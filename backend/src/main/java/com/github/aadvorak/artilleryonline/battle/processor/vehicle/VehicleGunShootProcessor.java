@@ -6,7 +6,7 @@ import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.state.ShellState;
 
-public class VehicleGunProcessor {
+public class VehicleGunShootProcessor {
 
     public static void processStep(VehicleModel vehicleModel, BattleModel battleModel) {
         var gunState = vehicleModel.getState().getGunState();

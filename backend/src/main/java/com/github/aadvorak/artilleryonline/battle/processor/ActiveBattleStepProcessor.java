@@ -4,7 +4,8 @@ import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.BattleStage;
 import com.github.aadvorak.artilleryonline.battle.processor.command.CommandProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.shell.ShellFlyProcessor;
-import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleGunProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleGunRotateProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleGunShootProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleMoveProcessor;
 
 public class ActiveBattleStepProcessor extends BattleStepProcessorBase implements BattleStepProcessor {
@@ -14,8 +15,9 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         readCommandsFromQueue(battle);
         // логика изменения ландшафта от попадания снарядов
         battle.getModel().getVehicles().values().forEach(vehicleModel -> {
+            VehicleGunShootProcessor.processStep(vehicleModel, battle.getModel());
             VehicleMoveProcessor.processStep(vehicleModel, battle.getModel());
-            VehicleGunProcessor.processStep(vehicleModel, battle.getModel());
+            VehicleGunRotateProcessor.processStep(vehicleModel);
         });
         battle.getModel().getShells().forEach(shellModel ->
                 ShellFlyProcessor.processStep(shellModel, battle.getModel()));
