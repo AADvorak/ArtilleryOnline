@@ -39,7 +39,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         battle.getUserCommands().forEach((userKey, commandQueue) -> {
             var commandsNumber = 10;
             while (commandsNumber > 0) {
-                var userCommand = commandQueue.peek();
+                var userCommand = commandQueue.poll();
                 if (userCommand == null) {
                     return;
                 }
