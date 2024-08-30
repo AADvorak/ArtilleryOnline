@@ -18,7 +18,7 @@ public class BattleRunner implements Runnable {
     public void run() {
         while (!BattleStage.TERMINATE.equals(battle.getBattleStage())) {
             try {
-                Thread.sleep(Battle.TIME_STEP);
+                Thread.sleep(Battle.TIME_STEP_MS);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

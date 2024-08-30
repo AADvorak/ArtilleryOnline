@@ -10,7 +10,11 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class Battle {
 
-    public static final long TIME_STEP = 100;
+    public static final long TIME_STEP_MS = 100;
+
+    public static double getTimeStepSecs() {
+        return (double) TIME_STEP_MS / 1000;
+    }
 
     private BattleModel model;
 

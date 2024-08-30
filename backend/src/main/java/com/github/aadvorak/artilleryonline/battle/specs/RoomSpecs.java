@@ -15,4 +15,6 @@ public class RoomSpecs implements Specs {
     private Position rightTop;
 
     private double step;
+
+    private double gravityAcceleration;
 }

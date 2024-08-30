@@ -21,5 +21,7 @@ public class VehicleSpecs implements Specs {
 
     private double movingVelocity;
 
+    private double radius;
+
     private Set<GunSpecs> availableGuns;
 }

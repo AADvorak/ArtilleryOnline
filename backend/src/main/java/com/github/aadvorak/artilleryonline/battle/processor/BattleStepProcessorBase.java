@@ -11,7 +11,7 @@ public class BattleStepProcessorBase implements BattleStepProcessor {
     }
 
     private void increaseTime(Battle battle) {
-        battle.setTime(battle.getTime() + Battle.TIME_STEP);
+        battle.setTime(battle.getTime() + Battle.TIME_STEP_MS);
     }
 
     protected void doStepLogic(Battle battle) {

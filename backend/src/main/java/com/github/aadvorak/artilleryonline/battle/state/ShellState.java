@@ -13,4 +13,6 @@ public class ShellState implements State {
     private Position position;
 
     private double angle;
+
+    private double velocity;
 }
