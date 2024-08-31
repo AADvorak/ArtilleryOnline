@@ -26,7 +26,7 @@ public class Battle {
 
     private BattleStage battleStage;
 
-    Map<String, Queue<UserCommand>> userCommands;
+    private Map<String, Queue<UserCommand>> userCommandQueues;
 
     public synchronized void setStageAndResetTime(BattleStage battleStage) {
         this.battleStage = battleStage;

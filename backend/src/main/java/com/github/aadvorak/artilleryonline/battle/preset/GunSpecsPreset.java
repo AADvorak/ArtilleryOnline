@@ -1,0 +1,21 @@
+package com.github.aadvorak.artilleryonline.battle.preset;
+
+import com.github.aadvorak.artilleryonline.battle.specs.GunSpecs;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+import java.util.Collections;
+
+@Getter
+@RequiredArgsConstructor
+public enum GunSpecsPreset {
+
+    DEFAULT("default", new GunSpecs()
+            .setLoadTime(5.0)
+            .setRotationVelocity(0.1)
+            .setAvailableShells(Collections.singleton(ShellSpecsPreset.DEFAULT.getSpecs())));
+
+    private final String name;
+
+    private final GunSpecs specs;
+}

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -14,13 +15,13 @@ import java.util.stream.Collectors;
 @Accessors(chain = true)
 public class BattleModel {
 
-    private IdGenerator idGenerator = new IdGenerator();
+    private final IdGenerator idGenerator = new IdGenerator();
+
+    private List<ShellModel> shells = new ArrayList<>();
 
     private RoomModel room;
 
     private Map<String, VehicleModel> vehicles;
-
-    private List<ShellModel> shells;
 
     public void removeShellById(int id) {
         shells = shells.stream()
