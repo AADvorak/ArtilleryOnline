@@ -3,12 +3,19 @@ package com.github.aadvorak.artilleryonline.battle;
 import com.github.aadvorak.artilleryonline.battle.processor.ActiveBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.FinishedBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.WaitingBattleStepProcessor;
+import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Set;
 
 @RequiredArgsConstructor
 public class BattleRunner implements Runnable {
 
     private final Battle battle;
+
+    private final Set<String> userKeys;
+
+    private final UserBattleMap userBattleMap;
 
     private final WaitingBattleStepProcessor waitingBattleStepProcessor = new WaitingBattleStepProcessor();
     private final ActiveBattleStepProcessor activeBattleStepProcessor = new ActiveBattleStepProcessor();
@@ -24,6 +31,7 @@ public class BattleRunner implements Runnable {
             }
             processBattleStep();
         }
+        removeBattleFromMap();
     }
 
     private void processBattleStep() {
@@ -34,5 +42,9 @@ public class BattleRunner implements Runnable {
         } else if (BattleStage.FINISHED.equals(battle.getBattleStage())) {
             finishedBattleStepProcessor.processStep(battle);
         }
+    }
+
+    private void removeBattleFromMap() {
+        userKeys.forEach(userBattleMap::remove);
     }
 }

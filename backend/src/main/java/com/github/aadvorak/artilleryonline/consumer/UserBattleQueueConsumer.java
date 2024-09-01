@@ -31,10 +31,11 @@ public class UserBattleQueueConsumer implements Runnable {
         while (true) {
             var firstUserKey = getUserKeyFromQueue();
             var secondUserKey = getUserKeyFromQueue();
-            var battle = battleFactory.createBattle(Set.of(firstUserKey, secondUserKey));
+            var userKeys = Set.of(firstUserKey, secondUserKey);
+            var battle = battleFactory.createBattle(userKeys);
             userBattleMap.put(firstUserKey, battle);
             userBattleMap.put(secondUserKey, battle);
-            var battleRunner = new BattleRunner(battle);
+            var battleRunner = new BattleRunner(battle, userKeys, userBattleMap);
             new Thread(battleRunner).start();
         }
     }
