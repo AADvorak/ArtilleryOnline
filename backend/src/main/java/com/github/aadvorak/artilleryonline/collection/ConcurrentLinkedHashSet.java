@@ -13,6 +13,9 @@ public class ConcurrentLinkedHashSet<T> {
     }
 
     public synchronized T poll() {
+        if (set.isEmpty()) {
+            return null;
+        }
         Iterator<T> iterator = set.iterator();
         T next = iterator.next();
         iterator.remove();

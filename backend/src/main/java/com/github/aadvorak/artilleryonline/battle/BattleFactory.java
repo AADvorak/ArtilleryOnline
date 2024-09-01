@@ -27,7 +27,8 @@ public class BattleFactory {
                 .setRoom(roomModel);
         var battle = new Battle()
                 .setTime(0)
-                .setBattleStage(BattleStage.WAITING);
+                .setBattleStage(BattleStage.WAITING)
+                .setModel(battleModel);
         var userCommandQueues = new HashMap<String, Queue<UserCommand>>();
         var vehicles = new HashMap<String, VehicleModel>();
         var distanceBetweenVehicles = (roomModel.getSpecs().getRightTop().getX()
@@ -56,6 +57,6 @@ public class BattleFactory {
         }
         battleModel.setVehicles(vehicles);
         battle.setUserCommandQueues(userCommandQueues);
-        return new Battle();
+        return battle;
     }
 }
