@@ -15,5 +15,5 @@ public class VehicleConfig implements Config {
 
     private GunSpecs gun;
 
-    private Map<ShellSpecs, Integer> ammo;
+    private Map<String, Integer> ammo;
 }

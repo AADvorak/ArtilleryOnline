@@ -26,7 +26,7 @@ public class VehicleState implements State {
 
     private double heatPoints;
 
-    private Map<ShellSpecs, Integer> ammo;
+    private Map<String, Integer> ammo;
 
     private GunState gunState;
 }

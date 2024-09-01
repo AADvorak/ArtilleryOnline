@@ -40,7 +40,7 @@ public class BattleFactory {
             vehicleModel.setId(battleModel.getIdGenerator().generate());
             vehicleModel.setSpecs(VehicleSpecsPreset.DEFAULT.getSpecs());
             vehicleModel.setConfig(new VehicleConfig()
-                    .setAmmo(Collections.singletonMap(ShellSpecsPreset.DEFAULT.getSpecs(), 30))
+                    .setAmmo(Collections.singletonMap(ShellSpecsPreset.DEFAULT.getName(), 30))
                     .setGun(GunSpecsPreset.DEFAULT.getSpecs()));
             vehicleModel.setState(new VehicleState()
                     .setAngle(0)

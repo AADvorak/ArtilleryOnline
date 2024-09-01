@@ -12,6 +12,8 @@ public class VehicleGunShootProcessor {
         var gunState = vehicleModel.getState().getGunState();
         if (gunState.isTriggerPushed() && gunState.getLoadedShell() != null) {
             doShot(vehicleModel, battleModel);
+        }
+        if (gunState.getLoadedShell() == null && gunState.getLoadingShell() == null) {
             startLoading(vehicleModel);
         } else if (gunState.getLoadingShell() != null) {
             continueLoading(vehicleModel);
@@ -37,6 +39,7 @@ public class VehicleGunShootProcessor {
         var gunState = vehicleModel.getState().getGunState();
         gunState.setLoadingShell(gunState.getSelectedShell());
         gunState.setLoadRemainTime(vehicleModel.getConfig().getGun().getLoadTime());
+        // todo ammo--
     }
 
     private static void continueLoading(VehicleModel vehicleModel) {
