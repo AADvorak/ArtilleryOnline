@@ -1,4 +1,14 @@
 package com.github.aadvorak.artilleryonline.battle.command;
 
-public interface CommandParams {
+import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
+@Getter
+@Setter
+@Accessors(chain = true)
+public class CommandParams {
+
+    private MovingDirection direction;
 }

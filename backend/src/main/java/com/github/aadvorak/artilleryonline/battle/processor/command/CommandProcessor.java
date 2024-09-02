@@ -1,7 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.processor.command;
 
 import com.github.aadvorak.artilleryonline.battle.command.Command;
-import com.github.aadvorak.artilleryonline.battle.command.DirectionCommandParams;
 import com.github.aadvorak.artilleryonline.battle.command.UserCommand;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 
@@ -14,7 +13,7 @@ public class CommandProcessor {
         }
 
         if (Command.START_MOVING.equals(userCommand.getCommand())) {
-            var direction = ((DirectionCommandParams) userCommand.getParams()).getDirection();
+            var direction = userCommand.getParams().getDirection();
             userVehicle.getState().setMovingDirection(direction);
         }
 
@@ -31,7 +30,7 @@ public class CommandProcessor {
         }
 
         if (Command.START_GUN_ROTATING.equals(userCommand.getCommand())) {
-            var direction = ((DirectionCommandParams) userCommand.getParams()).getDirection();
+            var direction = userCommand.getParams().getDirection();
             userVehicle.getState().setGunRotatingDirection(direction);
         }
 

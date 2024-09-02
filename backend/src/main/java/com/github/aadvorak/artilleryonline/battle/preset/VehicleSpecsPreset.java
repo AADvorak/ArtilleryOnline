@@ -16,7 +16,7 @@ public enum VehicleSpecsPreset {
             .setHitPoints(10.0)
             .setMinAngle(0.0)
             .setMaxAngle(Math.PI)
-            .setMovingVelocity(0.05)
+            .setMovingVelocity(0.1)
             .setAvailableGuns(Map.of(GunSpecsPreset.DEFAULT.getName(), GunSpecsPreset.DEFAULT.getSpecs())));
 
     private final String name;
