@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.Set;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -15,5 +15,5 @@ public class GunSpecs implements Specs {
 
     private double rotationVelocity;
 
-    private Set<ShellSpecs> availableShells;
+    private Map<String, ShellSpecs> availableShells;
 }

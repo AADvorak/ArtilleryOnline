@@ -2,7 +2,6 @@ package com.github.aadvorak.artilleryonline.battle.state;
 
 import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
-import com.github.aadvorak.artilleryonline.battle.specs.ShellSpecs;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,7 +23,7 @@ public class VehicleState implements State {
 
     private MovingDirection gunRotatingDirection;
 
-    private double heatPoints;
+    private double hitPoints;
 
     private Map<String, Integer> ammo;
 

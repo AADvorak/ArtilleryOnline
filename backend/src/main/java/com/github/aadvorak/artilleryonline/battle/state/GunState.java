@@ -1,6 +1,5 @@
 package com.github.aadvorak.artilleryonline.battle.state;
 
-import com.github.aadvorak.artilleryonline.battle.specs.ShellSpecs;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -10,11 +9,11 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class GunState implements State {
 
-    private ShellSpecs loadedShell;
+    private String loadedShell;
 
-    private ShellSpecs selectedShell;
+    private String selectedShell;
 
-    private ShellSpecs loadingShell;
+    private String loadingShell;
 
     private double loadRemainTime;
 

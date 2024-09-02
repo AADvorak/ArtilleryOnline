@@ -25,38 +25,46 @@ public class BattleFactory {
         roomModel.setSpecs(RoomSpecsPreset.DEFAULT.getSpecs());
         var battleModel = new BattleModel()
                 .setRoom(roomModel);
-        var battle = new Battle()
+        battleModel.setVehicles(createVehicles(userKeys, battleModel));
+        return new Battle()
                 .setTime(0)
                 .setBattleStage(BattleStage.WAITING)
-                .setModel(battleModel);
-        var userCommandQueues = new HashMap<String, Queue<UserCommand>>();
+                .setModel(battleModel)
+                .setUserCommandQueues(createUserCommandQueues(userKeys));
+    }
+
+    private Map<String, VehicleModel> createVehicles(Set<String> userKeys, BattleModel battleModel) {
         var vehicles = new HashMap<String, VehicleModel>();
-        var distanceBetweenVehicles = (roomModel.getSpecs().getRightTop().getX()
-                - roomModel.getSpecs().getLeftBottom().getX())
+        var distanceBetweenVehicles = (battleModel.getRoom().getSpecs().getRightTop().getX()
+                - battleModel.getRoom().getSpecs().getLeftBottom().getX())
                 / (userKeys.size() + 1);
         var vehicleNumber = 1;
         for (String userKey : userKeys) {
             var vehicleModel = new VehicleModel();
+            var ammo = Collections.singletonMap(ShellSpecsPreset.DEFAULT.getName(), 30);
             vehicleModel.setId(battleModel.getIdGenerator().generate());
             vehicleModel.setSpecs(VehicleSpecsPreset.DEFAULT.getSpecs());
             vehicleModel.setConfig(new VehicleConfig()
-                    .setAmmo(Collections.singletonMap(ShellSpecsPreset.DEFAULT.getName(), 30))
+                    .setAmmo(ammo)
                     .setGun(GunSpecsPreset.DEFAULT.getSpecs()));
             vehicleModel.setState(new VehicleState()
                     .setAngle(0)
                     .setGunAngle(Math.PI / 2)
-                    .setAmmo(vehicleModel.getConfig().getAmmo())
-                    .setHeatPoints(vehicleModel.getSpecs().getHeatPoints())
+                    .setAmmo(new HashMap<>(vehicleModel.getConfig().getAmmo()))
+                    .setHitPoints(vehicleModel.getSpecs().getHitPoints())
                     .setPosition(new Position().setX(distanceBetweenVehicles * vehicleNumber).setY(0.0))
                     .setGunState(new GunState()
-                            .setSelectedShell(ShellSpecsPreset.DEFAULT.getSpecs())
+                            .setSelectedShell(ammo.keySet().stream().findAny().orElseThrow())
                             .setTriggerPushed(false)));
             vehicles.put(userKey, vehicleModel);
-            userCommandQueues.put(userKey, new ConcurrentLinkedQueue<>());
             vehicleNumber++;
         }
-        battleModel.setVehicles(vehicles);
-        battle.setUserCommandQueues(userCommandQueues);
-        return battle;
+        return vehicles;
+    }
+
+    private Map<String, Queue<UserCommand>> createUserCommandQueues(Set<String> userKeys) {
+        var userCommandQueues = new HashMap<String, Queue<UserCommand>>();
+        userKeys.forEach(userKey -> userCommandQueues.put(userKey, new ConcurrentLinkedQueue<>()));
+        return userCommandQueues;
     }
 }

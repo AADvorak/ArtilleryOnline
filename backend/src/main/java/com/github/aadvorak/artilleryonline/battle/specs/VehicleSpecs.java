@@ -4,14 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.Set;
+import java.util.Map;
 
 @Getter
 @Setter
 @Accessors(chain = true)
 public class VehicleSpecs implements Specs {
 
-    private double heatPoints;
+    private double hitPoints;
 
     private int ammo;
 
@@ -23,5 +23,5 @@ public class VehicleSpecs implements Specs {
 
     private double radius;
 
-    private Set<GunSpecs> availableGuns;
+    private Map<String, GunSpecs> availableGuns;
 }
