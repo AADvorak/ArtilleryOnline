@@ -21,4 +21,8 @@ public class ConcurrentLinkedHashSet<T> {
         iterator.remove();
         return next;
     }
+
+    public synchronized int size() {
+        return set.size();
+    }
 }

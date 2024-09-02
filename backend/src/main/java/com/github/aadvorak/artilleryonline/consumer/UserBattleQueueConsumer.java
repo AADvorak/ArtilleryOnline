@@ -29,6 +29,10 @@ public class UserBattleQueueConsumer implements Runnable {
     @Override
     public void run() {
         while (true) {
+            if (userBattleQueue.size() < 2) {
+                sleep();
+                continue;
+            }
             var firstUserKey = getUserKeyFromQueue();
             var secondUserKey = getUserKeyFromQueue();
             var userKeys = Set.of(firstUserKey, secondUserKey);
