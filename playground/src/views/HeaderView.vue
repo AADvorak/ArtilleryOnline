@@ -2,12 +2,15 @@
 import {ref} from "vue";
 import {useUserStore} from "@/stores/user";
 import {useBattleLoader} from "@/composables/battle-loader";
+import {ApiRequestSender} from "@/api/api-request-sender";
 
 const userKey = ref()
 const userStore = useUserStore()
+const apiRequestSender = new ApiRequestSender()
 
-function battle() {
+async function battle() {
   userStore.userKey = userKey.value
+  await apiRequestSender.putJson<undefined, void>('/battles/queue', userStore.userKey as string, undefined)
   useBattleLoader().startBattleLoading()
 }
 </script>

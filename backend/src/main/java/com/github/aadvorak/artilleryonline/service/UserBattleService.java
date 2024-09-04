@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.service;
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
 import com.github.aadvorak.artilleryonline.dto.response.BattleStateResponse;
+import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ public class UserBattleService {
     public BattleResponse getBattle(String userKey) {
         var battle = userBattleMap.get(userKey);
         if (battle == null) {
-            return null;
+            throw new NotFoundAppException();
         }
         return mapper.map(battle, BattleResponse.class);
     }
@@ -26,7 +27,7 @@ public class UserBattleService {
     public BattleStateResponse getBattleState(String userKey) {
         var battle = userBattleMap.get(userKey);
         if (battle == null) {
-            return null;
+            throw new NotFoundAppException();
         }
         return mapper.map(battle, BattleStateResponse.class);
     }
