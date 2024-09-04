@@ -68,7 +68,7 @@ export function useBattleLoader() {
         '                    },\n' +
         '                    "movingDirection": null,\n' +
         '                    "angle": 0.0,\n' +
-        '                    "gunAngle": 1.5707963267948966,\n' +
+        '                    "gunAngle": 1.0,\n' +
         '                    "gunRotatingDirection": null,\n' +
         '                    "hitPoints": 10.0,\n' +
         '                    "ammo": {\n' +
@@ -129,7 +129,7 @@ export function useBattleLoader() {
         '                    },\n' +
         '                    "movingDirection": null,\n' +
         '                    "angle": 0.0,\n' +
-        '                    "gunAngle": 1.5707963267948966,\n' +
+        '                    "gunAngle": 1.9,\n' +
         '                    "gunRotatingDirection": null,\n' +
         '                    "hitPoints": 10.0,\n' +
         '                    "ammo": {\n' +
