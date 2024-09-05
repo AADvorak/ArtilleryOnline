@@ -24,9 +24,19 @@ const battleSize = computed(() => {
   }
 })
 const canvasSize = computed(() => {
-  const width = window.innerWidth - 20
-  const height = Math.floor((battleSize.value.height * width) / battleSize.value.width)
-  return { width, height }
+  const battleWidthToHeight = battleSize.value.width / battleSize.value.height
+  const screenWidth = window.innerWidth - 10
+  const screenHeight = window.innerHeight - 70
+  const screenWidthToHeight = screenWidth / screenHeight
+  if (battleWidthToHeight > screenWidthToHeight) {
+    const width = screenWidth
+    const height = Math.floor(width / battleWidthToHeight)
+    return { width, height }
+  } else {
+    const height = screenHeight
+    const width = Math.floor(battleWidthToHeight * height)
+    return { width, height }
+  }
 })
 const scaleCoefficient = computed(() => {
   return canvasSize.value.width / battleSize.value.width
