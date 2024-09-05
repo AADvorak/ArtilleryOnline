@@ -78,14 +78,7 @@ function drawVehicle(vehicleModel: VehicleModel) {
     ctx.value.strokeStyle = 'rgb(200 0 0)'
     ctx.value.beginPath()
     const position = transformPosition(vehicleModel.state.position)
-    const gunEndPosition = transformPosition({
-      x:
-        vehicleModel.state.position.x +
-        vehicleModel.specs.radius * 1.5 * Math.cos(vehicleModel.state.gunAngle),
-      y:
-        vehicleModel.state.position.y +
-        vehicleModel.specs.radius * 1.5 * Math.sin(vehicleModel.state.gunAngle)
-    })
+    const gunEndPosition = transformPosition(getGunEndPosition(vehicleModel))
     const radius = vehicleModel.specs.radius * scaleCoefficient.value
     const startAngle = Math.PI
     const endAngle = 2 * Math.PI
@@ -95,6 +88,16 @@ function drawVehicle(vehicleModel: VehicleModel) {
     ctx.value.lineTo(gunEndPosition.x, gunEndPosition.y)
     ctx.value.stroke()
     ctx.value.closePath()
+  }
+}
+
+function getGunEndPosition(vehicleModel: VehicleModel) {
+  const vehiclePosition = vehicleModel.state.position
+  const gunAngle = vehicleModel.state.gunAngle
+  const gunLength = vehicleModel.config.gun.length
+  return {
+    x: vehiclePosition.x + gunLength * Math.cos(gunAngle),
+    y: vehiclePosition.y + gunLength * Math.sin(gunAngle)
   }
 }
 

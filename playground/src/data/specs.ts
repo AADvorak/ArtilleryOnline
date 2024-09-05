@@ -13,6 +13,7 @@ export interface AvailableShells {
 export interface GunSpecs {
   loadTime: number
   rotationVelocity: number
+  length: number
   availableShells: AvailableShells
 }
 

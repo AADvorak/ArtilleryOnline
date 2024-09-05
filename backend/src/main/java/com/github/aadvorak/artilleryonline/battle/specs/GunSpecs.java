@@ -15,5 +15,7 @@ public class GunSpecs implements Specs {
 
     private double rotationVelocity;
 
+    private double length;
+
     private Map<String, ShellSpecs> availableShells;
 }

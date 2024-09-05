@@ -23,7 +23,7 @@ public class ShellFlyProcessor {
             battleModel.removeShellById(shellModel.getId());
             return;
         }
-        var hitVehicle = getHitVehicle(prevPosition, nextPosition, battleModel);
+        var hitVehicle = getHitVehicle(nextPosition, battleModel);
         if (hitVehicle != null) {
             ShellDamageProcessor.process(hitVehicle, shellModel.getSpecs(), battleModel);
             battleModel.removeShellById(shellModel.getId());
@@ -33,15 +33,15 @@ public class ShellFlyProcessor {
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
         velocityY = velocityY - gravityAcceleration * Battle.getTimeStepSecs();
         velocity = Math.sqrt(Math.pow(velocityX, 2.0) + Math.pow(velocityY, 2.0));
-        angle = Math.atan(velocityY / velocityX); // todo from 0 to 2 Pi
+        angle = Math.atan(velocityY / velocityX) + (velocityX < 0 ? Math.PI : 0.0);
         shellModel.getState().setPosition(nextPosition);
         shellModel.getState().setVelocity(velocity);
         shellModel.getState().setAngle(angle);
     }
 
-    private static VehicleModel getHitVehicle(Position prevPosition, Position nextPosition, BattleModel battleModel) {
+    private static VehicleModel getHitVehicle(Position nextPosition, BattleModel battleModel) {
         for (var vehicleModel : battleModel.getVehicles().values()) {
-            if (positionIsInVehicle(nextPosition, vehicleModel) && !positionIsInVehicle(prevPosition, vehicleModel)) {
+            if (positionIsInVehicle(nextPosition, vehicleModel)) {
                 return vehicleModel;
             }
         }
@@ -52,8 +52,8 @@ public class ShellFlyProcessor {
         var vehiclePosition = vehicleModel.getState().getPosition();
         var vehicleRadius = vehicleModel.getSpecs().getRadius();
         // todo logic with vehicle angle
-        return position.getY() > vehiclePosition.getY()
-                && position.distanceTo(vehiclePosition) <= vehicleRadius;
+        var distanceToVehicleCenter = position.distanceTo(vehiclePosition);
+        return position.getY() > vehiclePosition.getY() && distanceToVehicleCenter <= vehicleRadius;
     }
 
     private static boolean positionIsOutOfRoom(Position position, RoomSpecs roomSpecs) {

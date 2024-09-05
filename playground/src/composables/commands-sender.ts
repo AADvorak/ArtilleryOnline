@@ -74,7 +74,6 @@ export function usePlayerCommandsListener() {
 
   function sendCommand(userCommand: UserCommand) {
     if (userStore.userKey && battleStore.isActive) {
-      console.log('sendCommand', userCommand)
       apiRequestSender.postJson('/battles/commands', userStore.userKey, userCommand).then()
     }
   }

@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.Battle;
+import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
@@ -28,11 +29,9 @@ public class VehicleGunShootProcessor {
         shellModel.setSpecs(loadedShellSpecs);
         shellModel.setState(new ShellState()
                 .setAngle(vehicleModel.getState().getGunAngle())
-                .setPosition(vehicleModel.getState().getPosition())
+                .setPosition(getShellInitialPosition(vehicleModel))
                 .setVelocity(loadedShellSpecs.getVelocity()));
-        var shells = battleModel.getShells();
-        shells.add(shellModel);
-        battleModel.setShells(shells);
+        battleModel.getShells().add(shellModel);
         vehicleModel.getState().getGunState().setLoadedShell(null);
     }
 
@@ -57,5 +56,14 @@ public class VehicleGunShootProcessor {
             gunState.setLoadedShell(gunState.getLoadingShell());
             gunState.setLoadingShell(null);
         }
+    }
+
+    private static Position getShellInitialPosition(VehicleModel vehicleModel) {
+        var vehiclePosition = vehicleModel.getState().getPosition();
+        var gunAngle = vehicleModel.getState().getGunAngle();
+        var gunLength = vehicleModel.getConfig().getGun().getLength();
+        return new Position()
+                .setX(vehiclePosition.getX() + gunLength * Math.cos(gunAngle))
+                .setY(vehiclePosition.getY() + gunLength * Math.sin(gunAngle));
     }
 }
