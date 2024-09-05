@@ -3,12 +3,15 @@ import {ref} from "vue";
 import {useUserStore} from "@/stores/user";
 import {useBattleLoader} from "@/composables/battle-loader";
 import {ApiRequestSender} from "@/api/api-request-sender";
+import {useBattleStore} from "@/stores/battle";
+import ReloadingProgress from "@/components/ReloadingProgress.vue";
 
 const userKey = ref()
 const userStore = useUserStore()
+const battleStore = useBattleStore()
 const apiRequestSender = new ApiRequestSender()
 
-async function battle() {
+async function toBattle() {
   userStore.userKey = userKey.value
   await apiRequestSender.putJson<undefined, void>('/battles/queue', userStore.userKey as string, undefined)
   useBattleLoader().startBattleLoading()
@@ -27,9 +30,12 @@ async function battle() {
     <v-btn
         color="error"
         :disabled="!!userStore.userKey || !userKey"
-        @click="battle"
+        @click="toBattle"
     >
       Battle
     </v-btn>
+    <div v-if="battleStore.isActive">
+      <ReloadingProgress />
+    </div>
   </v-app-bar>
 </template>

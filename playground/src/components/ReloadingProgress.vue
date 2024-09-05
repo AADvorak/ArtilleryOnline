@@ -1,0 +1,39 @@
+<script setup lang="ts">
+import {computed} from "vue";
+import {useUserStore} from "@/stores/user";
+import {useBattleStore} from "@/stores/battle";
+
+const userStore = useUserStore()
+const battleStore = useBattleStore()
+
+const userVehicle = computed(() => {
+  if (!userStore.userKey) {
+    return null
+  }
+  return battleStore.battle?.model.vehicles[userStore.userKey]
+})
+
+const reloadingProgress = computed(() => {
+  if (!userVehicle.value) {
+    return 0
+  }
+  const loadTime = userVehicle.value.config.gun.loadTime
+  const loadRemainTime = userVehicle.value.state.gunState.loadRemainTime
+  return Math.floor(100 * (loadTime - loadRemainTime) / loadTime)
+})
+
+const showProgress = computed(() => {
+  if (!userVehicle.value) {
+    return false
+  }
+  return !!userVehicle.value.state.gunState.loadingShell
+})
+</script>
+
+<template>
+  <v-progress-circular
+      v-if="showProgress"
+      color="lime"
+      :model-value="reloadingProgress"
+  />
+</template>
