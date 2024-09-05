@@ -12,7 +12,7 @@ public enum GunSpecsPreset {
 
     DEFAULT("default", new GunSpecs()
             .setLoadTime(5.0)
-            .setRotationVelocity(0.1)
+            .setRotationVelocity(0.2)
             .setAvailableShells(Map.of(ShellSpecsPreset.DEFAULT.getName(), ShellSpecsPreset.DEFAULT.getSpecs())));
 
     private final String name;

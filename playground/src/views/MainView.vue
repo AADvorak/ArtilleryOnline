@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import HeaderView from "@/views/HeaderView.vue";
-import BattleView from "@/views/BattleView.vue";
+import BattleHeader from "@/components/BattleHeader.vue";
+import BattleCanvas from "@/components/BattleCanvas.vue";
 </script>
 
 <template>
   <v-app theme="dark">
-    <HeaderView />
-    <BattleView />
+    <BattleHeader />
+    <BattleCanvas />
   </v-app>
 </template>

@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import {computed, onMounted, ref, watch} from "vue";
-import type {VehicleModel} from "@/data/model";
-import {useBattleStore} from "@/stores/battle";
-import type {Position} from "@/data/common";
+import { computed, onMounted, ref, watch } from 'vue'
+import type {ShellModel, VehicleModel} from '@/data/model'
+import { useBattleStore } from '@/stores/battle'
+import type { Position } from '@/data/common'
+import {usePlayerCommandsListener} from "@/composables/commands-sender";
 
 const battleStore = useBattleStore()
+const battle = computed(() => battleStore.battle)
 const vehicles = computed(() => battleStore.vehicles)
 const battleSize = computed(() => {
   const roomSpecs = battleStore.battle?.model?.room?.specs
@@ -23,8 +25,8 @@ const battleSize = computed(() => {
 })
 const canvasSize = computed(() => {
   const width = window.innerWidth - 20
-  const height = Math.floor(battleSize.value.height * width / battleSize.value.width)
-  return {width, height}
+  const height = Math.floor((battleSize.value.height * width) / battleSize.value.width)
+  return { width, height }
 })
 const scaleCoefficient = computed(() => {
   return canvasSize.value.width / battleSize.value.width
@@ -33,10 +35,17 @@ const scaleCoefficient = computed(() => {
 const canvas = ref<HTMLCanvasElement>()
 const ctx = ref<CanvasRenderingContext2D>()
 
-watch(vehicles, () => setTimeout(drawVehicles))
+watch(battle, () =>
+  setTimeout(() => {
+    clearCanvas()
+    drawVehicles()
+    drawShells()
+  })
+)
 
 onMounted(() => {
   initCanvasAndCtx()
+  usePlayerCommandsListener().startSending()
 })
 
 function initCanvasAndCtx() {
@@ -46,10 +55,20 @@ function initCanvasAndCtx() {
   }
 }
 
+function clearCanvas() {
+  if (ctx.value) {
+    ctx.value.clearRect(0, 0, canvasSize.value.width, canvasSize.value.height)
+  }
+}
+
 function drawVehicles() {
   if (vehicles.value) {
     Object.values(vehicles.value).forEach(drawVehicle)
   }
+}
+
+function drawShells() {
+  battle.value?.model.shells.forEach(drawShell)
 }
 
 function drawVehicle(vehicleModel: VehicleModel) {
@@ -60,17 +79,32 @@ function drawVehicle(vehicleModel: VehicleModel) {
     ctx.value.beginPath()
     const position = transformPosition(vehicleModel.state.position)
     const gunEndPosition = transformPosition({
-      x: vehicleModel.state.position.x + vehicleModel.specs.radius * 1.5 * Math.cos(vehicleModel.state.gunAngle),
-      y: vehicleModel.state.position.y + vehicleModel.specs.radius * 1.5 * Math.sin(vehicleModel.state.gunAngle)
+      x:
+        vehicleModel.state.position.x +
+        vehicleModel.specs.radius * 1.5 * Math.cos(vehicleModel.state.gunAngle),
+      y:
+        vehicleModel.state.position.y +
+        vehicleModel.specs.radius * 1.5 * Math.sin(vehicleModel.state.gunAngle)
     })
     const radius = vehicleModel.specs.radius * scaleCoefficient.value
     const startAngle = Math.PI
     const endAngle = 2 * Math.PI
     ctx.value.arc(position.x, position.y, radius, startAngle, endAngle)
     ctx.value.fill()
-    ctx.value.moveTo(position.x, position.y);
+    ctx.value.moveTo(position.x, position.y)
     ctx.value.lineTo(gunEndPosition.x, gunEndPosition.y)
     ctx.value.stroke()
+    ctx.value.closePath()
+  }
+}
+
+function drawShell(shellModel: ShellModel) {
+  if (ctx.value) {
+    ctx.value.fillStyle = 'rgb(200 0 0)'
+    ctx.value.beginPath()
+    const position = transformPosition(shellModel.state.position)
+    ctx.value.arc(position.x, position.y, 2, 0, 2 * Math.PI)
+    ctx.value.fill()
     ctx.value.closePath()
   }
 }

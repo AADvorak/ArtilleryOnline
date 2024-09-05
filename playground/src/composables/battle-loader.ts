@@ -7,20 +7,19 @@ export function useBattleLoader() {
 
   const apiRequestSender = new ApiRequestSender()
   const userStore = useUserStore()
+  const battleStore = useBattleStore()
 
   async function loadBattle() {
     const battle = await apiRequestSender.getJson<Battle>('/battles', userStore.userKey as string)
-    console.log('battle', battle)
     if (battle) {
-      useBattleStore().battle = battle
-    } else {
-      setTimeout(loadBattle, 100)
+      battleStore.battle = battle
     }
+    setTimeout(loadBattle, 100)
   }
 
   function startBattleLoading() {
-    // todo loop
     loadBattle().then()
+    // todo battle state loading
   }
 
   return { startBattleLoading }

@@ -20,7 +20,8 @@ export class ApiRequestSender {
     return fetch(this.BASE_PATH + path, {
       method: 'PUT',
       headers: {
-        'UserKey': userKey
+        'UserKey': userKey,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(body ? body : {})
     }).then()
@@ -30,7 +31,8 @@ export class ApiRequestSender {
     return fetch(this.BASE_PATH + path, {
       method: 'POST',
       headers: {
-        'UserKey': userKey
+        'UserKey': userKey,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(body)
     }).then()
