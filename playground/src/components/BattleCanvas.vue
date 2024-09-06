@@ -22,7 +22,6 @@ const ctx = ref<CanvasRenderingContext2D>()
 
 watch(battle, (value, oldValue) => {
   if (!oldValue && value) {
-    console.log('!oldValue && value')
     calculateBattleSize()
     calculateCanvasSize()
     calculateScaleCoefficient()
