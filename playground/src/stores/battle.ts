@@ -8,7 +8,9 @@ export const useBattleStore = defineStore('battle', () => {
 
   const vehicles = computed(() => battle.value?.model?.vehicles)
 
+  const shells = computed(() => battle.value?.model?.shells)
+
   const isActive = computed(() => battle.value?.battleStage === BattleStage.ACTIVE)
 
-  return { battle, vehicles, isActive }
+  return { battle, vehicles, shells, isActive }
 })

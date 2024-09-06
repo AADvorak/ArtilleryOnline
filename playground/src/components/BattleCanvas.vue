@@ -7,7 +7,6 @@ import {usePlayerCommandsListener} from "@/composables/commands-sender";
 
 const battleStore = useBattleStore()
 const battle = computed(() => battleStore.battle)
-const vehicles = computed(() => battleStore.vehicles)
 const battleSize = computed(() => {
   const roomSpecs = battleStore.battle?.model?.room?.specs
   if (!roomSpecs) {
@@ -72,13 +71,15 @@ function clearCanvas() {
 }
 
 function drawVehicles() {
-  if (vehicles.value) {
-    Object.values(vehicles.value).forEach(drawVehicle)
+  if (battleStore.vehicles) {
+    Object.values(battleStore.vehicles).forEach(drawVehicle)
   }
 }
 
 function drawShells() {
-  battle.value?.model.shells.forEach(drawShell)
+  if (battleStore.shells) {
+    Object.values(battleStore.shells).forEach(drawShell)
+  }
 }
 
 function drawVehicle(vehicleModel: VehicleModel) {

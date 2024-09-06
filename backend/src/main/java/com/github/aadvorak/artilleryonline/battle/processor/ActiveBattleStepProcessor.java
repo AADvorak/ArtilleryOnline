@@ -8,6 +8,8 @@ import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleGunRo
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleGunShootProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleMoveProcessor;
 
+import java.util.ArrayList;
+
 public class ActiveBattleStepProcessor extends BattleStepProcessorBase implements BattleStepProcessor {
 
     @Override
@@ -19,8 +21,10 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
             VehicleMoveProcessor.processStep(vehicleModel, battle.getModel());
             VehicleGunRotateProcessor.processStep(vehicleModel, battle.getModel());
         });
-        battle.getModel().getShells().forEach(shellModel ->
-                ShellFlyProcessor.processStep(shellModel, battle.getModel()));
+        var shellIdsToRemove = new ArrayList<Integer>();
+        battle.getModel().getShells().values().forEach(shellModel ->
+                ShellFlyProcessor.processStep(shellModel, battle.getModel(), shellIdsToRemove));
+        shellIdsToRemove.forEach(battle.getModel()::removeShellById);
     }
 
     @Override

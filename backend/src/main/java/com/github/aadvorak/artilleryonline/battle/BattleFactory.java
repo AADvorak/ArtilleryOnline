@@ -24,7 +24,8 @@ public class BattleFactory {
         var roomModel = new RoomModel();
         roomModel.setSpecs(RoomSpecsPreset.DEFAULT.getSpecs());
         var battleModel = new BattleModel()
-                .setRoom(roomModel);
+                .setRoom(roomModel)
+                .setShells(new HashMap<>());
         battleModel.setVehicles(createVehicles(userKeys, battleModel));
         return new Battle()
                 .setTime(0)

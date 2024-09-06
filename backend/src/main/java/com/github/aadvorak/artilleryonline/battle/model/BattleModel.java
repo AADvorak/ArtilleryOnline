@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -19,16 +16,14 @@ public class BattleModel {
 
     private double currentTimeStepSecs;
 
-    private List<ShellModel> shells = new ArrayList<>();
+    private Map<Integer, ShellModel> shells;
 
     private RoomModel room;
 
     private Map<String, VehicleModel> vehicles;
 
     public void removeShellById(int id) {
-        shells = shells.stream()
-                .filter(shellModel -> shellModel.getId() != id)
-                .collect(Collectors.toList());
+        shells.remove(id);
     }
 
     public void removeVehicleById(int id) {

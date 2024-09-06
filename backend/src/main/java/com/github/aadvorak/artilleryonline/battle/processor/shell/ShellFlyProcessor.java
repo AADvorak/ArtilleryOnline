@@ -6,9 +6,11 @@ import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
 
+import java.util.List;
+
 public class ShellFlyProcessor {
 
-    public static void processStep(ShellModel shellModel, BattleModel battleModel) {
+    public static void processStep(ShellModel shellModel, BattleModel battleModel, List<Integer> shellIdsToRemove) {
         var prevPosition = shellModel.getState().getPosition();
         var velocity = shellModel.getState().getVelocity();
         var angle = shellModel.getState().getAngle();
@@ -18,13 +20,13 @@ public class ShellFlyProcessor {
                 .setX(prevPosition.getX() + velocityX * battleModel.getCurrentTimeStepSecs())
                 .setY(prevPosition.getY() + velocityY * battleModel.getCurrentTimeStepSecs());
         if (positionIsOutOfRoom(nextPosition, battleModel.getRoom().getSpecs())) {
-            battleModel.removeShellById(shellModel.getId());
+            shellIdsToRemove.add(shellModel.getId());
             return;
         }
         var hitVehicle = getHitVehicle(nextPosition, battleModel);
         if (hitVehicle != null) {
             ShellDamageProcessor.process(hitVehicle, shellModel.getSpecs(), battleModel);
-            battleModel.removeShellById(shellModel.getId());
+            shellIdsToRemove.add(shellModel.getId());
             return;
         }
         // todo hit ground

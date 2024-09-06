@@ -30,7 +30,7 @@ public class VehicleGunShootProcessor {
                 .setAngle(vehicleModel.getState().getGunAngle())
                 .setPosition(getShellInitialPosition(vehicleModel))
                 .setVelocity(loadedShellSpecs.getVelocity()));
-        battleModel.getShells().add(shellModel);
+        battleModel.getShells().put(shellModel.getId(), shellModel);
         vehicleModel.getState().getGunState().setLoadedShell(null);
     }
 

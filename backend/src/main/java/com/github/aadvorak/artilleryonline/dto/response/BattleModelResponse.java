@@ -6,14 +6,13 @@ import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.Map;
 
 @Getter
 @Setter
 public class BattleModelResponse {
 
-    private List<ShellModel> shells;
+    private Map<Integer, ShellModel> shells;
 
     private RoomModel room;
 

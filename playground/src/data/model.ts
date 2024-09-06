@@ -23,8 +23,12 @@ export interface VehicleModels {
   [userKey: string]: VehicleModel
 }
 
+export interface ShellModels {
+  [id: number]: ShellModel
+}
+
 export interface BattleModel {
   room: RoomModel
-  shells: ShellModel[]
+  shells: ShellModels
   vehicles: VehicleModels
 }
