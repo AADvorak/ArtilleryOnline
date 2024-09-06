@@ -12,7 +12,11 @@ public class BattleStepProcessorBase implements BattleStepProcessor {
     }
 
     private void increaseTime(Battle battle) {
-        battle.setTime(battle.getTime() + Battle.TIME_STEP_MS);
+        var previousTime = battle.getTime();
+        var currentTime = System.currentTimeMillis() - battle.getBeginTime();
+        var currentTimeStep = currentTime - previousTime;
+        battle.setTime(currentTime);
+        battle.getModel().setCurrentTimeStepSecs((double) currentTimeStep / 1000);
     }
 
     protected void doStepLogic(Battle battle) {

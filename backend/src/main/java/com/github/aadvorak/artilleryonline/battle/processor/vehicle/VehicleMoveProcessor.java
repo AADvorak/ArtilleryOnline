@@ -1,6 +1,5 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
-import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
@@ -15,7 +14,7 @@ public class VehicleMoveProcessor {
                 || !canMove(vehicleModel, battleModel)) {
             return;
         }
-        doMoveStep(vehicleModel);
+        doMoveStep(vehicleModel, battleModel);
     }
 
     private static boolean canMove(VehicleModel vehicleModel, BattleModel battleModel) {
@@ -26,7 +25,7 @@ public class VehicleMoveProcessor {
 
     private static boolean wallCollide(VehicleModel vehicleModel, BattleModel battleModel) {
         var direction = vehicleModel.getState().getMovingDirection();
-        var nextX = getNextVehiclePosition(vehicleModel).getX();
+        var nextX = getNextVehiclePosition(vehicleModel, battleModel).getX();
         var xMax = battleModel.getRoom().getSpecs().getRightTop().getX();
         var xMin = battleModel.getRoom().getSpecs().getLeftBottom().getX();
         return MovingDirection.RIGHT.equals(direction) && nextX >= xMax
@@ -37,7 +36,7 @@ public class VehicleMoveProcessor {
         var otherVehicleModels = battleModel.getVehicles().values().stream()
                 .filter(value -> value.getId() != vehicleModel.getId())
                 .collect(Collectors.toSet());
-        var nextVehiclePosition = getNextVehiclePosition(vehicleModel);
+        var nextVehiclePosition = getNextVehiclePosition(vehicleModel, battleModel);
         var vehicleRadius = vehicleModel.getSpecs().getRadius();
         for (var otherVehicleModel : otherVehicleModels) {
             var otherVehiclePosition = otherVehicleModel.getState().getPosition();
@@ -51,14 +50,14 @@ public class VehicleMoveProcessor {
         return false;
     }
 
-    private static void doMoveStep(VehicleModel vehicleModel) {
+    private static void doMoveStep(VehicleModel vehicleModel, BattleModel battleModel) {
         // todo more detailed algorithm
-        vehicleModel.getState().setPosition(getNextVehiclePosition(vehicleModel));
+        vehicleModel.getState().setPosition(getNextVehiclePosition(vehicleModel, battleModel));
     }
 
-    private static Position getNextVehiclePosition(VehicleModel vehicleModel) {
+    private static Position getNextVehiclePosition(VehicleModel vehicleModel, BattleModel battleModel) {
         var position = vehicleModel.getState().getPosition();
-        var nextX = position.getX() + getVelocity(vehicleModel) * Battle.getTimeStepSecs();
+        var nextX = position.getX() + getVelocity(vehicleModel) * battleModel.getCurrentTimeStepSecs();
         return new Position().setX(nextX).setY(position.getY());
     }
 

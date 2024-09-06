@@ -16,11 +16,9 @@ public class Battle {
 
     public static final long TIME_STEP_MS = 100;
 
-    public static double getTimeStepSecs() {
-        return (double) TIME_STEP_MS / 1000;
-    }
-
     private BattleModel model;
+
+    private final long beginTime = System.currentTimeMillis();
 
     private long time;
 

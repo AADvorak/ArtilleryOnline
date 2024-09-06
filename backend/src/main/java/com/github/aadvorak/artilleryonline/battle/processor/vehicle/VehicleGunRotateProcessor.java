@@ -1,19 +1,19 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
-import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
+import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 
 public class VehicleGunRotateProcessor {
 
-    public static void processStep(VehicleModel vehicleModel) {
+    public static void processStep(VehicleModel vehicleModel, BattleModel battleModel) {
         var rotatingDirection = vehicleModel.getState().getGunRotatingDirection();
         if (rotatingDirection == null) {
             return;
         }
         var gunAngle = vehicleModel.getState().getGunAngle();
         gunAngle += (MovingDirection.RIGHT.equals(rotatingDirection) ? -1 : 1)
-                * Battle.getTimeStepSecs()
+                * battleModel.getCurrentTimeStepSecs()
                 * vehicleModel.getConfig().getGun().getRotationVelocity();
         var maxAngle = vehicleModel.getSpecs().getMaxAngle();
         if (gunAngle > maxAngle) {

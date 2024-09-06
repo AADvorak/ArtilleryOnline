@@ -1,6 +1,5 @@
 package com.github.aadvorak.artilleryonline.battle.processor.shell;
 
-import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
@@ -15,10 +14,9 @@ public class ShellFlyProcessor {
         var angle = shellModel.getState().getAngle();
         var velocityX = velocity * Math.cos(angle);
         var velocityY = velocity * Math.sin(angle);
-        var timeStep = Battle.getTimeStepSecs();
         var nextPosition = new Position()
-                .setX(prevPosition.getX() + velocityX * timeStep)
-                .setY(prevPosition.getY() + velocityY * timeStep);
+                .setX(prevPosition.getX() + velocityX * battleModel.getCurrentTimeStepSecs())
+                .setY(prevPosition.getY() + velocityY * battleModel.getCurrentTimeStepSecs());
         if (positionIsOutOfRoom(nextPosition, battleModel.getRoom().getSpecs())) {
             battleModel.removeShellById(shellModel.getId());
             return;
@@ -31,7 +29,7 @@ public class ShellFlyProcessor {
         }
         // todo hit ground
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
-        velocityY = velocityY - gravityAcceleration * Battle.getTimeStepSecs();
+        velocityY = velocityY - gravityAcceleration * battleModel.getCurrentTimeStepSecs();
         velocity = Math.sqrt(Math.pow(velocityX, 2.0) + Math.pow(velocityY, 2.0));
         angle = Math.atan(velocityY / velocityX) + (velocityX < 0 ? Math.PI : 0.0);
         shellModel.getState().setPosition(nextPosition);

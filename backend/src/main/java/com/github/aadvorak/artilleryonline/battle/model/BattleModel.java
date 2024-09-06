@@ -17,6 +17,8 @@ public class BattleModel {
 
     private final IdGenerator idGenerator = new IdGenerator();
 
+    private double currentTimeStepSecs;
+
     private List<ShellModel> shells = new ArrayList<>();
 
     private RoomModel room;

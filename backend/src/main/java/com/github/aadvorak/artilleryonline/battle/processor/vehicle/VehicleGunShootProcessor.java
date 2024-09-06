@@ -1,6 +1,5 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
-import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
@@ -17,7 +16,7 @@ public class VehicleGunShootProcessor {
         if (gunState.getLoadedShell() == null && gunState.getLoadingShell() == null) {
             startLoading(vehicleModel);
         } else if (gunState.getLoadingShell() != null) {
-            continueLoading(vehicleModel);
+            continueLoading(vehicleModel, battleModel);
         }
     }
 
@@ -46,9 +45,9 @@ public class VehicleGunShootProcessor {
         gunState.setLoadRemainTime(vehicleModel.getConfig().getGun().getLoadTime());
     }
 
-    private static void continueLoading(VehicleModel vehicleModel) {
+    private static void continueLoading(VehicleModel vehicleModel, BattleModel battleModel) {
         var gunState = vehicleModel.getState().getGunState();
-        var loadRemainTime = gunState.getLoadRemainTime() - Battle.getTimeStepSecs();
+        var loadRemainTime = gunState.getLoadRemainTime() - battleModel.getCurrentTimeStepSecs();
         if (loadRemainTime > 0) {
             gunState.setLoadRemainTime(loadRemainTime);
         } else {
