@@ -5,7 +5,7 @@ import {ApiRequestSender} from "@/api/api-request-sender";
 import {useUserStore} from "@/stores/user";
 import {useBattleStore} from "@/stores/battle";
 
-export function usePlayerCommandsListener() {
+export function useCommandsSender() {
 
   const keyDownCommands: Map<string, UserCommand> = new Map()
   keyDownCommands.set('KeyD', {

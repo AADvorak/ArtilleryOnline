@@ -1,60 +1,42 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import type {ShellModel, VehicleModel} from '@/data/model'
+import type { ShellModel, VehicleModel } from '@/data/model'
 import { useBattleStore } from '@/stores/battle'
 import type { Position } from '@/data/common'
-import {usePlayerCommandsListener} from "@/composables/commands-sender";
+import { useCommandsSender } from '@/composables/commands-sender'
 
 const battleStore = useBattleStore()
 const battle = computed(() => battleStore.battle)
-const battleSize = computed(() => {
-  const roomSpecs = battleStore.battle?.model?.room?.specs
-  if (!roomSpecs) {
-    return {
-      width: 16,
-      height: 9
-    }
-  }
-  const rightTop = roomSpecs.rightTop
-  const leftBottom = roomSpecs.leftBottom
-  return {
-    width: rightTop.x - leftBottom.x,
-    height: rightTop.y - leftBottom.y
-  }
+const battleSize = ref()
+const canvasSize = ref()
+const scaleCoefficient = ref()
+const canvasWidth = computed(() => {
+  return canvasSize.value ? canvasSize.value.width : window.innerWidth - 10
 })
-const canvasSize = computed(() => {
-  const battleWidthToHeight = battleSize.value.width / battleSize.value.height
-  const screenWidth = window.innerWidth - 10
-  const screenHeight = window.innerHeight - 70
-  const screenWidthToHeight = screenWidth / screenHeight
-  if (battleWidthToHeight > screenWidthToHeight) {
-    const width = screenWidth
-    const height = Math.floor(width / battleWidthToHeight)
-    return { width, height }
-  } else {
-    const height = screenHeight
-    const width = Math.floor(battleWidthToHeight * height)
-    return { width, height }
-  }
-})
-const scaleCoefficient = computed(() => {
-  return canvasSize.value.width / battleSize.value.width
+const canvasHeight = computed(() => {
+  return canvasSize.value ? canvasSize.value.height : window.innerHeight - 70
 })
 
 const canvas = ref<HTMLCanvasElement>()
 const ctx = ref<CanvasRenderingContext2D>()
 
-watch(battle, () =>
-  setTimeout(() => {
+watch(battle, (value, oldValue) => {
+  if (!oldValue && value) {
+    console.log('!oldValue && value')
+    calculateBattleSize()
+    calculateCanvasSize()
+    calculateScaleCoefficient()
+    useCommandsSender().startSending()
+  }
+  requestAnimationFrame(() => {
     clearCanvas()
     drawVehicles()
     drawShells()
   })
-)
+})
 
 onMounted(() => {
   initCanvasAndCtx()
-  usePlayerCommandsListener().startSending()
 })
 
 function initCanvasAndCtx() {
@@ -133,11 +115,60 @@ function transformPosition(position: Position) {
     y: Math.floor(canvasSize.value.height - scaleCoefficient.value * position.y)
   }
 }
+
+function calculateBattleSize() {
+  if (battleSize.value) {
+    return
+  }
+  const roomSpecs = battleStore.battle?.model?.room?.specs
+  if (roomSpecs) {
+    const rightTop = roomSpecs.rightTop
+    const leftBottom = roomSpecs.leftBottom
+    battleSize.value = {
+      width: rightTop.x - leftBottom.x,
+      height: rightTop.y - leftBottom.y
+    }
+  }
+}
+
+function calculateCanvasSize() {
+  if (canvasSize.value) {
+    return
+  }
+  if (battleSize.value) {
+    const battleWidthToHeight = battleSize.value.width / battleSize.value.height
+    const screenWidth = window.innerWidth - 10
+    const screenHeight = window.innerHeight - 70
+    const screenWidthToHeight = screenWidth / screenHeight
+    if (battleWidthToHeight > screenWidthToHeight) {
+      const width = screenWidth
+      const height = Math.floor(width / battleWidthToHeight)
+      canvasSize.value = { width, height }
+    } else {
+      const height = screenHeight
+      const width = Math.floor(battleWidthToHeight * height)
+      canvasSize.value = { width, height }
+    }
+  }
+}
+
+function calculateScaleCoefficient() {
+  if (scaleCoefficient.value) {
+    return
+  }
+  if (battleSize.value && canvasSize.value) {
+    scaleCoefficient.value = canvasSize.value.width / battleSize.value.width
+  }
+}
 </script>
 
 <template>
   <v-main>
-    <canvas id="battle-canvas" :width="canvasSize.width" :height="canvasSize.height"></canvas>
+    <canvas
+        id="battle-canvas"
+        :width="canvasWidth"
+        :height="canvasHeight"
+    ></canvas>
   </v-main>
 </template>
 
