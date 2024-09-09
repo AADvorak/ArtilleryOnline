@@ -42,7 +42,7 @@ async function toBattle() {
     <div v-if="!!battleStore.battle" style="min-width: 200px">
       <HitPointsBar v-for="userKey in userKeys" :user-key="userKey" />
     </div>
-    <div v-if="battleStore.isActive">
+    <div v-if="battleStore.isActive" class="ml-5">
       <ReloadingProgress />
     </div>
   </v-app-bar>
