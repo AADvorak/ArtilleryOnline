@@ -5,8 +5,10 @@ import { useBattleStore } from '@/stores/battle'
 import type { Position } from '@/data/common'
 import { useCommandsSender } from '@/composables/commands-sender'
 import {useBattleUpdater} from "@/composables/battle-updater";
+import {useUserStore} from "@/stores/user";
 
 const battleStore = useBattleStore()
+const userStore = useUserStore()
 const battle = computed(() => battleStore.battle)
 const battleSize = ref()
 const canvasSize = ref()
@@ -55,7 +57,7 @@ function clearCanvas() {
 
 function drawVehicles() {
   if (battleStore.vehicles) {
-    Object.values(battleStore.vehicles).forEach(drawVehicle)
+    Object.keys(battleStore.vehicles).forEach(drawVehicle)
   }
 }
 
@@ -65,11 +67,13 @@ function drawShells() {
   }
 }
 
-function drawVehicle(vehicleModel: VehicleModel) {
+function drawVehicle(userKey: string) {
+  const vehicleModel = battleStore.vehicles[userKey]
+  const color = getColor(userKey)
   if (ctx.value) {
-    ctx.value.fillStyle = 'rgb(200 0 0)'
+    ctx.value.fillStyle = color
     ctx.value.lineWidth = 4
-    ctx.value.strokeStyle = 'rgb(200 0 0)'
+    ctx.value.strokeStyle = color
     ctx.value.beginPath()
     const position = transformPosition(vehicleModel.state.position)
     const gunEndPosition = transformPosition(getGunEndPosition(vehicleModel))
@@ -85,6 +89,10 @@ function drawVehicle(vehicleModel: VehicleModel) {
   }
 }
 
+function getColor(userKey: string) {
+  return userKey === userStore.userKey ? 'rgb(60,200,0)' : 'rgb(200 0 0)'
+}
+
 function getGunEndPosition(vehicleModel: VehicleModel) {
   const vehiclePosition = vehicleModel.state.position
   const gunAngle = vehicleModel.state.gunAngle
@@ -97,7 +105,7 @@ function getGunEndPosition(vehicleModel: VehicleModel) {
 
 function drawShell(shellModel: ShellModel) {
   if (ctx.value) {
-    ctx.value.fillStyle = 'rgb(200 0 0)'
+    ctx.value.fillStyle = 'rgb(200 200 200)'
     ctx.value.beginPath()
     const position = transformPosition(shellModel.state.position)
     ctx.value.arc(position.x, position.y, 2, 0, 2 * Math.PI)

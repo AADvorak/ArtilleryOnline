@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {useUserStore} from "@/stores/user";
 import {useBattleLoader} from "@/composables/battle-loader";
 import {ApiRequestSender} from "@/api/api-request-sender";
 import {useBattleStore} from "@/stores/battle";
 import ReloadingProgress from "@/components/ReloadingProgress.vue";
+import HitPointsBar from "@/components/HitPointsBar.vue";
 
-const userKey = ref('Client')
+const userKey = ref('Player')
 const userStore = useUserStore()
 const battleStore = useBattleStore()
 const apiRequestSender = new ApiRequestSender()
+
+const userKeys = computed(() => {
+  return Object.keys(battleStore.vehicles)
+})
 
 async function toBattle() {
   userStore.userKey = userKey.value
@@ -34,6 +39,9 @@ async function toBattle() {
     >
       Battle
     </v-btn>
+    <div v-if="!!battleStore.battle" style="min-width: 200px">
+      <HitPointsBar v-for="userKey in userKeys" :user-key="userKey" />
+    </div>
     <div v-if="battleStore.isActive">
       <ReloadingProgress />
     </div>
