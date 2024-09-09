@@ -15,4 +15,9 @@ public class CollectionsConfig {
     public UserBattleMap userBattleMap() {
         return new UserBattleMap();
     }
+
+    @Bean
+    public BattleUpdatesQueue battleUpdatesQueue() {
+        return new BattleUpdatesQueue();
+    }
 }

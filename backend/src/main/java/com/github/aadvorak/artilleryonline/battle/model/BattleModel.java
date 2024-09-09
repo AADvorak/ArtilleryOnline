@@ -22,6 +22,8 @@ public class BattleModel {
 
     private Map<String, VehicleModel> vehicles;
 
+    private boolean updated = false;
+
     public void removeShellById(int id) {
         shells.remove(id);
     }

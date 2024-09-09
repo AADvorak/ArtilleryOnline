@@ -6,7 +6,7 @@ import {ApiRequestSender} from "@/api/api-request-sender";
 import {useBattleStore} from "@/stores/battle";
 import ReloadingProgress from "@/components/ReloadingProgress.vue";
 
-const userKey = ref()
+const userKey = ref('Client')
 const userStore = useUserStore()
 const battleStore = useBattleStore()
 const apiRequestSender = new ApiRequestSender()

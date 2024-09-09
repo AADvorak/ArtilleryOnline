@@ -10,8 +10,11 @@ import java.util.stream.Collectors;
 public class VehicleMoveProcessor {
 
     public static void processStep(VehicleModel vehicleModel, BattleModel battleModel) {
-        if (vehicleModel.getState().getMovingDirection() == null
-                || !canMove(vehicleModel, battleModel)) {
+        if (vehicleModel.getState().getMovingDirection() == null) {
+            return;
+        }
+        if (!canMove(vehicleModel, battleModel)) {
+            battleModel.setUpdated(true);
             return;
         }
         doMoveStep(vehicleModel, battleModel);

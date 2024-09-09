@@ -4,6 +4,7 @@ import type { ShellModel, VehicleModel } from '@/data/model'
 import { useBattleStore } from '@/stores/battle'
 import type { Position } from '@/data/common'
 import { useCommandsSender } from '@/composables/commands-sender'
+import {useBattleUpdater} from "@/composables/battle-updater";
 
 const battleStore = useBattleStore()
 const battle = computed(() => battleStore.battle)
@@ -26,6 +27,7 @@ watch(battle, (value, oldValue) => {
     calculateCanvasSize()
     calculateScaleCoefficient()
     useCommandsSender().startSending()
+    useBattleUpdater().startListening()
   }
   requestAnimationFrame(() => {
     clearCanvas()

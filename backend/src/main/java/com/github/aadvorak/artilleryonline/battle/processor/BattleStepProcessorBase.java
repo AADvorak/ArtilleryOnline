@@ -8,7 +8,9 @@ public class BattleStepProcessorBase implements BattleStepProcessor {
     public final void processStep(Battle battle) {
         increaseTime(battle);
         doStepLogic(battle);
-        changeStageIfNeeded(battle);
+        if (changeStageIfNeeded(battle)) {
+            battle.getModel().setUpdated(true);
+        }
     }
 
     private void increaseTime(Battle battle) {

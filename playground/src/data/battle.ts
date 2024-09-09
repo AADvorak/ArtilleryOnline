@@ -8,6 +8,7 @@ export enum BattleStage {
 }
 
 export interface Battle {
+  id: string
   model: BattleModel
   time: number
   battleStage: BattleStage

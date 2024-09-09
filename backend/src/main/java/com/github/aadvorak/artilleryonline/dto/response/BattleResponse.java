@@ -8,6 +8,8 @@ import lombok.Setter;
 @Setter
 public class BattleResponse {
 
+    private String id;
+
     private BattleModelResponse model;
 
     private long time;

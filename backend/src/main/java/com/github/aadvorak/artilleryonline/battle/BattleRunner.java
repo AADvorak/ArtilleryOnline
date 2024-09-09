@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.battle;
 import com.github.aadvorak.artilleryonline.battle.processor.ActiveBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.FinishedBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.WaitingBattleStepProcessor;
+import com.github.aadvorak.artilleryonline.collection.BattleUpdatesQueue;
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +18,8 @@ public class BattleRunner implements Runnable {
 
     private final UserBattleMap userBattleMap;
 
+    private final BattleUpdatesQueue battleUpdatesQueue;
+
     private final WaitingBattleStepProcessor waitingBattleStepProcessor = new WaitingBattleStepProcessor();
     private final ActiveBattleStepProcessor activeBattleStepProcessor = new ActiveBattleStepProcessor();
     private final FinishedBattleStepProcessor finishedBattleStepProcessor = new FinishedBattleStepProcessor();
@@ -30,6 +33,7 @@ public class BattleRunner implements Runnable {
                 throw new RuntimeException(e);
             }
             processBattleStep();
+            sendBattleToUpdatesQueueIfUpdated();
         }
         removeBattleFromMap();
     }
@@ -46,5 +50,12 @@ public class BattleRunner implements Runnable {
 
     private void removeBattleFromMap() {
         userKeys.forEach(userBattleMap::remove);
+    }
+
+    private void sendBattleToUpdatesQueueIfUpdated () {
+        if (battle.getModel().isUpdated()) {
+            battleUpdatesQueue.add(battle);
+            battle.getModel().setUpdated(false);
+        }
     }
 }

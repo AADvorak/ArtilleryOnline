@@ -24,6 +24,9 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         var shellIdsToRemove = new ArrayList<Integer>();
         battle.getModel().getShells().values().forEach(shellModel ->
                 ShellFlyProcessor.processStep(shellModel, battle.getModel(), shellIdsToRemove));
+        if (!shellIdsToRemove.isEmpty()) {
+            battle.getModel().setUpdated(true);
+        }
         shellIdsToRemove.forEach(battle.getModel()::removeShellById);
     }
 
@@ -48,6 +51,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
                     return;
                 }
                 CommandProcessor.process(userKey, userCommand, battle.getModel());
+                battle.getModel().setUpdated(true);
                 commandsNumber--;
             }
         });

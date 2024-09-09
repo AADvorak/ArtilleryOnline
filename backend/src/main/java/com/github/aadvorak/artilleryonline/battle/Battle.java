@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 
 import java.util.Map;
 import java.util.Queue;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -17,6 +18,8 @@ public class Battle {
     public static final long TIME_STEP_MS = 20;
 
     private BattleModel model;
+
+    private final String id = UUID.randomUUID().toString();
 
     private final long beginTime = System.currentTimeMillis();
 
