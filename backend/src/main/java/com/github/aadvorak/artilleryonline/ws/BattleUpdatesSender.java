@@ -31,7 +31,7 @@ public class BattleUpdatesSender implements Runnable {
         while (true) {
             var battle = battleUpdatesQueue.poll();
             if (battle != null) {
-                simpMessagingTemplate.convertAndSend("/topic/battle-updates/" + battle.getId(),
+                simpMessagingTemplate.convertAndSend("/topic/battle/updates/" + battle.getId(),
                         mapper.map(battle, BattleResponse.class));
             } else {
                 sleep();

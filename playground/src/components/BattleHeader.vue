@@ -40,10 +40,10 @@ async function toBattle() {
     >
       Battle
     </v-btn>
-    <div v-if="!!battleStore.battle" style="min-width: 100px">
+    <div v-if="!!battleStore.battle" class="ml-5 battle-timer-wrapper">
       <BattleTimer />
     </div>
-    <div v-if="!!battleStore.battle" style="min-width: 200px">
+    <div v-if="!!battleStore.battle" class="ml-5 hit-points-bar-wrapper">
       <HitPointsBar v-for="userKey in userKeys" :user-key="userKey" />
     </div>
     <div v-if="battleStore.isActive" class="ml-5">
@@ -51,3 +51,13 @@ async function toBattle() {
     </div>
   </v-app-bar>
 </template>
+
+<style scoped>
+.battle-timer-wrapper {
+  min-width: 50px;
+}
+
+.hit-points-bar-wrapper {
+  min-width: 200px;
+}
+</style>

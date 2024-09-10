@@ -54,9 +54,11 @@ function formatTwoDigits(value: number) {
 <style scoped>
 .battle-timer {
   color: aquamarine;
+  font-size: large;
 }
 
 .battle-timer_waiting {
   color: crimson;
+  font-size: large;
 }
 </style>

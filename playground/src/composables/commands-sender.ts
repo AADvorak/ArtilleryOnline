@@ -1,12 +1,10 @@
 import type { UserCommand } from '@/data/command'
 import { Command } from '@/data/command'
 import { MovingDirection } from '@/data/common'
-import {ApiRequestSender} from "@/api/api-request-sender";
-import {useUserStore} from "@/stores/user";
-import {useBattleStore} from "@/stores/battle";
+import { useUserStore } from '@/stores/user'
+import { useBattleStore } from '@/stores/battle'
 
-export function useCommandsSender() {
-
+export function useCommandsSender(stompClient) {
   const keyDownCommands: Map<string, UserCommand> = new Map()
   keyDownCommands.set('KeyD', {
     command: Command.START_MOVING,
@@ -47,8 +45,6 @@ export function useCommandsSender() {
 
   const keysDown: Map<string, string> = new Map()
 
-  const apiRequestSender = new ApiRequestSender()
-
   const userStore = useUserStore()
 
   const battleStore = useBattleStore()
@@ -74,7 +70,11 @@ export function useCommandsSender() {
 
   function sendCommand(userCommand: UserCommand) {
     if (userStore.userKey && battleStore.isActive) {
-      apiRequestSender.postJson('/battles/commands', userStore.userKey, userCommand).then()
+      stompClient.client.value.send(
+        '/api/ws/battle/commands',
+        {},
+        JSON.stringify({ userKey: userStore.userKey, userCommand })
+      )
     }
   }
 

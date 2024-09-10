@@ -6,9 +6,11 @@ import type { Position } from '@/data/common'
 import { useCommandsSender } from '@/composables/commands-sender'
 import {useBattleUpdater} from "@/composables/battle-updater";
 import {useUserStore} from "@/stores/user";
+import {useStompClient} from "@/composables/stomp-client";
 
 const battleStore = useBattleStore()
 const userStore = useUserStore()
+const stompClient = useStompClient()
 const battle = computed(() => battleStore.battle)
 const battleSize = ref()
 const canvasSize = ref()
@@ -28,8 +30,8 @@ watch(battle, (value, oldValue) => {
     calculateBattleSize()
     calculateCanvasSize()
     calculateScaleCoefficient()
-    useCommandsSender().startSending()
-    useBattleUpdater().startListening()
+    stompClient.connect()
+    useCommandsSender(stompClient).startSending()
   }
   requestAnimationFrame(() => {
     clearCanvas()
@@ -40,6 +42,7 @@ watch(battle, (value, oldValue) => {
 
 onMounted(() => {
   initCanvasAndCtx()
+  useBattleUpdater(stompClient).subscribeAfterWsConnect()
 })
 
 function initCanvasAndCtx() {
