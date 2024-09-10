@@ -6,6 +6,7 @@ import {ApiRequestSender} from "@/api/api-request-sender";
 import {useBattleStore} from "@/stores/battle";
 import ReloadingProgress from "@/components/ReloadingProgress.vue";
 import HitPointsBar from "@/components/HitPointsBar.vue";
+import BattleTimer from "@/components/BattleTimer.vue";
 
 const userKey = ref('Player')
 const userStore = useUserStore()
@@ -39,6 +40,9 @@ async function toBattle() {
     >
       Battle
     </v-btn>
+    <div v-if="!!battleStore.battle" style="min-width: 100px">
+      <BattleTimer />
+    </div>
     <div v-if="!!battleStore.battle" style="min-width: 200px">
       <HitPointsBar v-for="userKey in userKeys" :user-key="userKey" />
     </div>
