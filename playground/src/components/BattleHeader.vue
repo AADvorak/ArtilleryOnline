@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {useUserStore} from "@/stores/user";
 import {useBattleLoader} from "@/composables/battle-loader";
 import {ApiRequestSender} from "@/api/api-request-sender";
@@ -17,7 +17,15 @@ const userKeys = computed(() => {
   return Object.keys(battleStore.vehicles)
 })
 
+onMounted(() => {
+  const userKeyFromLocalStorage = localStorage.getItem('userKey')
+  if (userKeyFromLocalStorage) {
+    userKey.value = userKeyFromLocalStorage
+  }
+})
+
 async function toBattle() {
+  localStorage.setItem('userKey', userKey.value)
   userStore.userKey = userKey.value
   await apiRequestSender.putJson<undefined, void>('/battles/queue', userStore.userKey as string, undefined)
   useBattleLoader().startBattleLoading()
