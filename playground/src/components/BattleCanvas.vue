@@ -7,6 +7,7 @@ import { useCommandsSender } from '@/composables/commands-sender'
 import {useBattleUpdater} from "@/composables/battle-updater";
 import {useUserStore} from "@/stores/user";
 import {useStompClient} from "@/composables/stomp-client";
+import {useBattleProcessor} from "@/processor/battle-processor";
 
 const battleStore = useBattleStore()
 const userStore = useUserStore()
@@ -32,6 +33,7 @@ watch(battle, (value, oldValue) => {
     calculateScaleCoefficient()
     stompClient.connect()
     useCommandsSender(stompClient).startSending()
+    useBattleProcessor().startProcessing()
   }
   requestAnimationFrame(() => {
     clearCanvas()
