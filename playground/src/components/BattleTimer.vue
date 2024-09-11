@@ -4,7 +4,7 @@ import {computed} from "vue";
 import {BattleStage} from "@/data/battle";
 
 const WAITING_STAGE_OFFSET = 15 * 1000
-const ACTIVE_STAGE_OFFSET = WAITING_STAGE_OFFSET + 10 * 60 * 1000
+const ACTIVE_STAGE_OFFSET = WAITING_STAGE_OFFSET + 5 * 60 * 1000
 
 const MS_IN_MINUTE = 1000 * 60
 const MS_IN_SECOND = 1000
