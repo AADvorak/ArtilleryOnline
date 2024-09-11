@@ -37,7 +37,7 @@ async function toBattle() {
     <v-text-field
         v-model="userKey"
         label="Nickname"
-        style="max-width: 300px"
+        style="max-width: 150px"
         type="text"
         :disabled="!!userStore.userKey"
     />

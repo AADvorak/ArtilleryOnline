@@ -19,5 +19,9 @@ export function useStompClient() {
     })
   }
 
-  return { client, addConnectCallback, connect }
+  function disconnect() {
+    client.value?.disconnect()
+  }
+
+  return { client, addConnectCallback, connect, disconnect }
 }

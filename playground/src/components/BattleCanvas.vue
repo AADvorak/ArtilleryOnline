@@ -28,30 +28,50 @@ const ctx = ref<CanvasRenderingContext2D>()
 
 watch(battle, (value, oldValue) => {
   if (!oldValue && value) {
-    calculateBattleSize()
-    calculateCanvasSize()
-    calculateScaleCoefficient()
-    stompClient.connect()
-    useCommandsSender(stompClient).startSending()
-    useBattleProcessor().startProcessing()
+    startBattle()
   }
-  requestAnimationFrame(() => {
-    clearCanvas()
-    drawShells()
-    drawVehicles()
-  })
+  if (oldValue && !value) {
+    finishBattle()
+    return
+  }
+  redrawBattle()
 })
 
 onMounted(() => {
   initCanvasAndCtx()
   useBattleUpdater(stompClient).subscribeAfterWsConnect()
+  useCommandsSender(stompClient).startSending()
 })
+
+function startBattle() {
+  calculateBattleSize()
+  calculateCanvasSize()
+  calculateScaleCoefficient()
+  stompClient.connect()
+  useBattleProcessor().startProcessing()
+}
+
+function finishBattle() {
+  clearCanvas()
+  battleSize.value = undefined
+  canvasSize.value = undefined
+  scaleCoefficient.value = undefined
+  stompClient.disconnect()
+}
 
 function initCanvasAndCtx() {
   canvas.value = document.getElementById('battle-canvas') as HTMLCanvasElement
   if (canvas.value && canvas.value.getContext) {
     ctx.value = canvas.value.getContext('2d') as CanvasRenderingContext2D
   }
+}
+
+function redrawBattle() {
+  requestAnimationFrame(() => {
+    clearCanvas()
+    drawShells()
+    drawVehicles()
+  })
 }
 
 function clearCanvas() {
