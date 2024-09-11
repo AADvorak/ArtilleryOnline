@@ -37,8 +37,8 @@ watch(battle, (value, oldValue) => {
   }
   requestAnimationFrame(() => {
     clearCanvas()
-    drawVehicles()
     drawShells()
+    drawVehicles()
   })
 })
 
