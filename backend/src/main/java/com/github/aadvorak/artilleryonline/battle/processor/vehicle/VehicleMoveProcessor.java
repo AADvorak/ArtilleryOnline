@@ -56,23 +56,49 @@ public class VehicleMoveProcessor {
     }
 
     private static void doMoveStep(VehicleModel vehicleModel, BattleModel battleModel, Position nextPosition) {
-        // todo more detailed algorithm
         vehicleModel.getState().setPosition(nextPosition);
         BattleUtils.correctVehiclePositionAndAngleOnGround(vehicleModel.getState(), battleModel.getRoom());
     }
 
     private static Position getNextVehiclePosition(VehicleModel vehicleModel, BattleModel battleModel) {
         var position = vehicleModel.getState().getPosition();
-        var nextX = position.getX() + getVelocity(vehicleModel) * battleModel.getCurrentTimeStepSecs();
-        return new Position().setX(nextX).setY(position.getY());
+        var angle = vehicleModel.getState().getAngle();
+        var velocity = getVelocity(vehicleModel);
+        var velocityX = velocity * Math.cos(angle);
+        var velocityY = velocity * Math.sin(angle);
+        var nextX = position.getX() + velocityX * battleModel.getCurrentTimeStepSecs();
+        var nextY = position.getY() + velocityY * battleModel.getCurrentTimeStepSecs();
+        return new Position().setX(nextX).setY(nextY);
     }
 
     private static double getVelocity(VehicleModel vehicleModel) {
         var direction = vehicleModel.getState().getMovingDirection();
         var velocity = vehicleModel.getSpecs().getMovingVelocity();
+        var angle = vehicleModel.getState().getAngle();
+        var absAngle = Math.abs(angle);
+        var criticalAngle = vehicleModel.getSpecs().getCriticalAngle();
         if (MovingDirection.RIGHT.equals(direction)) {
-            return velocity;
+            if (angle > criticalAngle) {
+                return 0;
+            } else if (angle > 0) {
+                return velocity * (criticalAngle - absAngle) / criticalAngle;
+            } else if (angle > -criticalAngle) {
+                return velocity * (criticalAngle + absAngle) / criticalAngle;
+            } else {
+                return 2 * velocity;
+            }
         }
-        return -velocity;
+        if (MovingDirection.LEFT.equals(direction)) {
+            if (angle < -criticalAngle) {
+                return 0;
+            } else if (angle < 0) {
+                return - velocity * (criticalAngle - absAngle) / criticalAngle;
+            } else if (angle < criticalAngle) {
+                return - velocity * (criticalAngle + absAngle) / criticalAngle;
+            } else {
+                return - 2 * velocity;
+            }
+        }
+        return 0;
     }
 }

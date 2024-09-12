@@ -49,10 +49,10 @@ public class BattleFactory {
         var xMin = roomSpecs.getLeftBottom().getX();
         var xMax = roomSpecs.getRightTop().getX();
         var height = roomSpecs.getRightTop().getY() - roomSpecs.getLeftBottom().getY();
-        var randomShift = BattleUtils.generateRandom(-1.0, 1.0);
-        var randomHeight = BattleUtils.generateRandom(2.0, 4.0);
+        var sigma = BattleUtils.generateRandom(0.5, 1.5);
+        var mu = (xMax - xMin) / 2;
         for (var x = xMin; x <= xMax; x += roomSpecs.getStep()) {
-            var y = height * Math.sin((x - xMin) / (xMax - xMin) * Math.PI + randomShift) / randomHeight;
+            var y = (height / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2.0));
             groundLine.add(y > 0 ? y : 0.0);
         }
         return groundLine;

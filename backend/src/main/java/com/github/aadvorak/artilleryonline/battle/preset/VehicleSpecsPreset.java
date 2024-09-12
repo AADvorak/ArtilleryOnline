@@ -12,10 +12,11 @@ public enum VehicleSpecsPreset {
 
     DEFAULT("default", new VehicleSpecs()
             .setAmmo(30)
-            .setRadius(0.5)
+            .setRadius(0.4)
             .setHitPoints(10.0)
             .setMinAngle(0.0)
             .setMaxAngle(Math.PI)
+            .setCriticalAngle(Math.PI / 4)
             .setMovingVelocity(0.3)
             .setAvailableGuns(Map.of(GunSpecsPreset.DEFAULT.getName(), GunSpecsPreset.DEFAULT.getSpecs())));
 

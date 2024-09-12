@@ -13,7 +13,7 @@ public enum RoomSpecsPreset {
             .setGravityAcceleration(9.8)
             .setStep(0.01)
             .setLeftBottom(new Position().setX(0.0).setY(0.0))
-            .setRightTop(new Position().setX(16.0).setY(9.0)));
+            .setRightTop(new Position().setX(20.0).setY(9.0)));
 
     private final String name;
 

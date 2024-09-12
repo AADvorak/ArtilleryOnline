@@ -19,6 +19,8 @@ public class VehicleSpecs implements Specs {
 
     private double maxAngle;
 
+    private double criticalAngle;
+
     private double movingVelocity;
 
     private double radius;
