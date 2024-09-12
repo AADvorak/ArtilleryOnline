@@ -10,8 +10,11 @@ import com.github.aadvorak.artilleryonline.battle.preset.GunSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.preset.RoomSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.preset.VehicleSpecsPreset;
+import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.GunState;
+import com.github.aadvorak.artilleryonline.battle.state.RoomState;
 import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
+import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -21,10 +24,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class BattleFactory {
 
     public Battle createBattle(Set<String> userKeys) {
-        var roomModel = new RoomModel();
-        roomModel.setSpecs(RoomSpecsPreset.DEFAULT.getSpecs());
         var battleModel = new BattleModel()
-                .setRoom(roomModel)
+                .setRoom(createRoomModel())
                 .setShells(new HashMap<>());
         battleModel.setVehicles(createVehicles(userKeys, battleModel));
         return new Battle()
@@ -32,6 +33,29 @@ public class BattleFactory {
                 .setBattleStage(BattleStage.WAITING)
                 .setModel(battleModel)
                 .setUserCommandQueues(createUserCommandQueues(userKeys));
+    }
+
+    private RoomModel createRoomModel() {
+        var roomModel = new RoomModel();
+        var specs = RoomSpecsPreset.DEFAULT.getSpecs();
+        var state = new RoomState().setGroundLine(createGroundLine(specs));
+        roomModel.setSpecs(specs);
+        roomModel.setState(state);
+        return roomModel;
+    }
+
+    private List<Double> createGroundLine(RoomSpecs roomSpecs) {
+        var groundLine = new ArrayList<Double>();
+        var xMin = roomSpecs.getLeftBottom().getX();
+        var xMax = roomSpecs.getRightTop().getX();
+        var height = roomSpecs.getRightTop().getY() - roomSpecs.getLeftBottom().getY();
+        var randomShift = BattleUtils.generateRandom(-1.0, 1.0);
+        var randomHeight = BattleUtils.generateRandom(2.0, 4.0);
+        for (var x = xMin; x <= xMax; x += roomSpecs.getStep()) {
+            var y = height * Math.sin((x - xMin) / (xMax - xMin) * Math.PI + randomShift) / randomHeight;
+            groundLine.add(y > 0 ? y : 0.0);
+        }
+        return groundLine;
     }
 
     private Map<String, VehicleModel> createVehicles(Set<String> userKeys, BattleModel battleModel) {
@@ -57,6 +81,7 @@ public class BattleFactory {
                     .setGunState(new GunState()
                             .setSelectedShell(ammo.keySet().stream().findAny().orElseThrow())
                             .setTriggerPushed(false)));
+            BattleUtils.correctVehiclePositionAndAngleOnGround(vehicleModel.getState(), battleModel.getRoom());
             vehicles.put(userKey, vehicleModel);
             vehicleNumber++;
         }

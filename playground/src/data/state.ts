@@ -25,3 +25,7 @@ export interface VehicleState {
   ammo: Ammo
   gunState: GunState
 }
+
+export interface RoomState {
+  groundLine: number[]
+}

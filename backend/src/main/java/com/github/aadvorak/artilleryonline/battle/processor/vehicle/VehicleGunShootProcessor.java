@@ -29,7 +29,7 @@ public class VehicleGunShootProcessor {
         shellModel.setId(battleModel.getIdGenerator().generate());
         shellModel.setSpecs(loadedShellSpecs);
         shellModel.setState(new ShellState()
-                .setAngle(vehicleModel.getState().getGunAngle())
+                .setAngle(vehicleModel.getState().getGunAngle() + vehicleModel.getState().getAngle())
                 .setPosition(getShellInitialPosition(vehicleModel))
                 .setVelocity(loadedShellSpecs.getVelocity()));
         battleModel.getShells().put(shellModel.getId(), shellModel);
@@ -63,9 +63,10 @@ public class VehicleGunShootProcessor {
     private static Position getShellInitialPosition(VehicleModel vehicleModel) {
         var vehiclePosition = vehicleModel.getState().getPosition();
         var gunAngle = vehicleModel.getState().getGunAngle();
+        var angle = vehicleModel.getState().getAngle();
         var gunLength = vehicleModel.getConfig().getGun().getLength();
         return new Position()
-                .setX(vehiclePosition.getX() + gunLength * Math.cos(gunAngle))
-                .setY(vehiclePosition.getY() + gunLength * Math.sin(gunAngle));
+                .setX(vehiclePosition.getX() + gunLength * Math.cos(gunAngle + angle))
+                .setY(vehiclePosition.getY() + gunLength * Math.sin(gunAngle + angle));
     }
 }

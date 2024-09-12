@@ -4,6 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 
 import java.util.stream.Collectors;
 
@@ -13,38 +14,39 @@ public class VehicleMoveProcessor {
         if (vehicleModel.getState().getMovingDirection() == null) {
             return;
         }
-        if (!canMove(vehicleModel, battleModel)) {
+        var nextPosition = getNextVehiclePosition(vehicleModel, battleModel);
+        if (!canMove(vehicleModel, battleModel, nextPosition)) {
             battleModel.setUpdated(true);
             return;
         }
-        doMoveStep(vehicleModel, battleModel);
+        doMoveStep(vehicleModel, battleModel, nextPosition);
     }
 
-    private static boolean canMove(VehicleModel vehicleModel, BattleModel battleModel) {
-        var wallCollide = wallCollide(vehicleModel, battleModel);
-        var vehicleCollide = vehicleCollide(vehicleModel, battleModel);
+    private static boolean canMove(VehicleModel vehicleModel, BattleModel battleModel, Position nextPosition) {
+        var wallCollide = wallCollide(vehicleModel, battleModel, nextPosition);
+        var vehicleCollide = vehicleCollide(vehicleModel, battleModel, nextPosition);
         return !wallCollide && !vehicleCollide;
     }
 
-    private static boolean wallCollide(VehicleModel vehicleModel, BattleModel battleModel) {
+    private static boolean wallCollide(VehicleModel vehicleModel, BattleModel battleModel, Position nextPosition) {
         var direction = vehicleModel.getState().getMovingDirection();
-        var nextX = getNextVehiclePosition(vehicleModel, battleModel).getX();
+        var nextX = nextPosition.getX();
+        var radius = vehicleModel.getSpecs().getRadius();
         var xMax = battleModel.getRoom().getSpecs().getRightTop().getX();
         var xMin = battleModel.getRoom().getSpecs().getLeftBottom().getX();
-        return MovingDirection.RIGHT.equals(direction) && nextX >= xMax
-                || MovingDirection.LEFT.equals(direction) && nextX <= xMin;
+        return MovingDirection.RIGHT.equals(direction) && nextX + radius >= xMax
+                || MovingDirection.LEFT.equals(direction) && nextX - radius <= xMin;
     }
 
-    private static boolean vehicleCollide(VehicleModel vehicleModel, BattleModel battleModel) {
+    private static boolean vehicleCollide(VehicleModel vehicleModel, BattleModel battleModel, Position nextPosition) {
         var otherVehicleModels = battleModel.getVehicles().values().stream()
                 .filter(value -> value.getId() != vehicleModel.getId())
                 .collect(Collectors.toSet());
-        var nextVehiclePosition = getNextVehiclePosition(vehicleModel, battleModel);
         var vehicleRadius = vehicleModel.getSpecs().getRadius();
         for (var otherVehicleModel : otherVehicleModels) {
             var otherVehiclePosition = otherVehicleModel.getState().getPosition();
             var otherVehicleRadius = otherVehicleModel.getSpecs().getRadius();
-            var distance = nextVehiclePosition.distanceTo(otherVehiclePosition);
+            var distance = nextPosition.distanceTo(otherVehiclePosition);
             var minDistance = vehicleRadius + otherVehicleRadius;
             if (distance <= minDistance) {
                 return true;
@@ -53,9 +55,10 @@ public class VehicleMoveProcessor {
         return false;
     }
 
-    private static void doMoveStep(VehicleModel vehicleModel, BattleModel battleModel) {
+    private static void doMoveStep(VehicleModel vehicleModel, BattleModel battleModel, Position nextPosition) {
         // todo more detailed algorithm
-        vehicleModel.getState().setPosition(getNextVehiclePosition(vehicleModel, battleModel));
+        vehicleModel.getState().setPosition(nextPosition);
+        BattleUtils.correctVehiclePositionAndAngleOnGround(vehicleModel.getState(), battleModel.getRoom());
     }
 
     private static Position getNextVehiclePosition(VehicleModel vehicleModel, BattleModel battleModel) {

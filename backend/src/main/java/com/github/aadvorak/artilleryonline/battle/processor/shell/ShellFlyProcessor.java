@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
+import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 
 import java.util.List;
 
@@ -29,7 +30,10 @@ public class ShellFlyProcessor {
             shellIdsToRemove.add(shellModel.getId());
             return;
         }
-        // todo hit ground
+        if (isHitGround(nextPosition, battleModel)) {
+            shellIdsToRemove.add(shellModel.getId());
+            return;
+        }
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
         velocityY = velocityY - gravityAcceleration * battleModel.getCurrentTimeStepSecs();
         velocity = Math.sqrt(Math.pow(velocityX, 2.0) + Math.pow(velocityY, 2.0));
@@ -61,5 +65,10 @@ public class ShellFlyProcessor {
         var xMin = roomSpecs.getLeftBottom().getX();
         var yMin = roomSpecs.getLeftBottom().getY();
         return position.getX() >= xMax || position.getX() <= xMin || position.getY() <= yMin;
+    }
+
+    private static boolean isHitGround(Position position, BattleModel battleModel) {
+        var nearestGroundPosition = BattleUtils.getNearestGroundPosition(position.getX(), battleModel.getRoom());
+        return position.getY() <= nearestGroundPosition.getY();
     }
 }

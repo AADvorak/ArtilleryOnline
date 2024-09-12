@@ -53,7 +53,7 @@ public class BattleRunner implements Runnable {
     }
 
     private void sendBattleToUpdatesQueueIfUpdated () {
-        if (battle.getModel().isUpdated()) {
+        if (true) {
             battleUpdatesQueue.add(battle);
             battle.getModel().setUpdated(false);
         }

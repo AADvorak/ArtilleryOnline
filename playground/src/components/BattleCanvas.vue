@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import type { ShellModel, VehicleModel } from '@/data/model'
+import type {RoomModel, ShellModel, VehicleModel} from '@/data/model'
 import { useBattleStore } from '@/stores/battle'
 import type { Position } from '@/data/common'
 import { useCommandsSender } from '@/composables/commands-sender'
@@ -48,7 +48,7 @@ function startBattle() {
   calculateCanvasSize()
   calculateScaleCoefficient()
   stompClient.connect()
-  useBattleProcessor().startProcessing()
+  //useBattleProcessor().startProcessing()
 }
 
 function finishBattle() {
@@ -70,6 +70,7 @@ function redrawBattle() {
   requestAnimationFrame(() => {
     clearCanvas()
     drawShells()
+    drawGround()
     drawVehicles()
   })
 }
@@ -78,6 +79,30 @@ function clearCanvas() {
   if (ctx.value) {
     ctx.value.clearRect(0, 0, canvasSize.value.width, canvasSize.value.height)
   }
+}
+
+function drawGround() {
+  const roomModel = battle.value?.model.room
+  if (ctx.value && roomModel) {
+    ctx.value.fillStyle = 'rgb(100 100 100)'
+    ctx.value.strokeStyle = 'rgb(100 100 100)'
+    ctx.value.lineWidth = 1
+    let position = getGroundPosition(0, roomModel)
+    ctx.value.moveTo(position.x, position.y)
+    for (let i = 1; i < roomModel.state.groundLine.length; i++) {
+      position = getGroundPosition(i, roomModel)
+      ctx.value.lineTo(position.x, position.y)
+    }
+    ctx.value.stroke()
+    ctx.value.closePath()
+  }
+}
+
+function getGroundPosition(i: number, roomModel: RoomModel) {
+  return transformPosition({
+    x: roomModel.specs.step * i,
+    y: roomModel.state.groundLine[i]
+  })
 }
 
 function drawVehicles() {
@@ -97,20 +122,21 @@ function drawVehicle(userKey: string) {
   const color = getColor(userKey)
   if (ctx.value) {
     ctx.value.fillStyle = color
-    ctx.value.lineWidth = 4
     ctx.value.strokeStyle = color
     ctx.value.beginPath()
     const position = transformPosition(vehicleModel.state.position)
     const gunEndPosition = transformPosition(getGunEndPosition(vehicleModel))
     const radius = vehicleModel.specs.radius * scaleCoefficient.value
-    const startAngle = Math.PI
-    const endAngle = 2 * Math.PI
+    const startAngle = Math.PI - vehicleModel.state.angle
+    const endAngle = 2 * Math.PI - vehicleModel.state.angle
     ctx.value.arc(position.x, position.y, radius, startAngle, endAngle)
     ctx.value.fill()
+    ctx.value.lineWidth = 4
     ctx.value.moveTo(position.x, position.y)
     ctx.value.lineTo(gunEndPosition.x, gunEndPosition.y)
     ctx.value.stroke()
     ctx.value.closePath()
+    ctx.value.lineWidth = 1
   }
 }
 
@@ -121,16 +147,18 @@ function getColor(userKey: string) {
 function getGunEndPosition(vehicleModel: VehicleModel) {
   const vehiclePosition = vehicleModel.state.position
   const gunAngle = vehicleModel.state.gunAngle
+  const angle = vehicleModel.state.angle
   const gunLength = vehicleModel.config.gun.length
   return {
-    x: vehiclePosition.x + gunLength * Math.cos(gunAngle),
-    y: vehiclePosition.y + gunLength * Math.sin(gunAngle)
+    x: vehiclePosition.x + gunLength * Math.cos(gunAngle + angle),
+    y: vehiclePosition.y + gunLength * Math.sin(gunAngle + angle)
   }
 }
 
 function drawShell(shellModel: ShellModel) {
   if (ctx.value) {
-    ctx.value.fillStyle = 'rgb(200 200 200)'
+    ctx.value.fillStyle = 'rgb(256 256 256)'
+    ctx.value.lineWidth = 1
     ctx.value.beginPath()
     const position = transformPosition(shellModel.state.position)
     ctx.value.arc(position.x, position.y, 2, 0, 2 * Math.PI)

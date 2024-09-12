@@ -1,9 +1,10 @@
 import type {RoomSpecs, ShellSpecs, VehicleSpecs} from "@/data/specs";
-import type {ShellState, VehicleState} from "@/data/state";
+import type {RoomState, ShellState, VehicleState} from "@/data/state";
 import type {VehicleConfig} from "@/data/config";
 
 export interface RoomModel {
   specs: RoomSpecs
+  state: RoomState
 }
 
 export interface ShellModel {
