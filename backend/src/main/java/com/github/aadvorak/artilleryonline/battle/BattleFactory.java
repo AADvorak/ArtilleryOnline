@@ -81,7 +81,7 @@ public class BattleFactory {
                     .setGunState(new GunState()
                             .setSelectedShell(ammo.keySet().stream().findAny().orElseThrow())
                             .setTriggerPushed(false)));
-            BattleUtils.correctVehiclePositionAndAngleOnGround(vehicleModel.getState(), battleModel.getRoom());
+            BattleUtils.correctVehiclePositionAndAngleOnGround(vehicleModel, battleModel.getRoom());
             vehicles.put(userKey, vehicleModel);
             vehicleNumber++;
         }

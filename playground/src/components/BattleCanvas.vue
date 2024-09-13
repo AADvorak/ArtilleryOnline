@@ -131,12 +131,51 @@ function drawVehicle(userKey: string) {
     const endAngle = 2 * Math.PI - vehicleModel.state.angle
     ctx.value.arc(position.x, position.y, radius, startAngle, endAngle)
     ctx.value.fill()
+    ctx.value.closePath()
+
+    ctx.value.beginPath()
+    const wheelRadius = vehicleModel.specs.wheelRadius * scaleCoefficient.value
+    const rightWheelPosition = transformPosition(getRightWheelPosition(vehicleModel))
+    const leftWheelPosition = transformPosition(getLeftWheelPosition(vehicleModel))
+    ctx.value.arc(rightWheelPosition.x, rightWheelPosition.y, wheelRadius, 0, 2 * Math.PI)
+    ctx.value.fill()
+    ctx.value.arc(leftWheelPosition.x, leftWheelPosition.y, wheelRadius, 0, 2 * Math.PI)
+    ctx.value.fill()
+    ctx.value.closePath()
+
+    ctx.value.beginPath()
     ctx.value.lineWidth = 4
     ctx.value.moveTo(position.x, position.y)
     ctx.value.lineTo(gunEndPosition.x, gunEndPosition.y)
     ctx.value.stroke()
     ctx.value.closePath()
     ctx.value.lineWidth = 1
+  }
+}
+
+function getLeftWheelPosition(vehicleModel: VehicleModel) {
+  const position = vehicleModel.state.position
+  const vehicleRadius = vehicleModel.specs.radius
+  const wheelRadius = vehicleModel.specs.wheelRadius
+  const angle = vehicleModel.state.angle
+  const wheelDistance = Math.sqrt(Math.pow(wheelRadius, 2) + Math.pow(vehicleRadius, 2))
+  const wheelAngle = Math.atan(wheelRadius / vehicleRadius)
+  return {
+    x: position.x - wheelDistance * Math.cos(angle + wheelAngle),
+    y: position.y - wheelDistance * Math.sin(angle + wheelAngle)
+  }
+}
+
+function getRightWheelPosition(vehicleModel: VehicleModel) {
+  const position = vehicleModel.state.position
+  const vehicleRadius = vehicleModel.specs.radius
+  const wheelRadius = vehicleModel.specs.wheelRadius
+  const angle = vehicleModel.state.angle
+  const wheelDistance = Math.sqrt(Math.pow(wheelRadius, 2) + Math.pow(vehicleRadius, 2))
+  const wheelAngle = Math.atan(wheelRadius / vehicleRadius)
+  return {
+    x: position.x + wheelDistance * Math.cos(angle - wheelAngle),
+    y: position.y + wheelDistance * Math.sin(angle - wheelAngle)
   }
 }
 

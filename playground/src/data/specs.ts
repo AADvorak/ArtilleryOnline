@@ -35,5 +35,6 @@ export interface VehicleSpecs {
   maxAngle: number
   movingVelocity: number
   radius: number
+  wheelRadius: number
   availableGuns: AvailableGuns
 }

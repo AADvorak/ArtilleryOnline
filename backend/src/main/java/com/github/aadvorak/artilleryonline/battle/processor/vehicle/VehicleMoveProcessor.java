@@ -30,26 +30,45 @@ public class VehicleMoveProcessor {
 
     private static boolean wallCollide(VehicleModel vehicleModel, BattleModel battleModel, Position nextPosition) {
         var direction = vehicleModel.getState().getMovingDirection();
-        var nextX = nextPosition.getX();
-        var radius = vehicleModel.getSpecs().getRadius();
+        var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
         var xMax = battleModel.getRoom().getSpecs().getRightTop().getX();
         var xMin = battleModel.getRoom().getSpecs().getLeftBottom().getX();
-        return MovingDirection.RIGHT.equals(direction) && nextX + radius >= xMax
-                || MovingDirection.LEFT.equals(direction) && nextX - radius <= xMin;
+        if (MovingDirection.RIGHT.equals(direction)) {
+            var rightWheelPosition = BattleUtils.getRightWheelPosition(vehicleModel, nextPosition);
+            return rightWheelPosition.getX() + wheelRadius >= xMax;
+        }
+        if (MovingDirection.LEFT.equals(direction)) {
+            var leftWheelPosition = BattleUtils.getLeftWheelPosition(vehicleModel, nextPosition);
+            return leftWheelPosition.getX() - wheelRadius <= xMin;
+        }
+        return false;
     }
 
     private static boolean vehicleCollide(VehicleModel vehicleModel, BattleModel battleModel, Position nextPosition) {
         var otherVehicleModels = battleModel.getVehicles().values().stream()
                 .filter(value -> value.getId() != vehicleModel.getId())
                 .collect(Collectors.toSet());
-        var vehicleRadius = vehicleModel.getSpecs().getRadius();
+        var direction = vehicleModel.getState().getMovingDirection();
+        var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
+        var rightWheelPosition = BattleUtils.getRightWheelPosition(vehicleModel, nextPosition);
+        var leftWheelPosition = BattleUtils.getLeftWheelPosition(vehicleModel, nextPosition);
         for (var otherVehicleModel : otherVehicleModels) {
             var otherVehiclePosition = otherVehicleModel.getState().getPosition();
-            var otherVehicleRadius = otherVehicleModel.getSpecs().getRadius();
-            var distance = nextPosition.distanceTo(otherVehiclePosition);
-            var minDistance = vehicleRadius + otherVehicleRadius;
-            if (distance <= minDistance) {
-                return true;
+            var otherWheelRadius = otherVehicleModel.getSpecs().getWheelRadius();
+            var minDistance = wheelRadius + otherWheelRadius;
+            if (MovingDirection.RIGHT.equals(direction)) {
+                var otherLeftWheelPosition = BattleUtils.getLeftWheelPosition(otherVehicleModel, otherVehiclePosition);
+                var distance = otherLeftWheelPosition.distanceTo(rightWheelPosition);
+                if (distance < minDistance) {
+                    return true;
+                }
+            }
+            if (MovingDirection.LEFT.equals(direction)) {
+                var otherRightWheelPosition = BattleUtils.getRightWheelPosition(vehicleModel, otherVehiclePosition);
+                var distance = otherRightWheelPosition.distanceTo(leftWheelPosition);
+                if (distance < minDistance) {
+                    return true;
+                }
             }
         }
         return false;
@@ -57,7 +76,7 @@ public class VehicleMoveProcessor {
 
     private static void doMoveStep(VehicleModel vehicleModel, BattleModel battleModel, Position nextPosition) {
         vehicleModel.getState().setPosition(nextPosition);
-        BattleUtils.correctVehiclePositionAndAngleOnGround(vehicleModel.getState(), battleModel.getRoom());
+        BattleUtils.correctVehiclePositionAndAngleOnGround(vehicleModel, battleModel.getRoom());
     }
 
     private static Position getNextVehiclePosition(VehicleModel vehicleModel, BattleModel battleModel) {
