@@ -155,11 +155,9 @@ function drawVehicle(userKey: string) {
 
 function getLeftWheelPosition(vehicleModel: VehicleModel) {
   const position = vehicleModel.state.position
-  const vehicleRadius = vehicleModel.specs.radius
-  const wheelRadius = vehicleModel.specs.wheelRadius
   const angle = vehicleModel.state.angle
-  const wheelDistance = Math.sqrt(Math.pow(wheelRadius, 2) + Math.pow(vehicleRadius, 2))
-  const wheelAngle = Math.atan(wheelRadius / vehicleRadius)
+  const wheelDistance = vehicleModel.preCalc.wheelDistance
+  const wheelAngle = vehicleModel.preCalc.wheelAngle
   return {
     x: position.x - wheelDistance * Math.cos(angle + wheelAngle),
     y: position.y - wheelDistance * Math.sin(angle + wheelAngle)
@@ -168,11 +166,9 @@ function getLeftWheelPosition(vehicleModel: VehicleModel) {
 
 function getRightWheelPosition(vehicleModel: VehicleModel) {
   const position = vehicleModel.state.position
-  const vehicleRadius = vehicleModel.specs.radius
-  const wheelRadius = vehicleModel.specs.wheelRadius
   const angle = vehicleModel.state.angle
-  const wheelDistance = Math.sqrt(Math.pow(wheelRadius, 2) + Math.pow(vehicleRadius, 2))
-  const wheelAngle = Math.atan(wheelRadius / vehicleRadius)
+  const wheelDistance = vehicleModel.preCalc.wheelDistance
+  const wheelAngle = vehicleModel.preCalc.wheelAngle
   return {
     x: position.x + wheelDistance * Math.cos(angle - wheelAngle),
     y: position.y + wheelDistance * Math.sin(angle - wheelAngle)

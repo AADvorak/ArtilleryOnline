@@ -6,6 +6,7 @@ import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
 import com.github.aadvorak.artilleryonline.battle.preset.GunSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.preset.RoomSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
@@ -69,6 +70,7 @@ public class BattleFactory {
             var ammo = Collections.singletonMap(ShellSpecsPreset.DEFAULT.getName(), 30);
             vehicleModel.setId(battleModel.getIdGenerator().generate());
             vehicleModel.setSpecs(VehicleSpecsPreset.DEFAULT.getSpecs());
+            vehicleModel.setPreCalc(new VehiclePreCalc(vehicleModel.getSpecs()));
             vehicleModel.setConfig(new VehicleConfig()
                     .setAmmo(ammo)
                     .setGun(GunSpecsPreset.DEFAULT.getSpecs()));

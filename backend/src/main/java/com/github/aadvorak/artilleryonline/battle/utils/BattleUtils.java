@@ -32,8 +32,8 @@ public class BattleUtils {
         var vehicleRadius = vehicleModel.getSpecs().getRadius();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
         var angle = vehicleModel.getState().getAngle();
-        var wheelDistance = Math.sqrt(Math.pow(wheelRadius, 2) + Math.pow(vehicleRadius, 2));
-        var wheelAngle = Math.atan(wheelRadius / vehicleRadius);
+        var wheelDistance = vehicleModel.getPreCalc().getWheelDistance();
+        var wheelAngle = vehicleModel.getPreCalc().getWheelAngle();
         var leftWheelX = vehicleModel.getState().getPosition().getX() - wheelDistance * Math.cos(wheelAngle + angle);
         var leftWheelPosition = getLeftWheelPositionOnGround(leftWheelX, wheelRadius, roomModel);
         angle = getVehicleAngleOnGround(leftWheelPosition, vehicleRadius, wheelRadius, roomModel);
@@ -46,22 +46,18 @@ public class BattleUtils {
     }
 
     public static Position getLeftWheelPosition(VehicleModel vehicleModel, Position position) {
-        var vehicleRadius = vehicleModel.getSpecs().getRadius();
-        var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
         var angle = vehicleModel.getState().getAngle();
-        var wheelDistance = Math.sqrt(Math.pow(wheelRadius, 2) + Math.pow(vehicleRadius, 2));
-        var wheelAngle = Math.atan(wheelRadius / vehicleRadius);
+        var wheelDistance = vehicleModel.getPreCalc().getWheelDistance();
+        var wheelAngle = vehicleModel.getPreCalc().getWheelAngle();
         return new Position()
                 .setX(position.getX() - wheelDistance * Math.cos(angle + wheelAngle))
                 .setY(position.getY() - wheelDistance * Math.sin(angle + wheelAngle));
     }
 
     public static Position getRightWheelPosition(VehicleModel vehicleModel, Position position) {
-        var vehicleRadius = vehicleModel.getSpecs().getRadius();
-        var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
         var angle = vehicleModel.getState().getAngle();
-        var wheelDistance = Math.sqrt(Math.pow(wheelRadius, 2) + Math.pow(vehicleRadius, 2));
-        var wheelAngle = Math.atan(wheelRadius / vehicleRadius);
+        var wheelDistance = vehicleModel.getPreCalc().getWheelDistance();
+        var wheelAngle = vehicleModel.getPreCalc().getWheelAngle();
         return new Position()
                 .setX(position.getX() + wheelDistance * Math.cos(angle - wheelAngle))
                 .setY(position.getY() + wheelDistance * Math.sin(angle - wheelAngle));

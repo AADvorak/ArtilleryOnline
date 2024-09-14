@@ -13,11 +13,17 @@ export interface ShellModel {
   state: ShellState
 }
 
+export interface VehiclePreCalc {
+  wheelDistance: number
+  wheelAngle: number
+}
+
 export interface VehicleModel {
   id: number
   specs: VehicleSpecs
   config: VehicleConfig
   state: VehicleState
+  preCalc: VehiclePreCalc
 }
 
 export interface VehicleModels {
