@@ -11,6 +11,7 @@ import com.github.aadvorak.artilleryonline.battle.preset.GunSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.preset.RoomSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.preset.VehicleSpecsPreset;
+import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleOnGroundProcessor;
 import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.GunState;
 import com.github.aadvorak.artilleryonline.battle.state.RoomState;
@@ -83,7 +84,7 @@ public class BattleFactory {
                     .setGunState(new GunState()
                             .setSelectedShell(ammo.keySet().stream().findAny().orElseThrow())
                             .setTriggerPushed(false)));
-            BattleUtils.correctVehiclePositionAndAngleOnGround(vehicleModel, battleModel.getRoom());
+            VehicleOnGroundProcessor.correctVehiclePositionAndAngleOnGround(vehicleModel, battleModel.getRoom());
             vehicles.put(userKey, vehicleModel);
             vehicleNumber++;
         }

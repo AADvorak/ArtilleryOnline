@@ -4,7 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
-import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
+import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 import java.util.stream.Collectors;
 
@@ -34,11 +34,11 @@ public class VehicleMoveProcessor {
         var xMax = battleModel.getRoom().getSpecs().getRightTop().getX();
         var xMin = battleModel.getRoom().getSpecs().getLeftBottom().getX();
         if (MovingDirection.RIGHT.equals(direction)) {
-            var rightWheelPosition = BattleUtils.getRightWheelPosition(vehicleModel, nextPosition);
+            var rightWheelPosition = VehicleUtils.getRightWheelPosition(vehicleModel, nextPosition);
             return rightWheelPosition.getX() + wheelRadius >= xMax;
         }
         if (MovingDirection.LEFT.equals(direction)) {
-            var leftWheelPosition = BattleUtils.getLeftWheelPosition(vehicleModel, nextPosition);
+            var leftWheelPosition = VehicleUtils.getLeftWheelPosition(vehicleModel, nextPosition);
             return leftWheelPosition.getX() - wheelRadius <= xMin;
         }
         return false;
@@ -50,21 +50,21 @@ public class VehicleMoveProcessor {
                 .collect(Collectors.toSet());
         var direction = vehicleModel.getState().getMovingDirection();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
-        var rightWheelPosition = BattleUtils.getRightWheelPosition(vehicleModel, nextPosition);
-        var leftWheelPosition = BattleUtils.getLeftWheelPosition(vehicleModel, nextPosition);
+        var rightWheelPosition = VehicleUtils.getRightWheelPosition(vehicleModel, nextPosition);
+        var leftWheelPosition = VehicleUtils.getLeftWheelPosition(vehicleModel, nextPosition);
         for (var otherVehicleModel : otherVehicleModels) {
             var otherVehiclePosition = otherVehicleModel.getState().getPosition();
             var otherWheelRadius = otherVehicleModel.getSpecs().getWheelRadius();
             var minDistance = wheelRadius + otherWheelRadius;
             if (MovingDirection.RIGHT.equals(direction)) {
-                var otherLeftWheelPosition = BattleUtils.getLeftWheelPosition(otherVehicleModel, otherVehiclePosition);
+                var otherLeftWheelPosition = VehicleUtils.getLeftWheelPosition(otherVehicleModel, otherVehiclePosition);
                 var distance = otherLeftWheelPosition.distanceTo(rightWheelPosition);
                 if (distance < minDistance) {
                     return true;
                 }
             }
             if (MovingDirection.LEFT.equals(direction)) {
-                var otherRightWheelPosition = BattleUtils.getRightWheelPosition(vehicleModel, otherVehiclePosition);
+                var otherRightWheelPosition = VehicleUtils.getRightWheelPosition(vehicleModel, otherVehiclePosition);
                 var distance = otherRightWheelPosition.distanceTo(leftWheelPosition);
                 if (distance < minDistance) {
                     return true;
@@ -76,7 +76,7 @@ public class VehicleMoveProcessor {
 
     private static void doMoveStep(VehicleModel vehicleModel, BattleModel battleModel, Position nextPosition) {
         vehicleModel.getState().setPosition(nextPosition);
-        BattleUtils.correctVehiclePositionAndAngleOnGround(vehicleModel, battleModel.getRoom());
+        VehicleOnGroundProcessor.correctVehiclePositionAndAngleOnGround(vehicleModel, battleModel.getRoom());
     }
 
     private static Position getNextVehiclePosition(VehicleModel vehicleModel, BattleModel battleModel) {
