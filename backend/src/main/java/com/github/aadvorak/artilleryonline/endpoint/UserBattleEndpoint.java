@@ -6,8 +6,6 @@ import com.github.aadvorak.artilleryonline.service.UserBattleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-// todo remove
-@CrossOrigin(origins = "http://localhost:5173/", maxAge = 3600)
 @RestController
 @RequestMapping("/api/battles")
 @RequiredArgsConstructor

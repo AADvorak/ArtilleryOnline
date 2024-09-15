@@ -1,9 +1,7 @@
-import {useHostStore} from "@/stores/host";
-
 export class ApiRequestSender {
 
   // todo same origin
-  BASE_PATH = `http://${useHostStore().host}/api`
+  BASE_PATH = '/api'
 
   async getJson<Response>(path: string, userKey: string): Promise<Response> {
     return fetch(this.BASE_PATH + path, {
