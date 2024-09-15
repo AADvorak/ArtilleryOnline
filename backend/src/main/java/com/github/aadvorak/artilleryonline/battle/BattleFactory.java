@@ -54,7 +54,7 @@ public class BattleFactory {
         var sigma = BattleUtils.generateRandom(0.5, 1.5);
         var mu = (xMax - xMin) / 2;
         for (var x = xMin; x <= xMax; x += roomSpecs.getStep()) {
-            var y = (height / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2.0));
+            var y = 1.0 + (height / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2.0));
             groundLine.add(y > 0 ? y : 0.0);
         }
         return groundLine;
@@ -84,6 +84,7 @@ public class BattleFactory {
                     .setGunState(new GunState()
                             .setSelectedShell(ammo.keySet().stream().findAny().orElseThrow())
                             .setTriggerPushed(false)));
+            VehicleOnGroundProcessor.estimateVehicleAngleByPosition(vehicleModel, battleModel.getRoom());
             VehicleOnGroundProcessor.correctVehiclePositionAndAngleOnGround(vehicleModel, battleModel.getRoom());
             vehicles.put(userKey, vehicleModel);
             vehicleNumber++;
