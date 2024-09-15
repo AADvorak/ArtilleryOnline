@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+
+  artillery-online-nginx:
+    image: nginx:1.23-alpine
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx/nginx-dev.conf:/etc/nginx/nginx.conf
+      - ./nginx/mime.types:/etc/nginx/mime.types
+    networks:
+      artillery-online-net:
+
+networks:
+  artillery-online-net:
