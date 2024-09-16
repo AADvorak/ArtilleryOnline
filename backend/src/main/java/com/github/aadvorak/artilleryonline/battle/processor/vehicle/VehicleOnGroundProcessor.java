@@ -25,7 +25,7 @@ public class VehicleOnGroundProcessor {
         var firstWheelX = vehicleModel.getState().getPosition().getX()
                 - sign * wheelDistance * Math.cos(wheelAngle + sign * angle);
         var firstWheelPosition = getWheelPositionOnGround(firstWheelX, wheelRadius, roomModel);
-        angle = getVehicleAngleOnGround(firstWheelPosition, sign, vehicleRadius, wheelRadius, roomModel, wheelAngle);
+        angle = getVehicleAngleOnGround(firstWheelPosition, sign, vehicleRadius, wheelRadius, roomModel);
         var position = new Position()
                 .setX(firstWheelPosition.getX() + sign * wheelDistance * Math.cos(sign * wheelAngle + angle))
                 .setY(firstWheelPosition.getY() + sign * wheelDistance * Math.sin(sign * wheelAngle + angle));
@@ -54,9 +54,7 @@ public class VehicleOnGroundProcessor {
     }
 
     private static double getVehicleAngleOnGround(Position otherWheelPosition, short sign, double vehicleRadius,
-                                                 double wheelRadius, RoomModel roomModel, double wheelAngle) {
-        // sign = 1 - left wheel, sign = -1 = right wheel
-        // todo check min and max
+                                                 double wheelRadius, RoomModel roomModel) {
         var xMin = sign > 0 ? otherWheelPosition.getX() : otherWheelPosition.getX() - 2 * vehicleRadius - wheelRadius;
         var xMax = sign > 0 ? otherWheelPosition.getX() + 2 * vehicleRadius + wheelRadius : otherWheelPosition.getX();
         var groundPositions = BattleUtils.getGroundIndexesBetween(xMin, xMax, roomModel).stream()

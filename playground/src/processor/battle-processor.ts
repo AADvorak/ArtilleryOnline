@@ -2,8 +2,8 @@ import {useBattleStore} from "@/stores/battle";
 import {ref} from "vue";
 import {BattleStage} from "@/data/battle";
 import type {Battle} from "@/data/battle";
-import type {ShellModel, VehicleModel} from "@/data/model";
-import {MovingDirection} from "@/data/common";
+import {VehicleProcessor} from "@/processor/vehicle-processor";
+import {ShellProcessor} from "@/processor/shell-processor";
 
 export function useBattleProcessor() {
 
@@ -35,43 +35,11 @@ export function useBattleProcessor() {
 
   function processStepActive(battle: Battle, timeStepSecs: number) {
     Object.values(battle.model.vehicles).forEach(vehicle => {
-      processVehicle(vehicle, timeStepSecs)
+      VehicleProcessor.processStep(vehicle, battle.model, timeStepSecs)
     })
     Object.values(battle.model.shells).forEach(shell => {
-      processShell(shell, timeStepSecs, battle.model.room.specs.gravityAcceleration)
+      ShellProcessor.processStep(shell, timeStepSecs, battle.model.room.specs.gravityAcceleration)
     })
-  }
-
-  function processVehicle(vehicleModel: VehicleModel, timeStepSecs: number) {
-    if (vehicleModel.state.movingDirection) {
-      const sign = MovingDirection.LEFT === vehicleModel.state.movingDirection ? -1 : 1
-      vehicleModel.state.position.x += sign * vehicleModel.specs.movingVelocity * timeStepSecs
-    }
-    if (vehicleModel.state.gunRotatingDirection) {
-      const sign = MovingDirection.RIGHT === vehicleModel.state.gunRotatingDirection ? -1 : 1
-      vehicleModel.state.gunAngle += sign * vehicleModel.config.gun.rotationVelocity * timeStepSecs
-    }
-    if (vehicleModel.state.gunState.loadingShell) {
-      vehicleModel.state.gunState.loadRemainTime -= timeStepSecs
-    }
-  }
-
-  function processShell(shellModel: ShellModel, timeStepSecs: number, gravityAcceleration: number) {
-    const prevPosition = shellModel.state.position
-    let velocity = shellModel.state.velocity
-    let angle = shellModel.state.angle
-    let velocityX = velocity * Math.cos(angle)
-    let velocityY = velocity * Math.sin(angle)
-    const nextPosition = {
-      x: prevPosition.x + velocityX * timeStepSecs,
-      y: prevPosition.y + velocityY * timeStepSecs
-    }
-    velocityY -= gravityAcceleration * timeStepSecs
-    velocity = Math.sqrt(Math.pow(velocityX, 2.0) + Math.pow(velocityY, 2.0))
-    angle = Math.atan(velocityY / velocityX) + (velocityX < 0 ? Math.PI : 0.0)
-    shellModel.state.position = nextPosition
-    shellModel.state.velocity = velocity
-    shellModel.state.angle = angle
   }
 
   return { startProcessing }

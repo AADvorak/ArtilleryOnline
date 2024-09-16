@@ -8,6 +8,7 @@ import {useBattleUpdater} from "@/composables/battle-updater";
 import {useUserStore} from "@/stores/user";
 import {useStompClient} from "@/composables/stomp-client";
 import {useBattleProcessor} from "@/processor/battle-processor";
+import {VehicleUtils} from "@/utils/vehicle-utils";
 
 const battleStore = useBattleStore()
 const userStore = useUserStore()
@@ -48,7 +49,7 @@ function startBattle() {
   calculateCanvasSize()
   calculateScaleCoefficient()
   stompClient.connect()
-  //useBattleProcessor().startProcessing()
+  useBattleProcessor().startProcessing()
 }
 
 function finishBattle() {
@@ -125,7 +126,7 @@ function drawVehicle(userKey: string) {
     ctx.value.strokeStyle = color
     ctx.value.beginPath()
     const position = transformPosition(vehicleModel.state.position)
-    const gunEndPosition = transformPosition(getGunEndPosition(vehicleModel))
+    const gunEndPosition = transformPosition(VehicleUtils.getGunEndPosition(vehicleModel))
     const radius = vehicleModel.specs.radius * scaleCoefficient.value
     const startAngle = Math.PI - vehicleModel.state.angle
     const endAngle = 2 * Math.PI - vehicleModel.state.angle
@@ -135,8 +136,8 @@ function drawVehicle(userKey: string) {
 
     ctx.value.beginPath()
     const wheelRadius = vehicleModel.specs.wheelRadius * scaleCoefficient.value
-    const rightWheelPosition = transformPosition(getRightWheelPosition(vehicleModel))
-    const leftWheelPosition = transformPosition(getLeftWheelPosition(vehicleModel))
+    const rightWheelPosition = transformPosition(VehicleUtils.getRightWheelPosition(vehicleModel))
+    const leftWheelPosition = transformPosition(VehicleUtils.getLeftWheelPosition(vehicleModel))
     ctx.value.arc(rightWheelPosition.x, rightWheelPosition.y, wheelRadius, 0, 2 * Math.PI)
     ctx.value.fill()
     ctx.value.arc(leftWheelPosition.x, leftWheelPosition.y, wheelRadius, 0, 2 * Math.PI)
@@ -153,41 +154,8 @@ function drawVehicle(userKey: string) {
   }
 }
 
-function getLeftWheelPosition(vehicleModel: VehicleModel) {
-  const position = vehicleModel.state.position
-  const angle = vehicleModel.state.angle
-  const wheelDistance = vehicleModel.preCalc.wheelDistance
-  const wheelAngle = vehicleModel.preCalc.wheelAngle
-  return {
-    x: position.x - wheelDistance * Math.cos(angle + wheelAngle),
-    y: position.y - wheelDistance * Math.sin(angle + wheelAngle)
-  }
-}
-
-function getRightWheelPosition(vehicleModel: VehicleModel) {
-  const position = vehicleModel.state.position
-  const angle = vehicleModel.state.angle
-  const wheelDistance = vehicleModel.preCalc.wheelDistance
-  const wheelAngle = vehicleModel.preCalc.wheelAngle
-  return {
-    x: position.x + wheelDistance * Math.cos(angle - wheelAngle),
-    y: position.y + wheelDistance * Math.sin(angle - wheelAngle)
-  }
-}
-
 function getColor(userKey: string) {
   return userKey === userStore.userKey ? 'rgb(60,200,0)' : 'rgb(200 0 0)'
-}
-
-function getGunEndPosition(vehicleModel: VehicleModel) {
-  const vehiclePosition = vehicleModel.state.position
-  const gunAngle = vehicleModel.state.gunAngle
-  const angle = vehicleModel.state.angle
-  const gunLength = vehicleModel.config.gun.length
-  return {
-    x: vehiclePosition.x + gunLength * Math.cos(gunAngle + angle),
-    y: vehiclePosition.y + gunLength * Math.sin(gunAngle + angle)
-  }
 }
 
 function drawShell(shellModel: ShellModel) {
