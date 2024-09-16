@@ -1,4 +1,5 @@
-import type { VehicleModel } from '@/data/model'
+import type {VehicleModel} from '@/data/model'
+import type {Position} from "@/data/common";
 
 export const VehicleUtils = {
   getLeftWheelPosition(vehicleModel: VehicleModel) {
@@ -12,6 +13,14 @@ export const VehicleUtils = {
     }
   },
 
+  getLeftWheelBottomPosition(vehicleModel: VehicleModel) {
+    return this.getWheelBottomPosition(this.getLeftWheelPosition(vehicleModel), vehicleModel, 0.8)
+  },
+
+  getLeftWheelTopPosition(vehicleModel: VehicleModel) {
+    return this.getWheelTopPosition(this.getLeftWheelPosition(vehicleModel), vehicleModel, 0.8)
+  },
+
   getRightWheelPosition(vehicleModel: VehicleModel) {
     const position = vehicleModel.state.position
     const angle = vehicleModel.state.angle
@@ -20,6 +29,32 @@ export const VehicleUtils = {
     return {
       x: position.x + wheelDistance * Math.cos(angle - wheelAngle),
       y: position.y + wheelDistance * Math.sin(angle - wheelAngle)
+    }
+  },
+
+  getRightWheelBottomPosition(vehicleModel: VehicleModel) {
+    return this.getWheelBottomPosition(this.getRightWheelPosition(vehicleModel), vehicleModel, 0.8)
+  },
+
+  getRightWheelTopPosition(vehicleModel: VehicleModel) {
+    return this.getWheelTopPosition(this.getRightWheelPosition(vehicleModel), vehicleModel, 0.8)
+  },
+
+  getWheelBottomPosition(wheelPosition: Position, vehicleModel: VehicleModel, coefficient: number) {
+    const angle = vehicleModel.state.angle - Math.PI / 2
+    const wheelRadius = vehicleModel.specs.wheelRadius * coefficient
+    return {
+      x: wheelPosition.x + wheelRadius * Math.cos(angle),
+      y: wheelPosition.y + wheelRadius * Math.sin(angle)
+    }
+  },
+
+  getWheelTopPosition(wheelPosition: Position, vehicleModel: VehicleModel, coefficient: number) {
+    const angle = vehicleModel.state.angle + Math.PI / 2
+    const wheelRadius = vehicleModel.specs.wheelRadius * coefficient
+    return {
+      x: wheelPosition.x + wheelRadius * Math.cos(angle),
+      y: wheelPosition.y + wheelRadius * Math.sin(angle)
     }
   },
 
@@ -32,5 +67,19 @@ export const VehicleUtils = {
       x: vehiclePosition.x + gunLength * Math.cos(gunAngle + angle),
       y: vehiclePosition.y + gunLength * Math.sin(gunAngle + angle)
     }
+  },
+
+  getSmallWheels(vehicleModel: VehicleModel) {
+    const vehicleRadius = vehicleModel.specs.radius
+    const angle = vehicleModel.state.angle
+    const leftWheelBottom = this.getWheelBottomPosition(this.getLeftWheelPosition(vehicleModel), vehicleModel, 0.2)
+    const smallWheels: Position[] = []
+    for (let i = 1; i <= 3; i++) {
+      smallWheels.push({
+        x: leftWheelBottom.x + 0.5 * i * vehicleRadius * Math.cos(angle),
+        y: leftWheelBottom.y + 0.5 * i * vehicleRadius * Math.sin(angle)
+      })
+    }
+    return smallWheels
   }
 }

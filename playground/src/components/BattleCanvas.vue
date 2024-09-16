@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import type {RoomModel, ShellModel, VehicleModel} from '@/data/model'
+import type {RoomModel, ShellModel} from '@/data/model'
 import { useBattleStore } from '@/stores/battle'
 import type { Position } from '@/data/common'
 import { useCommandsSender } from '@/composables/commands-sender'
@@ -142,6 +142,27 @@ function drawVehicle(userKey: string) {
     ctx.value.fill()
     ctx.value.arc(leftWheelPosition.x, leftWheelPosition.y, wheelRadius, 0, 2 * Math.PI)
     ctx.value.fill()
+    ctx.value.closePath()
+
+    VehicleUtils.getSmallWheels(vehicleModel).map(transformPosition).forEach(position => {
+      ctx.value.beginPath()
+      ctx.value.arc(position.x, position.y, wheelRadius / 2, 0, 2 * Math.PI)
+      ctx.value.fill()
+      ctx.value.closePath()
+    })
+
+    ctx.value.beginPath()
+    ctx.value.lineWidth = 2
+    const bottomTrackBeginPosition = transformPosition(VehicleUtils.getLeftWheelBottomPosition(vehicleModel))
+    const bottomTrackEndPosition = transformPosition(VehicleUtils.getRightWheelBottomPosition(vehicleModel))
+    const topTrackBeginPosition = transformPosition(VehicleUtils.getLeftWheelTopPosition(vehicleModel))
+    const topTrackEndPosition = transformPosition(VehicleUtils.getRightWheelTopPosition(vehicleModel))
+    ctx.value.moveTo(bottomTrackBeginPosition.x, bottomTrackBeginPosition.y)
+    ctx.value.lineTo(bottomTrackEndPosition.x, bottomTrackEndPosition.y)
+    ctx.value.stroke()
+    ctx.value.moveTo(topTrackBeginPosition.x, topTrackBeginPosition.y)
+    ctx.value.lineTo(topTrackEndPosition.x, topTrackEndPosition.y)
+    ctx.value.stroke()
     ctx.value.closePath()
 
     ctx.value.beginPath()
