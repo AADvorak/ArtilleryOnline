@@ -13,6 +13,14 @@ const userVehicle = computed(() => {
   return battleStore.battle?.model.vehicles[userStore.userKey]
 })
 
+const ammo = computed(() => {
+  return userVehicle.value?.state.ammo
+})
+
+const ammoKeys = computed(() => {
+  return Object.keys(ammo.value)
+})
+
 const reloadingProgress = computed(() => {
   if (!userVehicle.value) {
     return 0
@@ -36,4 +44,7 @@ const showProgress = computed(() => {
       color="lime"
       :model-value="reloadingProgress"
   />
+  <v-btn v-for="ammoKey in ammoKeys">
+    {{ ammoKey }}: {{ ammo[ammoKey] }}
+  </v-btn>
 </template>
