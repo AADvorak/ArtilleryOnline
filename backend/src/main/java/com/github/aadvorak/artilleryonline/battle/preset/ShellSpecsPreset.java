@@ -11,7 +11,7 @@ public enum ShellSpecsPreset {
     DEFAULT("default", new ShellSpecs()
             .setDamage(1.0)
             .setRadius(0.1)
-            .setVelocity(10.0));
+            .setVelocity(13.0));
 
     private final String name;
 
