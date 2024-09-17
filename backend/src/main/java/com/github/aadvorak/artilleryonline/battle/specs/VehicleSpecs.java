@@ -27,7 +27,7 @@ public class VehicleSpecs implements Specs {
 
     private double wheelRadius;
 
-    private double wheelRepairTime;
+    private double trackRepairTime;
 
     private Map<String, GunSpecs> availableGuns;
 }

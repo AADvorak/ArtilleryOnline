@@ -15,6 +15,7 @@ import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleOnGro
 import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.GunState;
 import com.github.aadvorak.artilleryonline.battle.state.RoomState;
+import com.github.aadvorak.artilleryonline.battle.state.TrackState;
 import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import org.springframework.stereotype.Component;
@@ -71,10 +72,10 @@ public class BattleFactory {
         var vehicleNumber = 1;
         for (String userKey : userKeys) {
             var vehicleModel = new VehicleModel();
-            var ammo = Collections.singletonMap(ShellSpecsPreset.DEFAULT.getName(), 30);
             vehicleModel.setId(battleModel.getIdGenerator().generate());
             vehicleModel.setSpecs(VehicleSpecsPreset.DEFAULT.getSpecs());
             vehicleModel.setPreCalc(new VehiclePreCalc(vehicleModel.getSpecs()));
+            var ammo = Collections.singletonMap(ShellSpecsPreset.DEFAULT.getName(), vehicleModel.getSpecs().getAmmo());
             vehicleModel.setConfig(new VehicleConfig()
                     .setAmmo(ammo)
                     .setGun(GunSpecsPreset.DEFAULT.getSpecs()));
@@ -86,7 +87,8 @@ public class BattleFactory {
                     .setPosition(new Position().setX(distanceBetweenVehicles * vehicleNumber).setY(0.0))
                     .setGunState(new GunState()
                             .setSelectedShell(ammo.keySet().stream().findAny().orElseThrow())
-                            .setTriggerPushed(false)));
+                            .setTriggerPushed(false))
+                    .setTrackState(new TrackState()));
             VehicleOnGroundProcessor.estimateVehicleAngleByPosition(vehicleModel, battleModel.getRoom());
             VehicleOnGroundProcessor.correctVehiclePositionAndAngleOnGround(vehicleModel, battleModel.getRoom());
             vehicles.put(userKey, vehicleModel);

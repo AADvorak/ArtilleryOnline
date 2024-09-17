@@ -6,6 +6,7 @@ import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
+import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 import java.util.List;
 
@@ -24,7 +25,15 @@ public class ShellFlyProcessor {
             shellIdsToRemove.add(shellModel.getId());
             return;
         }
-        var hitVehicle = getHitVehicle(nextPosition, battleModel);
+        var hitTrackVehicle = getHitTrack(prevPosition, nextPosition, battleModel);
+        if (hitTrackVehicle != null) {
+            var trackState = hitTrackVehicle.getState().getTrackState();
+            trackState.setBroken(true);
+            trackState.setRepairRemainTime(hitTrackVehicle.getSpecs().getTrackRepairTime());
+            shellIdsToRemove.add(shellModel.getId());
+            return;
+        }
+        var hitVehicle = getHitVehicle(prevPosition, nextPosition, battleModel);
         if (hitVehicle != null) {
             ShellDamageProcessor.process(hitVehicle, shellModel.getSpecs(), battleModel);
             shellIdsToRemove.add(shellModel.getId());
@@ -43,21 +52,40 @@ public class ShellFlyProcessor {
         shellModel.getState().setAngle(angle);
     }
 
-    private static VehicleModel getHitVehicle(Position nextPosition, BattleModel battleModel) {
+    private static VehicleModel getHitVehicle(Position prevPosition, Position nextPosition, BattleModel battleModel) {
         for (var vehicleModel : battleModel.getVehicles().values()) {
-            if (positionIsInVehicle(nextPosition, vehicleModel)) {
+            if (isHitVehicle(prevPosition, nextPosition, vehicleModel)) {
                 return vehicleModel;
             }
         }
         return null;
     }
 
-    private static boolean positionIsInVehicle(Position position, VehicleModel vehicleModel) {
+    private static VehicleModel getHitTrack(Position prevPosition, Position nextPosition, BattleModel battleModel) {
+        for (var vehicleModel : battleModel.getVehicles().values()) {
+            if (isHitTrack(prevPosition, nextPosition, vehicleModel)) {
+                return vehicleModel;
+            }
+        }
+        return null;
+    }
+
+    private static boolean isHitVehicle(Position prevPosition, Position nextPosition, VehicleModel vehicleModel) {
+        // todo logic with vehicle angle
         var vehiclePosition = vehicleModel.getState().getPosition();
         var vehicleRadius = vehicleModel.getSpecs().getRadius();
-        // todo logic with vehicle angle
-        var distanceToVehicleCenter = position.distanceTo(vehiclePosition);
-        return position.getY() > vehiclePosition.getY() && distanceToVehicleCenter <= vehicleRadius;
+        return nextPosition.distanceTo(vehiclePosition) <= vehicleRadius
+                || BattleUtils.isLineCrossingCircle(prevPosition, nextPosition, vehiclePosition, vehicleRadius);
+    }
+
+    private static boolean isHitTrack(Position prevPosition, Position nextPosition, VehicleModel vehicleModel) {
+        var rightWheelPosition = VehicleUtils.getRightWheelPosition(vehicleModel);
+        var leftWheelPosition = VehicleUtils.getLeftWheelPosition(vehicleModel);
+        var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
+        return nextPosition.distanceTo(rightWheelPosition) <= wheelRadius
+                || nextPosition.distanceTo(leftWheelPosition) <= wheelRadius
+                || BattleUtils.isLineCrossingCircle(prevPosition, nextPosition, rightWheelPosition, wheelRadius)
+                || BattleUtils.isLineCrossingCircle(prevPosition, nextPosition, leftWheelPosition, wheelRadius);
     }
 
     private static boolean positionIsOutOfRoom(Position position, RoomSpecs roomSpecs) {

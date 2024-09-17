@@ -28,4 +28,6 @@ public class VehicleState implements State {
     private Map<String, Integer> ammo;
 
     private GunState gunState;
+
+    private TrackState trackState;
 }

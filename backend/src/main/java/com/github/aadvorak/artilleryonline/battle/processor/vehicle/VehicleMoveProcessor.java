@@ -23,9 +23,13 @@ public class VehicleMoveProcessor {
     }
 
     private static boolean canMove(VehicleModel vehicleModel, BattleModel battleModel, Position nextPosition) {
-        var wallCollide = wallCollide(vehicleModel, battleModel, nextPosition);
-        var vehicleCollide = vehicleCollide(vehicleModel, battleModel, nextPosition);
-        return !wallCollide && !vehicleCollide;
+        if (vehicleModel.getState().getTrackState().isBroken()) {
+            return false;
+        }
+        if (wallCollide(vehicleModel, battleModel, nextPosition)) {
+            return false;
+        }
+        return !vehicleCollide(vehicleModel, battleModel, nextPosition);
     }
 
     private static boolean wallCollide(VehicleModel vehicleModel, BattleModel battleModel, Position nextPosition) {

@@ -54,6 +54,25 @@ public class BattleUtils {
                 .setY(roomModel.getState().getGroundLine().get(index));
     }
 
+    public static boolean isLineCrossingCircle(Position lineBegin, Position lineEnd,
+                                               Position circleCenter, double circleRadius) {
+        var lineA = (lineBegin.getY() - lineEnd.getY()) / (lineBegin.getX() - lineEnd.getX());
+        var lineB = lineEnd.getY() - lineA * lineEnd.getX();
+        var circleA = 1 + Math.pow(lineA, 2);
+        var circleB = 2 * lineA * (lineB - circleCenter.getY()) - 2 * circleCenter.getX();
+        var circleC = Math.pow(circleCenter.getX(), 2) - Math.pow(circleRadius, 2)
+                + Math.pow(lineB - circleCenter.getY(), 2);
+        var discriminant = Math.pow(circleB, 2) - 4 * circleA * circleC;
+        if (discriminant < 0) {
+            return false;
+        }
+        var x1 = (- circleB + Math.sqrt(discriminant)) / (2 * circleA);
+        var x2 = (- circleB - Math.sqrt(discriminant)) / (2 * circleA);
+        var xMin = Math.min(lineBegin.getX(), lineEnd.getX());
+        var xMax = Math.max(lineBegin.getX(), lineEnd.getX());
+        return x1 <= xMax && x1 >= xMin || x2 <= xMax && x2 >= xMin;
+    }
+
     public static double generateRandom(double min, double max) {
         return min + (Math.random() * (max - min));
     }

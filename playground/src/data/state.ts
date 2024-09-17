@@ -9,6 +9,11 @@ export interface GunState {
   triggerPushed: boolean
 }
 
+export interface TrackState {
+  broken: boolean
+  repairRemainTime: number
+}
+
 export interface ShellState {
   position: Position
   angle: number
@@ -24,6 +29,7 @@ export interface VehicleState {
   hitPoints: number
   ammo: Ammo
   gunState: GunState
+  trackState: TrackState
 }
 
 export interface RoomState {

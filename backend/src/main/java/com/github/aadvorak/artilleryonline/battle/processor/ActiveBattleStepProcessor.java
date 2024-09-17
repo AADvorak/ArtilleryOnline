@@ -7,6 +7,7 @@ import com.github.aadvorak.artilleryonline.battle.processor.shell.ShellFlyProces
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleGunRotateProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleGunShootProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleMoveProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleTrackProcessor;
 
 import java.util.ArrayList;
 
@@ -20,6 +21,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
             VehicleGunShootProcessor.processStep(vehicleModel, battle.getModel());
             VehicleMoveProcessor.processStep(vehicleModel, battle.getModel());
             VehicleGunRotateProcessor.processStep(vehicleModel, battle.getModel());
+            VehicleTrackProcessor.processStep(vehicleModel, battle.getModel());
         });
         var shellIdsToRemove = new ArrayList<Integer>();
         battle.getModel().getShells().values().forEach(shellModel ->

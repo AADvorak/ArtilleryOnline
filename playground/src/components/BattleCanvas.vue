@@ -151,19 +151,21 @@ function drawVehicle(userKey: string) {
       ctx.value.closePath()
     })
 
-    ctx.value.beginPath()
-    ctx.value.lineWidth = 2
-    const bottomTrackBeginPosition = transformPosition(VehicleUtils.getLeftWheelBottomPosition(vehicleModel))
-    const bottomTrackEndPosition = transformPosition(VehicleUtils.getRightWheelBottomPosition(vehicleModel))
-    const topTrackBeginPosition = transformPosition(VehicleUtils.getLeftWheelTopPosition(vehicleModel))
-    const topTrackEndPosition = transformPosition(VehicleUtils.getRightWheelTopPosition(vehicleModel))
-    ctx.value.moveTo(bottomTrackBeginPosition.x, bottomTrackBeginPosition.y)
-    ctx.value.lineTo(bottomTrackEndPosition.x, bottomTrackEndPosition.y)
-    ctx.value.stroke()
-    ctx.value.moveTo(topTrackBeginPosition.x, topTrackBeginPosition.y)
-    ctx.value.lineTo(topTrackEndPosition.x, topTrackEndPosition.y)
-    ctx.value.stroke()
-    ctx.value.closePath()
+    if (!vehicleModel.state.trackState.broken) {
+      ctx.value.beginPath()
+      ctx.value.lineWidth = 2
+      const bottomTrackBeginPosition = transformPosition(VehicleUtils.getLeftWheelBottomPosition(vehicleModel))
+      const bottomTrackEndPosition = transformPosition(VehicleUtils.getRightWheelBottomPosition(vehicleModel))
+      const topTrackBeginPosition = transformPosition(VehicleUtils.getLeftWheelTopPosition(vehicleModel))
+      const topTrackEndPosition = transformPosition(VehicleUtils.getRightWheelTopPosition(vehicleModel))
+      ctx.value.moveTo(bottomTrackBeginPosition.x, bottomTrackBeginPosition.y)
+      ctx.value.lineTo(bottomTrackEndPosition.x, bottomTrackEndPosition.y)
+      ctx.value.stroke()
+      ctx.value.moveTo(topTrackBeginPosition.x, topTrackBeginPosition.y)
+      ctx.value.lineTo(topTrackEndPosition.x, topTrackEndPosition.y)
+      ctx.value.stroke()
+      ctx.value.closePath()
+    }
 
     ctx.value.beginPath()
     ctx.value.lineWidth = 4
