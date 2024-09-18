@@ -81,6 +81,7 @@ public class BattleFactory {
                     .setGun(GunSpecsPreset.DEFAULT.getSpecs()));
             vehicleModel.setState(new VehicleState()
                     .setAngle(0)
+                    .setVelocity(0.0)
                     .setGunAngle(Math.PI / 2)
                     .setAmmo(new HashMap<>(vehicleModel.getConfig().getAmmo()))
                     .setHitPoints(vehicleModel.getSpecs().getHitPoints())

@@ -23,6 +23,8 @@ public class VehicleSpecs implements Specs {
 
     private double movingVelocity;
 
+    private double acceleration;
+
     private double radius;
 
     private double wheelRadius;

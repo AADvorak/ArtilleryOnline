@@ -17,6 +17,8 @@ public class VehicleState implements State {
 
     private MovingDirection movingDirection;
 
+    private double velocity;
+
     private double angle;
 
     private double gunAngle;

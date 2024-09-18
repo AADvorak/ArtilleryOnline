@@ -49,7 +49,7 @@ function startBattle() {
   calculateCanvasSize()
   calculateScaleCoefficient()
   stompClient.connect()
-  useBattleProcessor().startProcessing()
+  //useBattleProcessor().startProcessing()
 }
 
 function finishBattle() {
