@@ -14,6 +14,7 @@ export interface ShellModel {
 }
 
 export interface VehiclePreCalc {
+  frictionCoefficient: number;
   wheelDistance: number
   wheelAngle: number
 }

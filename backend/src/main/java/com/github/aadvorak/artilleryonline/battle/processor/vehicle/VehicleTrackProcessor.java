@@ -9,11 +9,11 @@ public class VehicleTrackProcessor {
         var trackState = vehicleModel.getState().getTrackState();
         if (trackState.isBroken()) {
             trackState.setRepairRemainTime(trackState.getRepairRemainTime() - battleModel.getCurrentTimeStepSecs());
-        }
-        if (trackState.getRepairRemainTime() <= 0) {
-            trackState.setBroken(false);
-            trackState.setRepairRemainTime(0.0);
-            battleModel.setUpdated(true);
+            if (trackState.getRepairRemainTime() <= 0) {
+                trackState.setBroken(false);
+                trackState.setRepairRemainTime(0.0);
+                battleModel.setUpdated(true);
+            }
         }
     }
 }

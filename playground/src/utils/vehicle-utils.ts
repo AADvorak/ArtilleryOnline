@@ -1,5 +1,5 @@
-import type {VehicleModel} from '@/data/model'
-import type {Position} from "@/data/common";
+import type { VehicleModel } from '@/data/model'
+import { MovingDirection, type Position } from '@/data/common'
 
 export const VehicleUtils = {
   getLeftWheelPosition(vehicleModel: VehicleModel) {
@@ -72,7 +72,11 @@ export const VehicleUtils = {
   getSmallWheels(vehicleModel: VehicleModel) {
     const vehicleRadius = vehicleModel.specs.radius
     const angle = vehicleModel.state.angle
-    const leftWheelBottom = this.getWheelBottomPosition(this.getLeftWheelPosition(vehicleModel), vehicleModel, 0.2)
+    const leftWheelBottom = this.getWheelBottomPosition(
+      this.getLeftWheelPosition(vehicleModel),
+      vehicleModel,
+      0.2
+    )
     const smallWheels: Position[] = []
     for (let i = 1; i <= 3; i++) {
       smallWheels.push({
@@ -81,5 +85,29 @@ export const VehicleUtils = {
       })
     }
     return smallWheels
+  },
+
+  getVehicleAcceleration(vehicleModel: VehicleModel) {
+    return this.getEngineAcceleration(vehicleModel) + this.getFrictionAcceleration(vehicleModel)
+  },
+
+  getEngineAcceleration(vehicleModel: VehicleModel) {
+    if (vehicleModel.state.trackState.broken) {
+      return 0
+    }
+    const direction = vehicleModel.state.movingDirection
+    const acceleration = vehicleModel.specs.acceleration
+    if (direction === MovingDirection.RIGHT) {
+      return acceleration
+    }
+    if (direction === MovingDirection.LEFT) {
+      return -acceleration
+    }
+    return 0.0
+  },
+
+  getFrictionAcceleration(vehicleModel: VehicleModel) {
+    const velocity = vehicleModel.state.velocity
+    return -vehicleModel.preCalc.frictionCoefficient * velocity * Math.abs(velocity)
   }
 }

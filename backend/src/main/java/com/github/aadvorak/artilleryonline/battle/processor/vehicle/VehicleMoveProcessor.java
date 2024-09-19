@@ -19,11 +19,13 @@ public class VehicleMoveProcessor {
         var nextPosition = getNextVehiclePosition(vehicleModel, battleModel);
         if (wallCollide(vehicleModel, battleModel, nextPosition)) {
             vehicleModel.getState().setVelocity(- vehicleModel.getState().getVelocity() / 2);
+            battleModel.setUpdated(true);
             return;
         }
         var vehicleCollide = vehicleCollide(vehicleModel, battleModel, nextPosition);
         if (vehicleCollide != null) {
             doCollide(vehicleModel, vehicleCollide);
+            battleModel.setUpdated(true);
             return;
         }
         doMoveStep(vehicleModel, battleModel, nextPosition);

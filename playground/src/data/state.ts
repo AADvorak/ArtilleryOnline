@@ -21,6 +21,7 @@ export interface ShellState {
 }
 
 export interface VehicleState {
+  velocity: number;
   position: Position
   movingDirection: MovingDirection
   angle: number
