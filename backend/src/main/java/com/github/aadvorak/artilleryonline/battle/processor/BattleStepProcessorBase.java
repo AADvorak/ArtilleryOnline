@@ -6,11 +6,11 @@ import com.github.aadvorak.artilleryonline.battle.BattleStage;
 public class BattleStepProcessorBase implements BattleStepProcessor {
 
     public final void processStep(Battle battle) {
-        increaseTime(battle);
-        doStepLogic(battle);
         if (changeStageIfNeeded(battle)) {
             battle.getModel().setUpdated(true);
         }
+        increaseTime(battle);
+        doStepLogic(battle);
     }
 
     private void increaseTime(Battle battle) {
