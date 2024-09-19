@@ -108,6 +108,6 @@ export const VehicleUtils = {
 
   getFrictionAcceleration(vehicleModel: VehicleModel) {
     const velocity = vehicleModel.state.velocity
-    return -vehicleModel.preCalc.frictionCoefficient * velocity * Math.abs(velocity)
+    return -vehicleModel.preCalc.frictionCoefficient * velocity
   }
 }

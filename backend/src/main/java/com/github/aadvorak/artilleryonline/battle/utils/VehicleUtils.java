@@ -53,6 +53,6 @@ public class VehicleUtils {
 
     private static double getFrictionAcceleration(VehicleModel vehicleModel) {
         var velocity = vehicleModel.getState().getVelocity();
-        return - vehicleModel.getPreCalc().getFrictionCoefficient() * velocity * Math.abs(velocity);
+        return - vehicleModel.getPreCalc().getFrictionCoefficient() * velocity;
     }
 }
