@@ -10,7 +10,11 @@ import java.util.stream.Collectors;
 public class VehicleMoveProcessor {
 
     public static void processStep(VehicleModel vehicleModel, BattleModel battleModel) {
-        recalculateVelocity(vehicleModel, battleModel);
+        if (vehicleModel.isCollided()) {
+            vehicleModel.setCollided(false);
+        } else {
+            recalculateVelocity(vehicleModel, battleModel);
+        }
         var nextPosition = getNextVehiclePosition(vehicleModel, battleModel);
         if (wallCollide(vehicleModel, battleModel, nextPosition)) {
             vehicleModel.getState().setVelocity(- vehicleModel.getState().getVelocity() / 2);
@@ -18,11 +22,7 @@ public class VehicleMoveProcessor {
         }
         var vehicleCollide = vehicleCollide(vehicleModel, battleModel, nextPosition);
         if (vehicleCollide != null) {
-            var currentVehicleVelocity = vehicleModel.getState().getVelocity();
-            var otherVehicleVelocity = vehicleCollide.getState().getVelocity();
-            vehicleModel.getState().setVelocity(otherVehicleVelocity / 2);
-            vehicleCollide.getState().setVelocity(currentVehicleVelocity / 2);
-            // todo other vehicle no calculations
+            doCollide(vehicleModel, vehicleCollide);
             return;
         }
         doMoveStep(vehicleModel, battleModel, nextPosition);
@@ -95,5 +95,18 @@ public class VehicleMoveProcessor {
         var nextX = position.getX() + velocityX * battleModel.getCurrentTimeStepSecs();
         var nextY = position.getY() + velocityY * battleModel.getCurrentTimeStepSecs();
         return new Position().setX(nextX).setY(nextY);
+    }
+
+    private static void doCollide(VehicleModel vehicle, VehicleModel otherVehicle) {
+        var vehicleVelocity = vehicle.getState().getVelocity();
+        var otherVehicleVelocity = otherVehicle.getState().getVelocity();
+        if (vehicleVelocity * otherVehicleVelocity > 0) {
+            vehicle.getState().setVelocity(otherVehicleVelocity);
+            otherVehicle.getState().setVelocity(vehicleVelocity);
+        } else {
+            vehicle.getState().setVelocity(otherVehicleVelocity / 2);
+            otherVehicle.getState().setVelocity(vehicleVelocity / 2);
+        }
+        otherVehicle.setCollided(true);
     }
 }

@@ -14,4 +14,6 @@ public class VehicleModel extends GenericSpecsConfigStateModel<VehicleSpecs, Veh
     private int id;
 
     private VehiclePreCalc preCalc;
+
+    private boolean collided = false;
 }
