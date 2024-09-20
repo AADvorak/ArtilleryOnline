@@ -6,13 +6,16 @@ import type { Position } from '@/data/common'
 import { useCommandsSender } from '@/composables/commands-sender'
 import {useBattleUpdater} from "@/composables/battle-updater";
 import {useUserStore} from "@/stores/user";
-import {useStompClient} from "@/composables/stomp-client";
+import {type StompClient} from "@/composables/stomp-client";
 import {useBattleProcessor} from "@/processor/battle-processor";
 import {VehicleUtils} from "@/utils/vehicle-utils";
 
+const props = defineProps<{
+  stompClient: StompClient
+}>()
+
 const battleStore = useBattleStore()
 const userStore = useUserStore()
-const stompClient = useStompClient()
 const battle = computed(() => battleStore.battle)
 const battleSize = ref()
 const canvasSize = ref()
@@ -40,15 +43,15 @@ watch(battle, (value, oldValue) => {
 
 onMounted(() => {
   initCanvasAndCtx()
-  useBattleUpdater(stompClient).subscribeAfterWsConnect()
-  useCommandsSender(stompClient).startSending()
+  useBattleUpdater(props.stompClient).subscribeAfterWsConnect()
+  useCommandsSender(props.stompClient).startSending()
 })
 
 function startBattle() {
   calculateBattleSize()
   calculateCanvasSize()
   calculateScaleCoefficient()
-  stompClient.connect()
+  props.stompClient.connect()
   useBattleProcessor().startProcessing()
 }
 
@@ -57,7 +60,7 @@ function finishBattle() {
   battleSize.value = undefined
   canvasSize.value = undefined
   scaleCoefficient.value = undefined
-  stompClient.disconnect()
+  props.stompClient.disconnect()
 }
 
 function initCanvasAndCtx() {

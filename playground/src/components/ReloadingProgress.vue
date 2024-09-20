@@ -2,9 +2,17 @@
 import { computed } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useBattleStore } from '@/stores/battle'
+import type {StompClient} from "@/composables/stomp-client";
+import {useCommandsSender} from "@/composables/commands-sender";
+import {Command} from "@/data/command";
+
+const props = defineProps<{
+  stompClient: StompClient
+}>()
 
 const userStore = useUserStore()
 const battleStore = useBattleStore()
+const commandsSender = useCommandsSender(props.stompClient)
 
 const userVehicle = computed(() => {
   if (!userStore.userKey) {
@@ -42,11 +50,10 @@ const showProgress = computed(() => {
 })
 
 function selectShell(key) {
-  console.log(key)
-  // commandsSender.sendCommand({
-  //   command: Command.SELECT_SHELL,
-  //   params: {shellType: key}
-  // })
+  commandsSender.sendCommand({
+    command: Command.SELECT_SHELL,
+    params: {shellType: key}
+  })
 }
 </script>
 

@@ -7,6 +7,11 @@ import {useBattleStore} from "@/stores/battle";
 import ReloadingProgress from "@/components/ReloadingProgress.vue";
 import HitPointsBar from "@/components/HitPointsBar.vue";
 import BattleTimer from "@/components/BattleTimer.vue";
+import type {StompClient} from "@/composables/stomp-client";
+
+const props = defineProps<{
+  stompClient: StompClient
+}>()
 
 const userKey = ref('Player')
 const userStore = useUserStore()
@@ -55,7 +60,7 @@ async function toBattle() {
       <HitPointsBar v-for="userKey in userKeys" :user-key="userKey" />
     </div>
     <div v-if="battleStore.isActive" class="ml-5">
-      <ReloadingProgress />
+      <ReloadingProgress :stomp-client="props.stompClient"/>
     </div>
   </v-app-bar>
 </template>
