@@ -10,12 +10,12 @@ import lombok.RequiredArgsConstructor;
 public enum ShellSpecsPreset {
 
     DEFAULT_AP("AP", new ShellSpecs()
-            .setDamage(1.0)
+            .setDamage(10.0)
             .setRadius(0.1)
             .setVelocity(13.0)
             .setType(ShellType.AP)),
     DEFAULT_HE("HE", new ShellSpecs()
-            .setDamage(2.0)
+            .setDamage(5.0)
             .setRadius(0.5)
             .setVelocity(12.0)
             .setType(ShellType.HE));

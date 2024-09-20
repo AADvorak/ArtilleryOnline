@@ -15,7 +15,7 @@ public enum VehicleSpecsPreset {
             .setRadius(0.4)
             .setWheelRadius(0.1)
             .setTrackRepairTime(10.0)
-            .setHitPoints(10.0)
+            .setHitPoints(100.0)
             .setMinAngle(0.0)
             .setMaxAngle(Math.PI)
             .setCriticalAngle(Math.PI / 4)

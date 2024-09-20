@@ -27,19 +27,18 @@ public class ShellFlyProcessor {
         }
         var hitTrackVehicle = getHitTrack(prevPosition, nextPosition, battleModel);
         if (hitTrackVehicle != null) {
-            var trackState = hitTrackVehicle.getState().getTrackState();
-            trackState.setBroken(true);
-            trackState.setRepairRemainTime(hitTrackVehicle.getSpecs().getTrackRepairTime());
+            ShellDamageProcessor.processHitTrack(nextPosition, hitTrackVehicle, shellModel.getSpecs(), battleModel);
             shellIdsToRemove.add(shellModel.getId());
             return;
         }
         var hitVehicle = getHitVehicle(prevPosition, nextPosition, battleModel);
         if (hitVehicle != null) {
-            ShellDamageProcessor.process(hitVehicle, shellModel.getSpecs(), battleModel);
+            ShellDamageProcessor.processHitVehicle(nextPosition, hitVehicle, shellModel.getSpecs(), battleModel);
             shellIdsToRemove.add(shellModel.getId());
             return;
         }
         if (isHitGround(nextPosition, battleModel)) {
+            ShellDamageProcessor.processHitGround(nextPosition, shellModel.getSpecs(), battleModel);
             shellIdsToRemove.add(shellModel.getId());
             return;
         }
