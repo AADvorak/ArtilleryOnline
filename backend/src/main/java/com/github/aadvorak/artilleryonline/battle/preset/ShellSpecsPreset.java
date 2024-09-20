@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.preset;
 
+import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.specs.ShellSpecs;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -8,10 +9,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ShellSpecsPreset {
 
-    DEFAULT("default", new ShellSpecs()
+    DEFAULT_AP("AP", new ShellSpecs()
             .setDamage(1.0)
             .setRadius(0.1)
-            .setVelocity(13.0));
+            .setVelocity(13.0)
+            .setType(ShellType.AP)),
+    DEFAULT_HE("HE", new ShellSpecs()
+            .setDamage(2.0)
+            .setRadius(0.5)
+            .setVelocity(12.0)
+            .setType(ShellType.HE));
 
     private final String name;
 

@@ -3,8 +3,9 @@ import { Command } from '@/data/command'
 import { MovingDirection } from '@/data/common'
 import { useUserStore } from '@/stores/user'
 import { useBattleStore } from '@/stores/battle'
+import type {StompClient} from "@/composables/stomp-client";
 
-export function useCommandsSender(stompClient) {
+export function useCommandsSender(stompClient: StompClient) {
   const keyDownCommands: Map<string, UserCommand> = new Map()
   keyDownCommands.set('KeyD', {
     command: Command.START_MOVING,
@@ -70,7 +71,7 @@ export function useCommandsSender(stompClient) {
 
   function sendCommand(userCommand: UserCommand) {
     if (userStore.userKey && battleStore.isActive) {
-      stompClient.client.value.send(
+      stompClient.client.value?.send(
         '/api/ws/battle/commands',
         {},
         JSON.stringify({ userKey: userStore.userKey, userCommand })
@@ -78,5 +79,5 @@ export function useCommandsSender(stompClient) {
     }
   }
 
-  return { startSending }
+  return { startSending, sendCommand }
 }

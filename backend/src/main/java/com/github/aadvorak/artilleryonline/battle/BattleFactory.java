@@ -75,7 +75,10 @@ public class BattleFactory {
             vehicleModel.setId(battleModel.getIdGenerator().generate());
             vehicleModel.setSpecs(VehicleSpecsPreset.DEFAULT.getSpecs());
             vehicleModel.setPreCalc(new VehiclePreCalc(vehicleModel.getSpecs()));
-            var ammo = Collections.singletonMap(ShellSpecsPreset.DEFAULT.getName(), vehicleModel.getSpecs().getAmmo());
+            var ammo = Map.of(
+                    ShellSpecsPreset.DEFAULT_AP.getName(), vehicleModel.getSpecs().getAmmo() / 2,
+                    ShellSpecsPreset.DEFAULT_HE.getName(), vehicleModel.getSpecs().getAmmo() / 2
+            );
             vehicleModel.setConfig(new VehicleConfig()
                     .setAmmo(ammo)
                     .setGun(GunSpecsPreset.DEFAULT.getSpecs()));

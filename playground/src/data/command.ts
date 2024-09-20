@@ -1,4 +1,4 @@
-import type {MovingDirection} from "@/data/common";
+import {type MovingDirection, ShellType} from "@/data/common";
 
 export enum Command {
   START_MOVING = 'START_MOVING',
@@ -6,11 +6,13 @@ export enum Command {
   PUSH_TRIGGER = 'PUSH_TRIGGER',
   RELEASE_TRIGGER = 'RELEASE_TRIGGER',
   START_GUN_ROTATING = 'START_GUN_ROTATING',
-  STOP_GUN_ROTATING = 'STOP_GUN_ROTATING'
+  STOP_GUN_ROTATING = 'STOP_GUN_ROTATING',
+  SELECT_SHELL = 'SELECT_SHELL'
 }
 
 export interface CommandParams {
-  direction: MovingDirection
+  direction?: MovingDirection
+  shellType?: ShellType
 }
 
 export interface UserCommand {

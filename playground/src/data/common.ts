@@ -11,3 +11,8 @@ export enum MovingDirection {
   LEFT = 'LEFT',
   RIGHT = 'RIGHT'
 }
+
+export enum ShellType {
+  AP = 'AP',
+  HE = 'HE'
+}

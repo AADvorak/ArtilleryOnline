@@ -1,9 +1,10 @@
-import type {Position} from "@/data/common";
+import {type Position, ShellType} from "@/data/common";
 
 export interface ShellSpecs {
   velocity: number
   damage: number
   radius: number
+  type: ShellType
 }
 
 export interface AvailableShells {

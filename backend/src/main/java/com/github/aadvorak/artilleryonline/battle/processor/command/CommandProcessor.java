@@ -37,5 +37,16 @@ public class CommandProcessor {
         if (Command.STOP_GUN_ROTATING.equals(userCommand.getCommand())) {
             userVehicle.getState().setGunRotatingDirection(null);
         }
+
+        if (Command.SELECT_SHELL.equals(userCommand.getCommand())) {
+            var shellType = userCommand.getParams().getShellType();
+            var ammo = userVehicle.getState().getAmmo();
+            if (ammo.containsKey(shellType.name()) && ammo.get(shellType.name()) > 0) {
+                var gunState = userVehicle.getState().getGunState();
+                gunState.setSelectedShell(shellType.name());
+                gunState.setLoadedShell(null);
+                gunState.setLoadingShell(null);
+            }
+        }
     }
 }

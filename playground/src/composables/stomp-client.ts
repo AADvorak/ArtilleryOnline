@@ -1,11 +1,18 @@
 import { CompatClient, Stomp } from '@stomp/stompjs'
-import { ref } from 'vue'
 import {useHostStore} from "@/stores/host";
+import {type Ref, ref} from "vue";
 
-export function useStompClient() {
-  const client = ref<CompatClient>()
+export interface StompClient {
+  client: Ref<CompatClient | undefined>
+  addConnectCallback: Function
+  connect: Function
+  disconnect: Function
+}
+
+export function useStompClient(): StompClient {
   const connectCallbacks: Function[] = []
   const hostStore = useHostStore()
+  const client = ref<CompatClient>()
 
   function addConnectCallback(connectCallback: Function) {
     connectCallbacks.push(connectCallback)
