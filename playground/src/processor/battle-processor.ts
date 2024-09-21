@@ -4,6 +4,7 @@ import {BattleStage} from "@/data/battle";
 import type {Battle} from "@/data/battle";
 import {VehicleProcessor} from "@/processor/vehicle-processor";
 import {ShellProcessor} from "@/processor/shell-processor";
+import {ExplosionProcessor} from "@/processor/explosion-processor";
 
 export function useBattleProcessor() {
 
@@ -39,6 +40,9 @@ export function useBattleProcessor() {
     })
     Object.values(battle.model.shells).forEach(shell => {
       ShellProcessor.processStep(shell, timeStepSecs, battle.model.room.specs.gravityAcceleration)
+    })
+    Object.values(battle.model.explosions).forEach(explosion => {
+      ExplosionProcessor.processStep(explosion, timeStepSecs)
     })
   }
 

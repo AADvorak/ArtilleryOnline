@@ -28,8 +28,7 @@ public class BattleFactory {
 
     public Battle createBattle(Set<String> userKeys) {
         var battleModel = new BattleModel()
-                .setRoom(createRoomModel())
-                .setShells(new HashMap<>());
+                .setRoom(createRoomModel());
         battleModel.setVehicles(createVehicles(userKeys, battleModel));
         return new Battle()
                 .setTime(0)

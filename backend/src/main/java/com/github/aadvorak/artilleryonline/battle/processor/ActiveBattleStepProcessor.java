@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.processor;
 import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.BattleStage;
 import com.github.aadvorak.artilleryonline.battle.processor.command.CommandProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.shell.ShellFlyProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleGunRotateProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleGunShootProcessor;
@@ -15,21 +16,35 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
 
     @Override
     protected void doStepLogic(Battle battle) {
+        var battleModel = battle.getModel();
+
         readCommandsFromQueue(battle);
-        // логика изменения ландшафта от попадания снарядов
-        battle.getModel().getVehicles().values().forEach(vehicleModel -> {
-            VehicleGunShootProcessor.processStep(vehicleModel, battle.getModel());
-            VehicleMoveProcessor.processStep(vehicleModel, battle.getModel());
-            VehicleGunRotateProcessor.processStep(vehicleModel, battle.getModel());
-            VehicleTrackProcessor.processStep(vehicleModel, battle.getModel());
+
+        battleModel.getVehicles().values().forEach(vehicleModel -> {
+            VehicleGunShootProcessor.processStep(vehicleModel, battleModel);
+            VehicleMoveProcessor.processStep(vehicleModel, battleModel);
+            VehicleGunRotateProcessor.processStep(vehicleModel, battleModel);
+            VehicleTrackProcessor.processStep(vehicleModel, battleModel);
         });
-        var shellIdsToRemove = new ArrayList<Integer>();
-        battle.getModel().getShells().values().forEach(shellModel ->
-                ShellFlyProcessor.processStep(shellModel, battle.getModel(), shellIdsToRemove));
-        if (!shellIdsToRemove.isEmpty()) {
-            battle.getModel().setUpdated(true);
+
+        var explosionIdsToRemove = new ArrayList<Integer>();
+        battleModel.getExplosions().values().forEach(explosionModel ->
+                ExplosionProcessor.processStep(explosionModel, battleModel, explosionIdsToRemove));
+        if (!explosionIdsToRemove.isEmpty()) {
+            battleModel.setUpdated(true);
         }
-        shellIdsToRemove.forEach(battle.getModel()::removeShellById);
+        explosionIdsToRemove.forEach(battleModel::removeExplosionById);
+
+        var shellIdsToRemove = new ArrayList<Integer>();
+        battleModel.getShells().values().forEach(shellModel ->
+                ShellFlyProcessor.processStep(shellModel, battleModel, shellIdsToRemove));
+        if (!shellIdsToRemove.isEmpty()) {
+            battleModel.setUpdated(true);
+        }
+        shellIdsToRemove.forEach(id -> {
+            ExplosionProcessor.initExplosion(battleModel.getShells().get(id), battleModel);
+            battleModel.removeShellById(id);
+        });
     }
 
     @Override

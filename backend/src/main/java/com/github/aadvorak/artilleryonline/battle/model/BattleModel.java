@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -16,7 +17,9 @@ public class BattleModel {
 
     private double currentTimeStepSecs;
 
-    private Map<Integer, ShellModel> shells;
+    private Map<Integer, ShellModel> shells = new HashMap<>();
+
+    private Map<Integer, ExplosionModel> explosions = new HashMap<>();
 
     private RoomModel room;
 
@@ -26,6 +29,10 @@ public class BattleModel {
 
     public void removeShellById(int id) {
         shells.remove(id);
+    }
+
+    public void removeExplosionById(int id) {
+        explosions.remove(id);
     }
 
     public void removeVehicleById(int id) {

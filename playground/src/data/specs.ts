@@ -7,6 +7,11 @@ export interface ShellSpecs {
   type: ShellType
 }
 
+export interface ExplosionSpecs {
+  radius: number
+  duration: number
+}
+
 export interface AvailableShells {
   [key: string]: ShellSpecs
 }

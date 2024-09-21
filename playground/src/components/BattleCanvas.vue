@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import type {RoomModel, ShellModel} from '@/data/model'
+import type {ExplosionModel, RoomModel, ShellModel} from '@/data/model'
 import { useBattleStore } from '@/stores/battle'
 import type { Position } from '@/data/common'
 import { useCommandsSender } from '@/composables/commands-sender'
@@ -76,6 +76,7 @@ function redrawBattle() {
     drawShells()
     drawGround()
     drawVehicles()
+    drawExplosions()
   })
 }
 
@@ -118,6 +119,12 @@ function drawVehicles() {
 function drawShells() {
   if (battleStore.shells) {
     Object.values(battleStore.shells).forEach(drawShell)
+  }
+}
+
+function drawExplosions() {
+  if (battleStore.explosions) {
+    Object.values(battleStore.explosions).forEach(drawExplosion)
   }
 }
 
@@ -191,6 +198,19 @@ function drawShell(shellModel: ShellModel) {
     ctx.value.beginPath()
     const position = transformPosition(shellModel.state.position)
     ctx.value.arc(position.x, position.y, 2, 0, 2 * Math.PI)
+    ctx.value.fill()
+    ctx.value.closePath()
+  }
+}
+
+function drawExplosion(explosionModel: ExplosionModel) {
+  if (ctx.value) {
+    ctx.value.fillStyle = 'rgb(256 256 256)'
+    ctx.value.lineWidth = 1
+    ctx.value.beginPath()
+    const position = transformPosition(explosionModel.state.position)
+    const radius = explosionModel.state.radius * scaleCoefficient.value
+    ctx.value.arc(position.x, position.y, radius, 0, 2 * Math.PI)
     ctx.value.fill()
     ctx.value.closePath()
   }

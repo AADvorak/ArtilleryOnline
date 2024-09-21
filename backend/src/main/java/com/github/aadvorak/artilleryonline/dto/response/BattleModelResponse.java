@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.dto.response;
 
+import com.github.aadvorak.artilleryonline.battle.model.ExplosionModel;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
@@ -13,6 +14,8 @@ import java.util.Map;
 public class BattleModelResponse {
 
     private Map<Integer, ShellModel> shells;
+
+    private Map<Integer, ExplosionModel> explosions;
 
     private RoomModel room;
 

@@ -20,6 +20,12 @@ export interface ShellState {
   velocity: number
 }
 
+export interface ExplosionState {
+  time: number
+  radius: number
+  position: Position
+}
+
 export interface VehicleState {
   velocity: number;
   position: Position

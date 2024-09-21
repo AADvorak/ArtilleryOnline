@@ -1,5 +1,5 @@
-import type {RoomSpecs, ShellSpecs, VehicleSpecs} from "@/data/specs";
-import type {RoomState, ShellState, VehicleState} from "@/data/state";
+import type {ExplosionSpecs, RoomSpecs, ShellSpecs, VehicleSpecs} from "@/data/specs";
+import type {ExplosionState, RoomState, ShellState, VehicleState} from "@/data/state";
 import type {VehicleConfig} from "@/data/config";
 
 export interface RoomModel {
@@ -11,6 +11,12 @@ export interface ShellModel {
   id: number
   specs: ShellSpecs
   state: ShellState
+}
+
+export interface ExplosionModel {
+  id: number
+  specs: ExplosionSpecs
+  state: ExplosionState
 }
 
 export interface VehiclePreCalc {
@@ -35,8 +41,13 @@ export interface ShellModels {
   [id: number]: ShellModel
 }
 
+export interface ExplosionModels {
+  [id: number]: ExplosionModel
+}
+
 export interface BattleModel {
   room: RoomModel
   shells: ShellModels
+  explosions: ExplosionModels
   vehicles: VehicleModels
 }
