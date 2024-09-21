@@ -29,16 +29,20 @@ export function useCommandsSender(stompClient: StompClient) {
 
   const keyUpCommands: Map<string, UserCommand> = new Map()
   keyUpCommands.set('KeyD', {
-    command: Command.STOP_MOVING
+    command: Command.STOP_MOVING,
+    params: { direction: MovingDirection.RIGHT }
   })
   keyUpCommands.set('KeyA', {
-    command: Command.STOP_MOVING
+    command: Command.STOP_MOVING,
+    params: { direction: MovingDirection.LEFT }
   })
   keyUpCommands.set('ArrowRight', {
-    command: Command.STOP_GUN_ROTATING
+    command: Command.STOP_GUN_ROTATING,
+    params: { direction: MovingDirection.RIGHT }
   })
   keyUpCommands.set('ArrowLeft', {
-    command: Command.STOP_GUN_ROTATING
+    command: Command.STOP_GUN_ROTATING,
+    params: { direction: MovingDirection.LEFT }
   })
   keyUpCommands.set('Space', {
     command: Command.RELEASE_TRIGGER
