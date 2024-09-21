@@ -50,10 +50,12 @@ const showProgress = computed(() => {
 })
 
 function selectShell(key) {
-  commandsSender.sendCommand({
-    command: Command.SELECT_SHELL,
-    params: {shellType: key}
-  })
+  if (key !== selectedShell.value) {
+    commandsSender.sendCommand({
+      command: Command.SELECT_SHELL,
+      params: {shellType: key}
+    })
+  }
 }
 </script>
 
@@ -61,7 +63,7 @@ function selectShell(key) {
   <v-progress-circular v-if="showProgress" color="lime" :model-value="reloadingProgress" />
   <template v-for="ammoKey in ammoKeys">
     <v-btn
-        :color="ammoKey === selectedShell ? 'primary' : 'secondary'"
+        :color="ammoKey === selectedShell ? 'primary' : ''"
         @click="() => selectShell(ammoKey)"
     >
       {{ ammoKey }}: {{ ammo[ammoKey] }}
