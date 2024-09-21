@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.specs.ShellSpecs;
+import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 
 public class ShellDamageProcessor {
 
@@ -31,7 +32,7 @@ public class ShellDamageProcessor {
         if (ShellType.HE.equals(shellSpecs.getType())) {
             calculateHEDamage(hitPosition, shellSpecs, battleModel);
         }
-        // todo ground destruction
+        processGroundDamage(hitPosition, shellSpecs, battleModel);
         // todo possible track destruction
     }
 
@@ -54,6 +55,30 @@ public class ShellDamageProcessor {
             battleModel.removeVehicleById(vehicleModel.getId());
         } else {
             vehicleModel.getState().setHitPoints(hitPoints);
+        }
+    }
+
+    /**
+     * todo improve, smooth ground after explosion
+     */
+    private static void processGroundDamage(Position hitPosition, ShellSpecs shellSpecs, BattleModel battleModel) {
+        var damageRadius = shellSpecs.getRadius();
+        var groundIndexes = BattleUtils.getGroundIndexesBetween(hitPosition.getX() - damageRadius,
+                hitPosition.getX() + damageRadius, battleModel.getRoom());
+        for (var groundIndex : groundIndexes) {
+            var groundPosition = BattleUtils.getGroundPosition(groundIndex, battleModel.getRoom());
+            var explosionShiftY = getExplosionShiftY(groundPosition.getX(), hitPosition, damageRadius);
+            var newGroundY = groundPosition.getY() - explosionShiftY;
+            battleModel.getRoom().getState().getGroundLine().set(groundIndex, newGroundY > 0 ? newGroundY : 0);
+        }
+    }
+
+    private static double getExplosionShiftY(double x, Position hitPosition, double damageRadius) {
+        var discriminant = 4 * (Math.pow(damageRadius, 2) - Math.pow(x - hitPosition.getX(), 2));
+        if (discriminant <= 0) {
+            return 0;
+        } else {
+            return Math.sqrt(discriminant) / 2;
         }
     }
 }
