@@ -3,6 +3,11 @@ export interface Position {
   y: number
 }
 
+export interface Size {
+  width: number
+  height: number
+}
+
 export interface Ammo {
   [key: string]: number
 }
