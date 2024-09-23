@@ -68,8 +68,15 @@ public class ShellDamageProcessor {
         for (var groundIndex : groundIndexes) {
             var groundPosition = BattleUtils.getGroundPosition(groundIndex, battleModel.getRoom());
             var explosionShiftY = getExplosionShiftY(groundPosition.getX(), hitPosition, damageRadius);
-            var newGroundY = groundPosition.getY() - explosionShiftY;
-            battleModel.getRoom().getState().getGroundLine().set(groundIndex, newGroundY > 0 ? newGroundY : 0);
+            var minY = hitPosition.getY() - explosionShiftY;
+            var groundY = groundPosition.getY();
+            var diffY = groundY - minY;
+            if (diffY > explosionShiftY) {
+                groundY -= explosionShiftY;
+            } else if (diffY > 0) {
+                groundY -= diffY;
+            }
+            battleModel.getRoom().getState().getGroundLine().set(groundIndex, groundY > 0 ? groundY : 0);
         }
     }
 
