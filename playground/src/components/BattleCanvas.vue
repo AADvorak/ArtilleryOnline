@@ -58,7 +58,7 @@ function startBattle() {
   calculateCanvasSize()
   calculateScaleCoefficient()
   props.stompClient.connect()
-  useBattleProcessor().startProcessing()
+  //useBattleProcessor().startProcessing()
 }
 
 function finishBattle() {

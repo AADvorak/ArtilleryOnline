@@ -3,7 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
-import com.github.aadvorak.artilleryonline.battle.utils.VehicleGravityAccelerationUtils;
+import com.github.aadvorak.artilleryonline.battle.utils.VehicleAccelerationUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 public class VehicleMoveProcessor {
@@ -13,6 +13,7 @@ public class VehicleMoveProcessor {
             recalculateVelocity(vehicleModel, battleModel);
         }
         var nextPosition = getNextVehiclePosition(vehicleModel, battleModel);
+        var nextAngle = getNextVehicleAngle(vehicleModel, battleModel);
         if (wallCollide(vehicleModel, battleModel, nextPosition)) {
             vehicleModel.getState().setVelocity(- vehicleModel.getState().getVelocity() / 2);
             battleModel.setUpdated(true);
@@ -21,15 +22,17 @@ public class VehicleMoveProcessor {
         if (VehicleCollideProcessor.processCollide(vehicleModel, battleModel, nextPosition)) {
             return;
         }
-        doMoveStep(vehicleModel, battleModel, nextPosition);
+        vehicleModel.getState().setPosition(nextPosition);
+        vehicleModel.getState().setAngle(nextAngle);
         vehicleModel.setCollided(false);
     }
 
     private static void recalculateVelocity(VehicleModel vehicleModel, BattleModel battleModel) {
-        var acceleration = VehicleUtils.getVehicleAcceleration(vehicleModel)
-                + VehicleGravityAccelerationUtils.getVehicleGravityAcceleration(vehicleModel, battleModel.getRoom());
-        vehicleModel.getState().setVelocity(vehicleModel.getState().getVelocity()
-                + battleModel.getCurrentTimeStepSecs() * acceleration);
+        var acceleration = VehicleAccelerationUtils.getVehicleAcceleration(vehicleModel, battleModel.getRoom());
+        var vehicleVelocity = vehicleModel.getState().getVehicleVelocity();
+        vehicleVelocity.setX(vehicleVelocity.getX() + acceleration.getX() * battleModel.getCurrentTimeStepSecs());
+        vehicleVelocity.setY(vehicleVelocity.getY() + acceleration.getY() * battleModel.getCurrentTimeStepSecs());
+        vehicleVelocity.setAngle(vehicleVelocity.getAngle() + acceleration.getAngle() * battleModel.getCurrentTimeStepSecs());
     }
 
     private static boolean wallCollide(VehicleModel vehicleModel, BattleModel battleModel, Position nextPosition) {
@@ -48,21 +51,17 @@ public class VehicleMoveProcessor {
         return false;
     }
 
-    private static void doMoveStep(VehicleModel vehicleModel, BattleModel battleModel, Position nextPosition) {
-        vehicleModel.getState().setPosition(nextPosition);
-        if (!vehicleModel.isCollided()) {
-            VehicleOnGroundProcessor.correctVehiclePositionAndAngleOnGround(vehicleModel, battleModel.getRoom());
-        }
-    }
-
     private static Position getNextVehiclePosition(VehicleModel vehicleModel, BattleModel battleModel) {
         var position = vehicleModel.getState().getPosition();
-        var angle = vehicleModel.getState().getAngle();
-        var velocity = vehicleModel.getState().getVelocity();
-        var velocityX = velocity * Math.cos(angle);
-        var velocityY = velocity * Math.sin(angle);
-        var nextX = position.getX() + velocityX * battleModel.getCurrentTimeStepSecs();
-        var nextY = position.getY() + velocityY * battleModel.getCurrentTimeStepSecs();
+        var vehicleVelocity = vehicleModel.getState().getVehicleVelocity();
+        var nextX = position.getX() + vehicleVelocity.getX() * battleModel.getCurrentTimeStepSecs();
+        var nextY = position.getY() + vehicleVelocity.getY() * battleModel.getCurrentTimeStepSecs();
         return new Position().setX(nextX).setY(nextY);
+    }
+
+    private static double getNextVehicleAngle(VehicleModel vehicleModel, BattleModel battleModel) {
+        var angle = vehicleModel.getState().getAngle();
+        var vehicleVelocity = vehicleModel.getState().getVehicleVelocity();
+        return angle + vehicleVelocity.getAngle() * battleModel.getCurrentTimeStepSecs();
     }
 }

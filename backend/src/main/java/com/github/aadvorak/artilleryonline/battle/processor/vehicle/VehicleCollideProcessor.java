@@ -23,7 +23,7 @@ public class VehicleCollideProcessor {
         var otherVehicleModels = battleModel.getVehicles().values().stream()
                 .filter(value -> value.getId() != vehicleModel.getId())
                 .collect(Collectors.toSet());
-        var velocity = vehicleModel.getState().getVelocity();
+        var velocity = vehicleModel.getState().getVehicleVelocity().getX();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
         var vehicleRadius = vehicleModel.getSpecs().getRadius();
         var rightWheelPosition = VehicleUtils.getRightWheelPosition(vehicleModel, nextPosition);
@@ -75,14 +75,23 @@ public class VehicleCollideProcessor {
     }
 
     private static void doCollide(VehicleModel vehicle, VehicleModel otherVehicle) {
-        var vehicleVelocity = vehicle.getState().getVelocity();
-        var otherVehicleVelocity = otherVehicle.getState().getVelocity();
-        if (vehicleVelocity * otherVehicleVelocity > 0) {
-            vehicle.getState().setVelocity(otherVehicleVelocity);
-            otherVehicle.getState().setVelocity(vehicleVelocity);
+        var vehicleVelocity = vehicle.getState().getVehicleVelocity();
+        var otherVehicleVelocity = otherVehicle.getState().getVehicleVelocity();
+        var vehicleVelocityX = vehicleVelocity.getX();
+        if (vehicleVelocity.getX() * otherVehicleVelocity.getX() > 0) {
+            vehicleVelocity.setX(otherVehicleVelocity.getX());
+            otherVehicleVelocity.setX(vehicleVelocityX);
         } else {
-            vehicle.getState().setVelocity(otherVehicleVelocity / 2);
-            otherVehicle.getState().setVelocity(vehicleVelocity / 2);
+            vehicleVelocity.setX(otherVehicleVelocity.getX() / 2);
+            otherVehicleVelocity.setX(vehicleVelocityX / 2);
+        }
+        var vehicleVelocityY = vehicleVelocity.getY();
+        if (vehicleVelocity.getY() * otherVehicleVelocity.getY() > 0) {
+            vehicleVelocity.setY(otherVehicleVelocity.getY());
+            otherVehicleVelocity.setY(vehicleVelocityY);
+        } else {
+            vehicleVelocity.setY(otherVehicleVelocity.getY() / 2);
+            otherVehicleVelocity.setY(vehicleVelocityY / 2);
         }
         otherVehicle.setCollided(true);
     }

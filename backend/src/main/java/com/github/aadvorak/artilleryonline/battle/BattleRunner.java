@@ -53,9 +53,9 @@ public class BattleRunner implements Runnable {
     }
 
     private void sendBattleToUpdatesQueueIfUpdated () {
-        if (battle.getModel().isUpdated()) {
+//        if (battle.getModel().isUpdated()) {
             battleUpdatesQueue.add(battle);
             battle.getModel().setUpdated(false);
-        }
+//        }
     }
 }
