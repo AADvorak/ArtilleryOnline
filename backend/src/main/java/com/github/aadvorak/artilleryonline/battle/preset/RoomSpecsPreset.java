@@ -11,6 +11,8 @@ public enum RoomSpecsPreset {
 
     DEFAULT("default", new RoomSpecs()
             .setGravityAcceleration(9.8)
+            .setGroundMaxDepth(0.03)
+            .setGroundReactionCoefficient(200.0)
             .setStep(0.01)
             .setLeftBottom(new Position().setX(0.0).setY(0.0))
             .setRightTop(new Position().setX(20.0).setY(9.0)));
