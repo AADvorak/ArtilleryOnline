@@ -15,7 +15,8 @@ public class VehicleMoveProcessor {
         var nextPosition = getNextVehiclePosition(vehicleModel, battleModel);
         var nextAngle = getNextVehicleAngle(vehicleModel, battleModel);
         if (wallCollide(vehicleModel, battleModel, nextPosition)) {
-            vehicleModel.getState().setVelocity(- vehicleModel.getState().getVelocity() / 2);
+            vehicleModel.getState().getVehicleVelocity().setX(
+                    - vehicleModel.getState().getVehicleVelocity().getX() / 2);
             battleModel.setUpdated(true);
             return;
         }
@@ -36,15 +37,15 @@ public class VehicleMoveProcessor {
     }
 
     private static boolean wallCollide(VehicleModel vehicleModel, BattleModel battleModel, Position nextPosition) {
-        var velocity = vehicleModel.getState().getVelocity();
+        var velocityX = vehicleModel.getState().getVehicleVelocity().getX();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
         var xMax = battleModel.getRoom().getSpecs().getRightTop().getX();
         var xMin = battleModel.getRoom().getSpecs().getLeftBottom().getX();
-        if (velocity > 0) {
+        if (velocityX > 0) {
             var rightWheelPosition = VehicleUtils.getRightWheelPosition(vehicleModel, nextPosition);
             return rightWheelPosition.getX() + wheelRadius >= xMax;
         }
-        if (velocity < 0) {
+        if (velocityX < 0) {
             var leftWheelPosition = VehicleUtils.getLeftWheelPosition(vehicleModel, nextPosition);
             return leftWheelPosition.getX() - wheelRadius <= xMin;
         }

@@ -18,9 +18,6 @@ public class VehicleState implements State {
 
     private MovingDirection movingDirection;
 
-    // todo remove
-    private double velocity;
-
     private VehicleVelocity vehicleVelocity = new VehicleVelocity();
 
     private double angle;
