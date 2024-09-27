@@ -20,5 +20,7 @@ public class RoomSpecs implements Specs {
 
     private double groundReactionCoefficient;
 
+    private double groundFrictionCoefficient;
+
     private double groundMaxDepth;
 }

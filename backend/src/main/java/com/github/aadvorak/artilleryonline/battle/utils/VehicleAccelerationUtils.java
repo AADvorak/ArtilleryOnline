@@ -33,7 +33,7 @@ public class VehicleAccelerationUtils {
                         frictionAcceleration
                 ))
                 .setAngle(rotatingAcceleration / vehicleModel.getSpecs().getRadius()
-                        - vehicleVelocity.getAngle() * Math.abs(vehicleVelocity.getAngle()));
+                        - vehicleVelocity.getAngle());
     }
 
     private static Acceleration getWheelAcceleration(Position wheelPosition, Velocity wheelVelocity,
@@ -41,14 +41,15 @@ public class VehicleAccelerationUtils {
                                                      int sign) {
         var roomGravityAcceleration = roomModel.getSpecs().getGravityAcceleration();
         var groundReactionCoefficient = roomModel.getSpecs().getGroundReactionCoefficient();
+        var groundFrictionCoefficient = roomModel.getSpecs().getGroundFrictionCoefficient();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
         var nearestGroundPositionByX = BattleUtils.getNearestGroundPosition(wheelPosition.getX(), roomModel);
         if (nearestGroundPositionByX.getY() >= wheelPosition.getY()) {
-            var groundReactionAcceleration = getInGroundFrictionAcceleration(wheelVelocity, wheelRadius,
-                    groundReactionCoefficient);
+            var groundFrictionAcceleration = getInGroundFrictionAcceleration(wheelVelocity, wheelRadius,
+                    groundFrictionCoefficient);
             var engineAcceleration = getWheelEngineAcceleration(vehicleModel, 0.0, wheelRadius);
             return Acceleration.sumOf(
-                    groundReactionAcceleration,
+                    groundFrictionAcceleration,
                     engineAcceleration
             );
         }
@@ -63,10 +64,13 @@ public class VehicleAccelerationUtils {
                 : new Acceleration();
         var groundReactionAcceleration = getGroundReactionAcceleration(wheelVelocity, groundAngle,
                 depth, groundReactionCoefficient);
+        var groundFrictionAcceleration = getInGroundFrictionAcceleration(wheelVelocity, depth,
+                groundFrictionCoefficient);
         var engineAcceleration = getWheelEngineAcceleration(vehicleModel, groundAngle, depth);
         return Acceleration.sumOf(
                 groundAcceleration,
                 groundReactionAcceleration,
+                groundFrictionAcceleration,
                 engineAcceleration
         );
     }
@@ -89,7 +93,7 @@ public class VehicleAccelerationUtils {
         if (velocityAxialProjection >= 0) {
             return new Acceleration();
         } else {
-            var accelerationModule = - velocityAxialProjection * depth * coefficient;
+            var accelerationModule = - velocityAxialProjection * Math.sqrt(depth) * coefficient;
             return new Acceleration()
                     .setX(accelerationModule * Math.sin(groundAngle))
                     .setY(accelerationModule * Math.cos(groundAngle));
@@ -107,9 +111,6 @@ public class VehicleAccelerationUtils {
                 .setY(velocityY);
     }
 
-    /**
-     * todo to getWheelGroundReactionAcceleration
-     */
     private static Acceleration getInGroundFrictionAcceleration(Velocity velocity, double depth, double coefficient) {
         return new Acceleration()
                 .setX( - velocity.getX() * depth * coefficient)

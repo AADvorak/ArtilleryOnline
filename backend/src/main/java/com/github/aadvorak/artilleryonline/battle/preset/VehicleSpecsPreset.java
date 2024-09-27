@@ -19,7 +19,7 @@ public enum VehicleSpecsPreset {
             .setMinAngle(0.0)
             .setMaxAngle(Math.PI)
             .setCriticalAngle(Math.PI / 4)
-            .setMovingVelocity(2.0)
+            .setMovingVelocity(4.0)
             .setAcceleration(10.0)
             .setAvailableGuns(Map.of(GunSpecsPreset.DEFAULT.getName(), GunSpecsPreset.DEFAULT.getSpecs())));
 
