@@ -14,4 +14,16 @@ public class VehicleAcceleration {
     private double y;
 
     private double angle;
+
+    public Acceleration getMovingAcceleration() {
+        return new Acceleration()
+                .setX(x)
+                .setY(y);
+    }
+
+    public VehicleAcceleration setMovingAcceleration(Acceleration acceleration) {
+        x = acceleration.getX();
+        y = acceleration.getY();
+        return this;
+    }
 }
