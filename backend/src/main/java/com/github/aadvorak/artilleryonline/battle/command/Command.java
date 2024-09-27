@@ -10,5 +10,9 @@ public enum Command {
     RELEASE_TRIGGER,
     START_GUN_ROTATING,
     STOP_GUN_ROTATING,
-    SELECT_SHELL
+    SELECT_SHELL,
+
+    PAUSE,
+    RESUME,
+    STEP
 }

@@ -11,5 +11,6 @@ export interface Battle {
   id: string
   model: BattleModel
   time: number
+  paused: boolean
   battleStage: BattleStage
 }

@@ -14,5 +14,7 @@ public class BattleResponse {
 
     private long time;
 
+    private boolean paused;
+
     private BattleStage battleStage;
 }

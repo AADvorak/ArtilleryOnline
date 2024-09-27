@@ -1,4 +1,4 @@
-import type { UserCommand } from '@/data/command'
+import type {DebugCommand, UserCommand} from '@/data/command'
 import { Command } from '@/data/command'
 import { MovingDirection } from '@/data/common'
 import { useUserStore } from '@/stores/user'
@@ -83,5 +83,15 @@ export function useCommandsSender(stompClient: StompClient) {
     }
   }
 
-  return { startSending, sendCommand }
+  function sendDebugCommand(debugCommand: DebugCommand) {
+    if (userStore.userKey && battleStore.isActive) {
+      stompClient.client.value?.send(
+          '/api/ws/battle/debug-commands',
+          {},
+          JSON.stringify({ userKey: userStore.userKey, debugCommand })
+      )
+    }
+  }
+
+  return { startSending, sendCommand, sendDebugCommand }
 }

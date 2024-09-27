@@ -8,6 +8,7 @@ import ReloadingProgress from "@/components/ReloadingProgress.vue";
 import HitPointsBar from "@/components/HitPointsBar.vue";
 import BattleTimer from "@/components/BattleTimer.vue";
 import type {StompClient} from "@/composables/stomp-client";
+import BattleDebugButtons from "@/components/BattleDebugButtons.vue";
 
 const props = defineProps<{
   stompClient: StompClient
@@ -53,6 +54,9 @@ async function toBattle() {
     >
       Battle
     </v-btn>
+    <div v-if="!!battleStore.battle" class="ml-5">
+      <BattleDebugButtons :stomp-client="props.stompClient"/>
+    </div>
     <div v-if="!!battleStore.battle" class="ml-5 battle-timer-wrapper">
       <BattleTimer />
     </div>

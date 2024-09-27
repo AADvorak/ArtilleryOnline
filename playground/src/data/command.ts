@@ -7,7 +7,11 @@ export enum Command {
   RELEASE_TRIGGER = 'RELEASE_TRIGGER',
   START_GUN_ROTATING = 'START_GUN_ROTATING',
   STOP_GUN_ROTATING = 'STOP_GUN_ROTATING',
-  SELECT_SHELL = 'SELECT_SHELL'
+  SELECT_SHELL = 'SELECT_SHELL',
+
+  PAUSE = 'PAUSE',
+  RESUME = 'RESUME',
+  STEP = 'STEP'
 }
 
 export interface CommandParams {
@@ -18,4 +22,8 @@ export interface CommandParams {
 export interface UserCommand {
   command: Command
   params?: CommandParams
+}
+
+export interface DebugCommand {
+  command: Command
 }

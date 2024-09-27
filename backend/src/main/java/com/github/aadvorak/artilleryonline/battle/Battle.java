@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle;
 
+import com.github.aadvorak.artilleryonline.battle.command.DebugCommand;
 import com.github.aadvorak.artilleryonline.battle.command.UserCommand;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import lombok.experimental.Accessors;
 import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Getter
 @Setter
@@ -27,9 +29,13 @@ public class Battle {
 
     private long time;
 
+    private boolean paused = false;
+
     private BattleStage battleStage;
 
     private Map<String, Queue<UserCommand>> userCommandQueues;
+
+    private Queue<DebugCommand> debugCommands = new ConcurrentLinkedQueue<>();
 
     public void setStageAndResetTime(BattleStage battleStage) {
         this.battleStage = battleStage;
