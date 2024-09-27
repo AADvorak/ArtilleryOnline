@@ -40,32 +40,36 @@ async function toBattle() {
 
 <template>
   <v-app-bar>
-    <v-text-field
-        v-model="userKey"
-        label="Nickname"
-        style="max-width: 150px"
-        type="text"
-        :disabled="!!userStore.userKey"
-    />
-    <v-btn
-        color="error"
-        :disabled="!!userStore.userKey || !userKey"
-        @click="toBattle"
-    >
-      Battle
-    </v-btn>
-    <div v-if="!!battleStore.battle" class="ml-5">
-      <BattleDebugButtons :stomp-client="props.stompClient"/>
-    </div>
-    <div v-if="!!battleStore.battle" class="ml-5 battle-timer-wrapper">
-      <BattleTimer />
-    </div>
-    <div v-if="!!battleStore.battle" class="ml-5 hit-points-bar-wrapper">
-      <HitPointsBar v-for="userKey in userKeys" :user-key="userKey" />
-    </div>
-    <div v-if="battleStore.isActive" class="ml-5">
-      <ReloadingProgress :stomp-client="props.stompClient"/>
-    </div>
+    <template v-if="!battleStore.battle">
+      <v-text-field
+          v-model="userKey"
+          label="Nickname"
+          style="max-width: 150px"
+          type="text"
+          :disabled="!!userStore.userKey"
+      />
+      <v-btn
+          color="error"
+          :disabled="!!userStore.userKey || !userKey"
+          @click="toBattle"
+      >
+        Battle
+      </v-btn>
+    </template>
+    <template v-else>
+      <div class="ml-5">
+        <BattleDebugButtons :stomp-client="props.stompClient"/>
+      </div>
+      <div class="ml-5 battle-timer-wrapper">
+        <BattleTimer />
+      </div>
+      <div class="ml-5 hit-points-bar-wrapper">
+        <HitPointsBar v-for="userKey in userKeys" :user-key="userKey" />
+      </div>
+      <div v-if="battleStore.isActive" class="ml-5">
+        <ReloadingProgress :stomp-client="props.stompClient"/>
+      </div>
+    </template>
   </v-app-bar>
 </template>
 
