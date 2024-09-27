@@ -4,8 +4,6 @@ import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 
-import java.util.List;
-
 public class VehicleAccelerationUtils {
 
     public static VehicleAcceleration getVehicleAcceleration(VehicleModel vehicleModel, RoomModel roomModel) {
@@ -30,10 +28,10 @@ public class VehicleAccelerationUtils {
                 .setX((rightWheelAcceleration.getX() + leftWheelAcceleration.getX()) / 2)
                 .setY((rightWheelAcceleration.getY() + leftWheelAcceleration.getY()) / 2);
         return new VehicleAcceleration()
-                .setMovingAcceleration(Acceleration.sumOf(List.of(
+                .setMovingAcceleration(Acceleration.sumOf(
                         wheelsMovingAcceleration,
                         frictionAcceleration
-                )))
+                ))
                 .setAngle(rotatingAcceleration / vehicleModel.getSpecs().getRadius()
                         - vehicleVelocity.getAngle() * Math.abs(vehicleVelocity.getAngle()));
     }
@@ -49,10 +47,10 @@ public class VehicleAccelerationUtils {
             var groundReactionAcceleration = getInGroundFrictionAcceleration(wheelVelocity, wheelRadius,
                     groundReactionCoefficient);
             var engineAcceleration = getWheelEngineAcceleration(vehicleModel, 0.0, wheelRadius);
-            return Acceleration.sumOf(List.of(
+            return Acceleration.sumOf(
                     groundReactionAcceleration,
                     engineAcceleration
-            ));
+            );
         }
         var nearestGroundPosition = getNearestGroundPosition(wheelPosition, wheelRadius, roomModel, sign);
         if (nearestGroundPosition == null) {
@@ -66,11 +64,11 @@ public class VehicleAccelerationUtils {
         var groundReactionAcceleration = getGroundReactionAcceleration(wheelVelocity, groundAngle,
                 depth, groundReactionCoefficient);
         var engineAcceleration = getWheelEngineAcceleration(vehicleModel, groundAngle, depth);
-        return Acceleration.sumOf(List.of(
+        return Acceleration.sumOf(
                 groundAcceleration,
                 groundReactionAcceleration,
                 engineAcceleration
-        ));
+        );
     }
 
     private static double getGroundAngle(Position position, Position groundPosition) {
