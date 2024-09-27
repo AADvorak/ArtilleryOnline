@@ -10,6 +10,7 @@ import {useVehicleDrawer} from "@/composables/drawer/vehicle-drawer";
 import {useShellDrawer} from "@/composables/drawer/shell-drawer";
 import {useExplosionDrawer} from "@/composables/drawer/explosion-drawer";
 import {useGroundDrawer} from "@/composables/drawer/ground-drawer";
+import {useKeyboardListener} from "@/composables/keyboard-listener";
 
 const props = defineProps<{
   stompClient: StompClient
@@ -50,7 +51,7 @@ watch(battle, (value, oldValue) => {
 onMounted(() => {
   initCanvasAndCtx()
   useBattleUpdater(props.stompClient).subscribeAfterWsConnect()
-  useCommandsSender(props.stompClient).startSending()
+  useKeyboardListener(useCommandsSender(props.stompClient)).startListening()
 })
 
 function startBattle() {
