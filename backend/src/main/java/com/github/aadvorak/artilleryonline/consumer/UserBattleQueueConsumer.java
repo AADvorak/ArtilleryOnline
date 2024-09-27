@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.BattleRunner;
 import com.github.aadvorak.artilleryonline.collection.BattleUpdatesQueue;
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueue;
+import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -24,6 +25,8 @@ public class UserBattleQueueConsumer implements Runnable {
 
     private final BattleUpdatesQueue battleUpdatesQueue;
 
+    private final ApplicationSettings applicationSettings;
+
     @EventListener(ApplicationReadyEvent.class)
     public void startConsumer() {
         new Thread(this).start();
@@ -42,7 +45,8 @@ public class UserBattleQueueConsumer implements Runnable {
             var battle = battleFactory.createBattle(userKeys);
             userBattleMap.put(firstUserKey, battle);
             userBattleMap.put(secondUserKey, battle);
-            var battleRunner = new BattleRunner(battle, userKeys, userBattleMap, battleUpdatesQueue);
+            var battleRunner = new BattleRunner(battle, userKeys, userBattleMap,
+                    battleUpdatesQueue, applicationSettings.isClientProcessing());
             new Thread(battleRunner).start();
         }
     }

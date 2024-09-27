@@ -11,13 +11,16 @@ import {useShellDrawer} from "@/composables/drawer/shell-drawer";
 import {useExplosionDrawer} from "@/composables/drawer/explosion-drawer";
 import {useGroundDrawer} from "@/composables/drawer/ground-drawer";
 import {useKeyboardListener} from "@/composables/keyboard-listener";
+import {useSettingsStore} from "@/stores/settings";
 
 const props = defineProps<{
   stompClient: StompClient
 }>()
 
 const battleStore = useBattleStore()
+const settingsStore = useSettingsStore()
 const battle = computed(() => battleStore.battle)
+const isClientProcessing = computed(() => settingsStore.settings?.clientProcessing)
 const battleSize = ref()
 const canvasSize = ref()
 const scaleCoefficient = ref()
@@ -59,7 +62,7 @@ function startBattle() {
   calculateCanvasSize()
   calculateScaleCoefficient()
   props.stompClient.connect()
-  //useBattleProcessor().startProcessing()
+  isClientProcessing.value && useBattleProcessor().startProcessing()
 }
 
 function finishBattle() {

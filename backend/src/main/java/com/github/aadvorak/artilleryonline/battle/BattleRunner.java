@@ -20,6 +20,8 @@ public class BattleRunner implements Runnable {
 
     private final BattleUpdatesQueue battleUpdatesQueue;
 
+    private final boolean clientProcessing;
+
     private final WaitingBattleStepProcessor waitingBattleStepProcessor = new WaitingBattleStepProcessor();
     private final ActiveBattleStepProcessor activeBattleStepProcessor = new ActiveBattleStepProcessor();
     private final FinishedBattleStepProcessor finishedBattleStepProcessor = new FinishedBattleStepProcessor();
@@ -53,9 +55,9 @@ public class BattleRunner implements Runnable {
     }
 
     private void sendBattleToUpdatesQueueIfUpdated () {
-//        if (battle.getModel().isUpdated()) {
+        if (!clientProcessing || battle.getModel().isUpdated()) {
             battleUpdatesQueue.add(battle);
             battle.getModel().setUpdated(false);
-//        }
+        }
     }
 }

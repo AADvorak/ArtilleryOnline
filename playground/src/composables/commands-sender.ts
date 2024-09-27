@@ -24,7 +24,7 @@ export function useCommandsSender(stompClient: StompClient) {
   }
 
   function sendDebugCommand(debugCommand: DebugCommand) {
-    if (userStore.userKey && battleStore.isActive) {
+    if (userStore.userKey && battleStore.battle) {
       stompClient.client.value?.send(
           '/api/ws/battle/debug-commands',
           {},

@@ -21,3 +21,8 @@ export enum ShellType {
   AP = 'AP',
   HE = 'HE'
 }
+
+export interface ApplicationSettings {
+  debug: boolean,
+  clientProcessing: boolean
+}

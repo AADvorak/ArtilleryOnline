@@ -9,6 +9,7 @@ import HitPointsBar from "@/components/HitPointsBar.vue";
 import BattleTimer from "@/components/BattleTimer.vue";
 import type {StompClient} from "@/composables/stomp-client";
 import BattleDebugButtons from "@/components/BattleDebugButtons.vue";
+import {useSettingsStore} from "@/stores/settings";
 
 const props = defineProps<{
   stompClient: StompClient
@@ -17,11 +18,14 @@ const props = defineProps<{
 const userKey = ref('Player')
 const userStore = useUserStore()
 const battleStore = useBattleStore()
+const settingsStore = useSettingsStore()
 const apiRequestSender = new ApiRequestSender()
 
 const userKeys = computed(() => {
   return Object.keys(battleStore.vehicles)
 })
+
+const isDebugMode = computed(() => settingsStore.settings?.debug)
 
 onMounted(() => {
   const userKeyFromLocalStorage = localStorage.getItem('userKey')
@@ -57,7 +61,7 @@ async function toBattle() {
       </v-btn>
     </template>
     <template v-else>
-      <div class="ml-5">
+      <div v-if="isDebugMode" class="ml-5">
         <BattleDebugButtons :stomp-client="props.stompClient"/>
       </div>
       <div class="ml-5 battle-timer-wrapper">
