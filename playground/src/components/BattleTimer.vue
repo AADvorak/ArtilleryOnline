@@ -6,8 +6,8 @@ import {BattleStage} from "@/data/battle";
 const MS_IN_MINUTE = 1000 * 60
 const MS_IN_SECOND = 1000
 
-const WAITING_STAGE_OFFSET = 5 * MS_IN_SECOND
-const ACTIVE_STAGE_OFFSET = WAITING_STAGE_OFFSET + 5 * MS_IN_MINUTE
+const WAITING_STAGE_LENGTH = 5 * MS_IN_SECOND
+const ACTIVE_STAGE_LENGTH = 5 * MS_IN_MINUTE
 
 const battleStore = useBattleStore()
 
@@ -18,9 +18,9 @@ const leftTime = computed(() => {
   }
   switch (battle.battleStage) {
     case BattleStage.WAITING:
-      return WAITING_STAGE_OFFSET - battle.time
+      return WAITING_STAGE_LENGTH - battle.time
     case BattleStage.ACTIVE:
-      return ACTIVE_STAGE_OFFSET - battle.time
+      return ACTIVE_STAGE_LENGTH - battle.time
     default:
       return 0
   }

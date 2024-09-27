@@ -23,6 +23,8 @@ public class Battle {
 
     private final long beginTime = System.currentTimeMillis();
 
+    private long currentStageBeginTime = beginTime;
+
     private long time;
 
     private BattleStage battleStage;
@@ -31,6 +33,7 @@ public class Battle {
 
     public synchronized void setStageAndResetTime(BattleStage battleStage) {
         this.battleStage = battleStage;
+        this.currentStageBeginTime = System.currentTimeMillis();
         this.time = 0;
     }
 }
