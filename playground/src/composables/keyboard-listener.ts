@@ -45,12 +45,22 @@ export function useKeyboardListener(commandsSender: CommandsSender) {
     command: Command.RELEASE_TRIGGER
   })
 
+  const clickCommands: Map<string, UserCommand> = new Map()
+  clickCommands.set('KeyE', {
+    command: Command.START_MOVING,
+    params: { direction: MovingDirection.RIGHT }
+  })
+  clickCommands.set('KeyQ', {
+    command: Command.START_MOVING,
+    params: { direction: MovingDirection.LEFT }
+  })
+
   const keysDown: Map<string, string> = new Map()
 
   function startListening() {
     document.addEventListener('keyup', (e) => {
       keysDown.delete(e.code)
-      const userCommand = keyUpCommands.get(e.code)
+      const userCommand = keyUpCommands.get(e.code) || clickCommands.get(e.code)
       if (userCommand) {
         commandsSender.sendCommand(userCommand)
       }
