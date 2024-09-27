@@ -23,7 +23,7 @@ public class Battle {
 
     private final long beginTime = System.currentTimeMillis();
 
-    private long currentStageBeginTime = beginTime;
+    private long absoluteTime = beginTime;
 
     private long time;
 
@@ -31,9 +31,21 @@ public class Battle {
 
     private Map<String, Queue<UserCommand>> userCommandQueues;
 
-    public synchronized void setStageAndResetTime(BattleStage battleStage) {
+    public void setStageAndResetTime(BattleStage battleStage) {
         this.battleStage = battleStage;
-        this.currentStageBeginTime = System.currentTimeMillis();
+        this.absoluteTime = System.currentTimeMillis();
         this.time = 0;
+    }
+
+    public void increaseTime() {
+        var previousTime = absoluteTime;
+        var currentTime = System.currentTimeMillis();
+        var currentTimeStep = currentTime - previousTime;
+        if (currentTimeStep > TIME_STEP_MS * 10) {
+            currentTimeStep = TIME_STEP_MS;
+        }
+        time += currentTimeStep;
+        absoluteTime = currentTime;
+        model.setCurrentTimeStepSecs((double) currentTimeStep / 1000);
     }
 }
