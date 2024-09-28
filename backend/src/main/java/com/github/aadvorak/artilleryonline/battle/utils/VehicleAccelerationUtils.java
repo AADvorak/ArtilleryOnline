@@ -3,76 +3,89 @@ package com.github.aadvorak.artilleryonline.battle.utils;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 public class VehicleAccelerationUtils {
 
     public static VehicleAcceleration getVehicleAcceleration(VehicleModel vehicleModel, RoomModel roomModel) {
         var angle = vehicleModel.getState().getAngle();
-        var rightWheelVelocity = getWheelVelocity(vehicleModel, -1);
-        var leftWheelVelocity = getWheelVelocity(vehicleModel, 1);
+        var calculations = new Calculations();
+
+        calculateWheelVelocity(vehicleModel, calculations.getRightWheel());
+        calculateWheelVelocity(vehicleModel, calculations.getLeftWheel());
+
+        calculations.getRightWheel().setPosition(VehicleUtils.getRightWheelPosition(vehicleModel));
+        calculations.getLeftWheel().setPosition(VehicleUtils.getLeftWheelPosition(vehicleModel));
+
+        calculateWheelAcceleration(calculations.getRightWheel(), vehicleModel, roomModel);
+        calculateWheelAcceleration(calculations.getLeftWheel(), vehicleModel, roomModel);
+
+        var rightWheelRotatingAcceleration = calculations.getRightWheel().getSumAcceleration().getX() * Math.sin(angle)
+                + calculations.getRightWheel().getSumAcceleration().getY() * Math.cos(angle);
+        var leftWheelRotatingAcceleration = calculations.getLeftWheel().getSumAcceleration().getX() * Math.sin(angle)
+                + calculations.getLeftWheel().getSumAcceleration().getY() * Math.cos(angle);
+        var rotatingAcceleration = (rightWheelRotatingAcceleration - leftWheelRotatingAcceleration) / 2;
+
+        var movingAcceleration = new Acceleration()
+                .setX((calculations.getRightWheel().getSumAcceleration().getX()
+                        + calculations.getLeftWheel().getSumAcceleration().getX()) / 2)
+                .setY((calculations.getRightWheel().getSumAcceleration().getY()
+                        + calculations.getLeftWheel().getSumAcceleration().getY()) / 2);
+
         var vehicleVelocity = vehicleModel.getState().getVehicleVelocity();
         var frictionCoefficient = vehicleModel.getPreCalc().getFrictionCoefficient();
         var frictionAcceleration = new Acceleration()
                 .setX( - vehicleVelocity.getX() * Math.abs(vehicleVelocity.getX()) * frictionCoefficient)
                 .setY( - vehicleVelocity.getY() * Math.abs(vehicleVelocity.getY()) * frictionCoefficient);
-        var rightWheelAcceleration = getWheelAcceleration(VehicleUtils.getRightWheelPosition(vehicleModel),
-                rightWheelVelocity, vehicleModel, roomModel, -1);
-        var leftWheelAcceleration = getWheelAcceleration(VehicleUtils.getLeftWheelPosition(vehicleModel),
-                leftWheelVelocity, vehicleModel, roomModel, 1);
-        var rightWheelRotatingAcceleration = rightWheelAcceleration.getX() * Math.sin(angle)
-                + rightWheelAcceleration.getY() * Math.cos(angle);
-        var leftWheelRotatingAcceleration = leftWheelAcceleration.getX() * Math.sin(angle)
-                + leftWheelAcceleration.getY() * Math.cos(angle);
-        var rotatingAcceleration = (rightWheelRotatingAcceleration - leftWheelRotatingAcceleration) / 2;
-        var wheelsMovingAcceleration = new Acceleration()
-                .setX((rightWheelAcceleration.getX() + leftWheelAcceleration.getX()) / 2)
-                .setY((rightWheelAcceleration.getY() + leftWheelAcceleration.getY()) / 2);
+
         return new VehicleAcceleration()
                 .setMovingAcceleration(Acceleration.sumOf(
-                        wheelsMovingAcceleration,
+                        movingAcceleration,
                         frictionAcceleration
                 ))
                 .setAngle(rotatingAcceleration / vehicleModel.getSpecs().getRadius()
                         - vehicleVelocity.getAngle());
     }
 
-    private static Acceleration getWheelAcceleration(Position wheelPosition, Velocity wheelVelocity,
-                                                     VehicleModel vehicleModel, RoomModel roomModel,
-                                                     int sign) {
+    private static void calculateWheelAcceleration(WheelCalculations wheelCalculations,
+                                                   VehicleModel vehicleModel, RoomModel roomModel) {
         var roomGravityAcceleration = roomModel.getSpecs().getGravityAcceleration();
         var groundReactionCoefficient = roomModel.getSpecs().getGroundReactionCoefficient();
         var groundFrictionCoefficient = roomModel.getSpecs().getGroundFrictionCoefficient();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
-        var nearestGroundPositionByX = BattleUtils.getNearestGroundPosition(wheelPosition.getX(), roomModel);
-        if (nearestGroundPositionByX.getY() >= wheelPosition.getY()) {
-            var groundFrictionAcceleration = getInGroundFrictionAcceleration(wheelVelocity, wheelRadius,
-                    groundFrictionCoefficient);
-            var engineAcceleration = getWheelEngineAcceleration(vehicleModel, 0.0, wheelRadius);
-            return Acceleration.sumOf(
-                    groundFrictionAcceleration,
-                    engineAcceleration
-            );
+
+        wheelCalculations.setNearestGroundPointByX(BattleUtils.getNearestGroundPosition(
+                wheelCalculations.getPosition().getX(), roomModel));
+        if (wheelCalculations.getNearestGroundPointByX().getY() >= wheelCalculations.getPosition().getY()) {
+            wheelCalculations.setGroundFrictionAcceleration(getInGroundFrictionAcceleration(
+                    wheelCalculations.getVelocity(), wheelRadius, groundFrictionCoefficient));
+            wheelCalculations.setEngineAcceleration(getWheelEngineAcceleration(vehicleModel, 0.0, wheelRadius));
+            return;
         }
-        var nearestGroundPosition = getNearestGroundPosition(wheelPosition, wheelRadius, roomModel, sign);
-        if (nearestGroundPosition == null) {
-            return new Acceleration().setX(0).setY(-roomGravityAcceleration);
+
+        wheelCalculations.setNearestGroundPoint(getNearestGroundPosition(wheelCalculations.getPosition(), wheelRadius,
+                roomModel, wheelCalculations.getSign().getValue()));
+        if (wheelCalculations.getNearestGroundPoint() == null) {
+            wheelCalculations.getGravityAcceleration().setX(0).setY(-roomGravityAcceleration);
+            return;
         }
-        var groundAngle = getGroundAngle(wheelPosition, nearestGroundPosition.position());
-        var depth = wheelRadius - nearestGroundPosition.distance();
-        var groundAcceleration = depth <= roomModel.getSpecs().getGroundMaxDepth()
-                ? getOnGroundGravityAcceleration(roomGravityAcceleration, groundAngle)
-                : new Acceleration();
-        var groundReactionAcceleration = getGroundReactionAcceleration(wheelVelocity, groundAngle,
-                depth, groundReactionCoefficient);
-        var groundFrictionAcceleration = getInGroundFrictionAcceleration(wheelVelocity, depth,
-                groundFrictionCoefficient);
-        var engineAcceleration = getWheelEngineAcceleration(vehicleModel, groundAngle, depth);
-        return Acceleration.sumOf(
-                groundAcceleration,
-                groundReactionAcceleration,
-                groundFrictionAcceleration,
-                engineAcceleration
-        );
+
+        wheelCalculations.setGroundAngle(getGroundAngle(wheelCalculations.getPosition(),
+                wheelCalculations.getNearestGroundPoint().position()));
+        wheelCalculations.setDepth(wheelRadius - wheelCalculations.getNearestGroundPoint().distance());
+        if (wheelCalculations.getDepth() <= roomModel.getSpecs().getGroundMaxDepth()) {
+            wheelCalculations.setGravityAcceleration(getOnGroundGravityAcceleration(roomGravityAcceleration,
+                    wheelCalculations.getGroundAngle()));
+        }
+        wheelCalculations.setGroundReactionAcceleration(getGroundReactionAcceleration(wheelCalculations.getVelocity(),
+                wheelCalculations.getGroundAngle(), wheelCalculations.getDepth(), groundReactionCoefficient));
+        wheelCalculations.setGroundFrictionAcceleration(getInGroundFrictionAcceleration(wheelCalculations.getVelocity(),
+                wheelCalculations.getDepth(), groundFrictionCoefficient));
+        wheelCalculations.setEngineAcceleration(getWheelEngineAcceleration(vehicleModel,
+                wheelCalculations.getGroundAngle(), wheelCalculations.getDepth()));
     }
 
     private static double getGroundAngle(Position position, Position groundPosition) {
@@ -100,13 +113,13 @@ public class VehicleAccelerationUtils {
         }
     }
 
-    private static Velocity getWheelVelocity(VehicleModel vehicleModel, int sign) {
+    private static void calculateWheelVelocity(VehicleModel vehicleModel, WheelCalculations wheelCalculations) {
         var vehicleVelocity = vehicleModel.getState().getVehicleVelocity();
         var angle = vehicleModel.getState().getAngle();
         var angleVelocity = vehicleVelocity.getAngle() * vehicleModel.getSpecs().getRadius();
-        var velocityX = vehicleVelocity.getX() + sign * angleVelocity * Math.sin(angle);
-        var velocityY = vehicleVelocity.getY() - sign * angleVelocity * Math.cos(angle);
-        return new Velocity()
+        var velocityX = vehicleVelocity.getX() + wheelCalculations.getSign().getValue() * angleVelocity * Math.sin(angle);
+        var velocityY = vehicleVelocity.getY() - wheelCalculations.getSign().getValue() * angleVelocity * Math.cos(angle);
+        wheelCalculations.getVelocity()
                 .setX(velocityX)
                 .setY(velocityY);
     }
@@ -167,4 +180,65 @@ public class VehicleAccelerationUtils {
     }
 
     private record PositionAndDistance(Position position, Double distance) {}
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    private static final class Calculations {
+
+        private WheelCalculations rightWheel = new WheelCalculations().setSign(WheelSign.RIGHT);
+
+        private WheelCalculations leftWheel = new WheelCalculations().setSign(WheelSign.LEFT);
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    private static final class WheelCalculations {
+
+        private WheelSign sign;
+
+        private Position position;
+
+        private Velocity velocity = new Velocity();
+
+        private Position nearestGroundPointByX;
+
+        private PositionAndDistance nearestGroundPoint;
+
+        private double groundAngle;
+
+        private double depth;
+
+        private Acceleration gravityAcceleration = new Acceleration();
+
+        private Acceleration groundReactionAcceleration = new Acceleration();
+
+        private Acceleration groundFrictionAcceleration = new Acceleration();
+
+        private Acceleration engineAcceleration = new Acceleration();
+
+        private Acceleration sumAcceleration;
+
+        public Acceleration getSumAcceleration() {
+            if (sumAcceleration == null) {
+                sumAcceleration = Acceleration.sumOf(
+                        gravityAcceleration,
+                        groundReactionAcceleration,
+                        groundFrictionAcceleration,
+                        engineAcceleration
+                );
+            }
+            return sumAcceleration;
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    private enum WheelSign {
+        RIGHT(-1),
+        LEFT(1);
+
+        private final int value;
+    }
 }
