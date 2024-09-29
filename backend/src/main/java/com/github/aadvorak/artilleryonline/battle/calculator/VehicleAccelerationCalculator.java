@@ -109,7 +109,7 @@ public class VehicleAccelerationCalculator {
         if (velocityAxialProjection >= 0) {
             return new Acceleration();
         } else {
-            var accelerationModule = - velocityAxialProjection * Math.sqrt(depth) * coefficient;
+            var accelerationModule = - velocityAxialProjection * depth * coefficient;
             return new Acceleration()
                     .setX(accelerationModule * Math.sin(groundAngle))
                     .setY(accelerationModule * Math.cos(groundAngle));

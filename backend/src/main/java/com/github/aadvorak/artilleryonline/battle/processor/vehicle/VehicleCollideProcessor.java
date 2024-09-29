@@ -9,8 +9,9 @@ import java.util.stream.Collectors;
 
 public class VehicleCollideProcessor {
 
-    public static boolean processCollide(VehicleModel vehicleModel, BattleModel battleModel, Position nextPosition) {
-        var vehicleCollide = vehicleCollide(vehicleModel, battleModel, nextPosition);
+    public static boolean processCollide(VehicleModel vehicleModel, BattleModel battleModel,
+                                         Position nextPosition, double nextAngle) {
+        var vehicleCollide = vehicleCollide(vehicleModel, battleModel, nextPosition, nextAngle);
         if (vehicleCollide != null) {
             doCollide(vehicleModel, vehicleCollide);
             battleModel.setUpdated(true);
@@ -19,15 +20,16 @@ public class VehicleCollideProcessor {
         return false;
     }
 
-    private static VehicleModel vehicleCollide(VehicleModel vehicleModel, BattleModel battleModel, Position nextPosition) {
+    private static VehicleModel vehicleCollide(VehicleModel vehicleModel, BattleModel battleModel,
+                                               Position nextPosition, double nextAngle) {
         var otherVehicleModels = battleModel.getVehicles().values().stream()
                 .filter(value -> value.getId() != vehicleModel.getId())
                 .collect(Collectors.toSet());
         var velocity = vehicleModel.getState().getVehicleVelocity().getX();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
         var vehicleRadius = vehicleModel.getSpecs().getRadius();
-        var rightWheelPosition = VehicleUtils.getRightWheelPosition(vehicleModel, nextPosition);
-        var leftWheelPosition = VehicleUtils.getLeftWheelPosition(vehicleModel, nextPosition);
+        var rightWheelPosition = VehicleUtils.getRightWheelPosition(vehicleModel, nextPosition, nextAngle);
+        var leftWheelPosition = VehicleUtils.getLeftWheelPosition(vehicleModel, nextPosition, nextAngle);
         for (var otherVehicleModel : otherVehicleModels) {
             var otherVehiclePosition = otherVehicleModel.getState().getPosition();
             var otherWheelRadius = otherVehicleModel.getSpecs().getWheelRadius();

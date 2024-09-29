@@ -14,13 +14,13 @@ public class VehicleMoveProcessor {
         }
         var nextPosition = getNextVehiclePosition(vehicleModel, battleModel);
         var nextAngle = getNextVehicleAngle(vehicleModel, battleModel);
-        if (wallCollide(vehicleModel, battleModel, nextPosition)) {
+        if (wallCollide(vehicleModel, battleModel, nextPosition, nextAngle)) {
             vehicleModel.getState().getVehicleVelocity().setX(
                     - vehicleModel.getState().getVehicleVelocity().getX() / 2);
             battleModel.setUpdated(true);
             return;
         }
-        if (VehicleCollideProcessor.processCollide(vehicleModel, battleModel, nextPosition)) {
+        if (VehicleCollideProcessor.processCollide(vehicleModel, battleModel, nextPosition, nextAngle)) {
             return;
         }
         vehicleModel.getState().setPosition(nextPosition);
@@ -36,17 +36,18 @@ public class VehicleMoveProcessor {
         vehicleVelocity.setAngle(vehicleVelocity.getAngle() + acceleration.getAngle() * battleModel.getCurrentTimeStepSecs());
     }
 
-    private static boolean wallCollide(VehicleModel vehicleModel, BattleModel battleModel, Position nextPosition) {
+    private static boolean wallCollide(VehicleModel vehicleModel, BattleModel battleModel,
+                                       Position nextPosition, double nextAngle) {
         var velocityX = vehicleModel.getState().getVehicleVelocity().getX();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
         var xMax = battleModel.getRoom().getSpecs().getRightTop().getX();
         var xMin = battleModel.getRoom().getSpecs().getLeftBottom().getX();
         if (velocityX > 0) {
-            var rightWheelPosition = VehicleUtils.getRightWheelPosition(vehicleModel, nextPosition);
+            var rightWheelPosition = VehicleUtils.getRightWheelPosition(vehicleModel, nextPosition, nextAngle);
             return rightWheelPosition.getX() + wheelRadius >= xMax;
         }
         if (velocityX < 0) {
-            var leftWheelPosition = VehicleUtils.getLeftWheelPosition(vehicleModel, nextPosition);
+            var leftWheelPosition = VehicleUtils.getLeftWheelPosition(vehicleModel, nextPosition, nextAngle);
             return leftWheelPosition.getX() - wheelRadius <= xMin;
         }
         return false;
