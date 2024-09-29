@@ -1,18 +1,19 @@
-package com.github.aadvorak.artilleryonline.battle.utils;
+package com.github.aadvorak.artilleryonline.battle.calculator;
 
+import com.github.aadvorak.artilleryonline.battle.calculations.PositionAndDistance;
+import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
+import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
-public class VehicleAccelerationUtils {
+public class VehicleAccelerationCalculator {
 
     public static VehicleAcceleration getVehicleAcceleration(VehicleModel vehicleModel, RoomModel roomModel) {
         var angle = vehicleModel.getState().getAngle();
-        var calculations = new Calculations();
+        var calculations = new VehicleCalculations();
 
         calculateWheelVelocity(vehicleModel, calculations.getRightWheel());
         calculateWheelVelocity(vehicleModel, calculations.getLeftWheel());
@@ -45,7 +46,7 @@ public class VehicleAccelerationUtils {
                         - vehicleVelocity.getAngle());
     }
 
-    private static double getVehicleRotatingAcceleration(Calculations calculations, double angle) {
+    private static double getVehicleRotatingAcceleration(VehicleCalculations calculations, double angle) {
         var rightWheelRotatingAcceleration = calculations.getRightWheel().getSumAcceleration().getX() * Math.sin(angle)
                 + calculations.getRightWheel().getSumAcceleration().getY() * Math.cos(angle);
         var leftWheelRotatingAcceleration = calculations.getLeftWheel().getSumAcceleration().getX() * Math.sin(angle)
@@ -179,68 +180,5 @@ public class VehicleAccelerationUtils {
             return null;
         }
         return new PositionAndDistance(nearestPosition, minimalDistance);
-    }
-
-    private record PositionAndDistance(Position position, Double distance) {}
-
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private static final class Calculations {
-
-        private WheelCalculations rightWheel = new WheelCalculations().setSign(WheelSign.RIGHT);
-
-        private WheelCalculations leftWheel = new WheelCalculations().setSign(WheelSign.LEFT);
-    }
-
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private static final class WheelCalculations {
-
-        private WheelSign sign;
-
-        private Position position;
-
-        private Velocity velocity = new Velocity();
-
-        private Position nearestGroundPointByX;
-
-        private PositionAndDistance nearestGroundPoint;
-
-        private double groundAngle;
-
-        private double depth;
-
-        private Acceleration gravityAcceleration = new Acceleration();
-
-        private Acceleration groundReactionAcceleration = new Acceleration();
-
-        private Acceleration groundFrictionAcceleration = new Acceleration();
-
-        private Acceleration engineAcceleration = new Acceleration();
-
-        private Acceleration sumAcceleration;
-
-        public Acceleration getSumAcceleration() {
-            if (sumAcceleration == null) {
-                sumAcceleration = Acceleration.sumOf(
-                        gravityAcceleration,
-                        groundReactionAcceleration,
-                        groundFrictionAcceleration,
-                        engineAcceleration
-                );
-            }
-            return sumAcceleration;
-        }
-    }
-
-    @Getter
-    @RequiredArgsConstructor
-    private enum WheelSign {
-        RIGHT(-1),
-        LEFT(1);
-
-        private final int value;
     }
 }

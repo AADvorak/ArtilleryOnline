@@ -3,7 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
-import com.github.aadvorak.artilleryonline.battle.utils.VehicleAccelerationUtils;
+import com.github.aadvorak.artilleryonline.battle.calculator.VehicleAccelerationCalculator;
 import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 public class VehicleMoveProcessor {
@@ -29,7 +29,7 @@ public class VehicleMoveProcessor {
     }
 
     private static void recalculateVelocity(VehicleModel vehicleModel, BattleModel battleModel) {
-        var acceleration = VehicleAccelerationUtils.getVehicleAcceleration(vehicleModel, battleModel.getRoom());
+        var acceleration = VehicleAccelerationCalculator.getVehicleAcceleration(vehicleModel, battleModel.getRoom());
         var vehicleVelocity = vehicleModel.getState().getVehicleVelocity();
         vehicleVelocity.setX(vehicleVelocity.getX() + acceleration.getX() * battleModel.getCurrentTimeStepSecs());
         vehicleVelocity.setY(vehicleVelocity.getY() + acceleration.getY() * battleModel.getCurrentTimeStepSecs());
