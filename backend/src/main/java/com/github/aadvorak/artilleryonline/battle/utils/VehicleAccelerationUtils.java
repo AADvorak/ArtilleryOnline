@@ -23,12 +23,7 @@ public class VehicleAccelerationUtils {
         calculateWheelAcceleration(calculations.getRightWheel(), vehicleModel, roomModel);
         calculateWheelAcceleration(calculations.getLeftWheel(), vehicleModel, roomModel);
 
-        var rightWheelRotatingAcceleration = calculations.getRightWheel().getSumAcceleration().getX() * Math.sin(angle)
-                + calculations.getRightWheel().getSumAcceleration().getY() * Math.cos(angle);
-        var leftWheelRotatingAcceleration = calculations.getLeftWheel().getSumAcceleration().getX() * Math.sin(angle)
-                + calculations.getLeftWheel().getSumAcceleration().getY() * Math.cos(angle);
-        var rotatingAcceleration = (rightWheelRotatingAcceleration - leftWheelRotatingAcceleration) / 2;
-
+        var rotatingAcceleration = getVehicleRotatingAcceleration(calculations, angle);
         var movingAcceleration = new Acceleration()
                 .setX((calculations.getRightWheel().getSumAcceleration().getX()
                         + calculations.getLeftWheel().getSumAcceleration().getX()) / 2)
@@ -50,6 +45,14 @@ public class VehicleAccelerationUtils {
                         - vehicleVelocity.getAngle());
     }
 
+    private static double getVehicleRotatingAcceleration(Calculations calculations, double angle) {
+        var rightWheelRotatingAcceleration = calculations.getRightWheel().getSumAcceleration().getX() * Math.sin(angle)
+                + calculations.getRightWheel().getSumAcceleration().getY() * Math.cos(angle);
+        var leftWheelRotatingAcceleration = calculations.getLeftWheel().getSumAcceleration().getX() * Math.sin(angle)
+                + calculations.getLeftWheel().getSumAcceleration().getY() * Math.cos(angle);
+        return (rightWheelRotatingAcceleration - leftWheelRotatingAcceleration) / 2;
+    }
+
     private static void calculateWheelAcceleration(WheelCalculations wheelCalculations,
                                                    VehicleModel vehicleModel, RoomModel roomModel) {
         var roomGravityAcceleration = roomModel.getSpecs().getGravityAcceleration();
@@ -62,7 +65,6 @@ public class VehicleAccelerationUtils {
         if (wheelCalculations.getNearestGroundPointByX().getY() >= wheelCalculations.getPosition().getY()) {
             wheelCalculations.setGroundFrictionAcceleration(getInGroundFrictionAcceleration(
                     wheelCalculations.getVelocity(), wheelRadius, groundFrictionCoefficient));
-            wheelCalculations.setEngineAcceleration(getWheelEngineAcceleration(vehicleModel, 0.0, wheelRadius));
             return;
         }
 
