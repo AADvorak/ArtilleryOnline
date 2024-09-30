@@ -5,7 +5,6 @@ import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.calculator.VehicleAccelerationCalculator;
-import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 public class VehicleMoveProcessor {
 
@@ -15,24 +14,14 @@ public class VehicleMoveProcessor {
             recalculateVelocity(calculations, vehicleModel, battleModel);
         }
         calculateNextPositionAndAngle(calculations, vehicleModel, battleModel);
-        if (wallCollide(calculations, vehicleModel, battleModel)) {
-            vehicleModel.getState().getVehicleVelocity().setX(
-                    - vehicleModel.getState().getVehicleVelocity().getX() / 2);
-            battleModel.setUpdated(true);
-            return;
+        if (!processCollisions(calculations, vehicleModel, battleModel)) {
+            vehicleModel.getState().setPosition(calculations.getNextPosition());
+            vehicleModel.getState().setAngle(calculations.getNextAngle());
         }
-        if (VehicleCollideProcessor.processCollide(calculations, vehicleModel, battleModel)) {
-            return;
-        }
-        if (VehicleGroundCollideProcessor.processCollide(calculations, vehicleModel, battleModel)) {
-            return;
-        }
-        vehicleModel.getState().setPosition(calculations.getNextPosition());
-        vehicleModel.getState().setAngle(calculations.getNextAngle());
         vehicleModel.setCollided(false);
     }
 
-    private static void recalculateVelocity(VehicleCalculations calculations, VehicleModel vehicleModel, BattleModel battleModel) {
+    private static void recalculateVelocity(VehicleCalculations calculations, VehicleModel vehicleModel,BattleModel battleModel) {
         var acceleration = VehicleAccelerationCalculator.getVehicleAcceleration(calculations, vehicleModel, battleModel.getRoom());
         var vehicleVelocity = vehicleModel.getState().getVehicleVelocity();
         vehicleVelocity.setX(vehicleVelocity.getX() + acceleration.getX() * battleModel.getCurrentTimeStepSecs());
@@ -40,22 +29,14 @@ public class VehicleMoveProcessor {
         vehicleVelocity.setAngle(vehicleVelocity.getAngle() + acceleration.getAngle() * battleModel.getCurrentTimeStepSecs());
     }
 
-    private static boolean wallCollide(VehicleCalculations calculations, VehicleModel vehicleModel, BattleModel battleModel) {
-        var velocityX = vehicleModel.getState().getVehicleVelocity().getX();
-        var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
-        var xMax = battleModel.getRoom().getSpecs().getRightTop().getX();
-        var xMin = battleModel.getRoom().getSpecs().getLeftBottom().getX();
-        if (velocityX > 0) {
-            var rightWheelPosition = VehicleUtils.getRightWheelPosition(vehicleModel, calculations.getNextPosition(),
-                    calculations.getNextAngle());
-            return rightWheelPosition.getX() + wheelRadius >= xMax;
+    private static boolean processCollisions(VehicleCalculations calculations, VehicleModel vehicleModel, BattleModel battleModel) {
+        if (VehicleWallCollideProcessor.processCollide(calculations, vehicleModel, battleModel)) {
+            return true;
         }
-        if (velocityX < 0) {
-            var leftWheelPosition = VehicleUtils.getLeftWheelPosition(vehicleModel, calculations.getNextPosition(),
-                    calculations.getNextAngle());
-            return leftWheelPosition.getX() - wheelRadius <= xMin;
+        if (VehicleCollideProcessor.processCollide(calculations, vehicleModel, battleModel)) {
+            return true;
         }
-        return false;
+        return VehicleGroundCollideProcessor.processCollide(calculations, vehicleModel, battleModel);
     }
 
     private static void calculateNextPositionAndAngle(VehicleCalculations calculations, VehicleModel vehicleModel,
