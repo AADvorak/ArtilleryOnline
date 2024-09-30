@@ -1,6 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
-import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
@@ -8,9 +8,9 @@ import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 public class VehicleGroundCollideProcessor {
 
-    public static boolean processCollide(VehicleModel vehicleModel, BattleModel battleModel,
-                                         Position nextPosition, double nextAngle) {
-        if (groundCollide(vehicleModel, battleModel, nextPosition, nextAngle)) {
+    public static boolean processCollide(VehicleCalculations calculations, VehicleModel vehicleModel,
+                                         BattleModel battleModel) {
+        if (groundCollide(calculations, vehicleModel, battleModel)) {
             doCollide(vehicleModel);
             battleModel.setUpdated(true);
             return true;
@@ -18,10 +18,12 @@ public class VehicleGroundCollideProcessor {
         return false;
     }
 
-    private static boolean groundCollide(VehicleModel vehicleModel, BattleModel battleModel,
-                                         Position nextPosition, double nextAngle) {
-        var nextRightWheelPosition = VehicleUtils.getRightWheelPosition(vehicleModel, nextPosition, nextAngle);
-        var nextLeftWheelPosition = VehicleUtils.getLeftWheelPosition(vehicleModel, nextPosition, nextAngle);
+    private static boolean groundCollide(VehicleCalculations calculations, VehicleModel vehicleModel,
+                                         BattleModel battleModel) {
+        var nextRightWheelPosition = VehicleUtils.getRightWheelPosition(vehicleModel, calculations.getNextPosition(),
+                calculations.getNextAngle());
+        var nextLeftWheelPosition = VehicleUtils.getLeftWheelPosition(vehicleModel, calculations.getNextPosition(),
+                calculations.getNextAngle());
         var rightWheelNearestGroundPoint = BattleUtils.getNearestGroundPosition(nextRightWheelPosition.getX(),
                 battleModel.getRoom());
         var leftWheelNearestGroundPoint = BattleUtils.getNearestGroundPosition(nextLeftWheelPosition.getX(),

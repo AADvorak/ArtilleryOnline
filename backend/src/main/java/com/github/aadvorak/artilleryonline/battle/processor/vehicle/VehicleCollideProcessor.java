@@ -1,6 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
-import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 
 public class VehicleCollideProcessor {
 
-    public static boolean processCollide(VehicleModel vehicleModel, BattleModel battleModel,
-                                         Position nextPosition, double nextAngle) {
-        var vehicleCollide = vehicleCollide(vehicleModel, battleModel, nextPosition, nextAngle);
+    public static boolean processCollide(VehicleCalculations calculations, VehicleModel vehicleModel,
+                                         BattleModel battleModel) {
+        var vehicleCollide = vehicleCollide(calculations, vehicleModel, battleModel);
         if (vehicleCollide != null) {
             doCollide(vehicleModel, vehicleCollide);
             battleModel.setUpdated(true);
@@ -20,14 +20,16 @@ public class VehicleCollideProcessor {
         return false;
     }
 
-    private static VehicleModel vehicleCollide(VehicleModel vehicleModel, BattleModel battleModel,
-                                               Position nextPosition, double nextAngle) {
+    private static VehicleModel vehicleCollide(VehicleCalculations calculations, VehicleModel vehicleModel,
+                                               BattleModel battleModel) {
         var otherVehicleModels = battleModel.getVehicles().values().stream()
                 .filter(value -> value.getId() != vehicleModel.getId())
                 .collect(Collectors.toSet());
         var velocity = vehicleModel.getState().getVehicleVelocity().getX();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
         var vehicleRadius = vehicleModel.getSpecs().getRadius();
+        var nextPosition = calculations.getNextPosition();
+        var nextAngle = calculations.getNextAngle();
         var rightWheelPosition = VehicleUtils.getRightWheelPosition(vehicleModel, nextPosition, nextAngle);
         var leftWheelPosition = VehicleUtils.getLeftWheelPosition(vehicleModel, nextPosition, nextAngle);
         for (var otherVehicleModel : otherVehicleModels) {

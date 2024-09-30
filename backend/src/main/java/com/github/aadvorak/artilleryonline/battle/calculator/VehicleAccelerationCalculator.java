@@ -11,9 +11,9 @@ import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 public class VehicleAccelerationCalculator {
 
-    public static VehicleAcceleration getVehicleAcceleration(VehicleModel vehicleModel, RoomModel roomModel) {
+    public static VehicleAcceleration getVehicleAcceleration(VehicleCalculations calculations,
+                                                             VehicleModel vehicleModel, RoomModel roomModel) {
         var angle = vehicleModel.getState().getAngle();
-        var calculations = new VehicleCalculations();
 
         calculateWheelVelocity(vehicleModel, calculations.getRightWheel());
         calculateWheelVelocity(vehicleModel, calculations.getLeftWheel());
