@@ -8,12 +8,14 @@ import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 public class VehicleGroundCollideProcessor {
 
-    public static void processCollide(VehicleModel vehicleModel, BattleModel battleModel,
+    public static boolean processCollide(VehicleModel vehicleModel, BattleModel battleModel,
                                          Position nextPosition, double nextAngle) {
         if (groundCollide(vehicleModel, battleModel, nextPosition, nextAngle)) {
             doCollide(vehicleModel);
             battleModel.setUpdated(true);
+            return true;
         }
+        return false;
     }
 
     private static boolean groundCollide(VehicleModel vehicleModel, BattleModel battleModel,

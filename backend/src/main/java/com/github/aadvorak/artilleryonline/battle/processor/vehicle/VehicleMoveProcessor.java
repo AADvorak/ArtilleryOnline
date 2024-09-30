@@ -23,7 +23,9 @@ public class VehicleMoveProcessor {
         if (VehicleCollideProcessor.processCollide(vehicleModel, battleModel, nextPosition, nextAngle)) {
             return;
         }
-        VehicleGroundCollideProcessor.processCollide(vehicleModel, battleModel, nextPosition, nextAngle);
+        if (VehicleGroundCollideProcessor.processCollide(vehicleModel, battleModel, nextPosition, nextAngle)) {
+            return;
+        }
         vehicleModel.getState().setPosition(nextPosition);
         vehicleModel.getState().setAngle(nextAngle);
         vehicleModel.setCollided(false);
