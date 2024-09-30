@@ -35,6 +35,8 @@ public class VehicleGroundCollideProcessor {
     private static void doCollide(VehicleModel vehicleModel) {
         vehicleModel.getState().getVehicleVelocity().setX(
                 - vehicleModel.getState().getVehicleVelocity().getX() / 2);
+        vehicleModel.getState().getVehicleVelocity().setAngle(
+                vehicleModel.getState().getVehicleVelocity().getAngle() / 2);
         if (vehicleModel.getState().getVehicleVelocity().getY() < 0) {
             vehicleModel.getState().getVehicleVelocity().setY(
                     - vehicleModel.getState().getVehicleVelocity().getY() / 2);
