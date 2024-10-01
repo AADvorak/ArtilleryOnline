@@ -6,6 +6,7 @@ import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.specs.ShellSpecs;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
+import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 public class ShellDamageProcessor {
 
@@ -47,7 +48,7 @@ public class ShellDamageProcessor {
                 applyDamageToVehicle(shellSpecs.getDamage() * (shellSpecs.getRadius() - distanceToTarget)
                         / shellSpecs.getRadius(), vehicleModel, battleModel);
             }
-            // todo track destruction
+            calculateHETrackDamage(hitPosition, vehicleModel, shellSpecs);
         });
     }
 
@@ -58,6 +59,27 @@ public class ShellDamageProcessor {
         } else {
             vehicleModel.getState().setHitPoints(hitPoints);
         }
+    }
+
+    private static void calculateHETrackDamage(Position hitPosition, VehicleModel vehicleModel, ShellSpecs shellSpecs) {
+        var trackState = vehicleModel.getState().getTrackState();
+        if (trackState.isBroken()) {
+            return;
+        }
+        var shellHitRadius = shellSpecs.getRadius();
+        var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
+        var rightWheelPosition = VehicleUtils.getRightWheelPosition(vehicleModel);
+        var leftWheelPosition = VehicleUtils.getLeftWheelPosition(vehicleModel);
+        if (isWheelHitByHE(hitPosition, rightWheelPosition, shellHitRadius, wheelRadius)
+                || isWheelHitByHE(hitPosition, leftWheelPosition, shellHitRadius, wheelRadius)) {
+            trackState.setBroken(true);
+            trackState.setRepairRemainTime(vehicleModel.getSpecs().getTrackRepairTime());
+        }
+    }
+
+    private static boolean isWheelHitByHE(Position hitPosition, Position wheelPosition,
+                                          double shellHitRadius, double wheelRadius) {
+        return hitPosition.distanceTo(wheelPosition) <= 0.6 * shellHitRadius - wheelRadius;
     }
 
     /**
@@ -83,9 +105,9 @@ public class ShellDamageProcessor {
     }
 
     private static double getExplosionShiftY(double x, Position hitPosition, double damageRadius) {
-        var discriminant = 4 * (Math.pow(damageRadius, 2) - Math.pow(x - hitPosition.getX(), 2));
+        var discriminant = 4.0 * (Math.pow(damageRadius, 2) - Math.pow(x - hitPosition.getX(), 2));
         if (discriminant <= 0) {
-            return 0;
+            return 0.0;
         } else {
             return Math.sqrt(discriminant) / 2;
         }
