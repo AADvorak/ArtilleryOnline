@@ -15,8 +15,7 @@ public class VehicleMoveProcessor {
         }
         calculateNextPositionAndAngle(calculations, vehicleModel, battleModel);
         if (!processCollisions(calculations, vehicleModel, battleModel)) {
-            vehicleModel.getState().setPosition(calculations.getNextPosition());
-            vehicleModel.getState().setAngle(calculations.getNextAngle());
+            applyNextPositionAndAngle(calculations, vehicleModel);
         }
         vehicleModel.setCollided(false);
     }
@@ -48,5 +47,17 @@ public class VehicleMoveProcessor {
                 .setX(position.getX() + vehicleVelocity.getX() * battleModel.getCurrentTimeStepSecs())
                 .setY(position.getY() + vehicleVelocity.getY() * battleModel.getCurrentTimeStepSecs()));
         calculations.setNextAngle(angle + vehicleVelocity.getAngle() * battleModel.getCurrentTimeStepSecs());
+    }
+
+    private static void applyNextPositionAndAngle(VehicleCalculations calculations, VehicleModel vehicleModel) {
+        vehicleModel.getState().setPosition(calculations.getNextPosition());
+        var angle = calculations.getNextAngle();
+        if (angle > Math.PI / 2) {
+            angle = Math.PI / 2;
+        }
+        if (angle < - Math.PI / 2) {
+            angle = - Math.PI / 2;
+        }
+        vehicleModel.getState().setAngle(angle);
     }
 }
