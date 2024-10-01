@@ -15,6 +15,7 @@ public class ShellDamageProcessor {
             applyDamageToVehicle(shellSpecs.getDamage(), vehicleModel, battleModel);
         } else if (ShellType.HE.equals(shellSpecs.getType())) {
             calculateHEDamage(hitPosition, shellSpecs, battleModel);
+            processGroundDamage(hitPosition, shellSpecs, battleModel);
         }
     }
 
@@ -25,6 +26,7 @@ public class ShellDamageProcessor {
         trackState.setRepairRemainTime(vehicleModel.getSpecs().getTrackRepairTime());
         if (ShellType.HE.equals(shellSpecs.getType())) {
             calculateHEDamage(hitPosition, shellSpecs, battleModel);
+            processGroundDamage(hitPosition, shellSpecs, battleModel);
         }
     }
 
@@ -33,7 +35,6 @@ public class ShellDamageProcessor {
             calculateHEDamage(hitPosition, shellSpecs, battleModel);
         }
         processGroundDamage(hitPosition, shellSpecs, battleModel);
-        // todo possible track destruction
     }
 
     private static void calculateHEDamage(Position hitPosition, ShellSpecs shellSpecs, BattleModel battleModel) {
@@ -46,6 +47,7 @@ public class ShellDamageProcessor {
                 applyDamageToVehicle(shellSpecs.getDamage() * (shellSpecs.getRadius() - distanceToTarget)
                         / shellSpecs.getRadius(), vehicleModel, battleModel);
             }
+            // todo track destruction
         });
     }
 
