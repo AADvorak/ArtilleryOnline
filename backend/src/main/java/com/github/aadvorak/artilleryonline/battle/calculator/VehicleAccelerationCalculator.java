@@ -7,6 +7,7 @@ import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
+import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 public class VehicleAccelerationCalculator {
@@ -15,8 +16,8 @@ public class VehicleAccelerationCalculator {
                                                              VehicleModel vehicleModel, RoomModel roomModel) {
         var angle = vehicleModel.getState().getAngle();
 
-        calculateWheelVelocity(vehicleModel, calculations.getRightWheel());
-        calculateWheelVelocity(vehicleModel, calculations.getLeftWheel());
+        VehicleUtils.calculateWheelVelocity(vehicleModel, calculations.getRightWheel());
+        VehicleUtils.calculateWheelVelocity(vehicleModel, calculations.getLeftWheel());
 
         calculations.getRightWheel().setPosition(VehicleUtils.getRightWheelPosition(vehicleModel));
         calculations.getLeftWheel().setPosition(VehicleUtils.getLeftWheelPosition(vehicleModel));
@@ -105,26 +106,15 @@ public class VehicleAccelerationCalculator {
 
     private static Acceleration getGroundReactionAcceleration(Velocity velocity, double groundAngle,
                                                               double depth, double coefficient) {
-        var velocityAxialProjection = velocity.getX() * Math.sin(groundAngle) + velocity.getY() * Math.cos(groundAngle);
-        if (velocityAxialProjection >= 0) {
+        var velocityVerticalProjection = VectorUtils.getVerticalProjection(velocity, groundAngle);
+        if (velocityVerticalProjection >= 0) {
             return new Acceleration();
         } else {
-            var accelerationModule = - velocityAxialProjection * depth * coefficient;
+            var accelerationVerticalProjection = - velocityVerticalProjection * depth * coefficient;
             return new Acceleration()
-                    .setX(accelerationModule * Math.sin(groundAngle))
-                    .setY(accelerationModule * Math.cos(groundAngle));
+                    .setX(VectorUtils.getComponentX(accelerationVerticalProjection, 0.0, groundAngle))
+                    .setY(VectorUtils.getComponentY(accelerationVerticalProjection, 0.0, groundAngle));
         }
-    }
-
-    private static void calculateWheelVelocity(VehicleModel vehicleModel, WheelCalculations wheelCalculations) {
-        var vehicleVelocity = vehicleModel.getState().getVehicleVelocity();
-        var angle = vehicleModel.getState().getAngle();
-        var angleVelocity = vehicleVelocity.getAngle() * vehicleModel.getSpecs().getRadius();
-        var velocityX = vehicleVelocity.getX() + wheelCalculations.getSign().getValue() * angleVelocity * Math.sin(angle);
-        var velocityY = vehicleVelocity.getY() - wheelCalculations.getSign().getValue() * angleVelocity * Math.cos(angle);
-        wheelCalculations.getVelocity()
-                .setX(velocityX)
-                .setY(velocityY);
     }
 
     private static Acceleration getInGroundFrictionAcceleration(Velocity velocity, double depth, double coefficient) {

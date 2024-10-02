@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class Acceleration {
+public class Acceleration implements Vector {
 
     private double x;
 

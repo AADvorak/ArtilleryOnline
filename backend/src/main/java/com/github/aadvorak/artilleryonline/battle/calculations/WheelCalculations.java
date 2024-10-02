@@ -16,7 +16,7 @@ public class WheelCalculations {
 
     private Position position;
 
-    private Velocity velocity = new Velocity();
+    private Velocity velocity;
 
     private Position nearestGroundPointByX;
 
