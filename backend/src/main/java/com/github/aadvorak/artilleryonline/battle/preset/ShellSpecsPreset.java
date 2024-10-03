@@ -13,11 +13,13 @@ public enum ShellSpecsPreset {
             .setDamage(10.0)
             .setRadius(0.1)
             .setVelocity(13.0)
+            .setPushCoefficient(0.05)
             .setType(ShellType.AP)),
     DEFAULT_HE("HE", new ShellSpecs()
             .setDamage(5.0)
             .setRadius(0.5)
             .setVelocity(12.0)
+            .setPushCoefficient(0.05)
             .setType(ShellType.HE));
 
     private final String name;

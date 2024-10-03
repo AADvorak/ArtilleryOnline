@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.processor.shell;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.specs.ShellSpecs;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
@@ -11,13 +12,15 @@ import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 public class ShellDamageProcessor {
 
     public static void processHitVehicle(Position hitPosition, VehicleModel vehicleModel,
-                                         ShellSpecs shellSpecs, BattleModel battleModel) {
+                                         ShellModel shellModel, BattleModel battleModel) {
+        var shellSpecs = shellModel.getSpecs();
         if (ShellType.AP.equals(shellSpecs.getType())) {
             applyDamageToVehicle(shellSpecs.getDamage(), vehicleModel, battleModel);
         } else if (ShellType.HE.equals(shellSpecs.getType())) {
             calculateHEDamage(hitPosition, shellSpecs, battleModel);
             processGroundDamage(hitPosition, shellSpecs, battleModel);
         }
+        pushHitVehicle(vehicleModel, shellModel);
     }
 
     public static void processHitTrack(Position hitPosition, VehicleModel vehicleModel,
@@ -111,5 +114,18 @@ public class ShellDamageProcessor {
         } else {
             return Math.sqrt(discriminant) / 2;
         }
+    }
+
+    private static void pushHitVehicle(VehicleModel vehicleModel, ShellModel shellModel) {
+        var vehicleVelocity = vehicleModel.getState().getVehicleVelocity();
+        var pushCoefficient = shellModel.getSpecs().getPushCoefficient();
+        if (ShellType.HE.equals(shellModel.getSpecs().getType())) {
+            pushCoefficient /= 2.0;
+        }
+        var shellVelocity = shellModel.getState().getVelocity();
+        var shellAngle = shellModel.getState().getAngle();
+        vehicleVelocity
+                .setX(vehicleVelocity.getX() + pushCoefficient * shellVelocity * Math.cos(shellAngle))
+                .setY(vehicleVelocity.getY() + pushCoefficient * shellVelocity * Math.sin(shellAngle));
     }
 }

@@ -36,6 +36,7 @@ public class VehicleGunShootProcessor {
         vehicleModel.getState().getGunState().setLoadedShell(null);
         var gunState = vehicleModel.getState().getGunState();
         vehicleModel.getState().getAmmo().compute(gunState.getSelectedShell(), (k, ammo) -> ammo - 1);
+        pushShootingVehicle(vehicleModel, shellModel);
     }
 
     private static void startLoading(VehicleModel vehicleModel) {
@@ -69,5 +70,15 @@ public class VehicleGunShootProcessor {
         return new Position()
                 .setX(vehiclePosition.getX() + gunLength * Math.cos(gunAngle + angle))
                 .setY(vehiclePosition.getY() + gunLength * Math.sin(gunAngle + angle));
+    }
+
+    private static void pushShootingVehicle(VehicleModel vehicleModel, ShellModel shellModel) {
+        var vehicleVelocity = vehicleModel.getState().getVehicleVelocity();
+        var pushCoefficient = shellModel.getSpecs().getPushCoefficient();
+        var shellVelocity = shellModel.getState().getVelocity();
+        var shellAngle = shellModel.getState().getAngle();
+        vehicleVelocity
+                .setX(vehicleVelocity.getX() - pushCoefficient * shellVelocity * Math.cos(shellAngle))
+                .setY(vehicleVelocity.getY() - pushCoefficient * shellVelocity * Math.sin(shellAngle));
     }
 }

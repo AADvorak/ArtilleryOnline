@@ -34,7 +34,7 @@ public class ShellFlyProcessor {
         }
         var hitVehicle = getHitVehicle(prevPosition, nextPosition, battleModel);
         if (hitVehicle != null) {
-            ShellDamageProcessor.processHitVehicle(nextPosition, hitVehicle, shellModel.getSpecs(), battleModel);
+            ShellDamageProcessor.processHitVehicle(nextPosition, hitVehicle, shellModel, battleModel);
             shellIdsToRemove.add(shellModel.getId());
             return;
         }
