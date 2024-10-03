@@ -15,7 +15,6 @@ public class VehicleGroundCollideProcessor {
         var groundCollideWheel = getGroundCollideWheel(calculations, vehicleModel, battleModel);
         if (groundCollideWheel != null) {
             doCollide(vehicleModel, calculations, groundCollideWheel);
-            vehicleModel.setCollided(true);
             battleModel.setUpdated(true);
             return true;
         }
@@ -32,28 +31,12 @@ public class VehicleGroundCollideProcessor {
                 battleModel.getRoom());
         var leftWheelNearestGroundPoint = BattleUtils.getNearestGroundPosition(nextLeftWheelPosition.getX(),
                 battleModel.getRoom());
-        if (rightWheelNearestGroundPoint.getY() >= nextRightWheelPosition.getY()) {
-            /*System.out.printf("Collision RW. ID: %d, X: %.3f, Y: %.3f, NextX: %.3f, NextY: %.3f, GPx: %.3f, GPy: %.3f %n",
-                    vehicleModel.getId(),
-                    calculations.getRightWheel().getPosition().getX(),
-                    calculations.getRightWheel().getPosition().getY(),
-                    nextRightWheelPosition.getX(),
-                    nextRightWheelPosition.getY(),
-                    rightWheelNearestGroundPoint.getX(),
-                    rightWheelNearestGroundPoint.getY()
-            );*/
+        if (calculations.getRightWheel().getNearestGroundPoint() != null
+                && rightWheelNearestGroundPoint.getY() >= nextRightWheelPosition.getY()) {
             return calculations.getRightWheel();
         }
-        if (leftWheelNearestGroundPoint.getY() >= nextLeftWheelPosition.getY()) {
-            /*System.out.printf("Collision LW. ID: %d, X: %.3f, Y: %.3f, NextX: %.3f, NextY: %.3f, GPx: %.3f, GPy: %.3f %n",
-                    vehicleModel.getId(),
-                    calculations.getLeftWheel().getPosition().getX(),
-                    calculations.getLeftWheel().getPosition().getY(),
-                    nextLeftWheelPosition.getX(),
-                    nextLeftWheelPosition.getY(),
-                    leftWheelNearestGroundPoint.getX(),
-                    leftWheelNearestGroundPoint.getY()
-            );*/
+        if (calculations.getLeftWheel().getNearestGroundPoint() != null
+                && leftWheelNearestGroundPoint.getY() >= nextLeftWheelPosition.getY()) {
             return calculations.getLeftWheel();
         }
         return null;
@@ -66,43 +49,24 @@ public class VehicleGroundCollideProcessor {
 
         var groundAngle = wheelCalculations.getGroundAngle();
         var wheelVelocity = wheelCalculations.getVelocity();
-        var velocityVerticalProjection = - 2.0 * VectorUtils.getVerticalProjection(wheelVelocity, groundAngle);
+        var velocityVerticalProjection = VectorUtils.getVerticalProjection(wheelVelocity, groundAngle);
         var velocityHorizontalProjection = VectorUtils.getHorizontalProjection(wheelVelocity, groundAngle);
-        /*System.out.printf("Before recalc. Vx: %.3f, Vy: %.3f, Va: %.3f, Vwx: %.3f, Vwy: %.3f, Vv: %.3f, Vh: %.3f %n",
-                vehicleModel.getState().getVehicleVelocity().getX(),
-                vehicleModel.getState().getVehicleVelocity().getY(),
-                vehicleModel.getState().getVehicleVelocity().getAngle(),
-                wheelVelocity.getX(),
-                wheelVelocity.getY(),
-                velocityVerticalProjection,
-                velocityHorizontalProjection
-        );*/
 
+        velocityVerticalProjection += 3.0 * Math.sqrt(Math.abs(velocityVerticalProjection));
         wheelVelocity.setX(VectorUtils.getComponentX(velocityVerticalProjection, velocityHorizontalProjection, groundAngle));
         wheelVelocity.setY(VectorUtils.getComponentY(velocityVerticalProjection, velocityHorizontalProjection, groundAngle));
 
         var rightWheelVelocity = calculations.getRightWheel().getVelocity();
         var leftWheelVelocity = calculations.getLeftWheel().getVelocity();
-        var rightWheelSign = calculations.getRightWheel().getSign().getValue();
-        var leftWheelSign = calculations.getLeftWheel().getSign().getValue();
         var angle = vehicleModel.getState().getAngle();
 
-        var angleVelocity = - (rightWheelVelocity.getY() * rightWheelSign + leftWheelVelocity.getY() * leftWheelSign)
-                / (2 * Math.cos(angle));
+        var angleVelocity = Math.abs(angle) < Math.PI / 4
+                ? (rightWheelVelocity.getY() - leftWheelVelocity.getY()) / (2.0 * Math.cos(angle))
+                : (leftWheelVelocity.getX() - rightWheelVelocity.getX()) / (2.0 * Math.sin(angle));
         var wheelSign = wheelCalculations.getSign().getValue();
         vehicleModel.getState().getVehicleVelocity()
                 .setAngle(angleVelocity)
                 .setX(wheelVelocity.getX() - wheelSign * angleVelocity * Math.sin(angle))
                 .setY(wheelVelocity.getY() + wheelSign * angleVelocity * Math.cos(angle));
-
-        /*System.out.printf("After recalc. Vx: %.3f, Vy: %.3f, Va: %.3f, Vwx: %.3f, Vwy: %.3f, Vv: %.3f, Vh: %.3f %n",
-                vehicleModel.getState().getVehicleVelocity().getX(),
-                vehicleModel.getState().getVehicleVelocity().getY(),
-                vehicleModel.getState().getVehicleVelocity().getAngle(),
-                wheelVelocity.getX(),
-                wheelVelocity.getY(),
-                velocityVerticalProjection,
-                velocityHorizontalProjection
-        );*/
     }
 }

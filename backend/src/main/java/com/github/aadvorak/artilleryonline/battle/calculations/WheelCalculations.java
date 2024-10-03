@@ -20,11 +20,11 @@ public class WheelCalculations {
 
     private Position nearestGroundPointByX;
 
-    private PositionAndDistance nearestGroundPoint;
+    private NearestGroundPoint nearestGroundPoint;
 
     private double groundAngle;
 
-    private double depth;
+    private Double depth;
 
     private Acceleration gravityAcceleration = new Acceleration();
 

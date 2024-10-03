@@ -2,5 +2,5 @@ package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 
-public record PositionAndDistance(Position position, Double distance) {
+public record NearestGroundPoint(Position position, Double distance, Integer index) {
 }

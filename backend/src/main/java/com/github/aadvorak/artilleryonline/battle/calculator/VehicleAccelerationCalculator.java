@@ -1,6 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.calculator;
 
-import com.github.aadvorak.artilleryonline.battle.calculations.PositionAndDistance;
+import com.github.aadvorak.artilleryonline.battle.calculations.NearestGroundPoint;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.*;
@@ -97,26 +97,30 @@ public class VehicleAccelerationCalculator {
 
     private static void calculateNearestGroundPointAngleAndDepth(WheelCalculations wheelCalculations,
                                                                  double wheelRadius, RoomModel roomModel) {
-        var nearestGroundPoint = getNearestGroundPosition(wheelCalculations.getPosition(), wheelRadius,
+        var nearestGroundPoint = getNearestGroundPoint(wheelCalculations.getPosition(), wheelRadius,
                 roomModel, wheelCalculations.getSign().getValue());
         if (nearestGroundPoint == null) {
             return;
         }
         wheelCalculations.setNearestGroundPoint(nearestGroundPoint);
+        wheelCalculations.setGroundAngle(getGroundAngle(wheelCalculations.getPosition(), nearestGroundPoint, roomModel));
         if (nearestGroundPoint.position().getY() <= wheelCalculations.getPosition().getY()) {
-            wheelCalculations.setGroundAngle(getGroundAngle(wheelCalculations.getPosition(),
-                    nearestGroundPoint.position()));
             wheelCalculations.setDepth(wheelRadius - nearestGroundPoint.distance());
         } else {
-            wheelCalculations.setGroundAngle(getGroundAngle(nearestGroundPoint.position(),
-                    wheelCalculations.getPosition()));
             wheelCalculations.setDepth(wheelRadius + nearestGroundPoint.distance());
         }
     }
 
-    private static double getGroundAngle(Position position, Position groundPosition) {
-        return Math.atan((groundPosition.getX() - position.getX())
-                / Math.abs(position.getY() - groundPosition.getY()));
+    private static double getGroundAngle(Position position, NearestGroundPoint nearestGroundPoint, RoomModel roomModel) {
+        if (nearestGroundPoint.index() > 0 && nearestGroundPoint.position().getX() <= position.getX()) {
+            var otherGroundPosition = BattleUtils.getGroundPosition(nearestGroundPoint.index() - 1, roomModel);
+            return Math.atan((nearestGroundPoint.position().getY() - otherGroundPosition.getY())
+                    / (nearestGroundPoint.position().getX() - otherGroundPosition.getX()));
+        } else {
+            var otherGroundPosition = BattleUtils.getGroundPosition(nearestGroundPoint.index() + 1, roomModel);
+            return Math.atan((otherGroundPosition.getY() - nearestGroundPoint.position().getY())
+                    / (otherGroundPosition.getX() - nearestGroundPoint.position().getX()));
+        }
     }
 
     private static Acceleration getOnGroundGravityAcceleration(double roomGravityAcceleration, double groundAngle) {
@@ -167,8 +171,8 @@ public class VehicleAccelerationCalculator {
         return new Acceleration();
     }
 
-    private static PositionAndDistance getNearestGroundPosition(Position objectPosition, double objectRadius,
-                                                                RoomModel roomModel, int sign) {
+    private static NearestGroundPoint getNearestGroundPoint(Position objectPosition, double objectRadius,
+                                                            RoomModel roomModel, int sign) {
         var groundIndexes = BattleUtils.getGroundIndexesBetween(objectPosition.getX() - objectRadius,
                 objectPosition.getX() + objectRadius, roomModel);
         if (groundIndexes.isEmpty()) {
@@ -176,6 +180,7 @@ public class VehicleAccelerationCalculator {
         }
         Position nearestPosition = null;
         Double minimalDistance = null;
+        Integer index = null;
         var i = sign > 0 ? 0 : groundIndexes.size() - 1;
         while (i >= 0 && i < groundIndexes.size()) {
             var position = BattleUtils.getGroundPosition(groundIndexes.get(i), roomModel);
@@ -184,6 +189,7 @@ public class VehicleAccelerationCalculator {
                 if (minimalDistance == null || distance < minimalDistance) {
                     nearestPosition = position;
                     minimalDistance = distance;
+                    index = groundIndexes.get(i);
                 }
             }
             i += sign;
@@ -191,6 +197,6 @@ public class VehicleAccelerationCalculator {
         if (nearestPosition == null) {
             return null;
         }
-        return new PositionAndDistance(nearestPosition, minimalDistance);
+        return new NearestGroundPoint(nearestPosition, minimalDistance, index);
     }
 }
