@@ -16,4 +16,9 @@ public class Position implements Vector {
     public double distanceTo(Position other) {
         return Math.sqrt(Math.pow(x - other.getX(), 2.0) + Math.pow(y - other.getY(), 2.0));
     }
+
+    @Override
+    public String toString() {
+        return String.format("(%.3f, %.3f)", x, y);
+    }
 }

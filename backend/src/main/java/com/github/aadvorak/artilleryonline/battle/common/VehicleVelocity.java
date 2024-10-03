@@ -14,4 +14,9 @@ public class VehicleVelocity {
     private double y;
 
     private double angle;
+
+    @Override
+    public String toString() {
+        return String.format("(%.3f, %.3f, %.3f)", x, y, angle);
+    }
 }

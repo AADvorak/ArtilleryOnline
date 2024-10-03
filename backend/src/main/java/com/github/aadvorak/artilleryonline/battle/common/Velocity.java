@@ -12,4 +12,9 @@ public class Velocity implements Vector {
     private double x;
 
     private double y;
+
+    @Override
+    public String toString() {
+        return String.format("(%.3f, %.3f)", x, y);
+    }
 }
