@@ -64,22 +64,25 @@ public class VehicleAccelerationCalculator {
 
         wheelCalculations.setNearestGroundPointByX(BattleUtils.getNearestGroundPosition(
                 wheelCalculations.getPosition().getX(), roomModel));
+        calculateNearestGroundPointAngleAndDepth(wheelCalculations, wheelRadius, roomModel);
+
         if (wheelCalculations.getNearestGroundPointByX().getY() >= wheelCalculations.getPosition().getY()) {
+            var depth = wheelCalculations.getDepth() != null ? wheelCalculations.getDepth() : 2 * wheelRadius;
             wheelCalculations.setGroundFrictionAcceleration(getInGroundFrictionAcceleration(
-                    wheelCalculations.getVelocity(), wheelRadius, groundFrictionCoefficient));
+                    wheelCalculations.getVelocity(), depth, groundFrictionCoefficient));
+            if (wheelCalculations.getNearestGroundPoint() != null) {
+                wheelCalculations.setGroundReactionAcceleration(getGroundReactionAcceleration(
+                        wheelCalculations.getVelocity(), wheelCalculations.getGroundAngle(), depth,
+                        groundReactionCoefficient));
+            }
             return;
         }
 
-        wheelCalculations.setNearestGroundPoint(getNearestGroundPosition(wheelCalculations.getPosition(), wheelRadius,
-                roomModel, wheelCalculations.getSign().getValue()));
         if (wheelCalculations.getNearestGroundPoint() == null) {
             wheelCalculations.getGravityAcceleration().setX(0).setY(-roomGravityAcceleration);
             return;
         }
 
-        wheelCalculations.setGroundAngle(getGroundAngle(wheelCalculations.getPosition(),
-                wheelCalculations.getNearestGroundPoint().position()));
-        wheelCalculations.setDepth(wheelRadius - wheelCalculations.getNearestGroundPoint().distance());
         if (wheelCalculations.getDepth() <= roomModel.getSpecs().getGroundMaxDepth()) {
             wheelCalculations.setGravityAcceleration(getOnGroundGravityAcceleration(roomGravityAcceleration,
                     wheelCalculations.getGroundAngle()));
@@ -90,6 +93,25 @@ public class VehicleAccelerationCalculator {
                 wheelCalculations.getDepth(), groundFrictionCoefficient));
         wheelCalculations.setEngineAcceleration(getWheelEngineAcceleration(vehicleModel,
                 wheelCalculations.getGroundAngle(), wheelCalculations.getDepth()));
+    }
+
+    private static void calculateNearestGroundPointAngleAndDepth(WheelCalculations wheelCalculations,
+                                                                 double wheelRadius, RoomModel roomModel) {
+        var nearestGroundPoint = getNearestGroundPosition(wheelCalculations.getPosition(), wheelRadius,
+                roomModel, wheelCalculations.getSign().getValue());
+        if (nearestGroundPoint == null) {
+            return;
+        }
+        wheelCalculations.setNearestGroundPoint(nearestGroundPoint);
+        if (nearestGroundPoint.position().getY() <= wheelCalculations.getPosition().getY()) {
+            wheelCalculations.setGroundAngle(getGroundAngle(wheelCalculations.getPosition(),
+                    nearestGroundPoint.position()));
+            wheelCalculations.setDepth(wheelRadius - nearestGroundPoint.distance());
+        } else {
+            wheelCalculations.setGroundAngle(getGroundAngle(nearestGroundPoint.position(),
+                    wheelCalculations.getPosition()));
+            wheelCalculations.setDepth(wheelRadius + nearestGroundPoint.distance());
+        }
     }
 
     private static double getGroundAngle(Position position, Position groundPosition) {
