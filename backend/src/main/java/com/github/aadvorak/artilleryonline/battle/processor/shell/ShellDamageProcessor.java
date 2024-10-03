@@ -117,7 +117,7 @@ public class ShellDamageProcessor {
     }
 
     private static void pushHitVehicle(VehicleModel vehicleModel, ShellModel shellModel) {
-        var vehicleVelocity = vehicleModel.getState().getVehicleVelocity();
+        var vehicleVelocity = vehicleModel.getState().getVelocity();
         var pushCoefficient = shellModel.getSpecs().getPushCoefficient();
         if (ShellType.HE.equals(shellModel.getSpecs().getType())) {
             pushCoefficient /= 2.0;

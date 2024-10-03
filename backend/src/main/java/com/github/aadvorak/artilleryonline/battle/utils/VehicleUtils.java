@@ -34,7 +34,7 @@ public class VehicleUtils {
     }
 
     public static void calculateWheelVelocity(VehicleModel vehicleModel, WheelCalculations wheelCalculations) {
-        var vehicleVelocity = vehicleModel.getState().getVehicleVelocity();
+        var vehicleVelocity = vehicleModel.getState().getVelocity();
         var angle = vehicleModel.getState().getAngle();
         var angleVelocity = vehicleVelocity.getAngle() * vehicleModel.getSpecs().getRadius();
         var velocityX = vehicleVelocity.getX() + wheelCalculations.getSign().getValue() * angleVelocity * Math.sin(angle);

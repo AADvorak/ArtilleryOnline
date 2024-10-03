@@ -18,7 +18,7 @@ public class VehicleWallCollideProcessor {
     }
 
     private static boolean wallCollide(VehicleCalculations calculations, VehicleModel vehicleModel, BattleModel battleModel) {
-        var velocityX = vehicleModel.getState().getVehicleVelocity().getX();
+        var velocityX = vehicleModel.getState().getVelocity().getX();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
         var xMax = battleModel.getRoom().getSpecs().getRightTop().getX();
         var xMin = battleModel.getRoom().getSpecs().getLeftBottom().getX();
@@ -36,7 +36,7 @@ public class VehicleWallCollideProcessor {
     }
 
     private static void doCollide(VehicleModel vehicleModel) {
-        vehicleModel.getState().getVehicleVelocity().setX(
-                - vehicleModel.getState().getVehicleVelocity().getX() / 2);
+        vehicleModel.getState().getVelocity().setX(
+                - vehicleModel.getState().getVelocity().getX() / 2);
     }
 }

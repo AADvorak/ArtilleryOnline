@@ -64,7 +64,7 @@ public class VehicleGroundCollideProcessor {
                 ? (rightWheelVelocity.getY() - leftWheelVelocity.getY()) / (2.0 * Math.cos(angle))
                 : (leftWheelVelocity.getX() - rightWheelVelocity.getX()) / (2.0 * Math.sin(angle));
         var wheelSign = wheelCalculations.getSign().getValue();
-        vehicleModel.getState().getVehicleVelocity()
+        vehicleModel.getState().getVelocity()
                 .setAngle(angleVelocity)
                 .setX(wheelVelocity.getX() - wheelSign * angleVelocity * Math.sin(angle))
                 .setY(wheelVelocity.getY() + wheelSign * angleVelocity * Math.cos(angle));

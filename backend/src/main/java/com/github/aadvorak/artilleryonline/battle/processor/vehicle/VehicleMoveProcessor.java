@@ -22,7 +22,7 @@ public class VehicleMoveProcessor {
 
     private static void recalculateVelocity(VehicleCalculations calculations, VehicleModel vehicleModel,BattleModel battleModel) {
         var acceleration = VehicleAccelerationCalculator.getVehicleAcceleration(calculations, vehicleModel, battleModel.getRoom());
-        var vehicleVelocity = vehicleModel.getState().getVehicleVelocity();
+        var vehicleVelocity = vehicleModel.getState().getVelocity();
         vehicleVelocity.setX(vehicleVelocity.getX() + acceleration.getX() * battleModel.getCurrentTimeStepSecs());
         vehicleVelocity.setY(vehicleVelocity.getY() + acceleration.getY() * battleModel.getCurrentTimeStepSecs());
         vehicleVelocity.setAngle(vehicleVelocity.getAngle() + acceleration.getAngle() * battleModel.getCurrentTimeStepSecs());
@@ -42,7 +42,7 @@ public class VehicleMoveProcessor {
                                                       BattleModel battleModel) {
         var position = vehicleModel.getState().getPosition();
         var angle = vehicleModel.getState().getAngle();
-        var vehicleVelocity = vehicleModel.getState().getVehicleVelocity();
+        var vehicleVelocity = vehicleModel.getState().getVelocity();
         calculations.setNextPosition(new Position()
                 .setX(position.getX() + vehicleVelocity.getX() * battleModel.getCurrentTimeStepSecs())
                 .setY(position.getY() + vehicleVelocity.getY() * battleModel.getCurrentTimeStepSecs()));

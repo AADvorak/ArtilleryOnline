@@ -25,7 +25,7 @@ public class VehicleCollideProcessor {
         var otherVehicleModels = battleModel.getVehicles().values().stream()
                 .filter(value -> value.getId() != vehicleModel.getId())
                 .collect(Collectors.toSet());
-        var velocity = vehicleModel.getState().getVehicleVelocity().getX();
+        var velocity = vehicleModel.getState().getVelocity().getX();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
         var vehicleRadius = vehicleModel.getSpecs().getRadius();
         var nextPosition = calculations.getNextPosition();
@@ -79,8 +79,8 @@ public class VehicleCollideProcessor {
     }
 
     private static void doCollide(VehicleModel vehicle, VehicleModel otherVehicle) {
-        var vehicleVelocity = vehicle.getState().getVehicleVelocity();
-        var otherVehicleVelocity = otherVehicle.getState().getVehicleVelocity();
+        var vehicleVelocity = vehicle.getState().getVelocity();
+        var otherVehicleVelocity = otherVehicle.getState().getVelocity();
         var vehicleVelocityX = vehicleVelocity.getX();
         if (vehicleVelocity.getX() * otherVehicleVelocity.getX() > 0) {
             vehicleVelocity.setX(otherVehicleVelocity.getX());

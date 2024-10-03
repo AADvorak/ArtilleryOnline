@@ -32,7 +32,7 @@ public class VehicleAccelerationCalculator {
                 .setY((calculations.getRightWheel().getSumAcceleration().getY()
                         + calculations.getLeftWheel().getSumAcceleration().getY()) / 2);
 
-        var vehicleVelocity = vehicleModel.getState().getVehicleVelocity();
+        var vehicleVelocity = vehicleModel.getState().getVelocity();
         var frictionCoefficient = vehicleModel.getPreCalc().getFrictionCoefficient();
         var frictionAcceleration = new Acceleration()
                 .setX( - vehicleVelocity.getX() * Math.abs(vehicleVelocity.getX()) * frictionCoefficient)
