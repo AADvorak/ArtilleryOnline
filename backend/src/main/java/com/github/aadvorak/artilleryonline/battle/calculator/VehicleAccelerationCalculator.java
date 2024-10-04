@@ -3,10 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.calculator;
 import com.github.aadvorak.artilleryonline.battle.calculations.NearestGroundPoint;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculator.wheel.EngineAccelerationCalculator;
-import com.github.aadvorak.artilleryonline.battle.calculator.wheel.GroundFrictionAccelerationCalculator;
-import com.github.aadvorak.artilleryonline.battle.calculator.wheel.GroundReactionAccelerationCalculator;
-import com.github.aadvorak.artilleryonline.battle.calculator.wheel.GroundStateCalculator;
+import com.github.aadvorak.artilleryonline.battle.calculator.wheel.*;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
@@ -63,6 +60,7 @@ public class VehicleAccelerationCalculator {
         var roomGravityAcceleration = roomModel.getSpecs().getGravityAcceleration();
         var groundReactionCoefficient = roomModel.getSpecs().getGroundReactionCoefficient();
         var groundFrictionCoefficient = roomModel.getSpecs().getGroundFrictionCoefficient();
+        var groundMaxDepth = roomModel.getSpecs().getGroundMaxDepth();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
 
         wheelCalculations.setNearestGroundPointByX(BattleUtils.getNearestGroundPosition(
@@ -73,16 +71,7 @@ public class VehicleAccelerationCalculator {
         EngineAccelerationCalculator.calculate(wheelCalculations, vehicleModel);
         GroundFrictionAccelerationCalculator.calculate(wheelCalculations, vehicleModel, groundFrictionCoefficient);
         GroundReactionAccelerationCalculator.calculate(wheelCalculations, groundReactionCoefficient);
-
-        if (wheelCalculations.getNearestGroundPoint() == null) {
-            wheelCalculations.getGravityAcceleration().setX(0).setY(-roomGravityAcceleration);
-            return;
-        }
-
-        if (wheelCalculations.getDepth() <= roomModel.getSpecs().getGroundMaxDepth()) {
-            wheelCalculations.setGravityAcceleration(getOnGroundGravityAcceleration(roomGravityAcceleration,
-                    wheelCalculations.getGroundAngle()));
-        }
+        GravityAccelerationCalculator.calculate(wheelCalculations, roomGravityAcceleration, groundMaxDepth);
     }
 
     private static void calculateNearestGroundPointAngleAndDepth(WheelCalculations wheelCalculations,
@@ -111,13 +100,6 @@ public class VehicleAccelerationCalculator {
             return Math.atan((otherGroundPosition.getY() - nearestGroundPoint.position().getY())
                     / (otherGroundPosition.getX() - nearestGroundPoint.position().getX()));
         }
-    }
-
-    private static Acceleration getOnGroundGravityAcceleration(double roomGravityAcceleration, double groundAngle) {
-        var groundAccelerationModule = Math.abs(roomGravityAcceleration * Math.sin(groundAngle));
-        return new Acceleration()
-                .setX(-groundAccelerationModule * Math.sin(groundAngle))
-                .setY(-groundAccelerationModule * Math.cos(groundAngle));
     }
 
     private static NearestGroundPoint getNearestGroundPoint(Position objectPosition, double objectRadius,
