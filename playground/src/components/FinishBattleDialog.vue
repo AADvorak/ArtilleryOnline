@@ -14,7 +14,7 @@ const opened = ref(false)
 
 watch(battle, (value) => {
   const battleStage = value?.battleStage
-  if (battleStage && [BattleStage.FINISHED, BattleStage.TERMINATE].includes(battleStage)) {
+  if (battleStage === BattleStage.FINISHED) {
     opened.value = true
   }
 })

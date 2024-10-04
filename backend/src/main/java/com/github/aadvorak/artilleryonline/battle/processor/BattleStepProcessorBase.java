@@ -28,8 +28,6 @@ public class BattleStepProcessorBase implements BattleStepProcessor {
                 battle.setStageAndResetTime(BattleStage.ACTIVE);
             } else if (BattleStage.ACTIVE.equals(battleStage)) {
                 battle.setStageAndResetTime(BattleStage.FINISHED);
-            } else if (BattleStage.FINISHED.equals(battleStage)) {
-                battle.setStageAndResetTime(BattleStage.TERMINATE);
             }
             return true;
         }

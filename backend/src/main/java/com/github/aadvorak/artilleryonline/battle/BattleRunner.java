@@ -1,7 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle;
 
 import com.github.aadvorak.artilleryonline.battle.processor.ActiveBattleStepProcessor;
-import com.github.aadvorak.artilleryonline.battle.processor.FinishedBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.WaitingBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.collection.BattleUpdatesQueue;
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
@@ -25,11 +24,10 @@ public class BattleRunner implements Runnable {
 
     private final WaitingBattleStepProcessor waitingBattleStepProcessor = new WaitingBattleStepProcessor();
     private final ActiveBattleStepProcessor activeBattleStepProcessor = new ActiveBattleStepProcessor();
-    private final FinishedBattleStepProcessor finishedBattleStepProcessor = new FinishedBattleStepProcessor();
 
     @Override
     public void run() {
-        while (!BattleStage.TERMINATE.equals(battle.getBattleStage())) {
+        while (!BattleStage.FINISHED.equals(battle.getBattleStage())) {
             try {
                 Thread.sleep(Battle.TIME_STEP_MS);
             } catch (InterruptedException e) {
@@ -47,8 +45,6 @@ public class BattleRunner implements Runnable {
             waitingBattleStepProcessor.processStep(battle);
         } else if (BattleStage.ACTIVE.equals(battle.getBattleStage())) {
             activeBattleStepProcessor.processStep(battle);
-        } else if (BattleStage.FINISHED.equals(battle.getBattleStage())) {
-            finishedBattleStepProcessor.processStep(battle);
         }
     }
 
