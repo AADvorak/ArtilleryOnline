@@ -1,8 +1,3 @@
-export interface Position {
-  x: number
-  y: number
-}
-
 export interface Size {
   width: number
   height: number
@@ -25,4 +20,30 @@ export enum ShellType {
 export interface ApplicationSettings {
   debug: boolean,
   clientProcessing: boolean
+}
+
+export interface Vector {
+  x: number
+  y: number
+}
+
+export interface Acceleration extends Vector {
+}
+
+export interface Velocity extends Vector {
+}
+
+export interface Position extends Vector {
+}
+
+export interface VehicleVelocity {
+  x: number
+  y: number
+  angle: number
+}
+
+export interface VehicleAcceleration {
+  x: number
+  y: number
+  angle: number
 }

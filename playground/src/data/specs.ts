@@ -32,6 +32,9 @@ export interface RoomSpecs {
   rightTop: Position
   step: number
   gravityAcceleration: number
+  groundReactionCoefficient: number
+  groundFrictionCoefficient: number
+  groundMaxDepth: number
 }
 
 export interface VehicleSpecs {

@@ -1,17 +1,13 @@
 import type { BattleModel, VehicleModel } from '@/data/model'
 import { MovingDirection } from '@/data/common'
-import { VehicleOnGroundProcessor } from '@/processor/vehicle-on-ground-processor'
-import { VehicleUtils } from '@/utils/vehicle-utils'
-import { VehicleGravityAccelerationUtils } from '@/utils/vehicle-gravity-acceleration-utils'
+import { VehicleAccelerationCalculator } from '@/processor/vehicle-acceleration-calculator'
+import { type VehicleCalculations, type WheelCalculations, WheelSign } from '@/data/calculations'
 
 export const VehicleProcessor = {
   processStep(vehicleModel: VehicleModel, battleModel: BattleModel, timeStepSecs: number) {
-    this.recalculateVelocity(vehicleModel, battleModel, timeStepSecs)
-    vehicleModel.state.position = this.getNextVehiclePosition(vehicleModel, timeStepSecs)
-    VehicleOnGroundProcessor.correctVehiclePositionAndAngleOnGround(
-        vehicleModel,
-        battleModel.room
-    )
+    const calculations = this.initVehicleCalculations()
+    this.recalculateVelocity(calculations, vehicleModel, battleModel, timeStepSecs)
+    this.recalculatePositionAndAngle(vehicleModel, timeStepSecs)
     if (vehicleModel.state.gunRotatingDirection) {
       const sign = MovingDirection.RIGHT === vehicleModel.state.gunRotatingDirection ? -1 : 1
       vehicleModel.state.gunAngle += sign * vehicleModel.config.gun.rotationVelocity * timeStepSecs
@@ -21,24 +17,61 @@ export const VehicleProcessor = {
     }
   },
 
-  recalculateVelocity(vehicleModel: VehicleModel, battleModel: BattleModel, timeStepSecs: number) {
-    const acceleration =
-      VehicleUtils.getVehicleAcceleration(vehicleModel) +
-      VehicleGravityAccelerationUtils.getVehicleGravityAcceleration(vehicleModel, battleModel.room)
-    vehicleModel.state.velocity += timeStepSecs * acceleration
+  initVehicleCalculations(): VehicleCalculations {
+    return {
+      nextAngle: undefined,
+      nextPosition: undefined,
+      rightWheel: this.initWheelCalculations(WheelSign.RIGHT),
+      leftWheel: this.initWheelCalculations(WheelSign.LEFT)
+    }
   },
 
-  getNextVehiclePosition(vehicleModel: VehicleModel, timeStepSecs: number) {
-    const position = vehicleModel.state.position
-    const angle = vehicleModel.state.angle
-    const velocity = vehicleModel.state.velocity
-    const velocityX = velocity * Math.cos(angle)
-    const velocityY = velocity * Math.sin(angle)
-    const nextX = position.x + velocityX * timeStepSecs
-    const nextY = position.y + velocityY * timeStepSecs
+  initWheelCalculations(sign: WheelSign): WheelCalculations {
     return {
-      x: nextX,
-      y: nextY
+      depth: undefined,
+      groundAngle: undefined,
+      nearestGroundPoint: undefined,
+      nearestGroundPointByX: undefined,
+      position: undefined,
+      sumAcceleration: undefined,
+      velocity: undefined,
+      sign,
+      gravityAcceleration: { x: 0, y: 0 },
+      engineAcceleration: { x: 0, y: 0 },
+      groundReactionAcceleration: { x: 0, y: 0 },
+      groundFrictionAcceleration: { x: 0, y: 0 }
     }
+  },
+
+  recalculateVelocity(
+    calculations: VehicleCalculations,
+    vehicleModel: VehicleModel,
+    battleModel: BattleModel,
+    timeStepSecs: number
+  ) {
+    const acceleration = VehicleAccelerationCalculator.getVehicleAcceleration(
+      calculations,
+      vehicleModel,
+      battleModel.room
+    )
+    const velocity = vehicleModel.state.velocity
+    velocity.x += acceleration.x * timeStepSecs
+    velocity.y += acceleration.y * timeStepSecs
+    velocity.angle += acceleration.angle * timeStepSecs
+  },
+
+  recalculatePositionAndAngle(vehicleModel: VehicleModel, timeStepSecs: number) {
+    const velocity = vehicleModel.state.velocity
+    const position = vehicleModel.state.position
+    position.x += velocity.x * timeStepSecs
+    position.y += velocity.y * timeStepSecs
+    let angle = vehicleModel.state.angle + velocity.angle * timeStepSecs
+    if (angle > Math.PI / 2) {
+      angle = Math.PI / 2
+    }
+    if (angle < - Math.PI / 2) {
+      angle = - Math.PI / 2
+    }
+    vehicleModel.state.angle = angle
   }
 }

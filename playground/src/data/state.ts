@@ -1,4 +1,4 @@
-import type {Ammo, Position} from "@/data/common";
+import type {Ammo, Position, VehicleVelocity} from "@/data/common";
 import {MovingDirection} from "@/data/common";
 
 export interface GunState {
@@ -27,7 +27,7 @@ export interface ExplosionState {
 }
 
 export interface VehicleState {
-  velocity: number;
+  velocity: VehicleVelocity;
   position: Position
   movingDirection: MovingDirection
   angle: number
