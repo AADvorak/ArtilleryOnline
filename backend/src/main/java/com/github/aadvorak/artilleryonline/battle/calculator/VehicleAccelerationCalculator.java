@@ -4,6 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.NearestGroundPoin
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculator.wheel.EngineAccelerationCalculator;
+import com.github.aadvorak.artilleryonline.battle.calculator.wheel.GroundFrictionAccelerationCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculator.wheel.GroundStateCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
@@ -70,15 +71,13 @@ public class VehicleAccelerationCalculator {
         GroundStateCalculator.calculate(wheelCalculations);
 
         EngineAccelerationCalculator.calculate(wheelCalculations, vehicleModel);
+        GroundFrictionAccelerationCalculator.calculate(wheelCalculations, vehicleModel, groundFrictionCoefficient);
 
         if (wheelCalculations.getNearestGroundPointByX().getY() >= wheelCalculations.getPosition().getY()) {
-            var depth = wheelCalculations.getDepth() != null ? wheelCalculations.getDepth() : 2 * wheelRadius;
-            wheelCalculations.setGroundFrictionAcceleration(getInGroundFrictionAcceleration(
-                    wheelCalculations.getVelocity(), depth, groundFrictionCoefficient));
             if (wheelCalculations.getNearestGroundPoint() != null) {
                 wheelCalculations.setGroundReactionAcceleration(getGroundReactionAcceleration(
-                        wheelCalculations.getVelocity(), wheelCalculations.getGroundAngle(), depth,
-                        groundReactionCoefficient));
+                        wheelCalculations.getVelocity(), wheelCalculations.getGroundAngle(),
+                        wheelCalculations.getDepth(), groundReactionCoefficient));
             }
             return;
         }
@@ -94,8 +93,6 @@ public class VehicleAccelerationCalculator {
         }
         wheelCalculations.setGroundReactionAcceleration(getGroundReactionAcceleration(wheelCalculations.getVelocity(),
                 wheelCalculations.getGroundAngle(), wheelCalculations.getDepth(), groundReactionCoefficient));
-        wheelCalculations.setGroundFrictionAcceleration(getInGroundFrictionAcceleration(wheelCalculations.getVelocity(),
-                wheelCalculations.getDepth(), groundFrictionCoefficient));
     }
 
     private static void calculateNearestGroundPointAngleAndDepth(WheelCalculations wheelCalculations,
@@ -144,12 +141,6 @@ public class VehicleAccelerationCalculator {
                     .setX(VectorUtils.getComponentX(accelerationVerticalProjection, 0.0, groundAngle))
                     .setY(VectorUtils.getComponentY(accelerationVerticalProjection, 0.0, groundAngle));
         }
-    }
-
-    private static Acceleration getInGroundFrictionAcceleration(Velocity velocity, double depth, double coefficient) {
-        return new Acceleration()
-                .setX( - velocity.getX() * depth * coefficient)
-                .setY( - velocity.getY() * depth * coefficient);
     }
 
     private static NearestGroundPoint getNearestGroundPoint(Position objectPosition, double objectRadius,
