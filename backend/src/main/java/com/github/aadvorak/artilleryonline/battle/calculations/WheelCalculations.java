@@ -14,6 +14,8 @@ public class WheelCalculations {
 
     private WheelSign sign;
 
+    private WheelGroundState groundState;
+
     private Position position;
 
     private Velocity velocity;
