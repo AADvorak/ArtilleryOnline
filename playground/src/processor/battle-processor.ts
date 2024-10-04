@@ -8,13 +8,15 @@ import {ExplosionProcessor} from "@/processor/explosion-processor";
 
 export function useBattleProcessor() {
 
+  const TIME_STEP_MS = 15
+
   const battleStore = useBattleStore()
 
   const previousTime = ref<number>(0)
 
   function startProcessing() {
     previousTime.value = new Date().getTime()
-    setTimeout(processStep, 10)
+    setTimeout(processStep, TIME_STEP_MS)
   }
 
   function processStep() {
@@ -30,7 +32,7 @@ export function useBattleProcessor() {
       }
       battleStore.battle = battle
       previousTime.value = currentTime
-      setTimeout(processStep, 10)
+      setTimeout(processStep, TIME_STEP_MS)
     }
   }
 
