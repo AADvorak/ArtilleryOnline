@@ -27,6 +27,8 @@ public class BattleModel {
 
     private boolean updated = false;
 
+    private long lastUpdateTime;
+
     public void removeShellById(int id) {
         shells.remove(id);
     }
@@ -40,5 +42,15 @@ public class BattleModel {
                 .filter(entry -> entry.getValue().getId() == id).findAny()
                 .map(Map.Entry::getKey)
                 .ifPresent(key -> vehicles.remove(key));
+    }
+
+    public void setUpdated(boolean updated) {
+        if (updated && !this.updated) {
+            this.lastUpdateTime = System.currentTimeMillis();
+            this.updated = true;
+        }
+        if (!updated && this.updated) {
+            this.updated = false;
+        }
     }
 }

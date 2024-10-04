@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.processor.FinishedBattleStepPr
 import com.github.aadvorak.artilleryonline.battle.processor.WaitingBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.collection.BattleUpdatesQueue;
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
+import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Set;
@@ -20,7 +21,7 @@ public class BattleRunner implements Runnable {
 
     private final BattleUpdatesQueue battleUpdatesQueue;
 
-    private final boolean clientProcessing;
+    private final ApplicationSettings applicationSettings;
 
     private final WaitingBattleStepProcessor waitingBattleStepProcessor = new WaitingBattleStepProcessor();
     private final ActiveBattleStepProcessor activeBattleStepProcessor = new ActiveBattleStepProcessor();
@@ -35,6 +36,7 @@ public class BattleRunner implements Runnable {
                 throw new RuntimeException(e);
             }
             processBattleStep();
+            setBattleUpdatedByTimeout();
             sendBattleToUpdatesQueueIfUpdated();
         }
         removeBattleFromMap();
@@ -54,8 +56,17 @@ public class BattleRunner implements Runnable {
         userKeys.forEach(userBattleMap::remove);
     }
 
-    private void sendBattleToUpdatesQueueIfUpdated () {
-        if (!clientProcessing || battle.getModel().isUpdated()) {
+    private void setBattleUpdatedByTimeout() {
+        var battleModel = battle.getModel();
+        if (!battleModel.isUpdated()
+                && battle.getAbsoluteTime() - battleModel.getLastUpdateTime()
+                > applicationSettings.getBattleUpdateTimeout()) {
+            battleModel.setUpdated(true);
+        }
+    }
+
+    private void sendBattleToUpdatesQueueIfUpdated() {
+        if (!applicationSettings.isClientProcessing() || battle.getModel().isUpdated()) {
             battleUpdatesQueue.add(battle);
             battle.getModel().setUpdated(false);
         }

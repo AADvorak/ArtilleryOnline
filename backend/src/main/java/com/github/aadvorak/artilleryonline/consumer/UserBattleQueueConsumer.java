@@ -46,7 +46,7 @@ public class UserBattleQueueConsumer implements Runnable {
             userBattleMap.put(firstUserKey, battle);
             userBattleMap.put(secondUserKey, battle);
             var battleRunner = new BattleRunner(battle, userKeys, userBattleMap,
-                    battleUpdatesQueue, applicationSettings.isClientProcessing());
+                    battleUpdatesQueue, applicationSettings);
             new Thread(battleRunner).start();
         }
     }
