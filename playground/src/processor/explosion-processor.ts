@@ -6,5 +6,8 @@ export const ExplosionProcessor = {
     explosionModel.state.radius = explosionModel.specs.radius
         * (explosionModel.specs.duration - explosionModel.state.time)
         / explosionModel.specs.duration
+    if (explosionModel.state.radius < 0) {
+      explosionModel.state.radius = 0
+    }
   }
 }
