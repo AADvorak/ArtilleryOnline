@@ -76,4 +76,8 @@ public class BattleUtils {
     public static double generateRandom(double min, double max) {
         return min + (Math.random() * (max - min));
     }
+
+    public static double gaussian(double x, double sigma, double mu) {
+        return (1.0 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2.0));
+    }
 }

@@ -52,11 +52,17 @@ public class BattleFactory {
         var xMax = roomSpecs.getRightTop().getX();
         var height = roomSpecs.getRightTop().getY() - roomSpecs.getLeftBottom().getY();
         var sigma = BattleUtils.generateRandom(0.5, 1.5);
-        var amplitude = BattleUtils.generateRandom(0.01, 0.05);
+        var sigma1 = BattleUtils.generateRandom(1.0, 1.5);
+        var sigma2 = BattleUtils.generateRandom(1.0, 1.5);
+        var amplitude = BattleUtils.generateRandom(0.01, 0.025);
         var frequency = BattleUtils.generateRandom(5.0, 20.0);
         var mu = (xMax - xMin) / 2;
+        var mu1 = mu - 0.3 * mu - BattleUtils.generateRandom(0.0, 0.6 * mu);
+        var mu2 = mu + 0.3 * mu + BattleUtils.generateRandom(0.0, 0.6 * mu);
         for (var x = xMin; x <= xMax; x += roomSpecs.getStep()) {
-            var y = 1.0 + (height / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2.0));
+            var y = 1.0 + height * BattleUtils.gaussian(x, sigma, mu);
+            y += 0.6 * height * BattleUtils.gaussian(x, sigma1, mu1);
+            y += 0.6 * height * BattleUtils.gaussian(x, sigma2, mu2);
             y += amplitude * Math.sin(frequency * x);
             groundLine.add(y > 0 ? y : 0.0);
         }
