@@ -2,9 +2,9 @@ import {useBattleStore} from "@/stores/battle";
 import {ref} from "vue";
 import {BattleStage} from "@/data/battle";
 import type {Battle} from "@/data/battle";
-import {VehicleProcessor} from "@/processor/vehicle-processor";
-import {ShellProcessor} from "@/processor/shell-processor";
-import {ExplosionProcessor} from "@/processor/explosion-processor";
+import {VehicleProcessor} from "@/battle/processor/vehicle-processor";
+import {ShellProcessor} from "@/battle/processor/shell-processor";
+import {ExplosionProcessor} from "@/battle/processor/explosion-processor";
 
 export function useBattleProcessor() {
 

@@ -1,6 +1,6 @@
 import type { BattleModel, VehicleModel } from '@/data/model'
 import { MovingDirection } from '@/data/common'
-import { VehicleAccelerationCalculator } from '@/processor/vehicle-acceleration-calculator'
+import { VehicleAccelerationCalculator } from '@/battle/calculator/vehicle-acceleration-calculator'
 import { type VehicleCalculations, type WheelCalculations, WheelSign } from '@/data/calculations'
 
 export const VehicleProcessor = {

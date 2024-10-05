@@ -4,7 +4,7 @@ import { useBattleStore } from '@/stores/battle'
 import { useCommandsSender } from '@/composables/commands-sender'
 import {useBattleUpdater} from "@/composables/battle-updater";
 import {type StompClient} from "@/composables/stomp-client";
-import {useBattleProcessor} from "@/processor/battle-processor";
+import {useBattleProcessor} from "@/battle/processor/battle-processor";
 import {useDrawerBase} from "@/composables/drawer/drawer-base";
 import {useVehicleDrawer} from "@/composables/drawer/vehicle-drawer";
 import {useShellDrawer} from "@/composables/drawer/shell-drawer";
