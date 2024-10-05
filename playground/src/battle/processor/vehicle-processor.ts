@@ -28,7 +28,7 @@ export const VehicleProcessor = {
 
   initWheelCalculations(sign: WheelSign): WheelCalculations {
     return {
-      depth: undefined,
+      groundDepth: undefined,
       groundAngle: undefined,
       nearestGroundPoint: undefined,
       nearestGroundPointByX: undefined,
