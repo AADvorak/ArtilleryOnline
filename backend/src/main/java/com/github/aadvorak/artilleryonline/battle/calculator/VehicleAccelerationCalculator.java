@@ -84,9 +84,9 @@ public class VehicleAccelerationCalculator {
         wheelCalculations.setNearestGroundPoint(nearestGroundPoint);
         wheelCalculations.setGroundAngle(getGroundAngle(wheelCalculations.getPosition(), nearestGroundPoint, roomModel));
         if (nearestGroundPoint.position().getY() <= wheelCalculations.getPosition().getY()) {
-            wheelCalculations.setDepth(wheelRadius - nearestGroundPoint.distance());
+            wheelCalculations.setGroundDepth(wheelRadius - nearestGroundPoint.distance());
         } else {
-            wheelCalculations.setDepth(wheelRadius + nearestGroundPoint.distance());
+            wheelCalculations.setGroundDepth(wheelRadius + nearestGroundPoint.distance());
         }
     }
 

@@ -26,7 +26,7 @@ public class WheelCalculations {
 
     private double groundAngle;
 
-    private Double depth;
+    private double groundDepth;
 
     private Acceleration gravityAcceleration = new Acceleration();
 

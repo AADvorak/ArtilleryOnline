@@ -14,7 +14,7 @@ public class GroundReactionAccelerationCalculator {
         var groundAngle = wheelCalculations.getGroundAngle();
         var velocityVerticalProjection = VectorUtils.getVerticalProjection(wheelCalculations.getVelocity(), groundAngle);
         if (velocityVerticalProjection < 0) {
-            var accelerationVerticalProjection = - velocityVerticalProjection * wheelCalculations.getDepth()
+            var accelerationVerticalProjection = - velocityVerticalProjection * wheelCalculations.getGroundDepth()
                     * groundReactionCoefficient;
             wheelCalculations.getGroundReactionAcceleration()
                     .setX(VectorUtils.getComponentX(accelerationVerticalProjection, 0.0, groundAngle))

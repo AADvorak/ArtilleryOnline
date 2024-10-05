@@ -13,7 +13,7 @@ public class EngineAccelerationCalculator {
                 || WheelGroundState.FULL_OVER_GROUND.equals(wheelCalculations.getGroundState())) {
             return;
         }
-        var depth = wheelCalculations.getDepth();
+        var depth = wheelCalculations.getGroundDepth();
         var groundAngle = wheelCalculations.getGroundAngle();
         var direction = vehicleModel.getState().getMovingDirection();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
