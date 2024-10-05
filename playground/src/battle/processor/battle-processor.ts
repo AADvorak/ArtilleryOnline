@@ -1,5 +1,4 @@
 import {useBattleStore} from "@/stores/battle";
-import {ref} from "vue";
 import {BattleStage} from "@/data/battle";
 import type {Battle} from "@/data/battle";
 import {VehicleProcessor} from "@/battle/processor/vehicle-processor";
@@ -12,10 +11,7 @@ export function useBattleProcessor() {
 
   const battleStore = useBattleStore()
 
-  const previousTime = ref<number>(0)
-
   function startProcessing() {
-    previousTime.value = new Date().getTime()
     setTimeout(processStep, TIME_STEP_MS)
   }
 
@@ -24,14 +20,13 @@ export function useBattleProcessor() {
     const battleStage = battle.battleStage
     if ([BattleStage.WAITING, BattleStage.ACTIVE].includes(battleStage)) {
       const currentTime = new Date().getTime()
-      const timeStep = currentTime - previousTime.value
+      const timeStep = currentTime - battleStore.updateTime!
       const timeStepSecs = timeStep / 1000
       battle.time += timeStep
       if (BattleStage.ACTIVE === battleStage) {
         processStepActive(battle, timeStepSecs)
       }
-      battleStore.battle = battle
-      previousTime.value = currentTime
+      battleStore.updateBattle(battle, currentTime)
       setTimeout(processStep, TIME_STEP_MS)
     }
   }

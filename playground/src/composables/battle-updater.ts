@@ -11,7 +11,7 @@ export function useBattleUpdater(stompClient: StompClient) {
       stompClient.client.value?.subscribe('/topic/battle/updates/' + battle.id, function (msgOut) {
         const battle = JSON.parse(msgOut.body) as Battle
         if (battle) {
-          battleStore.battle = battle
+          battleStore.updateBattle(battle)
         }
       })
     })

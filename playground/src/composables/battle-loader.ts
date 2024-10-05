@@ -12,7 +12,7 @@ export function useBattleLoader() {
   async function loadBattle() {
     const battle = await apiRequestSender.getJson<Battle>('/battles', userStore.userKey as string)
     if (battle) {
-      battleStore.battle = battle
+      battleStore.updateBattle(battle)
     } else {
       setTimeout(loadBattle, 500)
     }
