@@ -17,16 +17,26 @@ export function useBattleProcessor() {
 
   function processStep() {
     const battle = JSON.parse(JSON.stringify(battleStore.battle)) as Battle
+    if (battleStore.paused && !battleStore.doStep) {
+      setTimeout(processStep, TIME_STEP_MS)
+      return
+    }
+    if (battleStore.doStep) {
+      battleStore.doStep = false
+    }
     const battleStage = battle.battleStage
     if ([BattleStage.WAITING, BattleStage.ACTIVE].includes(battleStage)) {
       const currentTime = new Date().getTime()
-      const timeStep = currentTime - battleStore.updateTime!
+      let timeStep = currentTime - battleStore.updateTime!
+      if (timeStep > 10 * TIME_STEP_MS) {
+        timeStep = TIME_STEP_MS
+      }
       const timeStepSecs = timeStep / 1000
       battle.time += timeStep
       if (BattleStage.ACTIVE === battleStage) {
         processStepActive(battle, timeStepSecs)
       }
-      battleStore.updateBattle(battle, currentTime)
+      battleStore.updateClientBattle(battle, currentTime)
       setTimeout(processStep, TIME_STEP_MS)
     }
   }

@@ -1,9 +1,11 @@
 import { useBattleStore } from '@/stores/battle'
 import type { Battle } from '@/data/battle'
 import type {StompClient} from "@/composables/stomp-client";
+import {useSettingsStore} from "@/stores/settings";
 
 export function useBattleUpdater(stompClient: StompClient) {
   const battleStore = useBattleStore()
+  const settingsStore = useSettingsStore()
 
   function subscribeAfterWsConnect() {
     stompClient.addConnectCallback(() => {
@@ -11,7 +13,8 @@ export function useBattleUpdater(stompClient: StompClient) {
       stompClient.client.value?.subscribe('/topic/battle/updates/' + battle.id, function (msgOut) {
         const battle = JSON.parse(msgOut.body) as Battle
         if (battle) {
-          battleStore.updateBattle(battle)
+          !battle.paused || battle.model.updated || !settingsStore.settings!.clientProcessing
+              ? battleStore.updateBattle(battle) : battleStore.updateServerBattle(battle)
         }
       })
     })

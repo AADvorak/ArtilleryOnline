@@ -50,4 +50,5 @@ export interface BattleModel {
   shells: ShellModels
   explosions: ExplosionModels
   vehicles: VehicleModels
+  updated: boolean
 }

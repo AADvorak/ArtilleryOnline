@@ -31,6 +31,10 @@ public class Battle {
 
     private boolean paused = false;
 
+    private boolean doStep = false;
+
+    private boolean forceSend = false;
+
     private BattleStage battleStage;
 
     private Map<String, Queue<UserCommand>> userCommandQueues;

@@ -7,7 +7,8 @@ import com.github.aadvorak.artilleryonline.battle.command.Command;
 public class BattleStepProcessorBase implements BattleStepProcessor {
 
     public final void processStep(Battle battle) {
-        if (checkDoStep(battle)) {
+        setDebugFlags(battle);
+        if (!battle.isPaused() || battle.isDoStep()) {
             battle.increaseTime();
             if (changeStageIfNeeded(battle)) {
                 battle.getModel().setUpdated(true);
@@ -34,20 +35,23 @@ public class BattleStepProcessorBase implements BattleStepProcessor {
         return false;
     }
 
-    private boolean checkDoStep(Battle battle) {
+    private void setDebugFlags(Battle battle) {
+        battle.setDoStep(false);
+        battle.setForceSend(false);
         var debugCommand = battle.getDebugCommands().poll();
-        var doStep = false;
         if (debugCommand != null) {
             if (Command.PAUSE.equals(debugCommand.getCommand())) {
                 battle.setPaused(true);
+                battle.getModel().setUpdated(true);
             }
             if (Command.RESUME.equals(debugCommand.getCommand())) {
                 battle.setPaused(false);
+                battle.getModel().setUpdated(true);
             }
             if (Command.STEP.equals(debugCommand.getCommand())) {
-                doStep = true;
+                battle.setDoStep(true);
+                battle.setForceSend(true);
             }
         }
-        return !battle.isPaused() || doStep;
     }
 }

@@ -4,7 +4,22 @@ import type { Battle } from '@/data/battle'
 import { BattleStage } from '@/data/battle'
 
 export const useBattleStore = defineStore('battle', () => {
-  const battle = ref<Battle>()
+  const clientBattle = ref<Battle>()
+
+  const serverBattle = ref<Battle>()
+
+  const battle = computed(() => {
+    if (showServerState.value) {
+      return serverBattle.value
+    }
+    return clientBattle.value || serverBattle.value
+  })
+
+  const paused = ref<boolean>(false)
+
+  const doStep = ref<boolean>(false)
+
+  const showServerState = ref<boolean>(false)
 
   const updateTime = ref<number>()
 
@@ -17,9 +32,35 @@ export const useBattleStore = defineStore('battle', () => {
   const isActive = computed(() => battle.value?.battleStage === BattleStage.ACTIVE)
 
   function updateBattle(value: Battle, time?: number) {
-    battle.value = value
+    clientBattle.value = value
+    serverBattle.value = value
+    paused.value = value.paused
     updateTime.value = time ? time : new Date().getTime()
   }
 
-  return { battle, vehicles, shells, explosions, isActive, updateBattle, updateTime }
+  function updateClientBattle(value: Battle, time?: number) {
+    clientBattle.value = value
+    updateTime.value = time ? time : new Date().getTime()
+  }
+
+  function updateServerBattle(value: Battle, time?: number) {
+    serverBattle.value = value
+    paused.value = value.paused
+    updateTime.value = time ? time : new Date().getTime()
+  }
+
+  return {
+    battle,
+    vehicles,
+    shells,
+    explosions,
+    isActive,
+    updateBattle,
+    updateClientBattle,
+    updateServerBattle,
+    paused,
+    doStep,
+    showServerState,
+    updateTime
+  }
 })

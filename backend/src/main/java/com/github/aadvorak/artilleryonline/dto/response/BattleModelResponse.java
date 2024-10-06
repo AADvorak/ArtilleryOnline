@@ -20,4 +20,6 @@ public class BattleModelResponse {
     private RoomModel room;
 
     private Map<String, VehicleModel> vehicles;
+
+    private boolean updated;
 }

@@ -39,7 +39,10 @@ function millisecondsToTime(milliseconds: number) {
   const minutes = Math.floor(leftMilliseconds / MS_IN_MINUTE)
   leftMilliseconds -= minutes * MS_IN_MINUTE
   const seconds = Math.floor(leftMilliseconds / MS_IN_SECOND)
-  return `${formatTwoDigits(minutes)}:${formatTwoDigits(seconds)}`
+  leftMilliseconds -= seconds * MS_IN_SECOND
+  return battleStore.paused
+      ? `${formatTwoDigits(minutes)}:${formatTwoDigits(seconds)}:${leftMilliseconds}`
+      : `${formatTwoDigits(minutes)}:${formatTwoDigits(seconds)}`
 }
 
 function formatTwoDigits(value: number) {

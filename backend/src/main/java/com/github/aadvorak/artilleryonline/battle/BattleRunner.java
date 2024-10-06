@@ -35,7 +35,8 @@ public class BattleRunner implements Runnable {
             }
             processBattleStep();
             setBattleUpdatedByTimeout();
-            sendBattleToUpdatesQueueIfUpdated();
+            sendBattleToUpdatesQueue();
+            battle.getModel().setUpdated(false);
         }
         removeBattleFromMap();
     }
@@ -61,10 +62,11 @@ public class BattleRunner implements Runnable {
         }
     }
 
-    private void sendBattleToUpdatesQueueIfUpdated() {
-        if (!applicationSettings.isClientProcessing() || battle.getModel().isUpdated()) {
+    private void sendBattleToUpdatesQueue() {
+        if (battle.getModel().isUpdated()
+                || battle.isForceSend()
+                || (!applicationSettings.isClientProcessing() && !battle.isPaused())) {
             battleUpdatesQueue.add(battle);
-            battle.getModel().setUpdated(false);
         }
     }
 }

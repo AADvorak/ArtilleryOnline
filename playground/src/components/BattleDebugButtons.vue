@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { StompClient } from '@/composables/stomp-client'
 import { useBattleStore } from '@/stores/battle'
-import { computed } from 'vue'
 import { useCommandsSender } from '@/composables/commands-sender'
 import { Command } from '@/data/command'
 import {useUserStore} from "@/stores/user";
+import {useSettingsStore} from "@/stores/settings";
 
 const props = defineProps<{
   stompClient: StompClient
@@ -12,11 +12,8 @@ const props = defineProps<{
 
 const battleStore = useBattleStore()
 const userStore = useUserStore()
+const settingsStore = useSettingsStore()
 const commandsSender = useCommandsSender(props.stompClient)
-
-const paused = computed(() => {
-  return battleStore.battle?.paused
-})
 
 function pause() {
   commandsSender.sendDebugCommand({ command: Command.PAUSE })
@@ -27,6 +24,7 @@ function resume() {
 }
 
 function step() {
+  battleStore.doStep = true
   commandsSender.sendDebugCommand({ command: Command.STEP })
 }
 
@@ -36,11 +34,18 @@ function switchVehicle() {
     userStore.userKey = otherUserKey
   }
 }
+
+function switchState() {
+  battleStore.showServerState = !battleStore.showServerState
+}
 </script>
 
 <template>
   <v-btn color="primary" @click="switchVehicle">Switch Vehicle</v-btn>
-  <v-btn v-if="!paused" color="warning" @click="pause">Pause</v-btn>
-  <v-btn v-if="paused" color="success" @click="resume">Resume</v-btn>
-  <v-btn v-if="paused" color="warning" @click="step">Step</v-btn>
+  <v-btn v-if="!battleStore.paused" color="warning" @click="pause">Pause</v-btn>
+  <v-btn v-if="battleStore.paused" color="success" @click="resume">Resume</v-btn>
+  <v-btn v-if="battleStore.paused" color="warning" @click="step">Step</v-btn>
+  <v-btn v-if="battleStore.paused && settingsStore.settings.clientProcessing" color="secondary" @click="switchState">
+    State: {{ battleStore.showServerState ? 'server' : 'client' }}
+  </v-btn>
 </template>
