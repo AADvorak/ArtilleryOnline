@@ -21,7 +21,7 @@ watch(battle, (value) => {
 
 function hideAndCleanBattle() {
   opened.value = false
-  battleStore.battle = undefined
+  battleStore.clear()
   userStore.userKey = undefined
 }
 </script>

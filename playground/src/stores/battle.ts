@@ -49,6 +49,11 @@ export const useBattleStore = defineStore('battle', () => {
     updateTime.value = time ? time : new Date().getTime()
   }
 
+  function clear() {
+    clientBattle.value = undefined
+    serverBattle.value = undefined
+  }
+
   return {
     battle,
     vehicles,
@@ -58,6 +63,7 @@ export const useBattleStore = defineStore('battle', () => {
     updateBattle,
     updateClientBattle,
     updateServerBattle,
+    clear,
     paused,
     doStep,
     showServerState,
