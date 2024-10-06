@@ -41,12 +41,12 @@ function millisecondsToTime(milliseconds: number) {
   const seconds = Math.floor(leftMilliseconds / MS_IN_SECOND)
   leftMilliseconds -= seconds * MS_IN_SECOND
   return battleStore.paused
-      ? `${formatTwoDigits(minutes)}:${formatTwoDigits(seconds)}:${leftMilliseconds}`
-      : `${formatTwoDigits(minutes)}:${formatTwoDigits(seconds)}`
+      ? `${padStart(minutes)}:${padStart(seconds)}:${padStart(leftMilliseconds, 3)}`
+      : `${padStart(minutes)}:${padStart(seconds)}`
 }
 
-function formatTwoDigits(value: number) {
-  return (value < 10 ? '0' : '') + value
+function padStart(value: number, maxLength: number = 2) {
+  return String(value).padStart(maxLength, '0')
 }
 </script>
 
