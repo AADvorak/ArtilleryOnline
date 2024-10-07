@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.state;
 
 import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.VehicleAcceleration;
 import com.github.aadvorak.artilleryonline.battle.common.VehicleVelocity;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,8 @@ public class VehicleState implements State {
     private MovingDirection movingDirection;
 
     private VehicleVelocity velocity = new VehicleVelocity();
+
+    private VehicleAcceleration acceleration = new VehicleAcceleration();
 
     private double angle;
 

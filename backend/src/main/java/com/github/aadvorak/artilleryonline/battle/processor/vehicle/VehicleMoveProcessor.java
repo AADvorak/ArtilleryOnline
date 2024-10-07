@@ -11,7 +11,8 @@ public class VehicleMoveProcessor {
     public static void processStep(VehicleModel vehicleModel, BattleModel battleModel) {
         var calculations = new VehicleCalculations();
         if (!vehicleModel.isCollided()) {
-            recalculateVelocity(calculations, vehicleModel, battleModel);
+            recalculateAcceleration(calculations, vehicleModel, battleModel);
+            recalculateVelocity(vehicleModel, battleModel);
         }
         calculateNextPositionAndAngle(calculations, vehicleModel, battleModel);
         if (!processCollisions(calculations, vehicleModel, battleModel)) {
@@ -20,8 +21,19 @@ public class VehicleMoveProcessor {
         vehicleModel.setCollided(false);
     }
 
-    private static void recalculateVelocity(VehicleCalculations calculations, VehicleModel vehicleModel,BattleModel battleModel) {
+    private static void recalculateAcceleration(VehicleCalculations calculations, VehicleModel vehicleModel, BattleModel battleModel) {
+        var threshold = 0.3;
+        var oldAcceleration = vehicleModel.getState().getAcceleration();
         var acceleration = VehicleAccelerationCalculator.getVehicleAcceleration(calculations, vehicleModel, battleModel.getRoom());
+        if (acceleration.getX() * oldAcceleration.getX() < 0
+                && Math.abs(acceleration.getX() - oldAcceleration.getX()) > threshold) {
+            battleModel.setUpdated(true);
+        }
+        vehicleModel.getState().setAcceleration(acceleration);
+    }
+
+    private static void recalculateVelocity(VehicleModel vehicleModel, BattleModel battleModel) {
+        var acceleration = vehicleModel.getState().getAcceleration();
         var vehicleVelocity = vehicleModel.getState().getVelocity();
         vehicleVelocity.setX(vehicleVelocity.getX() + acceleration.getX() * battleModel.getCurrentTimeStepSecs());
         vehicleVelocity.setY(vehicleVelocity.getY() + acceleration.getY() * battleModel.getCurrentTimeStepSecs());
