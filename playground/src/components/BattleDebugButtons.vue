@@ -5,6 +5,7 @@ import { useCommandsSender } from '@/composables/commands-sender'
 import { Command } from '@/data/command'
 import {useUserStore} from "@/stores/user";
 import {useSettingsStore} from "@/stores/settings";
+import HistoryTracker from "@/components/HistoryTracker.vue";
 
 const props = defineProps<{
   stompClient: StompClient
@@ -48,4 +49,5 @@ function switchState() {
   <v-btn v-if="battleStore.paused && settingsStore.settings.clientProcessing" color="secondary" @click="switchState">
     State: {{ battleStore.showServerState ? 'server' : 'client' }}
   </v-btn>
+  <HistoryTracker />
 </template>
