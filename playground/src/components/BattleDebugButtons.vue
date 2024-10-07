@@ -49,5 +49,5 @@ function switchState() {
   <v-btn v-if="battleStore.paused && settingsStore.settings.clientProcessing" color="secondary" @click="switchState">
     State: {{ battleStore.showServerState ? 'server' : 'client' }}
   </v-btn>
-  <HistoryTracker />
+  <HistoryTracker :commands-sender="commandsSender"/>
 </template>

@@ -14,5 +14,7 @@ public enum Command {
 
     PAUSE,
     RESUME,
-    STEP
+    STEP,
+    START_TRACKING,
+    STOP_TRACKING
 }

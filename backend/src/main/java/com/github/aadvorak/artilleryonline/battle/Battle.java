@@ -41,6 +41,8 @@ public class Battle {
 
     private Queue<DebugCommand> debugCommands = new ConcurrentLinkedQueue<>();
 
+    private String tracking;
+
     public void setStageAndResetTime(BattleStage battleStage) {
         this.battleStage = battleStage;
         this.absoluteTime = System.currentTimeMillis();

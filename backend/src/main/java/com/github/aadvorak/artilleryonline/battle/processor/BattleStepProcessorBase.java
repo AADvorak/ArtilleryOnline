@@ -3,12 +3,16 @@ package com.github.aadvorak.artilleryonline.battle.processor;
 import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.BattleStage;
 import com.github.aadvorak.artilleryonline.battle.command.Command;
+import com.github.aadvorak.artilleryonline.battle.tracking.BattleTracker;
 
 public class BattleStepProcessorBase implements BattleStepProcessor {
 
+    private BattleTracker battleTracker;
+
     public final void processStep(Battle battle) {
-        setDebugFlags(battle);
+        processDebugCommand(battle);
         if (!battle.isPaused() || battle.isDoStep()) {
+            trackBattle(battle);
             battle.increaseTime();
             if (changeStageIfNeeded(battle)) {
                 battle.getModel().setUpdated(true);
@@ -35,7 +39,7 @@ public class BattleStepProcessorBase implements BattleStepProcessor {
         return false;
     }
 
-    private void setDebugFlags(Battle battle) {
+    private void processDebugCommand(Battle battle) {
         battle.setDoStep(false);
         battle.setForceSend(false);
         var debugCommand = battle.getDebugCommands().poll();
@@ -52,6 +56,29 @@ public class BattleStepProcessorBase implements BattleStepProcessor {
                 battle.setDoStep(true);
                 battle.setForceSend(true);
             }
+            if (Command.START_TRACKING.equals(debugCommand.getCommand())) {
+                startTrackingBattle(battle);
+            }
+            if (Command.STOP_TRACKING.equals(debugCommand.getCommand())) {
+                stopTrackingBattle(battle);
+            }
+        }
+    }
+
+    private void startTrackingBattle(Battle battle) {
+        battleTracker = new BattleTracker(battle);
+    }
+
+    private void trackBattle(Battle battle) {
+        if (battleTracker != null) {
+            battleTracker.appendToCsv(battle);
+        }
+    }
+
+    private void stopTrackingBattle(Battle battle) {
+        if (battleTracker != null) {
+            battle.setTracking(battleTracker.getCsv());
+            battleTracker = null;
         }
     }
 }

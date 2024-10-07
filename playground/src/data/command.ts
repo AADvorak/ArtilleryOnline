@@ -11,7 +11,9 @@ export enum Command {
 
   PAUSE = 'PAUSE',
   RESUME = 'RESUME',
-  STEP = 'STEP'
+  STEP = 'STEP',
+  START_TRACKING = 'START_TRACKING',
+  STOP_TRACKING = 'STOP_TRACKING'
 }
 
 export interface CommandParams {

@@ -2,7 +2,6 @@ package com.github.aadvorak.artilleryonline.service;
 
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
-import com.github.aadvorak.artilleryonline.dto.response.BattleStateResponse;
 import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -24,11 +23,11 @@ public class UserBattleService {
         return mapper.map(battle, BattleResponse.class);
     }
 
-    public BattleStateResponse getBattleState(String userKey) {
+    public String getBattleTracking(String userKey) {
         var battle = userBattleMap.get(userKey);
-        if (battle == null) {
+        if (battle == null || battle.getTracking() == null) {
             throw new NotFoundAppException();
         }
-        return mapper.map(battle, BattleStateResponse.class);
+        return battle.getTracking();
     }
 }

@@ -2,17 +2,28 @@
 import { useBattleStore } from '@/stores/battle'
 import { ref, watch } from 'vue'
 import type { Battle } from '@/data/battle'
+import type { CommandsSender } from '@/composables/commands-sender'
+import { Command } from '@/data/command'
+import { useUserStore } from '@/stores/user'
+
+const props = defineProps<{
+  commandsSender: CommandsSender
+}>()
 
 const battleStore = useBattleStore()
+const userStore = useUserStore()
 
 const csv = ref<string>('')
 const active = ref<boolean>(false)
 
-watch(() => battleStore.battle, (value) => {
-  if (active.value) {
-    appendToCsv(value)
+watch(
+  () => battleStore.battle,
+  (value) => {
+    if (active.value) {
+      appendToCsv(value)
+    }
   }
-})
+)
 
 function appendToCsv(battle: Battle) {
   csv.value += `${battle.time}`
@@ -31,7 +42,7 @@ function appendToCsv(battle: Battle) {
 }
 
 function appendNumbersToRow(numbers: number[]) {
-  numbers.forEach(number => csv.value += `,"${number.toFixed(3).replace('.', ',')}"`)
+  numbers.forEach((number) => (csv.value += `,"${number.toFixed(3).replace('.', ',')}"`))
 }
 
 function startTracking() {
@@ -42,17 +53,30 @@ function startTracking() {
   })
   csv.value += '\r\n'
   active.value = true
+  props.commandsSender.sendDebugCommand({ command: Command.START_TRACKING })
 }
 
 function stopTrackingAndSaveCsv() {
+  props.commandsSender.sendDebugCommand({ command: Command.STOP_TRACKING })
   active.value = false
-  saveToFile()
+  saveClientCsv()
   csv.value = ''
+  setTimeout(getAndSaveServerCsv, 1000)
 }
 
-function saveToFile() {
+function saveClientCsv() {
   const href = `data:text/csv;charset=utf-8,${csv.value}`
   const fileName = 'tracking-client.csv'
+  saveToFile(href, fileName)
+}
+
+function getAndSaveServerCsv() {
+  const href = `/api/battles/tracking/${userStore.userKey}`
+  const fileName = 'tracking-server.csv'
+  saveToFile(href, fileName)
+}
+
+function saveToFile(href: string, fileName: string) {
   const element = document.createElement('a')
   element.setAttribute('href', href)
   element.setAttribute('download', fileName)
