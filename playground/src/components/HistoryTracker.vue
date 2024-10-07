@@ -31,7 +31,7 @@ function appendToCsv(battle: Battle) {
 }
 
 function appendNumbersToRow(numbers: number[]) {
-  numbers.forEach(number => csv.value += `,${number.toFixed(3)}`)
+  numbers.forEach(number => csv.value += `,"${number.toFixed(3).replace('.', ',')}"`)
 }
 
 function startTracking() {
