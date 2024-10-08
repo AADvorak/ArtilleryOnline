@@ -15,13 +15,15 @@ public class CommandProcessor {
         if (Command.START_MOVING.equals(userCommand.getCommand())) {
             var direction = userCommand.getParams().getDirection();
             userVehicle.getState().setMovingDirection(direction);
+            userVehicle.setUpdated(true);
         }
 
         if (Command.STOP_MOVING.equals(userCommand.getCommand())) {
             var direction = userCommand.getParams().getDirection();
             var vehicleDirection = userVehicle.getState().getMovingDirection();
-            if (direction != null && vehicleDirection != null && direction.equals(vehicleDirection)) {
+            if (direction != null && direction.equals(vehicleDirection)) {
                 userVehicle.getState().setMovingDirection(null);
+                userVehicle.setUpdated(true);
             }
         }
 
@@ -36,13 +38,15 @@ public class CommandProcessor {
         if (Command.START_GUN_ROTATING.equals(userCommand.getCommand())) {
             var direction = userCommand.getParams().getDirection();
             userVehicle.getState().setGunRotatingDirection(direction);
+            userVehicle.setUpdated(true);
         }
 
         if (Command.STOP_GUN_ROTATING.equals(userCommand.getCommand())) {
             var direction = userCommand.getParams().getDirection();
             var vehicleDirection = userVehicle.getState().getGunRotatingDirection();
-            if (direction != null && vehicleDirection != null && direction.equals(vehicleDirection)) {
+            if (direction != null && direction.equals(vehicleDirection)) {
                 userVehicle.getState().setGunRotatingDirection(null);
+                userVehicle.setUpdated(true);
             }
         }
 

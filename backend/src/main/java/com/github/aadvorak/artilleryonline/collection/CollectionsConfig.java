@@ -20,4 +20,9 @@ public class CollectionsConfig {
     public BattleUpdatesQueue battleUpdatesQueue() {
         return new BattleUpdatesQueue();
     }
+
+    @Bean
+    public BattleStateUpdatesQueue battleStateUpdatesQueue() {
+        return new BattleStateUpdatesQueue();
+    }
 }

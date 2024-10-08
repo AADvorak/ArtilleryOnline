@@ -68,7 +68,6 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
                     return;
                 }
                 CommandProcessor.process(userKey, userCommand, battle.getModel());
-                battle.getModel().setUpdated(true);
                 commandsNumber--;
             }
         });

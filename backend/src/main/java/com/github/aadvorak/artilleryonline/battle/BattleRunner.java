@@ -2,12 +2,17 @@ package com.github.aadvorak.artilleryonline.battle;
 
 import com.github.aadvorak.artilleryonline.battle.processor.ActiveBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.WaitingBattleStepProcessor;
+import com.github.aadvorak.artilleryonline.collection.BattleStateUpdatesQueue;
 import com.github.aadvorak.artilleryonline.collection.BattleUpdatesQueue;
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
+import com.github.aadvorak.artilleryonline.dto.response.BattleModelStateResponse;
+import com.github.aadvorak.artilleryonline.dto.response.BattleStateResponse;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class BattleRunner implements Runnable {
@@ -19,6 +24,8 @@ public class BattleRunner implements Runnable {
     private final UserBattleMap userBattleMap;
 
     private final BattleUpdatesQueue battleUpdatesQueue;
+
+    private final BattleStateUpdatesQueue battleStateUpdatesQueue;
 
     private final ApplicationSettings applicationSettings;
 
@@ -36,7 +43,7 @@ public class BattleRunner implements Runnable {
             processBattleStep();
             setBattleUpdatedByTimeout();
             sendBattleToUpdatesQueue();
-            battle.getModel().setUpdated(false);
+            resetUpdatedFlags();
         }
         removeBattleFromMap();
     }
@@ -67,6 +74,26 @@ public class BattleRunner implements Runnable {
                 || battle.isForceSend()
                 || (!applicationSettings.isClientProcessing() && !battle.isPaused())) {
             battleUpdatesQueue.add(battle);
+        } else {
+            sendBattleStateToUpdatesQueue();
         }
+    }
+
+    private void sendBattleStateToUpdatesQueue() {
+        var vehicleStates = battle.getModel().getVehicles().entrySet().stream()
+                .filter(vehicleEntry -> vehicleEntry.getValue().isUpdated())
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
+        if (!vehicleStates.isEmpty()) {
+            battleStateUpdatesQueue.add(new BattleStateResponse()
+                    .setId(battle.getId())
+                    .setTime(battle.getTime())
+                    .setState(new BattleModelStateResponse()
+                            .setVehicles(vehicleStates)));
+        }
+    }
+
+    private void resetUpdatedFlags() {
+        battle.getModel().setUpdated(false);
+        battle.getModel().getVehicles().values().forEach(vehicle -> vehicle.setUpdated(false));
     }
 }

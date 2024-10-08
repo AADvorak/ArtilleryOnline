@@ -14,7 +14,7 @@ public class VehicleCollideProcessor {
         var vehicleCollide = vehicleCollide(calculations, vehicleModel, battleModel);
         if (vehicleCollide != null) {
             doCollide(vehicleModel, vehicleCollide);
-            battleModel.setUpdated(true);
+            vehicleModel.setUpdated(true);
             return true;
         }
         return false;
@@ -98,5 +98,6 @@ public class VehicleCollideProcessor {
             otherVehicleVelocity.setY(vehicleVelocityY / 2);
         }
         otherVehicle.setCollided(true);
+        otherVehicle.setUpdated(true);
     }
 }

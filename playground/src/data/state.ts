@@ -42,3 +42,11 @@ export interface VehicleState {
 export interface RoomState {
   groundLine: number[]
 }
+
+export interface VehicleStates {
+  [userKey: string]: VehicleState
+}
+
+export interface BattleModelState {
+  vehicles: VehicleStates
+}

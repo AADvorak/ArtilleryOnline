@@ -27,7 +27,7 @@ public class VehicleMoveProcessor {
         var acceleration = VehicleAccelerationCalculator.getVehicleAcceleration(calculations, vehicleModel, battleModel.getRoom());
         if (acceleration.getX() * oldAcceleration.getX() < 0
                 && Math.abs(acceleration.getX() - oldAcceleration.getX()) > threshold) {
-            battleModel.setUpdated(true);
+            vehicleModel.setUpdated(true);
         }
         vehicleModel.getState().setAcceleration(acceleration);
     }

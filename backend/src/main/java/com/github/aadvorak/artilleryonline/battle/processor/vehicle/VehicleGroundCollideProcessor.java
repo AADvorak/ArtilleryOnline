@@ -15,7 +15,7 @@ public class VehicleGroundCollideProcessor {
         var groundCollideWheel = getGroundCollideWheel(calculations, vehicleModel, battleModel);
         if (groundCollideWheel != null) {
             doCollide(vehicleModel, calculations, groundCollideWheel);
-            battleModel.setUpdated(true);
+            vehicleModel.setUpdated(true);
             return true;
         }
         return false;

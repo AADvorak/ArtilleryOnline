@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.consumer;
 
 import com.github.aadvorak.artilleryonline.battle.BattleFactory;
 import com.github.aadvorak.artilleryonline.battle.BattleRunner;
+import com.github.aadvorak.artilleryonline.collection.BattleStateUpdatesQueue;
 import com.github.aadvorak.artilleryonline.collection.BattleUpdatesQueue;
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueue;
@@ -25,6 +26,8 @@ public class UserBattleQueueConsumer implements Runnable {
 
     private final BattleUpdatesQueue battleUpdatesQueue;
 
+    private final BattleStateUpdatesQueue battleStateUpdatesQueue;
+
     private final ApplicationSettings applicationSettings;
 
     @EventListener(ApplicationReadyEvent.class)
@@ -46,7 +49,7 @@ public class UserBattleQueueConsumer implements Runnable {
             userBattleMap.put(firstUserKey, battle);
             userBattleMap.put(secondUserKey, battle);
             var battleRunner = new BattleRunner(battle, userKeys, userBattleMap,
-                    battleUpdatesQueue, applicationSettings);
+                    battleUpdatesQueue, battleStateUpdatesQueue, applicationSettings);
             new Thread(battleRunner).start();
         }
     }
