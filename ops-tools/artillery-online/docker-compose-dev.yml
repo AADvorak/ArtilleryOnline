@@ -12,5 +12,16 @@ services:
     networks:
       artillery-online-net:
 
+  artillery-online-postgres:
+    image: postgres:16.4-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: artillery
+      POSTGRES_USER: artillery
+      POSTGRES_DB: artillery
+    networks:
+      artillery-online-net:
+
 networks:
   artillery-online-net:

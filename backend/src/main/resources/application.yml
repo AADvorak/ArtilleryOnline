@@ -1,0 +1,19 @@
+application:
+  settings:
+    debug: ${APP_SETTINGS_DEBUG}
+    client-processing: ${APP_SETTINGS_CLIENT_PROCESSING}
+    battle-update-timeout: 10000
+spring:
+  application:
+    name: artilleryonline
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+  flyway:
+    locations: classpath:db/migration
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
