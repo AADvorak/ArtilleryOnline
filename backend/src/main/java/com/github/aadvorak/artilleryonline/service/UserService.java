@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.dto.request.RegisterRequest;
 import com.github.aadvorak.artilleryonline.dto.response.ResponseWithToken;
 import com.github.aadvorak.artilleryonline.dto.response.UserResponse;
 import com.github.aadvorak.artilleryonline.entity.User;
+import com.github.aadvorak.artilleryonline.error.exception.AuthenticationAppException;
 import com.github.aadvorak.artilleryonline.error.exception.BadRequestAppException;
 import com.github.aadvorak.artilleryonline.error.response.Validation;
 import com.github.aadvorak.artilleryonline.error.response.ValidationResponse;
@@ -74,8 +75,17 @@ public class UserService {
     }
 
     public UserResponse getCurrentUser() {
-        return mapper.map(userRepository.findByEmail(SecurityContextHolder.getContext()
-                .getAuthentication().getName()).orElseThrow(), UserResponse.class);
+        User user = getUserFromContext();
+        return mapper.map(user, UserResponse.class);
+    }
+
+    public User getUserFromContext() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth instanceof UsernamePasswordAuthenticationToken) {
+            return ((ArtilleryOnlineUserDetails) auth.getPrincipal()).getUser();
+        } else {
+            throw new AuthenticationAppException();
+        }
     }
 
     private ResponseWithToken<UserResponse> createResponseWithToken(User user) {

@@ -13,12 +13,12 @@ public class UserBattleEndpoint {
     private final UserBattleService userBattleService;
 
     @GetMapping
-    public BattleResponse getBattle(@RequestHeader("UserKey") String userKey) {
-        return userBattleService.getBattle(userKey);
+    public BattleResponse getBattle() {
+        return userBattleService.getBattle();
     }
 
-    @GetMapping("/tracking/{userKey}")
-    public String getBattleTracking(@PathVariable("userKey") String userKey) {
-        return userBattleService.getBattleTracking(userKey);
+    @GetMapping("/tracking")
+    public String getBattleTracking() {
+        return userBattleService.getBattleTracking();
     }
 }

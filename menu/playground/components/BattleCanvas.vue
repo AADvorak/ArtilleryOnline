@@ -55,6 +55,7 @@ onMounted(() => {
   initCanvasAndCtx()
   useBattleUpdater(props.stompClient).subscribeAfterWsConnect()
   useKeyboardListener(useCommandsSender(props.stompClient)).startListening()
+  startBattle()
 })
 
 function startBattle() {

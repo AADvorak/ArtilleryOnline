@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.error;
 
+import com.github.aadvorak.artilleryonline.error.exception.AuthenticationAppException;
 import com.github.aadvorak.artilleryonline.error.exception.BadRequestAppException;
 import com.github.aadvorak.artilleryonline.error.response.ErrorResponse;
 import com.github.aadvorak.artilleryonline.error.response.ValidationResponse;
@@ -42,10 +43,15 @@ public class GlobalErrorHandler {
 
     @ExceptionHandler(BadRequestAppException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBadCredentialsException(BadRequestAppException exc) {
+    public ErrorResponse handleBadRequestAppException(BadRequestAppException exc) {
         return new ErrorResponse()
                 .setCode("BadRequestAppException")
                 .setValidation(exc.getValidation());
+    }
+
+    @ExceptionHandler(AuthenticationAppException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public void handleBadRequestAppException() {
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

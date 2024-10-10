@@ -13,18 +13,22 @@ public class UserBattleService {
 
     private final UserBattleMap userBattleMap;
 
+    private final UserService userService;
+
     private final ModelMapper mapper = new ModelMapper();
 
-    public BattleResponse getBattle(String userKey) {
-        var battle = userBattleMap.get(userKey);
+    public BattleResponse getBattle() {
+        var nickname = userService.getUserFromContext().getNickname();
+        var battle = userBattleMap.get(nickname);
         if (battle == null) {
             throw new NotFoundAppException();
         }
         return mapper.map(battle, BattleResponse.class);
     }
 
-    public String getBattleTracking(String userKey) {
-        var battle = userBattleMap.get(userKey);
+    public String getBattleTracking() {
+        var nickname = userService.getUserFromContext().getNickname();
+        var battle = userBattleMap.get(nickname);
         if (battle == null || battle.getTracking() == null) {
             throw new NotFoundAppException();
         }

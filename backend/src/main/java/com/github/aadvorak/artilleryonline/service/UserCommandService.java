@@ -11,12 +11,14 @@ import org.springframework.stereotype.Service;
 public class UserCommandService {
 
     private final UserBattleMap userBattleMap;
+    private final UserService userService;
 
-    public void addCommand(String userKey, UserCommand userCommand) {
-        var battle = userBattleMap.get(userKey);
+    public void addCommand(UserCommand userCommand) {
+        var nickname = userService.getUserFromContext().getNickname();
+        var battle = userBattleMap.get(nickname);
         if (battle == null || !BattleStage.ACTIVE.equals(battle.getBattleStage())) {
             return;
         }
-        battle.getUserCommandQueues().get(userKey).add(userCommand);
+        battle.getUserCommandQueues().get(nickname).add(userCommand);
     }
 }

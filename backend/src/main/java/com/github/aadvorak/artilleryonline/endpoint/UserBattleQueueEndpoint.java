@@ -12,7 +12,7 @@ public class UserBattleQueueEndpoint {
     private final UserBattleQueueService userBattleQueueService;
 
     @PutMapping
-    public void addUserToQueue(@RequestHeader("UserKey") String userKey) {
-        userBattleQueueService.addUserToQueue(userKey);
+    public void addUserToQueue() {
+        userBattleQueueService.addUserToQueue();
     }
 }

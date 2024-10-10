@@ -36,7 +36,8 @@ export class ApiRequestSender {
   }
 
   async processResponseJson(response: Response) {
-    const json = await response.json()
+    const isJson = response.headers.get('content-type')?.includes('application/json')
+    const json = isJson ? await response.json() : null
     if (response.ok) {
       return json
     }

@@ -1,6 +1,6 @@
 package com.github.aadvorak.artilleryonline.ws;
 
-import com.github.aadvorak.artilleryonline.battle.command.UserKeyAndDebugCommand;
+import com.github.aadvorak.artilleryonline.battle.command.DebugCommand;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import com.github.aadvorak.artilleryonline.service.DebugCommandService;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +15,10 @@ public class DebugCommandController {
     private final ApplicationSettings applicationSettings;
 
     @MessageMapping("/debug-commands")
-    public void addCommand(UserKeyAndDebugCommand userKeyAndCommand) {
+    public void addCommand(DebugCommand debugCommand) {
+
         if (applicationSettings.isDebug()) {
-            debugCommandService.addCommand(userKeyAndCommand.getUserKey(), userKeyAndCommand.getDebugCommand());
+            debugCommandService.addCommand(debugCommand);
         }
     }
 }

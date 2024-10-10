@@ -4,14 +4,12 @@ import { ref, watch } from 'vue'
 import type { Battle } from '@/playground/data/battle'
 import type { CommandsSender } from '@/playground/composables/commands-sender'
 import { Command } from '@/playground/data/command'
-import {useUserKeyStore} from "~/playground/stores/user-key";
 
 const props = defineProps<{
   commandsSender: CommandsSender
 }>()
 
 const battleStore = useBattleStore()
-const userStore = useUserKeyStore()
 
 const csv = ref<string>('')
 const active = ref<boolean>(false)
@@ -71,7 +69,7 @@ function saveClientCsv() {
 }
 
 function getAndSaveServerCsv() {
-  const href = `/api/battles/tracking/${userStore.userKey}`
+  const href = `/api/battles/tracking`
   const fileName = 'tracking-server.csv'
   saveToFile(href, fileName)
 }

@@ -10,9 +10,11 @@ import org.springframework.stereotype.Service;
 public class DebugCommandService {
 
     private final UserBattleMap userBattleMap;
+    private final UserService userService;
 
-    public void addCommand(String userKey, DebugCommand debugCommand) {
-        var battle = userBattleMap.get(userKey);
+    public void addCommand(DebugCommand debugCommand) {
+        var nickname = userService.getUserFromContext().getNickname();
+        var battle = userBattleMap.get(nickname);
         if (battle == null) {
             return;
         }

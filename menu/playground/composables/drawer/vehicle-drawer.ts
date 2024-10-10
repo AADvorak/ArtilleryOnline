@@ -2,14 +2,14 @@ import type { DrawerBase } from '@/playground/composables/drawer/drawer-base'
 import type { Ref } from 'vue'
 import { useBattleStore } from '@/playground/stores/battle'
 import { VehicleUtils } from '@/playground/utils/vehicle-utils'
-import { useUserKeyStore } from '@/playground/stores/user-key'
+import {useUserStore} from "~/stores/user";
 
 export function useVehicleDrawer(
   drawerBase: DrawerBase,
   ctx: Ref<CanvasRenderingContext2D | undefined>
 ) {
   const battleStore = useBattleStore()
-  const userStore = useUserKeyStore()
+  const userStore = useUserStore()
 
   function draw() {
     if (battleStore.vehicles) {
@@ -93,7 +93,7 @@ export function useVehicleDrawer(
   }
 
   function getColor(userKey: string) {
-    return userKey === userStore.userKey ? 'rgb(60,200,0)' : 'rgb(200 0 0)'
+    return userKey === userStore.user!.nickname ? 'rgb(60,200,0)' : 'rgb(200 0 0)'
   }
 
   return { draw }

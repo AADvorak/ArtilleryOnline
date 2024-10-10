@@ -2,11 +2,8 @@
 import { computed, ref, watch } from 'vue'
 import { useBattleStore } from '@/playground/stores/battle'
 import { BattleStage } from '@/playground/data/battle'
-import {useUserKeyStore} from "~/playground/stores/user-key";
 
 const battleStore = useBattleStore()
-
-const userStore = useUserKeyStore()
 
 const battle = computed(() => battleStore.battle)
 
@@ -22,7 +19,6 @@ watch(battle, (value) => {
 function hideAndCleanBattle() {
   opened.value = false
   battleStore.clear()
-  userStore.userKey = undefined
 }
 </script>
 

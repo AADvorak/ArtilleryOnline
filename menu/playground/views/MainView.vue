@@ -5,7 +5,7 @@ import FinishBattleDialog from "@/playground/components/FinishBattleDialog.vue";
 import {useStompClient} from "@/playground/composables/stomp-client";
 import {useSettingsStore} from "@/playground/stores/settings";
 import {onMounted} from "vue";
-import {ApiRequestSender} from "@/playground/api/api-request-sender";
+import {ApiRequestSender} from "@/api/api-request-sender";
 import type {ApplicationSettings} from "@/playground/data/common";
 
 const stompClient = useStompClient()
@@ -18,7 +18,7 @@ onMounted(() => {
 
 async function loadApplicationSettings() {
   settingsStore.settings = await new ApiRequestSender()
-      .getJson<ApplicationSettings>('/application/settings', '')
+      .getJson<ApplicationSettings>('/application/settings')
 }
 </script>
 

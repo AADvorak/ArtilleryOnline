@@ -4,21 +4,18 @@ import { useBattleStore } from '@/playground/stores/battle'
 import type {StompClient} from "@/playground/composables/stomp-client";
 import {useCommandsSender} from "@/playground/composables/commands-sender";
 import {Command} from "@/playground/data/command";
-import {useUserKeyStore} from "~/playground/stores/user-key";
+import {useUserStore} from "~/stores/user";
 
 const props = defineProps<{
   stompClient: StompClient
 }>()
 
-const userStore = useUserKeyStore()
+const userStore = useUserStore()
 const battleStore = useBattleStore()
 const commandsSender = useCommandsSender(props.stompClient)
 
 const userVehicle = computed(() => {
-  if (!userStore.userKey) {
-    return null
-  }
-  return battleStore.battle?.model.vehicles[userStore.userKey]
+  return battleStore.battle?.model.vehicles[userStore.user!.nickname]
 })
 
 const ammo = computed(() => {

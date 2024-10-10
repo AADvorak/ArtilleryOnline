@@ -2,10 +2,10 @@
 
 import {useBattleStore} from "@/playground/stores/battle";
 import {computed} from "vue";
-import {useUserKeyStore} from "~/playground/stores/user-key";
+import {useUserStore} from "~/stores/user";
 
 const battleStore = useBattleStore()
-const userStore = useUserKeyStore()
+const userStore = useUserStore()
 
 const props = defineProps<{
   userKey: string
@@ -33,7 +33,7 @@ const userHp = computed(() => {
 })
 
 const color = computed(() => {
-  return props.userKey === userStore.userKey ? 'success' : 'error'
+  return props.userKey === userStore.user!.nickname ? 'success' : 'error'
 })
 </script>
 

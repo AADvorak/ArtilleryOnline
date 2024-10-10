@@ -13,10 +13,13 @@ public class UserBattleQueueService {
 
     private final UserBattleMap userBattleMap;
 
-    public void addUserToQueue(String userKey) {
-        if (userBattleMap.get(userKey) != null) {
+    private final UserService userService;
+
+    public void addUserToQueue() {
+        var nickname = userService.getUserFromContext().getNickname();
+        if (userBattleMap.get(nickname) != null) {
             return;
         }
-        userBattleQueue.add(userKey);
+        userBattleQueue.add(nickname);
     }
 }
