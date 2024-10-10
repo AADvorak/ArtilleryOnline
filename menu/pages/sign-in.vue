@@ -5,6 +5,7 @@ import {useUserStore} from "~/stores/user";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import type {LoginRequest} from "~/data/request";
 import type {User} from "~/data/model";
+import {useRequestErrorHandler} from "~/composables/request-error-handler";
 
 const router = useRouter()
 
@@ -28,7 +29,7 @@ async function signIn() {
       useUserStore().user = await new ApiRequestSender().postJson<LoginRequest, User>('/users/login', request)
       await router.push('/menu')
     } catch (e) {
-      console.log(e)
+      useRequestErrorHandler().handle(e, validation)
     }
   }
 }

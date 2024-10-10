@@ -5,6 +5,9 @@ import com.github.aadvorak.artilleryonline.dto.request.RegisterRequest;
 import com.github.aadvorak.artilleryonline.dto.response.ResponseWithToken;
 import com.github.aadvorak.artilleryonline.dto.response.UserResponse;
 import com.github.aadvorak.artilleryonline.entity.User;
+import com.github.aadvorak.artilleryonline.error.exception.BadRequestAppException;
+import com.github.aadvorak.artilleryonline.error.response.Validation;
+import com.github.aadvorak.artilleryonline.error.response.ValidationResponse;
 import com.github.aadvorak.artilleryonline.repository.UserRepository;
 import com.github.aadvorak.artilleryonline.security.ArtilleryOnlineUserDetails;
 import com.github.aadvorak.artilleryonline.security.JwtTokenUtil;
@@ -12,16 +15,28 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
+    private static final List<ValidationResponse> BAD_CREDENTIALS_VALIDATION = List.of(
+            new ValidationResponse()
+                    .setValidation(Validation.WRONG)
+                    .setField("email"),
+            new ValidationResponse()
+                    .setValidation(Validation.WRONG)
+                    .setField("password")
+    );
+
+    private static final List<String> UNIQUE_USER_FIELDS = List.of("email", "nickname");
 
     private final UserRepository userRepository;
 
@@ -38,7 +53,7 @@ public class UserService {
             User user = ((ArtilleryOnlineUserDetails) auth.getPrincipal()).getUser();
             return createResponseWithToken(user);
         } else {
-            throw new BadCredentialsException(request.getEmail());
+            throw new BadRequestAppException(BAD_CREDENTIALS_VALIDATION);
         }
     }
 
@@ -49,7 +64,12 @@ public class UserService {
             user = userRepository.save(user);
             return createResponseWithToken(user);
         } catch (DataIntegrityViolationException ex) {
-            throw new RuntimeException();
+            throw new BadRequestAppException(UNIQUE_USER_FIELDS.stream()
+                    .filter(field -> ex.getMessage().contains("(" + field + ")"))
+                    .map(field -> new ValidationResponse()
+                            .setValidation(Validation.EXISTS)
+                            .setField(field))
+                    .toList());
         }
     }
 

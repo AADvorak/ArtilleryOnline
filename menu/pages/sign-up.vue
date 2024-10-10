@@ -5,6 +5,7 @@ import {ApiRequestSender} from "~/api/api-request-sender";
 import type {RegisterRequest} from "~/data/request";
 import type {User} from "~/data/model";
 import {useUserStore} from "~/stores/user";
+import {useRequestErrorHandler} from "~/composables/request-error-handler";
 
 const router = useRouter()
 
@@ -37,7 +38,7 @@ async function signUp() {
       useUserStore().user = await new ApiRequestSender().postJson<RegisterRequest, User>('/users', request)
       await router.push('/menu')
     } catch (e) {
-      console.log(e)
+      useRequestErrorHandler().handle(e, validation)
     }
   }
 }

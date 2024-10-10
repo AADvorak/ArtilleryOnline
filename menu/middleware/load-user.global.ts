@@ -2,7 +2,7 @@ import {useUserStore} from "~/stores/user";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import type {User} from "~/data/model";
 
-const UNSIGNED_PATHS = ['/', '/sign-in', 'sign-up']
+const UNSIGNED_PATHS = ['/', '/sign-in', '/sign-up']
 
 export default defineNuxtRouteMiddleware(async (to) => {
   const userStore = useUserStore()

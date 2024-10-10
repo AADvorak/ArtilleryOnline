@@ -14,7 +14,7 @@ export class ApiRequestSender {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(body ? body : {})
-    }).then(this.processResponseJson)
+    })
     return this.processResponseJson(response)
   }
 
@@ -25,7 +25,7 @@ export class ApiRequestSender {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(body)
-    }).then(this.processResponseJson)
+    })
     return this.processResponseJson(response)
   }
 
@@ -42,7 +42,7 @@ export class ApiRequestSender {
     }
     throw {
       status: response.status,
-      errors: json
+      error: json
     }
   }
 }
