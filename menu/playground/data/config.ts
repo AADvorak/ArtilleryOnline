@@ -1,0 +1,7 @@
+import type {GunSpecs} from "@/playground/data/specs";
+import type {Ammo} from "@/playground/data/common";
+
+export interface VehicleConfig {
+  gun: GunSpecs
+  ammo: Ammo
+}
