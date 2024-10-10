@@ -36,6 +36,11 @@ public class UserEndpoint {
         return responseWithToken.getResponse();
     }
 
+    @DeleteMapping("/logout")
+    public void logout(HttpServletResponse response) {
+        setCookieWithTokenToResponse(null, response);
+    }
+
     private void setCookieWithTokenToResponse(String token, HttpServletResponse response) {
         var cookie = new Cookie("Token", token);
         cookie.setPath("/");

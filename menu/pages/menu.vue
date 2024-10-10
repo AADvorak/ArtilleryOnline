@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import {useRouter} from "#app";
+import {ApiRequestSender} from "~/api/api-request-sender";
+import {useUserStore} from "~/stores/user";
 
 const router = useRouter()
+const userStore = useUserStore()
 
 function toBattle() {
   router.push('/battle')
@@ -11,8 +14,10 @@ function toProfile() {
   router.push('/profile')
 }
 
-function signOut() {
-  router.push('/')
+async function signOut() {
+  await new ApiRequestSender().delete('/users/logout')
+  userStore.user = null
+  await router.push('/')
 }
 </script>
 
