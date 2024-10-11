@@ -2,8 +2,10 @@
 import { computed, ref, watch } from 'vue'
 import { useBattleStore } from '~/stores/battle'
 import { BattleStage } from '@/playground/data/battle'
+import {useRouter} from "#app";
 
 const battleStore = useBattleStore()
+const router = useRouter()
 
 const battle = computed(() => battleStore.battle)
 
@@ -19,6 +21,7 @@ watch(battle, (value) => {
 function hideAndCleanBattle() {
   opened.value = false
   battleStore.clear()
+  router.push('/battle')
 }
 </script>
 
