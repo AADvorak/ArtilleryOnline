@@ -1,6 +1,6 @@
 import type { DrawerBase } from '@/playground/composables/drawer/drawer-base'
 import type { Ref } from 'vue'
-import { useBattleStore } from '@/playground/stores/battle'
+import { useBattleStore } from '~/stores/battle'
 import { VehicleUtils } from '@/playground/utils/vehicle-utils'
 import {useUserStore} from "~/stores/user";
 

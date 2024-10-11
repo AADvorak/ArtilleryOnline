@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {useBattleStore} from "@/playground/stores/battle";
+import {useBattleStore} from "~/stores/battle";
 import {computed} from "vue";
 import {BattleStage} from "@/playground/data/battle";
 

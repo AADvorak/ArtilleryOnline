@@ -1,4 +1,4 @@
-import {useBattleStore} from "@/playground/stores/battle";
+import {useBattleStore} from "~/stores/battle";
 import {ApiRequestSender} from "@/api/api-request-sender";
 import type {Battle} from "@/playground/data/battle";
 

@@ -2,7 +2,7 @@
 import {useRouter} from "#app";
 import {useBattleLoader} from "~/playground/composables/battle-loader";
 import {ApiRequestSender} from "~/api/api-request-sender";
-import {useBattleStore} from "~/playground/stores/battle";
+import {useBattleStore} from "~/stores/battle";
 
 const router = useRouter()
 const battleStore = useBattleStore()

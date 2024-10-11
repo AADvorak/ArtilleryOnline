@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import {computed} from "vue";
-import {useBattleStore} from "@/playground/stores/battle";
+import {useBattleStore} from "~/stores/battle";
 import ReloadingProgress from "@/playground/components/ReloadingProgress.vue";
 import HitPointsBar from "@/playground/components/HitPointsBar.vue";
 import BattleTimer from "@/playground/components/BattleTimer.vue";
 import type {StompClient} from "@/playground/composables/stomp-client";
 import BattleDebugButtons from "@/playground/components/BattleDebugButtons.vue";
-import {useSettingsStore} from "@/playground/stores/settings";
+import {useSettingsStore} from "~/stores/settings";
 
 const props = defineProps<{
   stompClient: StompClient

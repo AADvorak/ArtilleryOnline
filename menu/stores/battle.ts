@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import type { Battle } from '@/playground/data/battle'
-import { BattleStage } from '@/playground/data/battle'
+import type { Battle } from '~/playground/data/battle'
+import { BattleStage } from '~/playground/data/battle'
 
 export const useBattleStore = defineStore('battle', () => {
   const clientBattle = ref<Battle>()

@@ -1,5 +1,5 @@
 import type {DebugCommand, UserCommand} from '@/playground/data/command'
-import { useBattleStore } from '@/playground/stores/battle'
+import { useBattleStore } from '~/stores/battle'
 import type {StompClient} from "@/playground/composables/stomp-client";
 
 export interface CommandsSender {

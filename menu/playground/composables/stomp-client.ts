@@ -1,5 +1,5 @@
 import { CompatClient, Stomp } from '@stomp/stompjs'
-import {useHostStore} from "@/playground/stores/host";
+import {useHostStore} from "~/stores/host";
 import {type Ref, ref} from "vue";
 
 export interface StompClient {

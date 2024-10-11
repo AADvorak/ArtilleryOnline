@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { StompClient } from '@/playground/composables/stomp-client'
-import { useBattleStore } from '@/playground/stores/battle'
-import { useCommandsSender } from '@/playground/composables/commands-sender'
-import { Command } from '@/playground/data/command'
-import {useSettingsStore} from "@/playground/stores/settings";
+import type {StompClient} from '@/playground/composables/stomp-client'
+import {useBattleStore} from '@/stores/battle'
+import {useCommandsSender} from '@/playground/composables/commands-sender'
+import {Command} from '@/playground/data/command'
+import {useSettingsStore} from "@/stores/settings";
 import HistoryTracker from "@/playground/components/HistoryTracker.vue";
 
 const props = defineProps<{

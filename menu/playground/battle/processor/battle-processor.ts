@@ -1,4 +1,4 @@
-import {useBattleStore} from "@/playground/stores/battle";
+import {useBattleStore} from "~/stores/battle";
 import {BattleStage} from "@/playground/data/battle";
 import type {Battle} from "@/playground/data/battle";
 import {VehicleProcessor} from "@/playground/battle/processor/vehicle-processor";

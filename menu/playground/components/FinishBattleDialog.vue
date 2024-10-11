@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { useBattleStore } from '@/playground/stores/battle'
+import { useBattleStore } from '~/stores/battle'
 import { BattleStage } from '@/playground/data/battle'
 
 const battleStore = useBattleStore()

@@ -1,7 +1,7 @@
-import { useBattleStore } from '@/playground/stores/battle'
+import { useBattleStore } from '~/stores/battle'
 import type {Battle, BattleState} from '@/playground/data/battle'
 import type {StompClient} from "@/playground/composables/stomp-client";
-import {useSettingsStore} from "@/playground/stores/settings";
+import {useSettingsStore} from "~/stores/settings";
 
 export function useBattleUpdater(stompClient: StompClient) {
   const battleStore = useBattleStore()

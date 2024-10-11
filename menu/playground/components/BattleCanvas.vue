@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { useBattleStore } from '@/playground/stores/battle'
+import { useBattleStore } from '~/stores/battle'
 import { useCommandsSender } from '@/playground/composables/commands-sender'
 import {useBattleUpdater} from "@/playground/composables/battle-updater";
 import {type StompClient} from "@/playground/composables/stomp-client";
@@ -11,7 +11,7 @@ import {useShellDrawer} from "@/playground/composables/drawer/shell-drawer";
 import {useExplosionDrawer} from "@/playground/composables/drawer/explosion-drawer";
 import {useGroundDrawer} from "@/playground/composables/drawer/ground-drawer";
 import {useKeyboardListener} from "@/playground/composables/keyboard-listener";
-import {useSettingsStore} from "@/playground/stores/settings";
+import {useSettingsStore} from "~/stores/settings";
 
 const props = defineProps<{
   stompClient: StompClient

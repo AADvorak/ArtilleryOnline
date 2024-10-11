@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useBattleStore } from '@/playground/stores/battle'
+import { useBattleStore } from '~/stores/battle'
 import type {StompClient} from "@/playground/composables/stomp-client";
 import {useCommandsSender} from "@/playground/composables/commands-sender";
 import {Command} from "@/playground/data/command";
