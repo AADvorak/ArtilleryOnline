@@ -2,7 +2,6 @@ package com.github.aadvorak.artilleryonline.service;
 
 import com.github.aadvorak.artilleryonline.dto.request.LoginRequest;
 import com.github.aadvorak.artilleryonline.dto.request.RegisterRequest;
-import com.github.aadvorak.artilleryonline.dto.response.ResponseWithToken;
 import com.github.aadvorak.artilleryonline.dto.response.UserResponse;
 import com.github.aadvorak.artilleryonline.entity.User;
 import com.github.aadvorak.artilleryonline.error.exception.AuthenticationAppException;
@@ -47,23 +46,23 @@ public class UserService {
 
     private final ModelMapper mapper = new ModelMapper();
 
-    public ResponseWithToken<UserResponse> login(LoginRequest request) {
+    public UserResponse login(LoginRequest request) {
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         if (auth.isAuthenticated()) {
             User user = ((ArtilleryOnlineUserDetails) auth.getPrincipal()).getUser();
-            return createResponseWithToken(user);
+            return createUserResponse(user);
         } else {
             throw new BadRequestAppException(BAD_CREDENTIALS_VALIDATION);
         }
     }
 
-    public ResponseWithToken<UserResponse> register(RegisterRequest request) {
+    public UserResponse register(RegisterRequest request) {
         User user = mapper.map(request, User.class);
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         try {
             user = userRepository.save(user);
-            return createResponseWithToken(user);
+            return createUserResponse(user);
         } catch (DataIntegrityViolationException ex) {
             throw new BadRequestAppException(UNIQUE_USER_FIELDS.stream()
                     .filter(field -> ex.getMessage().contains("(" + field + ")"))
@@ -88,10 +87,9 @@ public class UserService {
         }
     }
 
-    private ResponseWithToken<UserResponse> createResponseWithToken(User user) {
+    private UserResponse createUserResponse(User user) {
         UserResponse response = mapper.map(user, UserResponse.class);
-        return new ResponseWithToken<UserResponse>()
-                .setResponse(response)
-                .setToken(jwtTokenUtil.generateToken(user.getEmail()));
+        response.setToken(jwtTokenUtil.generateToken(user.getEmail()));
+        return response;
     }
 }

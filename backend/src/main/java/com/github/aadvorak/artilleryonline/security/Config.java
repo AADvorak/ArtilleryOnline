@@ -32,9 +32,8 @@ public class Config {
     public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/api/users/**").permitAll()
-                .requestMatchers("/api/battles/**").permitAll()
                 .requestMatchers("/api/application/**").permitAll()
-                .anyRequest().permitAll());
+                .anyRequest().authenticated());
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 

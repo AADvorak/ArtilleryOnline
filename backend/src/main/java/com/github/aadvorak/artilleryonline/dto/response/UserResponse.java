@@ -12,4 +12,6 @@ public class UserResponse {
     private String email;
 
     private String nickname;
+
+    private String token;
 }
