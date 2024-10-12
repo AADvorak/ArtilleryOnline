@@ -9,6 +9,8 @@ import {useRequestErrorHandler} from "~/composables/request-error-handler";
 
 const router = useRouter()
 
+const emailField = ref<HTMLInputElement | null>(null)
+
 const form = reactive({
   email: '',
   nickname: '',
@@ -20,6 +22,10 @@ const validation = reactive({
   nickname: [],
   password: [],
   passwordConfirm: []
+})
+
+onMounted(() => {
+  emailField.value?.focus()
 })
 
 function signIn() {
@@ -72,6 +78,7 @@ function preValidateForm() {
     <v-card-text>
       <v-form @submit.prevent="signUp">
         <v-text-field
+            ref="emailField"
             v-model="form.email"
             :error="!!validation.email.length"
             :error-messages="validation.email"
