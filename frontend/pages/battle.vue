@@ -6,6 +6,7 @@ import {useQueueStore} from "~/stores/queue";
 import {useSettingsStore} from "~/stores/settings";
 import type {Battle} from "~/playground/data/battle";
 import type {UserBattleQueueResponse} from "~/data/response";
+import {DateUtils} from "~/utils/DateUtils";
 
 const router = useRouter()
 const battleStore = useBattleStore()
@@ -55,8 +56,8 @@ function checkUserInQueue() {
   if (!queueStore.addTime) {
     return false
   }
-  let addDate = new Date(queueStore.addTime)
-  let now = new Date()
+  const addDate = DateUtils.getClientDate(queueStore.addTime, settingsStore.timeZoneOffset)
+  const now = new Date()
   if (now.getTime() - addDate.getTime() > settingsStore.settings!.userBattleQueueTimeout) {
     queueStore.addTime = null
     return false

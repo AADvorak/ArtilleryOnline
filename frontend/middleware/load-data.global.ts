@@ -3,7 +3,6 @@ import {useSettingsStore} from "~/stores/settings";
 import {useBattleStore} from "~/stores/battle";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import type {CsrfToken, User} from "~/data/model";
-import type {ApplicationSettings} from "~/playground/data/common";
 import type {Battle} from "~/playground/data/battle";
 import {useCsrfStore} from "~/stores/csrf";
 import {useQueueStore} from "~/stores/queue";
@@ -22,13 +21,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const csrfStore = useCsrfStore()
   const queueStore = useQueueStore()
 
-  if (!settingsStore.settings) {
-    try {
-      settingsStore.settings = await api.getJson<ApplicationSettings>('/application/settings')
-    } catch (e) {
-      console.log(e)
-    }
-  }
+  await settingsStore.loadIfNull()
 
   if (!userStore.user) {
     try {

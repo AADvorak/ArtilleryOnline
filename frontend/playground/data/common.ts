@@ -23,6 +23,10 @@ export interface ApplicationSettings {
   userBattleQueueTimeout: number
 }
 
+export interface TimeZone {
+  offset: number
+}
+
 export interface Vector {
   x: number
   y: number
