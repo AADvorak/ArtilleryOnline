@@ -6,9 +6,11 @@ import type {CsrfToken, User} from "~/data/model";
 import type {ApplicationSettings} from "~/playground/data/common";
 import type {Battle} from "~/playground/data/battle";
 import {useCsrfStore} from "~/stores/csrf";
+import {useQueueStore} from "~/stores/queue";
 
 const ROOT_PATH = '/'
 const MENU_PATH = '/menu'
+const BATTLE_PATH = '/battle'
 const PLAYGROUND_PATH = '/playground'
 const UNSIGNED_PATHS = ['/', '/sign-in', '/sign-up']
 
@@ -18,6 +20,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const settingsStore = useSettingsStore()
   const battleStore = useBattleStore()
   const csrfStore = useCsrfStore()
+  const queueStore = useQueueStore()
 
   if (!settingsStore.settings) {
     try {
@@ -52,8 +55,15 @@ export default defineNuxtRouteMiddleware(async (to) => {
     }
   }
 
+  if (!!userStore.user && !battleStore.battle) {
+    await queueStore.loadAddTimeIfNull()
+  }
+
   if (!userStore.user && !UNSIGNED_PATHS.includes(to.path)) {
     return navigateTo(ROOT_PATH)
+  }
+  if (!!userStore.user && !!queueStore.addTime && to.path !== BATTLE_PATH) {
+    return navigateTo(BATTLE_PATH)
   }
   if (!!userStore.user && !!battleStore.battle && to.path !== PLAYGROUND_PATH) {
     return navigateTo(PLAYGROUND_PATH)

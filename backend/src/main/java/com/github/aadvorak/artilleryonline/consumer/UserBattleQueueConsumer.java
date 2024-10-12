@@ -8,6 +8,7 @@ import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueue;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class UserBattleQueueConsumer implements Runnable {
 
     private final UserBattleQueue userBattleQueue;
@@ -38,23 +40,38 @@ public class UserBattleQueueConsumer implements Runnable {
     @Override
     public void run() {
         while (true) {
-            if (userBattleQueue.size() < 2) {
-                sleep();
-                continue;
+            synchronized (userBattleQueue) {
+                removeTimedOutUser();
+                if (userBattleQueue.size() < 2) {
+                    sleep();
+                    continue;
+                }
+                var firstNickname = getUserFromQueue();
+                var secondNickname = getUserFromQueue();
+                var nicknames = Set.of(firstNickname, secondNickname);
+                var battle = battleFactory.createBattle(nicknames);
+                userBattleMap.put(firstNickname, battle);
+                userBattleMap.put(secondNickname, battle);
+                var battleRunner = new BattleRunner(battle, nicknames, userBattleMap,
+                        battleUpdatesQueue, battleStateUpdatesQueue, applicationSettings);
+                new Thread(battleRunner).start();
+                log.info("Battle started for users: {}, queue size: {}", nicknames, userBattleQueue.size());
             }
-            var firstUserKey = getUserKeyFromQueue();
-            var secondUserKey = getUserKeyFromQueue();
-            var userKeys = Set.of(firstUserKey, secondUserKey);
-            var battle = battleFactory.createBattle(userKeys);
-            userBattleMap.put(firstUserKey, battle);
-            userBattleMap.put(secondUserKey, battle);
-            var battleRunner = new BattleRunner(battle, userKeys, userBattleMap,
-                    battleUpdatesQueue, battleStateUpdatesQueue, applicationSettings);
-            new Thread(battleRunner).start();
         }
     }
 
-    private String getUserKeyFromQueue() {
+    private void removeTimedOutUser() {
+        var nickname = userBattleQueue.pick();
+        if (nickname != null) {
+            var addTime = userBattleQueue.getAddTime(nickname);
+            if (System.currentTimeMillis() - addTime > applicationSettings.getBattleUpdateTimeout()) {
+                userBattleQueue.remove(nickname);
+                log.info("removeTimedOutElement: {}, queue size: {}", nickname, userBattleQueue.size());
+            }
+        }
+    }
+
+    private String getUserFromQueue() {
         while (true) {
             var userKey = userBattleQueue.poll();
             if (userKey != null) {

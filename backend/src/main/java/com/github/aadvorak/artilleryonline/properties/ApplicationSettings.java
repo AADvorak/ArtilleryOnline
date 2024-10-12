@@ -16,4 +16,6 @@ public class ApplicationSettings {
     private boolean clientProcessing;
 
     private long battleUpdateTimeout;
+
+    private long userBattleQueueTimeout;
 }

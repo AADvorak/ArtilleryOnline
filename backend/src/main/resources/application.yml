@@ -3,6 +3,7 @@ application:
     debug: ${APP_SETTINGS_DEBUG}
     client-processing: ${APP_SETTINGS_CLIENT_PROCESSING}
     battle-update-timeout: 10000
+    user-battle-queue-timeout: 30000
 spring:
   application:
     name: artilleryonline

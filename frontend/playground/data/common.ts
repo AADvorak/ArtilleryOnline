@@ -20,6 +20,7 @@ export enum ShellType {
 export interface ApplicationSettings {
   debug: boolean,
   clientProcessing: boolean
+  userBattleQueueTimeout: number
 }
 
 export interface Vector {
