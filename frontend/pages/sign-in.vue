@@ -71,6 +71,7 @@ function preValidateForm() {
             v-model="form.password"
             :error="!!validation.password.length"
             :error-messages="validation.password"
+            type="password"
             label="Password"
         />
       </v-form>
