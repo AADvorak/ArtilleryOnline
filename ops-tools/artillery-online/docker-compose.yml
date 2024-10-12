@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+
+  artillery-online-nginx:
+    image: nginx:1.23-alpine
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx/nginx-dev.conf:/etc/nginx/nginx.conf
+      - ./nginx/mime.types:/etc/nginx/mime.types
+    networks:
+      artillery-online-net:
+
+  artillery-online-postgres:
+    image: postgres:16.4-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: artillery
+      POSTGRES_USER: artillery
+      POSTGRES_DB: artillery
+    networks:
+      artillery-online-net:
+
+  artillery-online-backend:
+    build:
+      context: ./images/backend
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
+    depends_on:
+      - artillery-online-postgres
+    environment:
+      DB_URL: jdbc:postgresql://artillery-online-postgres:5432/artillery
+      DB_USERNAME: artillery
+      DB_PASSWORD: artillery
+      APP_SETTINGS_DEBUG: false
+      APP_SETTINGS_CLIENT_PROCESSING: true
+    volumes:
+      - ../../backend/target/artilleryonline-0.1.0.jar:/backend/artilleryonline.jar
+    stdin_open: true
+    tty: true
+    networks:
+      artillery-online-net:
+
+  artillery-online-frontend:
+    build:
+      context: ./images/frontend
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    volumes:
+      - ../../frontend/:/frontend
+    networks:
+      artillery-online-net:
+
+networks:
+  artillery-online-net:
