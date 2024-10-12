@@ -76,7 +76,7 @@ function preValidateForm() {
       Artillery online: sign up
     </v-card-title>
     <v-card-text>
-      <v-form @submit.prevent="signUp">
+      <v-form @submit.prevent>
         <v-text-field
             ref="emailField"
             v-model="form.email"
@@ -104,9 +104,9 @@ function preValidateForm() {
             :error-messages="validation.nickname"
             label="Nickname"
         />
+        <v-btn class="mb-4" width="100%" color="primary" type="submit" @click="signUp">Sign up</v-btn>
+        <v-btn class="mb-4" width="100%" color="secondary" @click="signIn">Sign in</v-btn>
       </v-form>
-      <v-btn class="mb-4" width="100%" color="primary" @click="signUp">Sign up</v-btn>
-      <v-btn class="mb-4" width="100%" color="secondary" @click="signIn">Sign in</v-btn>
     </v-card-text>
   </v-card>
 </template>
