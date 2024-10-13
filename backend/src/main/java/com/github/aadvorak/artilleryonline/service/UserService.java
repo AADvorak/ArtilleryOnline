@@ -16,10 +16,12 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,20 +49,26 @@ public class UserService {
 
     private final ModelMapper mapper = new ModelMapper();
 
+    private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
     public UserResponse login(LoginRequest request) {
-        Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        if (auth.isAuthenticated()) {
-            User user = ((ArtilleryOnlineUserDetails) auth.getPrincipal()).getUser();
-            return createUserResponseWithToken(user);
-        } else {
+        try {
+            Authentication auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+            if (auth.isAuthenticated()) {
+                User user = ((ArtilleryOnlineUserDetails) auth.getPrincipal()).getUser();
+                return createUserResponseWithToken(user);
+            } else {
+                throw new BadRequestAppException(BAD_CREDENTIALS_VALIDATION);
+            }
+        } catch (BadCredentialsException e) {
             throw new BadRequestAppException(BAD_CREDENTIALS_VALIDATION);
         }
     }
 
     public UserResponse register(RegisterRequest request) {
         User user = mapper.map(request, User.class);
-        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         try {
             user = userRepository.save(user);
             return createUserResponseWithToken(user);
