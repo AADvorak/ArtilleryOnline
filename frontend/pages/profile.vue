@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import {useRouter} from "#app";
 import {useUserStore} from "~/stores/user";
-import {VALIDATION_MSG} from "~/dictionary/validation-msg";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import type {EditUserRequest} from "~/data/request";
 import type {User} from "~/data/model";
-import {useRequestErrorHandler} from "~/composables/request-error-handler";
+import {useFormSubmit} from "~/composables/form-submit";
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -35,40 +34,17 @@ onMounted(() => {
 })
 
 async function save() {
-  clearValidation()
-  if (preValidateForm()) {
+  await useFormSubmit({form, validation, submitting}).submit(async () => {
     const request = {
       email: form.email,
       nickname: form.nickname
     }
-    submitting.value = true
-    try {
-      useUserStore().user = await new ApiRequestSender().putJson<EditUserRequest, User>('/users/me', request)
-    } catch (e) {
-      useRequestErrorHandler().handle(e, validation)
-    } finally {
-      submitting.value = false
-    }
-  }
+    useUserStore().user = await new ApiRequestSender().putJson<EditUserRequest, User>('/users/me', request)
+  })
 }
 
 function back() {
   router.push('/menu')
-}
-
-function clearValidation() {
-  Object.keys(validation).forEach(key => validation[key] = [])
-}
-
-function preValidateForm() {
-  let valid = true
-  Object.keys(form).forEach(key => {
-    if (!form[key].length) {
-      validation[key].push(VALIDATION_MSG.REQUIRED)
-      valid = false
-    }
-  })
-  return valid
 }
 </script>
 

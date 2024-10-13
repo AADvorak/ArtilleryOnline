@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import {useRouter} from "#app";
-import {VALIDATION_MSG} from "~/dictionary/validation-msg";
 import {useUserStore} from "~/stores/user";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import type {LoginRequest} from "~/data/request";
 import type {User} from "~/data/model";
-import {useRequestErrorHandler} from "~/composables/request-error-handler";
+import {useFormSubmit} from "~/composables/form-submit";
 
 const router = useRouter()
 
@@ -19,44 +18,25 @@ const validation = reactive({
   email: [],
   password: []
 })
+const submitting = ref<boolean>(false)
 
 onMounted(() => {
   emailField.value?.focus()
 })
 
 async function signIn() {
-  clearValidation()
-  if (preValidateForm()) {
+  await useFormSubmit({form, validation, submitting}).submit(async () => {
     const request = {
       email: form.email,
       password: form.password
     }
-    try {
-      useUserStore().user = await new ApiRequestSender().postJson<LoginRequest, User>('/users/login', request)
-      await router.push('/menu')
-    } catch (e) {
-      useRequestErrorHandler().handle(e, validation)
-    }
-  }
+    useUserStore().user = await new ApiRequestSender().postJson<LoginRequest, User>('/users/login', request)
+    await router.push('/menu')
+  })
 }
 
 function signUp() {
   router.push('/sign-up')
-}
-
-function clearValidation() {
-  Object.keys(validation).forEach(key => validation[key] = [])
-}
-
-function preValidateForm() {
-  let valid = true
-  Object.keys(form).forEach(key => {
-    if (!form[key].length) {
-      validation[key].push(VALIDATION_MSG.REQUIRED)
-      valid = false
-    }
-  })
-  return valid
 }
 </script>
 
@@ -81,7 +61,8 @@ function preValidateForm() {
             type="password"
             label="Password"
         />
-        <v-btn class="mb-4" width="100%" color="primary" type="submit" @click="signIn">Sign in</v-btn>
+        <v-btn class="mb-4" width="100%" color="primary" type="submit" :loading="submitting"
+               @click="signIn">Sign in</v-btn>
         <v-btn class="mb-4" width="100%" color="secondary" @click="signUp">Sign up</v-btn>
       </v-form>
     </v-card-text>

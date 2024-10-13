@@ -20,6 +20,10 @@ export interface FormValidation {
   [fieldName: string]: string[]
 }
 
+export interface FormValues {
+  [fieldName: string]: string
+}
+
 export interface UserBattleQueueResponse {
   addTime: string
 }

@@ -5,7 +5,7 @@ import {ApiRequestSender} from "~/api/api-request-sender";
 import type {RegisterRequest} from "~/data/request";
 import type {User} from "~/data/model";
 import {useUserStore} from "~/stores/user";
-import {useRequestErrorHandler} from "~/composables/request-error-handler";
+import type {FormValidation, FormValues} from "~/data/response";
 
 const router = useRouter()
 
@@ -23,6 +23,7 @@ const validation = reactive({
   password: [],
   passwordConfirm: []
 })
+const submitting = ref<boolean>(false)
 
 onMounted(() => {
   emailField.value?.focus()
@@ -33,40 +34,24 @@ function signIn() {
 }
 
 async function signUp() {
-  clearValidation()
-  if (preValidateForm()) {
+  await useFormSubmit({form, validation, submitting, validator}).submit(async () => {
     const request = {
       email: form.email,
       password: form.password,
       nickname: form.nickname
     }
-    try {
-      useUserStore().user = await new ApiRequestSender().postJson<RegisterRequest, User>('/users', request)
-      await router.push('/menu')
-    } catch (e) {
-      useRequestErrorHandler().handle(e, validation)
-    }
-  }
-}
-
-function clearValidation() {
-  Object.keys(validation).forEach(key => validation[key] = [])
-}
-
-function preValidateForm() {
-  let valid = true
-  Object.keys(form).forEach(key => {
-    if (!form[key].length) {
-      validation[key].push(VALIDATION_MSG.REQUIRED)
-      valid = false
-    }
+    useUserStore().user = await new ApiRequestSender().postJson<RegisterRequest, User>('/users', request)
+    await router.push('/menu')
   })
+}
+
+function validator(form: FormValues, validation: FormValidation): boolean {
   if (form.password !== form.passwordConfirm) {
-    valid = false
     validation.password.push(VALIDATION_MSG.EQUAL)
     validation.passwordConfirm.push(VALIDATION_MSG.EQUAL)
+    return false
   }
-  return valid
+  return true
 }
 </script>
 
@@ -104,7 +89,8 @@ function preValidateForm() {
             :error-messages="validation.nickname"
             label="Nickname"
         />
-        <v-btn class="mb-4" width="100%" color="primary" type="submit" @click="signUp">Sign up</v-btn>
+        <v-btn class="mb-4" width="100%" color="primary" type="submit" :loading="submitting"
+               @click="signUp">Sign up</v-btn>
         <v-btn class="mb-4" width="100%" color="secondary" @click="signIn">Sign in</v-btn>
       </v-form>
     </v-card-text>
