@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.endpoint;
 
+import com.github.aadvorak.artilleryonline.dto.request.EditUserRequest;
 import com.github.aadvorak.artilleryonline.dto.request.LoginRequest;
 import com.github.aadvorak.artilleryonline.dto.request.RegisterRequest;
 import com.github.aadvorak.artilleryonline.dto.response.UserResponse;
@@ -23,11 +24,14 @@ public class UserEndpoint {
     @GetMapping("/me")
     public UserResponse getCurrentUser(HttpServletRequest request) {
         var userResponse = userService.getCurrentUser();
-        Arrays.stream(request.getCookies())
-                .filter(cookie -> cookie.getName().equals("Token"))
-                .map(Cookie::getValue)
-                .findAny()
-                .ifPresent(userResponse::setToken);
+        setCookieFromRequestToUserResponse(request, userResponse);
+        return userResponse;
+    }
+
+    @PutMapping("/me")
+    public UserResponse editCurrentUser(@RequestBody @Valid EditUserRequest editUserRequest, HttpServletRequest request) {
+        var userResponse = userService.editCurrentUser(editUserRequest);
+        setCookieFromRequestToUserResponse(request, userResponse);
         return userResponse;
     }
 
@@ -55,5 +59,13 @@ public class UserEndpoint {
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
+    }
+
+    private void setCookieFromRequestToUserResponse(HttpServletRequest request, UserResponse userResponse) {
+        Arrays.stream(request.getCookies())
+                .filter(cookie -> cookie.getName().equals("Token"))
+                .map(Cookie::getValue)
+                .findAny()
+                .ifPresent(userResponse::setToken);
     }
 }

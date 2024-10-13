@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.service;
 
+import com.github.aadvorak.artilleryonline.dto.request.EditUserRequest;
 import com.github.aadvorak.artilleryonline.dto.request.LoginRequest;
 import com.github.aadvorak.artilleryonline.dto.request.RegisterRequest;
 import com.github.aadvorak.artilleryonline.dto.response.UserResponse;
@@ -51,7 +52,7 @@ public class UserService {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         if (auth.isAuthenticated()) {
             User user = ((ArtilleryOnlineUserDetails) auth.getPrincipal()).getUser();
-            return createUserResponse(user);
+            return createUserResponseWithToken(user);
         } else {
             throw new BadRequestAppException(BAD_CREDENTIALS_VALIDATION);
         }
@@ -62,20 +63,27 @@ public class UserService {
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         try {
             user = userRepository.save(user);
-            return createUserResponse(user);
+            return createUserResponseWithToken(user);
         } catch (DataIntegrityViolationException ex) {
-            throw new BadRequestAppException(UNIQUE_USER_FIELDS.stream()
-                    .filter(field -> ex.getMessage().contains("(" + field + ")"))
-                    .map(field -> new ValidationResponse()
-                            .setValidation(Validation.EXISTS)
-                            .setField(field))
-                    .toList());
+            throw createUniqueFieldException(ex);
         }
     }
 
     public UserResponse getCurrentUser() {
         User user = getUserFromContext();
         return mapper.map(user, UserResponse.class);
+    }
+
+    public UserResponse editCurrentUser(EditUserRequest request) {
+        User user = getUserFromContext();
+        user.setNickname(request.getNickname());
+        user.setEmail(request.getEmail());
+        try {
+            user = userRepository.save(user);
+            return mapper.map(user, UserResponse.class);
+        } catch (DataIntegrityViolationException ex) {
+            throw createUniqueFieldException(ex);
+        }
     }
 
     public User getUserFromContext() {
@@ -87,9 +95,18 @@ public class UserService {
         }
     }
 
-    private UserResponse createUserResponse(User user) {
+    private UserResponse createUserResponseWithToken(User user) {
         UserResponse response = mapper.map(user, UserResponse.class);
         response.setToken(jwtTokenUtil.generateToken(user.getEmail()));
         return response;
+    }
+
+    private BadRequestAppException createUniqueFieldException(DataIntegrityViolationException ex) {
+        return new BadRequestAppException(UNIQUE_USER_FIELDS.stream()
+                .filter(field -> ex.getMessage().contains("(" + field + ")"))
+                .map(field -> new ValidationResponse()
+                        .setValidation(Validation.EXISTS)
+                        .setField(field))
+                .toList());
     }
 }

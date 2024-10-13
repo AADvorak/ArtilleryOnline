@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import {useRouter} from "#app";
 import {useUserStore} from "~/stores/user";
+import {VALIDATION_MSG} from "~/dictionary/validation-msg";
+import {ApiRequestSender} from "~/api/api-request-sender";
+import type {EditUserRequest} from "~/data/request";
+import type {User} from "~/data/model";
+import {useRequestErrorHandler} from "~/composables/request-error-handler";
 
 const router = useRouter()
 const userStore = useUserStore()
+
+const emailField = ref<HTMLInputElement | null>(null)
 
 const form = reactive({
   email: '',
@@ -13,19 +20,55 @@ const validation = reactive({
   email: [],
   nickname: []
 })
+const submitting = ref<boolean>(false)
+
+const noChanges = computed(() => {
+  const user = userStore.user!
+  return user.email === form.email && user.nickname === form.nickname
+})
 
 onMounted(() => {
   const user = userStore.user!
   form.email = user.email
   form.nickname = user.nickname
+  emailField.value?.focus()
 })
 
-function save() {
-
+async function save() {
+  clearValidation()
+  if (preValidateForm()) {
+    const request = {
+      email: form.email,
+      nickname: form.nickname
+    }
+    submitting.value = true
+    try {
+      useUserStore().user = await new ApiRequestSender().putJson<EditUserRequest, User>('/users/me', request)
+    } catch (e) {
+      useRequestErrorHandler().handle(e, validation)
+    } finally {
+      submitting.value = false
+    }
+  }
 }
 
 function back() {
   router.push('/menu')
+}
+
+function clearValidation() {
+  Object.keys(validation).forEach(key => validation[key] = [])
+}
+
+function preValidateForm() {
+  let valid = true
+  Object.keys(form).forEach(key => {
+    if (!form[key].length) {
+      validation[key].push(VALIDATION_MSG.REQUIRED)
+      valid = false
+    }
+  })
+  return valid
 }
 </script>
 
@@ -35,8 +78,9 @@ function back() {
       Artillery online: profile
     </v-card-title>
     <v-card-text>
-      <v-form @submit.prevent="save">
+      <v-form @submit.prevent>
         <v-text-field
+            ref="emailField"
             v-model="form.email"
             :error="!!validation.email.length"
             :error-messages="validation.email"
@@ -48,9 +92,10 @@ function back() {
             :error-messages="validation.nickname"
             label="Nickname"
         />
+        <v-btn class="mb-4" width="100%" color="success" type="submit" :loading="submitting"
+               :disabled="noChanges" @click="save">Save</v-btn>
+        <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
       </v-form>
-      <v-btn class="mb-4" width="100%" color="success" @click="save">Save</v-btn>
-      <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
     </v-card-text>
   </v-card>
 </template>

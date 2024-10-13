@@ -8,3 +8,8 @@ export interface LoginRequest {
   email: string
   password: string
 }
+
+export interface EditUserRequest {
+  email: string
+  nickname: string
+}
