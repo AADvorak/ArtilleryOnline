@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.error.exception.BadRequestAppExceptio
 import com.github.aadvorak.artilleryonline.error.response.ErrorResponse;
 import com.github.aadvorak.artilleryonline.error.response.ValidationResponse;
 import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalErrorHandler {
 
     @ExceptionHandler(NotFoundAppException.class)
@@ -57,6 +59,7 @@ public class GlobalErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ErrorResponse handleException(Exception exc) {
+        log.error(exc.getMessage(), exc);
         return new ErrorResponse()
                 .setCode("Exception")
                 .setMessage(exc.getMessage());
