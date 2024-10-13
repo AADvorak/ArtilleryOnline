@@ -64,7 +64,7 @@ public class UserBattleQueueConsumer implements Runnable {
         var nickname = userBattleQueue.pick();
         if (nickname != null) {
             var addTime = userBattleQueue.getAddTime(nickname);
-            if (System.currentTimeMillis() - addTime > applicationSettings.getBattleUpdateTimeout()) {
+            if (System.currentTimeMillis() - addTime > applicationSettings.getUserBattleQueueTimeout()) {
                 userBattleQueue.remove(nickname);
                 log.info("removeTimedOutElement: {}, queue size: {}", nickname, userBattleQueue.size());
             }
