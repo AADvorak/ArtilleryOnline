@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
+import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
@@ -25,7 +26,6 @@ public class VehicleCollideProcessor {
         var otherVehicleModels = battleModel.getVehicles().values().stream()
                 .filter(value -> value.getId() != vehicleModel.getId())
                 .collect(Collectors.toSet());
-        var velocity = vehicleModel.getState().getVelocity().getX();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
         var vehicleRadius = vehicleModel.getSpecs().getRadius();
         var nextPosition = calculations.getNextPosition();
@@ -37,45 +37,61 @@ public class VehicleCollideProcessor {
             var otherWheelRadius = otherVehicleModel.getSpecs().getWheelRadius();
             var otherVehicleRadius = otherVehicleModel.getSpecs().getRadius();
             var minDistanceWheelWheel = wheelRadius + otherWheelRadius;
-            var minDistanceVehicleVehicle = vehicleRadius + otherVehicleRadius;
+            var minDistanceVehicleVehicle = getMinVehicleVehicleDistance(nextPosition, otherVehiclePosition,
+                    vehicleRadius, otherVehicleRadius);
             var minDistanceWheelVehicle = wheelRadius + otherVehicleRadius;
             var minDistanceVehicleWheel = vehicleRadius + otherWheelRadius;
             var distanceVehicleVehicle = nextPosition.distanceTo(otherVehiclePosition);
             if (distanceVehicleVehicle < minDistanceVehicleVehicle) {
                 return otherVehicleModel;
             }
-            if (velocity > 0) {
-                var otherLeftWheelPosition = VehicleUtils.getLeftWheelPosition(otherVehicleModel);
-                var distanceWheelWheel = rightWheelPosition.distanceTo(otherLeftWheelPosition);
-                if (distanceWheelWheel < minDistanceWheelWheel) {
-                    return otherVehicleModel;
-                }
-                var distanceWheelVehicle = rightWheelPosition.distanceTo(otherVehiclePosition);
-                if (distanceWheelVehicle < minDistanceWheelVehicle) {
-                    return otherVehicleModel;
-                }
-                var distanceVehicleWheel = nextPosition.distanceTo(otherLeftWheelPosition);
-                if (distanceVehicleWheel < minDistanceVehicleWheel) {
-                    return otherVehicleModel;
-                }
+            var otherLeftWheelPosition = VehicleUtils.getLeftWheelPosition(otherVehicleModel);
+            var otherRightWheelPosition = VehicleUtils.getRightWheelPosition(otherVehicleModel);
+            var distanceRightWheelLeftWheel = rightWheelPosition.distanceTo(otherLeftWheelPosition);
+            if (distanceRightWheelLeftWheel < minDistanceWheelWheel) {
+                return otherVehicleModel;
             }
-            if (velocity < 0) {
-                var otherRightWheelPosition = VehicleUtils.getRightWheelPosition(otherVehicleModel);
-                var distanceWheelWheel = leftWheelPosition.distanceTo(otherRightWheelPosition);
-                if (distanceWheelWheel < minDistanceWheelWheel) {
-                    return otherVehicleModel;
-                }
-                var distanceWheelVehicle = leftWheelPosition.distanceTo(otherVehiclePosition);
-                if (distanceWheelVehicle < minDistanceWheelVehicle) {
-                    return otherVehicleModel;
-                }
-                var distanceVehicleWheel = nextPosition.distanceTo(otherRightWheelPosition);
-                if (distanceVehicleWheel < minDistanceVehicleWheel) {
-                    return otherVehicleModel;
-                }
+            var distanceLeftWheelRightWheel = leftWheelPosition.distanceTo(otherRightWheelPosition);
+            if (distanceLeftWheelRightWheel < minDistanceWheelWheel) {
+                return otherVehicleModel;
+            }
+            var distanceRightWheelVehicle = rightWheelPosition.distanceTo(otherVehiclePosition);
+            if (distanceRightWheelVehicle < minDistanceWheelVehicle) {
+                return otherVehicleModel;
+            }
+            var distanceVehicleRightWheel = nextPosition.distanceTo(otherRightWheelPosition);
+            if (distanceVehicleRightWheel < minDistanceVehicleWheel) {
+                return otherVehicleModel;
+            }
+            var distanceVehicleLeftWheel = nextPosition.distanceTo(otherLeftWheelPosition);
+            if (distanceVehicleLeftWheel < minDistanceVehicleWheel) {
+                return otherVehicleModel;
+            }
+            var distanceLeftWheelVehicle = leftWheelPosition.distanceTo(otherVehiclePosition);
+            if (distanceLeftWheelVehicle < minDistanceWheelVehicle) {
+                return otherVehicleModel;
+            }
+            var distanceLeftWheelLeftWheel = leftWheelPosition.distanceTo(otherLeftWheelPosition);
+            if (distanceLeftWheelLeftWheel < minDistanceWheelWheel) {
+                return otherVehicleModel;
+            }
+            var distanceRightWheelRightWheel = rightWheelPosition.distanceTo(otherRightWheelPosition);
+            if (distanceRightWheelRightWheel < minDistanceWheelWheel) {
+                return otherVehicleModel;
             }
         }
         return null;
+    }
+
+    private static double getMinVehicleVehicleDistance(Position position, Position otherPosition,
+                                                       double radius, double otherRadius) {
+        if (position.getY() - otherPosition.getY() > otherRadius) {
+            return otherRadius;
+        }
+        if (otherPosition.getY() - position.getY() > radius) {
+            return radius;
+        }
+        return radius + otherRadius;
     }
 
     private static void doCollide(VehicleModel vehicle, VehicleModel otherVehicle) {
