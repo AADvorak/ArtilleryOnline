@@ -9,6 +9,7 @@ public class EngineAccelerationCalculator {
 
     public static void calculate(WheelCalculations wheelCalculations, VehicleModel vehicleModel) {
         if (vehicleModel.getState().getTrackState().isBroken()
+                || vehicleModel.getState().getJetState().isActive()
                 || WheelGroundState.FULL_UNDER_GROUND.equals(wheelCalculations.getGroundState())
                 || WheelGroundState.FULL_OVER_GROUND.equals(wheelCalculations.getGroundState())) {
             return;

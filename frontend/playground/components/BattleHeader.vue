@@ -7,6 +7,7 @@ import BattleTimer from "@/playground/components/BattleTimer.vue";
 import type {StompClient} from "@/playground/composables/stomp-client";
 import BattleDebugButtons from "@/playground/components/BattleDebugButtons.vue";
 import {useSettingsStore} from "~/stores/settings";
+import JetBar from "~/playground/components/JetBar.vue";
 
 const props = defineProps<{
   stompClient: StompClient
@@ -34,6 +35,9 @@ const isDebugMode = computed(() => settingsStore.settings?.debug)
       <div class="ml-5 hit-points-bar-wrapper">
         <HitPointsBar v-for="userKey in userKeys" :user-key="userKey" />
       </div>
+      <div class="ml-5 jet-bar-wrapper">
+        <JetBar />
+      </div>
       <div v-if="battleStore.isActive" class="ml-5">
         <ReloadingProgress :stomp-client="props.stompClient"/>
       </div>
@@ -47,6 +51,10 @@ const isDebugMode = computed(() => settingsStore.settings?.debug)
 }
 
 .hit-points-bar-wrapper {
+  min-width: 200px;
+}
+
+.jet-bar-wrapper {
   min-width: 200px;
 }
 </style>

@@ -9,6 +9,7 @@ import { EngineAccelerationCalculator } from '@/playground/battle/calculator/whe
 import { GroundFrictionAccelerationCalculator } from '@/playground/battle/calculator/wheel/ground-friction-acceleration-calculator'
 import { GroundReactionAccelerationCalculator } from '@/playground/battle/calculator/wheel/ground-reaction-acceleration-calculator'
 import { GravityAccelerationCalculator } from '@/playground/battle/calculator/wheel/gravity-acceleration-calculator'
+import {JetAccelerationCalculator} from "~/playground/battle/calculator/wheel/jet-acceleration-calculator";
 
 export const VehicleAccelerationCalculator = {
   getVehicleAcceleration(
@@ -60,7 +61,8 @@ export const VehicleAccelerationCalculator = {
       wheelCalculations.gravityAcceleration,
       wheelCalculations.engineAcceleration,
       wheelCalculations.groundFrictionAcceleration,
-      wheelCalculations.groundReactionAcceleration
+      wheelCalculations.groundReactionAcceleration,
+      wheelCalculations.jetAcceleration
     )
   },
 
@@ -89,6 +91,7 @@ export const VehicleAccelerationCalculator = {
     GroundStateCalculator.calculate(wheelCalculations)
 
     EngineAccelerationCalculator.calculate(wheelCalculations, vehicleModel)
+    JetAccelerationCalculator.calculate(wheelCalculations, vehicleModel)
     GroundFrictionAccelerationCalculator.calculate(
       wheelCalculations,
       vehicleModel,

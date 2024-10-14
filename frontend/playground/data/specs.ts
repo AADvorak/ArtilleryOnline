@@ -49,3 +49,10 @@ export interface VehicleSpecs {
   wheelRadius: number
   availableGuns: AvailableGuns
 }
+
+export interface JetSpecs {
+  capacity: number
+  consumption: number
+  regeneration: number
+  acceleration: number
+}

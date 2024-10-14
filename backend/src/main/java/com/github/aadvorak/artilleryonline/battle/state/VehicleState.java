@@ -36,4 +36,6 @@ public class VehicleState implements State {
     private GunState gunState;
 
     private TrackState trackState;
+
+    private JetState jetState;
 }

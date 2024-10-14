@@ -5,10 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.BattleStage;
 import com.github.aadvorak.artilleryonline.battle.processor.command.CommandProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.shell.ShellFlyProcessor;
-import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleGunRotateProcessor;
-import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleGunShootProcessor;
-import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleMoveProcessor;
-import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleTrackProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.vehicle.*;
 
 import java.util.ArrayList;
 
@@ -25,6 +22,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
             VehicleMoveProcessor.processStep(vehicleModel, battleModel);
             VehicleGunRotateProcessor.processStep(vehicleModel, battleModel);
             VehicleTrackProcessor.processStep(vehicleModel, battleModel);
+            VehicleJetProcessor.processStep(vehicleModel, battleModel);
         });
 
         var explosionIdsToRemove = new ArrayList<Integer>();

@@ -60,5 +60,15 @@ public class CommandProcessor {
                 gunState.setLoadingShell(null);
             }
         }
+
+        if (Command.JET_ON.equals(userCommand.getCommand())) {
+            userVehicle.getState().getJetState().setActive(true);
+            userVehicle.setUpdated(true);
+        }
+
+        if (Command.JET_OFF.equals(userCommand.getCommand())) {
+            userVehicle.getState().getJetState().setActive(false);
+            userVehicle.setUpdated(true);
+        }
     }
 }

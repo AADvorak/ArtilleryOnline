@@ -7,16 +7,10 @@ import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
-import com.github.aadvorak.artilleryonline.battle.preset.GunSpecsPreset;
-import com.github.aadvorak.artilleryonline.battle.preset.RoomSpecsPreset;
-import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
-import com.github.aadvorak.artilleryonline.battle.preset.VehicleSpecsPreset;
+import com.github.aadvorak.artilleryonline.battle.preset.*;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleOnGroundProcessor;
 import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
-import com.github.aadvorak.artilleryonline.battle.state.GunState;
-import com.github.aadvorak.artilleryonline.battle.state.RoomState;
-import com.github.aadvorak.artilleryonline.battle.state.TrackState;
-import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
+import com.github.aadvorak.artilleryonline.battle.state.*;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import org.springframework.stereotype.Component;
 
@@ -86,7 +80,8 @@ public class BattleFactory {
             );
             vehicleModel.setConfig(new VehicleConfig()
                     .setAmmo(ammo)
-                    .setGun(GunSpecsPreset.DEFAULT.getSpecs()));
+                    .setGun(GunSpecsPreset.DEFAULT.getSpecs())
+                    .setJet(JetSpecsPreset.DEFAULT.getSpecs()));
             vehicleModel.setState(new VehicleState()
                     .setAngle(0)
                     .setGunAngle(Math.PI / 2)
@@ -98,7 +93,10 @@ public class BattleFactory {
                     .setGunState(new GunState()
                             .setSelectedShell(ammo.keySet().stream().findAny().orElseThrow())
                             .setTriggerPushed(false))
-                    .setTrackState(new TrackState()));
+                    .setTrackState(new TrackState())
+                    .setJetState(new JetState()
+                            .setVolume(JetSpecsPreset.DEFAULT.getSpecs().getCapacity())
+                            .setActive(false)));
             VehicleOnGroundProcessor.estimateVehicleAngleByPosition(vehicleModel, battleModel.getRoom());
             VehicleOnGroundProcessor.correctVehiclePositionAndAngleOnGround(vehicleModel, battleModel.getRoom());
             vehicles.put(userKey, vehicleModel);

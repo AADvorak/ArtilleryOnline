@@ -11,6 +11,8 @@ public enum Command {
     START_GUN_ROTATING,
     STOP_GUN_ROTATING,
     SELECT_SHELL,
+    JET_ON,
+    JET_OFF,
 
     PAUSE,
     RESUME,

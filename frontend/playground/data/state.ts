@@ -14,6 +14,11 @@ export interface TrackState {
   repairRemainTime: number
 }
 
+export interface JetState {
+  volume: number
+  active: boolean
+}
+
 export interface ShellState {
   position: Position
   angle: number
@@ -37,6 +42,7 @@ export interface VehicleState {
   ammo: Ammo
   gunState: GunState
   trackState: TrackState
+  jetState: JetState
 }
 
 export interface RoomState {

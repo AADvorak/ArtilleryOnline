@@ -36,6 +36,8 @@ public class WheelCalculations {
 
     private Acceleration engineAcceleration = new Acceleration();
 
+    private Acceleration jetAcceleration = new Acceleration();
+
     private Acceleration sumAcceleration;
 
     public Acceleration getSumAcceleration() {
@@ -44,7 +46,8 @@ public class WheelCalculations {
                     gravityAcceleration,
                     groundReactionAcceleration,
                     groundFrictionAcceleration,
-                    engineAcceleration
+                    engineAcceleration,
+                    jetAcceleration
             );
         }
         return sumAcceleration;

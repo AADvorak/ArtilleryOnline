@@ -15,6 +15,11 @@ export const VehicleProcessor = {
     if (vehicleModel.state.gunState.loadingShell) {
       vehicleModel.state.gunState.loadRemainTime -= timeStepSecs
     }
+    if (vehicleModel.state.jetState.volume < vehicleModel.config.jet.capacity) {
+      vehicleModel.state.jetState.volume += vehicleModel.state.jetState.active
+          ? - vehicleModel.config.jet.consumption * timeStepSecs
+          : vehicleModel.config.jet.regeneration * timeStepSecs
+    }
   },
 
   initVehicleCalculations(): VehicleCalculations {
@@ -39,7 +44,8 @@ export const VehicleProcessor = {
       gravityAcceleration: { x: 0, y: 0 },
       engineAcceleration: { x: 0, y: 0 },
       groundReactionAcceleration: { x: 0, y: 0 },
-      groundFrictionAcceleration: { x: 0, y: 0 }
+      groundFrictionAcceleration: { x: 0, y: 0 },
+      jetAcceleration: { x: 0, y: 0 }
     }
   },
 

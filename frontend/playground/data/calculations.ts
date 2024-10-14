@@ -31,6 +31,7 @@ export interface WheelCalculations {
   groundReactionAcceleration: Acceleration
   groundFrictionAcceleration: Acceleration
   engineAcceleration: Acceleration
+  jetAcceleration: Acceleration
   sumAcceleration: Acceleration | undefined
 }
 

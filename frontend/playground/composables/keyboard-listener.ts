@@ -23,6 +23,9 @@ export function useKeyboardListener(commandsSender: CommandsSender) {
   keyDownCommands.set('Space', {
     command: Command.PUSH_TRIGGER
   })
+  keyDownCommands.set('KeyW', {
+    command: Command.JET_ON
+  })
 
   const keyUpCommands: Map<string, UserCommand> = new Map()
   keyUpCommands.set('KeyD', {
@@ -43,6 +46,9 @@ export function useKeyboardListener(commandsSender: CommandsSender) {
   })
   keyUpCommands.set('Space', {
     command: Command.RELEASE_TRIGGER
+  })
+  keyUpCommands.set('KeyW', {
+    command: Command.JET_OFF
   })
 
   const clickCommands: Map<string, UserCommand> = new Map()
