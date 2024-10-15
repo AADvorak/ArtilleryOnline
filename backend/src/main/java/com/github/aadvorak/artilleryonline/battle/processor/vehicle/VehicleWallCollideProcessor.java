@@ -12,6 +12,7 @@ public class VehicleWallCollideProcessor {
         if (wallCollide(calculations, vehicleModel, battleModel)) {
             doCollide(vehicleModel);
             vehicleModel.setUpdated(true);
+            vehicleModel.setCollided(true);
             return true;
         }
         return false;

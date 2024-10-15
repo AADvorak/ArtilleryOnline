@@ -16,6 +16,7 @@ public class VehicleGroundCollideProcessor {
         if (groundCollideWheel != null) {
             doCollide(vehicleModel, calculations, groundCollideWheel);
             vehicleModel.setUpdated(true);
+            vehicleModel.setCollided(true);
             return true;
         }
         return false;

@@ -16,6 +16,7 @@ public class VehicleCollideProcessor {
         if (vehicleCollide != null) {
             doCollide(vehicleModel, vehicleCollide);
             vehicleModel.setUpdated(true);
+            vehicleModel.setCollided(true);
             return true;
         }
         return false;
@@ -98,22 +99,14 @@ public class VehicleCollideProcessor {
         var vehicleVelocity = vehicle.getState().getVelocity();
         var otherVehicleVelocity = otherVehicle.getState().getVelocity();
         var vehicleVelocityX = vehicleVelocity.getX();
-        if (vehicleVelocity.getX() * otherVehicleVelocity.getX() > 0) {
-            vehicleVelocity.setX(otherVehicleVelocity.getX());
-            otherVehicleVelocity.setX(vehicleVelocityX);
-        } else {
-            vehicleVelocity.setX(otherVehicleVelocity.getX() / 2);
-            otherVehicleVelocity.setX(vehicleVelocityX / 2);
-        }
         var vehicleVelocityY = vehicleVelocity.getY();
-        if (vehicleVelocity.getY() * otherVehicleVelocity.getY() > 0) {
-            vehicleVelocity.setY(otherVehicleVelocity.getY());
+        vehicleVelocity.setX(otherVehicleVelocity.getX());
+        vehicleVelocity.setY(otherVehicleVelocity.getY());
+        if (!otherVehicle.isCollided()) {
+            otherVehicleVelocity.setX(vehicleVelocityX);
             otherVehicleVelocity.setY(vehicleVelocityY);
-        } else {
-            vehicleVelocity.setY(otherVehicleVelocity.getY() / 2);
-            otherVehicleVelocity.setY(vehicleVelocityY / 2);
+            otherVehicle.setCollided(true);
+            otherVehicle.setUpdated(true);
         }
-        otherVehicle.setCollided(true);
-        otherVehicle.setUpdated(true);
     }
 }

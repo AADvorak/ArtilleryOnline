@@ -10,10 +10,8 @@ public class VehicleMoveProcessor {
 
     public static void processStep(VehicleModel vehicleModel, BattleModel battleModel) {
         var calculations = new VehicleCalculations();
-        if (!vehicleModel.isCollided()) {
-            recalculateAcceleration(calculations, vehicleModel, battleModel);
-            recalculateVelocity(vehicleModel, battleModel);
-        }
+        recalculateAcceleration(calculations, vehicleModel, battleModel);
+        recalculateVelocity(vehicleModel, battleModel);
         calculateNextPositionAndAngle(calculations, vehicleModel, battleModel);
         if (!processCollisions(calculations, vehicleModel, battleModel)) {
             applyNextPositionAndAngle(calculations, vehicleModel);
