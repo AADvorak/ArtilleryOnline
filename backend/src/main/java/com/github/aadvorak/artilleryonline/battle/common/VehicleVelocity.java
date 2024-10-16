@@ -15,6 +15,12 @@ public class VehicleVelocity {
 
     private double angle;
 
+    public Velocity getMovingVelocity() {
+        return new Velocity()
+                .setX(x)
+                .setY(y);
+    }
+
     @Override
     public String toString() {
         return String.format("(%.3f, %.3f, %.3f)", x, y, angle);

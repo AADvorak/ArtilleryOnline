@@ -57,17 +57,6 @@ public class VehicleGroundCollideProcessor {
         wheelVelocity.setX(VectorUtils.getComponentX(velocityVerticalProjection, velocityHorizontalProjection, groundAngle));
         wheelVelocity.setY(VectorUtils.getComponentY(velocityVerticalProjection, velocityHorizontalProjection, groundAngle));
 
-        var rightWheelVelocity = calculations.getRightWheel().getVelocity();
-        var leftWheelVelocity = calculations.getLeftWheel().getVelocity();
-        var angle = vehicleModel.getState().getAngle();
-
-        var angleVelocity = Math.abs(angle) < Math.PI / 4
-                ? (rightWheelVelocity.getY() - leftWheelVelocity.getY()) / (2.0 * Math.cos(angle))
-                : (leftWheelVelocity.getX() - rightWheelVelocity.getX()) / (2.0 * Math.sin(angle));
-        var wheelSign = wheelCalculations.getSign().getValue();
-        vehicleModel.getState().getVelocity()
-                .setAngle(angleVelocity)
-                .setX(wheelVelocity.getX() - wheelSign * angleVelocity * Math.sin(angle))
-                .setY(wheelVelocity.getY() + wheelSign * angleVelocity * Math.cos(angle));
+        VehicleUtils.recalculateVehicleVelocityByWheel(vehicleModel, calculations, wheelCalculations);
     }
 }
