@@ -36,6 +36,9 @@ export function useBattleUpdater(stompClient: StompClient) {
     Object.keys(battleState.state.vehicles).forEach(key => {
       battle.model.vehicles[key].state = battleState.state.vehicles[key]
     })
+    Object.keys(battleState.state.shells).forEach(key => {
+      battle.model.shells[key].state = battleState.state.shells[key]
+    })
     battleStore.updateBattle(battle)
   }
 

@@ -53,6 +53,11 @@ export interface VehicleStates {
   [userKey: string]: VehicleState
 }
 
+export interface ShellStates {
+  [id: number]: ShellState
+}
+
 export interface BattleModelState {
   vehicles: VehicleStates
+  shells: ShellStates
 }

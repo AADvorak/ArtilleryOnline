@@ -80,15 +80,18 @@ public class BattleRunner implements Runnable {
     }
 
     private void sendBattleStateToUpdatesQueue() {
-        var vehicleStates = battle.getModel().getVehicles().entrySet().stream()
-                .filter(vehicleEntry -> vehicleEntry.getValue().isUpdated())
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
-        if (!vehicleStates.isEmpty()) {
+        var vehicles = battle.getModel().getVehicles().entrySet();
+        if (vehicles.stream().anyMatch(vehicleEntry -> vehicleEntry.getValue().isUpdated())) {
+            var vehicleStates = vehicles.stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
+            var shellStates = battle.getModel().getShells().entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
             battleStateUpdatesQueue.add(new BattleStateResponse()
                     .setId(battle.getId())
                     .setTime(battle.getTime())
                     .setState(new BattleModelStateResponse()
-                            .setVehicles(vehicleStates)));
+                            .setVehicles(vehicleStates)
+                            .setShells(shellStates)));
         }
     }
 

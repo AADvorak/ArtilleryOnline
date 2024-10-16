@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.dto.response;
 
+import com.github.aadvorak.artilleryonline.battle.state.ShellState;
 import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,4 +14,6 @@ import java.util.Map;
 public class BattleModelStateResponse {
 
     private Map<String, VehicleState> vehicles;
+
+    private Map<Integer, ShellState> shells;
 }
