@@ -10,28 +10,27 @@ import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 public class VehicleAccelerationCalculator {
 
-    public static VehicleAcceleration getVehicleAcceleration(VehicleCalculations calculations,
-                                                             VehicleModel vehicleModel, RoomModel roomModel) {
-        var angle = vehicleModel.getState().getAngle();
+    public static VehicleAcceleration getVehicleAcceleration(VehicleCalculations vehicle, RoomModel roomModel) {
+        var angle = vehicle.getModel().getState().getAngle();
 
-        VehicleUtils.calculateWheelVelocity(vehicleModel, calculations.getRightWheel());
-        VehicleUtils.calculateWheelVelocity(vehicleModel, calculations.getLeftWheel());
+        VehicleUtils.calculateWheelVelocity(vehicle.getModel(), vehicle.getRightWheel());
+        VehicleUtils.calculateWheelVelocity(vehicle.getModel(), vehicle.getLeftWheel());
 
-        calculations.getRightWheel().setPosition(VehicleUtils.getRightWheelPosition(vehicleModel));
-        calculations.getLeftWheel().setPosition(VehicleUtils.getLeftWheelPosition(vehicleModel));
+        vehicle.getRightWheel().setPosition(VehicleUtils.getRightWheelPosition(vehicle.getModel()));
+        vehicle.getLeftWheel().setPosition(VehicleUtils.getLeftWheelPosition(vehicle.getModel()));
 
-        calculateWheelAcceleration(calculations.getRightWheel(), vehicleModel, roomModel);
-        calculateWheelAcceleration(calculations.getLeftWheel(), vehicleModel, roomModel);
+        calculateWheelAcceleration(vehicle.getRightWheel(), vehicle.getModel(), roomModel);
+        calculateWheelAcceleration(vehicle.getLeftWheel(), vehicle.getModel(), roomModel);
 
-        var rotatingAcceleration = getVehicleRotatingAcceleration(calculations, angle);
+        var rotatingAcceleration = getVehicleRotatingAcceleration(vehicle, angle);
         var movingAcceleration = new Acceleration()
-                .setX((calculations.getRightWheel().getSumAcceleration().getX()
-                        + calculations.getLeftWheel().getSumAcceleration().getX()) / 2)
-                .setY((calculations.getRightWheel().getSumAcceleration().getY()
-                        + calculations.getLeftWheel().getSumAcceleration().getY()) / 2);
+                .setX((vehicle.getRightWheel().getSumAcceleration().getX()
+                        + vehicle.getLeftWheel().getSumAcceleration().getX()) / 2)
+                .setY((vehicle.getRightWheel().getSumAcceleration().getY()
+                        + vehicle.getLeftWheel().getSumAcceleration().getY()) / 2);
 
-        var vehicleVelocity = vehicleModel.getState().getVelocity();
-        var frictionCoefficient = vehicleModel.getPreCalc().getFrictionCoefficient();
+        var vehicleVelocity = vehicle.getModel().getState().getVelocity();
+        var frictionCoefficient = vehicle.getModel().getPreCalc().getFrictionCoefficient();
         var frictionAcceleration = new Acceleration()
                 .setX( - vehicleVelocity.getX() * Math.abs(vehicleVelocity.getX()) * frictionCoefficient)
                 .setY( - vehicleVelocity.getY() * Math.abs(vehicleVelocity.getY()) * frictionCoefficient);
@@ -41,7 +40,7 @@ public class VehicleAccelerationCalculator {
                         movingAcceleration,
                         frictionAcceleration
                 ))
-                .setAngle(rotatingAcceleration / vehicleModel.getSpecs().getRadius()
+                .setAngle(rotatingAcceleration / vehicle.getModel().getSpecs().getRadius()
                         - vehicleVelocity.getAngle());
     }
 
