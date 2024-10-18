@@ -16,7 +16,7 @@ public class VehicleCollideProcessor {
     public static boolean processCollide(VehicleCalculations vehicle, BattleCalculations battle) {
         var collisionData = vehicleCollide(vehicle, battle);
         if (collisionData != null) {
-            doCollide(vehicle.getModel(), vehicle, collisionData);
+            doCollide(vehicle, collisionData);
             vehicle.getModel().setUpdated(true);
             vehicle.getModel().setCollided(true);
             return true;
@@ -42,7 +42,7 @@ public class VehicleCollideProcessor {
             var minDistanceWheelWheel = wheelRadius + otherWheelRadius;
             if (CollideUtils.isVehicleVehicleCollide(nextPosition, otherVehiclePosition, nextAngle,
                     otherVehicleAngle, vehicleRadius, otherVehicleRadius)) {
-                return new CollisionData(otherVehicle.getModel(), null, null, null);
+                return new CollisionData(otherVehicle, null, null);
             }
             var otherLeftWheelPosition = VehicleUtils.getNextLeftWheelPosition(otherVehicle);
             var otherRightWheelPosition = VehicleUtils.getNextRightWheelPosition(otherVehicle);
@@ -50,55 +50,55 @@ public class VehicleCollideProcessor {
             var otherRightWheel = otherVehicle.getRightWheel();
             var distanceRightWheelLeftWheel = rightWheelPosition.distanceTo(otherLeftWheelPosition);
             if (distanceRightWheelLeftWheel < minDistanceWheelWheel) {
-                return new CollisionData(otherVehicle.getModel(), otherVehicle, vehicle.getRightWheel(), otherLeftWheel);
+                return new CollisionData(otherVehicle, vehicle.getRightWheel(), otherLeftWheel);
             }
             var distanceLeftWheelRightWheel = leftWheelPosition.distanceTo(otherRightWheelPosition);
             if (distanceLeftWheelRightWheel < minDistanceWheelWheel) {
-                return new CollisionData(otherVehicle.getModel(), otherVehicle, vehicle.getLeftWheel(), otherRightWheel);
+                return new CollisionData(otherVehicle, vehicle.getLeftWheel(), otherRightWheel);
             }
             if (CollideUtils.isWheelVehicleCollide(rightWheelPosition, otherVehiclePosition, otherVehicleAngle,
                     wheelRadius, otherVehicleRadius)) {
-                return new CollisionData(otherVehicle.getModel(), otherVehicle, vehicle.getRightWheel(), null);
+                return new CollisionData(otherVehicle, vehicle.getRightWheel(), null);
             }
             if (CollideUtils.isWheelVehicleCollide(otherRightWheelPosition, nextPosition, nextAngle,
                     otherWheelRadius, vehicleRadius)) {
-                return new CollisionData(otherVehicle.getModel(), otherVehicle, null, otherRightWheel);
+                return new CollisionData(otherVehicle, null, otherRightWheel);
             }
             if (CollideUtils.isWheelVehicleCollide(otherLeftWheelPosition, nextPosition, nextAngle,
                     otherWheelRadius, vehicleRadius)) {
-                return new CollisionData(otherVehicle.getModel(), otherVehicle, null, otherLeftWheel);
+                return new CollisionData(otherVehicle, null, otherLeftWheel);
             }
             if (CollideUtils.isWheelVehicleCollide(leftWheelPosition, otherVehiclePosition, otherVehicleAngle,
                     wheelRadius, otherVehicleRadius)) {
-                return new CollisionData(otherVehicle.getModel(), otherVehicle, vehicle.getLeftWheel(), null);
+                return new CollisionData(otherVehicle, vehicle.getLeftWheel(), null);
             }
             var distanceLeftWheelLeftWheel = leftWheelPosition.distanceTo(otherLeftWheelPosition);
             if (distanceLeftWheelLeftWheel < minDistanceWheelWheel) {
-                return new CollisionData(otherVehicle.getModel(), otherVehicle, vehicle.getLeftWheel(), otherLeftWheel);
+                return new CollisionData(otherVehicle, vehicle.getLeftWheel(), otherLeftWheel);
             }
             var distanceRightWheelRightWheel = rightWheelPosition.distanceTo(otherRightWheelPosition);
             if (distanceRightWheelRightWheel < minDistanceWheelWheel) {
-                return new CollisionData(otherVehicle.getModel(), otherVehicle, vehicle.getRightWheel(), otherRightWheel);
+                return new CollisionData(otherVehicle, vehicle.getRightWheel(), otherRightWheel);
             }
         }
         return null;
     }
 
-    private static void doCollide(VehicleModel vehicle, VehicleCalculations calculations, CollisionData collisionData) {
+    private static void doCollide(VehicleCalculations vehicle, CollisionData collisionData) {
         if (collisionData.wheel() == null && collisionData.otherWheel() == null) {
-            doCollideVehicleVehicle(vehicle, collisionData.otherVehicle());
+            doCollideVehicleVehicle(vehicle.getModel(), collisionData.otherVehicle().getModel());
         }
         if (collisionData.wheel() != null && collisionData.otherWheel() != null) {
-            doCollideWheelWheel(vehicle, calculations, collisionData);
+            doCollideWheelWheel(vehicle, collisionData);
         }
         if (collisionData.wheel() != null && collisionData.otherWheel() == null) {
-            doCollideWheelVehicle(vehicle, calculations, collisionData);
+            doCollideWheelVehicle(vehicle, collisionData);
         }
         if (collisionData.wheel() == null && collisionData.otherWheel() != null) {
-            doCollideVehicleWheel(vehicle, collisionData);
+            doCollideVehicleWheel(vehicle.getModel(), collisionData);
         }
-        collisionData.otherVehicle().setCollided(true);
-        collisionData.otherVehicle().setUpdated(true);
+        collisionData.otherVehicle().getModel().setCollided(true);
+        collisionData.otherVehicle().getModel().setUpdated(true);
     }
 
     private static void doCollideVehicleVehicle(VehicleModel vehicle, VehicleModel otherVehicle) {
@@ -126,61 +126,61 @@ public class VehicleCollideProcessor {
         }
     }
 
-    private static void doCollideWheelWheel(VehicleModel vehicle, VehicleCalculations calculations, CollisionData collisionData) {
+    private static void doCollideWheelWheel(VehicleCalculations vehicle, CollisionData collisionData) {
         var collisionAngle = getCollisionAngle(collisionData.wheel().getPosition(), collisionData.otherWheel().getPosition());
 
-        VehicleUtils.calculateWheelVelocity(vehicle, calculations.getRightWheel());
-        VehicleUtils.calculateWheelVelocity(vehicle, calculations.getLeftWheel());
-        VehicleUtils.calculateWheelVelocity(collisionData.otherVehicle(), collisionData.otherCalculations().getRightWheel());
-        VehicleUtils.calculateWheelVelocity(collisionData.otherVehicle(), collisionData.otherCalculations().getLeftWheel());
+        VehicleUtils.calculateWheelVelocity(vehicle.getModel(), vehicle.getRightWheel());
+        VehicleUtils.calculateWheelVelocity(vehicle.getModel(), vehicle.getLeftWheel());
+        VehicleUtils.calculateWheelVelocity(collisionData.otherVehicle().getModel(), collisionData.otherVehicle().getRightWheel());
+        VehicleUtils.calculateWheelVelocity(collisionData.otherVehicle().getModel(), collisionData.otherVehicle().getLeftWheel());
 
         var velocityVerticalProjection = VectorUtils.getVerticalProjection(collisionData.wheel().getVelocity(), collisionAngle);
         var velocityHorizontalProjection = VectorUtils.getHorizontalProjection(collisionData.wheel().getVelocity(), collisionAngle);
         var otherVelocityVerticalProjection = VectorUtils.getVerticalProjection(collisionData.otherWheel().getVelocity(), collisionAngle);
 
-        var newVelocityVerticalProjection = getNewVelocityVerticalProjection(collisionData.otherVehicle().isCollided(),
-                velocityVerticalProjection, otherVelocityVerticalProjection, collisionAngle, vehicle.getState().getAngle());
+        var newVelocityVerticalProjection = getNewVelocityVerticalProjection(collisionData.otherVehicle().getModel().isCollided(),
+                velocityVerticalProjection, otherVelocityVerticalProjection, collisionAngle, vehicle.getModel().getState().getAngle());
         collisionData.wheel().getVelocity()
                 .setX(VectorUtils.getComponentX(newVelocityVerticalProjection, velocityHorizontalProjection, collisionAngle))
                 .setY(VectorUtils.getComponentY(newVelocityVerticalProjection, velocityHorizontalProjection, collisionAngle));
 
-        VehicleUtils.recalculateVehicleVelocityByWheel(vehicle, calculations, collisionData.wheel());
+        VehicleUtils.recalculateVehicleVelocityByWheel(vehicle, collisionData.wheel());
 
-        if (!collisionData.otherVehicle().isCollided()) {
+        if (!collisionData.otherVehicle().getModel().isCollided()) {
             var otherVelocityHorizontalProjection = VectorUtils.getHorizontalProjection(collisionData.otherWheel().getVelocity(), collisionAngle);
 
             collisionData.otherWheel().getVelocity()
                     .setX(VectorUtils.getComponentX(velocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle))
                     .setY(VectorUtils.getComponentY(velocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle));
 
-            VehicleUtils.recalculateVehicleVelocityByWheel(collisionData.otherVehicle(),
-                    collisionData.otherCalculations(), collisionData.otherWheel());
+            VehicleUtils.recalculateVehicleVelocityByWheel(collisionData.otherVehicle(), collisionData.otherWheel());
         }
     }
 
-    private static void doCollideWheelVehicle(VehicleModel vehicle, VehicleCalculations calculations, CollisionData collisionData) {
-        var collisionAngle = getCollisionAngle(collisionData.wheel().getPosition(), collisionData.otherVehicle().getState().getPosition());
-        var otherVelocity = collisionData.otherVehicle().getState().getVelocity().getMovingVelocity();
+    private static void doCollideWheelVehicle(VehicleCalculations vehicle, CollisionData collisionData) {
+        var collisionAngle = getCollisionAngle(collisionData.wheel().getPosition(),
+                collisionData.otherVehicle().getModel().getState().getPosition());
+        var otherVelocity = collisionData.otherVehicle().getModel().getState().getVelocity().getMovingVelocity();
 
-        VehicleUtils.calculateWheelVelocity(vehicle, calculations.getRightWheel());
-        VehicleUtils.calculateWheelVelocity(vehicle, calculations.getLeftWheel());
+        VehicleUtils.calculateWheelVelocity(vehicle.getModel(), vehicle.getRightWheel());
+        VehicleUtils.calculateWheelVelocity(vehicle.getModel(), vehicle.getLeftWheel());
 
         var velocityVerticalProjection = VectorUtils.getVerticalProjection(collisionData.wheel().getVelocity(), collisionAngle);
         var velocityHorizontalProjection = VectorUtils.getHorizontalProjection(collisionData.wheel().getVelocity(), collisionAngle);
         var otherVelocityVerticalProjection = VectorUtils.getVerticalProjection(otherVelocity, collisionAngle);
 
-        var newVelocityVerticalProjection = getNewVelocityVerticalProjection(collisionData.otherVehicle().isCollided(),
-                velocityVerticalProjection, otherVelocityVerticalProjection, collisionAngle, vehicle.getState().getAngle());
+        var newVelocityVerticalProjection = getNewVelocityVerticalProjection(collisionData.otherVehicle().getModel().isCollided(),
+                velocityVerticalProjection, otherVelocityVerticalProjection, collisionAngle, vehicle.getModel().getState().getAngle());
         collisionData.wheel().getVelocity()
                 .setX(VectorUtils.getComponentX(newVelocityVerticalProjection, velocityHorizontalProjection, collisionAngle))
                 .setY(VectorUtils.getComponentY(newVelocityVerticalProjection, velocityHorizontalProjection, collisionAngle));
 
-        VehicleUtils.recalculateVehicleVelocityByWheel(vehicle, calculations, collisionData.wheel());
+        VehicleUtils.recalculateVehicleVelocityByWheel(vehicle, collisionData.wheel());
 
-        if (!collisionData.otherVehicle().isCollided()) {
+        if (!collisionData.otherVehicle().getModel().isCollided()) {
             var otherVelocityHorizontalProjection = VectorUtils.getHorizontalProjection(otherVelocity, collisionAngle);
 
-            collisionData.otherVehicle().getState().getVelocity()
+            collisionData.otherVehicle().getModel().getState().getVelocity()
                     .setX(VectorUtils.getComponentX(velocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle))
                     .setY(VectorUtils.getComponentY(velocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle));
         }
@@ -190,28 +190,27 @@ public class VehicleCollideProcessor {
         var collisionAngle = getCollisionAngle(vehicle.getState().getPosition(), collisionData.otherWheel().getPosition());
         var velocity = vehicle.getState().getVelocity().getMovingVelocity();
 
-        VehicleUtils.calculateWheelVelocity(collisionData.otherVehicle(), collisionData.otherCalculations().getRightWheel());
-        VehicleUtils.calculateWheelVelocity(collisionData.otherVehicle(), collisionData.otherCalculations().getLeftWheel());
+        VehicleUtils.calculateWheelVelocity(collisionData.otherVehicle().getModel(), collisionData.otherVehicle().getRightWheel());
+        VehicleUtils.calculateWheelVelocity(collisionData.otherVehicle().getModel(), collisionData.otherVehicle().getLeftWheel());
 
         var velocityVerticalProjection = VectorUtils.getVerticalProjection(velocity, collisionAngle);
         var velocityHorizontalProjection = VectorUtils.getHorizontalProjection(velocity, collisionAngle);
         var otherVelocityVerticalProjection = VectorUtils.getVerticalProjection(collisionData.otherWheel().getVelocity(), collisionAngle);
 
-        var newVelocityVerticalProjection = getNewVelocityVerticalProjection(collisionData.otherVehicle().isCollided(),
+        var newVelocityVerticalProjection = getNewVelocityVerticalProjection(collisionData.otherVehicle().getModel().isCollided(),
                 velocityVerticalProjection, otherVelocityVerticalProjection, collisionAngle, vehicle.getState().getAngle());
         vehicle.getState().getVelocity()
                 .setX(VectorUtils.getComponentX(newVelocityVerticalProjection, velocityHorizontalProjection, collisionAngle))
                 .setY(VectorUtils.getComponentY(newVelocityVerticalProjection, velocityHorizontalProjection, collisionAngle));
 
-        if (!collisionData.otherVehicle().isCollided()) {
+        if (!collisionData.otherVehicle().getModel().isCollided()) {
             var otherVelocityHorizontalProjection = VectorUtils.getHorizontalProjection(collisionData.otherWheel().getVelocity(), collisionAngle);
 
             collisionData.otherWheel().getVelocity()
                     .setX(VectorUtils.getComponentX(velocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle))
                     .setY(VectorUtils.getComponentY(velocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle));
 
-            VehicleUtils.recalculateVehicleVelocityByWheel(collisionData.otherVehicle(),
-                    collisionData.otherCalculations(), collisionData.otherWheel());
+            VehicleUtils.recalculateVehicleVelocityByWheel(collisionData.otherVehicle(), collisionData.otherWheel());
         }
     }
 
@@ -232,7 +231,10 @@ public class VehicleCollideProcessor {
                 * Math.abs(Math.cos(vehicleAngle - collisionAngle));
     }
 
-    private record CollisionData(VehicleModel otherVehicle, VehicleCalculations otherCalculations,
-                                 WheelCalculations wheel, WheelCalculations otherWheel) {
+    private record CollisionData(
+            VehicleCalculations otherVehicle,
+            WheelCalculations wheel,
+            WheelCalculations otherWheel
+    ) {
     }
 }

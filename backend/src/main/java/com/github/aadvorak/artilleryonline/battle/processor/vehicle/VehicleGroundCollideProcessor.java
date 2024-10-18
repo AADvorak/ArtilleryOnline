@@ -57,6 +57,6 @@ public class VehicleGroundCollideProcessor {
         wheelVelocity.setX(VectorUtils.getComponentX(velocityVerticalProjection, velocityHorizontalProjection, groundAngle));
         wheelVelocity.setY(VectorUtils.getComponentY(velocityVerticalProjection, velocityHorizontalProjection, groundAngle));
 
-        VehicleUtils.recalculateVehicleVelocityByWheel(vehicleModel, calculations, wheelCalculations);
+        VehicleUtils.recalculateVehicleVelocityByWheel(calculations, wheelCalculations);
     }
 }

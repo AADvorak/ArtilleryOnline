@@ -53,17 +53,16 @@ public class VehicleUtils {
                 .setY(velocityY));
     }
 
-    public static void recalculateVehicleVelocityByWheel(VehicleModel vehicle, VehicleCalculations calculations,
-                                                         WheelCalculations wheelCalculations) {
+    public static void recalculateVehicleVelocityByWheel(VehicleCalculations calculations, WheelCalculations wheelCalculations) {
         var rightWheelVelocity = calculations.getRightWheel().getVelocity();
         var leftWheelVelocity = calculations.getLeftWheel().getVelocity();
-        var angle = vehicle.getState().getAngle();
+        var angle = calculations.getModel().getState().getAngle();
 
         var angleVelocity = Math.abs(angle) < Math.PI / 4
                 ? (rightWheelVelocity.getY() - leftWheelVelocity.getY()) / (2.0 * Math.cos(angle))
                 : (leftWheelVelocity.getX() - rightWheelVelocity.getX()) / (2.0 * Math.sin(angle));
         var wheelSign = wheelCalculations.getSign().getValue();
-        vehicle.getState().getVelocity()
+        calculations.getModel().getState().getVelocity()
                 .setAngle(angleVelocity)
                 .setX(wheelCalculations.getVelocity().getX() - wheelSign * angleVelocity * Math.sin(angle))
                 .setY(wheelCalculations.getVelocity().getY() + wheelSign * angleVelocity * Math.cos(angle));
