@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -9,6 +10,8 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class VehicleCalculations {
+
+    private VehicleModel model;
 
     private Position nextPosition;
 

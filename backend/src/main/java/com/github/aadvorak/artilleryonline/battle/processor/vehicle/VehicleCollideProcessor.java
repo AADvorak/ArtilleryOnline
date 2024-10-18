@@ -1,10 +1,9 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
+import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.WheelSign;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
-import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.utils.CollideUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
@@ -14,81 +13,72 @@ import java.util.stream.Collectors;
 
 public class VehicleCollideProcessor {
 
-    public static boolean processCollide(VehicleCalculations calculations, VehicleModel vehicleModel,
-                                         BattleModel battleModel) {
-        var collisionData = vehicleCollide(calculations, vehicleModel, battleModel);
+    public static boolean processCollide(VehicleCalculations vehicle, BattleCalculations battle) {
+        var collisionData = vehicleCollide(vehicle, battle);
         if (collisionData != null) {
-            doCollide(vehicleModel, calculations, collisionData);
-            vehicleModel.setUpdated(true);
-            vehicleModel.setCollided(true);
+            doCollide(vehicle.getModel(), vehicle, collisionData);
+            vehicle.getModel().setUpdated(true);
+            vehicle.getModel().setCollided(true);
             return true;
         }
         return false;
     }
 
-    private static CollisionData vehicleCollide(VehicleCalculations calculations, VehicleModel vehicleModel,
-                                               BattleModel battleModel) {
-        var otherVehicleModels = battleModel.getVehicles().values().stream()
-                .filter(value -> value.getId() != vehicleModel.getId())
+    private static CollisionData vehicleCollide(VehicleCalculations vehicle, BattleCalculations battle) {
+        var otherVehicles = battle.getVehicles().stream()
+                .filter(value -> value.getModel().getId() != vehicle.getModel().getId())
                 .collect(Collectors.toSet());
-        var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
-        var vehicleRadius = vehicleModel.getSpecs().getRadius();
-        var nextPosition = calculations.getNextPosition();
-        var nextAngle = calculations.getNextAngle();
-        var rightWheelPosition = VehicleUtils.getRightWheelPosition(vehicleModel, nextPosition, nextAngle);
-        var leftWheelPosition = VehicleUtils.getLeftWheelPosition(vehicleModel, nextPosition, nextAngle);
-        for (var otherVehicleModel : otherVehicleModels) {
-            var otherVehiclePosition = otherVehicleModel.getState().getPosition();
-            var otherVehicleAngle = otherVehicleModel.getState().getAngle();
-            var otherWheelRadius = otherVehicleModel.getSpecs().getWheelRadius();
-            var otherVehicleRadius = otherVehicleModel.getSpecs().getRadius();
+        var wheelRadius = vehicle.getModel().getSpecs().getWheelRadius();
+        var vehicleRadius = vehicle.getModel().getSpecs().getRadius();
+        var nextPosition = vehicle.getNextPosition();
+        var nextAngle = vehicle.getNextAngle();
+        var rightWheelPosition = VehicleUtils.getNextRightWheelPosition(vehicle);
+        var leftWheelPosition = VehicleUtils.getNextLeftWheelPosition(vehicle);
+        for (var otherVehicle : otherVehicles) {
+            var otherVehiclePosition = otherVehicle.getNextPosition();
+            var otherVehicleAngle = otherVehicle.getNextAngle();
+            var otherWheelRadius = otherVehicle.getModel().getSpecs().getWheelRadius();
+            var otherVehicleRadius = otherVehicle.getModel().getSpecs().getRadius();
             var minDistanceWheelWheel = wheelRadius + otherWheelRadius;
             if (CollideUtils.isVehicleVehicleCollide(nextPosition, otherVehiclePosition, nextAngle,
                     otherVehicleAngle, vehicleRadius, otherVehicleRadius)) {
-                return new CollisionData(otherVehicleModel, null, null, null);
+                return new CollisionData(otherVehicle.getModel(), null, null, null);
             }
-            var otherLeftWheelPosition = VehicleUtils.getLeftWheelPosition(otherVehicleModel);
-            var otherRightWheelPosition = VehicleUtils.getRightWheelPosition(otherVehicleModel);
-            var otherLeftWheel = new WheelCalculations()
-                    .setSign(WheelSign.LEFT)
-                    .setPosition(otherLeftWheelPosition);
-            var otherRightWheel = new WheelCalculations()
-                    .setSign(WheelSign.RIGHT)
-                    .setPosition(otherRightWheelPosition);
-            var otherCalculations = new VehicleCalculations()
-                    .setLeftWheel(otherLeftWheel)
-                    .setRightWheel(otherRightWheel);
+            var otherLeftWheelPosition = VehicleUtils.getNextLeftWheelPosition(otherVehicle);
+            var otherRightWheelPosition = VehicleUtils.getNextRightWheelPosition(otherVehicle);
+            var otherLeftWheel = otherVehicle.getLeftWheel();
+            var otherRightWheel = otherVehicle.getRightWheel();
             var distanceRightWheelLeftWheel = rightWheelPosition.distanceTo(otherLeftWheelPosition);
             if (distanceRightWheelLeftWheel < minDistanceWheelWheel) {
-                return new CollisionData(otherVehicleModel, otherCalculations, calculations.getRightWheel(), otherLeftWheel);
+                return new CollisionData(otherVehicle.getModel(), otherVehicle, vehicle.getRightWheel(), otherLeftWheel);
             }
             var distanceLeftWheelRightWheel = leftWheelPosition.distanceTo(otherRightWheelPosition);
             if (distanceLeftWheelRightWheel < minDistanceWheelWheel) {
-                return new CollisionData(otherVehicleModel, otherCalculations, calculations.getLeftWheel(), otherRightWheel);
+                return new CollisionData(otherVehicle.getModel(), otherVehicle, vehicle.getLeftWheel(), otherRightWheel);
             }
             if (CollideUtils.isWheelVehicleCollide(rightWheelPosition, otherVehiclePosition, otherVehicleAngle,
                     wheelRadius, otherVehicleRadius)) {
-                return new CollisionData(otherVehicleModel, otherCalculations, calculations.getRightWheel(), null);
+                return new CollisionData(otherVehicle.getModel(), otherVehicle, vehicle.getRightWheel(), null);
             }
             if (CollideUtils.isWheelVehicleCollide(otherRightWheelPosition, nextPosition, nextAngle,
                     otherWheelRadius, vehicleRadius)) {
-                return new CollisionData(otherVehicleModel, otherCalculations, null, otherRightWheel);
+                return new CollisionData(otherVehicle.getModel(), otherVehicle, null, otherRightWheel);
             }
             if (CollideUtils.isWheelVehicleCollide(otherLeftWheelPosition, nextPosition, nextAngle,
                     otherWheelRadius, vehicleRadius)) {
-                return new CollisionData(otherVehicleModel, otherCalculations, null, otherLeftWheel);
+                return new CollisionData(otherVehicle.getModel(), otherVehicle, null, otherLeftWheel);
             }
             if (CollideUtils.isWheelVehicleCollide(leftWheelPosition, otherVehiclePosition, otherVehicleAngle,
                     wheelRadius, otherVehicleRadius)) {
-                return new CollisionData(otherVehicleModel, otherCalculations, calculations.getLeftWheel(), null);
+                return new CollisionData(otherVehicle.getModel(), otherVehicle, vehicle.getLeftWheel(), null);
             }
             var distanceLeftWheelLeftWheel = leftWheelPosition.distanceTo(otherLeftWheelPosition);
             if (distanceLeftWheelLeftWheel < minDistanceWheelWheel) {
-                return new CollisionData(otherVehicleModel, otherCalculations, calculations.getLeftWheel(), otherLeftWheel);
+                return new CollisionData(otherVehicle.getModel(), otherVehicle, vehicle.getLeftWheel(), otherLeftWheel);
             }
             var distanceRightWheelRightWheel = rightWheelPosition.distanceTo(otherRightWheelPosition);
             if (distanceRightWheelRightWheel < minDistanceWheelWheel) {
-                return new CollisionData(otherVehicleModel, otherCalculations, calculations.getRightWheel(), otherRightWheel);
+                return new CollisionData(otherVehicle.getModel(), otherVehicle, vehicle.getRightWheel(), otherRightWheel);
             }
         }
         return null;

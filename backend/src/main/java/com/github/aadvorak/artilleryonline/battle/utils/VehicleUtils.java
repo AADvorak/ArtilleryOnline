@@ -8,6 +8,10 @@ import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 
 public class VehicleUtils {
 
+    public static Position getNextLeftWheelPosition(VehicleCalculations vehicle) {
+        return getLeftWheelPosition(vehicle.getModel(), vehicle.getNextPosition(), vehicle.getNextAngle());
+    }
+
     public static Position getLeftWheelPosition(VehicleModel vehicleModel) {
         return getLeftWheelPosition(vehicleModel, vehicleModel.getState().getPosition(),
                 vehicleModel.getState().getAngle());
@@ -19,6 +23,10 @@ public class VehicleUtils {
         return new Position()
                 .setX(position.getX() - wheelDistance * Math.cos(angle + wheelAngle))
                 .setY(position.getY() - wheelDistance * Math.sin(angle + wheelAngle));
+    }
+
+    public static Position getNextRightWheelPosition(VehicleCalculations vehicle) {
+        return getRightWheelPosition(vehicle.getModel(), vehicle.getNextPosition(), vehicle.getNextAngle());
     }
 
     public static Position getRightWheelPosition(VehicleModel vehicleModel) {
