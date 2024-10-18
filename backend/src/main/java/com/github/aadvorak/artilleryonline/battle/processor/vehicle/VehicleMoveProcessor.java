@@ -42,7 +42,7 @@ public class VehicleMoveProcessor {
     }
 
     private static boolean processCollisions(VehicleCalculations vehicle, BattleCalculations battle) {
-        if (VehicleWallCollideProcessor.processCollide(vehicle, vehicle.getModel(), battle.getModel())) {
+        if (VehicleWallCollideProcessor.processCollide(vehicle, battle)) {
             return true;
         }
         if (VehicleGroundCollideProcessor.processCollide(vehicle, battle)) {
