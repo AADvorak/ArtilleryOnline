@@ -6,6 +6,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.WheelSign;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.utils.CollideUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
@@ -38,15 +39,12 @@ public class VehicleCollideProcessor {
         var leftWheelPosition = VehicleUtils.getLeftWheelPosition(vehicleModel, nextPosition, nextAngle);
         for (var otherVehicleModel : otherVehicleModels) {
             var otherVehiclePosition = otherVehicleModel.getState().getPosition();
+            var otherVehicleAngle = otherVehicleModel.getState().getAngle();
             var otherWheelRadius = otherVehicleModel.getSpecs().getWheelRadius();
             var otherVehicleRadius = otherVehicleModel.getSpecs().getRadius();
             var minDistanceWheelWheel = wheelRadius + otherWheelRadius;
-            var minDistanceVehicleVehicle = getMinVehicleVehicleDistance(nextPosition, otherVehiclePosition,
-                    vehicleRadius, otherVehicleRadius);
-            var minDistanceWheelVehicle = wheelRadius + otherVehicleRadius;
-            var minDistanceVehicleWheel = vehicleRadius + otherWheelRadius;
-            var distanceVehicleVehicle = nextPosition.distanceTo(otherVehiclePosition);
-            if (distanceVehicleVehicle < minDistanceVehicleVehicle) {
+            if (CollideUtils.isVehicleVehicleCollide(nextPosition, otherVehiclePosition, nextAngle,
+                    otherVehicleAngle, vehicleRadius, otherVehicleRadius)) {
                 return new CollisionData(otherVehicleModel, null, null, null);
             }
             var otherLeftWheelPosition = VehicleUtils.getLeftWheelPosition(otherVehicleModel);
@@ -68,20 +66,20 @@ public class VehicleCollideProcessor {
             if (distanceLeftWheelRightWheel < minDistanceWheelWheel) {
                 return new CollisionData(otherVehicleModel, otherCalculations, calculations.getLeftWheel(), otherRightWheel);
             }
-            var distanceRightWheelVehicle = rightWheelPosition.distanceTo(otherVehiclePosition);
-            if (distanceRightWheelVehicle < minDistanceWheelVehicle) {
+            if (CollideUtils.isWheelVehicleCollide(rightWheelPosition, otherVehiclePosition, otherVehicleAngle,
+                    wheelRadius, otherVehicleRadius)) {
                 return new CollisionData(otherVehicleModel, otherCalculations, calculations.getRightWheel(), null);
             }
-            var distanceVehicleRightWheel = nextPosition.distanceTo(otherRightWheelPosition);
-            if (distanceVehicleRightWheel < minDistanceVehicleWheel) {
+            if (CollideUtils.isWheelVehicleCollide(otherRightWheelPosition, nextPosition, nextAngle,
+                    otherWheelRadius, vehicleRadius)) {
                 return new CollisionData(otherVehicleModel, otherCalculations, null, otherRightWheel);
             }
-            var distanceVehicleLeftWheel = nextPosition.distanceTo(otherLeftWheelPosition);
-            if (distanceVehicleLeftWheel < minDistanceVehicleWheel) {
+            if (CollideUtils.isWheelVehicleCollide(otherLeftWheelPosition, nextPosition, nextAngle,
+                    otherWheelRadius, vehicleRadius)) {
                 return new CollisionData(otherVehicleModel, otherCalculations, null, otherLeftWheel);
             }
-            var distanceLeftWheelVehicle = leftWheelPosition.distanceTo(otherVehiclePosition);
-            if (distanceLeftWheelVehicle < minDistanceWheelVehicle) {
+            if (CollideUtils.isWheelVehicleCollide(leftWheelPosition, otherVehiclePosition, otherVehicleAngle,
+                    wheelRadius, otherVehicleRadius)) {
                 return new CollisionData(otherVehicleModel, otherCalculations, calculations.getLeftWheel(), null);
             }
             var distanceLeftWheelLeftWheel = leftWheelPosition.distanceTo(otherLeftWheelPosition);
@@ -94,17 +92,6 @@ public class VehicleCollideProcessor {
             }
         }
         return null;
-    }
-
-    private static double getMinVehicleVehicleDistance(Position position, Position otherPosition,
-                                                       double radius, double otherRadius) {
-        if (position.getY() - otherPosition.getY() > otherRadius) {
-            return otherRadius;
-        }
-        if (otherPosition.getY() - position.getY() > radius) {
-            return radius;
-        }
-        return radius + otherRadius;
     }
 
     private static void doCollide(VehicleModel vehicle, VehicleCalculations calculations, CollisionData collisionData) {
