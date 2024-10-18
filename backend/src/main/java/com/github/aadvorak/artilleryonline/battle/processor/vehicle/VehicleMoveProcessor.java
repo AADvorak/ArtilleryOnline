@@ -45,7 +45,7 @@ public class VehicleMoveProcessor {
         if (VehicleWallCollideProcessor.processCollide(vehicle, vehicle.getModel(), battle.getModel())) {
             return true;
         }
-        if (VehicleGroundCollideProcessor.processCollide(vehicle, vehicle.getModel(), battle.getModel())) {
+        if (VehicleGroundCollideProcessor.processCollide(vehicle, battle)) {
             return true;
         }
         return VehicleCollideProcessor.processCollide(vehicle, battle);
