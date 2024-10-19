@@ -25,6 +25,11 @@ public class VehicleCollideProcessor {
         return false;
     }
 
+    public static boolean checkResolved(VehicleCalculations vehicle, BattleCalculations battle) {
+        var collisionData = vehicleCollide(vehicle, battle);
+        return collisionData == null;
+    }
+
     private static CollisionData vehicleCollide(VehicleCalculations vehicle, BattleCalculations battle) {
         var otherVehicles = battle.getVehicles().stream()
                 .filter(value -> value.getModel().getId() != vehicle.getModel().getId())

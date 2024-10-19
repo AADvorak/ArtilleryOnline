@@ -21,6 +21,11 @@ public class VehicleGroundCollideProcessor {
         return false;
     }
 
+    public static boolean checkResolved(VehicleCalculations vehicle, BattleCalculations battle) {
+        var groundCollideWheel = getGroundCollideWheel(vehicle, battle);
+        return groundCollideWheel == null;
+    }
+
     private static WheelCalculations getGroundCollideWheel(VehicleCalculations vehicle, BattleCalculations battle) {
         var nextRightWheelPosition = VehicleUtils.getNextRightWheelPosition(vehicle);
         var nextLeftWheelPosition = VehicleUtils.getNextLeftWheelPosition(vehicle);

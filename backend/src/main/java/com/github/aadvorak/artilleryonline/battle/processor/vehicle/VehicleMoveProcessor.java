@@ -15,10 +15,10 @@ public class VehicleMoveProcessor {
     }
 
     public static void processStep2(VehicleCalculations vehicle, BattleCalculations battle) {
-        if(processCollisions(vehicle, battle)) {
+        if (processCollisions(vehicle, battle)) {
             calculateNextPositionAndAngle(vehicle, battle);
         }
-        if (vehicle.getCollisions().size() <= 1) {
+        if (checkCollisionsResolved(vehicle, battle)) {
             applyNextPositionAndAngle(vehicle);
         }
     }
@@ -54,6 +54,15 @@ public class VehicleMoveProcessor {
             return true;
         }
         return VehicleCollideProcessor.processCollide(vehicle, battle);
+    }
+
+    private static boolean checkCollisionsResolved(VehicleCalculations vehicle, BattleCalculations battle) {
+        if (vehicle.getCollisions().isEmpty()) {
+            return true;
+        }
+        return VehicleWallCollideProcessor.checkResolved(vehicle, battle)
+                && VehicleGroundCollideProcessor.checkResolved(vehicle, battle)
+                && VehicleCollideProcessor.checkResolved(vehicle, battle);
     }
 
     private static void calculateNextPositionAndAngle(VehicleCalculations vehicle, BattleCalculations battle) {

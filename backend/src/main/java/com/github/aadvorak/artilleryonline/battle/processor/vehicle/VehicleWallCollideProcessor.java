@@ -18,6 +18,10 @@ public class VehicleWallCollideProcessor {
         return false;
     }
 
+    public static boolean checkResolved(VehicleCalculations vehicle, BattleCalculations battle) {
+        return !wallCollide(vehicle, battle);
+    }
+
     private static boolean wallCollide(VehicleCalculations vehicle, BattleCalculations battle) {
         var velocityX = vehicle.getModel().getState().getVelocity().getX();
         var wheelRadius = vehicle.getModel().getSpecs().getWheelRadius();
