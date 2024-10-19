@@ -11,7 +11,7 @@ import java.util.Map;
 public enum VehicleSpecsPreset {
 
     DEFAULT("default", new VehicleSpecs()
-            .setAmmo(50)
+            .setAmmo(80)
             .setRadius(0.4)
             .setWheelRadius(0.1)
             .setTrackRepairTime(10.0)
