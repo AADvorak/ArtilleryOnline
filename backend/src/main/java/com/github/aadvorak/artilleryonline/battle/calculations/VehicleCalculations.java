@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -16,6 +19,8 @@ public class VehicleCalculations {
     private Position nextPosition;
 
     private double nextAngle;
+
+    private Set<Collision> collisions = new HashSet<>();
 
     private WheelCalculations rightWheel = new WheelCalculations().setSign(WheelSign.RIGHT);
 

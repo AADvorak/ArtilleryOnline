@@ -15,7 +15,5 @@ public class VehicleModel extends GenericSpecsConfigStateModel<VehicleSpecs, Veh
 
     private VehiclePreCalc preCalc;
 
-    private boolean collided = false;
-
     private boolean updated = false;
 }

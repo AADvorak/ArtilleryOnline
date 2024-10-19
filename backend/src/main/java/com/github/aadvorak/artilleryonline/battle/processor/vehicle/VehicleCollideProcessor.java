@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.Collision;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
@@ -18,7 +19,7 @@ public class VehicleCollideProcessor {
         if (collisionData != null) {
             doCollide(vehicle, collisionData);
             vehicle.getModel().setUpdated(true);
-            vehicle.getModel().setCollided(true);
+            vehicle.getCollisions().add(Collision.VEHICLE);
             return true;
         }
         return false;
@@ -97,7 +98,7 @@ public class VehicleCollideProcessor {
         if (collisionData.wheel() == null && collisionData.otherWheel() != null) {
             doCollideVehicleWheel(vehicle.getModel(), collisionData);
         }
-        collisionData.otherVehicle().getModel().setCollided(true);
+        collisionData.otherVehicle().getCollisions().add(Collision.VEHICLE);
         collisionData.otherVehicle().getModel().setUpdated(true);
     }
 
@@ -111,19 +112,18 @@ public class VehicleCollideProcessor {
         var velocityHorizontalProjection = VectorUtils.getHorizontalProjection(velocity, collisionAngle);
         var otherVelocityVerticalProjection = VectorUtils.getVerticalProjection(otherVelocity, collisionAngle);
 
-        var newVelocityVerticalProjection = getNewVelocityVerticalProjection(otherVehicle.isCollided(),
-                velocityVerticalProjection, otherVelocityVerticalProjection, collisionAngle, vehicle.getState().getAngle());
+        var newVelocityVerticalProjection = getNewVelocityVerticalProjection(velocityVerticalProjection,
+                otherVelocityVerticalProjection, collisionAngle, vehicle.getState().getAngle());
         vehicle.getState().getVelocity()
                 .setX(VectorUtils.getComponentX(newVelocityVerticalProjection, velocityHorizontalProjection, collisionAngle))
                 .setY(VectorUtils.getComponentY(newVelocityVerticalProjection, velocityHorizontalProjection, collisionAngle));
 
-        if (!otherVehicle.isCollided()) {
-            var otherVelocityHorizontalProjection = VectorUtils.getHorizontalProjection(otherVelocity, collisionAngle);
-
-            otherVehicle.getState().getVelocity()
-                    .setX(VectorUtils.getComponentX(velocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle))
-                    .setY(VectorUtils.getComponentY(velocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle));
-        }
+        var otherVelocityHorizontalProjection = VectorUtils.getHorizontalProjection(otherVelocity, collisionAngle);
+        var otherNewVelocityVerticalProjection = getNewVelocityVerticalProjection(otherVelocityVerticalProjection,
+                velocityVerticalProjection, collisionAngle, otherVehicle.getState().getAngle());
+        otherVehicle.getState().getVelocity()
+                .setX(VectorUtils.getComponentX(otherNewVelocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle))
+                .setY(VectorUtils.getComponentY(otherNewVelocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle));
     }
 
     private static void doCollideWheelWheel(VehicleCalculations vehicle, CollisionData collisionData) {
@@ -138,23 +138,22 @@ public class VehicleCollideProcessor {
         var velocityHorizontalProjection = VectorUtils.getHorizontalProjection(collisionData.wheel().getVelocity(), collisionAngle);
         var otherVelocityVerticalProjection = VectorUtils.getVerticalProjection(collisionData.otherWheel().getVelocity(), collisionAngle);
 
-        var newVelocityVerticalProjection = getNewVelocityVerticalProjection(collisionData.otherVehicle().getModel().isCollided(),
-                velocityVerticalProjection, otherVelocityVerticalProjection, collisionAngle, vehicle.getModel().getState().getAngle());
+        var newVelocityVerticalProjection = getNewVelocityVerticalProjection(velocityVerticalProjection,
+                otherVelocityVerticalProjection, collisionAngle, vehicle.getModel().getState().getAngle());
         collisionData.wheel().getVelocity()
                 .setX(VectorUtils.getComponentX(newVelocityVerticalProjection, velocityHorizontalProjection, collisionAngle))
                 .setY(VectorUtils.getComponentY(newVelocityVerticalProjection, velocityHorizontalProjection, collisionAngle));
 
         VehicleUtils.recalculateVehicleVelocityByWheel(vehicle, collisionData.wheel());
 
-        if (!collisionData.otherVehicle().getModel().isCollided()) {
-            var otherVelocityHorizontalProjection = VectorUtils.getHorizontalProjection(collisionData.otherWheel().getVelocity(), collisionAngle);
+        var otherVelocityHorizontalProjection = VectorUtils.getHorizontalProjection(collisionData.otherWheel().getVelocity(), collisionAngle);
+        var otherNewVelocityVerticalProjection = getNewVelocityVerticalProjection(otherVelocityVerticalProjection,
+                velocityVerticalProjection, collisionAngle, collisionData.otherVehicle().getModel().getState().getAngle());
+        collisionData.otherWheel().getVelocity()
+                .setX(VectorUtils.getComponentX(otherNewVelocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle))
+                .setY(VectorUtils.getComponentY(otherNewVelocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle));
 
-            collisionData.otherWheel().getVelocity()
-                    .setX(VectorUtils.getComponentX(velocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle))
-                    .setY(VectorUtils.getComponentY(velocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle));
-
-            VehicleUtils.recalculateVehicleVelocityByWheel(collisionData.otherVehicle(), collisionData.otherWheel());
-        }
+        VehicleUtils.recalculateVehicleVelocityByWheel(collisionData.otherVehicle(), collisionData.otherWheel());
     }
 
     private static void doCollideWheelVehicle(VehicleCalculations vehicle, CollisionData collisionData) {
@@ -169,21 +168,20 @@ public class VehicleCollideProcessor {
         var velocityHorizontalProjection = VectorUtils.getHorizontalProjection(collisionData.wheel().getVelocity(), collisionAngle);
         var otherVelocityVerticalProjection = VectorUtils.getVerticalProjection(otherVelocity, collisionAngle);
 
-        var newVelocityVerticalProjection = getNewVelocityVerticalProjection(collisionData.otherVehicle().getModel().isCollided(),
-                velocityVerticalProjection, otherVelocityVerticalProjection, collisionAngle, vehicle.getModel().getState().getAngle());
+        var newVelocityVerticalProjection = getNewVelocityVerticalProjection(velocityVerticalProjection,
+                otherVelocityVerticalProjection, collisionAngle, vehicle.getModel().getState().getAngle());
         collisionData.wheel().getVelocity()
                 .setX(VectorUtils.getComponentX(newVelocityVerticalProjection, velocityHorizontalProjection, collisionAngle))
                 .setY(VectorUtils.getComponentY(newVelocityVerticalProjection, velocityHorizontalProjection, collisionAngle));
 
         VehicleUtils.recalculateVehicleVelocityByWheel(vehicle, collisionData.wheel());
 
-        if (!collisionData.otherVehicle().getModel().isCollided()) {
-            var otherVelocityHorizontalProjection = VectorUtils.getHorizontalProjection(otherVelocity, collisionAngle);
-
-            collisionData.otherVehicle().getModel().getState().getVelocity()
-                    .setX(VectorUtils.getComponentX(velocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle))
-                    .setY(VectorUtils.getComponentY(velocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle));
-        }
+        var otherVelocityHorizontalProjection = VectorUtils.getHorizontalProjection(otherVelocity, collisionAngle);
+        var otherNewVelocityVerticalProjection = getNewVelocityVerticalProjection(otherVelocityVerticalProjection,
+                velocityVerticalProjection, collisionAngle, collisionData.otherVehicle().getModel().getState().getAngle());
+        collisionData.otherVehicle().getModel().getState().getVelocity()
+                .setX(VectorUtils.getComponentX(otherNewVelocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle))
+                .setY(VectorUtils.getComponentY(otherNewVelocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle));
     }
 
     private static void doCollideVehicleWheel(VehicleModel vehicle, CollisionData collisionData) {
@@ -197,21 +195,20 @@ public class VehicleCollideProcessor {
         var velocityHorizontalProjection = VectorUtils.getHorizontalProjection(velocity, collisionAngle);
         var otherVelocityVerticalProjection = VectorUtils.getVerticalProjection(collisionData.otherWheel().getVelocity(), collisionAngle);
 
-        var newVelocityVerticalProjection = getNewVelocityVerticalProjection(collisionData.otherVehicle().getModel().isCollided(),
-                velocityVerticalProjection, otherVelocityVerticalProjection, collisionAngle, vehicle.getState().getAngle());
+        var newVelocityVerticalProjection = getNewVelocityVerticalProjection(velocityVerticalProjection,
+                otherVelocityVerticalProjection, collisionAngle, vehicle.getState().getAngle());
         vehicle.getState().getVelocity()
                 .setX(VectorUtils.getComponentX(newVelocityVerticalProjection, velocityHorizontalProjection, collisionAngle))
                 .setY(VectorUtils.getComponentY(newVelocityVerticalProjection, velocityHorizontalProjection, collisionAngle));
 
-        if (!collisionData.otherVehicle().getModel().isCollided()) {
-            var otherVelocityHorizontalProjection = VectorUtils.getHorizontalProjection(collisionData.otherWheel().getVelocity(), collisionAngle);
+        var otherVelocityHorizontalProjection = VectorUtils.getHorizontalProjection(collisionData.otherWheel().getVelocity(), collisionAngle);
+        var otherNewVelocityVerticalProjection = getNewVelocityVerticalProjection(otherVelocityVerticalProjection,
+                velocityVerticalProjection, collisionAngle, collisionData.otherVehicle().getModel().getState().getAngle());
+        collisionData.otherWheel().getVelocity()
+                .setX(VectorUtils.getComponentX(otherNewVelocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle))
+                .setY(VectorUtils.getComponentY(otherNewVelocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle));
 
-            collisionData.otherWheel().getVelocity()
-                    .setX(VectorUtils.getComponentX(velocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle))
-                    .setY(VectorUtils.getComponentY(velocityVerticalProjection, otherVelocityHorizontalProjection, collisionAngle));
-
-            VehicleUtils.recalculateVehicleVelocityByWheel(collisionData.otherVehicle(), collisionData.otherWheel());
-        }
+        VehicleUtils.recalculateVehicleVelocityByWheel(collisionData.otherVehicle(), collisionData.otherWheel());
     }
 
     private static double getCollisionAngle(Position position, Position otherPosition) {
@@ -223,11 +220,10 @@ public class VehicleCollideProcessor {
      * todo this is temporal solution
      */
     private static double getNewVelocityVerticalProjection(
-            boolean otherVehicleCollided, double velocityVerticalProjection,
-            double otherVelocityVerticalProjection, double collisionAngle, double vehicleAngle
+            double velocityVerticalProjection, double otherVelocityVerticalProjection,
+            double collisionAngle, double vehicleAngle
     ) {
-        return otherVehicleCollided ? -velocityVerticalProjection
-                : otherVelocityVerticalProjection - velocityVerticalProjection
+        return otherVelocityVerticalProjection - velocityVerticalProjection
                 * Math.abs(Math.cos(vehicleAngle - collisionAngle));
     }
 

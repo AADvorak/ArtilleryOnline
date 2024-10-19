@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.Collision;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
@@ -14,7 +15,7 @@ public class VehicleGroundCollideProcessor {
         if (groundCollideWheel != null) {
             doCollide(vehicle, groundCollideWheel);
             vehicle.getModel().setUpdated(true);
-            vehicle.getModel().setCollided(true);
+            vehicle.getCollisions().add(Collision.GROUND);
             return true;
         }
         return false;

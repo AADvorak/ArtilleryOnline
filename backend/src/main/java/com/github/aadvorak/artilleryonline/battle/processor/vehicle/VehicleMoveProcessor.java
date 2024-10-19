@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.Collision;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.calculator.VehicleAccelerationCalculator;
@@ -14,10 +15,12 @@ public class VehicleMoveProcessor {
     }
 
     public static void processStep2(VehicleCalculations vehicle, BattleCalculations battle) {
-        if (!processCollisions(vehicle, battle)) {
+        if(processCollisions(vehicle, battle)) {
+            calculateNextPositionAndAngle(vehicle, battle);
+        }
+        if (vehicle.getCollisions().size() <= 1) {
             applyNextPositionAndAngle(vehicle);
         }
-        vehicle.getModel().setCollided(false);
     }
 
     private static void recalculateAcceleration(VehicleCalculations vehicle, BattleCalculations battle) {
@@ -45,6 +48,9 @@ public class VehicleMoveProcessor {
             return true;
         }
         if (VehicleGroundCollideProcessor.processCollide(vehicle, battle)) {
+            return true;
+        }
+        if (vehicle.getCollisions().contains(Collision.VEHICLE)) {
             return true;
         }
         return VehicleCollideProcessor.processCollide(vehicle, battle);
