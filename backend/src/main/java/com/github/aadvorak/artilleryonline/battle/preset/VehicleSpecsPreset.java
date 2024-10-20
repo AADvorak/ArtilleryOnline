@@ -10,7 +10,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public enum VehicleSpecsPreset {
 
-    DEFAULT("default", new VehicleSpecs()
+    MEDIUM("Medium", new VehicleSpecs()
             .setAmmo(80)
             .setRadius(0.4)
             .setWheelRadius(0.1)
@@ -21,6 +21,19 @@ public enum VehicleSpecsPreset {
             .setCriticalAngle(Math.PI / 4)
             .setMovingVelocity(4.0)
             .setAcceleration(10.0)
+            .setAvailableGuns(Map.of(GunSpecsPreset.DEFAULT.getName(), GunSpecsPreset.DEFAULT.getSpecs()))),
+
+    LIGHT("Light", new VehicleSpecs()
+            .setAmmo(80)
+            .setRadius(0.3)
+            .setWheelRadius(0.08)
+            .setTrackRepairTime(7.0)
+            .setHitPoints(80.0)
+            .setMinAngle(0.0)
+            .setMaxAngle(Math.PI)
+            .setCriticalAngle(Math.PI / 4)
+            .setMovingVelocity(6.0)
+            .setAcceleration(14.0)
             .setAvailableGuns(Map.of(GunSpecsPreset.DEFAULT.getName(), GunSpecsPreset.DEFAULT.getSpecs())));
 
     private final String name;

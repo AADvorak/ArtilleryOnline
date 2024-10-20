@@ -5,7 +5,6 @@ import com.github.aadvorak.artilleryonline.collection.UserBattleQueue;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueElement;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueParams;
 import com.github.aadvorak.artilleryonline.dto.response.UserBattleQueueResponse;
-import com.github.aadvorak.artilleryonline.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,22 +24,27 @@ public class UserBattleQueueService {
 
     private final UserService userService;
 
-    public UserBattleQueueResponse addUserToQueue() {
+    public UserBattleQueueResponse addUserToQueue(UserBattleQueueParams params) {
         var user = userService.getUserFromContext();
         if (userBattleMap.get(user.getNickname()) != null) {
             return new UserBattleQueueResponse();
         }
-        userBattleQueue.add(new UserBattleQueueElement()
+        var element = new UserBattleQueueElement()
                 .setUser(user)
-                .setParams(new UserBattleQueueParams()));
+                .setParams(params);
+        userBattleQueue.add(element);
         log.info("addUserToQueue: {}, queue size: {}", user.getNickname(), userBattleQueue.size());
-        return createUserBattleQueueResponse(user);
+        return createUserBattleQueueResponse(element);
     }
 
     public UserBattleQueueResponse checkUserBattleQueue() {
         var user = userService.getUserFromContext();
         log.info("checkUserBattleQueue: {}, queue size: {}", user.getNickname(), userBattleQueue.size());
-        return createUserBattleQueueResponse(user);
+        var element = userBattleQueue.pick();
+        if (element == null) {
+            return new UserBattleQueueResponse();
+        }
+        return createUserBattleQueueResponse(element);
     }
 
     public void removeUserFromQueue() {
@@ -49,12 +53,12 @@ public class UserBattleQueueService {
         log.info("removeUserFromQueue: {}, queue size: {}", user.getNickname(), userBattleQueue.size());
     }
 
-    private UserBattleQueueResponse createUserBattleQueueResponse(User user) {
-        var addTime = userBattleQueue.getAddTime(user.getId());
-        return new UserBattleQueueResponse().setAddTime(
-                addTime != null
-                        ? LocalDateTime.ofInstant(Instant.ofEpochMilli(addTime), ZoneId.systemDefault())
-                        : null
-        );
+    private UserBattleQueueResponse createUserBattleQueueResponse(UserBattleQueueElement element) {
+        return new UserBattleQueueResponse()
+                .setAddTime(
+                        element.getAddTime() != null
+                                ? LocalDateTime.ofInstant(Instant.ofEpochMilli(element.getAddTime()), ZoneId.systemDefault())
+                                : null)
+                .setParams(element.getParams());
     }
 }

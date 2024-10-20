@@ -12,6 +12,7 @@ import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleOnGro
 import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.*;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
+import com.github.aadvorak.artilleryonline.collection.UserBattleQueueElement;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -20,15 +21,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Component
 public class BattleFactory {
 
-    public Battle createBattle(Set<String> userKeys) {
+    public Battle createBattle(Set<UserBattleQueueElement> queueElements) {
         var battleModel = new BattleModel()
                 .setRoom(createRoomModel());
-        battleModel.setVehicles(createVehicles(userKeys, battleModel));
+        battleModel.setVehicles(createVehicles(queueElements, battleModel));
         return new Battle()
                 .setTime(0)
                 .setBattleStage(BattleStage.WAITING)
                 .setModel(battleModel)
-                .setUserCommandQueues(createUserCommandQueues(userKeys));
+                .setUserCommandQueues(createUserCommandQueues(queueElements));
     }
 
     private RoomModel createRoomModel() {
@@ -63,16 +64,18 @@ public class BattleFactory {
         return groundLine;
     }
 
-    private Map<String, VehicleModel> createVehicles(Set<String> userKeys, BattleModel battleModel) {
+    private Map<String, VehicleModel> createVehicles(Set<UserBattleQueueElement> queueElements, BattleModel battleModel) {
         var vehicles = new HashMap<String, VehicleModel>();
         var distanceBetweenVehicles = (battleModel.getRoom().getSpecs().getRightTop().getX()
                 - battleModel.getRoom().getSpecs().getLeftBottom().getX())
-                / (userKeys.size() + 1);
+                / (queueElements.size() + 1);
         var vehicleNumber = 1;
-        for (String userKey : userKeys) {
+        for (var queueElement : queueElements) {
             var vehicleModel = new VehicleModel();
             vehicleModel.setId(battleModel.getIdGenerator().generate());
-            vehicleModel.setSpecs(VehicleSpecsPreset.DEFAULT.getSpecs());
+            vehicleModel.setSpecs(Arrays.stream(VehicleSpecsPreset.values())
+                    .filter(preset -> preset.getName().equals(queueElement.getParams().getSelectedVehicle()))
+                    .map(VehicleSpecsPreset::getSpecs).findAny().orElseThrow());
             vehicleModel.setPreCalc(new VehiclePreCalc(vehicleModel.getSpecs()));
             var ammo = Map.of(
                     ShellSpecsPreset.DEFAULT_AP.getName(), vehicleModel.getSpecs().getAmmo() / 2,
@@ -99,15 +102,15 @@ public class BattleFactory {
                             .setActive(false)));
             VehicleOnGroundProcessor.estimateVehicleAngleByPosition(vehicleModel, battleModel.getRoom());
             VehicleOnGroundProcessor.correctVehiclePositionAndAngleOnGround(vehicleModel, battleModel.getRoom());
-            vehicles.put(userKey, vehicleModel);
+            vehicles.put(queueElement.getUser().getNickname(), vehicleModel);
             vehicleNumber++;
         }
         return vehicles;
     }
 
-    private Map<String, Queue<UserCommand>> createUserCommandQueues(Set<String> userKeys) {
+    private Map<String, Queue<UserCommand>> createUserCommandQueues(Set<UserBattleQueueElement> queueElements) {
         var userCommandQueues = new HashMap<String, Queue<UserCommand>>();
-        userKeys.forEach(userKey -> userCommandQueues.put(userKey, new ConcurrentLinkedQueue<>()));
+        queueElements.forEach(element -> userCommandQueues.put(element.getUser().getNickname(), new ConcurrentLinkedQueue<>()));
         return userCommandQueues;
     }
 }

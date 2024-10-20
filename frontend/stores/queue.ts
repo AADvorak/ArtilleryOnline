@@ -4,19 +4,18 @@ import {ApiRequestSender} from '~/api/api-request-sender'
 import type {UserBattleQueueResponse} from '~/data/response'
 
 export const useQueueStore = defineStore('queue', () => {
-  const addTime = ref<string>()
+  const queue = ref<UserBattleQueueResponse>()
 
-  async function loadAddTimeIfNull() {
-    if (!addTime.value) {
+  async function loadQueueIfNull() {
+    if (!queue.value) {
       try {
-        const response = await new ApiRequestSender()
+        queue.value = await new ApiRequestSender()
             .getJson<UserBattleQueueResponse>('/battles/queue')
-        addTime.value = response.addTime
       } catch (e) {
         console.log(e)
       }
     }
   }
 
-  return {addTime, loadAddTimeIfNull}
+  return {queue, loadQueueIfNull}
 })

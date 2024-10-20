@@ -1,3 +1,5 @@
+import type {VehicleSpecs} from "~/playground/data/specs";
+
 export interface ValidationResponse {
   code: string
   field: string
@@ -24,6 +26,15 @@ export interface FormValues {
   [fieldName: string]: string
 }
 
+export interface UserBattleQueueParams {
+  selectedVehicle: string
+}
+
 export interface UserBattleQueueResponse {
   addTime: string
+  params: UserBattleQueueParams
+}
+
+export interface VehicleSpecsResponse {
+  [name: string]: VehicleSpecs
 }

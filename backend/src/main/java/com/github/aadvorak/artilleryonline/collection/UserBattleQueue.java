@@ -33,14 +33,6 @@ public class UserBattleQueue {
         return map.get(iterator.next());
     }
 
-    public Long getAddTime(Long userId) {
-        var element = map.get(userId);
-        if (element == null) {
-            return null;
-        }
-        return element.getAddTime();
-    }
-
     public int size() {
         return map.size();
     }

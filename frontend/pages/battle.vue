@@ -5,7 +5,7 @@ import {useBattleStore} from "~/stores/battle";
 import {useQueueStore} from "~/stores/queue";
 import {useSettingsStore} from "~/stores/settings";
 import type {Battle} from "~/playground/data/battle";
-import type {UserBattleQueueResponse} from "~/data/response";
+import type {UserBattleQueueParams, UserBattleQueueResponse, VehicleSpecsResponse} from "~/data/response";
 import {DateUtils} from "~/utils/DateUtils";
 
 const router = useRouter()
@@ -14,27 +14,36 @@ const queueStore = useQueueStore()
 const settingsStore = useSettingsStore()
 const api = new ApiRequestSender()
 
+const vehicles = ref<string[]>([])
+const selectedVehicle = ref<string>()
+
 watch(() => battleStore.battle, (value) => {
   if (value) {
     setTimeout(() => router.push('/playground'))
   }
 })
-watch(() => queueStore.addTime, () => {
+watch(() => queueStore.queue, () => {
   if (checkUserInQueue()) {
+    selectedVehicle.value = queueStore.queue!.params.selectedVehicle
     loadBattle()
   }
 })
 
 onMounted(() => {
+  loadVehicles()
   if (checkUserInQueue()) {
+    selectedVehicle.value = queueStore.queue!.params.selectedVehicle
     loadBattle()
   }
 })
 
 async function randomBattle() {
   try {
-    const response = await api.putJson<undefined, UserBattleQueueResponse>('/battles/queue', undefined)
-    queueStore.addTime = response.addTime
+    const request = {
+      selectedVehicle: selectedVehicle.value!
+    }
+    const response = await api.putJson<UserBattleQueueParams, UserBattleQueueResponse>('/battles/queue', request)
+    queueStore.queue = response
   } catch (e) {
     console.log(e)
   }
@@ -44,7 +53,7 @@ async function loadBattle() {
   if (checkUserInQueue()) {
     try {
       const battle = await api.getJson<Battle>('/battles')
-      queueStore.addTime = null
+      queueStore.queue = null
       battleStore.updateBattle(battle)
     } catch (e) {
       setTimeout(loadBattle, 1000)
@@ -52,14 +61,23 @@ async function loadBattle() {
   }
 }
 
+async function loadVehicles() {
+  try {
+    const response = await api.getJson<VehicleSpecsResponse>('/presets/vehicles')
+    vehicles.value = Object.keys(response)
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 function checkUserInQueue() {
-  if (!queueStore.addTime) {
+  if (!queueStore.queue) {
     return false
   }
-  const addDate = DateUtils.getClientDate(queueStore.addTime, settingsStore.timeZoneOffset)
+  const addDate = DateUtils.getClientDate(queueStore.queue!.addTime, settingsStore.timeZoneOffset)
   const now = new Date()
   if (now.getTime() - addDate.getTime() > settingsStore.settings!.userBattleQueueTimeout) {
-    queueStore.addTime = null
+    queueStore.queue = null
     return false
   }
   return true
@@ -67,7 +85,7 @@ function checkUserInQueue() {
 
 async function cancel() {
   await api.delete('/battles/queue')
-  queueStore.addTime = null
+  queueStore.queue = null
 }
 
 function back() {
@@ -81,10 +99,20 @@ function back() {
       Artillery online: battle
     </v-card-title>
     <v-card-text>
-      <v-btn class="mb-4" width="100%" color="error" :loading="!!queueStore.addTime" :disabled="!!battleStore.battle"
+      <v-form>
+        <v-select
+            v-model="selectedVehicle"
+            :items="vehicles"
+            :disabled="!!queueStore.queue"
+            density="compact"
+            label="Select vehicle"
+        />
+      </v-form>
+      <v-btn class="mb-4" width="100%" color="error" :loading="!!queueStore.queue"
+             :disabled="!!battleStore.battle || !selectedVehicle"
              @click="randomBattle">Random battle</v-btn>
-      <v-btn v-show="!!queueStore.addTime" class="mb-4" width="100%" @click="cancel">Cancel</v-btn>
-      <v-btn class="mb-4" width="100%" :disabled="!!queueStore.addTime" @click="back">Back</v-btn>
+      <v-btn v-show="!!queueStore.queue" class="mb-4" width="100%" @click="cancel">Cancel</v-btn>
+      <v-btn class="mb-4" width="100%" :disabled="!!queueStore.queue" @click="back">Back</v-btn>
     </v-card-text>
   </v-card>
 </template>
