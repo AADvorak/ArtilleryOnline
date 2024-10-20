@@ -2,10 +2,7 @@ package com.github.aadvorak.artilleryonline.consumer;
 
 import com.github.aadvorak.artilleryonline.battle.BattleFactory;
 import com.github.aadvorak.artilleryonline.battle.BattleRunner;
-import com.github.aadvorak.artilleryonline.collection.BattleStateUpdatesQueue;
-import com.github.aadvorak.artilleryonline.collection.BattleUpdatesQueue;
-import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
-import com.github.aadvorak.artilleryonline.collection.UserBattleQueue;
+import com.github.aadvorak.artilleryonline.collection.*;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +11,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -40,42 +38,50 @@ public class UserBattleQueueConsumer implements Runnable {
     @Override
     public void run() {
         while (true) {
-            synchronized (userBattleQueue) {
-                removeTimedOutUser();
-                if (userBattleQueue.size() < 2) {
-                    sleep();
-                    continue;
-                }
-                var firstNickname = getUserFromQueue();
-                var secondNickname = getUserFromQueue();
-                var nicknames = Set.of(firstNickname, secondNickname);
-                var battle = battleFactory.createBattle(nicknames);
-                userBattleMap.put(firstNickname, battle);
-                userBattleMap.put(secondNickname, battle);
-                var battleRunner = new BattleRunner(battle, nicknames, userBattleMap,
-                        battleUpdatesQueue, battleStateUpdatesQueue, applicationSettings);
-                new Thread(battleRunner).start();
-                log.info("Battle started for users: {}, queue size: {}", nicknames, userBattleQueue.size());
+            var elements = getElementsFromQueue();
+            if (elements.isEmpty()) {
+                sleep();
+                continue;
             }
+            var nicknames = elements.stream()
+                    .map(element -> element.getUser().getNickname())
+                    .collect(Collectors.toSet());
+            var battle = battleFactory.createBattle(nicknames);
+            elements.forEach(element -> userBattleMap.put(element.getUser().getNickname(), battle));
+            var battleRunner = new BattleRunner(battle, nicknames, userBattleMap,
+                    battleUpdatesQueue, battleStateUpdatesQueue, applicationSettings);
+            new Thread(battleRunner).start();
+            log.info("Battle started for users: {}, queue size: {}", nicknames, userBattleQueue.size());
+        }
+    }
+
+    private Set<UserBattleQueueElement> getElementsFromQueue() {
+        synchronized (userBattleQueue) {
+            removeTimedOutUser();
+            if (userBattleQueue.size() < 2) {
+                return Set.of();
+            }
+            return Set.of(getElementFromQueue(), getElementFromQueue());
         }
     }
 
     private void removeTimedOutUser() {
-        var nickname = userBattleQueue.pick();
-        if (nickname != null) {
-            var addTime = userBattleQueue.getAddTime(nickname);
+        var element = userBattleQueue.pick();
+        if (element != null) {
+            var addTime = element.getAddTime();
             if (System.currentTimeMillis() - addTime > applicationSettings.getUserBattleQueueTimeout()) {
-                userBattleQueue.remove(nickname);
-                log.info("removeTimedOutElement: {}, queue size: {}", nickname, userBattleQueue.size());
+                userBattleQueue.remove(element.getUser().getId());
+                log.info("removeTimedOutUser: {}, queue size: {}",
+                        element.getUser().getNickname(), userBattleQueue.size());
             }
         }
     }
 
-    private String getUserFromQueue() {
+    private UserBattleQueueElement getElementFromQueue() {
         while (true) {
-            var userKey = userBattleQueue.poll();
-            if (userKey != null) {
-                return userKey;
+            var element = userBattleQueue.poll();
+            if (element != null) {
+                return element;
             } else {
                 sleep();
             }
