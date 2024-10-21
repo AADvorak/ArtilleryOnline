@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.collection.UserBattleQueue;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueElement;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueParams;
 import com.github.aadvorak.artilleryonline.dto.response.UserBattleQueueResponse;
+import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class UserBattleQueueService {
         log.info("checkUserBattleQueue: {}, queue size: {}", user.getNickname(), userBattleQueue.size());
         var element = userBattleQueue.pick();
         if (element == null) {
-            return new UserBattleQueueResponse();
+            throw new NotFoundAppException();
         }
         return createUserBattleQueueResponse(element);
     }
