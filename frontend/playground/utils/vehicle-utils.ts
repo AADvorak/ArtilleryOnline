@@ -71,7 +71,7 @@ export const VehicleUtils = {
   },
 
   getSmallWheels(vehicleModel: VehicleModel) {
-    const vehicleRadius = vehicleModel.specs.radius
+    const hullRadius = vehicleModel.specs.hullRadius
     const angle = vehicleModel.state.angle
     const leftWheelBottom = this.getWheelBottomPosition(
       this.getLeftWheelPosition(vehicleModel),
@@ -81,8 +81,8 @@ export const VehicleUtils = {
     const smallWheels: Position[] = []
     for (let i = 1; i <= 3; i++) {
       smallWheels.push({
-        x: leftWheelBottom.x + 0.5 * i * vehicleRadius * Math.cos(angle),
-        y: leftWheelBottom.y + 0.5 * i * vehicleRadius * Math.sin(angle)
+        x: leftWheelBottom.x + 0.5 * i * hullRadius * Math.cos(angle),
+        y: leftWheelBottom.y + 0.5 * i * hullRadius * Math.sin(angle)
       })
     }
     return smallWheels

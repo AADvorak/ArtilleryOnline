@@ -47,6 +47,7 @@ export interface VehicleSpecs {
   movingVelocity: number
   radius: number
   wheelRadius: number
+  hullRadius: number
   availableGuns: AvailableGuns
 }
 
