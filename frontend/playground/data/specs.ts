@@ -4,6 +4,7 @@ export interface ShellSpecs {
   velocity: number
   damage: number
   radius: number
+  caliber: number
   type: ShellType
 }
 
@@ -20,6 +21,7 @@ export interface GunSpecs {
   loadTime: number
   rotationVelocity: number
   length: number
+  caliber: number
   availableShells: AvailableShells
 }
 

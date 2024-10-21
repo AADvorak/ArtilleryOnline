@@ -17,5 +17,7 @@ public class GunSpecs implements Specs {
 
     private double length;
 
+    private double caliber;
+
     private Map<String, ShellSpecs> availableShells;
 }

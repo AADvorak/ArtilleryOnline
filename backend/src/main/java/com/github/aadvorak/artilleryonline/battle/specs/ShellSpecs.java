@@ -18,5 +18,7 @@ public class ShellSpecs implements Specs {
 
     private double pushCoefficient;
 
+    private double caliber;
+
     private ShellType type;
 }

@@ -14,6 +14,7 @@ public enum GunSpecsPreset {
             .setLoadTime(3.0)
             .setRotationVelocity(0.2)
             .setLength(0.6)
+            .setCaliber(0.05)
             .setAvailableShells(Map.of(
                     ShellSpecsPreset.MEDIUM_AP.getName(), ShellSpecsPreset.MEDIUM_AP.getSpecs(),
                     ShellSpecsPreset.MEDIUM_HE.getName(), ShellSpecsPreset.MEDIUM_HE.getSpecs()
@@ -23,6 +24,7 @@ public enum GunSpecsPreset {
             .setLoadTime(2.0)
             .setRotationVelocity(0.3)
             .setLength(0.4)
+            .setCaliber(0.04)
             .setAvailableShells(Map.of(
                     ShellSpecsPreset.LIGHT_AP.getName(), ShellSpecsPreset.LIGHT_AP.getSpecs(),
                     ShellSpecsPreset.LIGHT_HE.getName(), ShellSpecsPreset.LIGHT_HE.getSpecs()

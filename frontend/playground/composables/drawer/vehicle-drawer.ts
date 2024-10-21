@@ -83,7 +83,7 @@ export function useVehicleDrawer(
       }
 
       ctx.value.beginPath()
-      ctx.value.lineWidth = 4
+      ctx.value.lineWidth = drawerBase.scale(vehicleModel.config.gun.caliber)
       ctx.value.moveTo(position.x, position.y)
       ctx.value.lineTo(gunEndPosition.x, gunEndPosition.y)
       ctx.value.stroke()

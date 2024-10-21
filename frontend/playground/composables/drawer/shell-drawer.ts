@@ -20,8 +20,9 @@ export function useShellDrawer(
       ctx.value.fillStyle = 'rgb(256 256 256)'
       ctx.value.lineWidth = 1
       ctx.value.beginPath()
+      const radius = drawerBase.scale(shellModel.specs.caliber / 2)
       const position = drawerBase.transformPosition(shellModel.state.position)
-      ctx.value.arc(position.x, position.y, 2, 0, 2 * Math.PI)
+      ctx.value.arc(position.x, position.y, radius, 0, 2 * Math.PI)
       ctx.value.fill()
       ctx.value.closePath()
     }
