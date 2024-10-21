@@ -45,7 +45,6 @@ export interface VehicleSpecs {
   ammo: number
   minAngle: number
   maxAngle: number
-  criticalAngle: number
   movingVelocity: number
   radius: number
   wheelRadius: number
