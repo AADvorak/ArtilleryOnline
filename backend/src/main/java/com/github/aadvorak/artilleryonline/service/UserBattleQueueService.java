@@ -41,7 +41,7 @@ public class UserBattleQueueService {
     public UserBattleQueueResponse checkUserBattleQueue() {
         var user = userService.getUserFromContext();
         log.info("checkUserBattleQueue: {}, queue size: {}", user.getNickname(), userBattleQueue.size());
-        var element = userBattleQueue.pick();
+        var element = userBattleQueue.getByUserId(user.getId());
         if (element == null) {
             throw new NotFoundAppException();
         }

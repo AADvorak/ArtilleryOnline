@@ -33,6 +33,10 @@ public class UserBattleQueue {
         return map.get(iterator.next());
     }
 
+    public UserBattleQueueElement getByUserId(long userId) {
+        return map.get(userId);
+    }
+
     public int size() {
         return map.size();
     }
