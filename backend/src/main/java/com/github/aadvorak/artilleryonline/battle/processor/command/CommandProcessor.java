@@ -51,11 +51,11 @@ public class CommandProcessor {
         }
 
         if (Command.SELECT_SHELL.equals(userCommand.getCommand())) {
-            var shellType = userCommand.getParams().getShellType();
+            var shellName = userCommand.getParams().getShellName();
             var ammo = userVehicle.getState().getAmmo();
-            if (ammo.containsKey(shellType.name()) && ammo.get(shellType.name()) > 0) {
+            if (ammo.containsKey(shellName) && ammo.get(shellName) > 0) {
                 var gunState = userVehicle.getState().getGunState();
-                gunState.setSelectedShell(shellType.name());
+                gunState.setSelectedShell(shellName);
                 gunState.setLoadedShell(null);
                 gunState.setLoadingShell(null);
             }

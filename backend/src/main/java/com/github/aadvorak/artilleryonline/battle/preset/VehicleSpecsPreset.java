@@ -21,7 +21,7 @@ public enum VehicleSpecsPreset {
             .setCriticalAngle(Math.PI / 4)
             .setMovingVelocity(4.0)
             .setAcceleration(10.0)
-            .setAvailableGuns(Map.of(GunSpecsPreset.DEFAULT.getName(), GunSpecsPreset.DEFAULT.getSpecs()))),
+            .setAvailableGuns(Map.of(GunSpecsPreset.MEDIUM.getName(), GunSpecsPreset.MEDIUM.getSpecs()))),
 
     LIGHT("Light", new VehicleSpecs()
             .setAmmo(80)
@@ -34,7 +34,7 @@ public enum VehicleSpecsPreset {
             .setCriticalAngle(Math.PI / 4)
             .setMovingVelocity(6.0)
             .setAcceleration(14.0)
-            .setAvailableGuns(Map.of(GunSpecsPreset.DEFAULT.getName(), GunSpecsPreset.DEFAULT.getSpecs())));
+            .setAvailableGuns(Map.of(GunSpecsPreset.LIGHT.getName(), GunSpecsPreset.LIGHT.getSpecs())));
 
     private final String name;
 

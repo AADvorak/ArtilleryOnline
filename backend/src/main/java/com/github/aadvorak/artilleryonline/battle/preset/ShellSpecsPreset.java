@@ -9,17 +9,29 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ShellSpecsPreset {
 
-    DEFAULT_AP("AP", new ShellSpecs()
+    MEDIUM_AP("AP-M", new ShellSpecs()
             .setDamage(10.0)
             .setRadius(0.1)
             .setVelocity(13.0)
             .setPushCoefficient(0.05)
             .setType(ShellType.AP)),
-    DEFAULT_HE("HE", new ShellSpecs()
+    MEDIUM_HE("HE-M", new ShellSpecs()
             .setDamage(5.0)
             .setRadius(0.5)
             .setVelocity(12.0)
             .setPushCoefficient(0.05)
+            .setType(ShellType.HE)),
+    LIGHT_AP("AP-L", new ShellSpecs()
+            .setDamage(7.0)
+            .setRadius(0.07)
+            .setVelocity(12.0)
+            .setPushCoefficient(0.03)
+            .setType(ShellType.AP)),
+    LIGHT_HE("HE-L", new ShellSpecs()
+            .setDamage(4.0)
+            .setRadius(0.4)
+            .setVelocity(11.0)
+            .setPushCoefficient(0.03)
             .setType(ShellType.HE));
 
     private final String name;

@@ -50,7 +50,7 @@ function selectShell(key) {
   if (key !== selectedShell.value) {
     commandsSender.sendCommand({
       command: Command.SELECT_SHELL,
-      params: {shellType: key}
+      params: {shellName: key}
     })
   }
 }

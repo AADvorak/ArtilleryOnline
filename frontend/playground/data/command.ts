@@ -1,4 +1,4 @@
-import {type MovingDirection, ShellType} from "@/playground/data/common";
+import {type MovingDirection} from "@/playground/data/common";
 
 export enum Command {
   START_MOVING = 'START_MOVING',
@@ -20,7 +20,7 @@ export enum Command {
 
 export interface CommandParams {
   direction?: MovingDirection
-  shellType?: ShellType
+  shellName?: string
 }
 
 export interface UserCommand {

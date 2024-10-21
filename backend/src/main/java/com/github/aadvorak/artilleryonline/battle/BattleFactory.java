@@ -77,13 +77,14 @@ public class BattleFactory {
                     .filter(preset -> preset.getName().equals(queueElement.getParams().getSelectedVehicle()))
                     .map(VehicleSpecsPreset::getSpecs).findAny().orElseThrow());
             vehicleModel.setPreCalc(new VehiclePreCalc(vehicleModel.getSpecs()));
-            var ammo = Map.of(
-                    ShellSpecsPreset.DEFAULT_AP.getName(), vehicleModel.getSpecs().getAmmo() / 2,
-                    ShellSpecsPreset.DEFAULT_HE.getName(), vehicleModel.getSpecs().getAmmo() / 2
-            );
+            var gun = vehicleModel.getSpecs().getAvailableGuns().values().iterator().next();
+            var availableShellsNumber = gun.getAvailableShells().keySet().size();
+            var ammo = new HashMap<String, Integer>();
+            gun.getAvailableShells().keySet().forEach(shellName ->
+                    ammo.put(shellName, vehicleModel.getSpecs().getAmmo() / availableShellsNumber));
             vehicleModel.setConfig(new VehicleConfig()
                     .setAmmo(ammo)
-                    .setGun(GunSpecsPreset.DEFAULT.getSpecs())
+                    .setGun(gun)
                     .setJet(JetSpecsPreset.DEFAULT.getSpecs()));
             vehicleModel.setState(new VehicleState()
                     .setAngle(0)

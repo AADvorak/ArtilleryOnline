@@ -13,5 +13,5 @@ public class CommandParams {
 
     private MovingDirection direction;
 
-    private ShellType shellType;
+    private String shellName;
 }
