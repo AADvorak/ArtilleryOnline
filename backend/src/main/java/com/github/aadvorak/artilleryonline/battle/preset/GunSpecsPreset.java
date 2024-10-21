@@ -10,6 +10,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 public enum GunSpecsPreset {
 
+    HEAVY("Heavy", new GunSpecs()
+            .setLoadTime(5.0)
+            .setRotationVelocity(0.15)
+            .setLength(0.6)
+            .setCaliber(0.07)
+            .setAvailableShells(Map.of(
+                    ShellSpecsPreset.HEAVY_AP.getName(), ShellSpecsPreset.HEAVY_AP.getSpecs(),
+                    ShellSpecsPreset.HEAVY_HE.getName(), ShellSpecsPreset.HEAVY_HE.getSpecs()
+            ))),
+
     MEDIUM("Medium", new GunSpecs()
             .setLoadTime(3.0)
             .setRotationVelocity(0.2)
