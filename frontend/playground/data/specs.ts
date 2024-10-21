@@ -36,6 +36,7 @@ export interface RoomSpecs {
   gravityAcceleration: number
   groundReactionCoefficient: number
   groundFrictionCoefficient: number
+  airFrictionCoefficient: number
   groundMaxDepth: number
 }
 

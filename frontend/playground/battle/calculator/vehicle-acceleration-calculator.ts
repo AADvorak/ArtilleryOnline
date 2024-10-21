@@ -41,7 +41,7 @@ export const VehicleAccelerationCalculator = {
     }
 
     const vehicleVelocity = vehicleModel.state.velocity
-    const frictionCoefficient = vehicleModel.preCalc.frictionCoefficient
+    const frictionCoefficient = roomModel.specs.airFrictionCoefficient
     const frictionAcceleration = {
       x: -vehicleVelocity.x * Math.abs(vehicleVelocity.x) * frictionCoefficient,
       y: -vehicleVelocity.y * Math.abs(vehicleVelocity.y) * frictionCoefficient

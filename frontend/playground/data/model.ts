@@ -20,9 +20,9 @@ export interface ExplosionModel {
 }
 
 export interface VehiclePreCalc {
-  frictionCoefficient: number;
   wheelDistance: number
   wheelAngle: number
+  mass: number
 }
 
 export interface VehicleModel {
