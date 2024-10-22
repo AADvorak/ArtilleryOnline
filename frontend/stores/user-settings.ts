@@ -40,5 +40,5 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     return mapping
   }
 
-  return { controls, controlsOrDefaultsValueNameMapping }
+  return { controls, controlsOrDefaults, controlsOrDefaultsValueNameMapping }
 })
