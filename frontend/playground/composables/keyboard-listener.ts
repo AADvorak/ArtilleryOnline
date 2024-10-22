@@ -1,62 +1,65 @@
 import type {CommandsSender} from "@/playground/composables/commands-sender";
 import {Command, type UserCommand} from "@/playground/data/command";
 import {MovingDirection} from "@/playground/data/common";
+import {useUserSettingsStore} from "~/stores/user-settings";
 
 export function useKeyboardListener(commandsSender: CommandsSender) {
+  const mapping = useUserSettingsStore().controlsOrDefaultsValueNameMapping
+
   const keyDownCommands: Map<string, UserCommand> = new Map()
-  keyDownCommands.set('KeyD', {
+  keyDownCommands.set('moveRight', {
     command: Command.START_MOVING,
     params: { direction: MovingDirection.RIGHT }
   })
-  keyDownCommands.set('KeyA', {
+  keyDownCommands.set('moveLeft', {
     command: Command.START_MOVING,
     params: { direction: MovingDirection.LEFT }
   })
-  keyDownCommands.set('ArrowRight', {
+  keyDownCommands.set('rotateGunRight', {
     command: Command.START_GUN_ROTATING,
     params: { direction: MovingDirection.RIGHT }
   })
-  keyDownCommands.set('ArrowLeft', {
+  keyDownCommands.set('rotateGunLeft', {
     command: Command.START_GUN_ROTATING,
     params: { direction: MovingDirection.LEFT }
   })
-  keyDownCommands.set('Space', {
+  keyDownCommands.set('shoot', {
     command: Command.PUSH_TRIGGER
   })
-  keyDownCommands.set('KeyW', {
+  keyDownCommands.set('activateJet', {
     command: Command.JET_ON
   })
 
   const keyUpCommands: Map<string, UserCommand> = new Map()
-  keyUpCommands.set('KeyD', {
+  keyUpCommands.set('moveRight', {
     command: Command.STOP_MOVING,
     params: { direction: MovingDirection.RIGHT }
   })
-  keyUpCommands.set('KeyA', {
+  keyUpCommands.set('moveLeft', {
     command: Command.STOP_MOVING,
     params: { direction: MovingDirection.LEFT }
   })
-  keyUpCommands.set('ArrowRight', {
+  keyUpCommands.set('rotateGunRight', {
     command: Command.STOP_GUN_ROTATING,
     params: { direction: MovingDirection.RIGHT }
   })
-  keyUpCommands.set('ArrowLeft', {
+  keyUpCommands.set('rotateGunLeft', {
     command: Command.STOP_GUN_ROTATING,
     params: { direction: MovingDirection.LEFT }
   })
-  keyUpCommands.set('Space', {
+  keyUpCommands.set('shoot', {
     command: Command.RELEASE_TRIGGER
   })
-  keyUpCommands.set('KeyW', {
+  keyUpCommands.set('activateJet', {
     command: Command.JET_OFF
   })
 
   const clickCommands: Map<string, UserCommand> = new Map()
-  clickCommands.set('KeyE', {
+  clickCommands.set('autoMoveRight', {
     command: Command.START_MOVING,
     params: { direction: MovingDirection.RIGHT }
   })
-  clickCommands.set('KeyQ', {
+  clickCommands.set('autoMoveLeft', {
     command: Command.START_MOVING,
     params: { direction: MovingDirection.LEFT }
   })
@@ -66,7 +69,8 @@ export function useKeyboardListener(commandsSender: CommandsSender) {
   function startListening() {
     document.addEventListener('keyup', (e) => {
       keysDown.delete(e.code)
-      const userCommand = keyUpCommands.get(e.code) || clickCommands.get(e.code)
+      const userCommand = keyUpCommands.get(mapping[e.code])
+          || clickCommands.get(mapping[e.code])
       if (userCommand) {
         commandsSender.sendCommand(userCommand)
       }
@@ -74,7 +78,7 @@ export function useKeyboardListener(commandsSender: CommandsSender) {
     document.addEventListener('keydown', (e) => {
       if (!keysDown.has(e.code)) {
         keysDown.set(e.code, e.key)
-        const userCommand = keyDownCommands.get(e.code)
+        const userCommand = keyDownCommands.get(mapping[e.code])
         if (userCommand) {
           commandsSender.sendCommand(userCommand)
         }

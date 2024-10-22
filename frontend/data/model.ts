@@ -9,3 +9,17 @@ export interface CsrfToken {
   headerName: string
   token: string
 }
+
+export interface UserSetting {
+  name: string
+  value: string
+  description?: string
+}
+
+export interface UserSettingsNameValueMapping {
+  [name: string]: string
+}
+
+export interface UserSettingsValueNameMapping {
+  [value: string]: string
+}
