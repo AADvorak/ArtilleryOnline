@@ -25,7 +25,7 @@ const battleSize = ref()
 const canvasSize = ref()
 const scaleCoefficient = ref()
 const canvasWidth = computed(() => {
-  return canvasSize.value ? canvasSize.value.width : window.innerWidth - 10
+  return canvasSize.value ? canvasSize.value.width : window.innerWidth
 })
 const canvasHeight = computed(() => {
   return canvasSize.value ? canvasSize.value.height : window.innerHeight - 70
@@ -134,7 +134,7 @@ function calculateCanvasSize() {
   }
   if (battleSize.value) {
     const battleWidthToHeight = battleSize.value.width / battleSize.value.height
-    const screenWidth = window.innerWidth - 10
+    const screenWidth = window.innerWidth
     const screenHeight = window.innerHeight - 70
     const screenWidthToHeight = screenWidth / screenHeight
     if (battleWidthToHeight > screenWidthToHeight) {
@@ -171,6 +171,6 @@ function calculateScaleCoefficient() {
 
 <style scoped>
 canvas {
-  border: 2px solid blue;
+  display:block;
 }
 </style>
