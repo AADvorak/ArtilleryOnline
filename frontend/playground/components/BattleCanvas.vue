@@ -56,7 +56,23 @@ onMounted(() => {
   useBattleUpdater(props.stompClient).subscribeAfterWsConnect()
   useKeyboardListener(useCommandsSender(props.stompClient)).startListening()
   startBattle()
+  addEventListener('resize', onWindowResize)
 })
+
+onBeforeUnmount(() => {
+  removeEventListener('resize', onWindowResize)
+})
+
+function onWindowResize() {
+  canvasSize.value = undefined
+  scaleCoefficient.value = undefined
+  calculateCanvasSize()
+  calculateScaleCoefficient()
+  if (canvas.value) {
+    canvas.value.width = canvasWidth.value
+    canvas.value.height = canvasHeight.value
+  }
+}
 
 function startBattle() {
   calculateBattleSize()
