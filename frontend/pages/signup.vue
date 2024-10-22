@@ -29,8 +29,8 @@ onMounted(() => {
   emailField.value?.focus()
 })
 
-function signIn() {
-  router.push('/sign-in')
+function logIn() {
+  router.push('/login')
 }
 
 async function signUp() {
@@ -58,7 +58,7 @@ function validator(form: FormValues, validation: FormValidation): boolean {
 <template>
   <v-card width="100%" max-width="600px">
     <v-card-title>
-      Artillery online: sign up
+      Artillery online: signup
     </v-card-title>
     <v-card-text>
       <v-form @submit.prevent>
@@ -91,7 +91,7 @@ function validator(form: FormValues, validation: FormValidation): boolean {
         />
         <v-btn class="mb-4" width="100%" color="primary" type="submit" :loading="submitting"
                @click="signUp">Sign up</v-btn>
-        <v-btn class="mb-4" width="100%" color="secondary" @click="signIn">Sign in</v-btn>
+        <v-btn class="mb-4" width="100%" color="secondary" @click="logIn">Log in</v-btn>
       </v-form>
     </v-card-text>
   </v-card>

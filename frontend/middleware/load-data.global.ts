@@ -11,7 +11,7 @@ const ROOT_PATH = '/'
 const MENU_PATH = '/menu'
 const BATTLE_PATH = '/battle'
 const PLAYGROUND_PATH = '/playground'
-const UNSIGNED_PATHS = ['/', '/sign-in', '/sign-up']
+const UNSIGNED_PATHS = ['/', '/login', '/signup']
 
 export default defineNuxtRouteMiddleware(async (to) => {
   const api = new ApiRequestSender()

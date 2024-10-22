@@ -24,7 +24,7 @@ onMounted(() => {
   emailField.value?.focus()
 })
 
-async function signIn() {
+async function logIn() {
   await useFormSubmit({form, validation, submitting}).submit(async () => {
     const request = {
       email: form.email,
@@ -36,14 +36,14 @@ async function signIn() {
 }
 
 function signUp() {
-  router.push('/sign-up')
+  router.push('/signup')
 }
 </script>
 
 <template>
   <v-card width="100%" max-width="600px">
     <v-card-title>
-      Artillery online: sign in
+      Artillery online: login
     </v-card-title>
     <v-card-text>
       <v-form @submit.prevent>
@@ -62,7 +62,7 @@ function signUp() {
             label="Password"
         />
         <v-btn class="mb-4" width="100%" color="primary" type="submit" :loading="submitting"
-               @click="signIn">Sign in</v-btn>
+               @click="logIn">Log in</v-btn>
         <v-btn class="mb-4" width="100%" color="secondary" @click="signUp">Sign up</v-btn>
       </v-form>
     </v-card-text>

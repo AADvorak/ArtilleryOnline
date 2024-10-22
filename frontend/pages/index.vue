@@ -3,12 +3,12 @@ import {useRouter} from "#app";
 
 const router = useRouter()
 
-function signIn() {
-  router.push('/sign-in')
+function logIn() {
+  router.push('/login')
 }
 
 function signUp() {
-  router.push('/sign-up')
+  router.push('/signup')
 }
 </script>
 
@@ -18,7 +18,7 @@ function signUp() {
       Artillery online
     </v-card-title>
     <v-card-text>
-      <v-btn class="mb-4" width="100%" color="primary" @click="signIn">Sign in</v-btn>
+      <v-btn class="mb-4" width="100%" color="primary" @click="logIn">Log in</v-btn>
       <v-btn class="mb-4" width="100%" color="secondary" @click="signUp">Sign up</v-btn>
     </v-card-text>
   </v-card>
