@@ -21,4 +21,9 @@ public class UserBattleEndpoint {
     public String getBattleTracking() {
         return userBattleService.getBattleTracking();
     }
+
+    @PutMapping("/test-drive")
+    public BattleResponse testDrive() {
+        return userBattleService.createTestDrive();
+    }
 }

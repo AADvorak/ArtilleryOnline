@@ -34,4 +34,14 @@ public class UserBattleService {
         }
         return battle.getTracking();
     }
+
+    public BattleResponse createTestDrive() {
+        var user = userService.getUserFromContext();
+        var existingBattle = userBattleMap.get(user.getId());
+        if (existingBattle != null) {
+            return mapper.map(existingBattle, BattleResponse.class);
+        }
+        // todo logic
+        return new BattleResponse();
+    }
 }
