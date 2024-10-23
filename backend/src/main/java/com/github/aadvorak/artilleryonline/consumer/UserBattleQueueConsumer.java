@@ -47,7 +47,7 @@ public class UserBattleQueueConsumer implements Runnable {
                     .map(element -> element.getUser().getNickname())
                     .collect(Collectors.toSet());
             var battle = battleFactory.createBattle(elements);
-            elements.forEach(element -> userBattleMap.put(element.getUser().getNickname(), battle));
+            elements.forEach(element -> userBattleMap.put(element.getUser().getId(), battle));
             var battleRunner = new BattleRunner(battle, nicknames, userBattleMap,
                     battleUpdatesQueue, battleStateUpdatesQueue, applicationSettings);
             new Thread(battleRunner).start();

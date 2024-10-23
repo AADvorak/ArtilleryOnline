@@ -14,11 +14,11 @@ public class UserCommandService {
     private final UserService userService;
 
     public void addCommand(UserCommand userCommand) {
-        var nickname = userService.getUserFromContext().getNickname();
-        var battle = userBattleMap.get(nickname);
+        var user = userService.getUserFromContext();
+        var battle = userBattleMap.get(user.getId());
         if (battle == null || !BattleStage.ACTIVE.equals(battle.getBattleStage())) {
             return;
         }
-        battle.getUserCommandQueues().get(nickname).add(userCommand);
+        battle.getUserCommandQueues().get(user.getNickname()).add(userCommand);
     }
 }

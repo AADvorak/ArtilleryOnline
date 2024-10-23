@@ -13,8 +13,8 @@ public class DebugCommandService {
     private final UserService userService;
 
     public void addCommand(DebugCommand debugCommand) {
-        var nickname = userService.getUserFromContext().getNickname();
-        var battle = userBattleMap.get(nickname);
+        var user = userService.getUserFromContext();
+        var battle = userBattleMap.get(user.getId());
         if (battle == null) {
             return;
         }

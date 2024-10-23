@@ -27,7 +27,7 @@ public class UserBattleQueueService {
 
     public UserBattleQueueResponse addUserToQueue(UserBattleQueueParams params) {
         var user = userService.getUserFromContext();
-        if (userBattleMap.get(user.getNickname()) != null) {
+        if (userBattleMap.get(user.getId()) != null) {
             return new UserBattleQueueResponse();
         }
         var element = new UserBattleQueueElement()
