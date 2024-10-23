@@ -35,14 +35,14 @@ function hide() {
     <v-card width="100%">
       <v-card-title>Help</v-card-title>
       <v-card-text>
-        <table>
+        <v-table density="compact">
           <tbody>
           <tr v-for="control of controls">
-            <td class="description-td">{{ control.description }}</td>
+            <td>{{ control.description }}</td>
             <td>{{ removeKeyStr(control.value) }}</td>
           </tr>
           </tbody>
-        </table>
+        </v-table>
         <div class="d-flex mt-4">
           <v-btn color="primary" @click="hide">OK</v-btn>
         </div>
@@ -50,9 +50,3 @@ function hide() {
     </v-card>
   </v-dialog>
 </template>
-
-<style scoped>
-.description-td {
-  min-width: 200px
-}
-</style>
