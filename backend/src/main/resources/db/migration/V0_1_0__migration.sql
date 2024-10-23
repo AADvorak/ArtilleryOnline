@@ -1,7 +1,7 @@
-create table public.user
+create table public.users
 (
-    id          serial                              not null
-        constraint user_pk
+    id          bigserial                           not null
+        constraint users_pk
             primary key,
     email       varchar(100)                        not null unique,
     nickname    varchar(100)                        not null unique,
