@@ -2,9 +2,14 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type {UserSetting, UserSettingsNameValueMapping} from '~/data/model'
 import {DefaultControls} from '~/dictionary/default-controls'
+import {ApiRequestSender} from '~/api/api-request-sender'
+
+const CONTROLS_PATH = '/user-settings/controls'
 
 export const useUserSettingsStore = defineStore('user-settings', () => {
   const controls = ref<UserSetting[]>()
+
+  const api = new ApiRequestSender()
 
   const controlsMapping = computed(() => {
     return toNameValueMapping(controls.value)
@@ -22,36 +27,38 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     return toValueNameMapping(controlsOrDefaults.value)
   })
 
-  function setControl(newControl: UserSetting) {
-    if (!controls.value) {
+  async function setControl(newControl: UserSetting) {
+    try {
+      await api.putJson<UserSetting, void>(CONTROLS_PATH, newControl)
+      if (!controls.value) {
+        controls.value = []
+      }
+      const existingControl = controls.value
+          .filter(control => control.name === newControl.name)[0]
+      if (existingControl) {
+        existingControl.value = newControl.value
+      } else {
+        controls.value.push(newControl)
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async function resetControls() {
+    try {
+      await api.delete(CONTROLS_PATH)
       controls.value = []
+    } catch (e) {
+      console.log(e)
     }
-    const existingControl = controls.value
-        .filter(control => control.name === newControl.name)[0]
-    if (existingControl) {
-      existingControl.value = newControl.value
-    } else {
-      controls.value.push(newControl)
-    }
-    saveControls().then()
-  }
-
-  function resetControls() {
-    controls.value = []
-    saveControls().then()
-  }
-
-  async function saveControls() {
-    // todo store on server
-    localStorage.setItem('user-settings.controls', JSON.stringify(controls.value))
   }
 
   async function loadControlsIfNull() {
-    // todo store on server
-    const controlsStr = localStorage.getItem('user-settings.controls')
-    if (controlsStr) {
-      controls.value = JSON.parse(controlsStr)
-    } else {
+    try {
+      controls.value = await api.getJson<UserSetting[]>(CONTROLS_PATH)
+    } catch (e) {
+      console.log(e)
       controls.value = []
     }
   }
