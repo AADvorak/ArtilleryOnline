@@ -6,8 +6,8 @@ import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 
 public class CommandProcessor {
 
-    public static void process(String userKey, UserCommand userCommand, BattleModel battleModel) {
-        var userVehicle = battleModel.getVehicles().get(userKey);
+    public static void process(String userNickname, UserCommand userCommand, BattleModel battleModel) {
+        var userVehicle = battleModel.getVehicles().get(userNickname);
         if (userVehicle == null) {
             return;
         }

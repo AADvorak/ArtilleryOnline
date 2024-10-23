@@ -29,7 +29,8 @@ public class BattleFactory {
                 .setTime(0)
                 .setBattleStage(BattleStage.WAITING)
                 .setModel(battleModel)
-                .setUserCommandQueues(createUserCommandQueues(queueElements));
+                .setUserCommandQueues(createUserCommandQueues(queueElements))
+                .setUserNicknameMap(createUserNicknameMap(queueElements));
     }
 
     private RoomModel createRoomModel() {
@@ -109,9 +110,15 @@ public class BattleFactory {
         return vehicles;
     }
 
-    private Map<String, Queue<UserCommand>> createUserCommandQueues(Set<UserBattleQueueElement> queueElements) {
-        var userCommandQueues = new HashMap<String, Queue<UserCommand>>();
-        queueElements.forEach(element -> userCommandQueues.put(element.getUser().getNickname(), new ConcurrentLinkedQueue<>()));
+    private Map<Long, Queue<UserCommand>> createUserCommandQueues(Set<UserBattleQueueElement> queueElements) {
+        var userCommandQueues = new HashMap<Long, Queue<UserCommand>>();
+        queueElements.forEach(element -> userCommandQueues.put(element.getUser().getId(), new ConcurrentLinkedQueue<>()));
         return userCommandQueues;
+    }
+
+    private Map<Long, String> createUserNicknameMap(Set<UserBattleQueueElement> queueElements) {
+        var userNicknameMap = new HashMap<Long, String>();
+        queueElements.forEach(element -> userNicknameMap.put(element.getUser().getId(), element.getUser().getNickname()));
+        return userNicknameMap;
     }
 }

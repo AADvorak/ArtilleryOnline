@@ -37,7 +37,9 @@ public class Battle {
 
     private BattleStage battleStage;
 
-    private Map<String, Queue<UserCommand>> userCommandQueues;
+    private Map<Long, Queue<UserCommand>> userCommandQueues;
+
+    private Map<Long, String> userNicknameMap;
 
     private Queue<DebugCommand> debugCommands = new ConcurrentLinkedQueue<>();
 
