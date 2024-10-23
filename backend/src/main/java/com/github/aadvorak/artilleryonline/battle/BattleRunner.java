@@ -11,15 +11,12 @@ import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class BattleRunner implements Runnable {
 
     private final Battle battle;
-
-    private final Set<String> userKeys;
 
     private final UserBattleMap userBattleMap;
 
@@ -57,7 +54,7 @@ public class BattleRunner implements Runnable {
     }
 
     private void removeBattleFromMap() {
-        userKeys.forEach(userBattleMap::remove);
+        battle.getUserNicknameMap().keySet().forEach(userBattleMap::remove);
     }
 
     private void setBattleUpdatedByTimeout() {
