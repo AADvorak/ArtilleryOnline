@@ -22,6 +22,40 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     return toValueNameMapping(controlsOrDefaults.value)
   })
 
+  function setControl(newControl: UserSetting) {
+    if (!controls.value) {
+      controls.value = []
+    }
+    const existingControl = controls.value
+        .filter(control => control.name === newControl.name)[0]
+    if (existingControl) {
+      existingControl.value = newControl.value
+    } else {
+      controls.value.push(newControl)
+    }
+    saveControls().then()
+  }
+
+  function resetControls() {
+    controls.value = []
+    saveControls().then()
+  }
+
+  async function saveControls() {
+    // todo store on server
+    localStorage.setItem('user-settings.controls', JSON.stringify(controls.value))
+  }
+
+  async function loadControlsIfNull() {
+    // todo store on server
+    const controlsStr = localStorage.getItem('user-settings.controls')
+    if (controlsStr) {
+      controls.value = JSON.parse(controlsStr)
+    } else {
+      controls.value = []
+    }
+  }
+
   function toNameValueMapping(userSettings: UserSetting[] | undefined) {
     if (!userSettings || !userSettings.length) {
       return {}
@@ -40,5 +74,12 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     return mapping
   }
 
-  return { controls, controlsOrDefaults, controlsOrDefaultsValueNameMapping }
+  return {
+    controls,
+    controlsOrDefaults,
+    controlsOrDefaultsValueNameMapping,
+    setControl,
+    resetControls,
+    loadControlsIfNull
+  }
 })

@@ -1,0 +1,65 @@
+<script setup lang="ts">
+import {useRouter} from "#app";
+import {useUserSettingsStore} from "~/stores/user-settings";
+import ControlEditor from "~/components/control-editor.vue";
+import type {UserSetting} from "~/data/model";
+
+const RESERVED_KEY_CODES = [
+    'Escape', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12'
+]
+
+const router = useRouter()
+const userSettingsStore = useUserSettingsStore()
+
+const editing = ref<boolean>(false)
+
+const controls = computed(() => userSettingsStore.controlsOrDefaults)
+
+function onEditStart() {
+  editing.value = true
+}
+
+function onEditEnd(newControl: UserSetting) {
+  editing.value = false
+  if (RESERVED_KEY_CODES.includes(newControl.value)) {
+    return
+  }
+  for (const control of controls.value) {
+    if (control.name !== newControl.name && control.value === newControl.value) {
+      return
+    }
+  }
+  userSettingsStore.setControl(newControl)
+}
+
+function back() {
+  router.push('/settings')
+}
+</script>
+
+<template>
+  <v-card width="100%" max-width="600px">
+    <v-card-title>
+      Artillery online: settings / controls
+    </v-card-title>
+    <v-card-text>
+      <v-table density="compact">
+        <tbody>
+        <tr v-for="control of controls">
+          <td>{{ control.description }}</td>
+          <td>
+            <control-editor
+                :control="control"
+                :editing="editing"
+                @edit-start="onEditStart"
+                @edit-end="onEditEnd"/>
+          </td>
+        </tr>
+        </tbody>
+      </v-table>
+      <v-btn class="mb-4" color="secondary" width="100%"
+             @click="userSettingsStore.resetControls">Reset to defaults</v-btn>
+      <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
+    </v-card-text>
+  </v-card>
+</template>

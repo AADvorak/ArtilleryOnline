@@ -14,6 +14,10 @@ function toProfile() {
   router.push('/profile')
 }
 
+function toSettings() {
+  router.push('/settings')
+}
+
 async function logOut() {
   await new ApiRequestSender().delete('/users/logout')
   userStore.user = null
@@ -29,6 +33,7 @@ async function logOut() {
     <v-card-text>
       <v-btn class="mb-4" width="100%" color="error" @click="toBattle">Battle</v-btn>
       <v-btn class="mb-4" width="100%" color="secondary" @click="toProfile">Profile</v-btn>
+      <v-btn class="mb-4" width="100%" color="secondary" @click="toSettings">Settings</v-btn>
       <v-btn class="mb-4" width="100%" @click="logOut">Log out</v-btn>
     </v-card-text>
   </v-card>
