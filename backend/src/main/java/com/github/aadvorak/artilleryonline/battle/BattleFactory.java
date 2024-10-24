@@ -12,7 +12,6 @@ import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleOnGro
 import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.*;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
-import com.github.aadvorak.artilleryonline.collection.UserBattleQueueElement;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -21,16 +20,16 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Component
 public class BattleFactory {
 
-    public Battle createBattle(Set<UserBattleQueueElement> queueElements) {
+    public Battle createBattle(Set<BattleParticipant> participants) {
         var battleModel = new BattleModel()
                 .setRoom(createRoomModel());
-        battleModel.setVehicles(createVehicles(queueElements, battleModel));
+        battleModel.setVehicles(createVehicles(participants, battleModel));
         return new Battle()
                 .setTime(0)
                 .setBattleStage(BattleStage.WAITING)
                 .setModel(battleModel)
-                .setUserCommandQueues(createUserCommandQueues(queueElements))
-                .setUserNicknameMap(createUserNicknameMap(queueElements));
+                .setUserCommandQueues(createUserCommandQueues(participants))
+                .setUserNicknameMap(createUserNicknameMap(participants));
     }
 
     private RoomModel createRoomModel() {
@@ -65,17 +64,17 @@ public class BattleFactory {
         return groundLine;
     }
 
-    private Map<String, VehicleModel> createVehicles(Set<UserBattleQueueElement> queueElements, BattleModel battleModel) {
+    private Map<String, VehicleModel> createVehicles(Set<BattleParticipant> participants, BattleModel battleModel) {
         var vehicles = new HashMap<String, VehicleModel>();
         var distanceBetweenVehicles = (battleModel.getRoom().getSpecs().getRightTop().getX()
                 - battleModel.getRoom().getSpecs().getLeftBottom().getX())
-                / (queueElements.size() + 1);
+                / (participants.size() + 1);
         var vehicleNumber = 1;
-        for (var queueElement : queueElements) {
+        for (var participant : participants) {
             var vehicleModel = new VehicleModel();
             vehicleModel.setId(battleModel.getIdGenerator().generate());
             vehicleModel.setSpecs(Arrays.stream(VehicleSpecsPreset.values())
-                    .filter(preset -> preset.getName().equals(queueElement.getParams().getSelectedVehicle()))
+                    .filter(preset -> preset.getName().equals(participant.getParams().getSelectedVehicle()))
                     .map(VehicleSpecsPreset::getSpecs).findAny().orElseThrow());
             vehicleModel.setPreCalc(new VehiclePreCalc(vehicleModel.getSpecs()));
             var gun = vehicleModel.getSpecs().getAvailableGuns().values().iterator().next();
@@ -104,21 +103,25 @@ public class BattleFactory {
                             .setActive(false)));
             VehicleOnGroundProcessor.estimateVehicleAngleByPosition(vehicleModel, battleModel.getRoom());
             VehicleOnGroundProcessor.correctVehiclePositionAndAngleOnGround(vehicleModel, battleModel.getRoom());
-            vehicles.put(queueElement.getUser().getNickname(), vehicleModel);
+            vehicles.put(participant.getNickname(), vehicleModel);
             vehicleNumber++;
         }
         return vehicles;
     }
 
-    private Map<Long, Queue<UserCommand>> createUserCommandQueues(Set<UserBattleQueueElement> queueElements) {
+    private Map<Long, Queue<UserCommand>> createUserCommandQueues(Set<BattleParticipant> participants) {
         var userCommandQueues = new HashMap<Long, Queue<UserCommand>>();
-        queueElements.forEach(element -> userCommandQueues.put(element.getUser().getId(), new ConcurrentLinkedQueue<>()));
+        participants.stream()
+                .filter(participant -> participant.getUser() != null)
+                .forEach(element -> userCommandQueues.put(element.getUser().getId(), new ConcurrentLinkedQueue<>()));
         return userCommandQueues;
     }
 
-    private Map<Long, String> createUserNicknameMap(Set<UserBattleQueueElement> queueElements) {
+    private Map<Long, String> createUserNicknameMap(Set<BattleParticipant> participants) {
         var userNicknameMap = new HashMap<Long, String>();
-        queueElements.forEach(element -> userNicknameMap.put(element.getUser().getId(), element.getUser().getNickname()));
+        participants.stream()
+                .filter(participant -> participant.getUser() != null)
+                .forEach(element -> userNicknameMap.put(element.getUser().getId(), element.getUser().getNickname()));
         return userNicknameMap;
     }
 }

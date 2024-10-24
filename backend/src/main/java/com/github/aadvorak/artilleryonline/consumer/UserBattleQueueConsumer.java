@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.consumer;
 
 import com.github.aadvorak.artilleryonline.battle.BattleFactory;
+import com.github.aadvorak.artilleryonline.battle.BattleParticipant;
 import com.github.aadvorak.artilleryonline.battle.BattleRunner;
 import com.github.aadvorak.artilleryonline.collection.*;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
@@ -43,14 +44,15 @@ public class UserBattleQueueConsumer implements Runnable {
                 sleep();
                 continue;
             }
-            var nicknames = elements.stream()
-                    .map(element -> element.getUser().getNickname())
-                    .collect(Collectors.toSet());
-            var battle = battleFactory.createBattle(elements);
+            var battle = battleFactory.createBattle(elements.stream()
+                    .map(BattleParticipant::of).collect(Collectors.toSet()));
             elements.forEach(element -> userBattleMap.put(element.getUser().getId(), battle));
             var battleRunner = new BattleRunner(battle, userBattleMap, battleUpdatesQueue,
                     battleStateUpdatesQueue, applicationSettings);
             new Thread(battleRunner).start();
+            var nicknames = elements.stream()
+                    .map(element -> element.getUser().getNickname())
+                    .collect(Collectors.toSet());
             log.info("Battle started for users: {}, queue size: {}", nicknames, userBattleQueue.size());
         }
     }
