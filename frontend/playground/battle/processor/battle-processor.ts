@@ -17,6 +17,9 @@ export function useBattleProcessor() {
 
   function processStep() {
     const battle = JSON.parse(JSON.stringify(battleStore.battle)) as Battle
+    if (!battle) {
+      return
+    }
     if (battleStore.paused && !battleStore.doStep) {
       setTimeout(processStep, TIME_STEP_MS)
       return

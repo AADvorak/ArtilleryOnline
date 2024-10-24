@@ -26,4 +26,9 @@ public class UserBattleEndpoint {
     public BattleResponse testDrive() {
         return userBattleService.createTestDrive();
     }
+
+    @DeleteMapping("/leave")
+    public void leaveBattle() {
+        userBattleService.leaveBattle();
+    }
 }

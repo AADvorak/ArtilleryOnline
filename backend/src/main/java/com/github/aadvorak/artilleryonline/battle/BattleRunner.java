@@ -9,11 +9,13 @@ import com.github.aadvorak.artilleryonline.dto.response.BattleModelStateResponse
 import com.github.aadvorak.artilleryonline.dto.response.BattleStateResponse;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
+@Slf4j
 public class BattleRunner implements Runnable {
 
     private final Battle battle;
@@ -31,7 +33,8 @@ public class BattleRunner implements Runnable {
 
     @Override
     public void run() {
-        while (!BattleStage.FINISHED.equals(battle.getBattleStage())) {
+        while (!BattleStage.FINISHED.equals(battle.getBattleStage())
+                && !battle.getUserNicknameMap().isEmpty()) {
             try {
                 Thread.sleep(Battle.TIME_STEP_MS);
             } catch (InterruptedException e) {
@@ -43,6 +46,7 @@ public class BattleRunner implements Runnable {
             resetUpdatedFlags();
         }
         removeBattleFromMap();
+        log.info("Battle finished: {}, map size {}", battle.getId(), userBattleMap.size());
     }
 
     private void processBattleStep() {
