@@ -3,7 +3,9 @@ package com.github.aadvorak.artilleryonline.endpoint;
 import com.github.aadvorak.artilleryonline.dto.request.EditUserRequest;
 import com.github.aadvorak.artilleryonline.dto.request.LoginRequest;
 import com.github.aadvorak.artilleryonline.dto.request.RegisterRequest;
+import com.github.aadvorak.artilleryonline.dto.response.ShortUserResponse;
 import com.github.aadvorak.artilleryonline.dto.response.UserResponse;
+import com.github.aadvorak.artilleryonline.service.OnlineUserService;
 import com.github.aadvorak.artilleryonline.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -20,6 +23,13 @@ import java.util.Arrays;
 public class UserEndpoint {
 
     private final UserService userService;
+
+    private final OnlineUserService onlineUserService;
+
+    @GetMapping("/online")
+    public List<ShortUserResponse> getOnlineUsers() {
+        return onlineUserService.getOnlineUsers();
+    }
 
     @GetMapping("/me")
     public UserResponse getCurrentUser(HttpServletRequest request) {
