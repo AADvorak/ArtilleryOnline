@@ -49,6 +49,18 @@ async function randomBattle() {
   }
 }
 
+async function testDrive() {
+  try {
+    const request = {
+      selectedVehicle: selectedVehicle.value!
+    }
+    const battle = await api.putJson<UserBattleQueueParams, Battle>('/battles/test-drive', request)
+    battleStore.updateBattle(battle)
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 async function loadBattle() {
   if (checkUserInQueue()) {
     try {
@@ -112,6 +124,9 @@ function back() {
              :disabled="!!battleStore.battle || !selectedVehicle"
              @click="randomBattle">Random battle</v-btn>
       <v-btn v-show="!!queueStore.queue" class="mb-4" width="100%" @click="cancel">Cancel</v-btn>
+      <v-btn class="mb-4" width="100%" color="secondary"
+             :disabled="!!queueStore.queue || !!battleStore.battle || !selectedVehicle"
+             @click="testDrive">Test drive</v-btn>
       <v-btn class="mb-4" width="100%" :disabled="!!queueStore.queue" @click="back">Back</v-btn>
     </v-card-text>
   </v-card>

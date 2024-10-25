@@ -10,15 +10,15 @@ import com.github.aadvorak.artilleryonline.dto.response.BattleStateResponse;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Component
 @RequiredArgsConstructor
 @Slf4j
-public class BattleRunner implements Runnable {
-
-    private final Battle battle;
+public class BattleRunner {
 
     private final UserBattleMap userBattleMap;
 
@@ -31,25 +31,26 @@ public class BattleRunner implements Runnable {
     private final WaitingBattleStepProcessor waitingBattleStepProcessor = new WaitingBattleStepProcessor();
     private final ActiveBattleStepProcessor activeBattleStepProcessor = new ActiveBattleStepProcessor();
 
-    @Override
-    public void run() {
-        while (!BattleStage.FINISHED.equals(battle.getBattleStage())
-                && !battle.getUserNicknameMap().isEmpty()) {
-            try {
-                Thread.sleep(Battle.TIME_STEP_MS);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+    public void runBattle(Battle battle) {
+        new Thread(() -> {
+            while (!BattleStage.FINISHED.equals(battle.getBattleStage())
+                    && !battle.getUserNicknameMap().isEmpty()) {
+                try {
+                    Thread.sleep(Battle.TIME_STEP_MS);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                processBattleStep(battle);
+                setBattleUpdatedByTimeout(battle);
+                sendBattleToUpdatesQueue(battle);
+                resetUpdatedFlags(battle);
             }
-            processBattleStep();
-            setBattleUpdatedByTimeout();
-            sendBattleToUpdatesQueue();
-            resetUpdatedFlags();
-        }
-        removeBattleFromMap();
-        log.info("Battle finished: {}, map size {}", battle.getId(), userBattleMap.size());
+            removeBattleFromMap(battle);
+            log.info("Battle finished: {}, map size {}", battle.getId(), userBattleMap.size());
+        }).start();
     }
 
-    private void processBattleStep() {
+    private void processBattleStep(Battle battle) {
         if (BattleStage.WAITING.equals(battle.getBattleStage())) {
             waitingBattleStepProcessor.processStep(battle);
         } else if (BattleStage.ACTIVE.equals(battle.getBattleStage())) {
@@ -57,11 +58,11 @@ public class BattleRunner implements Runnable {
         }
     }
 
-    private void removeBattleFromMap() {
+    private void removeBattleFromMap(Battle battle) {
         battle.getUserNicknameMap().keySet().forEach(userBattleMap::remove);
     }
 
-    private void setBattleUpdatedByTimeout() {
+    private void setBattleUpdatedByTimeout(Battle battle) {
         var battleModel = battle.getModel();
         if (!battleModel.isUpdated()
                 && battle.getAbsoluteTime() - battleModel.getLastUpdateTime()
@@ -70,17 +71,17 @@ public class BattleRunner implements Runnable {
         }
     }
 
-    private void sendBattleToUpdatesQueue() {
+    private void sendBattleToUpdatesQueue(Battle battle) {
         if (battle.getModel().isUpdated()
                 || battle.isForceSend()
                 || (!applicationSettings.isClientProcessing() && !battle.isPaused())) {
             battleUpdatesQueue.add(battle);
         } else {
-            sendBattleStateToUpdatesQueue();
+            sendBattleStateToUpdatesQueue(battle);
         }
     }
 
-    private void sendBattleStateToUpdatesQueue() {
+    private void sendBattleStateToUpdatesQueue(Battle battle) {
         var vehicles = battle.getModel().getVehicles().entrySet();
         if (vehicles.stream().anyMatch(vehicleEntry -> vehicleEntry.getValue().isUpdated())) {
             var vehicleStates = vehicles.stream()
@@ -96,7 +97,7 @@ public class BattleRunner implements Runnable {
         }
     }
 
-    private void resetUpdatedFlags() {
+    private void resetUpdatedFlags(Battle battle) {
         battle.getModel().setUpdated(false);
         battle.getModel().getVehicles().values().forEach(vehicle -> vehicle.setUpdated(false));
     }

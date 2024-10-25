@@ -25,11 +25,9 @@ public class UserBattleQueueConsumer implements Runnable {
 
     private final UserBattleMap userBattleMap;
 
-    private final BattleUpdatesQueue battleUpdatesQueue;
-
-    private final BattleStateUpdatesQueue battleStateUpdatesQueue;
-
     private final ApplicationSettings applicationSettings;
+
+    private final BattleRunner battleRunner;
 
     @EventListener(ApplicationReadyEvent.class)
     public void startConsumer() {
@@ -47,9 +45,7 @@ public class UserBattleQueueConsumer implements Runnable {
             var battle = battleFactory.createBattle(elements.stream()
                     .map(BattleParticipant::of).collect(Collectors.toSet()));
             elements.forEach(element -> userBattleMap.put(element.getUser().getId(), battle));
-            var battleRunner = new BattleRunner(battle, userBattleMap, battleUpdatesQueue,
-                    battleStateUpdatesQueue, applicationSettings);
-            new Thread(battleRunner).start();
+            battleRunner.runBattle(battle);
             var nicknames = elements.stream()
                     .map(element -> element.getUser().getNickname())
                     .collect(Collectors.toSet());

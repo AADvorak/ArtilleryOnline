@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.endpoint;
 
+import com.github.aadvorak.artilleryonline.collection.UserBattleQueueParams;
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
 import com.github.aadvorak.artilleryonline.service.UserBattleService;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,8 @@ public class UserBattleEndpoint {
     }
 
     @PutMapping("/test-drive")
-    public BattleResponse testDrive() {
-        return userBattleService.createTestDrive();
+    public BattleResponse testDrive(@RequestBody UserBattleQueueParams params) {
+        return userBattleService.createTestDrive(params);
     }
 
     @DeleteMapping("/leave")
