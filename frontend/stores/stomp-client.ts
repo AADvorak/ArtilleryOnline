@@ -15,13 +15,15 @@ export const useStompClientStore = defineStore('stomp-client', () => {
         resolve()
         return
       }
+      if (!client.value) {
+        const socket = new WebSocket(`ws://${hostStore.host}/api/ws/battle/websocket`)
+        client.value = Stomp.over(socket)
+      }
       const headers = {}
       const csrf = csrfStore.csrf
       if (csrf) {
         headers[csrf.headerName] = csrf.token
       }
-      const socket = new WebSocket(`ws://${hostStore.host}/api/ws/battle/websocket`)
-      client.value = Stomp.over(socket)
       client.value.connect(headers, () => resolve())
     })
   }
