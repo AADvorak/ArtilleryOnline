@@ -38,7 +38,7 @@ services:
       APP_SETTINGS_DEBUG: false
       APP_SETTINGS_CLIENT_PROCESSING: true
     volumes:
-      - ../../backend/target/artilleryonline-0.1.0.jar:/backend/artilleryonline.jar
+      - ../../backend/target/artilleryonline-0.2.0.jar:/backend/artilleryonline.jar
     stdin_open: true
     tty: true
     networks:
