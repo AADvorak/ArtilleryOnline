@@ -1,18 +1,13 @@
 <script setup lang="ts">
-import type {StompClient} from '@/playground/composables/stomp-client'
 import {useBattleStore} from '@/stores/battle'
 import {useCommandsSender} from '@/playground/composables/commands-sender'
 import {Command} from '@/playground/data/command'
 import {useSettingsStore} from "@/stores/settings";
 import HistoryTracker from "@/playground/components/HistoryTracker.vue";
 
-const props = defineProps<{
-  stompClient: StompClient
-}>()
-
 const battleStore = useBattleStore()
 const settingsStore = useSettingsStore()
-const commandsSender = useCommandsSender(props.stompClient)
+const commandsSender = useCommandsSender()
 
 function pause() {
   commandsSender.sendDebugCommand({ command: Command.PAUSE })

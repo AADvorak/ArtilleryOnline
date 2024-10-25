@@ -3,13 +3,10 @@ import { ref } from 'vue'
 import { useBattleStore } from '~/stores/battle'
 import {useRouter} from '#app'
 import {ApiRequestSender} from '~/api/api-request-sender'
-import type {StompClient} from '~/playground/composables/stomp-client'
-
-const props = defineProps<{
-  stompClient: StompClient
-}>()
+import {useStompClientStore} from '~/stores/stomp-client'
 
 const battleStore = useBattleStore()
+const stompClientStore = useStompClientStore()
 const router = useRouter()
 
 const opened = ref(false)
@@ -18,7 +15,7 @@ async function leaveBattle() {
   hide()
   try {
     await new ApiRequestSender().delete('/battles/leave')
-    props.stompClient.disconnect()
+    stompClientStore.disconnect()
     battleStore.clear()
     await useRouter().push('/battle')
   } catch (e) {

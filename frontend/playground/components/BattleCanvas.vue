@@ -3,7 +3,6 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useBattleStore } from '~/stores/battle'
 import { useCommandsSender } from '@/playground/composables/commands-sender'
 import {useBattleUpdater} from "@/playground/composables/battle-updater";
-import {type StompClient} from "@/playground/composables/stomp-client";
 import {useBattleProcessor} from "@/playground/battle/processor/battle-processor";
 import {useDrawerBase} from "@/playground/composables/drawer/drawer-base";
 import {useVehicleDrawer} from "@/playground/composables/drawer/vehicle-drawer";
@@ -12,13 +11,12 @@ import {useExplosionDrawer} from "@/playground/composables/drawer/explosion-draw
 import {useGroundDrawer} from "@/playground/composables/drawer/ground-drawer";
 import {useKeyboardListener} from "@/playground/composables/keyboard-listener";
 import {useSettingsStore} from "~/stores/settings";
-
-const props = defineProps<{
-  stompClient: StompClient
-}>()
+import {useStompClientStore} from "~/stores/stomp-client";
 
 const battleStore = useBattleStore()
 const settingsStore = useSettingsStore()
+const stompClientStore = useStompClientStore()
+
 const battle = computed(() => battleStore.battle)
 const isClientProcessing = computed(() => settingsStore.settings?.clientProcessing)
 const battleSize = ref()
@@ -53,8 +51,6 @@ watch(battle, (value, oldValue) => {
 
 onMounted(() => {
   initCanvasAndCtx()
-  useBattleUpdater(props.stompClient).subscribeAfterWsConnect()
-  useKeyboardListener(useCommandsSender(props.stompClient)).startListening()
   startBattle()
   addEventListener('resize', onWindowResize)
 })
@@ -78,7 +74,8 @@ function startBattle() {
   calculateBattleSize()
   calculateCanvasSize()
   calculateScaleCoefficient()
-  props.stompClient.connect()
+  useKeyboardListener(useCommandsSender()).startListening()
+  useBattleUpdater().subscribe()
   isClientProcessing.value && useBattleProcessor().startProcessing()
 }
 
@@ -87,7 +84,7 @@ function finishBattle() {
   battleSize.value = undefined
   canvasSize.value = undefined
   scaleCoefficient.value = undefined
-  props.stompClient.disconnect()
+  stompClientStore.disconnect()
 }
 
 function initCanvasAndCtx() {

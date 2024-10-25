@@ -1,18 +1,19 @@
 import type {DebugCommand, UserCommand} from '@/playground/data/command'
 import { useBattleStore } from '~/stores/battle'
-import type {StompClient} from "@/playground/composables/stomp-client";
+import {useStompClientStore} from "~/stores/stomp-client";
 
 export interface CommandsSender {
   sendCommand: Function
   sendDebugCommand: Function
 }
 
-export function useCommandsSender(stompClient: StompClient) {
+export function useCommandsSender() {
   const battleStore = useBattleStore()
+  const stompClientStore = useStompClientStore()
 
   function sendCommand(userCommand: UserCommand) {
     if (battleStore.isActive) {
-      stompClient.client.value?.send(
+      stompClientStore.client?.send(
         '/api/ws/battle/commands',
         {},
         JSON.stringify(userCommand)
@@ -22,7 +23,7 @@ export function useCommandsSender(stompClient: StompClient) {
 
   function sendDebugCommand(debugCommand: DebugCommand) {
     if (battleStore.battle) {
-      stompClient.client.value?.send(
+      stompClientStore.client?.send(
           '/api/ws/battle/debug-commands',
           {},
           JSON.stringify(debugCommand)

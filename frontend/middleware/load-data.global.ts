@@ -7,6 +7,7 @@ import type {Battle} from "~/playground/data/battle";
 import {useCsrfStore} from "~/stores/csrf";
 import {useQueueStore} from "~/stores/queue";
 import {useUserSettingsStore} from "~/stores/user-settings";
+import {useStompClientStore} from "~/stores/stomp-client";
 
 const ROOT_PATH = '/'
 const MENU_PATH = '/menu'
@@ -22,6 +23,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const csrfStore = useCsrfStore()
   const queueStore = useQueueStore()
   const userSettingsStore = useUserSettingsStore()
+  const stompClientStore = useStompClientStore()
 
   await settingsStore.loadIfNull()
 
@@ -56,6 +58,10 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   if (!!userStore.user && !battleStore.battle) {
     await queueStore.loadQueueIfNull()
+  }
+
+  if (!!userStore.user && !!battleStore.battle) {
+    await stompClientStore.connect()
   }
 
   if (!userStore.user && !UNSIGNED_PATHS.includes(to.path)) {

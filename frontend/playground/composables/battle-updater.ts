@@ -1,27 +1,26 @@
 import { useBattleStore } from '~/stores/battle'
 import type {Battle, BattleState} from '@/playground/data/battle'
-import type {StompClient} from "@/playground/composables/stomp-client";
 import {useSettingsStore} from "~/stores/settings";
+import {useStompClientStore} from "~/stores/stomp-client";
 
-export function useBattleUpdater(stompClient: StompClient) {
+export function useBattleUpdater() {
   const battleStore = useBattleStore()
   const settingsStore = useSettingsStore()
+  const stompClientStore = useStompClientStore()
 
-  function subscribeAfterWsConnect() {
-    stompClient.addConnectCallback(() => {
-      const battle = battleStore.battle as Battle
-      stompClient.client.value?.subscribe('/topic/battle/updates/' + battle.id, function (msgOut) {
-        const battle = JSON.parse(msgOut.body) as Battle
-        if (battle) {
-          updateBattle(battle)
-        }
-      })
-      stompClient.client.value?.subscribe('/topic/battle/updates/' + battle.id + '/state', function (msgOut) {
-        const battleState = JSON.parse(msgOut.body) as BattleState
-        if (battleState) {
-          updateBattleState(battleState)
-        }
-      })
+  function subscribe() {
+    const battle = battleStore.battle as Battle
+    stompClientStore.client?.subscribe('/topic/battle/updates/' + battle.id, function (msgOut) {
+      const battle = JSON.parse(msgOut.body) as Battle
+      if (battle) {
+        updateBattle(battle)
+      }
+    })
+    stompClientStore.client?.subscribe('/topic/battle/updates/' + battle.id + '/state', function (msgOut) {
+      const battleState = JSON.parse(msgOut.body) as BattleState
+      if (battleState) {
+        updateBattleState(battleState)
+      }
     })
   }
 
@@ -42,5 +41,5 @@ export function useBattleUpdater(stompClient: StompClient) {
     battleStore.updateBattle(battle)
   }
 
-  return { subscribeAfterWsConnect }
+  return { subscribe }
 }

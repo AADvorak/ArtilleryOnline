@@ -4,15 +4,10 @@ import {useBattleStore} from "~/stores/battle";
 import ReloadingProgress from "@/playground/components/ReloadingProgress.vue";
 import HitPointsBar from "@/playground/components/HitPointsBar.vue";
 import BattleTimer from "@/playground/components/BattleTimer.vue";
-import type {StompClient} from "@/playground/composables/stomp-client";
 import BattleDebugButtons from "@/playground/components/BattleDebugButtons.vue";
 import {useSettingsStore} from "~/stores/settings";
 import JetBar from "~/playground/components/JetBar.vue";
 import LeaveBattleDialog from "~/playground/components/LeaveBattleDialog.vue";
-
-const props = defineProps<{
-  stompClient: StompClient
-}>()
 
 const battleStore = useBattleStore()
 const settingsStore = useSettingsStore()
@@ -33,7 +28,7 @@ function showLeaveBattleDialog() {
 <template>
   <v-app-bar>
     <div v-if="isDebugMode" class="ml-5">
-      <BattleDebugButtons :stomp-client="props.stompClient"/>
+      <BattleDebugButtons />
     </div>
     <div class="ml-5 battle-timer-wrapper">
       <BattleTimer />
@@ -45,11 +40,11 @@ function showLeaveBattleDialog() {
       <JetBar />
     </div>
     <div v-if="battleStore.isActive" class="ml-5">
-      <ReloadingProgress :stomp-client="props.stompClient"/>
+      <ReloadingProgress />
     </div>
     <v-spacer/>
     <v-btn @click="showLeaveBattleDialog">Leave battle</v-btn>
-    <LeaveBattleDialog ref="leaveBattleDialog" :stomp-client="props.stompClient"/>
+    <LeaveBattleDialog ref="leaveBattleDialog"/>
   </v-app-bar>
 </template>
 
