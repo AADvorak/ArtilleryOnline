@@ -3,10 +3,8 @@ import { ref } from 'vue'
 import { useBattleStore } from '~/stores/battle'
 import {useRouter} from '#app'
 import {ApiRequestSender} from '~/api/api-request-sender'
-import {useStompClientStore} from '~/stores/stomp-client'
 
 const battleStore = useBattleStore()
-const stompClientStore = useStompClientStore()
 const router = useRouter()
 
 const opened = ref(false)
@@ -15,7 +13,6 @@ async function leaveBattle() {
   hide()
   try {
     await new ApiRequestSender().delete('/battles/leave')
-    stompClientStore.disconnect()
     battleStore.clear()
     await useRouter().push('/battle')
   } catch (e) {

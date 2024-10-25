@@ -11,11 +11,10 @@ import {useExplosionDrawer} from "@/playground/composables/drawer/explosion-draw
 import {useGroundDrawer} from "@/playground/composables/drawer/ground-drawer";
 import {useKeyboardListener} from "@/playground/composables/keyboard-listener";
 import {useSettingsStore} from "~/stores/settings";
-import {useStompClientStore} from "~/stores/stomp-client";
 
 const battleStore = useBattleStore()
 const settingsStore = useSettingsStore()
-const stompClientStore = useStompClientStore()
+const battleUpdater = useBattleUpdater()
 
 const battle = computed(() => battleStore.battle)
 const isClientProcessing = computed(() => settingsStore.settings?.clientProcessing)
@@ -75,7 +74,7 @@ function startBattle() {
   calculateCanvasSize()
   calculateScaleCoefficient()
   useKeyboardListener(useCommandsSender()).startListening()
-  useBattleUpdater().subscribe()
+  battleUpdater.subscribe()
   isClientProcessing.value && useBattleProcessor().startProcessing()
 }
 
@@ -84,7 +83,7 @@ function finishBattle() {
   battleSize.value = undefined
   canvasSize.value = undefined
   scaleCoefficient.value = undefined
-  stompClientStore.disconnect()
+  battleUpdater.unsubscribe()
 }
 
 function initCanvasAndCtx() {

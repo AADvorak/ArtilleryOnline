@@ -60,7 +60,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
     await queueStore.loadQueueIfNull()
   }
 
-  if (!!userStore.user && !!battleStore.battle) {
+  if (!!userStore.user) {
     await stompClientStore.connect()
   }
 

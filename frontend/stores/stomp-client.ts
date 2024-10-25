@@ -13,6 +13,7 @@ export const useStompClientStore = defineStore('stomp-client', () => {
     return new Promise((resolve, reject) => {
       if (client.value?.connected) {
         resolve()
+        return
       }
       const headers = {}
       const csrf = csrfStore.csrf

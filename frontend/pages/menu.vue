@@ -2,9 +2,11 @@
 import {useRouter} from "#app";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import {useUserStore} from "~/stores/user";
+import {useStompClientStore} from "~/stores/stomp-client";
 
 const router = useRouter()
 const userStore = useUserStore()
+const stompClientStore = useStompClientStore()
 
 function toBattle() {
   router.push('/battle')
@@ -21,6 +23,7 @@ function toSettings() {
 async function logOut() {
   await new ApiRequestSender().delete('/users/logout')
   userStore.user = null
+  stompClientStore.disconnect()
   await router.push('/')
 }
 </script>
