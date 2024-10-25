@@ -12,6 +12,10 @@ function toBattle() {
   router.push('/battle')
 }
 
+function toRooms() {
+  router.push('/rooms')
+}
+
 function toProfile() {
   router.push('/profile')
 }
@@ -35,6 +39,7 @@ async function logOut() {
     </v-card-title>
     <v-card-text>
       <v-btn class="mb-4" width="100%" color="error" @click="toBattle">Battle</v-btn>
+      <v-btn class="mb-4" width="100%" color="primary" @click="toRooms">Rooms</v-btn>
       <v-btn class="mb-4" width="100%" color="secondary" @click="toProfile">Profile</v-btn>
       <v-btn class="mb-4" width="100%" color="secondary" @click="toSettings">Settings</v-btn>
       <v-btn class="mb-4" width="100%" @click="logOut">Log out</v-btn>

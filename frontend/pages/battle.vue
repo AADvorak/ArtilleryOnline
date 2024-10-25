@@ -7,15 +7,20 @@ import {useSettingsStore} from "~/stores/settings";
 import type {Battle} from "~/playground/data/battle";
 import type {UserBattleQueueParams, UserBattleQueueResponse, VehicleSpecsResponse} from "~/data/response";
 import {DateUtils} from "~/utils/DateUtils";
+import {usePresetsStore} from "~/stores/presets";
 
 const router = useRouter()
 const battleStore = useBattleStore()
 const queueStore = useQueueStore()
 const settingsStore = useSettingsStore()
+const presetsStore = usePresetsStore()
 const api = new ApiRequestSender()
 
-const vehicles = ref<string[]>([])
 const selectedVehicle = ref<string>()
+
+const vehicles = computed(() => {
+  return Object.keys(presetsStore.vehicles)
+})
 
 watch(() => battleStore.battle, (value) => {
   if (value) {
@@ -30,7 +35,6 @@ watch(() => queueStore.queue, () => {
 })
 
 onMounted(() => {
-  loadVehicles()
   if (checkUserInQueue()) {
     selectedVehicle.value = queueStore.queue!.params.selectedVehicle
     loadBattle()
@@ -70,15 +74,6 @@ async function loadBattle() {
     } catch (e) {
       setTimeout(loadBattle, 1000)
     }
-  }
-}
-
-async function loadVehicles() {
-  try {
-    const response = await api.getJson<VehicleSpecsResponse>('/presets/vehicles')
-    vehicles.value = Object.keys(response)
-  } catch (e) {
-    console.log(e)
   }
 }
 

@@ -5,6 +5,11 @@ export interface User {
   token: string
 }
 
+export interface RoomMember {
+  nickname: string
+  selectedVehicle?: string
+}
+
 export interface CsrfToken {
   headerName: string
   token: string

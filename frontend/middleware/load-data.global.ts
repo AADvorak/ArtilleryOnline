@@ -8,6 +8,7 @@ import {useCsrfStore} from "~/stores/csrf";
 import {useQueueStore} from "~/stores/queue";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {useStompClientStore} from "~/stores/stomp-client";
+import {usePresetsStore} from "~/stores/presets";
 
 const ROOT_PATH = '/'
 const MENU_PATH = '/menu'
@@ -24,6 +25,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const queueStore = useQueueStore()
   const userSettingsStore = useUserSettingsStore()
   const stompClientStore = useStompClientStore()
+  const presetsStore = usePresetsStore()
 
   await settingsStore.loadIfNull()
 
@@ -37,6 +39,10 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   if (!!userStore.user) {
     await userSettingsStore.loadControlsIfNull()
+  }
+
+  if (!!userStore.user) {
+    await presetsStore.loadVehiclesIfNull()
   }
 
   if (!!userStore.user && !csrfStore.csrf) {
