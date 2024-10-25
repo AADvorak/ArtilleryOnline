@@ -6,7 +6,7 @@ const battleStore = useBattleStore()
 const userStore = useUserStore()
 
 const value = computed(() => {
-  const vehicle = battleStore.battle!.model.vehicles[userStore.user!.nickname]
+  const vehicle = battleStore.battle?.model.vehicles[userStore.user!.nickname]
   if (!vehicle) {
     return 0
   }
