@@ -15,6 +15,14 @@ async function loadOnlineUsers() {
     console.log(e)
   }
 }
+
+async function inviteUser(user) {
+  try {
+    await new ApiRequestSender().postJson('/rooms/invite', user)
+  } catch (e) {
+    console.log(e)
+  }
+}
 </script>
 
 <template>
@@ -22,7 +30,7 @@ async function loadOnlineUsers() {
     <tbody>
     <tr v-for="onlineUser of onlineUsers">
       <td>{{ onlineUser.nickname }}</td>
-      <td><v-btn variant="text">Invite</v-btn></td>
+      <td><v-btn variant="text" @click="inviteUser(onlineUser)">Invite</v-btn></td>
     </tr>
     </tbody>
   </v-table>

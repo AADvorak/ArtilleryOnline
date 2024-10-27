@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import type {RoomMember} from "~/data/model";
-import {useUserStore} from "~/stores/user";
+import {useRoomStore} from "~/stores/room";
 
-const userStore = useUserStore()
+const roomStore = useRoomStore()
 
-const roomMembers = ref<RoomMember[]>([])
-
-onMounted(() => {
-  roomMembers.value.push({
-    nickname: userStore.user!.nickname,
-    selectedVehicle: ''
-  })
+const roomMembers = computed(() => {
+  return roomStore.room?.members || []
 })
 </script>
 
@@ -24,12 +18,16 @@ onMounted(() => {
       <th class="text-left">
         Selected vehicle
       </th>
+      <th class="text-left">
+        Type
+      </th>
     </tr>
     </thead>
     <tbody>
     <tr v-for="roomMember of roomMembers">
       <td>{{ roomMember.nickname }}</td>
       <td>{{ roomMember.selectedVehicle }}</td>
+      <td>{{ roomMember.owner ? 'owner' : 'guest' }}</td>
     </tr>
     </tbody>
   </v-table>

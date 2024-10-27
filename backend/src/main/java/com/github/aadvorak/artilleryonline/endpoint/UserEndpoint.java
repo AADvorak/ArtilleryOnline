@@ -28,7 +28,7 @@ public class UserEndpoint {
 
     @GetMapping("/online")
     public List<ShortUserResponse> getOnlineUsers() {
-        return onlineUserService.getOnlineUsers();
+        return onlineUserService.getOnlineUsersResponse();
     }
 
     @GetMapping("/me")

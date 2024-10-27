@@ -1,10 +1,20 @@
 <script setup lang="ts">
 import {useRouter} from "#app";
+import {ApiRequestSender} from "~/api/api-request-sender";
+import type {Room} from "~/data/model";
+import {useRoomStore} from "~/stores/room";
 
 const router = useRouter()
 
-function toRoom() {
-  router.push('/rooms/room')
+const roomStore = useRoomStore()
+
+async function createRoom() {
+  try {
+    roomStore.room = await new ApiRequestSender().putJson<undefined, Room>('/rooms', undefined)
+    await router.push('/rooms/room')
+  } catch (e) {
+    console.log(e)
+  }
 }
 
 function back() {
@@ -18,7 +28,7 @@ function back() {
       Artillery online: rooms
     </v-card-title>
     <v-card-text>
-      <v-btn class="mb-4" width="100%" color="secondary" @click="toRoom">Create room</v-btn>
+      <v-btn class="mb-4" width="100%" color="secondary" @click="createRoom">Create room</v-btn>
       <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
     </v-card-text>
   </v-card>

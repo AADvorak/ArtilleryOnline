@@ -1,0 +1,42 @@
+package com.github.aadvorak.artilleryonline.endpoint;
+
+import com.github.aadvorak.artilleryonline.dto.request.EnterRoomRequest;
+import com.github.aadvorak.artilleryonline.dto.request.RoomInvitationRequest;
+import com.github.aadvorak.artilleryonline.dto.response.RoomInvitationResponse;
+import com.github.aadvorak.artilleryonline.dto.response.RoomResponse;
+import com.github.aadvorak.artilleryonline.service.RoomService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/rooms")
+@RequiredArgsConstructor
+public class RoomEndpoint {
+
+    private final RoomService roomService;
+
+    @GetMapping
+    public RoomResponse getRoom() {
+        return roomService.getRoom();
+    }
+
+    @PutMapping
+    public RoomResponse createRoom() {
+        return roomService.createRoom();
+    }
+
+    @PostMapping("/invite")
+    public RoomInvitationResponse inviteToRoom(@RequestBody RoomInvitationRequest request) {
+        return roomService.inviteToRoom(request);
+    }
+
+    @PostMapping("/enter")
+    public RoomResponse enterRoom(@RequestBody EnterRoomRequest request) {
+        return roomService.enterRoom(request);
+    }
+
+    @DeleteMapping("/exit")
+    public void exitRoom() {
+        roomService.exitRoom();
+    }
+}

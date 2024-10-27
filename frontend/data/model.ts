@@ -8,6 +8,17 @@ export interface User {
 export interface RoomMember {
   nickname: string
   selectedVehicle?: string
+  owner: boolean
+}
+
+export interface Room {
+  members: RoomMember[]
+  inBattle: boolean
+}
+
+export interface RoomInvitation {
+  id: string
+  inviterNickname: string
 }
 
 export interface CsrfToken {

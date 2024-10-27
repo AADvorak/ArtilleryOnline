@@ -24,4 +24,10 @@ public class BattleParticipant {
                .setParams(new BattleParticipantParams()
                        .setSelectedVehicle(queueElement.getParams().getSelectedVehicle()));
     }
+
+    public static BattleParticipant of(User user) {
+        return new BattleParticipant()
+                .setUser(user)
+                .setNickname(user.getNickname());
+    }
 }

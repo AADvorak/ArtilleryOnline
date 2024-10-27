@@ -9,10 +9,13 @@ import {useQueueStore} from "~/stores/queue";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {useStompClientStore} from "~/stores/stomp-client";
 import {usePresetsStore} from "~/stores/presets";
+import {useRoomStore} from "~/stores/room";
 
 const ROOT_PATH = '/'
 const MENU_PATH = '/menu'
 const BATTLE_PATH = '/battle'
+const ROOM_PATH = '/rooms/room'
+const ROOMS_PATH = '/rooms'
 const PLAYGROUND_PATH = '/playground'
 const UNSIGNED_PATHS = ['/', '/login', '/signup']
 
@@ -26,6 +29,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const userSettingsStore = useUserSettingsStore()
   const stompClientStore = useStompClientStore()
   const presetsStore = usePresetsStore()
+  const roomStore = useRoomStore()
 
   await settingsStore.loadIfNull()
 
@@ -39,10 +43,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   if (!!userStore.user) {
     await userSettingsStore.loadControlsIfNull()
-  }
-
-  if (!!userStore.user) {
     await presetsStore.loadVehiclesIfNull()
+    await roomStore.loadRoomIfNull()
   }
 
   if (!!userStore.user && !csrfStore.csrf) {
@@ -78,6 +80,12 @@ export default defineNuxtRouteMiddleware(async (to) => {
   }
   if (!!userStore.user && !!battleStore.battle && to.path !== PLAYGROUND_PATH) {
     return navigateTo(PLAYGROUND_PATH)
+  }
+  if (!!userStore.user && !!roomStore.room && to.path !== ROOM_PATH) {
+    return navigateTo(ROOM_PATH)
+  }
+  if (!!userStore.user && !roomStore.room && to.path === ROOM_PATH) {
+    return navigateTo(ROOMS_PATH)
   }
   if (!!userStore.user && !battleStore.battle && to.path === PLAYGROUND_PATH) {
     return navigateTo(MENU_PATH)

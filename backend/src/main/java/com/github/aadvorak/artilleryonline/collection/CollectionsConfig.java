@@ -17,6 +17,16 @@ public class CollectionsConfig {
     }
 
     @Bean
+    public UserRoomMap userRoomMap() {
+        return new UserRoomMap();
+    }
+
+    @Bean
+    public RoomInvitationMap roomInvitationMap() {
+        return new RoomInvitationMap();
+    }
+
+    @Bean
     public BattleUpdatesQueue battleUpdatesQueue() {
         return new BattleUpdatesQueue();
     }

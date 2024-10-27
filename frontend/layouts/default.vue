@@ -1,5 +1,6 @@
 <script setup lang="ts">
 
+import RoomInvitationDialog from "~/components/room-invitation-dialog.vue";
 </script>
 
 <template>
@@ -7,6 +8,7 @@
     <div class="d-flex align-center justify-center flex-column default">
       <slot />
     </div>
+    <room-invitation-dialog />
   </v-app>
 </template>
 

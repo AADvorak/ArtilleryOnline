@@ -13,3 +13,7 @@ export interface EditUserRequest {
   email: string
   nickname: string
 }
+
+export interface EnterRoomRequest {
+  invitationId: string
+}
