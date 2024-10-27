@@ -81,7 +81,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (!!userStore.user && !!battleStore.battle && to.path !== PLAYGROUND_PATH) {
     return navigateTo(PLAYGROUND_PATH)
   }
-  if (!!userStore.user && !!roomStore.room && to.path !== ROOM_PATH) {
+  if (!!userStore.user && !!roomStore.room && !battleStore.battle && to.path !== ROOM_PATH) {
     return navigateTo(ROOM_PATH)
   }
   if (!!userStore.user && !roomStore.room && to.path === ROOM_PATH) {

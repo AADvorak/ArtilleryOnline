@@ -1,9 +1,8 @@
 package com.github.aadvorak.artilleryonline.service;
 
-import com.github.aadvorak.artilleryonline.battle.BattleParticipant;
-import com.github.aadvorak.artilleryonline.battle.Room;
-import com.github.aadvorak.artilleryonline.battle.RoomInvitation;
+import com.github.aadvorak.artilleryonline.battle.*;
 import com.github.aadvorak.artilleryonline.collection.RoomInvitationMap;
+import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.collection.UserRoomMap;
 import com.github.aadvorak.artilleryonline.dto.request.EnterRoomRequest;
 import com.github.aadvorak.artilleryonline.dto.request.RoomInvitationRequest;
@@ -31,7 +30,11 @@ public class RoomService {
 
     private final RoomInvitationMap roomInvitationMap;
 
+    private final UserBattleMap userBattleMap;
+
     private final OnlineUserService onlineUserService;
+
+    private final BattleRunner battleRunner;
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
@@ -95,7 +98,6 @@ public class RoomService {
         var existingRoom = userRoomMap.get(user.getId());
         if (existingRoom != null) {
             exitRoom(user, existingRoom);
-            sendRoomUpdate(existingRoom);
         }
         var room = invitation.getRoom();
         room.getGuests().put(user.getId(), BattleParticipant.of(user));
@@ -106,11 +108,48 @@ public class RoomService {
         return RoomResponse.of(room);
     }
 
+    public void selectVehicle(BattleParticipantParams request) {
+        var user = userService.getUserFromContext();
+        var room = userRoomMap.get(user.getId());
+        if (room == null) {
+            throw new NotFoundAppException();
+        }
+        if (room.getOwner().getUser().getId() == user.getId()) {
+            room.getOwner().setParams(request);
+        } else {
+            room.getGuests().get(user.getId()).setParams(request);
+        }
+        sendRoomUpdate(room);
+    }
+
+    public void startBattle() {
+        var user = userService.getUserFromContext();
+        var room = userRoomMap.get(user.getId());
+        if (room == null) {
+            throw new NotFoundAppException();
+        }
+        if (room.getOwner().getUser().getId() != user.getId()) {
+            throw new NotFoundAppException();
+        }
+        checkReadyToBattle(room.getOwner());
+        room.getGuests().values().forEach(this::checkReadyToBattle);
+        var participants = room.getParticipants();
+        var battle = new BattleFactory().createBattle(participants);
+        room.setBattle(battle);
+        participants.forEach(participant -> userBattleMap.put(participant.getUser().getId(), battle));
+        battleRunner.runBattle(battle);
+        var nicknames = participants.stream().map(BattleParticipant::getNickname).toList();
+        sendRoomUpdate(room);
+        log.info("startBattle: users {}, battle {}, map size {}", nicknames,
+                battle.getId(), userBattleMap.size());
+    }
+
     public void exitRoom() {
         var user = userService.getUserFromContext();
-        var existingRoom = userRoomMap.get(user.getId());
-        if (existingRoom != null) {
-            exitRoom(user, existingRoom);
+        var room = userRoomMap.get(user.getId());
+        if (room != null) {
+            exitRoom(user, room);
+            sendRoomUpdate(room);
         }
     }
 
@@ -135,5 +174,15 @@ public class RoomService {
         var roomResponse = RoomResponse.of(room);
         emails.forEach(email -> simpMessagingTemplate.convertAndSendToUser(email,
                 "/topic/room/updates", roomResponse));
+    }
+
+    private void checkReadyToBattle(BattleParticipant participant) {
+        if (participant.getParams() == null || participant.getParams().getSelectedVehicle() == null) {
+            // todo
+            throw new NotFoundAppException();
+        }
+        if (userBattleMap.get(participant.getUser().getId()) != null) {
+            throw new NotFoundAppException();
+        }
     }
 }

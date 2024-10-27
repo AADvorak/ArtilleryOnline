@@ -5,7 +5,9 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -17,4 +19,10 @@ public class Room {
     private Map<Long, BattleParticipant> guests = new HashMap<>();
 
     private Battle battle;
+
+    public Set<BattleParticipant> getParticipants() {
+        var participants = new HashSet<>(guests.values());
+        participants.add(owner);
+        return participants;
+    }
 }

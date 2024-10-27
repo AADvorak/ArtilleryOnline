@@ -63,7 +63,7 @@ async function declineInvitation() {
       <v-card-text>
         <div class="d-flex">You have received an invitation from {{ invitation.inviterNickname }}.</div>
         <div class="d-flex mt-4">
-          <v-btn color="warning" @click="acceptInvitation">Enter room</v-btn>
+          <v-btn color="success" @click="acceptInvitation">Enter room</v-btn>
           <v-btn @click="declineInvitation">Cancel</v-btn>
         </div>
       </v-card-text>

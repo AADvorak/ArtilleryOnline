@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.endpoint;
 
+import com.github.aadvorak.artilleryonline.battle.BattleParticipantParams;
 import com.github.aadvorak.artilleryonline.dto.request.EnterRoomRequest;
 import com.github.aadvorak.artilleryonline.dto.request.RoomInvitationRequest;
 import com.github.aadvorak.artilleryonline.dto.response.RoomInvitationResponse;
@@ -33,6 +34,16 @@ public class RoomEndpoint {
     @PostMapping("/enter")
     public RoomResponse enterRoom(@RequestBody EnterRoomRequest request) {
         return roomService.enterRoom(request);
+    }
+
+    @PutMapping("/select-vehicle")
+    public void selectVehicle(@RequestBody BattleParticipantParams request) {
+        roomService.selectVehicle(request);
+    }
+
+    @PostMapping("/start-battle")
+    public void startBattle() {
+        roomService.startBattle();
     }
 
     @DeleteMapping("/exit")

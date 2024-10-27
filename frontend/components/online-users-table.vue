@@ -1,8 +1,16 @@
 <script setup lang="ts">
 import type {User} from "~/data/model";
 import {ApiRequestSender} from "~/api/api-request-sender";
+import {useRoomStore} from "~/stores/room";
+
+const roomStore = useRoomStore()
 
 const onlineUsers = ref<User[]>([])
+
+const roomMemberNicknames = computed(() => {
+  const members = roomStore.room?.members || []
+  return members.map(member => member.nickname)
+})
 
 onMounted(() => {
   loadOnlineUsers()
@@ -10,7 +18,8 @@ onMounted(() => {
 
 async function loadOnlineUsers() {
   try {
-    onlineUsers.value = await new ApiRequestSender().getJson<User[]>('/users/online')
+    const users = await new ApiRequestSender().getJson<User[]>('/users/online')
+    onlineUsers.value = users.filter(user => !roomMemberNicknames.value.includes(user.nickname))
   } catch (e) {
     console.log(e)
   }
