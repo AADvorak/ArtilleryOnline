@@ -2,7 +2,7 @@ package com.github.aadvorak.artilleryonline.endpoint;
 
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueParams;
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
-import com.github.aadvorak.artilleryonline.service.UserBattleService;
+import com.github.aadvorak.artilleryonline.service.BattleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,25 +11,25 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserBattleEndpoint {
 
-    private final UserBattleService userBattleService;
+    private final BattleService battleService;
 
     @GetMapping
     public BattleResponse getBattle() {
-        return userBattleService.getBattle();
+        return battleService.getBattle();
     }
 
     @GetMapping("/tracking")
     public String getBattleTracking() {
-        return userBattleService.getBattleTracking();
+        return battleService.getBattleTracking();
     }
 
     @PutMapping("/test-drive")
     public BattleResponse testDrive(@RequestBody UserBattleQueueParams params) {
-        return userBattleService.createTestDrive(params);
+        return battleService.createTestDrive(params);
     }
 
     @DeleteMapping("/leave")
     public void leaveBattle() {
-        userBattleService.leaveBattle();
+        battleService.leaveBattle();
     }
 }

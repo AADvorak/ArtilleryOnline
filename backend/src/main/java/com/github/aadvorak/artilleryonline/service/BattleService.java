@@ -1,9 +1,6 @@
 package com.github.aadvorak.artilleryonline.service;
 
-import com.github.aadvorak.artilleryonline.battle.BattleFactory;
-import com.github.aadvorak.artilleryonline.battle.BattleParticipant;
-import com.github.aadvorak.artilleryonline.battle.BattleParticipantParams;
-import com.github.aadvorak.artilleryonline.battle.BattleRunner;
+import com.github.aadvorak.artilleryonline.battle.*;
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueParams;
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
@@ -18,7 +15,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserBattleService {
+public class BattleService {
 
     private final UserBattleMap userBattleMap;
 
@@ -70,6 +67,20 @@ public class UserBattleService {
         return mapper.map(battle, BattleResponse.class);
     }
 
+    public void createRoomBattle(Room room) {
+        checkReadyToBattle(room.getOwner());
+        room.getGuests().values().forEach(this::checkReadyToBattle);
+        var participants = room.getParticipants();
+        var battle = new BattleFactory().createBattle(participants);
+        room.setBattle(battle);
+        battle.setRoom(room);
+        participants.forEach(participant -> userBattleMap.put(participant.getUser().getId(), battle));
+        battleRunner.runBattle(battle);
+        var nicknames = participants.stream().map(BattleParticipant::getNickname).toList();
+        log.info("startBattle: users {}, battle {}, map size {}", nicknames,
+                battle.getId(), userBattleMap.size());
+    }
+
     public void leaveBattle() {
         var user = userService.getUserFromContext();
         var battle = userBattleMap.get(user.getId());
@@ -79,6 +90,16 @@ public class UserBattleService {
             userBattleMap.remove(user.getId());
             log.info("leaveBattle: user {}, battle {}, map size {}", user.getNickname(),
                     battle.getId(), userBattleMap.size());
+        }
+    }
+
+    private void checkReadyToBattle(BattleParticipant participant) {
+        if (participant.getParams() == null || participant.getParams().getSelectedVehicle() == null) {
+            // todo
+            throw new NotFoundAppException();
+        }
+        if (userBattleMap.get(participant.getUser().getId()) != null) {
+            throw new NotFoundAppException();
         }
     }
 }
