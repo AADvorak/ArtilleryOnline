@@ -125,7 +125,7 @@ async function exit() {
         </v-btn>
         <h3>Players</h3>
         <room-members-table class="mb-4"/>
-        <v-expansion-panels class="mb-4" v-model="openedPanels">
+        <v-expansion-panels v-if="userIsBattleOwner" class="mb-4" v-model="openedPanels">
           <v-expansion-panel value="invitePlayersPanel">
             <v-expansion-panel-title>Invite players</v-expansion-panel-title>
             <v-expansion-panel-text>

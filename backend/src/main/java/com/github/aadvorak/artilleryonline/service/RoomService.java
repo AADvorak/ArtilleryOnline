@@ -59,14 +59,11 @@ public class RoomService {
 
     public RoomInvitationResponse inviteToRoom(RoomInvitationRequest request) {
         var user = userService.getUserFromContext();
-        var existingRoom = userRoomMap.get(user.getId());
-        if (existingRoom == null) {
-            throw new NotFoundAppException();
-        }
+        var room = requireOwnRoom(user);
         var invitedUser = onlineUserService.findByNickname(request.getNickname())
                 .orElseThrow(NotFoundAppException::new);
         var invitation = new RoomInvitation()
-                .setRoom(existingRoom)
+                .setRoom(room)
                 .setUserId(invitedUser.getId());
         roomInvitationMap.put(invitation.getId(), invitation);
         var invitationResponse = RoomInvitationResponse.of(invitation);
@@ -118,13 +115,7 @@ public class RoomService {
 
     public void startBattle() {
         var user = userService.getUserFromContext();
-        var room = userRoomMap.get(user.getId());
-        if (room == null) {
-            throw new NotFoundAppException();
-        }
-        if (room.getOwner().getUser().getId() != user.getId()) {
-            throw new NotFoundAppException();
-        }
+        var room = requireOwnRoom(user);
         if (room.getGuests().isEmpty()) {
             throw new ConflictAppException("Not enough players to start battle");
         }
@@ -138,6 +129,17 @@ public class RoomService {
         if (room != null) {
             exitRoom(user, room);
         }
+    }
+
+    private Room requireOwnRoom(User user) {
+        var room = userRoomMap.get(user.getId());
+        if (room == null) {
+            throw new NotFoundAppException();
+        }
+        if (room.getOwner().getUser().getId() != user.getId()) {
+            throw new NotFoundAppException();
+        }
+        return room;
     }
 
     private void exitRoom(User user, Room room) {
