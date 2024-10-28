@@ -67,6 +67,9 @@ function subscribeToRoomUpdates() {
     roomStore.room = JSON.parse(msgOut.body) as Room
     if (roomStore.room.inBattle) {
       router.push('/playground')
+    } else if (roomStore.room.deleted) {
+      roomStore.room = null
+      router.push('/rooms')
     }
   })
 }

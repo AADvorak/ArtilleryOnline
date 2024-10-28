@@ -133,7 +133,6 @@ public class RoomService {
         var room = userRoomMap.get(user.getId());
         if (room != null) {
             exitRoom(user, room);
-            roomUpdatesSender.sendRoomUpdate(room);
         }
     }
 
@@ -141,12 +140,14 @@ public class RoomService {
         if (room.getOwner().getUser().getId() != user.getId()) {
             userRoomMap.remove(user.getId());
             room.getGuests().remove(user.getId());
+            roomUpdatesSender.sendRoomUpdate(room);
             log.info("exitRoom: nickname {}, map size {}", user.getNickname(), userRoomMap.size());
         } else {
             var userIds = new HashSet<Long>();
             userIds.add(user.getId());
             room.getGuests().values().forEach(guest -> userIds.add(guest.getUser().getId()));
             userIds.forEach(userRoomMap::remove);
+            roomUpdatesSender.sendRoomUpdate(room, true);
             log.info("exitRoom: (room deleted) nickname {}, map size {}", user.getNickname(), userRoomMap.size());
         }
     }

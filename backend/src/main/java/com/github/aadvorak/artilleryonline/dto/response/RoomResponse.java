@@ -17,6 +17,12 @@ public class RoomResponse {
 
     private boolean inBattle;
 
+    private boolean deleted = false;
+
+    public static RoomResponse deletedOf(Room room) {
+        return of(room).setDeleted(true);
+    }
+
     public static RoomResponse of(Room room) {
         var response = new RoomResponse();
         response.setInBattle(room.getBattle() != null);
