@@ -56,6 +56,7 @@ watch(selectedVehicle, async (value) => {
 
 onMounted(() => {
   subscribeToRoomUpdates()
+  setSelectedVehicle()
 })
 
 onBeforeUnmount(() => {
@@ -76,6 +77,15 @@ function subscribeToRoomUpdates() {
 
 function unsubscribeFromRoomUpdates() {
   subscription.value && subscription.value.unsubscribe()
+}
+
+function setSelectedVehicle() {
+  const memberVehicle = (roomStore.room?.members || [])
+      .filter(member => member.nickname === userStore.user!.nickname)
+      .map(member => member.selectedVehicle)[0]
+  if (memberVehicle && selectedVehicle.value !== memberVehicle) {
+    selectedVehicle.value = memberVehicle
+  }
 }
 
 async function startBattle() {
