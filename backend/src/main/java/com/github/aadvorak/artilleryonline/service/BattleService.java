@@ -4,6 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.*;
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueParams;
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
+import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
 import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -95,11 +96,10 @@ public class BattleService {
 
     private void checkReadyToBattle(BattleParticipant participant) {
         if (participant.getParams() == null || participant.getParams().getSelectedVehicle() == null) {
-            // todo
-            throw new NotFoundAppException();
+            throw new ConflictAppException("Not all players have selected vehicles");
         }
         if (userBattleMap.get(participant.getUser().getId()) != null) {
-            throw new NotFoundAppException();
+            throw new ConflictAppException("Some players are in other battle");
         }
     }
 }

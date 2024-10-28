@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.error;
 
 import com.github.aadvorak.artilleryonline.error.exception.AuthenticationAppException;
 import com.github.aadvorak.artilleryonline.error.exception.BadRequestAppException;
+import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
 import com.github.aadvorak.artilleryonline.error.response.ErrorResponse;
 import com.github.aadvorak.artilleryonline.error.response.ValidationResponse;
 import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
@@ -23,6 +24,14 @@ public class GlobalErrorHandler {
     @ExceptionHandler(NotFoundAppException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public void handleNotFoundAppException() {
+    }
+
+    @ExceptionHandler(ConflictAppException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleConflictAppException(ConflictAppException exc) {
+        return new ErrorResponse()
+                .setCode("ConflictAppException")
+                .setMessage(exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

@@ -8,6 +8,7 @@ import com.github.aadvorak.artilleryonline.dto.request.RoomInvitationRequest;
 import com.github.aadvorak.artilleryonline.dto.response.RoomInvitationResponse;
 import com.github.aadvorak.artilleryonline.dto.response.RoomResponse;
 import com.github.aadvorak.artilleryonline.entity.User;
+import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
 import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
 import com.github.aadvorak.artilleryonline.ws.RoomUpdatesSender;
 import lombok.RequiredArgsConstructor;
@@ -123,6 +124,9 @@ public class RoomService {
         }
         if (room.getOwner().getUser().getId() != user.getId()) {
             throw new NotFoundAppException();
+        }
+        if (room.getGuests().isEmpty()) {
+            throw new ConflictAppException("Not enough players to start battle");
         }
         battleService.createRoomBattle(room);
         roomUpdatesSender.sendRoomUpdate(room);
