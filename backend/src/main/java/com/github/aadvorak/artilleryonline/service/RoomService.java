@@ -9,13 +9,11 @@ import com.github.aadvorak.artilleryonline.dto.response.RoomInvitationResponse;
 import com.github.aadvorak.artilleryonline.dto.response.RoomResponse;
 import com.github.aadvorak.artilleryonline.entity.User;
 import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
+import com.github.aadvorak.artilleryonline.ws.RoomUpdatesSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 @Service
@@ -33,8 +31,7 @@ public class RoomService {
 
     private final BattleService battleService;
 
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
+    private final RoomUpdatesSender roomUpdatesSender;
 
     public RoomResponse getRoom() {
         var user = userService.getUserFromContext();
@@ -72,8 +69,7 @@ public class RoomService {
                 .setUserId(invitedUser.getId());
         roomInvitationMap.put(invitation.getId(), invitation);
         var invitationResponse = RoomInvitationResponse.of(invitation);
-        simpMessagingTemplate.convertAndSendToUser(invitedUser.getEmail(),
-                "/topic/room/invitations", invitationResponse);
+        roomUpdatesSender.sendRoomInvitation(invitedUser, invitationResponse);
         log.info("inviteToRoom: from {}, to {}, invitation map size {}", user.getNickname(),
                 invitedUser.getNickname(), roomInvitationMap.size());
         return invitationResponse;
@@ -101,7 +97,7 @@ public class RoomService {
         userRoomMap.put(user.getId(), room);
         log.info("enterRoom: nickname {}, map size {}, invitation map size {}", user.getNickname(),
                 userRoomMap.size(), roomInvitationMap.size());
-        sendRoomUpdate(room);
+        roomUpdatesSender.sendRoomUpdate(room);
         return RoomResponse.of(room);
     }
 
@@ -116,7 +112,7 @@ public class RoomService {
         } else {
             room.getGuests().get(user.getId()).setParams(request);
         }
-        sendRoomUpdate(room);
+        roomUpdatesSender.sendRoomUpdate(room);
     }
 
     public void startBattle() {
@@ -129,7 +125,7 @@ public class RoomService {
             throw new NotFoundAppException();
         }
         battleService.createRoomBattle(room);
-        sendRoomUpdate(room);
+        roomUpdatesSender.sendRoomUpdate(room);
     }
 
     public void exitRoom() {
@@ -137,7 +133,7 @@ public class RoomService {
         var room = userRoomMap.get(user.getId());
         if (room != null) {
             exitRoom(user, room);
-            sendRoomUpdate(room);
+            roomUpdatesSender.sendRoomUpdate(room);
         }
     }
 
@@ -153,14 +149,5 @@ public class RoomService {
             userIds.forEach(userRoomMap::remove);
             log.info("exitRoom: (room deleted) nickname {}, map size {}", user.getNickname(), userRoomMap.size());
         }
-    }
-
-    private void sendRoomUpdate(Room room) {
-        var emails = new ArrayList<String>();
-        emails.add(room.getOwner().getUser().getEmail());
-        room.getGuests().values().forEach(guest -> emails.add(guest.getUser().getEmail()));
-        var roomResponse = RoomResponse.of(room);
-        emails.forEach(email -> simpMessagingTemplate.convertAndSendToUser(email,
-                "/topic/room/updates", roomResponse));
     }
 }
