@@ -14,7 +14,7 @@ async function leaveBattle() {
   try {
     await new ApiRequestSender().delete('/battles/leave')
     battleStore.clear()
-    await useRouter().push('/')
+    await router.push('/')
   } catch (e) {
     console.log(e)
   }

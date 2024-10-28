@@ -21,7 +21,7 @@ watch(battle, (value) => {
 function hideAndCleanBattle() {
   opened.value = false
   battleStore.clear()
-  router.push('/battle')
+  router.push('/')
 }
 </script>
 
