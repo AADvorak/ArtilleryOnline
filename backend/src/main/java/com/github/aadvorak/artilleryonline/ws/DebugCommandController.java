@@ -14,7 +14,7 @@ public class DebugCommandController {
     private final DebugCommandService debugCommandService;
     private final ApplicationSettings applicationSettings;
 
-    @MessageMapping("/debug-commands")
+    @MessageMapping("/battle/debug-commands")
     public void addCommand(DebugCommand debugCommand) {
 
         if (applicationSettings.isDebug()) {

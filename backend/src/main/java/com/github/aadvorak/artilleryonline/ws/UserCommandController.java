@@ -12,7 +12,7 @@ public class UserCommandController {
 
     private final UserCommandService userCommandService;
 
-    @MessageMapping("/commands")
+    @MessageMapping("/battle/commands")
     public void addCommand(UserCommand userCommand) {
         userCommandService.addCommand(userCommand);
     }

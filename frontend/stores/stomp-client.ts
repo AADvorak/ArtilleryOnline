@@ -16,7 +16,7 @@ export const useStompClientStore = defineStore('stomp-client', () => {
         return
       }
       if (!client.value) {
-        const socket = new WebSocket(`ws://${hostStore.host}/api/ws/battle/websocket`)
+        const socket = new WebSocket(`ws://${hostStore.host}/api/ws/websocket`)
         client.value = Stomp.over(socket)
       }
       const headers = {}
