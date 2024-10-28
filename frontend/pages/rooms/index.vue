@@ -23,13 +23,15 @@ function back() {
 </script>
 
 <template>
-  <v-card width="100%" max-width="600px">
-    <v-card-title>
-      Artillery online: rooms
-    </v-card-title>
-    <v-card-text>
-      <v-btn class="mb-4" width="100%" color="secondary" @click="createRoom">Create room</v-btn>
-      <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
-    </v-card-text>
-  </v-card>
+  <NuxtLayout>
+    <v-card width="100%" max-width="600px">
+      <v-card-title>
+        Artillery online: rooms
+      </v-card-title>
+      <v-card-text>
+        <v-btn class="mb-4" width="100%" color="secondary" @click="createRoom">Create room</v-btn>
+        <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
+      </v-card-text>
+    </v-card>
+  </NuxtLayout>
 </template>

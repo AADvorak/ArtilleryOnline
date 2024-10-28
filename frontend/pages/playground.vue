@@ -3,5 +3,7 @@ import MainView from "~/playground/views/MainView.vue";
 </script>
 
 <template>
-  <MainView/>
+  <NuxtLayout name="playground">
+    <MainView/>
+  </NuxtLayout>
 </template>

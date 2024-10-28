@@ -96,40 +96,42 @@ async function exit() {
 </script>
 
 <template>
-  <v-card width="100%" max-width="600px">
-    <v-card-title>
-      Artillery online: room
-    </v-card-title>
-    <v-card-text>
-      <v-form>
-        <v-select
-            v-model="selectedVehicle"
-            :items="vehicles"
-            density="compact"
-            label="Select vehicle"
-        />
-      </v-form>
-      <v-btn
-          v-if="userIsBattleOwner"
-          class="mb-4"
-          width="100%"
-          color="error"
-          :disabled="!readyToBattle"
-          @click="startBattle"
-      >
-        Battle
-      </v-btn>
-      <h3>Players</h3>
-      <room-members-table class="mb-4"/>
-      <v-expansion-panels class="mb-4" v-model="openedPanels">
-        <v-expansion-panel value="invitePlayersPanel">
-          <v-expansion-panel-title>Invite players</v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <online-users-table />
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-      </v-expansion-panels>
-      <v-btn class="mb-4" width="100%" @click="exit">Exit</v-btn>
-    </v-card-text>
-  </v-card>
+  <NuxtLayout>
+    <v-card width="100%" max-width="600px">
+      <v-card-title>
+        Artillery online: room
+      </v-card-title>
+      <v-card-text>
+        <v-form>
+          <v-select
+              v-model="selectedVehicle"
+              :items="vehicles"
+              density="compact"
+              label="Select vehicle"
+          />
+        </v-form>
+        <v-btn
+            v-if="userIsBattleOwner"
+            class="mb-4"
+            width="100%"
+            color="error"
+            :disabled="!readyToBattle"
+            @click="startBattle"
+        >
+          Battle
+        </v-btn>
+        <h3>Players</h3>
+        <room-members-table class="mb-4"/>
+        <v-expansion-panels class="mb-4" v-model="openedPanels">
+          <v-expansion-panel value="invitePlayersPanel">
+            <v-expansion-panel-title>Invite players</v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <online-users-table />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+        <v-btn class="mb-4" width="100%" @click="exit">Exit</v-btn>
+      </v-card-text>
+    </v-card>
+  </NuxtLayout>
 </template>

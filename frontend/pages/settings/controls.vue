@@ -38,28 +38,30 @@ function back() {
 </script>
 
 <template>
-  <v-card width="100%" max-width="600px">
-    <v-card-title>
-      Artillery online: settings / controls
-    </v-card-title>
-    <v-card-text>
-      <v-table density="compact">
-        <tbody>
-        <tr v-for="control of controls">
-          <td>{{ control.description }}</td>
-          <td>
-            <control-editor
-                :control="control"
-                :editing="editing"
-                @edit-start="onEditStart"
-                @edit-end="onEditEnd"/>
-          </td>
-        </tr>
-        </tbody>
-      </v-table>
-      <v-btn class="mb-4" color="secondary" width="100%"
-             @click="userSettingsStore.resetControls">Reset to defaults</v-btn>
-      <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
-    </v-card-text>
-  </v-card>
+  <NuxtLayout>
+    <v-card width="100%" max-width="600px">
+      <v-card-title>
+        Artillery online: settings / controls
+      </v-card-title>
+      <v-card-text>
+        <v-table density="compact">
+          <tbody>
+          <tr v-for="control of controls">
+            <td>{{ control.description }}</td>
+            <td>
+              <control-editor
+                  :control="control"
+                  :editing="editing"
+                  @edit-start="onEditStart"
+                  @edit-end="onEditEnd"/>
+            </td>
+          </tr>
+          </tbody>
+        </v-table>
+        <v-btn class="mb-4" color="secondary" width="100%"
+               @click="userSettingsStore.resetControls">Reset to defaults</v-btn>
+        <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
+      </v-card-text>
+    </v-card>
+  </NuxtLayout>
 </template>

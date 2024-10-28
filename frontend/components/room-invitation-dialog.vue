@@ -28,6 +28,10 @@ onMounted(() => {
   }
 })
 
+onBeforeUnmount(() => {
+  unsubscribe()
+})
+
 function subscribe() {
   subscription.value = stompClientStore.client!.subscribe('/user/topic/room/invitations', function (msgOut) {
     invitation.value = JSON.parse(msgOut.body) as RoomInvitation

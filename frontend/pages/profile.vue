@@ -49,29 +49,31 @@ function back() {
 </script>
 
 <template>
-  <v-card width="100%" max-width="600px">
-    <v-card-title>
-      Artillery online: profile
-    </v-card-title>
-    <v-card-text>
-      <v-form @submit.prevent>
-        <v-text-field
-            ref="emailField"
-            v-model="form.email"
-            :error="!!validation.email.length"
-            :error-messages="validation.email"
-            label="Email"
-        />
-        <v-text-field
-            v-model="form.nickname"
-            :error="!!validation.nickname.length"
-            :error-messages="validation.nickname"
-            label="Nickname"
-        />
-        <v-btn class="mb-4" width="100%" color="success" type="submit" :loading="submitting"
-               :disabled="noChanges" @click="save">Save</v-btn>
-        <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
-      </v-form>
-    </v-card-text>
-  </v-card>
+  <NuxtLayout>
+    <v-card width="100%" max-width="600px">
+      <v-card-title>
+        Artillery online: profile
+      </v-card-title>
+      <v-card-text>
+        <v-form @submit.prevent>
+          <v-text-field
+              ref="emailField"
+              v-model="form.email"
+              :error="!!validation.email.length"
+              :error-messages="validation.email"
+              label="Email"
+          />
+          <v-text-field
+              v-model="form.nickname"
+              :error="!!validation.nickname.length"
+              :error-messages="validation.nickname"
+              label="Nickname"
+          />
+          <v-btn class="mb-4" width="100%" color="success" type="submit" :loading="submitting"
+                 :disabled="noChanges" @click="save">Save</v-btn>
+          <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
+        </v-form>
+      </v-card-text>
+    </v-card>
+  </NuxtLayout>
 </template>

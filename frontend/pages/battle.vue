@@ -101,28 +101,30 @@ function back() {
 </script>
 
 <template>
-  <v-card width="100%" max-width="600px">
-    <v-card-title>
-      Artillery online: battle
-    </v-card-title>
-    <v-card-text>
-      <v-form>
-        <v-select
-            v-model="selectedVehicle"
-            :items="vehicles"
-            :disabled="!!queueStore.queue"
-            density="compact"
-            label="Select vehicle"
-        />
-      </v-form>
-      <v-btn class="mb-4" width="100%" color="error" :loading="!!queueStore.queue"
-             :disabled="!!battleStore.battle || !selectedVehicle"
-             @click="randomBattle">Random battle</v-btn>
-      <v-btn v-show="!!queueStore.queue" class="mb-4" width="100%" @click="cancel">Cancel</v-btn>
-      <v-btn class="mb-4" width="100%" color="secondary"
-             :disabled="!!queueStore.queue || !!battleStore.battle || !selectedVehicle"
-             @click="testDrive">Test drive</v-btn>
-      <v-btn class="mb-4" width="100%" :disabled="!!queueStore.queue" @click="back">Back</v-btn>
-    </v-card-text>
-  </v-card>
+  <NuxtLayout>
+    <v-card width="100%" max-width="600px">
+      <v-card-title>
+        Artillery online: battle
+      </v-card-title>
+      <v-card-text>
+        <v-form>
+          <v-select
+              v-model="selectedVehicle"
+              :items="vehicles"
+              :disabled="!!queueStore.queue"
+              density="compact"
+              label="Select vehicle"
+          />
+        </v-form>
+        <v-btn class="mb-4" width="100%" color="error" :loading="!!queueStore.queue"
+               :disabled="!!battleStore.battle || !selectedVehicle"
+               @click="randomBattle">Random battle</v-btn>
+        <v-btn v-show="!!queueStore.queue" class="mb-4" width="100%" @click="cancel">Cancel</v-btn>
+        <v-btn class="mb-4" width="100%" color="secondary"
+               :disabled="!!queueStore.queue || !!battleStore.battle || !selectedVehicle"
+               @click="testDrive">Test drive</v-btn>
+        <v-btn class="mb-4" width="100%" :disabled="!!queueStore.queue" @click="back">Back</v-btn>
+      </v-card-text>
+    </v-card>
+  </NuxtLayout>
 </template>
