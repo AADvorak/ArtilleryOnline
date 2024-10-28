@@ -6,6 +6,7 @@ import {useRoomStore} from "~/stores/room";
 const roomStore = useRoomStore()
 
 const onlineUsers = ref<User[]>([])
+const invitedUsers = ref<User[]>([])
 
 const roomMemberNicknames = computed(() => {
   const members = roomStore.room?.members || []
@@ -28,18 +29,34 @@ async function loadOnlineUsers() {
 async function inviteUser(user) {
   try {
     await new ApiRequestSender().postJson('/rooms/invite', user)
+    invitedUsers.value.push(user)
   } catch (e) {
     console.log(e)
   }
+}
+
+function userIsInvited(user) {
+  for (const invitedUser of invitedUsers.value) {
+    if (user.nickname === invitedUser.nickname) {
+      return true
+    }
+  }
+  return false
 }
 </script>
 
 <template>
   <v-table density="compact">
-    <tbody>
+    <div v-if="!onlineUsers.length">
+      No available users
+    </div>
+    <tbody v-else>
     <tr v-for="onlineUser of onlineUsers">
       <td>{{ onlineUser.nickname }}</td>
-      <td><v-btn variant="text" @click="inviteUser(onlineUser)">Invite</v-btn></td>
+      <td>
+        <template v-if="userIsInvited(onlineUser)">Invitation sent</template>
+        <v-btn v-else variant="text" @click="inviteUser(onlineUser)">Invite</v-btn>
+      </td>
     </tr>
     </tbody>
   </v-table>
