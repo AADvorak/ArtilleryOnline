@@ -136,6 +136,7 @@ public class RoomService {
         var participants = room.getParticipants();
         var battle = new BattleFactory().createBattle(participants);
         room.setBattle(battle);
+        battle.setRoom(room);
         participants.forEach(participant -> userBattleMap.put(participant.getUser().getId(), battle));
         battleRunner.runBattle(battle);
         var nicknames = participants.stream().map(BattleParticipant::getNickname).toList();

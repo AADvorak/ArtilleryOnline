@@ -46,6 +46,7 @@ public class BattleRunner {
                 resetUpdatedFlags(battle);
             }
             removeBattleFromMap(battle);
+            removeBattleFromRoom(battle);
             log.info("Battle finished: {}, map size {}", battle.getId(), userBattleMap.size());
         }).start();
     }
@@ -60,6 +61,12 @@ public class BattleRunner {
 
     private void removeBattleFromMap(Battle battle) {
         battle.getUserNicknameMap().keySet().forEach(userBattleMap::remove);
+    }
+
+    private void removeBattleFromRoom(Battle battle) {
+        if (battle.getRoom() != null) {
+            battle.getRoom().setBattle(null);
+        }
     }
 
     private void setBattleUpdatedByTimeout(Battle battle) {

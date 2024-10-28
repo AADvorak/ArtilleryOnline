@@ -45,6 +45,8 @@ public class Battle {
 
     private String tracking;
 
+    private Room room;
+
     public void setStageAndResetTime(BattleStage battleStage) {
         this.battleStage = battleStage;
         this.absoluteTime = System.currentTimeMillis();
