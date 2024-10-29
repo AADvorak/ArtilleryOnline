@@ -45,7 +45,7 @@ function unsubscribe() {
 <template>
   <v-menu
       v-model="opened"
-      :close-on-content-click="false"
+      close-on-content-click
       location="bottom"
   >
     <template v-slot:activator="{ props }">
