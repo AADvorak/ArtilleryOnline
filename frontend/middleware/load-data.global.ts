@@ -7,6 +7,7 @@ import {useUserSettingsStore} from "~/stores/user-settings";
 import {useStompClientStore} from "~/stores/stomp-client";
 import {usePresetsStore} from "~/stores/presets";
 import {useRoomStore} from "~/stores/room";
+import {useMessageStore} from "~/stores/message";
 
 const ROOT_PATH = '/'
 const MENU_PATH = '/menu'
@@ -26,11 +27,13 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const stompClientStore = useStompClientStore()
   const presetsStore = usePresetsStore()
   const roomStore = useRoomStore()
+  const messageStore = useMessageStore()
 
   await settingsStore.loadIfNull()
   await userStore.loadUserIfNull()
 
   if (!!userStore.user) {
+    await messageStore.loadInvitations()
     await userSettingsStore.loadControlsIfNull()
     await presetsStore.loadVehiclesIfNull()
     await roomStore.loadRoomIfNull()

@@ -1,9 +1,19 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import type {RoomInvitation} from '~/data/model'
+import {ApiRequestSender} from '~/api/api-request-sender'
 
 export const useMessageStore = defineStore('message', () => {
   const roomInvitations = ref<RoomInvitation[]>([])
+
+  async function loadInvitations() {
+    try {
+      roomInvitations.value = await new ApiRequestSender()
+          .getJson<RoomInvitation[]>('/rooms/invitations')
+    } catch (e) {
+      console.log(e)
+    }
+  }
 
   function add(invitation: RoomInvitation) {
     roomInvitations.value.push(invitation)
@@ -14,5 +24,5 @@ export const useMessageStore = defineStore('message', () => {
         .filter(invitation => invitation.id !== id)
   }
 
-  return { roomInvitations, add, removeById }
+  return { roomInvitations, loadInvitations, add, removeById }
 })

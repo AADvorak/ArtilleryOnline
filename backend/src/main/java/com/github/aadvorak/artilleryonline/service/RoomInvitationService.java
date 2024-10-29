@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -31,6 +33,15 @@ public class RoomInvitationService {
     private final RoomUpdatesSender roomUpdatesSender;
 
     private final UserAvailabilityService userAvailabilityService;
+
+    public List<RoomInvitationResponse> getUserInvitations() {
+        var user = userService.getUserFromContext();
+        // todo possible slow query
+        return roomInvitationMap.values().stream()
+                .filter(invitation -> invitation.getUserId() == user.getId())
+                .map(RoomInvitationResponse::of)
+                .toList();
+    }
 
     public RoomInvitationResponse inviteToRoom(RoomInvitationRequest request) {
         var user = userService.getUserFromContext();

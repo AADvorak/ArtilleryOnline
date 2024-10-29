@@ -7,12 +7,19 @@ import com.github.aadvorak.artilleryonline.service.RoomInvitationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/rooms/invitations")
 @RequiredArgsConstructor
 public class RoomInvitationEndpoint {
 
     private final RoomInvitationService roomInvitationService;
+
+    @GetMapping
+    public List<RoomInvitationResponse> getUserInvitations() {
+        return roomInvitationService.getUserInvitations();
+    }
 
     @PostMapping()
     public RoomInvitationResponse inviteToRoom(@RequestBody RoomInvitationRequest request) {
