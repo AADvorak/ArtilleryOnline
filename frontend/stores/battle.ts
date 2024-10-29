@@ -2,6 +2,7 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { Battle } from '~/playground/data/battle'
 import { BattleStage } from '~/playground/data/battle'
+import {ApiRequestSender} from "~/api/api-request-sender";
 
 export const useBattleStore = defineStore('battle', () => {
   const clientBattle = ref<Battle>()
@@ -30,6 +31,17 @@ export const useBattleStore = defineStore('battle', () => {
   const explosions = computed(() => battle.value?.model?.explosions)
 
   const isActive = computed(() => battle.value?.battleStage === BattleStage.ACTIVE)
+
+  async function loadBattleIfNull() {
+    if (!battle.value) {
+      try {
+        const battle = await new ApiRequestSender().getJson<Battle>('/battles')
+        updateBattle(battle)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  }
 
   function updateBattle(value: Battle, time?: number) {
     clientBattle.value = value
@@ -60,6 +72,7 @@ export const useBattleStore = defineStore('battle', () => {
     shells,
     explosions,
     isActive,
+    loadBattleIfNull,
     updateBattle,
     updateClientBattle,
     updateServerBattle,

@@ -1,9 +1,6 @@
 import {useUserStore} from "~/stores/user";
 import {useSettingsStore} from "~/stores/settings";
 import {useBattleStore} from "~/stores/battle";
-import {ApiRequestSender} from "~/api/api-request-sender";
-import type {CsrfToken, User} from "~/data/model";
-import type {Battle} from "~/playground/data/battle";
 import {useCsrfStore} from "~/stores/csrf";
 import {useQueueStore} from "~/stores/queue";
 import {useUserSettingsStore} from "~/stores/user-settings";
@@ -20,7 +17,6 @@ const PLAYGROUND_PATH = '/playground'
 const UNSIGNED_PATHS = ['/', '/login', '/signup']
 
 export default defineNuxtRouteMiddleware(async (to) => {
-  const api = new ApiRequestSender()
   const userStore = useUserStore()
   const settingsStore = useSettingsStore()
   const battleStore = useBattleStore()
@@ -32,36 +28,14 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const roomStore = useRoomStore()
 
   await settingsStore.loadIfNull()
-
-  if (!userStore.user) {
-    try {
-      userStore.user = await api.getJson<User>('/users/me')
-    } catch (e) {
-      console.log(e)
-    }
-  }
+  await userStore.loadUserIfNull()
 
   if (!!userStore.user) {
     await userSettingsStore.loadControlsIfNull()
     await presetsStore.loadVehiclesIfNull()
     await roomStore.loadRoomIfNull()
-  }
-
-  if (!!userStore.user && !csrfStore.csrf) {
-    try {
-      csrfStore.csrf = await api.getJson<CsrfToken>('/csrf')
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  if (!!userStore.user && !battleStore.battle) {
-    try {
-      const battle = await api.getJson<Battle>('/battles')
-      battleStore.updateBattle(battle)
-    } catch (e) {
-      console.log(e)
-    }
+    await csrfStore.loadCsrfIfNull()
+    await battleStore.loadBattleIfNull()
   }
 
   if (!!userStore.user && !battleStore.battle) {
