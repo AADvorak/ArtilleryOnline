@@ -60,7 +60,9 @@ public class BattleRunner {
     }
 
     private void removeBattleFromMap(Battle battle) {
-        battle.getUserNicknameMap().keySet().forEach(userBattleMap::remove);
+        synchronized (userBattleMap) {
+            battle.getUserNicknameMap().keySet().forEach(userBattleMap::remove);
+        }
     }
 
     private void removeBattleFromRoom(Battle battle) {

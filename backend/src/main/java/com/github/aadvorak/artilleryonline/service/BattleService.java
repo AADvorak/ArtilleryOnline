@@ -49,47 +49,53 @@ public class BattleService {
 
     public BattleResponse createTestDrive(UserBattleQueueParams params) {
         var user = userService.getUserFromContext();
-        userAvailabilityService.checkTestDriveAvailability(user);
-        var userParticipant = new BattleParticipant()
-                .setUser(user)
-                .setNickname(user.getNickname())
-                .setParams(new BattleParticipantParams()
-                        .setSelectedVehicle(params.getSelectedVehicle()));
-        var otherParticipant = new BattleParticipant()
-                .setNickname("Dummy player")
-                .setParams(new BattleParticipantParams()
-                        .setSelectedVehicle(params.getSelectedVehicle()));
-        var battle = new BattleFactory().createBattle(Set.of(userParticipant, otherParticipant));
-        userBattleMap.put(user.getId(), battle);
-        battleRunner.runBattle(battle);
-        log.info("createTestDrive: user {}, battle {}, map size {}", user.getNickname(),
-                battle.getId(), userBattleMap.size());
-        return mapper.map(battle, BattleResponse.class);
+        synchronized (userBattleMap) {
+            userAvailabilityService.checkTestDriveAvailability(user);
+            var userParticipant = new BattleParticipant()
+                    .setUser(user)
+                    .setNickname(user.getNickname())
+                    .setParams(new BattleParticipantParams()
+                            .setSelectedVehicle(params.getSelectedVehicle()));
+            var otherParticipant = new BattleParticipant()
+                    .setNickname("Dummy player")
+                    .setParams(new BattleParticipantParams()
+                            .setSelectedVehicle(params.getSelectedVehicle()));
+            var battle = new BattleFactory().createBattle(Set.of(userParticipant, otherParticipant));
+            userBattleMap.put(user.getId(), battle);
+            battleRunner.runBattle(battle);
+            log.info("createTestDrive: user {}, battle {}, map size {}", user.getNickname(),
+                    battle.getId(), userBattleMap.size());
+            return mapper.map(battle, BattleResponse.class);
+        }
     }
 
     public void createRoomBattle(Room room) {
-        checkReadyToBattle(room.getOwner());
-        room.getGuests().values().forEach(this::checkReadyToBattle);
-        var participants = room.getParticipants();
-        var battle = new BattleFactory().createBattle(participants);
-        room.setBattle(battle);
-        battle.setRoom(room);
-        participants.forEach(participant -> userBattleMap.put(participant.getUser().getId(), battle));
-        battleRunner.runBattle(battle);
-        var nicknames = participants.stream().map(BattleParticipant::getNickname).toList();
-        log.info("startBattle: users {}, battle {}, map size {}", nicknames,
-                battle.getId(), userBattleMap.size());
+        synchronized (userBattleMap) {
+            checkReadyToBattle(room.getOwner());
+            room.getGuests().values().forEach(this::checkReadyToBattle);
+            var participants = room.getParticipants();
+            var battle = new BattleFactory().createBattle(participants);
+            room.setBattle(battle);
+            battle.setRoom(room);
+            participants.forEach(participant -> userBattleMap.put(participant.getUser().getId(), battle));
+            battleRunner.runBattle(battle);
+            var nicknames = participants.stream().map(BattleParticipant::getNickname).toList();
+            log.info("startBattle: users {}, battle {}, map size {}", nicknames,
+                    battle.getId(), userBattleMap.size());
+        }
     }
 
     public void leaveBattle() {
         var user = userService.getUserFromContext();
-        var battle = userBattleMap.get(user.getId());
-        if (battle != null) {
-            battle.getUserNicknameMap().remove(user.getId());
-            battle.getUserCommandQueues().remove(user.getId());
-            userBattleMap.remove(user.getId());
-            log.info("leaveBattle: user {}, battle {}, map size {}", user.getNickname(),
-                    battle.getId(), userBattleMap.size());
+        synchronized (userBattleMap) {
+            var battle = userBattleMap.get(user.getId());
+            if (battle != null) {
+                battle.getUserNicknameMap().remove(user.getId());
+                battle.getUserCommandQueues().remove(user.getId());
+                userBattleMap.remove(user.getId());
+                log.info("leaveBattle: user {}, battle {}, map size {}", user.getNickname(),
+                        battle.getId(), userBattleMap.size());
+            }
         }
     }
 
