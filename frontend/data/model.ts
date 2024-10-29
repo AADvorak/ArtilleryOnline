@@ -17,8 +17,11 @@ export interface Room {
   deleted: boolean
 }
 
-export interface RoomInvitation {
+export interface Message {
   id: string
+}
+
+export interface RoomInvitation extends Message {
   inviterNickname: string
 }
 
