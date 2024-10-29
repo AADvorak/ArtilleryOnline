@@ -1,9 +1,7 @@
 package com.github.aadvorak.artilleryonline.ws;
 
 import com.github.aadvorak.artilleryonline.collection.BattleUpdatesQueue;
-import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -16,8 +14,6 @@ public class BattleUpdatesSender implements Runnable {
 
     private final BattleUpdatesQueue battleUpdatesQueue;
 
-    private final ModelMapper mapper = new ModelMapper();
-
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
@@ -29,10 +25,10 @@ public class BattleUpdatesSender implements Runnable {
     @Override
     public void run() {
         while (true) {
-            var battle = battleUpdatesQueue.poll();
-            if (battle != null) {
-                simpMessagingTemplate.convertAndSend("/topic/battle/updates/" + battle.getId(),
-                        mapper.map(battle, BattleResponse.class));
+            var battleResponse = battleUpdatesQueue.poll();
+            if (battleResponse != null) {
+                simpMessagingTemplate.convertAndSend("/topic/battle/updates/" + battleResponse.getId(),
+                        battleResponse);
             } else {
                 sleep();
             }

@@ -6,10 +6,12 @@ import com.github.aadvorak.artilleryonline.collection.BattleStateUpdatesQueue;
 import com.github.aadvorak.artilleryonline.collection.BattleUpdatesQueue;
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.dto.response.BattleModelStateResponse;
+import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
 import com.github.aadvorak.artilleryonline.dto.response.BattleStateResponse;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -30,6 +32,8 @@ public class BattleRunner {
 
     private final WaitingBattleStepProcessor waitingBattleStepProcessor = new WaitingBattleStepProcessor();
     private final ActiveBattleStepProcessor activeBattleStepProcessor = new ActiveBattleStepProcessor();
+
+    private final ModelMapper mapper = new ModelMapper();
 
     public void runBattle(Battle battle) {
         new Thread(() -> {
@@ -84,7 +88,7 @@ public class BattleRunner {
         if (battle.getModel().isUpdated()
                 || battle.isForceSend()
                 || (!applicationSettings.isClientProcessing() && !battle.isPaused())) {
-            battleUpdatesQueue.add(battle);
+            battleUpdatesQueue.add(mapper.map(battle, BattleResponse.class));
         } else {
             sendBattleStateToUpdatesQueue(battle);
         }
