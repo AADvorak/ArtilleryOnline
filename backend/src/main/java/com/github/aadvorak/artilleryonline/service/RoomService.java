@@ -1,10 +1,7 @@
 package com.github.aadvorak.artilleryonline.service;
 
 import com.github.aadvorak.artilleryonline.battle.*;
-import com.github.aadvorak.artilleryonline.collection.RoomInvitationMap;
 import com.github.aadvorak.artilleryonline.collection.UserRoomMap;
-import com.github.aadvorak.artilleryonline.dto.request.RoomInvitationRequest;
-import com.github.aadvorak.artilleryonline.dto.response.RoomInvitationResponse;
 import com.github.aadvorak.artilleryonline.dto.response.RoomResponse;
 import com.github.aadvorak.artilleryonline.entity.User;
 import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
@@ -25,15 +22,9 @@ public class RoomService {
 
     private final UserRoomMap userRoomMap;
 
-    private final RoomInvitationMap roomInvitationMap;
-
-    private final OnlineUserService onlineUserService;
-
     private final BattleService battleService;
 
     private final RoomUpdatesSender roomUpdatesSender;
-
-    private final UserAvailabilityService userAvailabilityService;
 
     public RoomResponse getRoom() {
         var user = userService.getUserFromContext();
@@ -56,64 +47,6 @@ public class RoomService {
         userRoomMap.put(user.getId(), room);
         log.info("createRoom: nickname {}, map size {}", user.getNickname(), userRoomMap.size());
         return RoomResponse.of(room);
-    }
-
-    public RoomInvitationResponse inviteToRoom(RoomInvitationRequest request) {
-        var user = userService.getUserFromContext();
-        var room = requireOwnRoom(user);
-        var invitedUser = onlineUserService.findByNickname(request.getNickname())
-                .orElseThrow(NotFoundAppException::new);
-        var invitation = new RoomInvitation()
-                .setRoom(room)
-                .setUserId(invitedUser.getId());
-        roomInvitationMap.put(invitation.getId(), invitation);
-        var invitationResponse = RoomInvitationResponse.of(invitation);
-        roomUpdatesSender.sendRoomInvitation(invitedUser, invitationResponse);
-        log.info("inviteToRoom: from {}, to {}, invitation map size {}", user.getNickname(),
-                invitedUser.getNickname(), roomInvitationMap.size());
-        return invitationResponse;
-    }
-
-    public RoomResponse acceptInvitation(String invitationId) {
-        var invitation = roomInvitationMap.get(invitationId);
-        if (invitation == null) {
-            throw new NotFoundAppException();
-        }
-        var user = userService.getUserFromContext();
-        if (invitation.getUserId() != user.getId()) {
-            throw new NotFoundAppException();
-        }
-        roomInvitationMap.remove(invitationId);
-        if (userRoomMap.get(invitation.getRoom().getOwner().getUser().getId()) == null) {
-            throw new NotFoundAppException();
-        }
-        userAvailabilityService.checkRoomAvailability(user);
-        var existingRoom = userRoomMap.get(user.getId());
-        if (existingRoom != null) {
-            // todo check user already in this room
-            exitRoom(user, existingRoom);
-        }
-        var room = invitation.getRoom();
-        room.getGuests().put(user.getId(), BattleParticipant.of(user));
-        userRoomMap.put(user.getId(), room);
-        log.info("acceptInvitation: nickname {}, map size {}, invitation map size {}", user.getNickname(),
-                userRoomMap.size(), roomInvitationMap.size());
-        roomUpdatesSender.sendRoomUpdate(room);
-        return RoomResponse.of(room);
-    }
-
-    public void deleteInvitation(String invitationId) {
-        var invitation = roomInvitationMap.get(invitationId);
-        if (invitation == null) {
-            throw new NotFoundAppException();
-        }
-        var user = userService.getUserFromContext();
-        if (invitation.getUserId() != user.getId()) {
-            throw new NotFoundAppException();
-        }
-        roomInvitationMap.remove(invitationId);
-        log.info("declineInvitation: nickname {}, invitation map size {}", user.getNickname(),
-                roomInvitationMap.size());
     }
 
     public void selectVehicle(BattleParticipantParams request) {
@@ -148,7 +81,7 @@ public class RoomService {
         }
     }
 
-    private Room requireOwnRoom(User user) {
+    public Room requireOwnRoom(User user) {
         var room = userRoomMap.get(user.getId());
         if (room == null) {
             throw new NotFoundAppException();
@@ -159,7 +92,7 @@ public class RoomService {
         return room;
     }
 
-    private void exitRoom(User user, Room room) {
+    public void exitRoom(User user, Room room) {
         if (room.getOwner().getUser().getId() != user.getId()) {
             userRoomMap.remove(user.getId());
             room.getGuests().remove(user.getId());
