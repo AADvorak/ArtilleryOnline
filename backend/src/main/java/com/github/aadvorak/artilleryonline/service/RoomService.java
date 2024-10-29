@@ -34,6 +34,8 @@ public class RoomService {
 
     private final RoomUpdatesSender roomUpdatesSender;
 
+    private final UserAvailabilityService userAvailabilityService;
+
     public RoomResponse getRoom() {
         var user = userService.getUserFromContext();
         var room = userRoomMap.get(user.getId());
@@ -86,8 +88,10 @@ public class RoomService {
         if (userRoomMap.get(invitation.getRoom().getOwner().getUser().getId()) == null) {
             throw new NotFoundAppException();
         }
+        userAvailabilityService.checkRoomAvailability(user);
         var existingRoom = userRoomMap.get(user.getId());
         if (existingRoom != null) {
+            // todo check user already in this room
             exitRoom(user, existingRoom);
         }
         var room = invitation.getRoom();

@@ -23,7 +23,7 @@ public class UserBattleEndpoint {
         return battleService.getBattleTracking();
     }
 
-    @PutMapping("/test-drive")
+    @PostMapping("/test-drive")
     public BattleResponse testDrive(@RequestBody UserBattleQueueParams params) {
         return battleService.createTestDrive(params);
     }

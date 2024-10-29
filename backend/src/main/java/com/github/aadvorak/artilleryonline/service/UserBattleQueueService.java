@@ -21,15 +21,13 @@ public class UserBattleQueueService {
 
     private final UserBattleQueue userBattleQueue;
 
-    private final UserBattleMap userBattleMap;
-
     private final UserService userService;
+
+    private final UserAvailabilityService userAvailabilityService;
 
     public UserBattleQueueResponse addUserToQueue(UserBattleQueueParams params) {
         var user = userService.getUserFromContext();
-        if (userBattleMap.get(user.getId()) != null) {
-            return new UserBattleQueueResponse();
-        }
+        userAvailabilityService.checkBattleQueueAvailability(user);
         var element = new UserBattleQueueElement()
                 .setUser(user)
                 .setParams(params);

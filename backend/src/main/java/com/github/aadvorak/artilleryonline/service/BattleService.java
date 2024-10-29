@@ -24,6 +24,8 @@ public class BattleService {
 
     private final BattleRunner battleRunner;
 
+    private final UserAvailabilityService userAvailabilityService;
+
     private final ModelMapper mapper = new ModelMapper();
 
     public BattleResponse getBattle() {
@@ -47,10 +49,7 @@ public class BattleService {
 
     public BattleResponse createTestDrive(UserBattleQueueParams params) {
         var user = userService.getUserFromContext();
-        var existingBattle = userBattleMap.get(user.getId());
-        if (existingBattle != null) {
-            return mapper.map(existingBattle, BattleResponse.class);
-        }
+        userAvailabilityService.checkTestDriveAvailability(user);
         var userParticipant = new BattleParticipant()
                 .setUser(user)
                 .setNickname(user.getNickname())
@@ -98,8 +97,6 @@ public class BattleService {
         if (participant.getParams() == null || participant.getParams().getSelectedVehicle() == null) {
             throw new ConflictAppException("Not all players have selected vehicles");
         }
-        if (userBattleMap.get(participant.getUser().getId()) != null) {
-            throw new ConflictAppException("Some players are in other battle");
-        }
+        userAvailabilityService.checkRoomBattleAvailability(participant.getUser());
     }
 }

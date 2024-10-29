@@ -58,7 +58,7 @@ async function testDrive() {
     const request = {
       selectedVehicle: selectedVehicle.value!
     }
-    const battle = await api.putJson<UserBattleQueueParams, Battle>('/battles/test-drive', request)
+    const battle = await api.postJson<UserBattleQueueParams, Battle>('/battles/test-drive', request)
     battleStore.updateBattle(battle)
   } catch (e) {
     console.log(e)
