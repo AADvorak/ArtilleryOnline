@@ -38,19 +38,12 @@ public enum ShellSpecsPreset {
             .setCaliber(0.05)
             .setType(ShellType.HE)),
     LIGHT_AP("AP-L", new ShellSpecs()
-            .setDamage(7.0)
-            .setRadius(0.07)
+            .setDamage(2.0)
+            .setRadius(0.06)
             .setVelocity(12.0)
-            .setPushCoefficient(0.03)
-            .setCaliber(0.04)
-            .setType(ShellType.AP)),
-    LIGHT_HE("HE-L", new ShellSpecs()
-            .setDamage(4.0)
-            .setRadius(0.4)
-            .setVelocity(11.0)
-            .setPushCoefficient(0.03)
-            .setCaliber(0.04)
-            .setType(ShellType.HE));
+            .setPushCoefficient(0.01)
+            .setCaliber(0.03)
+            .setType(ShellType.AP));
 
     private final String name;
 

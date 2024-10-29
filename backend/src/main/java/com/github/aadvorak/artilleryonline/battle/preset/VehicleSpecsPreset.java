@@ -37,7 +37,7 @@ public enum VehicleSpecsPreset {
             .setAvailableGuns(Map.of(GunSpecsPreset.MEDIUM.getName(), GunSpecsPreset.MEDIUM.getSpecs()))),
 
     LIGHT("Light", new VehicleSpecs()
-            .setAmmo(80)
+            .setAmmo(320)
             .setRadius(0.3)
             .setHullRadius(0.35)
             .setWheelRadius(0.08)

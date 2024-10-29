@@ -31,13 +31,12 @@ public enum GunSpecsPreset {
             ))),
 
     LIGHT("Light", new GunSpecs()
-            .setLoadTime(2.0)
+            .setLoadTime(0.5)
             .setRotationVelocity(0.3)
             .setLength(0.4)
-            .setCaliber(0.04)
+            .setCaliber(0.03)
             .setAvailableShells(Map.of(
-                    ShellSpecsPreset.LIGHT_AP.getName(), ShellSpecsPreset.LIGHT_AP.getSpecs(),
-                    ShellSpecsPreset.LIGHT_HE.getName(), ShellSpecsPreset.LIGHT_HE.getSpecs()
+                    ShellSpecsPreset.LIGHT_AP.getName(), ShellSpecsPreset.LIGHT_AP.getSpecs()
             )));
 
     private final String name;
