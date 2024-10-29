@@ -28,7 +28,7 @@ async function loadOnlineUsers() {
 
 async function inviteUser(user) {
   try {
-    await new ApiRequestSender().postJson('/rooms/invite', user)
+    await new ApiRequestSender().postJson('/rooms/invitations', user)
     invitedUsers.value.push(user)
   } catch (e) {
     console.log(e)

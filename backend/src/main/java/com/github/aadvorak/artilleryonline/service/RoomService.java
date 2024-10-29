@@ -3,7 +3,6 @@ package com.github.aadvorak.artilleryonline.service;
 import com.github.aadvorak.artilleryonline.battle.*;
 import com.github.aadvorak.artilleryonline.collection.RoomInvitationMap;
 import com.github.aadvorak.artilleryonline.collection.UserRoomMap;
-import com.github.aadvorak.artilleryonline.dto.request.EnterRoomRequest;
 import com.github.aadvorak.artilleryonline.dto.request.RoomInvitationRequest;
 import com.github.aadvorak.artilleryonline.dto.response.RoomInvitationResponse;
 import com.github.aadvorak.artilleryonline.dto.response.RoomResponse;
@@ -75,8 +74,8 @@ public class RoomService {
         return invitationResponse;
     }
 
-    public RoomResponse enterRoom(EnterRoomRequest request) {
-        var invitation = roomInvitationMap.get(request.getInvitationId());
+    public RoomResponse acceptInvitation(String invitationId) {
+        var invitation = roomInvitationMap.get(invitationId);
         if (invitation == null) {
             throw new NotFoundAppException();
         }
@@ -84,7 +83,7 @@ public class RoomService {
         if (invitation.getUserId() != user.getId()) {
             throw new NotFoundAppException();
         }
-        roomInvitationMap.remove(request.getInvitationId());
+        roomInvitationMap.remove(invitationId);
         if (userRoomMap.get(invitation.getRoom().getOwner().getUser().getId()) == null) {
             throw new NotFoundAppException();
         }
@@ -97,10 +96,24 @@ public class RoomService {
         var room = invitation.getRoom();
         room.getGuests().put(user.getId(), BattleParticipant.of(user));
         userRoomMap.put(user.getId(), room);
-        log.info("enterRoom: nickname {}, map size {}, invitation map size {}", user.getNickname(),
+        log.info("acceptInvitation: nickname {}, map size {}, invitation map size {}", user.getNickname(),
                 userRoomMap.size(), roomInvitationMap.size());
         roomUpdatesSender.sendRoomUpdate(room);
         return RoomResponse.of(room);
+    }
+
+    public void deleteInvitation(String invitationId) {
+        var invitation = roomInvitationMap.get(invitationId);
+        if (invitation == null) {
+            throw new NotFoundAppException();
+        }
+        var user = userService.getUserFromContext();
+        if (invitation.getUserId() != user.getId()) {
+            throw new NotFoundAppException();
+        }
+        roomInvitationMap.remove(invitationId);
+        log.info("declineInvitation: nickname {}, invitation map size {}", user.getNickname(),
+                roomInvitationMap.size());
     }
 
     public void selectVehicle(BattleParticipantParams request) {
