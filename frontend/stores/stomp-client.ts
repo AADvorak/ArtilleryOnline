@@ -1,11 +1,9 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import {useHostStore} from '~/stores/host'
 import {useCsrfStore} from '~/stores/csrf'
 import {CompatClient, Stomp} from '@stomp/stompjs'
 
 export const useStompClientStore = defineStore('stomp-client', () => {
-  const hostStore = useHostStore()
   const csrfStore = useCsrfStore()
   const client = ref<CompatClient>()
 
@@ -16,7 +14,7 @@ export const useStompClientStore = defineStore('stomp-client', () => {
         return
       }
       if (!client.value) {
-        const socket = new WebSocket(`ws://${hostStore.host}/api/ws/websocket`)
+        const socket = new WebSocket(`ws://${window.location.host}/api/ws/websocket`)
         client.value = Stomp.over(socket)
       }
       const headers = {}
