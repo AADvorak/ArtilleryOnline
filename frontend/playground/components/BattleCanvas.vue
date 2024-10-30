@@ -1,24 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { useBattleStore } from '~/stores/battle'
-import { useCommandsSender } from '@/playground/composables/commands-sender'
-import {useBattleUpdater} from "@/playground/composables/battle-updater";
-import {useBattleProcessor} from "@/playground/battle/processor/battle-processor";
 import {useDrawerBase} from "@/playground/composables/drawer/drawer-base";
 import {useVehicleDrawer} from "@/playground/composables/drawer/vehicle-drawer";
 import {useShellDrawer} from "@/playground/composables/drawer/shell-drawer";
 import {useExplosionDrawer} from "@/playground/composables/drawer/explosion-drawer";
 import {useGroundDrawer} from "@/playground/composables/drawer/ground-drawer";
-import {useKeyboardListener} from "@/playground/composables/keyboard-listener";
-import {useSettingsStore} from "~/stores/settings";
 
 const battleStore = useBattleStore()
-const settingsStore = useSettingsStore()
-const battleUpdater = useBattleUpdater()
-const keyboardListener = useKeyboardListener(useCommandsSender())
 
 const battle = computed(() => battleStore.battle)
-const isClientProcessing = computed(() => settingsStore.settings?.clientProcessing)
 const battleSize = ref()
 const canvasSize = ref()
 const scaleCoefficient = ref()
@@ -38,20 +29,17 @@ const shellDrawer = useShellDrawer(drawerBase, ctx)
 const explosionDrawer = useExplosionDrawer(drawerBase, ctx)
 const groundDrawer = useGroundDrawer(drawerBase, ctx)
 
-watch(battle, (value, oldValue) => {
-  if (!oldValue && value) {
-    startBattle()
+watch(battle, (value) => {
+  if (value) {
+    redrawBattle()
   }
-  if (oldValue && !value) {
-    finishBattle()
-    return
-  }
-  redrawBattle()
 })
 
 onMounted(() => {
   initCanvasAndCtx()
-  startBattle()
+  calculateBattleSize()
+  calculateCanvasSize()
+  calculateScaleCoefficient()
   addEventListener('resize', onWindowResize)
 })
 
@@ -68,24 +56,6 @@ function onWindowResize() {
     canvas.value.width = canvasWidth.value
     canvas.value.height = canvasHeight.value
   }
-}
-
-function startBattle() {
-  calculateBattleSize()
-  calculateCanvasSize()
-  calculateScaleCoefficient()
-  keyboardListener.startListening()
-  battleUpdater.subscribe()
-  isClientProcessing.value && useBattleProcessor().startProcessing()
-}
-
-function finishBattle() {
-  clearCanvas()
-  battleSize.value = undefined
-  canvasSize.value = undefined
-  scaleCoefficient.value = undefined
-  keyboardListener.stopListening()
-  battleUpdater.unsubscribe()
 }
 
 function initCanvasAndCtx() {
