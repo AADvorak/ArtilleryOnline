@@ -75,7 +75,9 @@ public class RoomInvitationService {
         userAvailabilityService.checkRoomAvailability(user);
         var existingRoom = userRoomMap.get(user.getId());
         if (existingRoom != null) {
-            // todo check user already in this room
+            if (existingRoom.getGuests().containsKey(user.getId())) {
+                return RoomResponse.of(existingRoom);
+            }
             roomService.exitRoom(user, existingRoom);
         }
         var room = invitation.getRoom();
