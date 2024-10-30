@@ -15,6 +15,7 @@ import {useSettingsStore} from "~/stores/settings";
 const battleStore = useBattleStore()
 const settingsStore = useSettingsStore()
 const battleUpdater = useBattleUpdater()
+const keyboardListener = useKeyboardListener(useCommandsSender())
 
 const battle = computed(() => battleStore.battle)
 const isClientProcessing = computed(() => settingsStore.settings?.clientProcessing)
@@ -73,7 +74,7 @@ function startBattle() {
   calculateBattleSize()
   calculateCanvasSize()
   calculateScaleCoefficient()
-  useKeyboardListener(useCommandsSender()).startListening()
+  keyboardListener.startListening()
   battleUpdater.subscribe()
   isClientProcessing.value && useBattleProcessor().startProcessing()
 }
@@ -83,6 +84,7 @@ function finishBattle() {
   battleSize.value = undefined
   canvasSize.value = undefined
   scaleCoefficient.value = undefined
+  keyboardListener.stopListening()
   battleUpdater.unsubscribe()
 }
 

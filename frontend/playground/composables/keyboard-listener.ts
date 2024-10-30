@@ -67,24 +67,33 @@ export function useKeyboardListener(commandsSender: CommandsSender) {
   const keysDown: Map<string, string> = new Map()
 
   function startListening() {
-    document.addEventListener('keyup', (e) => {
-      keysDown.delete(e.code)
-      const userCommand = keyUpCommands.get(mapping[e.code])
-          || clickCommands.get(mapping[e.code])
+    addEventListener('keyup', keyupListener)
+    addEventListener('keydown', keydownListener)
+  }
+
+  function stopListening() {
+    removeEventListener('keyup', keyupListener)
+    removeEventListener('keydown', keydownListener)
+  }
+
+  function keyupListener(e: KeyboardEvent) {
+    keysDown.delete(e.code)
+    const userCommand = keyUpCommands.get(mapping[e.code])
+        || clickCommands.get(mapping[e.code])
+    if (userCommand) {
+      commandsSender.sendCommand(userCommand)
+    }
+  }
+
+  function keydownListener(e: KeyboardEvent) {
+    if (!keysDown.has(e.code)) {
+      keysDown.set(e.code, e.key)
+      const userCommand = keyDownCommands.get(mapping[e.code])
       if (userCommand) {
         commandsSender.sendCommand(userCommand)
       }
-    })
-    document.addEventListener('keydown', (e) => {
-      if (!keysDown.has(e.code)) {
-        keysDown.set(e.code, e.key)
-        const userCommand = keyDownCommands.get(mapping[e.code])
-        if (userCommand) {
-          commandsSender.sendCommand(userCommand)
-        }
-      }
-    })
+    }
   }
 
-  return { startListening }
+  return { startListening, stopListening }
 }
