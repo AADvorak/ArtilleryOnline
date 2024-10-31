@@ -49,7 +49,18 @@ public class VehicleAccelerationCalculator {
                 + calculations.getRightWheel().getSumAcceleration().getY() * Math.cos(angle);
         var leftWheelRotatingAcceleration = calculations.getLeftWheel().getSumAcceleration().getX() * Math.sin(angle)
                 + calculations.getLeftWheel().getSumAcceleration().getY() * Math.cos(angle);
-        return (rightWheelRotatingAcceleration - leftWheelRotatingAcceleration) / 2;
+        return (rightWheelRotatingAcceleration - leftWheelRotatingAcceleration) / 2
+                + getReturnOnWheelsRotatingAcceleration(angle);
+    }
+
+    private static double getReturnOnWheelsRotatingAcceleration(double angle) {
+        if (angle >= Math.PI / 2 - 0.1) {
+            return -2.0;
+        }
+        if (angle <= -Math.PI / 2 + 0.1) {
+            return 2.0;
+        }
+        return 0.0;
     }
 
     private static void calculateWheelAcceleration(WheelCalculations wheelCalculations,

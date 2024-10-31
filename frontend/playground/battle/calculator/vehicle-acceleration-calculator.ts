@@ -1,21 +1,25 @@
-import type { VehicleAcceleration } from '@/playground/data/common'
-import type { RoomModel, VehicleModel } from '@/playground/data/model'
-import type { VehicleCalculations, WheelCalculations } from '@/playground/data/calculations'
-import { VehicleUtils } from '@/playground/utils/vehicle-utils'
-import { VectorUtils } from '@/playground/utils/vector-utils'
-import { GroundPositionCalculator } from '@/playground/battle/calculator/wheel/ground-position-calculator'
-import { GroundStateCalculator } from '@/playground/battle/calculator/wheel/ground-state-calculator'
-import { EngineAccelerationCalculator } from '@/playground/battle/calculator/wheel/engine-acceleration-calculator'
-import { GroundFrictionAccelerationCalculator } from '@/playground/battle/calculator/wheel/ground-friction-acceleration-calculator'
-import { GroundReactionAccelerationCalculator } from '@/playground/battle/calculator/wheel/ground-reaction-acceleration-calculator'
-import { GravityAccelerationCalculator } from '@/playground/battle/calculator/wheel/gravity-acceleration-calculator'
+import type {VehicleAcceleration} from '@/playground/data/common'
+import type {RoomModel, VehicleModel} from '@/playground/data/model'
+import type {VehicleCalculations, WheelCalculations} from '@/playground/data/calculations'
+import {VehicleUtils} from '@/playground/utils/vehicle-utils'
+import {VectorUtils} from '@/playground/utils/vector-utils'
+import {GroundPositionCalculator} from '@/playground/battle/calculator/wheel/ground-position-calculator'
+import {GroundStateCalculator} from '@/playground/battle/calculator/wheel/ground-state-calculator'
+import {EngineAccelerationCalculator} from '@/playground/battle/calculator/wheel/engine-acceleration-calculator'
+import {
+  GroundFrictionAccelerationCalculator
+} from '@/playground/battle/calculator/wheel/ground-friction-acceleration-calculator'
+import {
+  GroundReactionAccelerationCalculator
+} from '@/playground/battle/calculator/wheel/ground-reaction-acceleration-calculator'
+import {GravityAccelerationCalculator} from '@/playground/battle/calculator/wheel/gravity-acceleration-calculator'
 import {JetAccelerationCalculator} from "~/playground/battle/calculator/wheel/jet-acceleration-calculator";
 
 export const VehicleAccelerationCalculator = {
   getVehicleAcceleration(
-    calculations: VehicleCalculations,
-    vehicleModel: VehicleModel,
-    roomModel: RoomModel
+      calculations: VehicleCalculations,
+      vehicleModel: VehicleModel,
+      roomModel: RoomModel
   ): VehicleAcceleration {
     const angle = vehicleModel.state.angle
 
@@ -34,10 +38,9 @@ export const VehicleAccelerationCalculator = {
     const rotatingAcceleration = this.getVehicleRotatingAcceleration(calculations, angle)
     const wheelsMovingAcceleration = {
       x:
-        (calculations.rightWheel.sumAcceleration!.x + calculations.leftWheel.sumAcceleration!.x) /
-        2,
+          (calculations.rightWheel.sumAcceleration!.x + calculations.leftWheel.sumAcceleration!.x) / 2,
       y:
-        (calculations.rightWheel.sumAcceleration!.y + calculations.leftWheel.sumAcceleration!.y) / 2
+          (calculations.rightWheel.sumAcceleration!.y + calculations.leftWheel.sumAcceleration!.y) / 2
     }
 
     const vehicleVelocity = vehicleModel.state.velocity
@@ -58,28 +61,39 @@ export const VehicleAccelerationCalculator = {
 
   calculateWheelSumAcceleration(wheelCalculations: WheelCalculations): void {
     wheelCalculations.sumAcceleration = VectorUtils.sumOf(
-      wheelCalculations.gravityAcceleration,
-      wheelCalculations.engineAcceleration,
-      wheelCalculations.groundFrictionAcceleration,
-      wheelCalculations.groundReactionAcceleration,
-      wheelCalculations.jetAcceleration
+        wheelCalculations.gravityAcceleration,
+        wheelCalculations.engineAcceleration,
+        wheelCalculations.groundFrictionAcceleration,
+        wheelCalculations.groundReactionAcceleration,
+        wheelCalculations.jetAcceleration
     )
   },
 
   getVehicleRotatingAcceleration(calculations: VehicleCalculations, angle: number): number {
     const rightWheelRotatingAcceleration =
-      calculations.rightWheel.sumAcceleration!.x * Math.sin(angle) +
-      calculations.rightWheel.sumAcceleration!.y * Math.cos(angle)
+        calculations.rightWheel.sumAcceleration!.x * Math.sin(angle) +
+        calculations.rightWheel.sumAcceleration!.y * Math.cos(angle)
     const leftWheelRotatingAcceleration =
-      calculations.leftWheel.sumAcceleration!.x * Math.sin(angle) +
-      calculations.leftWheel.sumAcceleration!.y * Math.cos(angle)
+        calculations.leftWheel.sumAcceleration!.x * Math.sin(angle) +
+        calculations.leftWheel.sumAcceleration!.y * Math.cos(angle)
     return (rightWheelRotatingAcceleration - leftWheelRotatingAcceleration) / 2
+        + this.getReturnOnWheelsRotatingAcceleration(angle)
+  },
+
+  getReturnOnWheelsRotatingAcceleration(angle: number) {
+    if (angle >= Math.PI / 2 - 0.1) {
+      return -2.0;
+    }
+    if (angle <= -Math.PI / 2 + 0.1) {
+      return 2.0;
+    }
+    return 0.0;
   },
 
   calculateWheelAcceleration(
-    wheelCalculations: WheelCalculations,
-    vehicleModel: VehicleModel,
-    roomModel: RoomModel
+      wheelCalculations: WheelCalculations,
+      vehicleModel: VehicleModel,
+      roomModel: RoomModel
   ): void {
     const roomGravityAcceleration = roomModel.specs.gravityAcceleration
     const groundReactionCoefficient = roomModel.specs.groundReactionCoefficient
@@ -93,15 +107,15 @@ export const VehicleAccelerationCalculator = {
     EngineAccelerationCalculator.calculate(wheelCalculations, vehicleModel)
     JetAccelerationCalculator.calculate(wheelCalculations, vehicleModel)
     GroundFrictionAccelerationCalculator.calculate(
-      wheelCalculations,
-      vehicleModel,
-      groundFrictionCoefficient
+        wheelCalculations,
+        vehicleModel,
+        groundFrictionCoefficient
     )
     GroundReactionAccelerationCalculator.calculate(wheelCalculations, groundReactionCoefficient)
     GravityAccelerationCalculator.calculate(
-      wheelCalculations,
-      roomGravityAcceleration,
-      groundMaxDepth
+        wheelCalculations,
+        roomGravityAcceleration,
+        groundMaxDepth
     )
   }
 }
