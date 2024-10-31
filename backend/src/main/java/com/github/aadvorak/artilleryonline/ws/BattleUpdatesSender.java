@@ -1,6 +1,8 @@
 package com.github.aadvorak.artilleryonline.ws;
 
 import com.github.aadvorak.artilleryonline.collection.BattleUpdatesQueue;
+import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
+import com.github.aadvorak.artilleryonline.dto.response.BattleStateResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -16,18 +18,32 @@ public class BattleUpdatesSender {
     public void start(BattleUpdatesQueue battleUpdatesQueue) {
         new Thread(() -> {
             while (true) {
-                var battleResponse = battleUpdatesQueue.poll();
-                if (battleResponse != null) {
-                    if (battleResponse.getId() == null) {
+                var queueElement = battleUpdatesQueue.poll();
+                if (queueElement != null) {
+                    if (queueElement.getId() == null) {
                         break;
                     }
-                    simpMessagingTemplate.convertAndSend("/topic/battle/updates/" + battleResponse.getId(),
-                            battleResponse);
+                    if (queueElement instanceof BattleResponse battleResponse) {
+                        sendBattleUpdate(battleResponse);
+                    }
+                    if (queueElement instanceof BattleStateResponse battleStateResponse) {
+                        sendBattleStateUpdate(battleStateResponse);
+                    }
                 } else {
                     sleep();
                 }
             }
         }).start();
+    }
+
+    private void sendBattleUpdate(BattleResponse battleResponse) {
+        simpMessagingTemplate.convertAndSend("/topic/battle/updates/"
+                        + battleResponse.getId(), battleResponse);
+    }
+
+    private void sendBattleStateUpdate(BattleStateResponse battleStateResponse) {
+        simpMessagingTemplate.convertAndSend("/topic/battle/updates/"
+                + battleStateResponse.getId() + "/state", battleStateResponse);
     }
 
     private void sleep() {

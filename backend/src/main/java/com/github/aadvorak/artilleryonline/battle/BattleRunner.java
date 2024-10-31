@@ -7,7 +7,6 @@ import com.github.aadvorak.artilleryonline.dto.response.BattleModelStateResponse
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
 import com.github.aadvorak.artilleryonline.dto.response.BattleStateResponse;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
-import com.github.aadvorak.artilleryonline.ws.BattleStateUpdatesSender;
 import com.github.aadvorak.artilleryonline.ws.BattleUpdatesSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,15 +27,13 @@ public class BattleRunner {
 
     private final BattleUpdatesSender battleUpdatesSender;
 
-    private final BattleStateUpdatesSender battleStateUpdatesSender;
-
     private final WaitingBattleStepProcessor waitingBattleStepProcessor = new WaitingBattleStepProcessor();
     private final ActiveBattleStepProcessor activeBattleStepProcessor = new ActiveBattleStepProcessor();
 
     private final ModelMapper mapper = new ModelMapper();
 
     public void runBattle(Battle battle) {
-        startUpdatesSenders(battle);
+        startUpdatesSender(battle);
         new Thread(() -> {
             while (!BattleStage.FINISHED.equals(battle.getBattleStage())
                     && !battle.getUserNicknameMap().isEmpty()) {
@@ -50,7 +47,7 @@ public class BattleRunner {
                 sendBattleToUpdatesQueue(battle);
                 resetUpdatedFlags(battle);
             }
-            stopUpdatesSenders(battle);
+            stopUpdatesSender(battle);
             removeBattleFromMap(battle);
             removeBattleFromRoom(battle);
             log.info("Battle finished: {}, map size {}", battle.getId(), userBattleMap.size());
@@ -77,14 +74,12 @@ public class BattleRunner {
         }
     }
 
-    private void startUpdatesSenders(Battle battle) {
+    private void startUpdatesSender(Battle battle) {
         battleUpdatesSender.start(battle.getQueues().getBattleUpdatesQueue());
-        battleStateUpdatesSender.start(battle.getQueues().getBattleStateUpdatesQueue());
     }
 
-    private void stopUpdatesSenders(Battle battle) {
+    private void stopUpdatesSender(Battle battle) {
         battle.getQueues().getBattleUpdatesQueue().add(new BattleResponse());
-        battle.getQueues().getBattleStateUpdatesQueue().add(new BattleStateResponse());
     }
 
     private void setBattleUpdatedByTimeout(Battle battle) {
@@ -113,7 +108,7 @@ public class BattleRunner {
                     .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
             var shellStates = battle.getModel().getShells().entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
-            battle.getQueues().getBattleStateUpdatesQueue().add(new BattleStateResponse()
+            battle.getQueues().getBattleUpdatesQueue().add(new BattleStateResponse()
                     .setId(battle.getId())
                     .setTime(battle.getTime())
                     .setState(new BattleModelStateResponse()
