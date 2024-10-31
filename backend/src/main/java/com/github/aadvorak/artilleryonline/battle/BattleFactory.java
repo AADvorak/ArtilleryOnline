@@ -24,12 +24,13 @@ public class BattleFactory {
         var battleModel = new BattleModel()
                 .setRoom(createRoomModel());
         battleModel.setVehicles(createVehicles(participants, battleModel));
-        return new Battle()
+        var battle = new Battle()
                 .setTime(0)
                 .setBattleStage(BattleStage.WAITING)
                 .setModel(battleModel)
-                .setUserCommandQueues(createUserCommandQueues(participants))
                 .setUserNicknameMap(createUserNicknameMap(participants));
+        battle.getQueues().setUserCommandQueues(createUserCommandQueues(participants));
+        return battle;
     }
 
     private RoomModel createRoomModel() {

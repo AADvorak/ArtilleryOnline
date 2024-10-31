@@ -91,7 +91,7 @@ public class BattleService {
             var battle = userBattleMap.get(user.getId());
             if (battle != null) {
                 battle.getUserNicknameMap().remove(user.getId());
-                battle.getUserCommandQueues().remove(user.getId());
+                battle.getQueues().getUserCommandQueues().remove(user.getId());
                 userBattleMap.remove(user.getId());
                 log.info("leaveBattle: user {}, battle {}, map size {}", user.getNickname(),
                         battle.getId(), userBattleMap.size());

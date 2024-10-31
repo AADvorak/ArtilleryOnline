@@ -42,7 +42,7 @@ public class BattleStepProcessorBase implements BattleStepProcessor {
     private void processDebugCommand(Battle battle) {
         battle.setDoStep(false);
         battle.setForceSend(false);
-        var debugCommand = battle.getDebugCommands().poll();
+        var debugCommand = battle.getQueues().getDebugCommands().poll();
         if (debugCommand != null) {
             if (Command.PAUSE.equals(debugCommand.getCommand())) {
                 battle.setPaused(true);

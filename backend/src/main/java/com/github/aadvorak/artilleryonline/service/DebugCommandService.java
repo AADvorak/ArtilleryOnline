@@ -18,6 +18,6 @@ public class DebugCommandService {
         if (battle == null) {
             return;
         }
-        battle.getDebugCommands().add(debugCommand);
+        battle.getQueues().getDebugCommands().add(debugCommand);
     }
 }

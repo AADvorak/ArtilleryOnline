@@ -19,7 +19,7 @@ public class UserCommandService {
         if (battle == null || !BattleStage.ACTIVE.equals(battle.getBattleStage())) {
             return;
         }
-        var userCommandQueue = battle.getUserCommandQueues().get(user.getId());
+        var userCommandQueue = battle.getQueues().getUserCommandQueues().get(user.getId());
         if (userCommandQueue != null) {
             userCommandQueue.add(userCommand);
         }

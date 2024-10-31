@@ -1,16 +1,12 @@
 package com.github.aadvorak.artilleryonline.battle;
 
-import com.github.aadvorak.artilleryonline.battle.command.DebugCommand;
-import com.github.aadvorak.artilleryonline.battle.command.UserCommand;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.Map;
-import java.util.Queue;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Getter
 @Setter
@@ -37,11 +33,7 @@ public class Battle {
 
     private BattleStage battleStage;
 
-    private Map<Long, Queue<UserCommand>> userCommandQueues;
-
     private Map<Long, String> userNicknameMap;
-
-    private Queue<DebugCommand> debugCommands = new ConcurrentLinkedQueue<>();
 
     private String tracking;
 

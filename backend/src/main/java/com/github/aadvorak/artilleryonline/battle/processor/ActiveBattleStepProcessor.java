@@ -71,7 +71,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
     }
 
     private void readCommandsFromQueue(Battle battle) {
-        battle.getUserCommandQueues().forEach((userId, commandQueue) -> {
+        battle.getQueues().getUserCommandQueues().forEach((userId, commandQueue) -> {
             var commandsNumber = 10;
             while (commandsNumber > 0) {
                 var userCommand = commandQueue.poll();
