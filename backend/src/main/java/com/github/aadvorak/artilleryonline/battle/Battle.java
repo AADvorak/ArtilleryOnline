@@ -47,6 +47,8 @@ public class Battle {
 
     private Room room;
 
+    private BattleQueues queues = new BattleQueues();
+
     public void setStageAndResetTime(BattleStage battleStage) {
         this.battleStage = battleStage;
         this.absoluteTime = System.currentTimeMillis();

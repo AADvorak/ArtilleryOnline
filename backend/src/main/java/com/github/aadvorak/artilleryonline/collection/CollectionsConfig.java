@@ -25,14 +25,4 @@ public class CollectionsConfig {
     public RoomInvitationMap roomInvitationMap() {
         return new RoomInvitationMap();
     }
-
-    @Bean
-    public BattleUpdatesQueue battleUpdatesQueue() {
-        return new BattleUpdatesQueue();
-    }
-
-    @Bean
-    public BattleStateUpdatesQueue battleStateUpdatesQueue() {
-        return new BattleStateUpdatesQueue();
-    }
 }

@@ -3,36 +3,31 @@ package com.github.aadvorak.artilleryonline.ws;
 import com.github.aadvorak.artilleryonline.collection.BattleStateUpdatesQueue;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor
-public class BattleStateUpdatesSender implements Runnable {
-
-    private final BattleStateUpdatesQueue battleStateUpdatesQueue;
+public class BattleStateUpdatesSender {
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    @EventListener(ApplicationReadyEvent.class)
-    public void startSender() {
-        new Thread(this).start();
-    }
-
-    @Override
-    public void run() {
-        while (true) {
-            var battleStateResponse = battleStateUpdatesQueue.poll();
-            if (battleStateResponse != null) {
-                simpMessagingTemplate.convertAndSend("/topic/battle/updates/"
-                        + battleStateResponse.getId() + "/state", battleStateResponse);
-            } else {
-                sleep();
+    public void start(BattleStateUpdatesQueue battleStateUpdatesQueue) {
+        new Thread(() -> {
+            while (true) {
+                var battleStateResponse = battleStateUpdatesQueue.poll();
+                if (battleStateResponse != null) {
+                    if (battleStateResponse.getId() == null) {
+                        break;
+                    }
+                    simpMessagingTemplate.convertAndSend("/topic/battle/updates/"
+                            + battleStateResponse.getId() + "/state", battleStateResponse);
+                } else {
+                    sleep();
+                }
             }
-        }
+        }).start();
     }
 
     private void sleep() {
