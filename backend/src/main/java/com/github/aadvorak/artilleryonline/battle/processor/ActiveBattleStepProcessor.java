@@ -78,7 +78,8 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
                 if (userCommand == null) {
                     return;
                 }
-                CommandProcessor.process(battle.getUserNicknameMap().get(userId), userCommand, battle.getModel());
+                CommandProcessor.process(battle.getUserMap().get(userId).getNickname(),
+                        userCommand, battle.getModel());
                 commandsNumber--;
             }
         });

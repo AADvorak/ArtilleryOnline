@@ -12,6 +12,7 @@ import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleOnGro
 import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.*;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
+import com.github.aadvorak.artilleryonline.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -24,11 +25,13 @@ public class BattleFactory {
         var battleModel = new BattleModel()
                 .setRoom(createRoomModel());
         battleModel.setVehicles(createVehicles(participants, battleModel));
+        var userMap = createUserMap(participants);
         var battle = new Battle()
                 .setTime(0)
                 .setBattleStage(BattleStage.WAITING)
                 .setModel(battleModel)
-                .setUserNicknameMap(createUserNicknameMap(participants));
+                .setUserMap(userMap)
+                .setActiveUserIds(new HashSet<>(userMap.keySet()));
         battle.getQueues().setUserCommandQueues(createUserCommandQueues(participants));
         return battle;
     }
@@ -118,11 +121,11 @@ public class BattleFactory {
         return userCommandQueues;
     }
 
-    private Map<Long, String> createUserNicknameMap(Set<BattleParticipant> participants) {
-        var userNicknameMap = new HashMap<Long, String>();
+    private Map<Long, User> createUserMap(Set<BattleParticipant> participants) {
+        var userNicknameMap = new HashMap<Long, User>();
         participants.stream()
                 .filter(participant -> participant.getUser() != null)
-                .forEach(element -> userNicknameMap.put(element.getUser().getId(), element.getUser().getNickname()));
+                .forEach(element -> userNicknameMap.put(element.getUser().getId(), element.getUser()));
         return userNicknameMap;
     }
 }

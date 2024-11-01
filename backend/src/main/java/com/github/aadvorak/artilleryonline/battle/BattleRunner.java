@@ -36,7 +36,7 @@ public class BattleRunner {
         startUpdatesSender(battle);
         new Thread(() -> {
             while (!BattleStage.FINISHED.equals(battle.getBattleStage())
-                    && !battle.getUserNicknameMap().isEmpty()) {
+                    && !battle.getActiveUserIds().isEmpty()) {
                 try {
                     Thread.sleep(Battle.TIME_STEP_MS);
                 } catch (InterruptedException e) {
@@ -64,7 +64,7 @@ public class BattleRunner {
 
     private void removeBattleFromMap(Battle battle) {
         synchronized (userBattleMap) {
-            battle.getUserNicknameMap().keySet().forEach(userBattleMap::remove);
+            battle.getActiveUserIds().forEach(userBattleMap::remove);
         }
     }
 

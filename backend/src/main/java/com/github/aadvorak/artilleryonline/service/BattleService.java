@@ -90,7 +90,7 @@ public class BattleService {
         synchronized (userBattleMap) {
             var battle = userBattleMap.get(user.getId());
             if (battle != null) {
-                battle.getUserNicknameMap().remove(user.getId());
+                battle.getActiveUserIds().remove(user.getId());
                 battle.getQueues().getUserCommandQueues().remove(user.getId());
                 userBattleMap.remove(user.getId());
                 log.info("leaveBattle: user {}, battle {}, map size {}", user.getNickname(),

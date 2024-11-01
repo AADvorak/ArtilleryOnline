@@ -1,11 +1,14 @@
 package com.github.aadvorak.artilleryonline.battle;
 
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -33,7 +36,9 @@ public class Battle {
 
     private BattleStage battleStage;
 
-    private Map<Long, String> userNicknameMap;
+    private Map<Long, User> userMap;
+
+    private Set<Long> activeUserIds;
 
     private String tracking;
 
