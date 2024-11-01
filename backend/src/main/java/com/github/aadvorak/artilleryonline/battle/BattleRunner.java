@@ -7,6 +7,7 @@ import com.github.aadvorak.artilleryonline.dto.response.BattleModelStateResponse
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
 import com.github.aadvorak.artilleryonline.dto.response.BattleStateResponse;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
+import com.github.aadvorak.artilleryonline.service.MessageService;
 import com.github.aadvorak.artilleryonline.ws.BattleUpdatesSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,8 @@ public class BattleRunner {
     private final ApplicationSettings applicationSettings;
 
     private final BattleUpdatesSender battleUpdatesSender;
+
+    private final MessageService messageService;
 
     private final WaitingBattleStepProcessor waitingBattleStepProcessor = new WaitingBattleStepProcessor();
     private final ActiveBattleStepProcessor activeBattleStepProcessor = new ActiveBattleStepProcessor();
@@ -50,6 +53,7 @@ public class BattleRunner {
             stopUpdatesSender(battle);
             removeBattleFromMap(battle);
             removeBattleFromRoom(battle);
+            createBattleFinishedMessages(battle);
             log.info("Battle finished: {}, map size {}", battle.getId(), userBattleMap.size());
         }).start();
     }
@@ -80,6 +84,10 @@ public class BattleRunner {
 
     private void stopUpdatesSender(Battle battle) {
         battle.getQueues().getBattleUpdatesQueue().add(new BattleResponse());
+    }
+
+    private void createBattleFinishedMessages(Battle battle) {
+        battle.getUserMap().values().forEach(user -> messageService.createMessage(user, "Battle finished"));
     }
 
     private void setBattleUpdatedByTimeout(Battle battle) {

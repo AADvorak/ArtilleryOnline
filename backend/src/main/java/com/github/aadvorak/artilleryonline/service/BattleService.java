@@ -26,6 +26,8 @@ public class BattleService {
 
     private final UserAvailabilityService userAvailabilityService;
 
+    private final MessageService messageService;
+
     private final ModelMapper mapper = new ModelMapper();
 
     public BattleResponse getBattle() {
@@ -93,6 +95,8 @@ public class BattleService {
                 battle.getActiveUserIds().remove(user.getId());
                 battle.getQueues().getUserCommandQueues().remove(user.getId());
                 userBattleMap.remove(user.getId());
+                battle.getActiveUserIds().forEach(userId -> messageService.createMessage(
+                        battle.getUserMap().get(userId), "User " + user.getNickname() + " left battle"));
                 log.info("leaveBattle: user {}, battle {}, map size {}", user.getNickname(),
                         battle.getId(), userBattleMap.size());
             }

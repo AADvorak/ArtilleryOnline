@@ -43,6 +43,7 @@ function showLeaveBattleDialog() {
       <ReloadingProgress />
     </div>
     <v-spacer/>
+    <messages-menu/>
     <v-btn @click="showLeaveBattleDialog">Leave battle</v-btn>
     <LeaveBattleDialog ref="leaveBattleDialog"/>
   </v-app-bar>
