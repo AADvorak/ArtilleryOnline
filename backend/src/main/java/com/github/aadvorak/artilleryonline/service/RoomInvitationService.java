@@ -34,6 +34,8 @@ public class RoomInvitationService {
 
     private final UserAvailabilityService userAvailabilityService;
 
+    private final MessageService messageService;
+
     public List<RoomInvitationResponse> getUserInvitations() {
         var user = userService.getUserFromContext();
         // todo possible slow query
@@ -86,6 +88,8 @@ public class RoomInvitationService {
         log.info("acceptInvitation: nickname {}, map size {}, invitation map size {}", user.getNickname(),
                 userRoomMap.size(), roomInvitationMap.size());
         roomUpdatesSender.sendRoomUpdate(room);
+        messageService.createMessage(invitation.getRoom().getOwner().getUser(),
+                "User " + user.getNickname() + " entered room");
         return RoomResponse.of(room);
     }
 

@@ -26,6 +26,8 @@ public class RoomService {
 
     private final RoomUpdatesSender roomUpdatesSender;
 
+    private final MessageService messageService;
+
     public RoomResponse getRoom() {
         var user = userService.getUserFromContext();
         var room = userRoomMap.get(user.getId());
@@ -97,11 +99,17 @@ public class RoomService {
             userRoomMap.remove(user.getId());
             room.getGuests().remove(user.getId());
             roomUpdatesSender.sendRoomUpdate(room);
+            messageService.createMessage(room.getOwner().getUser(),
+                    "User " + user.getNickname() + " left the room");
             log.info("exitRoom: nickname {}, map size {}", user.getNickname(), userRoomMap.size());
         } else {
             var userIds = new HashSet<Long>();
             userIds.add(user.getId());
-            room.getGuests().values().forEach(guest -> userIds.add(guest.getUser().getId()));
+            room.getGuests().values().forEach(guest -> {
+                userIds.add(guest.getUser().getId());
+                messageService.createMessage(guest.getUser(),
+                        "User " + user.getNickname() + " left and deleted the room");
+            });
             userIds.forEach(userRoomMap::remove);
             roomUpdatesSender.sendRoomUpdate(room, true);
             log.info("exitRoom: (room deleted) nickname {}, map size {}", user.getNickname(), userRoomMap.size());

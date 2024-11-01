@@ -19,9 +19,11 @@ export interface Room {
 
 export interface Message {
   id: string
+  text: string
 }
 
-export interface RoomInvitation extends Message {
+export interface RoomInvitation {
+  id: string
   inviterNickname: string
 }
 

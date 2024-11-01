@@ -19,7 +19,7 @@ async function acceptInvitation() {
     const invitationId = props.invitation!.id
     roomStore.room = await new ApiRequestSender()
         .postJson<undefined, Room>(`/rooms/invitations/${invitationId}/accept`, undefined)
-    messageStore.removeById(invitationId)
+    messageStore.removeRoomInvitationById(invitationId)
     await router.push('/rooms/room')
   } catch (e) {
     console.log(e)
@@ -30,7 +30,7 @@ async function deleteInvitation() {
   try {
     const invitationId = props.invitation!.id
     await new ApiRequestSender().delete(`/rooms/invitations/${invitationId}`)
-    messageStore.removeById(invitationId)
+    messageStore.removeRoomInvitationById(invitationId)
   } catch (e) {
     console.log(e)
   }

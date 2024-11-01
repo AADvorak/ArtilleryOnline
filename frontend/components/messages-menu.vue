@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {useMessageStore} from "~/stores/message";
-import type {RoomInvitation} from "~/data/model";
+import type {Message, RoomInvitation} from "~/data/model";
 import {useUserStore} from "~/stores/user";
 import {useStompClientStore} from "~/stores/stomp-client";
+import MessageCard from "~/components/message-card.vue";
 
 const stompClientStore = useStompClientStore()
 const messageStore = useMessageStore()
 const userStore = useUserStore()
 
 const opened = ref(false)
-const subscription = ref()
+const subscriptions = ref([])
 
+const messages = computed(() => {
+  return messageStore.messages
+})
 const roomInvitations = computed(() => {
   return messageStore.roomInvitations
 })
@@ -31,14 +35,18 @@ onBeforeUnmount(() => {
 })
 
 function subscribe() {
-  subscription.value = stompClientStore.client!.subscribe('/user/topic/room/invitations', function (msgOut) {
-    messageStore.add(JSON.parse(msgOut.body) as RoomInvitation)
+  subscriptions.value.push(stompClientStore.client!.subscribe('/user/topic/messages', function (msgOut) {
+    messageStore.addMessage(JSON.parse(msgOut.body) as Message)
     opened.value = true
-  })
+  }))
+  subscriptions.value.push(stompClientStore.client!.subscribe('/user/topic/room/invitations', function (msgOut) {
+    messageStore.addRoomInvitation(JSON.parse(msgOut.body) as RoomInvitation)
+    opened.value = true
+  }))
 }
 
 function unsubscribe() {
-  subscription.value && subscription.value.unsubscribe()
+  subscriptions.value.forEach(subscription => subscription.unsubscribe())
 }
 </script>
 
@@ -49,15 +57,18 @@ function unsubscribe() {
       location="bottom"
   >
     <template v-slot:activator="{ props }">
-      <v-btn :color="!!roomInvitations.length ? 'primary' : ''" v-bind="props">
+      <v-btn :color="!!roomInvitations.length || !!messages.length ? 'primary' : ''" v-bind="props">
         Messages
       </v-btn>
     </template>
     <v-card min-width="300">
-      <div class="no-messages-div" v-if="!roomInvitations.length">You have no messages</div>
+      <div class="no-messages-div" v-if="!roomInvitations.length && !messages.length">You have no messages</div>
       <v-list v-else>
         <v-list-item v-for="invitation in roomInvitations">
           <room-invitation-card :invitation="invitation" />
+        </v-list-item>
+        <v-list-item v-for="message in messages">
+          <message-card :message="message" />
         </v-list-item>
       </v-list>
     </v-card>

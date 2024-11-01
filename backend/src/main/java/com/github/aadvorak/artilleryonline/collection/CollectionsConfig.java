@@ -25,4 +25,9 @@ public class CollectionsConfig {
     public RoomInvitationMap roomInvitationMap() {
         return new RoomInvitationMap();
     }
+
+    @Bean
+    public UserMessageMap userMessageMap() {
+        return new UserMessageMap();
+    }
 }
