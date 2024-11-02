@@ -6,7 +6,7 @@ export const JetAccelerationCalculator = {
   calculate(wheelCalculations: WheelCalculations, vehicleModel: VehicleModel): void {
     const jetState = vehicleModel.state.jetState
 
-    if (!jetState.active || jetState.volume <= 0) {
+    if (!jetState || !jetState.active || jetState.volume <= 0) {
       return
     }
 

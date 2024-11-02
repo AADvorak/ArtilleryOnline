@@ -15,7 +15,7 @@ export const VehicleProcessor = {
     if (vehicleModel.state.gunState.loadingShell) {
       vehicleModel.state.gunState.loadRemainTime -= timeStepSecs
     }
-    if (vehicleModel.state.jetState.volume < vehicleModel.config.jet.capacity) {
+    if (vehicleModel.state.jetState && vehicleModel.state.jetState.volume < vehicleModel.config.jet.capacity) {
       vehicleModel.state.jetState.volume += vehicleModel.state.jetState.active
           ? - vehicleModel.config.jet.consumption * timeStepSecs
           : vehicleModel.config.jet.regeneration * timeStepSecs

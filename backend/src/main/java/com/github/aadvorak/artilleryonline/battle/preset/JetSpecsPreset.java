@@ -8,11 +8,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum JetSpecsPreset {
 
-    DEFAULT("default", new JetSpecs()
-            .setCapacity(100.0)
-            .setConsumption(10.0)
+    LIGHT("light", new JetSpecs()
+            .setCapacity(30.0)
+            .setConsumption(15.0)
             .setRegeneration(1.0)
-            .setAcceleration(15.0));
+            .setAcceleration(13.0)),
+
+    MEDIUM("medium", new JetSpecs()
+            .setCapacity(30.0)
+            .setConsumption(20.0)
+            .setRegeneration(0.5)
+            .setAcceleration(12.0));
 
     private final String name;
 

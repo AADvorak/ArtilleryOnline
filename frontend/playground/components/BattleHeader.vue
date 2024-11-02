@@ -8,14 +8,21 @@ import BattleDebugButtons from "@/playground/components/BattleDebugButtons.vue";
 import {useSettingsStore} from "~/stores/settings";
 import JetBar from "~/playground/components/JetBar.vue";
 import LeaveBattleDialog from "~/playground/components/LeaveBattleDialog.vue";
+import {useUserStore} from "~/stores/user";
 
 const battleStore = useBattleStore()
+const userStore = useUserStore()
 const settingsStore = useSettingsStore()
 
 const leaveBattleDialog = ref<InstanceType<typeof LeaveBattleDialog> | null>(null)
 
 const userKeys = computed(() => {
   return Object.keys(battleStore.vehicles || {})
+})
+
+const jetAvailable = computed(() => {
+  const vehicle = battleStore.battle?.model.vehicles[userStore.user!.nickname]
+  return !!vehicle && !!vehicle.config.jet
 })
 
 const isDebugMode = computed(() => settingsStore.settings?.debug)
@@ -36,7 +43,7 @@ function showLeaveBattleDialog() {
     <div class="ml-5 hit-points-bar-wrapper">
       <HitPointsBar v-for="userKey in userKeys" :user-key="userKey" />
     </div>
-    <div class="ml-5 jet-bar-wrapper">
+    <div v-if="jetAvailable" class="ml-5 jet-bar-wrapper">
       <JetBar />
     </div>
     <div v-if="battleStore.isActive" class="ml-5">

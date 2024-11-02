@@ -1,13 +1,14 @@
-import { type WheelCalculations, WheelGroundState } from '@/playground/data/calculations'
-import type { VehicleModel } from '@/playground/data/model'
-import { MovingDirection } from '@/playground/data/common'
+import {type WheelCalculations, WheelGroundState} from '@/playground/data/calculations'
+import type {VehicleModel} from '@/playground/data/model'
+import {MovingDirection} from '@/playground/data/common'
 
 export const EngineAccelerationCalculator = {
   calculate(wheelCalculations: WheelCalculations, vehicleModel: VehicleModel): void {
     if (
-      vehicleModel.state.trackState.broken ||
-      WheelGroundState.FULL_UNDER_GROUND === wheelCalculations.groundState ||
-      WheelGroundState.FULL_OVER_GROUND === wheelCalculations.groundState
+        vehicleModel.state.trackState.broken ||
+        vehicleModel.state.jetState && vehicleModel.state.jetState.active ||
+        WheelGroundState.FULL_UNDER_GROUND === wheelCalculations.groundState ||
+        WheelGroundState.FULL_OVER_GROUND === wheelCalculations.groundState
     ) {
       return
     }

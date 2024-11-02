@@ -30,4 +30,6 @@ public class VehicleSpecs implements Specs {
     private double trackRepairTime;
 
     private Map<String, GunSpecs> availableGuns;
+
+    private Map<String, JetSpecs> availableJets;
 }

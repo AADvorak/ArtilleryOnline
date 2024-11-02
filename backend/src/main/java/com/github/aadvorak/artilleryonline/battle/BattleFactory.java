@@ -9,6 +9,7 @@ import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
 import com.github.aadvorak.artilleryonline.battle.preset.*;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleOnGroundProcessor;
+import com.github.aadvorak.artilleryonline.battle.specs.JetSpecs;
 import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.*;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
@@ -82,6 +83,10 @@ public class BattleFactory {
                     .map(VehicleSpecsPreset::getSpecs).findAny().orElseThrow());
             vehicleModel.setPreCalc(new VehiclePreCalc(vehicleModel.getSpecs()));
             var gun = vehicleModel.getSpecs().getAvailableGuns().values().iterator().next();
+            JetSpecs jet = null;
+            if (!vehicleModel.getSpecs().getAvailableJets().isEmpty()) {
+                jet = vehicleModel.getSpecs().getAvailableJets().values().iterator().next();
+            }
             var availableShellsNumber = gun.getAvailableShells().keySet().size();
             var ammo = new HashMap<String, Integer>();
             gun.getAvailableShells().keySet().forEach(shellName ->
@@ -89,7 +94,7 @@ public class BattleFactory {
             vehicleModel.setConfig(new VehicleConfig()
                     .setAmmo(ammo)
                     .setGun(gun)
-                    .setJet(JetSpecsPreset.DEFAULT.getSpecs()));
+                    .setJet(jet));
             vehicleModel.setState(new VehicleState()
                     .setAngle(0)
                     .setGunAngle(Math.PI / 2)
@@ -102,8 +107,8 @@ public class BattleFactory {
                             .setSelectedShell(ammo.keySet().stream().findAny().orElseThrow())
                             .setTriggerPushed(false))
                     .setTrackState(new TrackState())
-                    .setJetState(new JetState()
-                            .setVolume(JetSpecsPreset.DEFAULT.getSpecs().getCapacity())
+                    .setJetState(jet == null ? null : new JetState()
+                            .setVolume(jet.getCapacity())
                             .setActive(false)));
             VehicleOnGroundProcessor.estimateVehicleAngleByPosition(vehicleModel, battleModel.getRoom());
             VehicleOnGroundProcessor.correctVehiclePositionAndAngleOnGround(vehicleModel, battleModel.getRoom());
