@@ -5,6 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -14,9 +18,13 @@ public class MessageResponse {
 
     private String text;
 
+    private LocalDateTime time;
+
     public static MessageResponse of(Message message) {
         return new MessageResponse()
                 .setId(message.getId())
-                .setText(message.getText());
+                .setText(message.getText())
+                .setTime(LocalDateTime.ofInstant(Instant.ofEpochMilli(message.getCreateTime()),
+                        ZoneId.systemDefault()));
     }
 }

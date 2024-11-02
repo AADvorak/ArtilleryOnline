@@ -3,6 +3,7 @@ import type {Message} from '~/data/model'
 import {useMessageStore} from '~/stores/message'
 import {ApiRequestSender} from "~/api/api-request-sender";
 import {useRouter} from "#app";
+import {DateUtils} from "~/utils/DateUtils";
 
 const props = defineProps<{
   message: Message
@@ -11,6 +12,10 @@ const props = defineProps<{
 const router = useRouter()
 
 const messageStore = useMessageStore()
+
+const messageTime = computed(() => {
+  return DateUtils.getClientDateLocaleString(props.message.time)
+})
 
 async function deleteMessage() {
   try {
@@ -26,7 +31,7 @@ async function deleteMessage() {
 <template>
   <v-card width="100%">
     <v-card-text>
-      <div class="d-flex">{{ props.message.text }}</div>
+      <div class="d-flex">{{ messageTime }}: {{ props.message.text }}</div>
       <div class="d-flex mt-4">
         <v-btn @click="deleteMessage">Close</v-btn>
       </div>

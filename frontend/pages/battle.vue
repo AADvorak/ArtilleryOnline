@@ -5,7 +5,7 @@ import {useBattleStore} from "~/stores/battle";
 import {useQueueStore} from "~/stores/queue";
 import {useSettingsStore} from "~/stores/settings";
 import type {Battle} from "~/playground/data/battle";
-import type {UserBattleQueueParams, UserBattleQueueResponse, VehicleSpecsResponse} from "~/data/response";
+import type {UserBattleQueueParams, UserBattleQueueResponse} from "~/data/response";
 import {DateUtils} from "~/utils/DateUtils";
 import {usePresetsStore} from "~/stores/presets";
 
@@ -81,7 +81,7 @@ function checkUserInQueue() {
   if (!queueStore.queue) {
     return false
   }
-  const addDate = DateUtils.getClientDate(queueStore.queue!.addTime, settingsStore.timeZoneOffset)
+  const addDate = DateUtils.getClientDate(queueStore.queue!.addTime)
   const now = new Date()
   if (now.getTime() - addDate.getTime() > settingsStore.settings!.userBattleQueueTimeout) {
     queueStore.queue = null

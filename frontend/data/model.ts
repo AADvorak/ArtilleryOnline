@@ -20,6 +20,7 @@ export interface Room {
 export interface Message {
   id: string
   text: string
+  time: string
 }
 
 export interface RoomInvitation {
