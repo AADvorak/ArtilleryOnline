@@ -19,11 +19,6 @@ public class VehicleSpecs implements Specs {
 
     private double maxAngle;
 
-    /**
-     * todo remove, one friction for all vehicles
-     */
-    private double movingVelocity;
-
     private double acceleration;
 
     private double radius;

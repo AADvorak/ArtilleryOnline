@@ -19,7 +19,6 @@ public enum VehicleSpecsPreset {
             .setHitPoints(120.0)
             .setMinAngle(0.0)
             .setMaxAngle(Math.PI)
-            .setMovingVelocity(8.0)
             .setAcceleration(6.0)
             .setAvailableGuns(Map.of(GunSpecsPreset.HEAVY.getName(), GunSpecsPreset.HEAVY.getSpecs()))),
 
@@ -32,7 +31,6 @@ public enum VehicleSpecsPreset {
             .setHitPoints(100.0)
             .setMinAngle(0.0)
             .setMaxAngle(Math.PI)
-            .setMovingVelocity(8.0)
             .setAcceleration(10.0)
             .setAvailableGuns(Map.of(GunSpecsPreset.MEDIUM.getName(), GunSpecsPreset.MEDIUM.getSpecs()))),
 
@@ -45,7 +43,6 @@ public enum VehicleSpecsPreset {
             .setHitPoints(80.0)
             .setMinAngle(0.0)
             .setMaxAngle(Math.PI)
-            .setMovingVelocity(8.0)
             .setAcceleration(14.0)
             .setAvailableGuns(Map.of(GunSpecsPreset.LIGHT.getName(), GunSpecsPreset.LIGHT.getSpecs())));
 
