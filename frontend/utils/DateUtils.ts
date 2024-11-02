@@ -1,10 +1,9 @@
 import {useSettingsStore} from '~/stores/settings'
 
-const settingsStore = useSettingsStore()
-
 export const DateUtils = {
 
   getClientDate(serverDate: string) {
+    const settingsStore = useSettingsStore()
     const date = new Date(serverDate)
     const serverOffset = settingsStore.timeZoneOffset
     const clientOffset = date.getTimezoneOffset() * 60
