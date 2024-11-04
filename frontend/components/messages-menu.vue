@@ -5,6 +5,7 @@ import type {Message, RoomInvitation} from "~/data/model";
 import {useUserStore} from "~/stores/user";
 import {useStompClientStore} from "~/stores/stomp-client";
 import MessageCard from "~/components/message-card.vue";
+import { mdiMessage } from '@mdi/js'
 
 const stompClientStore = useStompClientStore()
 const messageStore = useMessageStore()
@@ -58,7 +59,13 @@ function unsubscribe() {
   >
     <template v-slot:activator="{ props }">
       <v-btn :color="!!roomInvitations.length || !!messages.length ? 'primary' : ''" v-bind="props">
-        Messages
+        <v-icon :icon="mdiMessage" />
+        <v-tooltip
+            activator="parent"
+            location="bottom"
+            open-delay="1000">
+          Messages
+        </v-tooltip>
       </v-btn>
     </template>
     <v-card min-width="300">

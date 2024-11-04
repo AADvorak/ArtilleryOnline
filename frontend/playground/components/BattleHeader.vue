@@ -9,6 +9,7 @@ import {useSettingsStore} from "~/stores/settings";
 import JetBar from "~/playground/components/JetBar.vue";
 import LeaveBattleDialog from "~/playground/components/LeaveBattleDialog.vue";
 import {useUserStore} from "~/stores/user";
+import { mdiCloseThick } from '@mdi/js'
 
 const battleStore = useBattleStore()
 const userStore = useUserStore()
@@ -51,7 +52,15 @@ function showLeaveBattleDialog() {
     </div>
     <v-spacer/>
     <messages-menu/>
-    <v-btn @click="showLeaveBattleDialog">Leave battle</v-btn>
+    <v-btn @click="showLeaveBattleDialog">
+      <v-icon :icon="mdiCloseThick" />
+      <v-tooltip
+          activator="parent"
+          location="bottom"
+          open-delay="1000">
+        Leave battle
+      </v-tooltip>
+    </v-btn>
     <LeaveBattleDialog ref="leaveBattleDialog"/>
   </v-app-bar>
 </template>

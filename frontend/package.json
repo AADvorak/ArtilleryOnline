@@ -11,8 +11,9 @@
     "start": "nuxt start"
   },
   "dependencies": {
-    "@stomp/stompjs": "^7.0.0",
+    "@mdi/js": "^7.4.47",
     "@pinia/nuxt": "^0.5.5",
+    "@stomp/stompjs": "^7.0.0",
     "nuxt": "^3.13.0",
     "pinia": "^2.2.4",
     "vue": "^3.4.29",
