@@ -4,6 +4,7 @@ import { ref, watch } from 'vue'
 import type { Battle } from '@/playground/data/battle'
 import type { CommandsSender } from '@/playground/composables/commands-sender'
 import { Command } from '@/playground/data/command'
+import {mdiRecord, mdiStop} from '@mdi/js'
 
 const props = defineProps<{
   commandsSender: CommandsSender
@@ -86,6 +87,22 @@ function saveToFile(href: string, fileName: string) {
 </script>
 
 <template>
-  <v-btn color="success" v-if="!active" @click="startTracking">Track history</v-btn>
-  <v-btn color="error" v-else @click="stopTrackingAndSaveCsv">Stop tracking</v-btn>
+  <v-btn color="error" v-if="!active" @click="startTracking">
+    <v-icon :icon="mdiRecord" />
+    <v-tooltip
+        activator="parent"
+        location="bottom"
+        open-delay="1000">
+      Track history
+    </v-tooltip>
+  </v-btn>
+  <v-btn color="error" v-else @click="stopTrackingAndSaveCsv">
+    <v-icon :icon="mdiStop" />
+    <v-tooltip
+        activator="parent"
+        location="bottom"
+        open-delay="1000">
+      Stop tracking
+    </v-tooltip>
+  </v-btn>
 </template>
