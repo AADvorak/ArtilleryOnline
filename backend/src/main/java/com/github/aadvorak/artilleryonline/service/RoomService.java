@@ -83,6 +83,23 @@ public class RoomService {
         }
     }
 
+    public void removeUserFromRoom(String nickname) {
+        var user = userService.getUserFromContext();
+        var room = requireOwnRoom(user);
+        var guestToRemove = room.getGuests().values().stream()
+                .filter(guest -> guest.getNickname().equals(nickname))
+                .findAny();
+        guestToRemove.ifPresent(guest -> {
+            room.getGuests().remove(guest.getUser().getId());
+            userRoomMap.remove(guest.getUser().getId());
+            messageService.createMessage(guest.getUser(),
+                    "User " + user.getNickname() + " removed you from the room");
+            roomUpdatesSender.sendRoomUpdate(room);
+            roomUpdatesSender.sendRoomDelete(room, guest.getUser());
+            log.info("removeUserFromRoom: nickname {}, map size {}", user.getNickname(), userRoomMap.size());
+        });
+    }
+
     public Room requireOwnRoom(User user) {
         var room = userRoomMap.get(user.getId());
         if (room == null) {

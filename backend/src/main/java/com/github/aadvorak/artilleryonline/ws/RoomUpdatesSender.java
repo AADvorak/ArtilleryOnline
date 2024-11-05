@@ -33,4 +33,9 @@ public class RoomUpdatesSender {
         emails.forEach(email -> simpMessagingTemplate.convertAndSendToUser(email,
                 "/topic/room/updates", roomResponse));
     }
+
+    public void sendRoomDelete(Room room, User user) {
+        simpMessagingTemplate.convertAndSendToUser(user.getEmail(),
+                "/topic/room/updates", RoomResponse.deletedOf(room));
+    }
 }

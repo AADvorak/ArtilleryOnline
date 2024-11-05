@@ -39,11 +39,8 @@ const readyToBattle = computed(() => {
   return true
 })
 
-const userIsBattleOwner = computed(() => {
-  const members = roomStore.room?.members || []
-  const ownerNickname = members.filter(member => member.owner).map(member => member.nickname)[0]
-  const userNickname = userStore.user!.nickname
-  return ownerNickname === userNickname
+const userIsRoomOwner = computed(() => {
+  return roomStore.userIsRoomOwner(userStore.user!)
 })
 
 watch(selectedVehicle, async (value) => {
@@ -126,7 +123,7 @@ async function exit() {
           />
         </v-form>
         <v-btn
-            v-if="userIsBattleOwner"
+            v-if="userIsRoomOwner"
             class="mb-4"
             width="100%"
             color="error"
@@ -135,7 +132,7 @@ async function exit() {
         >
           Battle
         </v-btn>
-        <v-expansion-panels v-if="userIsBattleOwner" class="mb-4" v-model="openedPanels" multiple>
+        <v-expansion-panels class="mb-4" v-model="openedPanels" multiple>
           <v-expansion-panel value="playersPanel">
             <v-expansion-panel-title>
               <v-icon class="mr-2" :icon="mdiAccountMultiple"/>
@@ -145,7 +142,7 @@ async function exit() {
               <room-members-table class="mb-4"/>
             </v-expansion-panel-text>
           </v-expansion-panel>
-          <v-expansion-panel value="invitePlayersPanel">
+          <v-expansion-panel v-if="userIsRoomOwner" value="invitePlayersPanel">
             <v-expansion-panel-title>
               <v-icon class="mr-2" :icon="mdiAccountPlus"/>
               Invite players

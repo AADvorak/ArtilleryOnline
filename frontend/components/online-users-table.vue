@@ -53,7 +53,7 @@ function userIsInvited(user) {
     <tbody v-else>
     <tr v-for="onlineUser of onlineUsers">
       <td>{{ onlineUser.nickname }}</td>
-      <td>
+      <td class="btn-column">
         <template v-if="userIsInvited(onlineUser)">Invitation sent</template>
         <v-btn v-else variant="text" @click="inviteUser(onlineUser)">Invite</v-btn>
       </td>
@@ -61,3 +61,10 @@ function userIsInvited(user) {
     </tbody>
   </v-table>
 </template>
+
+<style scoped>
+.btn-column {
+  text-align: right;
+}
+</style>
+

@@ -15,6 +15,7 @@ function click() {
 <template>
   <v-btn
       class="btn-with-icon"
+      variant="text"
       :color="props.color"
       @click="click"
   >
