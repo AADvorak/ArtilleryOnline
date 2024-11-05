@@ -33,6 +33,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   await userStore.loadUserIfNull()
 
   if (!!userStore.user) {
+    await stompClientStore.connect()
     await messageStore.loadMessages()
     await messageStore.loadInvitations()
     await userSettingsStore.loadControlsIfNull()
@@ -44,10 +45,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   if (!!userStore.user && !battleStore.battle) {
     await queueStore.loadQueueIfNull()
-  }
-
-  if (!!userStore.user) {
-    await stompClientStore.connect()
   }
 
   if (!userStore.user && !UNSIGNED_PATHS.includes(to.path)) {

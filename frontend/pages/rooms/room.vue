@@ -4,8 +4,6 @@ import {ApiRequestSender} from "~/api/api-request-sender";
 import {usePresetsStore} from "~/stores/presets";
 import {useRoomStore} from "~/stores/room";
 import RoomMembersTable from "~/components/room-members-table.vue";
-import {useStompClientStore} from "~/stores/stomp-client";
-import type {Room} from "~/data/model";
 import {useUserStore} from "~/stores/user";
 import {mdiAccountMultiple, mdiAccountPlus} from '@mdi/js'
 
@@ -15,12 +13,10 @@ const router = useRouter()
 
 const presetsStore = usePresetsStore()
 const roomStore = useRoomStore()
-const stompClientStore = useStompClientStore()
 const userStore = useUserStore()
 
 const selectedVehicle = ref<string>()
 const openedPanels = ref<string[]>(['playersPanel'])
-const subscription = ref()
 
 const vehicles = computed(() => {
   return Object.keys(presetsStore.vehicles)
@@ -49,30 +45,17 @@ watch(selectedVehicle, async (value) => {
   }
 })
 
+watch(() => roomStore.room, value => {
+  if (!value) {
+    router.push('/rooms')
+  } else if (value.inBattle) {
+    router.push('/playground')
+  }
+})
+
 onMounted(() => {
-  subscribeToRoomUpdates()
   setSelectedVehicle()
 })
-
-onBeforeUnmount(() => {
-  unsubscribeFromRoomUpdates()
-})
-
-function subscribeToRoomUpdates() {
-  subscription.value = stompClientStore.client!.subscribe('/user/topic/room/updates', function (msgOut) {
-    roomStore.room = JSON.parse(msgOut.body) as Room
-    if (roomStore.room.inBattle) {
-      router.push('/playground')
-    } else if (roomStore.room.deleted) {
-      roomStore.room = null
-      router.push('/rooms')
-    }
-  })
-}
-
-function unsubscribeFromRoomUpdates() {
-  subscription.value && subscription.value.unsubscribe()
-}
 
 function setSelectedVehicle() {
   const memberVehicle = (roomStore.room?.members || [])
