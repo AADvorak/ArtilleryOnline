@@ -7,6 +7,8 @@ import RoomMembersTable from "~/components/room-members-table.vue";
 import {useStompClientStore} from "~/stores/stomp-client";
 import type {Room} from "~/data/model";
 import {useUserStore} from "~/stores/user";
+import {mdiAccountMultiple, mdiAccountPlus} from '@mdi/js'
+
 const api = new ApiRequestSender()
 
 const router = useRouter()
@@ -17,7 +19,7 @@ const stompClientStore = useStompClientStore()
 const userStore = useUserStore()
 
 const selectedVehicle = ref<string>()
-const openedPanels = ref<string[]>([])
+const openedPanels = ref<string[]>(['playersPanel'])
 const subscription = ref()
 
 const vehicles = computed(() => {
@@ -133,11 +135,21 @@ async function exit() {
         >
           Battle
         </v-btn>
-        <h3>Players</h3>
-        <room-members-table class="mb-4"/>
-        <v-expansion-panels v-if="userIsBattleOwner" class="mb-4" v-model="openedPanels">
+        <v-expansion-panels v-if="userIsBattleOwner" class="mb-4" v-model="openedPanels" multiple>
+          <v-expansion-panel value="playersPanel">
+            <v-expansion-panel-title>
+              <v-icon class="mr-2" :icon="mdiAccountMultiple"/>
+              Players
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <room-members-table class="mb-4"/>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
           <v-expansion-panel value="invitePlayersPanel">
-            <v-expansion-panel-title>Invite players</v-expansion-panel-title>
+            <v-expansion-panel-title>
+              <v-icon class="mr-2" :icon="mdiAccountPlus"/>
+              Invite players
+            </v-expansion-panel-title>
             <v-expansion-panel-text>
               <online-users-table />
             </v-expansion-panel-text>
