@@ -10,6 +10,7 @@ import JetBar from "~/playground/components/JetBar.vue";
 import LeaveBattleDialog from "~/playground/components/LeaveBattleDialog.vue";
 import {useUserStore} from "~/stores/user";
 import { mdiCloseThick } from '@mdi/js'
+import IconBtn from "~/components/icon-btn.vue";
 
 const battleStore = useBattleStore()
 const userStore = useUserStore()
@@ -52,15 +53,11 @@ function showLeaveBattleDialog() {
     </div>
     <v-spacer/>
     <messages-menu/>
-    <v-btn @click="showLeaveBattleDialog">
-      <v-icon :icon="mdiCloseThick" />
-      <v-tooltip
-          activator="parent"
-          location="bottom"
-          open-delay="1000">
-        Leave battle
-      </v-tooltip>
-    </v-btn>
+    <icon-btn
+        :icon="mdiCloseThick"
+        tooltip="Leave battle"
+        @click="showLeaveBattleDialog"
+    />
     <LeaveBattleDialog ref="leaveBattleDialog"/>
   </v-app-bar>
 </template>

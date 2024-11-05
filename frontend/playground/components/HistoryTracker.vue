@@ -87,22 +87,18 @@ function saveToFile(href: string, fileName: string) {
 </script>
 
 <template>
-  <v-btn color="error" v-if="!active" @click="startTracking">
-    <v-icon :icon="mdiRecord" />
-    <v-tooltip
-        activator="parent"
-        location="bottom"
-        open-delay="1000">
-      Track history
-    </v-tooltip>
-  </v-btn>
-  <v-btn color="error" v-else @click="stopTrackingAndSaveCsv">
-    <v-icon :icon="mdiStop" />
-    <v-tooltip
-        activator="parent"
-        location="bottom"
-        open-delay="1000">
-      Stop tracking
-    </v-tooltip>
-  </v-btn>
+  <icon-btn
+      v-if="!active"
+      :icon="mdiRecord"
+      tooltip="Track history"
+      color="error"
+      @click="startTracking"
+  />
+  <icon-btn
+      v-else
+      :icon="mdiStop"
+      tooltip="Stop tracking"
+      color="error"
+      @click="stopTrackingAndSaveCsv"
+  />
 </template>

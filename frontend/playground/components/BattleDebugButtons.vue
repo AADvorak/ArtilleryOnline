@@ -29,33 +29,27 @@ function switchState() {
 </script>
 
 <template>
-  <v-btn v-show="!battleStore.paused" color="warning" @click="pause">
-    <v-icon :icon="mdiPause" />
-    <v-tooltip
-        activator="parent"
-        location="bottom"
-        open-delay="1000">
-      Pause
-    </v-tooltip>
-  </v-btn>
-  <v-btn v-show="battleStore.paused" color="success" @click="resume">
-    <v-icon :icon="mdiPlay" />
-    <v-tooltip
-        activator="parent"
-        location="bottom"
-        open-delay="1000">
-      Resume
-    </v-tooltip>
-  </v-btn>
-  <v-btn v-show="battleStore.paused" color="warning" @click="step">
-    <v-icon :icon="mdiStepForward" />
-    <v-tooltip
-        activator="parent"
-        location="bottom"
-        open-delay="1000">
-      Step forward
-    </v-tooltip>
-  </v-btn>
+  <icon-btn
+      v-show="!battleStore.paused"
+      :icon="mdiPause"
+      tooltip="Pause"
+      color="warning"
+      @click="pause"
+  />
+  <icon-btn
+      v-show="battleStore.paused"
+      :icon="mdiPlay"
+      tooltip="Resume"
+      color="success"
+      @click="resume"
+  />
+  <icon-btn
+      v-show="battleStore.paused"
+      :icon="mdiStepForward"
+      tooltip="Step forward"
+      color="warning"
+      @click="step"
+  />
   <HistoryTracker :commands-sender="commandsSender"/>
   <v-btn v-show="battleStore.paused && settingsStore.settings.clientProcessing" color="secondary" @click="switchState">
     State: {{ battleStore.showServerState ? 'server' : 'client' }}

@@ -58,7 +58,11 @@ function unsubscribe() {
       location="bottom"
   >
     <template v-slot:activator="{ props }">
-      <v-btn :color="!!roomInvitations.length || !!messages.length ? 'primary' : ''" v-bind="props">
+      <v-btn
+          class="btn-with-icon"
+          :color="!!roomInvitations.length || !!messages.length ? 'primary' : ''"
+          v-bind="props"
+      >
         <v-icon :icon="mdiMessage" />
         <v-tooltip
             activator="parent"
@@ -85,5 +89,11 @@ function unsubscribe() {
 <style scoped>
 .no-messages-div {
   height: 50px;
+}
+
+.btn-with-icon {
+  width: 36px;
+  min-width: 36px;
+  padding: 0 0;
 }
 </style>
