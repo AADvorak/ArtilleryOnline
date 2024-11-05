@@ -55,6 +55,7 @@ function selectShell(key) {
   <v-progress-circular v-if="showProgress" color="lime" :model-value="reloadingProgress" />
   <template v-for="ammoKey in ammoKeys">
     <v-btn
+        class="ammo-btn"
         :color="ammoKey === selectedShell ? 'primary' : ''"
         @click="() => selectShell(ammoKey)"
     >
@@ -62,3 +63,9 @@ function selectShell(key) {
     </v-btn>
   </template>
 </template>
+
+<style scoped>
+.ammo-btn {
+  padding: 0 8px;
+}
+</style>
