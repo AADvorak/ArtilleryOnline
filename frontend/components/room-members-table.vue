@@ -3,19 +3,13 @@ import {useRoomStore} from '~/stores/room'
 import {mdiCrown, mdiKnifeMilitary, mdiAccountRemove} from '@mdi/js'
 import type {RoomMember} from '~/data/model'
 import {ApiRequestSender} from '~/api/api-request-sender'
-import {useUserStore} from "~/stores/user";
 
 const api = new ApiRequestSender()
 
 const roomStore = useRoomStore()
-const userStore = useUserStore()
 
 const roomMembers = computed(() => {
   return roomStore.room?.members.sort(sortMembers) || []
-})
-
-const userIsRoomOwner = computed(() => {
-  return roomStore.userIsRoomOwner(userStore.user!)
 })
 
 function sortMembers(a: RoomMember, b: RoomMember) {
@@ -44,7 +38,7 @@ async function removeUserFromRoom(nickname: string) {
       <th class="text-left">
         Selected vehicle
       </th>
-      <th v-if="userIsRoomOwner"></th>
+      <th v-if="roomStore.userIsRoomOwner"></th>
     </tr>
     </thead>
     <tbody>
@@ -54,7 +48,7 @@ async function removeUserFromRoom(nickname: string) {
         {{ roomMember.nickname }}
       </td>
       <td>{{ roomMember.selectedVehicle }}</td>
-      <td v-if="userIsRoomOwner" class="btn-column">
+      <td v-if="roomStore.userIsRoomOwner" class="btn-column">
         <icon-btn
             v-if="!roomMember.owner"
             color="error"

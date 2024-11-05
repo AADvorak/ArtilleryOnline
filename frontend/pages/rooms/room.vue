@@ -39,10 +39,6 @@ const readyToBattle = computed(() => {
   return true
 })
 
-const userIsRoomOwner = computed(() => {
-  return roomStore.userIsRoomOwner(userStore.user!)
-})
-
 watch(selectedVehicle, async (value) => {
   try {
     await api.putJson('/rooms/select-vehicle', {
@@ -123,7 +119,7 @@ async function exit() {
           />
         </v-form>
         <v-btn
-            v-if="userIsRoomOwner"
+            v-if="roomStore.userIsRoomOwner"
             class="mb-4"
             width="100%"
             color="error"
@@ -142,7 +138,7 @@ async function exit() {
               <room-members-table class="mb-4"/>
             </v-expansion-panel-text>
           </v-expansion-panel>
-          <v-expansion-panel v-if="userIsRoomOwner" value="invitePlayersPanel">
+          <v-expansion-panel v-if="roomStore.userIsRoomOwner" value="invitePlayersPanel">
             <v-expansion-panel-title>
               <v-icon class="mr-2" :icon="mdiAccountPlus"/>
               Invite players
