@@ -69,7 +69,6 @@ function setSelectedVehicle() {
 async function startBattle() {
   try {
     await api.postJson('/rooms/start-battle', {})
-    await router.push('/playground')
   } catch (e) {
     console.log(e)
   }
