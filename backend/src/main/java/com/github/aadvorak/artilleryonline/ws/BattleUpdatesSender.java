@@ -2,7 +2,7 @@ package com.github.aadvorak.artilleryonline.ws;
 
 import com.github.aadvorak.artilleryonline.collection.BattleUpdatesQueue;
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
-import com.github.aadvorak.artilleryonline.dto.response.BattleStateResponse;
+import com.github.aadvorak.artilleryonline.dto.response.BattleUpdateResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -26,8 +26,8 @@ public class BattleUpdatesSender {
                     if (queueElement instanceof BattleResponse battleResponse) {
                         sendBattleUpdate(battleResponse);
                     }
-                    if (queueElement instanceof BattleStateResponse battleStateResponse) {
-                        sendBattleStateUpdate(battleStateResponse);
+                    if (queueElement instanceof BattleUpdateResponse battleUpdateResponse) {
+                        sendBattleStateUpdate(battleUpdateResponse);
                     }
                 } else {
                     sleep();
@@ -37,13 +37,13 @@ public class BattleUpdatesSender {
     }
 
     private void sendBattleUpdate(BattleResponse battleResponse) {
-        simpMessagingTemplate.convertAndSend("/topic/battle/updates/"
+        simpMessagingTemplate.convertAndSend("/topic/battle/"
                         + battleResponse.getId(), battleResponse);
     }
 
-    private void sendBattleStateUpdate(BattleStateResponse battleStateResponse) {
-        simpMessagingTemplate.convertAndSend("/topic/battle/updates/"
-                + battleStateResponse.getId() + "/state", battleStateResponse);
+    private void sendBattleStateUpdate(BattleUpdateResponse battleUpdateResponse) {
+        simpMessagingTemplate.convertAndSend("/topic/battle/"
+                + battleUpdateResponse.getId() + "/updates", battleUpdateResponse);
     }
 
     private void sleep() {

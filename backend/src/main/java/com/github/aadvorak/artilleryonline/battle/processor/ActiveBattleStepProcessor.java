@@ -9,7 +9,6 @@ import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionP
 import com.github.aadvorak.artilleryonline.battle.processor.shell.ShellFlyProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.*;
 
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class ActiveBattleStepProcessor extends BattleStepProcessorBase implements BattleStepProcessor {
@@ -38,24 +37,25 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         battleCalculations.getVehicles().forEach(vehicleCalculations ->
                 VehicleMoveProcessor.processStep2(vehicleCalculations, battleCalculations));
 
-        var explosionIdsToRemove = new ArrayList<Integer>();
         battleModel.getExplosions().values().forEach(explosionModel ->
-                ExplosionProcessor.processStep(explosionModel, battleModel, explosionIdsToRemove));
-        if (!explosionIdsToRemove.isEmpty()) {
-            battleModel.setUpdated(true);
-        }
-        explosionIdsToRemove.forEach(battleModel::removeExplosionById);
+                ExplosionProcessor.processStep(explosionModel, battleModel));
 
-        var shellIdsToRemove = new ArrayList<Integer>();
         battleModel.getShells().values().forEach(shellModel ->
-                ShellFlyProcessor.processStep(shellModel, battleModel, shellIdsToRemove));
-        if (!shellIdsToRemove.isEmpty()) {
-            battleModel.setUpdated(true);
+                ShellFlyProcessor.processStep(shellModel, battleModel));
+
+        if (battleModel.getUpdates().getRemoved() != null) {
+            var removedExplosions = battleModel.getUpdates().getRemoved().getExplosionIds();
+            if (removedExplosions != null) {
+                removedExplosions.forEach(battleModel::removeExplosionById);
+            }
+            var removedShells = battleModel.getUpdates().getRemoved().getShellIds();
+            if (removedShells != null) {
+                removedShells.forEach(id -> {
+                    ExplosionProcessor.initExplosion(battleModel.getShells().get(id), battleModel);
+                    battleModel.removeShellById(id);
+                });
+            }
         }
-        shellIdsToRemove.forEach(id -> {
-            ExplosionProcessor.initExplosion(battleModel.getShells().get(id), battleModel);
-            battleModel.removeShellById(id);
-        });
     }
 
     @Override

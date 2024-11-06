@@ -8,11 +8,9 @@ import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
-import java.util.List;
-
 public class ShellFlyProcessor {
 
-    public static void processStep(ShellModel shellModel, BattleModel battleModel, List<Integer> shellIdsToRemove) {
+    public static void processStep(ShellModel shellModel, BattleModel battleModel) {
         var prevPosition = shellModel.getState().getPosition();
         var velocity = shellModel.getState().getVelocity();
         var angle = shellModel.getState().getAngle();
@@ -23,24 +21,24 @@ public class ShellFlyProcessor {
                 .setY(prevPosition.getY() + velocityY * battleModel.getCurrentTimeStepSecs());
         shellModel.getState().setPosition(nextPosition);
         if (positionIsOutOfRoom(nextPosition, battleModel.getRoom().getSpecs())) {
-            shellIdsToRemove.add(shellModel.getId());
+            battleModel.getUpdates().removeShell(shellModel.getId());
             return;
         }
         var hitTrackVehicle = getHitTrack(prevPosition, nextPosition, battleModel);
         if (hitTrackVehicle != null) {
             ShellDamageProcessor.processHitTrack(nextPosition, hitTrackVehicle, shellModel.getSpecs(), battleModel);
-            shellIdsToRemove.add(shellModel.getId());
+            battleModel.getUpdates().removeShell(shellModel.getId());
             return;
         }
         var hitVehicle = getHitVehicle(prevPosition, nextPosition, battleModel);
         if (hitVehicle != null) {
             ShellDamageProcessor.processHitVehicle(nextPosition, hitVehicle, shellModel, battleModel);
-            shellIdsToRemove.add(shellModel.getId());
+            battleModel.getUpdates().removeShell(shellModel.getId());
             return;
         }
         if (isHitGround(nextPosition, battleModel)) {
             ShellDamageProcessor.processHitGround(nextPosition, shellModel.getSpecs(), battleModel);
-            shellIdsToRemove.add(shellModel.getId());
+            battleModel.getUpdates().removeShell(shellModel.getId());
             return;
         }
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();

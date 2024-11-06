@@ -6,6 +6,7 @@ import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.specs.ShellSpecs;
+import com.github.aadvorak.artilleryonline.battle.updates.RoomStateUpdate;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
@@ -92,6 +93,7 @@ public class ShellDamageProcessor {
         var damageRadius = shellSpecs.getRadius();
         var groundIndexes = BattleUtils.getGroundIndexesBetween(hitPosition.getX() - damageRadius,
                 hitPosition.getX() + damageRadius, battleModel.getRoom());
+        var roomStateUpdate = new RoomStateUpdate().setBegin(groundIndexes.get(0));
         for (var groundIndex : groundIndexes) {
             var groundPosition = BattleUtils.getGroundPosition(groundIndex, battleModel.getRoom());
             var explosionShiftY = getExplosionShiftY(groundPosition.getX(), hitPosition, damageRadius);
@@ -103,8 +105,11 @@ public class ShellDamageProcessor {
             } else if (diffY > 0) {
                 groundY -= diffY;
             }
-            battleModel.getRoom().getState().getGroundLine().set(groundIndex, groundY > 0 ? groundY : 0);
+            groundY = groundY > 0 ? groundY : 0;
+            battleModel.getRoom().getState().getGroundLine().set(groundIndex, groundY);
+            roomStateUpdate.getGroundLinePart().add(groundY);
         }
+        battleModel.getUpdates().addRoomStateUpdate(roomStateUpdate);
     }
 
     private static double getExplosionShiftY(double x, Position hitPosition, double damageRadius) {
@@ -127,5 +132,6 @@ public class ShellDamageProcessor {
         vehicleVelocity
                 .setX(vehicleVelocity.getX() + pushCoefficient * shellVelocity * Math.cos(shellAngle))
                 .setY(vehicleVelocity.getY() + pushCoefficient * shellVelocity * Math.sin(shellAngle));
+        vehicleModel.setUpdated(true);
     }
 }

@@ -2,10 +2,11 @@ package com.github.aadvorak.artilleryonline.battle;
 
 import com.github.aadvorak.artilleryonline.battle.processor.ActiveBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.WaitingBattleStepProcessor;
+import com.github.aadvorak.artilleryonline.battle.updates.BattleModelUpdates;
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.dto.response.BattleModelStateResponse;
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
-import com.github.aadvorak.artilleryonline.dto.response.BattleStateResponse;
+import com.github.aadvorak.artilleryonline.dto.response.BattleUpdateResponse;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import com.github.aadvorak.artilleryonline.service.MessageService;
 import com.github.aadvorak.artilleryonline.ws.BattleUpdatesSender;
@@ -45,6 +46,7 @@ public class BattleRunner {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
+                battle.getModel().setUpdates(new BattleModelUpdates());
                 processBattleStep(battle);
                 setBattleUpdatedByTimeout(battle);
                 sendBattleToUpdatesQueue(battle);
@@ -110,19 +112,31 @@ public class BattleRunner {
     }
 
     private void sendBattleStateToUpdatesQueue(Battle battle) {
-        var vehicles = battle.getModel().getVehicles().entrySet();
-        if (vehicles.stream().anyMatch(vehicleEntry -> vehicleEntry.getValue().isUpdated())) {
-            var vehicleStates = vehicles.stream()
-                    .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
-            var shellStates = battle.getModel().getShells().entrySet().stream()
-                    .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
-            battle.getQueues().getBattleUpdatesQueue().add(new BattleStateResponse()
+        var sendState = battle.getModel().getVehicles().entrySet().stream()
+                .anyMatch(vehicleEntry -> vehicleEntry.getValue().isUpdated());
+        var sendUpdates = !battle.getModel().getUpdates().isEmpty();
+        if (sendState || sendUpdates) {
+            var battleUpdateResponse = new BattleUpdateResponse()
                     .setId(battle.getId())
-                    .setTime(battle.getTime())
-                    .setState(new BattleModelStateResponse()
-                            .setVehicles(vehicleStates)
-                            .setShells(shellStates)));
+                    .setTime(battle.getTime());
+            if (sendState) {
+                battleUpdateResponse.setState(createBattleModelStateResponse(battle));
+            }
+            if (sendUpdates) {
+                battleUpdateResponse.setUpdates(battle.getModel().getUpdates());
+            }
+            battle.getQueues().getBattleUpdatesQueue().add(battleUpdateResponse);
         }
+    }
+
+    private BattleModelStateResponse createBattleModelStateResponse(Battle battle) {
+        var vehicleStates = battle.getModel().getVehicles().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
+        var shellStates = battle.getModel().getShells().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
+        return new BattleModelStateResponse()
+                .setVehicles(vehicleStates)
+                .setShells(shellStates);
     }
 
     private void resetUpdatedFlags(Battle battle) {

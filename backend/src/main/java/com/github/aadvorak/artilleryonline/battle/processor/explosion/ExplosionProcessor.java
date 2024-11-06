@@ -7,8 +7,6 @@ import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.specs.ExplosionSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.ExplosionState;
 
-import java.util.List;
-
 public class ExplosionProcessor {
 
     public static void initExplosion(ShellModel shellModel, BattleModel battleModel) {
@@ -24,13 +22,14 @@ public class ExplosionProcessor {
         explosionModel.setSpecs(explosionSpecs);
         explosionModel.setState(explosionState);
         battleModel.getExplosions().put(explosionModel.getId(), explosionModel);
+        battleModel.getUpdates().addExplosion(explosionModel);
     }
 
-    public static void processStep(ExplosionModel explosionModel, BattleModel battleModel, List<Integer> explosionIdsToRemove) {
+    public static void processStep(ExplosionModel explosionModel, BattleModel battleModel) {
         var explosionState = explosionModel.getState();
         explosionState.setTime(explosionState.getTime() + battleModel.getCurrentTimeStepSecs());
         if (explosionState.getTime() > explosionModel.getSpecs().getDuration()) {
-            explosionIdsToRemove.add(explosionModel.getId());
+            battleModel.getUpdates().removeExplosion(explosionModel.getId());
             return;
         }
         explosionState.setRadius(explosionModel.getSpecs().getRadius()

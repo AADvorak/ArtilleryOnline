@@ -1,5 +1,6 @@
 import type {BattleModel} from "@/playground/data/model";
 import type {BattleModelState} from "@/playground/data/state";
+import type {BattleModelUpdates} from "~/playground/data/updates";
 
 export enum BattleStage {
   WAITING = 'WAITING',
@@ -15,8 +16,9 @@ export interface Battle {
   battleStage: BattleStage
 }
 
-export interface BattleState {
+export interface BattleUpdate {
   id: string
   time: number
-  state: BattleModelState
+  state?: BattleModelState
+  updates?: BattleModelUpdates
 }
