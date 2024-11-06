@@ -2,6 +2,7 @@
 import type {User} from "~/data/model";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import {useRoomStore} from "~/stores/room";
+import {useRequestErrorHandler} from "~/composables/request-error-handler";
 
 const roomStore = useRoomStore()
 
@@ -22,7 +23,7 @@ async function loadOnlineUsers() {
     const users = await new ApiRequestSender().getJson<User[]>('/users/online')
     onlineUsers.value = users.filter(user => !roomMemberNicknames.value.includes(user.nickname))
   } catch (e) {
-    console.log(e)
+    useRequestErrorHandler().handle(e)
   }
 }
 
@@ -31,7 +32,7 @@ async function inviteUser(user) {
     await new ApiRequestSender().postJson('/rooms/invitations', user)
     invitedUsers.value.push(user)
   } catch (e) {
-    console.log(e)
+    useRequestErrorHandler().handle(e)
   }
 }
 

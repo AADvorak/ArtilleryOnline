@@ -3,6 +3,7 @@ import {useRoomStore} from '~/stores/room'
 import {mdiCrown, mdiKnifeMilitary, mdiAccountRemove} from '@mdi/js'
 import type {RoomMember} from '~/data/model'
 import {ApiRequestSender} from '~/api/api-request-sender'
+import {useRequestErrorHandler} from "~/composables/request-error-handler";
 
 const api = new ApiRequestSender()
 
@@ -23,7 +24,7 @@ async function removeUserFromRoom(nickname: string) {
   try {
     await api.delete(`/rooms/guests/${nickname}`)
   } catch (e) {
-    console.log(e)
+    useRequestErrorHandler().handle(e)
   }
 }
 </script>

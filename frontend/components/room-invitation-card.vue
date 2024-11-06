@@ -4,6 +4,7 @@ import {useMessageStore} from '~/stores/message'
 import {ApiRequestSender} from "~/api/api-request-sender";
 import {useRoomStore} from "~/stores/room";
 import {useRouter} from "#app";
+import {useRequestErrorHandler} from "~/composables/request-error-handler";
 
 const props = defineProps<{
   invitation: RoomInvitation
@@ -22,7 +23,7 @@ async function acceptInvitation() {
     messageStore.removeRoomInvitationById(invitationId)
     await router.push('/rooms/room')
   } catch (e) {
-    console.log(e)
+    useRequestErrorHandler().handle(e)
   }
 }
 
@@ -32,7 +33,7 @@ async function deleteInvitation() {
     await new ApiRequestSender().delete(`/rooms/invitations/${invitationId}`)
     messageStore.removeRoomInvitationById(invitationId)
   } catch (e) {
-    console.log(e)
+    useRequestErrorHandler().handle(e)
   }
 }
 </script>

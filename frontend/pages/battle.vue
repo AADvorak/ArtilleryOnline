@@ -8,6 +8,7 @@ import type {Battle} from "~/playground/data/battle";
 import type {UserBattleQueueParams, UserBattleQueueResponse} from "~/data/response";
 import {DateUtils} from "~/utils/DateUtils";
 import {usePresetsStore} from "~/stores/presets";
+import {useRequestErrorHandler} from "~/composables/request-error-handler";
 
 const router = useRouter()
 const battleStore = useBattleStore()
@@ -49,7 +50,7 @@ async function randomBattle() {
     const response = await api.putJson<UserBattleQueueParams, UserBattleQueueResponse>('/battles/queue', request)
     queueStore.queue = response
   } catch (e) {
-    console.log(e)
+    useRequestErrorHandler().handle(e)
   }
 }
 
@@ -61,7 +62,7 @@ async function testDrive() {
     const battle = await api.postJson<UserBattleQueueParams, Battle>('/battles/test-drive', request)
     battleStore.updateBattle(battle)
   } catch (e) {
-    console.log(e)
+    useRequestErrorHandler().handle(e)
   }
 }
 

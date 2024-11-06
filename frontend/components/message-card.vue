@@ -4,6 +4,7 @@ import {useMessageStore} from '~/stores/message'
 import {ApiRequestSender} from "~/api/api-request-sender";
 import {useRouter} from "#app";
 import {DateUtils} from "~/utils/DateUtils";
+import {useRequestErrorHandler} from "~/composables/request-error-handler";
 
 const props = defineProps<{
   message: Message
@@ -23,7 +24,7 @@ async function deleteMessage() {
     await new ApiRequestSender().delete(`/messages/${messageId}`)
     messageStore.removeMessageById(messageId)
   } catch (e) {
-    console.log(e)
+    useRequestErrorHandler().handle(e)
   }
 }
 </script>

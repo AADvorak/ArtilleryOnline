@@ -3,6 +3,7 @@ import {useRouter} from "#app";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import type {Room} from "~/data/model";
 import {useRoomStore} from "~/stores/room";
+import {useRequestErrorHandler} from "~/composables/request-error-handler";
 
 const router = useRouter()
 
@@ -13,7 +14,7 @@ async function createRoom() {
     roomStore.room = await new ApiRequestSender().putJson<undefined, Room>('/rooms', undefined)
     await router.push('/rooms/room')
   } catch (e) {
-    console.log(e)
+    useRequestErrorHandler().handle(e)
   }
 }
 

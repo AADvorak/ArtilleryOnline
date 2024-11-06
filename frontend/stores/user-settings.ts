@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import type {UserSetting, UserSettingsNameValueMapping} from '~/data/model'
 import {DefaultControls} from '~/dictionary/default-controls'
 import {ApiRequestSender} from '~/api/api-request-sender'
+import {useRequestErrorHandler} from '~/composables/request-error-handler'
 
 const CONTROLS_PATH = '/user-settings/controls'
 
@@ -41,7 +42,7 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
         controls.value.push(newControl)
       }
     } catch (e) {
-      console.log(e)
+      useRequestErrorHandler().handle(e)
     }
   }
 
@@ -50,7 +51,7 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
       await api.delete(CONTROLS_PATH)
       controls.value = []
     } catch (e) {
-      console.log(e)
+      useRequestErrorHandler().handle(e)
     }
   }
 
