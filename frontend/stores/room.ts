@@ -35,16 +35,21 @@ export const useRoomStore = defineStore('room', () => {
   }
 
   function subscribeToRoomUpdates() {
-    subscription.value = stompClientStore.client!.subscribe('/user/topic/room/updates', function (msgOut) {
-      room.value = JSON.parse(msgOut.body) as Room
-      if (room.value.deleted) {
-        room.value = null
-      }
-    })
+    if (!subscription.value) {
+      subscription.value = stompClientStore.client!.subscribe('/user/topic/room/updates', function (msgOut) {
+        room.value = JSON.parse(msgOut.body) as Room
+        if (room.value.deleted) {
+          room.value = null
+        }
+      })
+    }
   }
 
   function unsubscribeFromRoomUpdates() {
-    subscription.value && subscription.value.unsubscribe()
+    if (subscription.value) {
+      subscription.value.unsubscribe()
+      subscription.value = null
+    }
   }
 
   return {room, loadRoomIfNull, userIsRoomOwner}
