@@ -72,7 +72,7 @@ public class RoomService {
             throw new ConflictAppException("Not enough players to start battle");
         }
         battleService.createRoomBattle(room);
-        roomUpdatesSender.sendRoomUpdate(room);
+        roomUpdatesSender.sendRoomUpdate(room, false, true);
     }
 
     public void exitRoom() {
@@ -128,7 +128,7 @@ public class RoomService {
                         "User " + user.getNickname() + " left and deleted the room");
             });
             userIds.forEach(userRoomMap::remove);
-            roomUpdatesSender.sendRoomUpdate(room, true);
+            roomUpdatesSender.sendRoomUpdate(room, true, false);
             log.info("exitRoom: (room deleted) nickname {}, map size {}", user.getNickname(), userRoomMap.size());
         }
     }

@@ -15,7 +15,7 @@ public class RoomResponse {
 
     private Set<RoomMemberResponse> members = new HashSet<>();
 
-    private boolean inBattle;
+    private boolean inBattle = false;
 
     private boolean deleted = false;
 
@@ -23,9 +23,12 @@ public class RoomResponse {
         return of(room).setDeleted(true);
     }
 
+    public static RoomResponse inBattleOf(Room room) {
+        return of(room).setInBattle(true);
+    }
+
     public static RoomResponse of(Room room) {
         var response = new RoomResponse();
-        response.setInBattle(room.getBattle() != null);
         response.members.add(RoomMemberResponse.of(room.getOwner(), true));
         room.getGuests().values().forEach(guest -> response.members.add(RoomMemberResponse.of(guest, false)));
         return response;
