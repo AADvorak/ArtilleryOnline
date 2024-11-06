@@ -1,20 +1,22 @@
 import type {ErrorResponse, FormValidation, ValidationResponse} from "~/data/response";
 import {useRouter} from "#app";
+import {useErrorsStore} from "~/stores/errors";
 
 export function useRequestErrorHandler() {
 
   const router = useRouter()
+  const errorsStore = useErrorsStore()
 
-  function handle(errorResponse: ErrorResponse, formValidation: FormValidation) {
+  function handle(errorResponse: ErrorResponse, formValidation?: FormValidation) {
     if (errorResponse.status === 401) {
       router.push('/sign-in').then()
       return
     }
-    if (errorResponse.status === 400 && errorResponse.error.validation) {
+    if (errorResponse.status === 400 && errorResponse.error.validation && formValidation) {
       parseValidation(errorResponse.error.validation, formValidation)
+      return
     }
-    // todo message
-    console.log(errorResponse)
+    errorsStore.errors.push(errorResponse)
   }
 
   function parseValidation(validation: ValidationResponse[], formValidation: FormValidation) {

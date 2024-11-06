@@ -12,6 +12,7 @@ import MessagesMenu from "~/components/messages-menu.vue";
     <div class="d-flex align-center justify-center flex-column default">
       <slot />
     </div>
+    <error-message />
   </v-app>
 </template>
 

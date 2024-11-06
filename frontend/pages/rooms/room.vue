@@ -6,8 +6,10 @@ import {useRoomStore} from "~/stores/room";
 import RoomMembersTable from "~/components/room-members-table.vue";
 import {useUserStore} from "~/stores/user";
 import {mdiAccountMultiple, mdiAccountPlus} from '@mdi/js'
+import {useRequestErrorHandler} from "~/composables/request-error-handler";
 
 const api = new ApiRequestSender()
+const requestErrorHandler = useRequestErrorHandler()
 
 const router = useRouter()
 
@@ -41,7 +43,7 @@ watch(selectedVehicle, async (value) => {
       selectedVehicle: value
     })
   } catch (e) {
-    console.log(e)
+    requestErrorHandler.handle(e)
   }
 })
 
@@ -70,7 +72,7 @@ async function startBattle() {
   try {
     await api.postJson('/rooms/start-battle', {})
   } catch (e) {
-    console.log(e)
+    requestErrorHandler.handle(e)
   }
 }
 
@@ -80,7 +82,7 @@ async function exit() {
     roomStore.room = null
     await router.push('/rooms')
   } catch (e) {
-    console.log(e)
+    requestErrorHandler.handle(e)
   }
 }
 </script>
