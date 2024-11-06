@@ -6,9 +6,10 @@ import {CompatClient, Stomp} from '@stomp/stompjs'
 export const useStompClientStore = defineStore('stomp-client', () => {
   const csrfStore = useCsrfStore()
   const client = ref<CompatClient>()
+  const connected = ref(false)
 
   function connect() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: (value: void) => void, reject) => {
       if (client.value?.connected) {
         resolve()
         return
@@ -22,7 +23,12 @@ export const useStompClientStore = defineStore('stomp-client', () => {
       if (csrf) {
         headers[csrf.headerName] = csrf.token
       }
-      client.value.connect(headers, () => resolve())
+      client.value.connect(headers, () => {
+        resolve()
+        connected.value = true
+      }, () => {}, () => {
+        connected.value = false
+      })
     })
   }
 
@@ -30,5 +36,5 @@ export const useStompClientStore = defineStore('stomp-client', () => {
     client.value?.disconnect()
   }
 
-  return { client, connect, disconnect }
+  return { client, connected, connect, disconnect }
 })

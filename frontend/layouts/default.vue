@@ -13,6 +13,7 @@ import MessagesMenu from "~/components/messages-menu.vue";
       <slot />
     </div>
     <error-message />
+    <connection-lost-dialog />
   </v-app>
 </template>
 

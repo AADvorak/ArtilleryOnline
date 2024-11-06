@@ -32,4 +32,5 @@ onBeforeUnmount(() => {
   <BattleCanvas />
   <FinishBattleDialog />
   <HelpDialog />
+  <connection-lost-dialog />
 </template>
