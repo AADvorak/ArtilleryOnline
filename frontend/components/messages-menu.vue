@@ -1,54 +1,19 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {useMessageStore} from "~/stores/message";
-import type {Message, RoomInvitation} from "~/data/model";
-import {useUserStore} from "~/stores/user";
-import {useStompClientStore} from "~/stores/stomp-client";
 import MessageCard from "~/components/message-card.vue";
 import { mdiMessage } from '@mdi/js'
 
-const stompClientStore = useStompClientStore()
 const messageStore = useMessageStore()
-const userStore = useUserStore()
 
 const opened = ref(false)
-const subscriptions = ref([])
 
 const messages = computed(() => {
-  return messageStore.messages
+  return messageStore.messages || []
 })
 const roomInvitations = computed(() => {
-  return messageStore.roomInvitations
+  return messageStore.roomInvitations || []
 })
-
-watch(() => userStore.user, (value) => {
-  !!value ? subscribe() : unsubscribe()
-})
-
-onMounted(() => {
-  if (!!userStore.user) {
-    subscribe()
-  }
-})
-
-onBeforeUnmount(() => {
-  unsubscribe()
-})
-
-function subscribe() {
-  subscriptions.value.push(stompClientStore.client!.subscribe('/user/topic/messages', function (msgOut) {
-    messageStore.addMessage(JSON.parse(msgOut.body) as Message)
-    opened.value = true
-  }))
-  subscriptions.value.push(stompClientStore.client!.subscribe('/user/topic/room/invitations', function (msgOut) {
-    messageStore.addRoomInvitation(JSON.parse(msgOut.body) as RoomInvitation)
-    opened.value = true
-  }))
-}
-
-function unsubscribe() {
-  subscriptions.value.forEach(subscription => subscription.unsubscribe())
-}
 </script>
 
 <template>

@@ -34,13 +34,14 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   if (!!userStore.user) {
     await stompClientStore.connect()
-    await messageStore.loadMessages()
-    await messageStore.loadInvitations()
+    await messageStore.loadMessagesIfNull()
+    await messageStore.loadInvitationsIfNull()
     await userSettingsStore.loadControlsIfNull()
     await presetsStore.loadVehiclesIfNull()
     await roomStore.loadRoomIfNull()
     await csrfStore.loadCsrfIfNull()
     await battleStore.loadBattleIfNull()
+    messageStore.subscribe()
   }
 
   if (!!userStore.user && !battleStore.battle) {
