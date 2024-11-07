@@ -56,11 +56,13 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
   }
 
   async function loadControlsIfNull() {
-    try {
-      controls.value = await api.getJson<UserSetting[]>(CONTROLS_PATH)
-    } catch (e) {
-      console.log(e)
-      controls.value = []
+    if (!controls.value) {
+      try {
+        controls.value = await api.getJson<UserSetting[]>(CONTROLS_PATH)
+      } catch (e) {
+        console.log(e)
+        controls.value = []
+      }
     }
   }
 
