@@ -10,14 +10,12 @@ export const useStompClientStore = defineStore('stomp-client', () => {
 
   function connect() {
     return new Promise((resolve: (value: void) => void, reject) => {
-      if (client.value?.connected) {
+      if (connected.value) {
         resolve()
         return
       }
-      if (!client.value) {
-        const socket = new WebSocket(`ws://${window.location.host}/api/ws/websocket`)
-        client.value = Stomp.over(socket)
-      }
+      const socket = new WebSocket(`ws://${window.location.host}/api/ws/websocket`)
+      client.value = Stomp.over(socket)
       const headers = {}
       const csrf = csrfStore.csrf
       if (csrf) {
