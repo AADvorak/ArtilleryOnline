@@ -16,24 +16,29 @@ const messageStore = useMessageStore()
 const roomStore = useRoomStore()
 
 async function acceptInvitation() {
+  const invitationId = props.invitation!.id
   try {
-    const invitationId = props.invitation!.id
     roomStore.room = await new ApiRequestSender()
         .postJson<undefined, Room>(`/rooms/invitations/${invitationId}/accept`, undefined)
-    messageStore.removeRoomInvitationById(invitationId)
     await router.push('/rooms/room')
   } catch (e) {
+    if (e.status === 404) {
+      e.error = {message: 'The invitation is outdated'}
+    }
     useRequestErrorHandler().handle(e)
+  } finally {
+    messageStore.removeRoomInvitationById(invitationId)
   }
 }
 
 async function deleteInvitation() {
+  const invitationId = props.invitation!.id
   try {
-    const invitationId = props.invitation!.id
     await new ApiRequestSender().delete(`/rooms/invitations/${invitationId}`)
-    messageStore.removeRoomInvitationById(invitationId)
   } catch (e) {
     useRequestErrorHandler().handle(e)
+  } finally {
+    messageStore.removeRoomInvitationById(invitationId)
   }
 }
 </script>

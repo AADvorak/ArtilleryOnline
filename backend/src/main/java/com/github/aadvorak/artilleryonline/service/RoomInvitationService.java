@@ -107,11 +107,11 @@ public class RoomInvitationService {
     public void deleteInvitation(String invitationId) {
         var invitation = roomInvitationMap.get(invitationId);
         if (invitation == null) {
-            throw new NotFoundAppException();
+            return;
         }
         var user = userService.getUserFromContext();
         if (invitation.getUserId() != user.getId()) {
-            throw new NotFoundAppException();
+            return;
         }
         roomInvitationMap.remove(invitationId);
         log.info("deleteInvitation: nickname {}, invitation map size {}", user.getNickname(),

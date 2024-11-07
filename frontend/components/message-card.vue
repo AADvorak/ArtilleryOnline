@@ -19,12 +19,13 @@ const messageTime = computed(() => {
 })
 
 async function deleteMessage() {
+  const messageId = props.message!.id
   try {
-    const messageId = props.message!.id
     await new ApiRequestSender().delete(`/messages/${messageId}`)
-    messageStore.removeMessageById(messageId)
   } catch (e) {
     useRequestErrorHandler().handle(e)
+  } finally {
+    messageStore.removeMessageById(messageId)
   }
 }
 </script>

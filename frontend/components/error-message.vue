@@ -10,7 +10,7 @@ const message = ref('')
 watch(() => errorsStore.errors, () => {
   if (errorsStore.errors.length) {
     const error = errorsStore.errors.shift()
-    if (error.status === 404) {
+    if (error.status === 404 && !error.error) {
       message.value = 'Requested resource is not found'
     } else if (error.error) {
       message.value = error.error.message
