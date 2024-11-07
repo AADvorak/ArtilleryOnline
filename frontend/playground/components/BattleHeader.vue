@@ -9,14 +9,16 @@ import {useSettingsStore} from "~/stores/settings";
 import JetBar from "~/playground/components/JetBar.vue";
 import LeaveBattleDialog from "~/playground/components/LeaveBattleDialog.vue";
 import {useUserStore} from "~/stores/user";
-import { mdiCloseThick } from '@mdi/js'
+import { mdiCloseThick, mdiHelp } from '@mdi/js'
 import IconBtn from "~/components/icon-btn.vue";
+import HelpDialog from "~/playground/components/HelpDialog.vue";
 
 const battleStore = useBattleStore()
 const userStore = useUserStore()
 const settingsStore = useSettingsStore()
 
 const leaveBattleDialog = ref<InstanceType<typeof LeaveBattleDialog> | null>(null)
+const helpDialog = ref<InstanceType<typeof HelpDialog> | null>(null)
 
 const userKeys = computed(() => {
   return Object.keys(battleStore.vehicles || {})
@@ -31,6 +33,10 @@ const isDebugMode = computed(() => settingsStore.settings?.debug)
 
 function showLeaveBattleDialog() {
   leaveBattleDialog.value?.show()
+}
+
+function showHelpDialog() {
+  helpDialog.value?.show()
 }
 </script>
 
@@ -52,6 +58,11 @@ function showLeaveBattleDialog() {
       <ReloadingProgress />
     </div>
     <v-spacer/>
+    <icon-btn
+        :icon="mdiHelp"
+        tooltip="Help"
+        @click="showHelpDialog"
+    />
     <messages-menu/>
     <icon-btn
         :icon="mdiCloseThick"
@@ -59,6 +70,7 @@ function showLeaveBattleDialog() {
         @click="showLeaveBattleDialog"
     />
     <LeaveBattleDialog ref="leaveBattleDialog"/>
+    <HelpDialog ref="helpDialog"/>
   </v-app-bar>
 </template>
 

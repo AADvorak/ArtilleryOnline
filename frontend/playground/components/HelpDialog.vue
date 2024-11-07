@@ -17,7 +17,7 @@ onBeforeUnmount(() => {
 
 function showHelpIfF1Pressed(e) {
   if (e.code === 'F1') {
-    opened.value = true
+    show()
   }
 }
 
@@ -25,9 +25,17 @@ function removeKeyStr(str: string) {
   return str.replace('Key', '')
 }
 
+function show() {
+  opened.value = true
+}
+
 function hide() {
   opened.value = false
 }
+
+defineExpose({
+  show
+})
 </script>
 
 <template>

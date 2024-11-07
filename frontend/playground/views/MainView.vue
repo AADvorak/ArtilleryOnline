@@ -2,7 +2,6 @@
 import BattleHeader from "@/playground/components/BattleHeader.vue";
 import BattleCanvas from "@/playground/components/BattleCanvas.vue";
 import FinishBattleDialog from "@/playground/components/FinishBattleDialog.vue";
-import HelpDialog from "~/playground/components/HelpDialog.vue";
 import {useBattleUpdater} from "~/playground/composables/battle-updater";
 import {useKeyboardListener} from "~/playground/composables/keyboard-listener";
 import {useCommandsSender} from "~/playground/composables/commands-sender";
@@ -31,6 +30,5 @@ onBeforeUnmount(() => {
   <BattleHeader />
   <BattleCanvas />
   <FinishBattleDialog />
-  <HelpDialog />
   <connection-lost-dialog />
 </template>
