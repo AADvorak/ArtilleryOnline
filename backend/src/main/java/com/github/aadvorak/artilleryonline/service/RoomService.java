@@ -72,6 +72,7 @@ public class RoomService {
             throw new ConflictAppException("Not enough players to start battle");
         }
         battleService.createRoomBattle(room);
+        removeSelectedVehicles(room);
         roomUpdatesSender.sendRoomUpdate(room, false, true);
     }
 
@@ -131,5 +132,10 @@ public class RoomService {
             roomUpdatesSender.sendRoomUpdate(room, true, false);
             log.info("exitRoom: (room deleted) nickname {}, map size {}", user.getNickname(), userRoomMap.size());
         }
+    }
+
+    private void removeSelectedVehicles(Room room) {
+        room.getOwner().getParams().setSelectedVehicle(null);
+        room.getGuests().values().forEach(guest -> guest.getParams().setSelectedVehicle(null));
     }
 }
