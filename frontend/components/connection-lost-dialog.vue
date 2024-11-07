@@ -2,6 +2,7 @@
 import {ref} from "vue";
 import {useStompClientStore} from "~/stores/stomp-client";
 import {useUserStore} from "~/stores/user";
+import {mdiReload} from "@mdi/js";
 
 const stompClientStore = useStompClientStore()
 const userStore = useUserStore()
@@ -27,7 +28,7 @@ function hideAndReload() {
       <v-card-text>
         <div class="d-flex">Connection to server lost</div>
         <div class="d-flex mt-4">
-          <v-btn color="primary" @click="hideAndReload">Reload page</v-btn>
+          <v-btn :prepend-icon="mdiReload" color="primary" @click="hideAndReload">Reload page</v-btn>
         </div>
       </v-card-text>
     </v-card>
