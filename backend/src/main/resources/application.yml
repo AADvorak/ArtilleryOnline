@@ -4,6 +4,8 @@ application:
     client-processing: ${APP_SETTINGS_CLIENT_PROCESSING}
     battle-update-timeout: 10000
     user-battle-queue-timeout: 30000
+    message-timeout: 600000
+    room-invitation-timeout: 60000
 spring:
   application:
     name: artilleryonline

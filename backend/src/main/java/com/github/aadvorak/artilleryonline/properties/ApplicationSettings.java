@@ -18,4 +18,8 @@ public class ApplicationSettings {
     private long battleUpdateTimeout;
 
     private long userBattleQueueTimeout;
+
+    private long messageTimeout;
+
+    private long roomInvitationTimeout;
 }

@@ -8,12 +8,17 @@ import com.github.aadvorak.artilleryonline.dto.request.RoomInvitationRequest;
 import com.github.aadvorak.artilleryonline.dto.response.RoomInvitationResponse;
 import com.github.aadvorak.artilleryonline.dto.response.RoomResponse;
 import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
+import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import com.github.aadvorak.artilleryonline.ws.RoomUpdatesSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +41,11 @@ public class RoomInvitationService {
 
     private final MessageService messageService;
 
+    private final ApplicationSettings applicationSettings;
+
+    private final TaskScheduler taskScheduler =
+            new ConcurrentTaskScheduler(Executors.newSingleThreadScheduledExecutor());
+
     public List<RoomInvitationResponse> getUserInvitations() {
         var user = userService.getUserFromContext();
         // todo possible slow query
@@ -56,6 +66,7 @@ public class RoomInvitationService {
         roomInvitationMap.put(invitation.getId(), invitation);
         var invitationResponse = RoomInvitationResponse.of(invitation);
         roomUpdatesSender.sendRoomInvitation(invitedUser, invitationResponse);
+        scheduleDeleteInvitation(invitation);
         log.info("inviteToRoom: from {}, to {}, invitation map size {}", user.getNickname(),
                 invitedUser.getNickname(), roomInvitationMap.size());
         return invitationResponse;
@@ -105,5 +116,13 @@ public class RoomInvitationService {
         roomInvitationMap.remove(invitationId);
         log.info("deleteInvitation: nickname {}, invitation map size {}", user.getNickname(),
                 roomInvitationMap.size());
+    }
+
+    private void scheduleDeleteInvitation(RoomInvitation invitation) {
+        taskScheduler.schedule(() -> {
+            roomInvitationMap.remove(invitation.getId());
+            log.info("scheduleDeleteInvitation: id {}, invitation map size {}", invitation.getId(),
+                    roomInvitationMap.size());
+        }, Instant.ofEpochMilli(invitation.getCreateTime() + applicationSettings.getRoomInvitationTimeout()));
     }
 }
