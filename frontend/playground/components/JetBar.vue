@@ -19,10 +19,16 @@ const value = computed(() => {
 <template>
   <v-progress-linear
       bg-color="blue-grey"
-      height="25"
+      height="16"
       color="orange"
       :model-value="value"
   >
-    <span>Jet</span>
+    <span class="progress-text">Jet</span>
   </v-progress-linear>
 </template>
+
+<style>
+.progress-text {
+  font-size: 16px;
+}
+</style>

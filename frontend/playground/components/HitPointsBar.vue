@@ -40,10 +40,16 @@ const color = computed(() => {
 <template>
   <v-progress-linear
       bg-color="blue-grey"
-      height="25"
+      height="16"
       :color="color"
       :model-value="value"
   >
-    <span>{{ userKey }}: {{ userHp }} HP</span>
+    <span class="progress-text">{{ userKey }}: {{ userHp }} HP</span>
   </v-progress-linear>
 </template>
+
+<style>
+.progress-text {
+  font-size: 16px;
+}
+</style>
