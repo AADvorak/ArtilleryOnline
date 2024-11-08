@@ -5,7 +5,7 @@ import MessagesMenu from "~/components/messages-menu.vue";
 
 <template>
   <v-app full-height theme="dark">
-    <v-app-bar>
+    <v-app-bar density="compact">
       <v-spacer />
       <messages-menu />
     </v-app-bar>

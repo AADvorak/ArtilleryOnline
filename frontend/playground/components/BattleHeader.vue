@@ -41,7 +41,7 @@ function showHelpDialog() {
 </script>
 
 <template>
-  <v-app-bar>
+  <v-app-bar density="compact">
     <div v-if="isDebugMode" class="ml-5">
       <BattleDebugButtons />
     </div>
