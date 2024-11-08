@@ -17,7 +17,7 @@ const canvasWidth = computed(() => {
   return canvasSize.value ? canvasSize.value.width : window.innerWidth
 })
 const canvasHeight = computed(() => {
-  return canvasSize.value ? canvasSize.value.height : window.innerHeight - 70
+  return canvasSize.value ? canvasSize.value.height : window.innerHeight - 50
 })
 
 const canvas = ref<HTMLCanvasElement>()
@@ -103,7 +103,7 @@ function calculateCanvasSize() {
   if (battleSize.value) {
     const battleWidthToHeight = battleSize.value.width / battleSize.value.height
     const screenWidth = window.innerWidth
-    const screenHeight = window.innerHeight - 70
+    const screenHeight = window.innerHeight - 50
     const screenWidthToHeight = screenWidth / screenHeight
     if (battleWidthToHeight > screenWidthToHeight) {
       const width = screenWidth
