@@ -14,6 +14,9 @@ const messages = computed(() => {
 const roomInvitations = computed(() => {
   return messageStore.roomInvitations || []
 })
+const count = computed(() => {
+  return roomInvitations.value.length + messages.value.length
+})
 </script>
 
 <template>
@@ -28,7 +31,10 @@ const roomInvitations = computed(() => {
           :color="!!roomInvitations.length || !!messages.length ? 'primary' : ''"
           v-bind="props"
       >
-        <v-icon :icon="mdiMessage" />
+        <v-badge v-if="!!count" color="error" :content="count">
+          <v-icon :icon="mdiMessage" />
+        </v-badge>
+        <v-icon v-else :icon="mdiMessage" />
         <v-tooltip
             activator="parent"
             location="bottom"
