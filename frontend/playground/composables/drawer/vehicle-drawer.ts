@@ -88,7 +88,20 @@ export function useVehicleDrawer(
       ctx.value.lineTo(gunEndPosition.x, gunEndPosition.y)
       ctx.value.stroke()
       ctx.value.closePath()
+
+      ctx.value.beginPath()
       ctx.value.lineWidth = 1
+      const hpBarHeight = 0.07
+      const hpBarTopLeft = drawerBase.transformPosition({
+        x: vehicleModel.state.position.x - vehicleModel.specs.radius,
+        y: vehicleModel.state.position.y + 2 * vehicleModel.specs.radius + hpBarHeight
+      })
+      const hpRatio = vehicleModel.state.hitPoints / vehicleModel.specs.hitPoints
+      ctx.value.strokeRect(hpBarTopLeft.x, hpBarTopLeft.y,
+          drawerBase.scale(2 * vehicleModel.specs.radius), drawerBase.scale(hpBarHeight))
+      ctx.value.fillRect(hpBarTopLeft.x, hpBarTopLeft.y,
+          drawerBase.scale(2 * vehicleModel.specs.radius * hpRatio), drawerBase.scale(hpBarHeight))
+      ctx.value.closePath()
     }
   }
 
