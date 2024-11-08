@@ -2,8 +2,8 @@ import type { Position, Size } from '@/playground/data/common'
 import type { Ref } from 'vue'
 
 export interface DrawerBase {
-  transformPosition: Function
-  scale: Function
+  transformPosition: (position: Position) => (Position)
+  scale: (value: number) => number
 }
 
 export function useDrawerBase(scaleCoefficient: Ref<number>, canvasSize: Ref<Size>) {
