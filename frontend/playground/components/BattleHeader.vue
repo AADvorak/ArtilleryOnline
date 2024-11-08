@@ -24,6 +24,21 @@ const userKeys = computed(() => {
   return Object.keys(battleStore.vehicles || {})
 })
 
+const userKeyPairs = computed(() => {
+  const usersCount = userKeys.value.length
+  const pairsCount = Math.ceil(usersCount / 2)
+  const pairs = []
+  for (let pairNumber = 0; pairNumber < pairsCount; pairNumber++) {
+    const pair = []
+    const first = userKeys.value[2 * pairNumber]
+    first && pair.push(first)
+    const second = userKeys.value[2 * pairNumber + 1]
+    second && pair.push(second)
+    pairs.push(pair)
+  }
+  return pairs
+})
+
 const jetAvailable = computed(() => {
   const vehicle = battleStore.battle?.model.vehicles[userStore.user!.nickname]
   return !!vehicle && !!vehicle.config.jet
@@ -48,8 +63,8 @@ function showHelpDialog() {
     <div class="ml-5 battle-timer-wrapper">
       <BattleTimer />
     </div>
-    <div class="ml-5 hit-points-bar-wrapper">
-      <HitPointsBar v-for="userKey in userKeys" :user-key="userKey" />
+    <div class="ml-5 hit-points-bar-wrapper" v-for="userKeyPair in userKeyPairs">
+      <HitPointsBar v-for="userKey in userKeyPair" :user-key="userKey" />
     </div>
     <div v-if="jetAvailable" class="ml-5 jet-bar-wrapper">
       <JetBar />
