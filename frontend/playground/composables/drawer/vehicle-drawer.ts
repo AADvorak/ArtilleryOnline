@@ -102,11 +102,26 @@ export function useVehicleDrawer(
       ctx.value.fillRect(hpBarTopLeft.x, hpBarTopLeft.y,
           drawerBase.scale(2 * vehicleModel.specs.radius * hpRatio), drawerBase.scale(hpBarHeight))
       ctx.value.closePath()
+
+      ctx.value.beginPath()
+      ctx.value.fillStyle = 'rgb(256,256,256)'
+      ctx.value.font = '16px arial'
+      const nicknamePosition = drawerBase.transformPosition({
+        x: vehicleModel.state.position.x - vehicleModel.specs.radius,
+        y: vehicleModel.state.position.y + 2 * vehicleModel.specs.radius + hpBarHeight + 0.02
+      })
+      ctx.value.fillText(restrictNicknameLength(userKey), nicknamePosition.x, nicknamePosition.y,
+          drawerBase.scale(2 * vehicleModel.specs.radius))
+      ctx.value.closePath()
     }
   }
 
   function getColor(userKey: string) {
     return userKey === userStore.user!.nickname ? 'rgb(60,200,0)' : 'rgb(200 0 0)'
+  }
+
+  function restrictNicknameLength(nickname: string) {
+    return nickname.substring(0, 8)
   }
 
   return { draw }
