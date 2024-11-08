@@ -17,6 +17,9 @@ function sortMembers(a: RoomMember, b: RoomMember) {
   if (a.owner) {
     return -1
   }
+  if (b.owner) {
+    return 1
+  }
   return a.nickname > b.nickname ? 1 : -1
 }
 
