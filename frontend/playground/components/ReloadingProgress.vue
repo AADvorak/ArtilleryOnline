@@ -41,6 +41,24 @@ const showProgress = computed(() => {
   return !!userVehicle.value.state.gunState.loadingShell
 })
 
+onMounted(() => {
+  addEventListener('keyup', keyPressed)
+})
+
+onBeforeUnmount(() => {
+  removeEventListener('keyup', keyPressed)
+})
+
+function keyPressed(e) {
+  if (e.code.startsWith('Digit')) {
+    const number = parseInt(e.key)
+    const ammoKey = ammoKeys.value[number - 1]
+    if (ammoKey) {
+      selectShell(ammoKey)
+    }
+  }
+}
+
 function selectShell(key) {
   if (key !== selectedShell.value) {
     commandsSender.sendCommand({
@@ -53,13 +71,13 @@ function selectShell(key) {
 
 <template>
   <v-progress-circular v-if="showProgress" color="lime" :model-value="reloadingProgress" />
-  <template v-for="ammoKey in ammoKeys">
+  <template v-for="(ammoKey, index) in ammoKeys">
     <v-btn
         class="ammo-btn"
         :color="ammoKey === selectedShell ? 'primary' : ''"
         @click="() => selectShell(ammoKey)"
     >
-      {{ ammoKey }}: {{ ammo[ammoKey] }}
+      {{ ammoKey }}({{ index + 1 }}): {{ ammo[ammoKey] }}
     </v-btn>
   </template>
 </template>
