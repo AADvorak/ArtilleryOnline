@@ -21,7 +21,7 @@ export function useVehicleDrawer(
 
   function drawVehicle(userKey: string) {
     const vehicleModel = battleStore.vehicles[userKey]
-    const color = getColor(userKey)
+    const color = VehicleUtils.getColor(userKey, vehicleModel)
     if (ctx.value) {
       ctx.value.fillStyle = color
       ctx.value.strokeStyle = color
@@ -140,10 +140,6 @@ export function useVehicleDrawer(
     ctx.value.fillText(restrictNicknameLength(userKey), nicknamePosition.x, nicknamePosition.y,
         drawerBase.scale(2 * vehicleModel.specs.radius))
     ctx.value.closePath()
-  }
-
-  function getColor(userKey: string) {
-    return userKey === userStore.user!.nickname ? 'rgb(60,200,0)' : 'rgb(200 0 0)'
   }
 
   function restrictNicknameLength(nickname: string) {

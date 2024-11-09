@@ -24,6 +24,8 @@ public class BattleService {
 
     private final BattleRunner battleRunner;
 
+    private final BattleFactory battleFactory;
+
     private final UserAvailabilityService userAvailabilityService;
 
     private final MessageService messageService;
@@ -62,7 +64,7 @@ public class BattleService {
                     .setNickname("Dummy player")
                     .setParams(new BattleParticipantParams()
                             .setSelectedVehicle(params.getSelectedVehicle()));
-            var battle = new BattleFactory().createBattle(Set.of(userParticipant, otherParticipant));
+            var battle = battleFactory.createBattle(Set.of(userParticipant, otherParticipant));
             userBattleMap.put(user.getId(), battle);
             battleRunner.runBattle(battle);
             log.info("createTestDrive: user {}, battle {}, map size {}", user.getNickname(),
@@ -76,7 +78,7 @@ public class BattleService {
             checkReadyToBattle(room.getOwner());
             room.getGuests().values().forEach(this::checkReadyToBattle);
             var participants = room.getParticipants();
-            var battle = new BattleFactory().createBattle(participants);
+            var battle = battleFactory.createBattle(participants);
             room.setBattle(battle);
             battle.setRoom(room);
             participants.forEach(participant -> userBattleMap.put(participant.getUser().getId(), battle));

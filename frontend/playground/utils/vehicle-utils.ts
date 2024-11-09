@@ -1,6 +1,8 @@
-import type { VehicleModel } from '@/playground/data/model'
-import type { Position } from '@/playground/data/common'
-import type { WheelCalculations } from '@/playground/data/calculations'
+import type {VehicleModel} from '@/playground/data/model'
+import type {Position} from '@/playground/data/common'
+import type {WheelCalculations} from '@/playground/data/calculations'
+import {DefaultColors} from '~/dictionary/default-colors'
+import {useUserStore} from '~/stores/user'
 
 export const VehicleUtils = {
   getLeftWheelPosition(vehicleModel: VehicleModel) {
@@ -74,9 +76,9 @@ export const VehicleUtils = {
     const hullRadius = vehicleModel.specs.hullRadius
     const angle = vehicleModel.state.angle
     const leftWheelBottom = this.getWheelBottomPosition(
-      this.getLeftWheelPosition(vehicleModel),
-      vehicleModel,
-      0.2
+        this.getLeftWheelPosition(vehicleModel),
+        vehicleModel,
+        0.2
     )
     const smallWheels: Position[] = []
     for (let i = 1; i <= 3; i++) {
@@ -98,5 +100,12 @@ export const VehicleUtils = {
       x: velocityX,
       y: velocityY
     }
+  },
+
+  getColor(userKey: string, vehicleModel: VehicleModel) {
+    if (vehicleModel.config.color) {
+      return vehicleModel.config.color
+    }
+    return userKey === useUserStore().user!.nickname ? DefaultColors.ALLY_VEHICLE : DefaultColors.ENEMY_VEHICLE
   }
 }

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-
 import {useBattleStore} from "~/stores/battle";
 import {computed} from "vue";
 import {useUserStore} from "~/stores/user";
+import {VehicleUtils} from "~/playground/utils/vehicle-utils";
 
 const battleStore = useBattleStore()
 const userStore = useUserStore()
@@ -33,7 +33,7 @@ const userHp = computed(() => {
 })
 
 const color = computed(() => {
-  return props.userKey === userStore.user!.nickname ? 'success' : 'error'
+  return VehicleUtils.getColor(props.userKey, vehicle.value!)
 })
 </script>
 

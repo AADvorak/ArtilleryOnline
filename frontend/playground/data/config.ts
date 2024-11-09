@@ -5,4 +5,5 @@ export interface VehicleConfig {
   gun: GunSpecs
   jet: JetSpecs
   ammo: Ammo
+  color?: string
 }

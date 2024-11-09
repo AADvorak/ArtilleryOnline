@@ -14,13 +14,19 @@ import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.*;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import com.github.aadvorak.artilleryonline.entity.User;
+import com.github.aadvorak.artilleryonline.entity.UserSetting;
+import com.github.aadvorak.artilleryonline.repository.UserSettingRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Component
+@RequiredArgsConstructor
 public class BattleFactory {
+
+    private final UserSettingRepository userSettingRepository;
 
     public Battle createBattle(Set<BattleParticipant> participants) {
         var battleModel = new BattleModel()
@@ -94,7 +100,8 @@ public class BattleFactory {
             vehicleModel.setConfig(new VehicleConfig()
                     .setAmmo(ammo)
                     .setGun(gun)
-                    .setJet(jet));
+                    .setJet(jet)
+                    .setColor(getVehicleColor(participant)));
             vehicleModel.setState(new VehicleState()
                     .setAngle(0)
                     .setGunAngle(Math.PI / 2)
@@ -132,5 +139,14 @@ public class BattleFactory {
                 .filter(participant -> participant.getUser() != null)
                 .forEach(element -> userNicknameMap.put(element.getUser().getId(), element.getUser()));
         return userNicknameMap;
+    }
+
+    private String getVehicleColor(BattleParticipant participant) {
+        if (participant.getUser() == null) {
+            return null;
+        }
+        var colorSetting = userSettingRepository.findByUserIdAndGroupNameAndName(participant.getUser().getId(),
+                "appearances", "vehicleColor");
+        return colorSetting.map(UserSetting::getValue).orElse(null);
     }
 }
