@@ -2,16 +2,19 @@ import type {DrawerBase} from '@/playground/composables/drawer/drawer-base'
 import type {Ref} from 'vue'
 import {useBattleStore} from '~/stores/battle'
 import {VehicleUtils} from '@/playground/utils/vehicle-utils'
-import {useUserStore} from "~/stores/user";
 import type {VehicleModel} from "~/playground/data/model";
 import type {Position} from "~/playground/data/common";
+import {useUserSettingsStore} from "~/stores/user-settings";
+import {AppearancesNames} from "~/dictionary/appearances-names";
 
 export function useVehicleDrawer(
     drawerBase: DrawerBase,
     ctx: Ref<CanvasRenderingContext2D>
 ) {
   const battleStore = useBattleStore()
-  const userStore = useUserStore()
+  const userSettingsStore = useUserSettingsStore()
+
+  const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
 
   function draw() {
     if (battleStore.vehicles) {
@@ -35,8 +38,12 @@ export function useVehicleDrawer(
       drawSmallWheels(vehicleModel, wheelRadius)
       drawTrack(vehicleModel)
       drawGun(vehicleModel, position)
-      drawHpBar(vehicleModel)
-      drawNickname(userKey, vehicleModel)
+      if (appearances.value[AppearancesNames.HP_ABOVE] === '1') {
+        drawHpBar(vehicleModel)
+      }
+      if (appearances.value[AppearancesNames.NICKNAMES_ABOVE] === '1') {
+        drawNickname(userKey, vehicleModel)
+      }
     }
   }
 
@@ -133,6 +140,7 @@ export function useVehicleDrawer(
     ctx.value.beginPath()
     ctx.value.fillStyle = 'rgb(256,256,256)'
     ctx.value.font = '16px arial'
+    ctx.value.lineWidth = 1
     const nicknamePosition = drawerBase.transformPosition({
       x: vehicleModel.state.position.x - vehicleModel.specs.radius,
       y: vehicleModel.state.position.y + 2 * vehicleModel.specs.radius + 0.1

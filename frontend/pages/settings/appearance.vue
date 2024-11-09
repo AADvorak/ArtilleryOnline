@@ -1,26 +1,65 @@
 <script setup lang="ts">
 import {useRouter} from "#app";
 import {useUserSettingsStore} from "~/stores/user-settings";
-
-const VEHICLE_COLOR_SETTING_NAME = 'vehicleColor'
+import {AppearancesNames} from "~/dictionary/appearances-names";
 
 const router = useRouter()
 const userSettingsStore = useUserSettingsStore()
 
-const vehicleColor = ref<string>('')
+const settings = reactive({
+  vehicleColor: '',
+  showNicknamesAboveVehicles: '1',
+  showHpBarsAboveVehicles: '1',
+  showAllPlayersHpBarsInTopBar: '1'
+})
 
-watch(vehicleColor, value => {
-  const existingValue = userSettingsStore.appearancesMapping[VEHICLE_COLOR_SETTING_NAME]
+const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
+
+watch(() => settings.vehicleColor, value => {
+  const existingValue = appearances.value[AppearancesNames.VEHICLE_COLOR]
   if (value && value !== existingValue) {
     userSettingsStore.setAppearance({
-      name: VEHICLE_COLOR_SETTING_NAME,
+      name: AppearancesNames.VEHICLE_COLOR,
+      value
+    })
+  }
+})
+
+watch(() => settings.showNicknamesAboveVehicles, value => {
+  const existingValue = appearances.value[AppearancesNames.NICKNAMES_ABOVE]
+  if (value && value !== existingValue) {
+    userSettingsStore.setAppearance({
+      name: AppearancesNames.NICKNAMES_ABOVE,
+      value
+    })
+  }
+})
+
+watch(() => settings.showHpBarsAboveVehicles, value => {
+  const existingValue = appearances.value[AppearancesNames.HP_ABOVE]
+  if (value && value !== existingValue) {
+    userSettingsStore.setAppearance({
+      name: AppearancesNames.HP_ABOVE,
+      value
+    })
+  }
+})
+
+watch(() => settings.showAllPlayersHpBarsInTopBar, value => {
+  const existingValue = appearances.value[AppearancesNames.ALL_HP_TOP]
+  if (value && value !== existingValue) {
+    userSettingsStore.setAppearance({
+      name: AppearancesNames.ALL_HP_TOP,
       value
     })
   }
 })
 
 onMounted(() => {
-  vehicleColor.value = userSettingsStore.appearancesMapping[VEHICLE_COLOR_SETTING_NAME] || ''
+  settings.vehicleColor = appearances.value[AppearancesNames.VEHICLE_COLOR]
+  settings.showNicknamesAboveVehicles = appearances.value[AppearancesNames.NICKNAMES_ABOVE]
+  settings.showHpBarsAboveVehicles = appearances.value[AppearancesNames.HP_ABOVE]
+  settings.showAllPlayersHpBarsInTopBar = appearances.value[AppearancesNames.ALL_HP_TOP]
 })
 
 function back() {
@@ -41,12 +80,42 @@ function back() {
             <td>Vehicle color</td>
             <td>
               <v-color-picker
-                  v-model="vehicleColor"
+                  v-model="settings.vehicleColor"
                   swatches-max-height="200px"
                   show-swatches
                   hide-canvas
                   hide-inputs
                   hide-sliders
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>Show nicknames above vehicles</td>
+            <td>
+              <v-switch
+                  v-model="settings.showNicknamesAboveVehicles"
+                  true-value="1"
+                  false-value="0"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>Show HP bars above vehicles</td>
+            <td>
+              <v-switch
+                  v-model="settings.showHpBarsAboveVehicles"
+                  true-value="1"
+                  false-value="0"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>Show all players HP bars in top bar</td>
+            <td>
+              <v-switch
+                  v-model="settings.showAllPlayersHpBarsInTopBar"
+                  true-value="1"
+                  false-value="0"
               />
             </td>
           </tr>

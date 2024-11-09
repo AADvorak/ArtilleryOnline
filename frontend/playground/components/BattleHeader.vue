@@ -12,16 +12,24 @@ import {useUserStore} from "~/stores/user";
 import { mdiCloseThick, mdiHelp } from '@mdi/js'
 import IconBtn from "~/components/icon-btn.vue";
 import HelpDialog from "~/playground/components/HelpDialog.vue";
+import {useUserSettingsStore} from "~/stores/user-settings";
+import {AppearancesNames} from "~/dictionary/appearances-names";
 
 const battleStore = useBattleStore()
 const userStore = useUserStore()
 const settingsStore = useSettingsStore()
+const userSettingsStore = useUserSettingsStore()
 
 const leaveBattleDialog = ref<InstanceType<typeof LeaveBattleDialog> | null>(null)
 const helpDialog = ref<InstanceType<typeof HelpDialog> | null>(null)
 
+const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
+
 const userKeys = computed(() => {
-  return Object.keys(battleStore.vehicles || {})
+  if (appearances.value[AppearancesNames.ALL_HP_TOP] === '1') {
+    return Object.keys(battleStore.vehicles || [])
+  }
+  return [userStore.user!.nickname]
 })
 
 const userKeyPairs = computed(() => {

@@ -4,6 +4,7 @@ import type {UserSetting, UserSettingsNameValueMapping} from '~/data/model'
 import {DefaultControls} from '~/dictionary/default-controls'
 import {ApiRequestSender} from '~/api/api-request-sender'
 import {useRequestErrorHandler} from '~/composables/request-error-handler'
+import {DefaultAppearances} from "~/dictionary/default-appearances";
 
 const CONTROLS_PATH = '/user-settings/controls'
 const APPEARANCES_PATH = '/user-settings/appearances'
@@ -30,8 +31,20 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     }))
   })
 
+  const appearancesOrDefaults = computed(() => {
+    return DefaultAppearances.map(appearance => ({
+      name: appearance.name,
+      value: appearancesMapping.value[appearance.name] || appearance.value,
+      description: appearance.description
+    }))
+  })
+
   const controlsOrDefaultsValueNameMapping = computed(() => {
     return toValueNameMapping(controlsOrDefaults.value)
+  })
+
+  const appearancesOrDefaultsNameValueMapping = computed(() => {
+    return toNameValueMapping(appearancesOrDefaults.value)
   })
 
   async function setControl(newControl: UserSetting) {
@@ -123,7 +136,8 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     controls,
     controlsOrDefaults,
     controlsOrDefaultsValueNameMapping,
-    appearancesMapping,
+    appearancesOrDefaults,
+    appearancesOrDefaultsNameValueMapping,
     setControl,
     setAppearance,
     resetControls,
