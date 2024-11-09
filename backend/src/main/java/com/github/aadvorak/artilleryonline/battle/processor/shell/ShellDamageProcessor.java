@@ -29,6 +29,7 @@ public class ShellDamageProcessor {
         var trackState = vehicleModel.getState().getTrackState();
         trackState.setBroken(true);
         trackState.setRepairRemainTime(vehicleModel.getSpecs().getTrackRepairTime());
+        vehicleModel.setUpdated(true);
         if (ShellType.HE.equals(shellSpecs.getType())) {
             calculateHEDamage(hitPosition, shellSpecs, battleModel);
             processGroundDamage(hitPosition, shellSpecs, battleModel);
@@ -78,6 +79,7 @@ public class ShellDamageProcessor {
                 || isWheelHitByHE(hitPosition, leftWheelPosition, shellHitRadius, wheelRadius)) {
             trackState.setBroken(true);
             trackState.setRepairRemainTime(vehicleModel.getSpecs().getTrackRepairTime());
+            vehicleModel.setUpdated(true);
         }
     }
 
