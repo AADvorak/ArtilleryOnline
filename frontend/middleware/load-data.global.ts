@@ -37,6 +37,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
     await messageStore.loadMessagesIfNull()
     await messageStore.loadInvitationsIfNull()
     await userSettingsStore.loadControlsIfNull()
+    await userSettingsStore.loadAppearancesIfNull()
     await presetsStore.loadVehiclesIfNull()
     await roomStore.loadRoomIfNull()
     await csrfStore.loadCsrfIfNull()

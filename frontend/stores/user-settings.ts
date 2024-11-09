@@ -6,14 +6,20 @@ import {ApiRequestSender} from '~/api/api-request-sender'
 import {useRequestErrorHandler} from '~/composables/request-error-handler'
 
 const CONTROLS_PATH = '/user-settings/controls'
+const APPEARANCES_PATH = '/user-settings/appearances'
 
 export const useUserSettingsStore = defineStore('user-settings', () => {
   const controls = ref<UserSetting[]>()
+  const appearances = ref<UserSetting[]>()
 
   const api = new ApiRequestSender()
 
   const controlsMapping = computed(() => {
     return toNameValueMapping(controls.value)
+  })
+
+  const appearancesMapping = computed(() => {
+    return toNameValueMapping(appearances.value)
   })
 
   const controlsOrDefaults = computed(() => {
@@ -46,6 +52,24 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     }
   }
 
+  async function setAppearance(newAppearance: UserSetting) {
+    try {
+      await api.putJson<UserSetting, void>(APPEARANCES_PATH, newAppearance)
+      if (!appearances.value) {
+        appearances.value = []
+      }
+      const existingAppearance = appearances.value
+          .filter(appearance => appearance.name === newAppearance.name)[0]
+      if (existingAppearance) {
+        existingAppearance.value = newAppearance.value
+      } else {
+        appearances.value.push(newAppearance)
+      }
+    } catch (e) {
+      useRequestErrorHandler().handle(e)
+    }
+  }
+
   async function resetControls() {
     try {
       await api.delete(CONTROLS_PATH)
@@ -62,6 +86,17 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
       } catch (e) {
         console.log(e)
         controls.value = []
+      }
+    }
+  }
+
+  async function loadAppearancesIfNull() {
+    if (!appearances.value) {
+      try {
+        appearances.value = await api.getJson<UserSetting[]>(APPEARANCES_PATH)
+      } catch (e) {
+        console.log(e)
+        appearances.value = []
       }
     }
   }
@@ -88,8 +123,11 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     controls,
     controlsOrDefaults,
     controlsOrDefaultsValueNameMapping,
+    appearancesMapping,
     setControl,
+    setAppearance,
     resetControls,
-    loadControlsIfNull
+    loadControlsIfNull,
+    loadAppearancesIfNull
   }
 })

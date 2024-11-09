@@ -7,6 +7,10 @@ function toControls() {
   router.push('/settings/controls')
 }
 
+function toAppearance() {
+  router.push('/settings/appearance')
+}
+
 function back() {
   router.push('/menu')
 }
@@ -20,6 +24,7 @@ function back() {
       </v-card-title>
       <v-card-text>
         <v-btn class="mb-4" width="100%" color="secondary" @click="toControls">Controls</v-btn>
+        <v-btn class="mb-4" width="100%" color="secondary" @click="toAppearance">Appearance</v-btn>
         <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
       </v-card-text>
     </v-card>

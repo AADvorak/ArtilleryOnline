@@ -44,7 +44,7 @@ function back() {
         Artillery online: settings / controls
       </v-card-title>
       <v-card-text>
-        <v-table density="compact">
+        <v-table class="mb-4" density="compact">
           <tbody>
           <tr v-for="control of controls">
             <td>{{ control.description }}</td>
