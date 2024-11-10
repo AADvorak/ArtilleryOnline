@@ -95,6 +95,9 @@ public class ShellDamageProcessor {
         var damageRadius = shellSpecs.getRadius();
         var groundIndexes = BattleUtils.getGroundIndexesBetween(hitPosition.getX() - damageRadius,
                 hitPosition.getX() + damageRadius, battleModel.getRoom());
+        if (groundIndexes.isEmpty()) {
+            return;
+        }
         var roomStateUpdate = new RoomStateUpdate().setBegin(groundIndexes.get(0));
         for (var groundIndex : groundIndexes) {
             var groundPosition = BattleUtils.getGroundPosition(groundIndex, battleModel.getRoom());

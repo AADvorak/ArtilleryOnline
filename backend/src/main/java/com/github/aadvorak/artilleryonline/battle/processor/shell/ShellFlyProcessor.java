@@ -19,6 +19,7 @@ public class ShellFlyProcessor {
         var nextPosition = new Position()
                 .setX(prevPosition.getX() + velocityX * battleModel.getCurrentTimeStepSecs())
                 .setY(prevPosition.getY() + velocityY * battleModel.getCurrentTimeStepSecs());
+        shellModel.getState().setPosition(nextPosition);
         if (positionIsOutOfRoom(nextPosition, battleModel.getRoom().getSpecs())) {
             velocityX = - velocityX;
         }
@@ -39,7 +40,6 @@ public class ShellFlyProcessor {
             battleModel.getUpdates().removeShell(shellModel.getId());
             return;
         }
-        shellModel.getState().setPosition(nextPosition);
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
         velocityY = velocityY - gravityAcceleration * battleModel.getCurrentTimeStepSecs();
         velocity = Math.sqrt(Math.pow(velocityX, 2.0) + Math.pow(velocityY, 2.0));
