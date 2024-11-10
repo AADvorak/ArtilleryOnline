@@ -36,6 +36,10 @@ const color = computed(() => {
   }
   return ''
 })
+
+const userKeyFixLength = computed(() => {
+  return props.userKey.substring(0, 14)
+})
 </script>
 
 <template>
@@ -45,7 +49,7 @@ const color = computed(() => {
       :color="color"
       :model-value="value"
   >
-    <span class="progress-text">{{ userKey }}: {{ userHp }} HP</span>
+    <span class="progress-text">{{ userKeyFixLength }}: {{ userHp }} HP</span>
   </v-progress-linear>
 </template>
 
