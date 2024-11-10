@@ -49,7 +49,7 @@ export function useBattleProcessor() {
       VehicleProcessor.processStep(vehicle, battle.model, timeStepSecs)
     })
     Object.values(battle.model.shells).forEach(shell => {
-      ShellProcessor.processStep(shell, timeStepSecs, battle.model.room.specs.gravityAcceleration)
+      ShellProcessor.processStep(shell, timeStepSecs, battle.model.room.specs)
     })
     Object.values(battle.model.explosions).forEach(explosion => {
       ExplosionProcessor.processStep(explosion, timeStepSecs)

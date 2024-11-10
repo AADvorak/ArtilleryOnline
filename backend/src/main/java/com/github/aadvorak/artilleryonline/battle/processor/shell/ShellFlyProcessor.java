@@ -19,10 +19,8 @@ public class ShellFlyProcessor {
         var nextPosition = new Position()
                 .setX(prevPosition.getX() + velocityX * battleModel.getCurrentTimeStepSecs())
                 .setY(prevPosition.getY() + velocityY * battleModel.getCurrentTimeStepSecs());
-        shellModel.getState().setPosition(nextPosition);
         if (positionIsOutOfRoom(nextPosition, battleModel.getRoom().getSpecs())) {
-            battleModel.getUpdates().removeShell(shellModel.getId());
-            return;
+            velocityX = - velocityX;
         }
         var hitTrackVehicle = getHitTrack(prevPosition, nextPosition, battleModel);
         if (hitTrackVehicle != null) {
@@ -41,6 +39,7 @@ public class ShellFlyProcessor {
             battleModel.getUpdates().removeShell(shellModel.getId());
             return;
         }
+        shellModel.getState().setPosition(nextPosition);
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
         velocityY = velocityY - gravityAcceleration * battleModel.getCurrentTimeStepSecs();
         velocity = Math.sqrt(Math.pow(velocityX, 2.0) + Math.pow(velocityY, 2.0));
@@ -88,8 +87,7 @@ public class ShellFlyProcessor {
     private static boolean positionIsOutOfRoom(Position position, RoomSpecs roomSpecs) {
         var xMax = roomSpecs.getRightTop().getX();
         var xMin = roomSpecs.getLeftBottom().getX();
-        var yMin = roomSpecs.getLeftBottom().getY();
-        return position.getX() >= xMax || position.getX() <= xMin || position.getY() <= yMin;
+        return position.getX() >= xMax || position.getX() <= xMin;
     }
 
     private static boolean isHitGround(Position position, BattleModel battleModel) {
