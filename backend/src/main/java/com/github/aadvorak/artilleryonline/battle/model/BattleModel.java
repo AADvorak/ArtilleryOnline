@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.model;
 
 import com.github.aadvorak.artilleryonline.battle.common.IdGenerator;
+import com.github.aadvorak.artilleryonline.battle.events.BattleModelEvents;
 import com.github.aadvorak.artilleryonline.battle.updates.BattleModelUpdates;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,6 +32,8 @@ public class BattleModel {
     private long lastUpdateTime;
 
     private BattleModelUpdates updates;
+
+    private BattleModelEvents events;
 
     public void removeShellById(int id) {
         shells.remove(id);

@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.github.aadvorak.artilleryonline.battle.events.BattleModelEvents;
 import com.github.aadvorak.artilleryonline.battle.updates.BattleModelUpdates;
 import com.github.aadvorak.artilleryonline.collection.BattleUpdatesQueueElement;
 import lombok.Getter;
@@ -20,4 +21,6 @@ public class BattleUpdateResponse implements BattleUpdatesQueueElement {
     private BattleModelStateResponse state;
 
     private BattleModelUpdates updates;
+
+    private BattleModelEvents events;
 }

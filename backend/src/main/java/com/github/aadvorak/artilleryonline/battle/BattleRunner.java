@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle;
 
+import com.github.aadvorak.artilleryonline.battle.events.BattleModelEvents;
 import com.github.aadvorak.artilleryonline.battle.processor.ActiveBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.WaitingBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.updates.BattleModelUpdates;
@@ -47,6 +48,7 @@ public class BattleRunner {
                     throw new RuntimeException(e);
                 }
                 battle.getModel().setUpdates(new BattleModelUpdates());
+                battle.getModel().setEvents(new BattleModelEvents());
                 processBattleStep(battle);
                 setBattleUpdatedByTimeout(battle);
                 sendBattleToUpdatesQueue(battle);
@@ -115,7 +117,8 @@ public class BattleRunner {
         var sendState = battle.getModel().getVehicles().entrySet().stream()
                 .anyMatch(vehicleEntry -> vehicleEntry.getValue().isUpdated());
         var sendUpdates = !battle.getModel().getUpdates().isEmpty();
-        if (sendState || sendUpdates) {
+        var sendEvents = !battle.getModel().getEvents().isEmpty();
+        if (sendState || sendUpdates || sendEvents) {
             var battleUpdateResponse = new BattleUpdateResponse()
                     .setId(battle.getId())
                     .setTime(battle.getTime());
@@ -124,6 +127,9 @@ public class BattleRunner {
             }
             if (sendUpdates) {
                 battleUpdateResponse.setUpdates(battle.getModel().getUpdates());
+            }
+            if (sendEvents) {
+                battleUpdateResponse.setEvents(battle.getModel().getEvents());
             }
             battle.getQueues().getBattleUpdatesQueue().add(battleUpdateResponse);
         }

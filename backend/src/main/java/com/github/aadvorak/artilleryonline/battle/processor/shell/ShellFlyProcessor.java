@@ -1,6 +1,9 @@
 package com.github.aadvorak.artilleryonline.battle.processor.shell;
 
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.ShellHitType;
+import com.github.aadvorak.artilleryonline.battle.events.ShellHitEvent;
+import com.github.aadvorak.artilleryonline.battle.events.ShellHitEventObject;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
@@ -27,17 +30,20 @@ public class ShellFlyProcessor {
         if (hitTrackVehicle != null) {
             ShellDamageProcessor.processHitTrack(nextPosition, hitTrackVehicle, shellModel.getSpecs(), battleModel);
             battleModel.getUpdates().removeShell(shellModel.getId());
+            addHitEvent(ShellHitType.VEHICLE_TRACK, shellModel.getId(), hitTrackVehicle.getId(), battleModel);
             return;
         }
         var hitVehicle = getHitVehicle(prevPosition, nextPosition, battleModel);
         if (hitVehicle != null) {
             ShellDamageProcessor.processHitVehicle(nextPosition, hitVehicle, shellModel, battleModel);
             battleModel.getUpdates().removeShell(shellModel.getId());
+            addHitEvent(ShellHitType.VEHICLE_HULL, shellModel.getId(), hitVehicle.getId(), battleModel);
             return;
         }
         if (isHitGround(nextPosition, battleModel)) {
             ShellDamageProcessor.processHitGround(nextPosition, shellModel.getSpecs(), battleModel);
             battleModel.getUpdates().removeShell(shellModel.getId());
+            addHitEvent(ShellHitType.GROUND, shellModel.getId(), null, battleModel);
             return;
         }
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
@@ -93,5 +99,13 @@ public class ShellFlyProcessor {
     private static boolean isHitGround(Position position, BattleModel battleModel) {
         var nearestGroundPosition = BattleUtils.getNearestGroundPosition(position.getX(), battleModel.getRoom());
         return position.getY() <= nearestGroundPosition.getY();
+    }
+
+    private static void addHitEvent(ShellHitType type, Integer shellId, Integer vehicleId, BattleModel battleModel) {
+        battleModel.getEvents().addHit(new ShellHitEvent()
+                .setShellId(shellId)
+                .setObject(new ShellHitEventObject()
+                        .setVehicleId(vehicleId)
+                        .setType(type)));
     }
 }

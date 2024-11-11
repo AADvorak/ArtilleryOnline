@@ -17,6 +17,12 @@ export enum ShellType {
   HE = 'HE'
 }
 
+export enum ShellHitType {
+  GROUND = 'GROUND',
+  VEHICLE_HULL = 'VEHICLE_HULL',
+  VEHICLE_TRACK = 'VEHICLE_TRACK'
+}
+
 export interface ApplicationSettings {
   debug: boolean,
   clientProcessing: boolean
