@@ -10,7 +10,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +26,20 @@ public class UserSettingService {
     private final UserService userService;
 
     private final ModelMapper mapper = new ModelMapper();
+
+    public Map<String, List<UserSettingResponse>> getSettings() {
+        var user = userService.getUserFromContext();
+        var settings = userSettingRepository.findByUserId(user.getId());
+        Map<String, List<UserSettingResponse>> settingsMap = new HashMap<>();
+        AVAILABLE_GROUP_NAMES.forEach(groupName -> {
+            var filteredSettings = settings.stream()
+                    .filter(setting -> setting.getGroupName().equals(groupName))
+                    .map(setting -> mapper.map(setting, UserSettingResponse.class))
+                    .toList();
+            settingsMap.put(groupName, filteredSettings);
+        });
+        return settingsMap;
+    }
 
     public List<UserSettingResponse> getSettingsFromGroup(String groupName) {
         if (!AVAILABLE_GROUP_NAMES.contains(groupName)) {

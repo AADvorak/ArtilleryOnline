@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface UserSettingRepository extends JpaRepository<UserSetting, Long> {
 
+    List<UserSetting> findByUserId(long userId);
+
     List<UserSetting> findByUserIdAndGroupName(long userId, String groupName);
 
     Optional<UserSetting> findByUserIdAndGroupNameAndName(long userId, String groupName, String name);

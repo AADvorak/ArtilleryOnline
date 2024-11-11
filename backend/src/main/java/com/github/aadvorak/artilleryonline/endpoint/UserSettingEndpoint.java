@@ -7,25 +7,31 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/user-settings/{groupName}")
+@RequestMapping("/api/user-settings")
 @RequiredArgsConstructor
 public class UserSettingEndpoint {
 
     private final UserSettingService userSettingService;
 
     @GetMapping()
+    public Map<String, List<UserSettingResponse>> getSettings() {
+        return userSettingService.getSettings();
+    }
+
+    @GetMapping("/{groupName}")
     public List<UserSettingResponse> getSettingsFromGroup(@PathVariable String groupName) {
         return userSettingService.getSettingsFromGroup(groupName);
     }
 
-    @PutMapping
+    @PutMapping("/{groupName}")
     public void setSetting(@PathVariable String groupName, @RequestBody UserSettingRequest request) {
         userSettingService.setSetting(groupName, request);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{groupName}")
     public void clearSettingsFromGroup(@PathVariable String groupName) {
         userSettingService.clearSettingsFromGroup(groupName);
     }
