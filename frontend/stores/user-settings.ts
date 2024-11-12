@@ -11,6 +11,7 @@ import {ApiRequestSender} from '~/api/api-request-sender'
 import {useRequestErrorHandler} from '~/composables/request-error-handler'
 import {DefaultAppearances} from '~/dictionary/default-appearances'
 import type {ErrorResponse} from '~/data/response'
+import {DefaultSoundSettings} from "~/dictionary/default-sound-settings";
 
 const SETTINGS_PATH = '/user-settings'
 
@@ -33,12 +34,23 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     return settings.value[UserSettingsGroup.APPEARANCES]
   })
 
+  const soundSettings = computed(() => {
+    if (!settings.value) {
+      return []
+    }
+    return settings.value[UserSettingsGroup.SOUNDS]
+  })
+
   const controlsMapping = computed(() => {
     return toNameValueMapping(controls.value)
   })
 
   const appearancesMapping = computed(() => {
     return toNameValueMapping(appearances.value)
+  })
+
+  const soundSettingsMapping = computed(() => {
+    return toNameValueMapping(soundSettings.value)
   })
 
   const controlsOrDefaults = computed(() => {
@@ -57,6 +69,14 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     }))
   })
 
+  const soundSettingsOrDefaults = computed(() => {
+    return DefaultSoundSettings.map(soundSetting => ({
+      name: soundSetting.name,
+      value: soundSettingsMapping.value[soundSetting.name] || soundSetting.value,
+      description: soundSetting.description
+    }))
+  })
+
   const controlsOrDefaultsValueNameMapping = computed(() => {
     return toValueNameMapping(controlsOrDefaults.value)
   })
@@ -65,12 +85,20 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     return toNameValueMapping(appearancesOrDefaults.value)
   })
 
+  const soundSettingsOrDefaultsNameValueMapping = computed(() => {
+    return toNameValueMapping(soundSettingsOrDefaults.value)
+  })
+
   async function setControl(newControl: UserSetting) {
     await setSetting(newControl, UserSettingsGroup.CONTROLS)
   }
 
   async function setAppearance(newAppearance: UserSetting) {
     await setSetting(newAppearance, UserSettingsGroup.APPEARANCES)
+  }
+
+  async function setSoundSetting(newSoundSetting: UserSetting) {
+    await setSetting(newSoundSetting, UserSettingsGroup.SOUNDS)
   }
 
   async function setSetting(newSetting: UserSetting, group: UserSettingsGroup) {
@@ -141,8 +169,10 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     controlsOrDefaultsValueNameMapping,
     appearancesOrDefaults,
     appearancesOrDefaultsNameValueMapping,
+    soundSettingsOrDefaultsNameValueMapping,
     setControl,
     setAppearance,
+    setSoundSetting,
     resetControls,
     loadSettingsIfNull
   }

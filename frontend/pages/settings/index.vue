@@ -11,6 +11,10 @@ function toAppearance() {
   router.push('/settings/appearance')
 }
 
+function toSounds() {
+  router.push('/settings/sounds')
+}
+
 function back() {
   router.push('/menu')
 }
@@ -25,6 +29,7 @@ function back() {
       <v-card-text>
         <v-btn class="mb-4" width="100%" color="secondary" @click="toControls">Controls</v-btn>
         <v-btn class="mb-4" width="100%" color="secondary" @click="toAppearance">Appearance</v-btn>
+        <v-btn class="mb-4" width="100%" color="secondary" @click="toSounds">Sounds</v-btn>
         <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
       </v-card-text>
     </v-card>

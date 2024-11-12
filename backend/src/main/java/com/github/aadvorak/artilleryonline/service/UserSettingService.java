@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserSettingService {
 
-    private final static List<String> AVAILABLE_GROUP_NAMES = List.of("controls", "appearances");
+    private final static List<String> AVAILABLE_GROUP_NAMES = List.of("controls", "appearances", "sounds");
 
     private final UserSettingRepository userSettingRepository;
 

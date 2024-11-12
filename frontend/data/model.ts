@@ -40,8 +40,9 @@ export interface UserSetting {
 }
 
 export enum UserSettingsGroup {
-  CONTROLS = "controls",
-  APPEARANCES = "appearances"
+  CONTROLS = 'controls',
+  APPEARANCES = 'appearances',
+  SOUNDS = 'sounds'
 }
 
 export interface UserSettingsGroupsMap {
