@@ -3,8 +3,7 @@ import type {Battle, BattleUpdate} from '@/playground/data/battle'
 import {useSettingsStore} from "~/stores/settings";
 import {useStompClientStore} from "~/stores/stomp-client";
 import type {StompSubscription} from "@stomp/stompjs";
-import {usePlayer} from "~/playground/audio/player";
-import {ShellHitType, ShellType} from "~/playground/data/common";
+import {useBattleSoundsPlayer} from "~/playground/composables/battle-sounds-player";
 
 export function useBattleUpdater() {
   const battleStore = useBattleStore()
@@ -46,16 +45,13 @@ export function useBattleUpdater() {
       return
     }
     const battle = JSON.parse(JSON.stringify(battleStore.battle)) as Battle
-    processBattleEvents(battleUpdate, battle)
+    useBattleSoundsPlayer().playSounds(battleUpdate, battle)
     battle.time = battleUpdate.time
     if (battleUpdate.updates) {
       if (battleUpdate.updates.added) {
         const addedShells = battleUpdate.updates.added.shells
         if (addedShells) {
-          addedShells.forEach(shell => {
-            battle.model.shells[shell.id] = shell
-            playShot(shell.specs.caliber)
-          })
+          addedShells.forEach(shell => battle.model.shells[shell.id] = shell)
         }
         const addedExplosions = battleUpdate.updates.added.explosions
         if (addedExplosions) {
@@ -89,48 +85,6 @@ export function useBattleUpdater() {
       })
     }
     battleStore.updateBattle(battle)
-  }
-
-  function processBattleEvents(battleUpdate: BattleUpdate, battle: Battle) {
-    if (battleUpdate.events) {
-      if (battleUpdate.events.hits) {
-        battleUpdate.events.hits.forEach(hit => {
-          const shellSpecs = battle.model.shells[hit.shellId].specs
-          const shellType = shellSpecs.type
-          const caliber = shellSpecs.caliber
-          const hitType = hit.object.type
-          if (shellType === ShellType.HE) {
-            play('he-explosion')
-          } else if (shellType === ShellType.AP) {
-            if (hitType === ShellHitType.GROUND) {
-              if (caliber > 0.06) {
-                play('ap-hit-ground-large')
-              } else {
-                play('ap-hit-ground')
-              }
-            } else if (hitType === ShellHitType.VEHICLE_HULL) {
-              play('ap-hit-vehicle')
-            } else if (hitType === ShellHitType.VEHICLE_TRACK) {
-              play('ap-hit-vehicle')
-            }
-          }
-        })
-      }
-    }
-  }
-
-  function playShot(caliber: number) {
-    if (caliber <= 0.04) {
-      play('shot-small')
-    } else if (caliber <= 0.06) {
-      play('shot-mid')
-    } else {
-      play('shot-large')
-    }
-  }
-
-  function play(fileName: string) {
-    setTimeout(() => usePlayer().play('/sounds/' + fileName + '.wav').then())
   }
 
   return { subscribe, unsubscribe }
