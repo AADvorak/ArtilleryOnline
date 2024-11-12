@@ -39,6 +39,15 @@ export interface UserSetting {
   description?: string
 }
 
+export enum UserSettingsGroup {
+  CONTROLS = "controls",
+  APPEARANCES = "appearances"
+}
+
+export interface UserSettingsGroupsMap {
+  [groupKey: string]: UserSetting[]
+}
+
 export interface UserSettingsNameValueMapping {
   [name: string]: string
 }

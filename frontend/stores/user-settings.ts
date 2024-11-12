@@ -1,19 +1,37 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import type {UserSetting, UserSettingsNameValueMapping} from '~/data/model'
+import {defineStore} from 'pinia'
+import {ref} from 'vue'
+import {
+  type UserSetting,
+  UserSettingsGroup,
+  type UserSettingsGroupsMap,
+  type UserSettingsNameValueMapping
+} from '~/data/model'
 import {DefaultControls} from '~/dictionary/default-controls'
 import {ApiRequestSender} from '~/api/api-request-sender'
 import {useRequestErrorHandler} from '~/composables/request-error-handler'
-import {DefaultAppearances} from "~/dictionary/default-appearances";
+import {DefaultAppearances} from '~/dictionary/default-appearances'
+import type {ErrorResponse} from '~/data/response'
 
-const CONTROLS_PATH = '/user-settings/controls'
-const APPEARANCES_PATH = '/user-settings/appearances'
+const SETTINGS_PATH = '/user-settings'
 
 export const useUserSettingsStore = defineStore('user-settings', () => {
-  const controls = ref<UserSetting[]>()
-  const appearances = ref<UserSetting[]>()
-
   const api = new ApiRequestSender()
+
+  const settings = ref<UserSettingsGroupsMap>()
+
+  const controls = computed(() => {
+    if (!settings.value) {
+      return []
+    }
+    return settings.value[UserSettingsGroup.CONTROLS]
+  })
+
+  const appearances = computed(() => {
+    if (!settings.value) {
+      return []
+    }
+    return settings.value[UserSettingsGroup.APPEARANCES]
+  })
 
   const controlsMapping = computed(() => {
     return toNameValueMapping(controls.value)
@@ -48,68 +66,53 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
   })
 
   async function setControl(newControl: UserSetting) {
-    try {
-      await api.putJson<UserSetting, void>(CONTROLS_PATH, newControl)
-      if (!controls.value) {
-        controls.value = []
-      }
-      const existingControl = controls.value
-          .filter(control => control.name === newControl.name)[0]
-      if (existingControl) {
-        existingControl.value = newControl.value
-      } else {
-        controls.value.push(newControl)
-      }
-    } catch (e) {
-      useRequestErrorHandler().handle(e)
-    }
+    await setSetting(newControl, UserSettingsGroup.CONTROLS)
   }
 
   async function setAppearance(newAppearance: UserSetting) {
+    await setSetting(newAppearance, UserSettingsGroup.APPEARANCES)
+  }
+
+  async function setSetting(newSetting: UserSetting, group: UserSettingsGroup) {
     try {
-      await api.putJson<UserSetting, void>(APPEARANCES_PATH, newAppearance)
-      if (!appearances.value) {
-        appearances.value = []
-      }
-      const existingAppearance = appearances.value
-          .filter(appearance => appearance.name === newAppearance.name)[0]
-      if (existingAppearance) {
-        existingAppearance.value = newAppearance.value
+      await api.putJson<UserSetting, void>(`${SETTINGS_PATH}/${group}`, newSetting)
+      const existingSetting = settings.value && settings.value[group]
+          ? settings.value![group].filter(setting => setting.name === newSetting.name)[0]
+          : undefined
+      if (existingSetting) {
+        existingSetting.value = newSetting.value
       } else {
-        appearances.value.push(newAppearance)
+        if (!settings.value) {
+          settings.value = {}
+        }
+        if (!settings.value[group]) {
+          settings.value[group] = []
+        }
+        settings.value[group].push(newSetting)
       }
     } catch (e) {
-      useRequestErrorHandler().handle(e)
+      useRequestErrorHandler().handle(e as ErrorResponse)
     }
   }
 
   async function resetControls() {
     try {
-      await api.delete(CONTROLS_PATH)
-      controls.value = []
-    } catch (e) {
-      useRequestErrorHandler().handle(e)
-    }
-  }
-
-  async function loadControlsIfNull() {
-    if (!controls.value) {
-      try {
-        controls.value = await api.getJson<UserSetting[]>(CONTROLS_PATH)
-      } catch (e) {
-        console.log(e)
-        controls.value = []
+      await api.delete(`${SETTINGS_PATH}/${UserSettingsGroup.CONTROLS}`)
+      if (settings.value) {
+        settings.value[UserSettingsGroup.CONTROLS] = []
       }
+    } catch (e) {
+      useRequestErrorHandler().handle(e as ErrorResponse)
     }
   }
 
-  async function loadAppearancesIfNull() {
-    if (!appearances.value) {
+  async function loadSettingsIfNull() {
+    if (!settings.value) {
       try {
-        appearances.value = await api.getJson<UserSetting[]>(APPEARANCES_PATH)
+        settings.value = await api.getJson<UserSettingsGroupsMap>(SETTINGS_PATH)
       } catch (e) {
         console.log(e)
-        appearances.value = []
+        settings.value = {}
       }
     }
   }
@@ -141,7 +144,6 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     setControl,
     setAppearance,
     resetControls,
-    loadControlsIfNull,
-    loadAppearancesIfNull
+    loadSettingsIfNull
   }
 })
