@@ -61,7 +61,6 @@ export function useBattleSoundsPlayer() {
   }
 
   function play(fileName: string, pan: number) {
-    console.log(pan)
     setTimeout(() => usePlayer().play('/sounds/' + fileName + '.wav', pan).then())
   }
 
