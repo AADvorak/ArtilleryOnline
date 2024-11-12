@@ -4,12 +4,13 @@ export function usePlayer() {
   const audioCtx = new AudioContext()
   let buffer: AudioBuffer | undefined = undefined
 
-  async function play(path: string) {
+  async function play(path: string, pan: number) {
     await load(path)
     if (buffer) {
+      const panner = new StereoPannerNode(audioCtx, {pan})
       const source = audioCtx.createBufferSource()
       source.buffer = buffer
-      source.connect(audioCtx.destination)
+      source.connect(panner).connect(audioCtx.destination)
       source.start()
     }
   }
