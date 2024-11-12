@@ -1,8 +1,10 @@
+import {useSoundsStore} from "~/stores/sounds";
+
 export function usePlayer() {
   const audioCtx = new AudioContext()
-  let buffer = undefined
+  let buffer: AudioBuffer | undefined = undefined
 
-  async function play(path) {
+  async function play(path: string) {
     await load(path)
     if (buffer) {
       const source = audioCtx.createBufferSource()
@@ -12,13 +14,12 @@ export function usePlayer() {
     }
   }
 
-  async function load(path) {
-    const response = await fetch(path)
-    const arrayBuffer = await response.arrayBuffer()
+  async function load(path: string) {
+    const arrayBuffer = await useSoundsStore().loadSound(path)
     await decodeArrayBuffer(arrayBuffer)
   }
 
-  async function decodeArrayBuffer(arrayBuffer) {
+  async function decodeArrayBuffer(arrayBuffer: ArrayBuffer) {
     await audioCtx.decodeAudioData(arrayBuffer,
         data => buffer = data,
         error => console.log(error))
