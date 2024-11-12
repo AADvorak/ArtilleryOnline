@@ -1,12 +1,12 @@
 import type {Battle, BattleUpdate} from "~/playground/data/battle";
-import {usePlayer} from "~/playground/audio/player";
+import type {Player} from "~/playground/audio/player";
 import {ShellHitType, ShellType} from "~/playground/data/common";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
 import type {RoomSpecs} from "~/playground/data/specs";
 import type {ShellModel} from "~/playground/data/model";
 
-export function useBattleSoundsPlayer() {
+export function useBattleSoundsPlayer(player: Player) {
   function playSounds(battleUpdate: BattleUpdate, battle: Battle) {
     if (useUserSettingsStore().soundSettingsOrDefaultsNameValueMapping[SoundSettingsNames.ENABLE] !== '1') {
       return
@@ -61,7 +61,7 @@ export function useBattleSoundsPlayer() {
   }
 
   function play(fileName: string, pan: number) {
-    setTimeout(() => usePlayer().play('/sounds/' + fileName + '.wav', pan).then())
+    setTimeout(() => player.play('/sounds/' + fileName + '.wav', pan))
   }
 
   function calculatePan(x: number, roomSpecs: RoomSpecs) {

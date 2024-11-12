@@ -1,11 +1,14 @@
 import {useSoundsStore} from "~/stores/sounds";
 
-export function usePlayer() {
+export interface Player {
+  play: (path: string, pan: number) => void
+}
+
+export function usePlayer(): Player {
   const audioCtx = new AudioContext()
-  let buffer: AudioBuffer | undefined = undefined
 
   async function play(path: string, pan: number) {
-    await load(path)
+    const buffer = await load(path) as AudioBuffer
     if (buffer) {
       const panner = new StereoPannerNode(audioCtx, {pan})
       const source = audioCtx.createBufferSource()
@@ -17,13 +20,15 @@ export function usePlayer() {
 
   async function load(path: string) {
     const arrayBuffer = await useSoundsStore().loadSound(path)
-    await decodeArrayBuffer(arrayBuffer)
+    return await decodeArrayBuffer(arrayBuffer)
   }
 
-  async function decodeArrayBuffer(arrayBuffer: ArrayBuffer) {
-    await audioCtx.decodeAudioData(arrayBuffer,
-        data => buffer = data,
-        error => console.log(error))
+  function decodeArrayBuffer(arrayBuffer: ArrayBuffer) {
+    return new Promise((resolve, reject) => {
+      audioCtx.decodeAudioData(arrayBuffer,
+          data => resolve(data),
+          error => reject(error)).then()
+    })
   }
 
   return {play}
