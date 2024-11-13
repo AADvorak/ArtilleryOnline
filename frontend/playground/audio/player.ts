@@ -6,9 +6,14 @@ export interface Player {
 
 export function usePlayer(): Player {
   const audioCtx = new AudioContext()
+  const soundsStore = useSoundsStore()
 
   async function play(path: string, pan: number) {
-    const buffer = await load(path) as AudioBuffer
+    let buffer = soundsStore.audioBufferMap[path]
+    if (!buffer) {
+      buffer = await load(path) as AudioBuffer
+      soundsStore.audioBufferMap[path] = buffer
+    }
     if (buffer) {
       const panner = new StereoPannerNode(audioCtx, {pan})
       const source = audioCtx.createBufferSource()
@@ -19,7 +24,8 @@ export function usePlayer(): Player {
   }
 
   async function load(path: string) {
-    const arrayBuffer = await useSoundsStore().loadSound(path)
+    const response = await fetch(path)
+    const arrayBuffer = await response.arrayBuffer()
     return await decodeArrayBuffer(arrayBuffer)
   }
 
