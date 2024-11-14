@@ -3,6 +3,8 @@ import {useBattleStore} from "~/stores/battle";
 import type {VehicleState} from "~/playground/data/state";
 import type {RoomSpecs} from "~/playground/data/specs";
 import type {VehicleModels} from "~/playground/data/model";
+import {useUserSettingsStore} from "~/stores/user-settings";
+import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
 
 interface VehicleAudioControls {
   [userKey: string]: AudioControl | undefined
@@ -24,6 +26,9 @@ export function useVehicleSoundsPlayer(player: Player) {
   }
 
   async function playSounds() {
+    if (useUserSettingsStore().soundSettingsOrDefaultsNameValueMapping[SoundSettingsNames.ENABLE] !== '1') {
+      return
+    }
     if (vehicles.value) {
       await playVehicleMove(vehicles.value!, battleStore.battle?.model.room.specs!)
       setTimeout(playSounds, 100)
