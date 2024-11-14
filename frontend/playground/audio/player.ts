@@ -11,6 +11,14 @@ export interface AudioControl {
   gainNode: GainNode
 }
 
+// todo read from metadata
+const LOOPS = {
+  '/sounds/gun-turn.wav': {
+    start: 0.433,
+    end: 0.912
+  }
+}
+
 export function usePlayer(): Player {
   const audioCtx = new AudioContext()
   const soundsStore = useSoundsStore()
@@ -26,7 +34,9 @@ export function usePlayer(): Player {
       const gainNode = audioCtx.createGain();
       const source = audioCtx.createBufferSource()
       source.buffer = buffer
-      source.loop = loop
+      if (loop) {
+        setLoop(source, path)
+      }
       source.connect(panner).connect(gainNode).connect(audioCtx.destination)
       source.start()
       return {audioCtx, source, panner, gainNode}
@@ -46,6 +56,15 @@ export function usePlayer(): Player {
           data => resolve(data),
           error => reject(error)).then()
     })
+  }
+
+  function setLoop(source: AudioBufferSourceNode, path: string) {
+    source.loop = true
+    const loopRange = LOOPS[path]
+    if (loopRange) {
+      source.loopStart = loopRange.start
+      source.loopEnd = loopRange.end
+    }
   }
 
   return {play}
