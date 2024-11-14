@@ -14,6 +14,7 @@ interface VehicleAudioControls {
 const TRACK_KEY = 'Track'
 const ENGINE_KEY = 'Engine'
 const GUN_KEY = 'Gun'
+const JET_KEY = 'Jet'
 
 export function useVehicleSoundsPlayer(player: Player) {
   const vehicleAudioControls: VehicleAudioControls = {}
@@ -50,6 +51,8 @@ export function useVehicleSoundsPlayer(player: Player) {
           'vehicle-move-medium.mp3', fadeOutAndStop)
       await playVehicleSound(key, ENGINE_KEY, pan, gain, isEngineActive(vehicleState),
           'vehicle-engine.mp3', fadeOutAndStop)
+      await playVehicleSound(key, JET_KEY, pan, gain, isJetActive(vehicleState),
+          'jet.wav', fadeOutAndStop)
       if (key === userStore.user!.nickname) {
         await playVehicleSound(key, GUN_KEY, 0, gain, !!vehicleState.gunRotatingDirection,
             'gun-turn.wav', stopLoop)
@@ -108,6 +111,10 @@ export function useVehicleSoundsPlayer(player: Player) {
 
   function isEngineActive(vehicleState: VehicleState) {
     return vehicleState.movingDirection && !vehicleState.jetState?.active
+  }
+
+  function isJetActive(vehicleState: VehicleState) {
+    return !!vehicleState.jetState?.active && vehicleState.jetState?.volume > 0
   }
 
   async function playLooped(fileName: string, pan: number, gain: number): Promise<AudioControl | undefined> {

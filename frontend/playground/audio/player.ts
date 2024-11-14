@@ -16,6 +16,9 @@ const LOOPS = {
   '/sounds/gun-turn.wav': {
     start: 0.433,
     end: 0.912
+  },
+  '/sounds/jet.wav': {
+    start: 0.497
   }
 }
 
@@ -55,8 +58,12 @@ export function usePlayer(): Player {
     source.loop = true
     const loopRange = LOOPS[path]
     if (loopRange) {
-      source.loopStart = loopRange.start
-      source.loopEnd = loopRange.end
+      if (loopRange.start) {
+        source.loopStart = loopRange.start
+      }
+      if (loopRange.end) {
+        source.loopEnd = loopRange.end
+      }
     }
   }
 
