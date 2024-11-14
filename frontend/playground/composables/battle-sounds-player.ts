@@ -3,10 +3,12 @@ import type {Player} from "~/playground/audio/player";
 import {ShellHitType, ShellType} from "~/playground/data/common";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
-import type {RoomSpecs} from "~/playground/data/specs";
 import type {ShellModel} from "~/playground/data/model";
+import {useSoundsPlayerBase} from "~/playground/composables/sounds-player-base";
 
 export function useBattleSoundsPlayer(player: Player) {
+  const soundsPlayerBase = useSoundsPlayerBase()
+
   function playSounds(battleUpdate: BattleUpdate, battle: Battle) {
     if (useUserSettingsStore().soundSettingsOrDefaultsNameValueMapping[SoundSettingsNames.ENABLE] !== '1') {
       return
@@ -19,20 +21,21 @@ export function useBattleSoundsPlayer(player: Player) {
           const shellType = shellSpecs.type
           const caliber = shellSpecs.caliber
           const hitType = hit.object.type
-          const pan = calculatePan(shell.state.position.x, battle.model.room.specs)
+          const pan = soundsPlayerBase.calculatePan(shell.state.position.x)
+          const gain = soundsPlayerBase.calculateGain(shell.state.position)
           if (shellType === ShellType.HE) {
-            play('he-explosion', pan)
+            play('he-explosion', pan, gain)
           } else if (shellType === ShellType.AP) {
             if (hitType === ShellHitType.GROUND) {
               if (caliber > 0.06) {
-                play('ap-hit-ground-large', pan)
+                play('ap-hit-ground-large', pan, gain)
               } else {
-                play('ap-hit-ground', pan)
+                play('ap-hit-ground', pan, gain)
               }
             } else if (hitType === ShellHitType.VEHICLE_HULL) {
-              play('ap-hit-vehicle', pan)
+              play('ap-hit-vehicle', pan, gain)
             } else if (hitType === ShellHitType.VEHICLE_TRACK) {
-              play('ap-hit-vehicle', pan)
+              play('ap-hit-vehicle', pan, gain)
             }
           }
         })
@@ -42,32 +45,27 @@ export function useBattleSoundsPlayer(player: Player) {
       if (battleUpdate.updates.added) {
         const addedShells = battleUpdate.updates.added.shells
         if (addedShells) {
-          addedShells.forEach(shell => playShot(shell, battle.model.room.specs))
+          addedShells.forEach(shell => playShot(shell))
         }
       }
     }
   }
 
-  function playShot(shell: ShellModel, roomSpecs: RoomSpecs) {
+  function playShot(shell: ShellModel) {
     const caliber = shell.specs.caliber
-    const pan = calculatePan(shell.state.position.x, roomSpecs)
+    const pan = soundsPlayerBase.calculatePan(shell.state.position.x)
+    const gain = soundsPlayerBase.calculateGain(shell.state.position)
     if (caliber <= 0.04) {
-      play('shot-small', pan)
+      play('shot-small', pan, gain)
     } else if (caliber <= 0.06) {
-      play('shot-mid', pan)
+      play('shot-mid', pan, gain)
     } else {
-      play('shot-large', pan)
+      play('shot-large', pan, gain)
     }
   }
 
-  function play(fileName: string, pan: number) {
-    setTimeout(() => player.play('/sounds/' + fileName + '.wav', pan))
-  }
-
-  function calculatePan(x: number, roomSpecs: RoomSpecs) {
-    const xMin = roomSpecs.leftBottom.x
-    const xMax = roomSpecs.rightTop.x
-    return 2 * (x - xMax) / (xMax - xMin) + 1
+  function play(fileName: string, pan: number, gain: number) {
+    setTimeout(() => player.play('/sounds/' + fileName + '.wav', pan, gain))
   }
 
   return {playSounds}

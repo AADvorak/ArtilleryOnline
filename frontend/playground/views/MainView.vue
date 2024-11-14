@@ -13,6 +13,7 @@ import {usePlayer} from "~/playground/audio/player";
 
 const player = usePlayer()
 const battleUpdater = useBattleUpdater(player)
+const vehicleSoundsPlayer = useVehicleSoundsPlayer(player)
 const keyboardListener = useKeyboardListener(useCommandsSender())
 
 const isClientProcessing = computed(() => useSettingsStore().settings?.clientProcessing)
@@ -21,12 +22,13 @@ onMounted(() => {
   keyboardListener.startListening()
   battleUpdater.subscribe()
   isClientProcessing.value && useBattleProcessor().startProcessing()
-  useVehicleSoundsPlayer(player).start()
+  vehicleSoundsPlayer.start()
 })
 
 onBeforeUnmount(() => {
   keyboardListener.stopListening()
   battleUpdater.unsubscribe()
+  vehicleSoundsPlayer.stopAll()
 })
 </script>
 

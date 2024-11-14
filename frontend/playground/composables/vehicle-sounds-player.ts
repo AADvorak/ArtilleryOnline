@@ -1,10 +1,11 @@
 import type {AudioControl, Player} from "~/playground/audio/player";
 import {useBattleStore} from "~/stores/battle";
 import type {VehicleState} from "~/playground/data/state";
-import type {RoomSpecs} from "~/playground/data/specs";
 import type {VehicleModels} from "~/playground/data/model";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
+import {useSoundsPlayerBase} from "~/playground/composables/sounds-player-base";
+import {useUserStore} from "~/stores/user";
 
 interface VehicleAudioControls {
   [userKey: string]: AudioControl | undefined
@@ -18,6 +19,8 @@ export function useVehicleSoundsPlayer(player: Player) {
   const vehicleAudioControls: VehicleAudioControls = {}
 
   const battleStore = useBattleStore()
+  const userStore = useUserStore()
+  const soundsPlayerBase = useSoundsPlayerBase()
 
   const vehicles = computed(() => battleStore.vehicles)
 
@@ -30,30 +33,36 @@ export function useVehicleSoundsPlayer(player: Player) {
       return
     }
     if (vehicles.value) {
-      await playVehicleMove(vehicles.value!, battleStore.battle?.model.room.specs!)
+      await playVehicleMove(vehicles.value!)
       setTimeout(playSounds, 100)
     } else {
       stopAll()
     }
   }
 
-  async function playVehicleMove(vehicles: VehicleModels, roomSpecs: RoomSpecs) {
+  async function playVehicleMove(vehicles: VehicleModels) {
     const keys = Object.keys(vehicles)
     for (const key of keys) {
       const vehicleState = vehicles[key].state
-      const pan = calculatePan(vehicleState.position.x, roomSpecs)
-      await playVehicleSound(key, TRACK_KEY, pan, isMovingOnGround(vehicleState), 'vehicle-move-medium.mp3', fadeOutAndStop)
-      await playVehicleSound(key, ENGINE_KEY, pan, isEngineActive(vehicleState), 'vehicle-engine.mp3', fadeOutAndStop)
-      await playVehicleSound(key, GUN_KEY, pan, !!vehicleState.gunRotatingDirection, 'gun-turn.wav', stopLoop)
+      const pan = soundsPlayerBase.calculatePan(vehicleState.position.x)
+      const gain = soundsPlayerBase.calculateGain(vehicleState.position)
+      await playVehicleSound(key, TRACK_KEY, pan, gain, isMovingOnGround(vehicleState),
+          'vehicle-move-medium.mp3', fadeOutAndStop)
+      await playVehicleSound(key, ENGINE_KEY, pan, gain, isEngineActive(vehicleState),
+          'vehicle-engine.mp3', fadeOutAndStop)
+      if (key === userStore.user!.nickname) {
+        await playVehicleSound(key, GUN_KEY, pan, gain, !!vehicleState.gunRotatingDirection,
+            'gun-turn.wav', stopLoop)
+      }
     }
   }
 
-  async function playVehicleSound(key: string, addKey: string, pan: number, condition: boolean, file: string,
-                                  stopFunction: (audioControl: AudioControl) => void) {
+  async function playVehicleSound(key: string, addKey: string, pan: number, gain: number, condition: boolean,
+                                  file: string, stopFunction: (audioControl: AudioControl) => void) {
     const fullKey = key + addKey
     const audioControl = vehicleAudioControls[fullKey]
     if (condition && !audioControl) {
-      const newAudioControl = await playLooped(file, pan)
+      const newAudioControl = await playLooped(file, pan, gain)
       if (newAudioControl) {
         vehicleAudioControls[fullKey] = newAudioControl
         newAudioControl.source.addEventListener('ended', () => {
@@ -63,6 +72,7 @@ export function useVehicleSoundsPlayer(player: Player) {
     }
     if (condition && audioControl) {
       audioControl.panner.pan.value = pan
+      audioControl.gainNode.gain.value = gain
     }
     if (!condition && audioControl) {
       stopFunction(audioControl)
@@ -83,13 +93,10 @@ export function useVehicleSoundsPlayer(player: Player) {
 
   function stopAll() {
     Object.keys(vehicleAudioControls).forEach(key => {
-      for (const addKey of [TRACK_KEY, ENGINE_KEY, GUN_KEY]) {
-        const fullKey = key + addKey
-        const audioControl = vehicleAudioControls[fullKey]
-        if (audioControl) {
-          audioControl.source.stop()
-          delete vehicleAudioControls[fullKey]
-        }
+      const audioControl = vehicleAudioControls[key]
+      if (audioControl) {
+        audioControl.source.stop()
+        delete vehicleAudioControls[key]
       }
     })
   }
@@ -100,18 +107,12 @@ export function useVehicleSoundsPlayer(player: Player) {
   }
 
   function isEngineActive(vehicleState: VehicleState) {
-    return vehicleState.movingDirection && !vehicleState.jetState.active
+    return vehicleState.movingDirection && !vehicleState.jetState?.active
   }
 
-  async function playLooped(fileName: string, pan: number): Promise<AudioControl | undefined> {
-    return await player.play('/sounds/' + fileName, pan, true)
+  async function playLooped(fileName: string, pan: number, gain: number): Promise<AudioControl | undefined> {
+    return await player.play('/sounds/' + fileName, pan, gain, true)
   }
 
-  function calculatePan(x: number, roomSpecs: RoomSpecs) {
-    const xMin = roomSpecs.leftBottom.x
-    const xMax = roomSpecs.rightTop.x
-    return 2 * (x - xMax) / (xMax - xMin) + 1
-  }
-
-  return {start}
+  return {start, stopAll}
 }

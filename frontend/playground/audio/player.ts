@@ -1,7 +1,7 @@
 import {useSoundsStore} from "~/stores/sounds";
 
 export interface Player {
-  play: (path: string, pan: number, loop?: boolean) => Promise<AudioControl | undefined>
+  play: (path: string, pan: number, gain: number, loop?: boolean) => Promise<AudioControl | undefined>
 }
 
 export interface AudioControl {
@@ -23,7 +23,7 @@ export function usePlayer(): Player {
   const audioCtx = new AudioContext()
   const soundsStore = useSoundsStore()
 
-  async function play(path: string, pan: number, loop: boolean = false): Promise<AudioControl | undefined> {
+  async function play(path: string, pan: number, gain: number, loop: boolean = false): Promise<AudioControl | undefined> {
     let buffer = soundsStore.audioBufferMap[path]
     if (!buffer) {
       buffer = await load(path) as AudioBuffer
@@ -31,7 +31,8 @@ export function usePlayer(): Player {
     }
     if (buffer) {
       const panner = new StereoPannerNode(audioCtx, {pan})
-      const gainNode = audioCtx.createGain();
+      const gainNode = audioCtx.createGain()
+      gainNode.gain.value = gain
       const source = audioCtx.createBufferSource()
       source.buffer = buffer
       if (loop) {
