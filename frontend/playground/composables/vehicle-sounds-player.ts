@@ -51,7 +51,7 @@ export function useVehicleSoundsPlayer(player: Player) {
       await playVehicleSound(key, ENGINE_KEY, pan, gain, isEngineActive(vehicleState),
           'vehicle-engine.mp3', fadeOutAndStop)
       if (key === userStore.user!.nickname) {
-        await playVehicleSound(key, GUN_KEY, pan, gain, !!vehicleState.gunRotatingDirection,
+        await playVehicleSound(key, GUN_KEY, 0, gain, !!vehicleState.gunRotatingDirection,
             'gun-turn.wav', stopLoop)
       }
     }

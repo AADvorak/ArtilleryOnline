@@ -5,9 +5,11 @@ import {useUserSettingsStore} from "~/stores/user-settings";
 import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
 import type {ShellModel} from "~/playground/data/model";
 import {useSoundsPlayerBase} from "~/playground/composables/sounds-player-base";
+import {useUserStore} from "~/stores/user";
 
 export function useBattleSoundsPlayer(player: Player) {
   const soundsPlayerBase = useSoundsPlayerBase()
+  const userStore = useUserStore()
 
   function playSounds(battleUpdate: BattleUpdate, battle: Battle) {
     if (useUserSettingsStore().soundSettingsOrDefaultsNameValueMapping[SoundSettingsNames.ENABLE] !== '1') {
@@ -47,6 +49,13 @@ export function useBattleSoundsPlayer(player: Player) {
         if (addedShells) {
           addedShells.forEach(shell => playShot(shell))
         }
+      }
+    }
+    if (battleUpdate.state) {
+      const prevLoadedShell = battle.model.vehicles[userStore.user!.nickname]?.state.gunState.loadedShell
+      const loadedShell = battleUpdate.state.vehicles[userStore.user!.nickname]?.gunState.loadedShell
+      if (loadedShell && !prevLoadedShell) {
+        play('reload', 0, 1)
       }
     }
   }
