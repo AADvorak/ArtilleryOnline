@@ -47,15 +47,7 @@ export function usePlayer(): Player {
   async function load(path: string) {
     const response = await fetch(path)
     const arrayBuffer = await response.arrayBuffer()
-    return await decodeArrayBuffer(arrayBuffer)
-  }
-
-  function decodeArrayBuffer(arrayBuffer: ArrayBuffer) {
-    return new Promise((resolve, reject) => {
-      audioCtx.decodeAudioData(arrayBuffer,
-          data => resolve(data),
-          error => reject(error)).then()
-    })
+    return await audioCtx.decodeAudioData(arrayBuffer)
   }
 
   function setLoop(source: AudioBufferSourceNode, path: string) {
