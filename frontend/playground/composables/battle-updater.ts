@@ -4,13 +4,13 @@ import {useSettingsStore} from "~/stores/settings";
 import {useStompClientStore} from "~/stores/stomp-client";
 import type {StompSubscription} from "@stomp/stompjs";
 import {useBattleSoundsPlayer} from "~/playground/composables/battle-sounds-player";
-import {usePlayer} from "~/playground/audio/player";
+import type {Player} from "~/playground/audio/player";
 
-export function useBattleUpdater() {
+export function useBattleUpdater(player: Player) {
   const battleStore = useBattleStore()
   const settingsStore = useSettingsStore()
   const stompClientStore = useStompClientStore()
-  const battleSoundsPlayer = useBattleSoundsPlayer(usePlayer())
+  const battleSoundsPlayer = useBattleSoundsPlayer(player)
 
   const subscriptions: StompSubscription[] = []
 

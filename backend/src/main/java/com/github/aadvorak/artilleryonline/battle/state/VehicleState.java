@@ -38,4 +38,6 @@ public class VehicleState implements State {
     private TrackState trackState;
 
     private JetState jetState;
+
+    private boolean onGround;
 }

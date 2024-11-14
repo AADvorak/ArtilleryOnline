@@ -43,6 +43,7 @@ export interface VehicleState {
   gunState: GunState
   trackState: TrackState
   jetState: JetState
+  onGround: boolean
 }
 
 export interface RoomState {

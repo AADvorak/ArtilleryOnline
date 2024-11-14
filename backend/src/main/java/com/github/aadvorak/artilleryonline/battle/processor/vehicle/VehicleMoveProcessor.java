@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.Collision;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.WheelGroundState;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.calculator.VehicleAccelerationCalculator;
 
@@ -21,6 +22,7 @@ public class VehicleMoveProcessor {
         if (checkCollisionsResolved(vehicle, battle)) {
             applyNextPositionAndAngle(vehicle);
         }
+        calculateOnGround(vehicle);
     }
 
     private static void recalculateAcceleration(VehicleCalculations vehicle, BattleCalculations battle) {
@@ -86,5 +88,15 @@ public class VehicleMoveProcessor {
             angle = - Math.PI / 2;
         }
         vehicle.getModel().getState().setAngle(angle);
+    }
+
+    private static void calculateOnGround(VehicleCalculations vehicle) {
+        var state = vehicle.getModel().getState();
+        var onGround = !(vehicle.getLeftWheel().getGroundState().equals(WheelGroundState.FULL_OVER_GROUND)
+                && vehicle.getRightWheel().getGroundState().equals(WheelGroundState.FULL_OVER_GROUND));
+        if (state.isOnGround() != onGround) {
+            state.setOnGround(onGround);
+            vehicle.getModel().setUpdated(true);
+        }
     }
 }
