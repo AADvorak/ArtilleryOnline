@@ -115,11 +115,11 @@ export function useBattleSoundsPlayer(player: Player) {
 
   function getCollideSoundName(type: CollideObjectType): string | undefined {
     if (type === CollideObjectType.GROUND) {
-      return 'collide-ground'
+      return 'collide-ground-' + (Math.ceil(Math.random() * 2))
     } else if (type === CollideObjectType.WALL) {
       return 'collide-wall'
     } else if (type === CollideObjectType.VEHICLE) {
-      return 'collide-vehicle-' + (Math.floor(Math.random() * 4) + 1)
+      return 'collide-vehicle-' + (Math.ceil(Math.random() * 6))
     }
   }
 
