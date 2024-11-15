@@ -25,21 +25,8 @@ export function useBattleSoundsPlayer(player: Player) {
           const hitType = hit.object.type
           const pan = soundsPlayerBase.calculatePan(shell.state.position.x)
           const gain = soundsPlayerBase.calculateGain(shell.state.position)
-          if (shellType === ShellType.HE) {
-            play('he-explosion', pan, gain)
-          } else if (shellType === ShellType.AP) {
-            if (hitType === ShellHitType.GROUND) {
-              if (caliber > 0.06) {
-                play('ap-hit-ground-large', pan, gain)
-              } else {
-                play('ap-hit-ground', pan, gain)
-              }
-            } else if (hitType === ShellHitType.VEHICLE_HULL) {
-              play('ap-hit-vehicle', pan, gain)
-            } else if (hitType === ShellHitType.VEHICLE_TRACK) {
-              play('ap-hit-vehicle', pan, gain)
-            }
-          }
+          const fileName = getHitSoundName(shellType, hitType, caliber)
+          fileName && play(fileName, pan, gain)
         })
       }
     }
@@ -82,6 +69,37 @@ export function useBattleSoundsPlayer(player: Player) {
       play('shot-mid', pan, gain)
     } else {
       play('shot-large', pan, gain)
+    }
+  }
+
+  function getHitSoundName(shellType: ShellType, hitType: ShellHitType, caliber: number): string | undefined {
+    if (shellType === ShellType.HE) {
+      return 'he-explosion'
+    } else if (shellType === ShellType.AP) {
+      if (hitType === ShellHitType.GROUND) {
+        if (caliber > 0.06) {
+          return 'ap-hit-ground-large'
+        } else {
+          return 'ap-hit-ground'
+        }
+      } else if (hitType === ShellHitType.VEHICLE_HULL) {
+        if (caliber > 0.06) {
+          return 'ap-hit-vehicle-large'
+        } else if (caliber > 0.04) {
+          return 'ap-hit-vehicle-medium'
+        } else {
+          return 'ap-hit-vehicle-small'
+        }
+      } else if (hitType === ShellHitType.VEHICLE_TRACK) {
+        // todo different sounds for tracks
+        if (caliber > 0.06) {
+          return 'ap-hit-vehicle-large'
+        } else if (caliber > 0.04) {
+          return 'ap-hit-vehicle-medium'
+        } else {
+          return 'ap-hit-vehicle-small'
+        }
+      }
     }
   }
 
