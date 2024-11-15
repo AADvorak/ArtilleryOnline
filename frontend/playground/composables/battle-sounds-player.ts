@@ -1,6 +1,6 @@
 import type {Battle, BattleUpdate} from "~/playground/data/battle";
 import type {Player} from "~/playground/audio/player";
-import {ShellHitType, ShellType} from "~/playground/data/common";
+import {CollideObjectType, ShellHitType, ShellType} from "~/playground/data/common";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
 import type {ShellModel, VehicleModel} from "~/playground/data/model";
@@ -30,8 +30,14 @@ export function useBattleSoundsPlayer(player: Player) {
         })
       }
       if (battleUpdate.events.collides) {
-        // todo sounds
-        // console.log(battleUpdate.events.collides)
+        battleUpdate.events.collides.forEach(collide => {
+          const vehicle = Object.values(battle.model.vehicles)
+              .filter(vehicle => vehicle.id === collide.vehicleId)[0]
+          const pan = soundsPlayerBase.calculatePan(vehicle.state.position.x)
+          const gain = soundsPlayerBase.calculateGain(vehicle.state.position)
+          const fileName = getCollideSoundName(collide.object.type)
+          fileName && play(fileName, pan, gain)
+        })
       }
     }
     if (battleUpdate.updates) {
@@ -104,6 +110,16 @@ export function useBattleSoundsPlayer(player: Player) {
           return 'ap-hit-vehicle-small'
         }
       }
+    }
+  }
+
+  function getCollideSoundName(type: CollideObjectType): string | undefined {
+    if (type === CollideObjectType.GROUND) {
+      return 'collide-ground'
+    } else if (type === CollideObjectType.WALL) {
+      return 'collide-wall'
+    } else if (type === CollideObjectType.VEHICLE) {
+      return 'collide-vehicle-' + (Math.floor(Math.random() * 4) + 1)
     }
   }
 
