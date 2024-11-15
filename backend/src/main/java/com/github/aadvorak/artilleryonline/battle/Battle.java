@@ -35,6 +35,8 @@ public class Battle {
 
     private BattleStage battleStage;
 
+    private boolean stageUpdated = false;
+
     private Map<Long, User> userMap;
 
     private Set<Long> activeUserIds;
@@ -47,6 +49,7 @@ public class Battle {
 
     public void setStageAndResetTime(BattleStage battleStage) {
         this.battleStage = battleStage;
+        this.stageUpdated = true;
         this.absoluteTime = System.currentTimeMillis();
         this.time = 0;
     }

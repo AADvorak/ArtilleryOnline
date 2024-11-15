@@ -59,7 +59,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
     }
 
     @Override
-    protected synchronized boolean changeStageIfNeeded(Battle battle) {
+    protected boolean changeStageIfNeeded(Battle battle) {
         if (super.changeStageIfNeeded(battle)) {
             return true;
         }

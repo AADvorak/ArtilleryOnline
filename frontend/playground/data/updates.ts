@@ -8,6 +8,7 @@ export interface BattleModelAdded {
 export interface BattleModelRemoved {
   shellIds?: number[]
   explosionIds?: number[]
+  vehicleKeys?: string[]
 }
 
 export interface RoomStateUpdate {

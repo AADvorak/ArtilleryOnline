@@ -49,6 +49,9 @@ export function useBattleUpdater(player: Player) {
     const battle = JSON.parse(JSON.stringify(battleStore.battle)) as Battle
     battleSoundsPlayer.playSounds(battleUpdate, battle)
     battle.time = battleUpdate.time
+    if (battleUpdate.stage) {
+      battle.battleStage = battleUpdate.stage
+    }
     if (battleUpdate.updates) {
       if (battleUpdate.updates.added) {
         const addedShells = battleUpdate.updates.added.shells
@@ -68,6 +71,10 @@ export function useBattleUpdater(player: Player) {
         const removedExplosionIds = battleUpdate.updates.removed.explosionIds
         if (removedExplosionIds) {
           removedExplosionIds.forEach(explosionId => delete battle.model.explosions[explosionId])
+        }
+        const removedVehicleKeys = battleUpdate.updates.removed.vehicleKeys
+        if (removedVehicleKeys) {
+          removedVehicleKeys.forEach(vehicleKey => delete battle.model.vehicles[vehicleKey])
         }
       }
       if (battleUpdate.updates.roomStateUpdates) {

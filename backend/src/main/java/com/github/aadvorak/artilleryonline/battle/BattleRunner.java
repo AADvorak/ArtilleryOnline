@@ -104,24 +104,28 @@ public class BattleRunner {
     }
 
     private void sendBattleToUpdatesQueue(Battle battle) {
+        var updatesSent = sendBattleStateToUpdatesQueue(battle);
         if (battle.getModel().isUpdated()
-                || battle.isForceSend()
-                || (!applicationSettings.isClientProcessing() && !battle.isPaused())) {
+                || (battle.isForceSend()
+                || (!applicationSettings.isClientProcessing() && !battle.isPaused())
+                && !updatesSent)) {
             battle.getQueues().getBattleUpdatesQueue().add(mapper.map(battle, BattleResponse.class));
-        } else {
-            sendBattleStateToUpdatesQueue(battle);
         }
     }
 
-    private void sendBattleStateToUpdatesQueue(Battle battle) {
+    private boolean sendBattleStateToUpdatesQueue(Battle battle) {
+        var sendStage = battle.isStageUpdated();
         var sendState = battle.getModel().getVehicles().entrySet().stream()
                 .anyMatch(vehicleEntry -> vehicleEntry.getValue().isUpdated());
         var sendUpdates = !battle.getModel().getUpdates().isEmpty();
         var sendEvents = !battle.getModel().getEvents().isEmpty();
-        if (sendState || sendUpdates || sendEvents) {
+        if (sendStage || sendState || sendUpdates || sendEvents) {
             var battleUpdateResponse = new BattleUpdateResponse()
                     .setId(battle.getId())
                     .setTime(battle.getTime());
+            if (sendStage) {
+                battleUpdateResponse.setStage(battle.getBattleStage());
+            }
             if (sendState) {
                 battleUpdateResponse.setState(createBattleModelStateResponse(battle));
             }
@@ -132,7 +136,9 @@ public class BattleRunner {
                 battleUpdateResponse.setEvents(battle.getModel().getEvents());
             }
             battle.getQueues().getBattleUpdatesQueue().add(battleUpdateResponse);
+            return true;
         }
+        return false;
     }
 
     private BattleModelStateResponse createBattleModelStateResponse(Battle battle) {
@@ -146,6 +152,7 @@ public class BattleRunner {
     }
 
     private void resetUpdatedFlags(Battle battle) {
+        battle.setStageUpdated(false);
         battle.getModel().setUpdated(false);
         battle.getModel().getVehicles().values().forEach(vehicle -> vehicle.setUpdated(false));
     }

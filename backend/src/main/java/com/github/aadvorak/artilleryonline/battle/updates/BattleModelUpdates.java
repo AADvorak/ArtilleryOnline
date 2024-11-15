@@ -54,6 +54,13 @@ public class BattleModelUpdates {
         removed.addExplosionId(explosionId);
     }
 
+    public void removeVehicle(String vehicleKey) {
+        if (removed == null) {
+            removed = new BattleModelRemoved();
+        }
+        removed.addVehicleKey(vehicleKey);
+    }
+
     @JsonIgnore
     public boolean isEmpty() {
         return added == null && removed == null && roomStateUpdates == null;

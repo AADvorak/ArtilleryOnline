@@ -14,9 +14,7 @@ public class BattleStepProcessorBase implements BattleStepProcessor {
         if (!battle.isPaused() || battle.isDoStep()) {
             trackBattle(battle);
             battle.increaseTime();
-            if (changeStageIfNeeded(battle)) {
-                battle.getModel().setUpdated(true);
-            } else {
+            if (!changeStageIfNeeded(battle)) {
                 doStepLogic(battle);
             }
         }

@@ -3,7 +3,7 @@ import type {Player} from "~/playground/audio/player";
 import {ShellHitType, ShellType} from "~/playground/data/common";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
-import type {ShellModel} from "~/playground/data/model";
+import type {ShellModel, VehicleModel} from "~/playground/data/model";
 import {useSoundsPlayerBase} from "~/playground/composables/sounds-player-base";
 import {useUserStore} from "~/stores/user";
 
@@ -50,6 +50,12 @@ export function useBattleSoundsPlayer(player: Player) {
           addedShells.forEach(shell => playShot(shell))
         }
       }
+      if (battleUpdate.updates.removed) {
+        const removedVehicleKeys = battleUpdate.updates.removed.vehicleKeys
+        if (removedVehicleKeys) {
+          removedVehicleKeys.forEach(vehicleKey => playVehicleDestroy(battle.model.vehicles[vehicleKey]))
+        }
+      }
     }
     if (battleUpdate.state) {
       const prevLoadedShell = battle.model.vehicles[userStore.user!.nickname]?.state.gunState.loadedShell
@@ -58,6 +64,12 @@ export function useBattleSoundsPlayer(player: Player) {
         play('reload', 0, 1)
       }
     }
+  }
+
+  function playVehicleDestroy(vehicle: VehicleModel) {
+    const pan = soundsPlayerBase.calculatePan(vehicle.state.position.x)
+    const gain = soundsPlayerBase.calculateGain(vehicle.state.position)
+    play('vehicle-destroy', pan, gain)
   }
 
   function playShot(shell: ShellModel) {

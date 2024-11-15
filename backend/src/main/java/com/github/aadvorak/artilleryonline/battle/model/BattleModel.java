@@ -47,7 +47,10 @@ public class BattleModel {
         vehicles.entrySet().stream()
                 .filter(entry -> entry.getValue().getId() == id).findAny()
                 .map(Map.Entry::getKey)
-                .ifPresent(key -> vehicles.remove(key));
+                .ifPresent(key -> {
+                    vehicles.remove(key);
+                    updates.removeVehicle(key);
+                });
     }
 
     public void setUpdated(boolean updated) {
