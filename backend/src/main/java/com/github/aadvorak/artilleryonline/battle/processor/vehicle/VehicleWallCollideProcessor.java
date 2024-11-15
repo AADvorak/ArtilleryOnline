@@ -1,8 +1,9 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.Collision;
+import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
+import com.github.aadvorak.artilleryonline.battle.common.CollideObject;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
@@ -12,7 +13,8 @@ public class VehicleWallCollideProcessor {
         if (wallCollide(vehicle, battle)) {
             doCollide(vehicle.getModel());
             vehicle.getModel().setUpdated(true);
-            vehicle.getCollisions().add(Collision.WALL);
+            vehicle.getCollisions().add(new CollideObject()
+                    .setType(CollideObjectType.WALL));
             return true;
         }
         return false;

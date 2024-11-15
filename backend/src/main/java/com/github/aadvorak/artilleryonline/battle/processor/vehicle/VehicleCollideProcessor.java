@@ -1,10 +1,11 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.Collision;
+import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.CollideObject;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.utils.CollideUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
@@ -19,7 +20,9 @@ public class VehicleCollideProcessor {
         if (collisionData != null) {
             doCollide(vehicle, collisionData);
             vehicle.getModel().setUpdated(true);
-            vehicle.getCollisions().add(Collision.VEHICLE);
+            vehicle.getCollisions().add(new CollideObject()
+                    .setType(CollideObjectType.VEHICLE)
+                    .setVehicleId(collisionData.otherVehicle().getModel().getId()));
             return true;
         }
         return false;
@@ -103,7 +106,9 @@ public class VehicleCollideProcessor {
         if (collisionData.wheel() == null && collisionData.otherWheel() != null) {
             doCollideVehicleWheel(vehicle.getModel(), collisionData);
         }
-        collisionData.otherVehicle().getCollisions().add(Collision.VEHICLE);
+        collisionData.otherVehicle().getCollisions().add(new CollideObject()
+                .setType(CollideObjectType.VEHICLE)
+                .setVehicleId(vehicle.getModel().getId()));
         collisionData.otherVehicle().getModel().setUpdated(true);
     }
 

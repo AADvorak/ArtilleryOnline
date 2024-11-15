@@ -29,6 +29,10 @@ export function useBattleSoundsPlayer(player: Player) {
           fileName && play(fileName, pan, gain)
         })
       }
+      if (battleUpdate.events.collides) {
+        // todo sounds
+        // console.log(battleUpdate.events.collides)
+      }
     }
     if (battleUpdate.updates) {
       if (battleUpdate.updates.added) {

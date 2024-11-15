@@ -13,6 +13,8 @@ public class BattleModelEvents {
 
     private List<ShellHitEvent> hits;
 
+    private List<VehicleCollideEvent> collides;
+
     public void addHit(ShellHitEvent hit) {
         if (hits == null) {
             hits = new ArrayList<>();
@@ -20,8 +22,15 @@ public class BattleModelEvents {
         hits.add(hit);
     }
 
+    public void addCollide(VehicleCollideEvent collide) {
+        if (collides == null) {
+            collides = new ArrayList<>();
+        }
+        collides.add(collide);
+    }
+
     @JsonIgnore
     public boolean isEmpty() {
-        return hits == null;
+        return hits == null && collides == null;
     }
 }

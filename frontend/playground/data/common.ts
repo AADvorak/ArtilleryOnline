@@ -23,6 +23,17 @@ export enum ShellHitType {
   VEHICLE_TRACK = 'VEHICLE_TRACK'
 }
 
+export enum CollideObjectType {
+  WALL = 'WALL',
+  GROUND = 'GROUND',
+  VEHICLE = 'VEHICLE'
+}
+
+export interface CollideObject {
+  type: CollideObjectType
+  vehicleId: number
+}
+
 export interface ApplicationSettings {
   debug: boolean,
   clientProcessing: boolean

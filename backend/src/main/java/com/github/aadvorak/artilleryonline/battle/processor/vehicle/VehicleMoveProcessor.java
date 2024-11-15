@@ -1,11 +1,12 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.Collision;
+import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelGroundState;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.calculator.VehicleAccelerationCalculator;
+import com.github.aadvorak.artilleryonline.battle.events.VehicleCollideEvent;
 
 public class VehicleMoveProcessor {
 
@@ -19,7 +20,14 @@ public class VehicleMoveProcessor {
         if (processCollisions(vehicle, battle)) {
             calculateNextPositionAndAngle(vehicle, battle);
         }
-        if (checkCollisionsResolved(vehicle, battle)) {
+        if (vehicle.getCollisions().isEmpty()) {
+            applyNextPositionAndAngle(vehicle);
+        } else if (checkCollisionsResolved(vehicle, battle)) {
+            vehicle.getCollisions().forEach(collideObject -> {
+                battle.getModel().getEvents().addCollide(new VehicleCollideEvent()
+                        .setVehicleId(vehicle.getModel().getId())
+                        .setObject(collideObject));
+            });
             applyNextPositionAndAngle(vehicle);
         }
         calculateOnGround(vehicle);
@@ -52,16 +60,14 @@ public class VehicleMoveProcessor {
         if (VehicleGroundCollideProcessor.processCollide(vehicle, battle)) {
             return true;
         }
-        if (vehicle.getCollisions().contains(Collision.VEHICLE)) {
+        if (vehicle.getCollisions().stream()
+                .anyMatch(collideObject -> CollideObjectType.VEHICLE.equals(collideObject.getType()))) {
             return true;
         }
         return VehicleCollideProcessor.processCollide(vehicle, battle);
     }
 
     private static boolean checkCollisionsResolved(VehicleCalculations vehicle, BattleCalculations battle) {
-        if (vehicle.getCollisions().isEmpty()) {
-            return true;
-        }
         return VehicleWallCollideProcessor.checkResolved(vehicle, battle)
                 && VehicleGroundCollideProcessor.checkResolved(vehicle, battle)
                 && VehicleCollideProcessor.checkResolved(vehicle, battle);

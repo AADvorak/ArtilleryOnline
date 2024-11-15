@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.CollideObject;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +21,7 @@ public class VehicleCalculations {
 
     private double nextAngle;
 
-    private Set<Collision> collisions = new HashSet<>();
+    private Set<CollideObject> collisions = new HashSet<>();
 
     private WheelCalculations rightWheel = new WheelCalculations().setSign(WheelSign.RIGHT);
 
