@@ -135,7 +135,8 @@ export function useBattleSoundsPlayer(player: Player) {
   }
 
   function play(fileName: string, pan: number, gain: number) {
-    setTimeout(() => player.play('/sounds/' + fileName + '.wav', pan, gain))
+    setTimeout(() => player.play({path: '/sounds/' +fileName + '.wav',
+      pan, gain, randomise: true}))
   }
 
   return {playSounds}

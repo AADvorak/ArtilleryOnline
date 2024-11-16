@@ -1,7 +1,15 @@
 import {useSoundsStore} from "~/stores/sounds";
 
+export interface PlayParams {
+  path: string
+  pan: number
+  gain: number
+  loop?: boolean
+  randomise?: boolean
+}
+
 export interface Player {
-  play: (path: string, pan: number, gain: number, loop?: boolean) => Promise<AudioControl | undefined>
+  play: (params: PlayParams) => Promise<AudioControl | undefined>
 }
 
 export interface AudioControl {
@@ -26,20 +34,23 @@ export function usePlayer(): Player {
   const audioCtx = new AudioContext()
   const soundsStore = useSoundsStore()
 
-  async function play(path: string, pan: number, gain: number, loop: boolean = false): Promise<AudioControl | undefined> {
-    let buffer = soundsStore.audioBufferMap[path]
+  async function play(params: PlayParams): Promise<AudioControl | undefined> {
+    let buffer = soundsStore.audioBufferMap[params.path]
     if (!buffer) {
-      buffer = await load(path) as AudioBuffer
-      soundsStore.audioBufferMap[path] = buffer
+      buffer = await load(params.path) as AudioBuffer
+      soundsStore.audioBufferMap[params.path] = buffer
     }
     if (buffer) {
-      const panner = new StereoPannerNode(audioCtx, {pan})
+      const panner = new StereoPannerNode(audioCtx, {pan: params.pan})
       const gainNode = audioCtx.createGain()
-      gainNode.gain.value = gain
+      gainNode.gain.value = params.gain
       const source = audioCtx.createBufferSource()
       source.buffer = buffer
-      if (loop) {
-        setLoop(source, path)
+      if (params.loop) {
+        setLoop(source, params.path)
+      }
+      if (params.randomise) {
+        source.playbackRate.value += Math.random() * 0.3 - 0.15
       }
       source.connect(panner).connect(gainNode).connect(audioCtx.destination)
       source.start()

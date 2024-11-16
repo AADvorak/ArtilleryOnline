@@ -118,7 +118,7 @@ export function useVehicleSoundsPlayer(player: Player) {
   }
 
   async function playLooped(fileName: string, pan: number, gain: number): Promise<AudioControl | undefined> {
-    return await player.play('/sounds/' + fileName, pan, gain, true)
+    return await player.play({path: '/sounds/' + fileName, pan, gain, loop: true})
   }
 
   return {start, stopAll}
