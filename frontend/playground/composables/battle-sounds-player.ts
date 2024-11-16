@@ -100,7 +100,7 @@ export function useBattleSoundsPlayer(player: Player) {
 
   function getHitSoundName(shellType: ShellType, hitType: ShellHitType, caliber: number): string | undefined {
     if (shellType === ShellType.HE) {
-      return 'he-explosion'
+      return 'he-explosion-' + (Math.ceil(Math.random() * 2))
     } else if (shellType === ShellType.AP) {
       if (hitType === ShellHitType.GROUND) {
         if (caliber > 0.06) {
