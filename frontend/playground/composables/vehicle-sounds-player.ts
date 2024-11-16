@@ -34,14 +34,14 @@ export function useVehicleSoundsPlayer(player: Player) {
       return
     }
     if (vehicles.value) {
-      await playVehicleMove(vehicles.value!)
+      await playVehicleSounds(vehicles.value!)
       setTimeout(playSounds, 100)
     } else {
       stopAll()
     }
   }
 
-  async function playVehicleMove(vehicles: VehicleModels) {
+  async function playVehicleSounds(vehicles: VehicleModels) {
     const keys = Object.keys(vehicles)
     for (const key of keys) {
       const vehicleState = vehicles[key].state
@@ -49,7 +49,7 @@ export function useVehicleSoundsPlayer(player: Player) {
       const gain = soundsPlayerBase.calculateGain(vehicleState.position)
       await playVehicleSound(key, TRACK_KEY, pan, gain, isMovingOnGround(vehicleState),
           'vehicle-move-medium.mp3', fadeOutAndStop)
-      await playVehicleSound(key, ENGINE_KEY, pan, gain, isEngineActive(vehicleState),
+      await playVehicleSound(key, ENGINE_KEY, pan, gain / 3, isEngineActive(vehicleState),
           'vehicle-engine.mp3', fadeOutAndStop)
       await playVehicleSound(key, JET_KEY, pan, gain, isJetActive(vehicleState),
           'jet.wav', fadeOutAndStop)
