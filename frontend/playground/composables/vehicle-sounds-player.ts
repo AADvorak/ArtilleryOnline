@@ -45,10 +45,11 @@ export function useVehicleSoundsPlayer(player: Player) {
     const keys = Object.keys(vehicles)
     for (const key of keys) {
       const vehicleState = vehicles[key].state
+      const acceleration = vehicles[key].specs.acceleration
       const pan = soundsPlayerBase.calculatePan(vehicleState.position.x)
       const gain = soundsPlayerBase.calculateGain(vehicleState.position)
       await playVehicleSound(key, TRACK_KEY, pan, gain, isMovingOnGround(vehicleState),
-          'vehicle-move-medium.mp3', fadeOutAndStop)
+          getVehicleMoveSoundName(acceleration), fadeOutAndStop)
       await playVehicleSound(key, ENGINE_KEY, pan, gain / 3, isEngineActive(vehicleState),
           'vehicle-engine.mp3', fadeOutAndStop)
       await playVehicleSound(key, JET_KEY, pan, gain, isJetActive(vehicleState),
@@ -57,6 +58,14 @@ export function useVehicleSoundsPlayer(player: Player) {
         await playVehicleSound(key, GUN_KEY, 0, gain, !!vehicleState.gunRotatingDirection,
             'gun-turn.wav', stopLoop)
       }
+    }
+  }
+
+  function getVehicleMoveSoundName(acceleration: number) {
+    if (acceleration > 12) {
+      return 'vehicle-move-fast.mp3'
+    } else {
+      return Math.random() > 0.5 ? 'vehicle-move-medium.mp3' : 'vehicle-move-slow.mp3'
     }
   }
 
