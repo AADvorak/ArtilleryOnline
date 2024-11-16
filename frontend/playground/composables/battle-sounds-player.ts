@@ -3,9 +3,10 @@ import type {Player} from "~/playground/audio/player";
 import {CollideObjectType, ShellHitType, ShellType} from "~/playground/data/common";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
-import type {ShellModel, VehicleModel} from "~/playground/data/model";
+import type {ShellModel, VehicleModel, VehicleModels} from "~/playground/data/model";
 import {useSoundsPlayerBase} from "~/playground/composables/sounds-player-base";
 import {useUserStore} from "~/stores/user";
+import type {VehicleStates} from "~/playground/data/state";
 
 export function useBattleSoundsPlayer(player: Player) {
   const soundsPlayerBase = useSoundsPlayerBase()
@@ -60,7 +61,22 @@ export function useBattleSoundsPlayer(player: Player) {
       if (loadedShell && !prevLoadedShell) {
         play('reload', 0, 1)
       }
+      playTracksBroken(battleUpdate.state.vehicles, battle.model.vehicles)
     }
+  }
+
+  function playTracksBroken(vehicleStates: VehicleStates, vehicleModels: VehicleModels) {
+    Object.keys(vehicleStates).forEach(key => {
+      const vehicleState = vehicleStates[key]
+      const nowBroken = vehicleState.trackState.broken
+      const wasBroken = vehicleModels[key].state.trackState.broken
+      if (nowBroken && !wasBroken) {
+        const pan = soundsPlayerBase.calculatePan(vehicleState.position.x)
+        const gain = soundsPlayerBase.calculateGain(vehicleState.position)
+        const fileName = getBrokenTrackSoundName()
+        fileName && play(fileName, pan, gain)
+      }
+    })
   }
 
   function playVehicleDestroy(vehicle: VehicleModel) {
@@ -92,16 +108,7 @@ export function useBattleSoundsPlayer(player: Player) {
         } else {
           return 'ap-hit-ground'
         }
-      } else if (hitType === ShellHitType.VEHICLE_HULL) {
-        if (caliber > 0.06) {
-          return 'ap-hit-vehicle-large'
-        } else if (caliber > 0.04) {
-          return 'ap-hit-vehicle-medium'
-        } else {
-          return 'ap-hit-vehicle-small'
-        }
-      } else if (hitType === ShellHitType.VEHICLE_TRACK) {
-        // todo different sounds for tracks
+      } else if (hitType === ShellHitType.VEHICLE_HULL || hitType === ShellHitType.VEHICLE_TRACK) {
         if (caliber > 0.06) {
           return 'ap-hit-vehicle-large'
         } else if (caliber > 0.04) {
@@ -111,6 +118,10 @@ export function useBattleSoundsPlayer(player: Player) {
         }
       }
     }
+  }
+
+  function getBrokenTrackSoundName() {
+    return 'track-broken-' + (Math.ceil(Math.random() * 3))
   }
 
   function getCollideSoundName(type: CollideObjectType): string | undefined {
