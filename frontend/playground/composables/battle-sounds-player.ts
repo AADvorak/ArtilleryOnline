@@ -104,9 +104,9 @@ export function useBattleSoundsPlayer(player: Player) {
     } else if (shellType === ShellType.AP) {
       if (hitType === ShellHitType.GROUND) {
         if (caliber > 0.06) {
-          return 'ap-hit-ground-large'
+          return 'ap-hit-ground-large-' + (Math.ceil(Math.random() * 2))
         } else {
-          return 'ap-hit-ground'
+          return 'ap-hit-ground-' + (Math.ceil(Math.random() * 3))
         }
       } else if (hitType === ShellHitType.VEHICLE_HULL || hitType === ShellHitType.VEHICLE_TRACK) {
         if (caliber > 0.06) {
