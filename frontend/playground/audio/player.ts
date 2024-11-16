@@ -4,6 +4,7 @@ export interface PlayParams {
   path: string
   pan: number
   gain: number
+  rate?: number
   loop?: boolean
   randomise?: boolean
 }
@@ -48,6 +49,9 @@ export function usePlayer(): Player {
       source.buffer = buffer
       if (params.loop) {
         setLoop(source, params.path)
+      }
+      if (params.rate) {
+        source.playbackRate.value = params.rate
       }
       if (params.randomise) {
         source.playbackRate.value += Math.random() * 0.3 - 0.15
