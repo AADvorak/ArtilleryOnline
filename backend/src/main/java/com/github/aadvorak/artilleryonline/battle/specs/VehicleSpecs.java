@@ -11,6 +11,8 @@ import java.util.Map;
 @Accessors(chain = true)
 public class VehicleSpecs implements Specs {
 
+    private String name;
+
     private double hitPoints;
 
     private int ammo;
@@ -28,6 +30,8 @@ public class VehicleSpecs implements Specs {
     private double hullRadius;
 
     private double trackRepairTime;
+
+    private double minTrackHitCaliber;
 
     private Map<String, GunSpecs> availableGuns;
 

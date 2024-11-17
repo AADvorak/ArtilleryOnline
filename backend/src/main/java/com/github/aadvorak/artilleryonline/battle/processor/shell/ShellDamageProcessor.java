@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.preset.VehicleSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.specs.ShellSpecs;
 import com.github.aadvorak.artilleryonline.battle.updates.RoomStateUpdate;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
@@ -27,9 +28,11 @@ public class ShellDamageProcessor {
     public static void processHitTrack(Position hitPosition, VehicleModel vehicleModel,
                                          ShellSpecs shellSpecs, BattleModel battleModel) {
         var trackState = vehicleModel.getState().getTrackState();
-        trackState.setBroken(true);
-        trackState.setRepairRemainTime(vehicleModel.getSpecs().getTrackRepairTime());
-        vehicleModel.setUpdated(true);
+        if (shellSpecs.getCaliber() >= vehicleModel.getSpecs().getMinTrackHitCaliber()) {
+            trackState.setBroken(true);
+            trackState.setRepairRemainTime(vehicleModel.getSpecs().getTrackRepairTime());
+            vehicleModel.setUpdated(true);
+        }
         if (ShellType.HE.equals(shellSpecs.getType())) {
             calculateHEDamage(hitPosition, shellSpecs, battleModel);
             processGroundDamage(hitPosition, shellSpecs, battleModel);
@@ -68,7 +71,8 @@ public class ShellDamageProcessor {
 
     private static void calculateHETrackDamage(Position hitPosition, VehicleModel vehicleModel, ShellSpecs shellSpecs) {
         var trackState = vehicleModel.getState().getTrackState();
-        if (trackState.isBroken()) {
+        if (trackState.isBroken()
+                || vehicleModel.getSpecs().getName().equals(VehicleSpecsPreset.HEAVY.getSpecs().getName())) {
             return;
         }
         var shellHitRadius = shellSpecs.getRadius();
