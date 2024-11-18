@@ -3,10 +3,11 @@ import type {Player} from "~/playground/audio/player";
 import {CollideObjectType, ShellHitType, ShellType} from "~/playground/data/common";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
-import type {ShellModel, VehicleModel, VehicleModels} from "~/playground/data/model";
+import type {ShellModel, ShellModels, VehicleModel, VehicleModels} from "~/playground/data/model";
 import {useSoundsPlayerBase} from "~/playground/composables/sound/sounds-player-base";
 import {useUserStore} from "~/stores/user";
 import type {VehicleStates} from "~/playground/data/state";
+import type {ShellHitEvent, VehicleCollideEvent} from "~/playground/data/events";
 
 export function useEventSoundsPlayer(player: Player) {
   const soundsPlayerBase = useSoundsPlayerBase()
@@ -18,27 +19,10 @@ export function useEventSoundsPlayer(player: Player) {
     }
     if (battleUpdate.events) {
       if (battleUpdate.events.hits) {
-        battleUpdate.events.hits.forEach(hit => {
-          const shell = battle.model.shells[hit.shellId]
-          const shellSpecs = shell.specs
-          const shellType = shellSpecs.type
-          const caliber = shellSpecs.caliber
-          const hitType = hit.object.type
-          const pan = soundsPlayerBase.calculatePan(shell.state.position.x)
-          const gain = soundsPlayerBase.calculateGain(shell.state.position)
-          const fileName = getHitSoundName(shellType, hitType, caliber)
-          fileName && play(fileName, pan, gain)
-        })
+        battleUpdate.events.hits.forEach(hit => playHit(hit, battle.model.shells))
       }
       if (battleUpdate.events.collides) {
-        battleUpdate.events.collides.forEach(collide => {
-          const vehicle = Object.values(battle.model.vehicles)
-              .filter(vehicle => vehicle.id === collide.vehicleId)[0]
-          const pan = soundsPlayerBase.calculatePan(vehicle.state.position.x)
-          const gain = soundsPlayerBase.calculateGain(vehicle.state.position)
-          const fileName = getCollideSoundName(collide.object.type)
-          fileName && play(fileName, pan, gain)
-        })
+        battleUpdate.events.collides.forEach(collide => playCollide(collide, battle.model.vehicles))
       }
     }
     if (battleUpdate.updates) {
@@ -63,6 +47,27 @@ export function useEventSoundsPlayer(player: Player) {
       }
       playTracksBroken(battleUpdate.state.vehicles, battle.model.vehicles)
     }
+  }
+
+  function playHit(hit: ShellHitEvent, shellsModels: ShellModels) {
+    const shell = shellsModels[hit.shellId]
+    const shellSpecs = shell.specs
+    const shellType = shellSpecs.type
+    const caliber = shellSpecs.caliber
+    const hitType = hit.object.type
+    const pan = soundsPlayerBase.calculatePan(shell.state.position.x)
+    const gain = soundsPlayerBase.calculateGain(shell.state.position)
+    const fileName = getHitSoundName(shellType, hitType, caliber)
+    fileName && play(fileName, pan, gain)
+  }
+
+  function playCollide(collide: VehicleCollideEvent, vehicleModels: VehicleModels) {
+    const vehicle = Object.values(vehicleModels)
+        .filter(vehicle => vehicle.id === collide.vehicleId)[0]
+    const pan = soundsPlayerBase.calculatePan(vehicle.state.position.x)
+    const gain = soundsPlayerBase.calculateGain(vehicle.state.position)
+    const fileName = getCollideSoundName(collide.object.type)
+    fileName && play(fileName, pan, gain)
   }
 
   function playTracksBroken(vehicleStates: VehicleStates, vehicleModels: VehicleModels) {
