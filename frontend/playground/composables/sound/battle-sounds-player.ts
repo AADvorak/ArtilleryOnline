@@ -4,7 +4,7 @@ import {CollideObjectType, ShellHitType, ShellType} from "~/playground/data/comm
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
 import type {ShellModel, VehicleModel, VehicleModels} from "~/playground/data/model";
-import {useSoundsPlayerBase} from "~/playground/composables/sounds-player-base";
+import {useSoundsPlayerBase} from "~/playground/composables/sound/sounds-player-base";
 import {useUserStore} from "~/stores/user";
 import type {VehicleStates} from "~/playground/data/state";
 

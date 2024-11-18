@@ -4,7 +4,7 @@ import type {VehicleState} from "~/playground/data/state";
 import type {VehicleModels} from "~/playground/data/model";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
-import {useSoundsPlayerBase} from "~/playground/composables/sounds-player-base";
+import {useSoundsPlayerBase} from "~/playground/composables/sound/sounds-player-base";
 import {useUserStore} from "~/stores/user";
 
 interface VehicleAudioControls {

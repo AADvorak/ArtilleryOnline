@@ -8,7 +8,7 @@ import {useCommandsSender} from "~/playground/composables/commands-sender";
 import {useBattleProcessor} from "~/playground/battle/processor/battle-processor";
 import {computed} from "vue";
 import {useSettingsStore} from "~/stores/settings";
-import {useVehicleSoundsPlayer} from "~/playground/composables/vehicle-sounds-player";
+import {useVehicleSoundsPlayer} from "~/playground/composables/sound/vehicle-sounds-player";
 import {usePlayer} from "~/playground/audio/player";
 
 const player = usePlayer()

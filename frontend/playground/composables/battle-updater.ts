@@ -3,7 +3,7 @@ import type {Battle, BattleUpdate} from '@/playground/data/battle'
 import {useSettingsStore} from "~/stores/settings";
 import {useStompClientStore} from "~/stores/stomp-client";
 import type {StompSubscription} from "@stomp/stompjs";
-import {useBattleSoundsPlayer} from "~/playground/composables/battle-sounds-player";
+import {useBattleSoundsPlayer} from "~/playground/composables/sound/battle-sounds-player";
 import type {Player} from "~/playground/audio/player";
 
 export function useBattleUpdater(player: Player) {
