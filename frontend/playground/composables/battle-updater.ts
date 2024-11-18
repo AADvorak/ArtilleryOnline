@@ -3,14 +3,14 @@ import type {Battle, BattleUpdate} from '@/playground/data/battle'
 import {useSettingsStore} from "~/stores/settings";
 import {useStompClientStore} from "~/stores/stomp-client";
 import type {StompSubscription} from "@stomp/stompjs";
-import {useBattleSoundsPlayer} from "~/playground/composables/sound/battle-sounds-player";
+import {useEventSoundsPlayer} from "~/playground/composables/sound/event-sounds-player";
 import type {Player} from "~/playground/audio/player";
 
 export function useBattleUpdater(player: Player) {
   const battleStore = useBattleStore()
   const settingsStore = useSettingsStore()
   const stompClientStore = useStompClientStore()
-  const battleSoundsPlayer = useBattleSoundsPlayer(player)
+  const eventSoundsPlayer = useEventSoundsPlayer(player)
 
   const subscriptions: StompSubscription[] = []
 
@@ -47,7 +47,7 @@ export function useBattleUpdater(player: Player) {
       return
     }
     const battle = JSON.parse(JSON.stringify(battleStore.battle)) as Battle
-    battleSoundsPlayer.playSounds(battleUpdate, battle)
+    eventSoundsPlayer.playSounds(battleUpdate, battle)
     battle.time = battleUpdate.time
     if (battleUpdate.stage) {
       battle.battleStage = battleUpdate.stage

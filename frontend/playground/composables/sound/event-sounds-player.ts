@@ -8,7 +8,7 @@ import {useSoundsPlayerBase} from "~/playground/composables/sound/sounds-player-
 import {useUserStore} from "~/stores/user";
 import type {VehicleStates} from "~/playground/data/state";
 
-export function useBattleSoundsPlayer(player: Player) {
+export function useEventSoundsPlayer(player: Player) {
   const soundsPlayerBase = useSoundsPlayerBase()
   const userStore = useUserStore()
 
