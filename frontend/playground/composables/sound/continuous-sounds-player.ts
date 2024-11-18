@@ -7,7 +7,7 @@ import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
 import {useSoundsPlayerBase} from "~/playground/composables/sound/sounds-player-base";
 import {useUserStore} from "~/stores/user";
 
-interface VehicleAudioControls {
+interface AudioControls {
   [userKey: string]: AudioControl | undefined
 }
 
@@ -21,8 +21,8 @@ const MAX_PLAYING_VELOCITY = 5.0
 const MIN_PLAYING_RATE = 0.5
 const MAX_PLAYING_RATE = 1.5
 
-export function useVehicleSoundsPlayer(player: Player) {
-  const vehicleAudioControls: VehicleAudioControls = {}
+export function useContinuousSoundsPlayer(player: Player) {
+  const audioControls: AudioControls = {}
 
   const battleStore = useBattleStore()
   const userStore = useUserStore()
@@ -54,14 +54,14 @@ export function useVehicleSoundsPlayer(player: Player) {
       const pan = soundsPlayerBase.calculatePan(vehicleState.position.x)
       const gain = soundsPlayerBase.calculateGain(vehicleState.position)
       const movingOnGroundVelocity = getMovingOnGroundVelocity(vehicleState)
-      await playVehicleSound(key, TRACK_KEY, pan, gain, velocityToPlayingRate(movingOnGroundVelocity),
+      await playContinuousSound(key, TRACK_KEY, pan, gain, velocityToPlayingRate(movingOnGroundVelocity),
           !!movingOnGroundVelocity, getVehicleMoveSoundName(acceleration), fadeOutAndStop)
-      await playVehicleSound(key, ENGINE_KEY, pan, gain / 3, 1.0, isEngineActive(vehicleState),
+      await playContinuousSound(key, ENGINE_KEY, pan, gain / 3, 1.0, isEngineActive(vehicleState),
           'vehicle-engine.mp3', fadeOutAndStop)
-      await playVehicleSound(key, JET_KEY, pan, gain, 1.0, isJetActive(vehicleState),
+      await playContinuousSound(key, JET_KEY, pan, gain, 1.0, isJetActive(vehicleState),
           'jet.wav', fadeOutAndStop)
       if (key === userStore.user!.nickname) {
-        await playVehicleSound(key, GUN_KEY, 0, gain, 1.0, !!vehicleState.gunRotatingDirection,
+        await playContinuousSound(key, GUN_KEY, 0, gain, 1.0, !!vehicleState.gunRotatingDirection,
             'gun-turn.wav', stopLoop)
       }
     }
@@ -75,17 +75,17 @@ export function useVehicleSoundsPlayer(player: Player) {
     }
   }
 
-  async function playVehicleSound(key: string, addKey: string, pan: number, gain: number,
-                                  rate: number, condition: boolean, file: string,
-                                  stopFunction: (audioControl: AudioControl) => void) {
+  async function playContinuousSound(key: string, addKey: string, pan: number, gain: number,
+                                     rate: number, condition: boolean, file: string,
+                                     stopFunction: (audioControl: AudioControl) => void) {
     const fullKey = key + addKey
-    const audioControl = vehicleAudioControls[fullKey]
+    const audioControl = audioControls[fullKey]
     if (condition && !audioControl) {
       const newAudioControl = await playLooped(file, pan, gain, rate)
       if (newAudioControl) {
-        vehicleAudioControls[fullKey] = newAudioControl
+        audioControls[fullKey] = newAudioControl
         newAudioControl.source.addEventListener('ended', () => {
-          vehicleAudioControls[fullKey] = undefined
+          audioControls[fullKey] = undefined
         })
       }
     }
@@ -112,11 +112,11 @@ export function useVehicleSoundsPlayer(player: Player) {
   }
 
   function stopAll() {
-    Object.keys(vehicleAudioControls).forEach(key => {
-      const audioControl = vehicleAudioControls[key]
+    Object.keys(audioControls).forEach(key => {
+      const audioControl = audioControls[key]
       if (audioControl) {
         audioControl.source.stop()
-        delete vehicleAudioControls[key]
+        delete audioControls[key]
       }
     })
   }

@@ -8,12 +8,12 @@ import {useCommandsSender} from "~/playground/composables/commands-sender";
 import {useBattleProcessor} from "~/playground/battle/processor/battle-processor";
 import {computed} from "vue";
 import {useSettingsStore} from "~/stores/settings";
-import {useVehicleSoundsPlayer} from "~/playground/composables/sound/vehicle-sounds-player";
+import {useContinuousSoundsPlayer} from "~/playground/composables/sound/continuous-sounds-player";
 import {usePlayer} from "~/playground/audio/player";
 
 const player = usePlayer()
 const battleUpdater = useBattleUpdater(player)
-const vehicleSoundsPlayer = useVehicleSoundsPlayer(player)
+const continuousSoundsPlayer = useContinuousSoundsPlayer(player)
 const keyboardListener = useKeyboardListener(useCommandsSender())
 
 const isClientProcessing = computed(() => useSettingsStore().settings?.clientProcessing)
@@ -22,13 +22,13 @@ onMounted(() => {
   keyboardListener.startListening()
   battleUpdater.subscribe()
   isClientProcessing.value && useBattleProcessor().startProcessing()
-  vehicleSoundsPlayer.start()
+  continuousSoundsPlayer.start()
 })
 
 onBeforeUnmount(() => {
   keyboardListener.stopListening()
   battleUpdater.unsubscribe()
-  vehicleSoundsPlayer.stopAll()
+  continuousSoundsPlayer.stopAll()
 })
 </script>
 
