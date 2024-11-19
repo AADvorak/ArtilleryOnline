@@ -9,6 +9,8 @@ import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
+import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
+import com.github.aadvorak.artilleryonline.battle.utils.Segment;
 import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 public class ShellFlyProcessor {
@@ -77,7 +79,8 @@ public class ShellFlyProcessor {
         var vehiclePosition = vehicleModel.getState().getPosition();
         var vehicleRadius = vehicleModel.getSpecs().getRadius();
         return nextPosition.distanceTo(vehiclePosition) <= vehicleRadius
-                || BattleUtils.isLineCrossingCircle(prevPosition, nextPosition, vehiclePosition, vehicleRadius);
+                || GeometryUtils.isSegmentCrossingCircle(new Segment(prevPosition, nextPosition),
+                vehiclePosition, vehicleRadius);
     }
 
     private static boolean isHitTrack(Position prevPosition, Position nextPosition, VehicleModel vehicleModel) {
@@ -86,8 +89,10 @@ public class ShellFlyProcessor {
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
         return nextPosition.distanceTo(rightWheelPosition) <= wheelRadius
                 || nextPosition.distanceTo(leftWheelPosition) <= wheelRadius
-                || BattleUtils.isLineCrossingCircle(prevPosition, nextPosition, rightWheelPosition, wheelRadius)
-                || BattleUtils.isLineCrossingCircle(prevPosition, nextPosition, leftWheelPosition, wheelRadius);
+                || GeometryUtils.isSegmentCrossingCircle(new Segment(prevPosition, nextPosition),
+                rightWheelPosition, wheelRadius)
+                || GeometryUtils.isSegmentCrossingCircle(new Segment(prevPosition, nextPosition),
+                leftWheelPosition, wheelRadius);
     }
 
     private static boolean positionIsOutOfRoom(Position position, RoomSpecs roomSpecs) {
