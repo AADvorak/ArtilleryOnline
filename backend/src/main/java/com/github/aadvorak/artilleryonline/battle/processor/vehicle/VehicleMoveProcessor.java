@@ -23,11 +23,10 @@ public class VehicleMoveProcessor {
         if (vehicle.getCollisions().isEmpty()) {
             applyNextPositionAndAngle(vehicle);
         } else if (checkCollisionsResolved(vehicle, battle)) {
-            vehicle.getCollisions().forEach(collideObject -> {
-                battle.getModel().getEvents().addCollide(new VehicleCollideEvent()
-                        .setVehicleId(vehicle.getModel().getId())
-                        .setObject(collideObject));
-            });
+            vehicle.getCollisions().forEach(collideObject ->
+                    battle.getModel().getEvents().addCollide(new VehicleCollideEvent()
+                            .setVehicleId(vehicle.getModel().getId())
+                            .setObject(collideObject)));
             applyNextPositionAndAngle(vehicle);
         }
         calculateOnGround(vehicle);
@@ -90,8 +89,8 @@ public class VehicleMoveProcessor {
         if (angle > Math.PI / 2) {
             angle = Math.PI / 2;
         }
-        if (angle < - Math.PI / 2) {
-            angle = - Math.PI / 2;
+        if (angle < -Math.PI / 2) {
+            angle = -Math.PI / 2;
         }
         vehicle.getModel().getState().setAngle(angle);
     }

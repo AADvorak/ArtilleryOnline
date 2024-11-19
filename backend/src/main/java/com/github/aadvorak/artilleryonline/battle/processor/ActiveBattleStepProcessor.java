@@ -63,7 +63,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         if (super.changeStageIfNeeded(battle)) {
             return true;
         }
-        if (battle.getModel().getVehicles().keySet().size() <= 1) {
+        if (battle.getModel().getVehicles().size() <= 1) {
             battle.setStageAndResetTime(BattleStage.FINISHED);
             return true;
         }

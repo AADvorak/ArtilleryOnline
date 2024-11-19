@@ -93,7 +93,7 @@ public class BattleFactory {
             if (!vehicleModel.getSpecs().getAvailableJets().isEmpty()) {
                 jet = vehicleModel.getSpecs().getAvailableJets().values().iterator().next();
             }
-            var availableShellsNumber = gun.getAvailableShells().keySet().size();
+            var availableShellsNumber = gun.getAvailableShells().size();
             var ammo = new HashMap<String, Integer>();
             gun.getAvailableShells().keySet().forEach(shellName ->
                     ammo.put(shellName, vehicleModel.getSpecs().getAmmo() / availableShellsNumber));
