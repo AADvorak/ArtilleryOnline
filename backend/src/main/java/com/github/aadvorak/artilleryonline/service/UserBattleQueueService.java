@@ -1,6 +1,5 @@
 package com.github.aadvorak.artilleryonline.service;
 
-import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueue;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueElement;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueParams;
