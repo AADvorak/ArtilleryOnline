@@ -45,10 +45,10 @@ public class BattleService {
     public String getBattleTracking() {
         var user = userService.getUserFromContext();
         var battle = userBattleMap.get(user.getId());
-        if (battle == null || battle.getTracking() == null) {
+        if (battle == null || battle.getDebug().getTracking() == null) {
             throw new NotFoundAppException();
         }
-        return battle.getTracking();
+        return battle.getDebug().getTracking();
     }
 
     public BattleResponse createTestDrive(UserBattleQueueParams params) {

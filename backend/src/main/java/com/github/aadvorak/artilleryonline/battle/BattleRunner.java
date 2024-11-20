@@ -106,10 +106,12 @@ public class BattleRunner {
     private void sendBattleToUpdatesQueue(Battle battle) {
         var updatesSent = sendBattleStateToUpdatesQueue(battle);
         if (battle.getModel().isUpdated()
-                || (battle.isForceSend()
-                || (!applicationSettings.isClientProcessing() && !battle.isPaused())
+                || (battle.getDebug().isForceSend()
+                || (!applicationSettings.isClientProcessing() && !battle.getDebug().isPaused())
                 && !updatesSent)) {
-            battle.getQueues().getBattleUpdatesQueue().add(mapper.map(battle, BattleResponse.class));
+            var battleResponse = mapper.map(battle, BattleResponse.class);
+            battleResponse.setPaused(battle.getDebug().isPaused());
+            battle.getQueues().getBattleUpdatesQueue().add(battleResponse);
         }
     }
 

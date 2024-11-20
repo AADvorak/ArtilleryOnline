@@ -27,12 +27,6 @@ public class Battle {
 
     private long time;
 
-    private boolean paused = false;
-
-    private boolean doStep = false;
-
-    private boolean forceSend = false;
-
     private BattleStage battleStage;
 
     private boolean stageUpdated = false;
@@ -41,7 +35,7 @@ public class Battle {
 
     private Set<Long> activeUserIds;
 
-    private String tracking;
+    private BattleDebug debug = new BattleDebug();
 
     private Room room;
 

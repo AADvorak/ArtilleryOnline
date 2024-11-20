@@ -11,7 +11,7 @@ public class BattleStepProcessorBase implements BattleStepProcessor {
 
     public final void processStep(Battle battle) {
         processDebugCommand(battle);
-        if (!battle.isPaused() || battle.isDoStep()) {
+        if (!battle.getDebug().isPaused() || battle.getDebug().isDoStep()) {
             trackBattle(battle);
             battle.increaseTime();
             if (!changeStageIfNeeded(battle)) {
@@ -38,21 +38,21 @@ public class BattleStepProcessorBase implements BattleStepProcessor {
     }
 
     private void processDebugCommand(Battle battle) {
-        battle.setDoStep(false);
-        battle.setForceSend(false);
+        battle.getDebug().setDoStep(false);
+        battle.getDebug().setForceSend(false);
         var debugCommand = battle.getQueues().getDebugCommands().poll();
         if (debugCommand != null) {
             if (Command.PAUSE.equals(debugCommand.getCommand())) {
-                battle.setPaused(true);
+                battle.getDebug().setPaused(true);
                 battle.getModel().setUpdated(true);
             }
             if (Command.RESUME.equals(debugCommand.getCommand())) {
-                battle.setPaused(false);
+                battle.getDebug().setPaused(false);
                 battle.getModel().setUpdated(true);
             }
             if (Command.STEP.equals(debugCommand.getCommand())) {
-                battle.setDoStep(true);
-                battle.setForceSend(true);
+                battle.getDebug().setDoStep(true);
+                battle.getDebug().setForceSend(true);
             }
             if (Command.START_TRACKING.equals(debugCommand.getCommand())) {
                 startTrackingBattle(battle);
@@ -75,7 +75,7 @@ public class BattleStepProcessorBase implements BattleStepProcessor {
 
     private void stopTrackingBattle(Battle battle) {
         if (battleTracker != null) {
-            battle.setTracking(battleTracker.getCsv());
+            battle.getDebug().setTracking(battleTracker.getCsv());
             battleTracker = null;
         }
     }
