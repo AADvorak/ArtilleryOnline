@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.battle;
 import com.github.aadvorak.artilleryonline.battle.events.BattleModelEvents;
 import com.github.aadvorak.artilleryonline.battle.processor.ActiveBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.WaitingBattleStepProcessor;
+import com.github.aadvorak.artilleryonline.battle.statistics.BattleStatisticsUtil;
 import com.github.aadvorak.artilleryonline.battle.updates.BattleModelUpdates;
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.dto.response.BattleModelStateResponse;
@@ -91,7 +92,8 @@ public class BattleRunner {
     }
 
     private void createBattleFinishedMessages(Battle battle) {
-        battle.getUserMap().values().forEach(user -> messageService.createMessage(user, "Battle finished"));
+        battle.getUserMap().values().forEach(user -> messageService.createMessage(user,
+                "Battle finished. " + BattleStatisticsUtil.createUserStatisticsMsg(battle.getModel(), user)));
     }
 
     private void setBattleUpdatedByTimeout(Battle battle) {

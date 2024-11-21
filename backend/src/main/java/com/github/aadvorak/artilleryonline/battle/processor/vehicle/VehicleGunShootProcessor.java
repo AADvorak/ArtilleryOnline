@@ -27,6 +27,10 @@ public class VehicleGunShootProcessor {
                 .get(vehicleModel.getState().getGunState().getLoadedShell());
         var shellModel = new ShellModel();
         shellModel.setId(battleModel.getIdGenerator().generate());
+        if (vehicleModel.getUserId() != null) {
+            shellModel.setUserId(vehicleModel.getUserId());
+            battleModel.getStatistics().get(vehicleModel.getUserId()).increaseMadeShots();
+        }
         shellModel.setSpecs(loadedShellSpecs);
         shellModel.setState(new ShellState()
                 .setAngle(vehicleModel.getState().getGunAngle() + vehicleModel.getState().getAngle())

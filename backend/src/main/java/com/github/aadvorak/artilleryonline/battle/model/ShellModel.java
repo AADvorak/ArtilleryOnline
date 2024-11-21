@@ -11,4 +11,6 @@ import lombok.Setter;
 public class ShellModel extends GenericSpecsConfigStateModel<ShellSpecs, ShellConfig, ShellState> {
 
     private int id;
+
+    private Long userId;
 }

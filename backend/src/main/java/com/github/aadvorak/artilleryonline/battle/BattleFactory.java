@@ -12,6 +12,7 @@ import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleOnGro
 import com.github.aadvorak.artilleryonline.battle.specs.JetSpecs;
 import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.*;
+import com.github.aadvorak.artilleryonline.battle.statistics.UserBattleStatistics;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import com.github.aadvorak.artilleryonline.entity.User;
 import com.github.aadvorak.artilleryonline.entity.UserSetting;
@@ -32,6 +33,7 @@ public class BattleFactory {
         var battleModel = new BattleModel()
                 .setRoom(createRoomModel());
         battleModel.setVehicles(createVehicles(participants, battleModel));
+        battleModel.setStatistics(createUserBattleStatistics(participants));
         var userMap = createUserMap(participants);
         var battle = new Battle()
                 .setTime(0)
@@ -84,6 +86,9 @@ public class BattleFactory {
         for (var participant : participants) {
             var vehicleModel = new VehicleModel();
             vehicleModel.setId(battleModel.getIdGenerator().generate());
+            if (participant.getUser() != null) {
+                vehicleModel.setUserId(participant.getUser().getId());
+            }
             vehicleModel.setSpecs(Arrays.stream(VehicleSpecsPreset.values())
                     .filter(preset -> preset.getName().equals(participant.getParams().getSelectedVehicle()))
                     .map(VehicleSpecsPreset::getSpecs).findAny().orElseThrow());
@@ -139,6 +144,15 @@ public class BattleFactory {
                 .filter(participant -> participant.getUser() != null)
                 .forEach(element -> userNicknameMap.put(element.getUser().getId(), element.getUser()));
         return userNicknameMap;
+    }
+
+    private Map<Long, UserBattleStatistics> createUserBattleStatistics(Set<BattleParticipant> participants) {
+        var userBattleStatistics = new HashMap<Long, UserBattleStatistics>();
+        participants.stream()
+                .filter(participant -> participant.getUser() != null)
+                .forEach(element -> userBattleStatistics.put(element.getUser().getId(),
+                        new UserBattleStatistics()));
+        return userBattleStatistics;
     }
 
     private String getVehicleColor(BattleParticipant participant) {

@@ -13,6 +13,8 @@ public class VehicleModel extends GenericSpecsConfigStateModel<VehicleSpecs, Veh
 
     private int id;
 
+    private Long userId;
+
     private VehiclePreCalc preCalc;
 
     private boolean updated = false;

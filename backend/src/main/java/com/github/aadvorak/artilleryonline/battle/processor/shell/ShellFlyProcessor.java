@@ -30,7 +30,7 @@ public class ShellFlyProcessor {
         }
         var hitTrackVehicle = getHitTrack(prevPosition, nextPosition, battleModel);
         if (hitTrackVehicle != null) {
-            ShellDamageProcessor.processHitTrack(nextPosition, hitTrackVehicle, shellModel.getSpecs(), battleModel);
+            ShellDamageProcessor.processHitTrack(nextPosition, hitTrackVehicle, shellModel, battleModel);
             battleModel.getUpdates().removeShell(shellModel.getId());
             addHitEvent(ShellHitType.VEHICLE_TRACK, shellModel.getId(), hitTrackVehicle.getId(), battleModel);
             return;
@@ -43,7 +43,7 @@ public class ShellFlyProcessor {
             return;
         }
         if (isHitGround(nextPosition, battleModel)) {
-            ShellDamageProcessor.processHitGround(nextPosition, shellModel.getSpecs(), battleModel);
+            ShellDamageProcessor.processHitGround(nextPosition, shellModel, battleModel);
             battleModel.getUpdates().removeShell(shellModel.getId());
             addHitEvent(ShellHitType.GROUND, shellModel.getId(), null, battleModel);
             return;
