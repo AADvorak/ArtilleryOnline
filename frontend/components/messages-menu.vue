@@ -43,7 +43,7 @@ const count = computed(() => {
         </v-tooltip>
       </v-btn>
     </template>
-    <v-card min-width="300">
+    <v-card min-width="300" max-width="400">
       <div class="no-messages-div" v-if="!roomInvitations.length && !messages.length">You have no messages</div>
       <v-list v-else>
         <v-list-item v-for="invitation in roomInvitations">
