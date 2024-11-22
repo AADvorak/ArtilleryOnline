@@ -10,16 +10,20 @@ import {computed} from "vue";
 import {useSettingsStore} from "~/stores/settings";
 import {useContinuousSoundsPlayer} from "~/playground/composables/sound/continuous-sounds-player";
 import {usePlayer} from "~/playground/audio/player";
+import {useMobileDeviceListener} from "~/playground/composables/mobile-device-listener";
 
 const player = usePlayer()
 const battleUpdater = useBattleUpdater(player)
 const continuousSoundsPlayer = useContinuousSoundsPlayer(player)
-const keyboardListener = useKeyboardListener(useCommandsSender())
+const commandsSender = useCommandsSender()
+const keyboardListener = useKeyboardListener(commandsSender)
+const mobileDeviceListener = useMobileDeviceListener(commandsSender)
 
 const isClientProcessing = computed(() => useSettingsStore().settings?.clientProcessing)
 
 onMounted(() => {
   keyboardListener.startListening()
+  mobileDeviceListener.startListening()
   battleUpdater.subscribe()
   isClientProcessing.value && useBattleProcessor().startProcessing()
   continuousSoundsPlayer.start()
@@ -27,6 +31,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   keyboardListener.stopListening()
+  mobileDeviceListener.stopListening()
   battleUpdater.unsubscribe()
   continuousSoundsPlayer.stopAll()
 })
