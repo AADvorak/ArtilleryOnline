@@ -44,7 +44,7 @@ async function save() {
 }
 
 function back() {
-  router.push('/menu')
+  router.push('/user')
 }
 </script>
 
@@ -52,7 +52,7 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: profile
+        Artillery online: user / profile
       </v-card-title>
       <v-card-text>
         <v-form @submit.prevent>
