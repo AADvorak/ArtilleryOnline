@@ -10,6 +10,7 @@ import com.github.aadvorak.artilleryonline.dto.response.BattleModelStateResponse
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
 import com.github.aadvorak.artilleryonline.dto.response.BattleUpdateResponse;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
+import com.github.aadvorak.artilleryonline.service.BattleHistoryService;
 import com.github.aadvorak.artilleryonline.service.MessageService;
 import com.github.aadvorak.artilleryonline.ws.BattleUpdatesSender;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,8 @@ public class BattleRunner {
     private final BattleUpdatesSender battleUpdatesSender;
 
     private final MessageService messageService;
+
+    private final BattleHistoryService battleHistoryService;
 
     private final WaitingBattleStepProcessor waitingBattleStepProcessor = new WaitingBattleStepProcessor();
     private final ActiveBattleStepProcessor activeBattleStepProcessor = new ActiveBattleStepProcessor();
@@ -59,6 +62,7 @@ public class BattleRunner {
             removeBattleFromMap(battle);
             removeBattleFromRoom(battle);
             createBattleFinishedMessages(battle);
+            writeBattleToHistory(battle);
             log.info("Battle finished: {}, map size {}", battle.getId(), userBattleMap.size());
         }).start();
     }
@@ -94,6 +98,12 @@ public class BattleRunner {
     private void createBattleFinishedMessages(Battle battle) {
         battle.getUserMap().values().forEach(user -> messageService.createMessage(user,
                 "Battle finished. " + BattleStatisticsUtil.createUserStatisticsMsg(battle.getModel(), user)));
+    }
+
+    private void writeBattleToHistory(Battle battle) {
+        if (!battle.getType().equals(BattleType.TEST_DRIVE)) {
+            battleHistoryService.writeHistory(battle);
+        }
     }
 
     private void setBattleUpdatedByTimeout(Battle battle) {

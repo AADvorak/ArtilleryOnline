@@ -29,6 +29,8 @@ public class Battle {
 
     private BattleStage battleStage;
 
+    private BattleType type;
+
     private boolean stageUpdated = false;
 
     private Map<Long, User> userMap;

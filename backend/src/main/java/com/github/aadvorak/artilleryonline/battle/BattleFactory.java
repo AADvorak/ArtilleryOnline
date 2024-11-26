@@ -29,7 +29,7 @@ public class BattleFactory {
 
     private final UserSettingRepository userSettingRepository;
 
-    public Battle createBattle(Set<BattleParticipant> participants) {
+    public Battle createBattle(Set<BattleParticipant> participants, BattleType battleType) {
         var battleModel = new BattleModel()
                 .setRoom(createRoomModel());
         battleModel.setVehicles(createVehicles(participants, battleModel));
@@ -38,6 +38,7 @@ public class BattleFactory {
         var battle = new Battle()
                 .setTime(0)
                 .setBattleStage(BattleStage.WAITING)
+                .setType(battleType)
                 .setModel(battleModel)
                 .setUserMap(userMap)
                 .setActiveUserIds(new HashSet<>(userMap.keySet()));

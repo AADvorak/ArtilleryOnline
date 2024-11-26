@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.consumer;
 import com.github.aadvorak.artilleryonline.battle.BattleFactory;
 import com.github.aadvorak.artilleryonline.battle.BattleParticipant;
 import com.github.aadvorak.artilleryonline.battle.BattleRunner;
+import com.github.aadvorak.artilleryonline.battle.BattleType;
 import com.github.aadvorak.artilleryonline.collection.*;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +44,7 @@ public class UserBattleQueueConsumer implements Runnable {
                 continue;
             }
             var battle = battleFactory.createBattle(elements.stream()
-                    .map(BattleParticipant::of).collect(Collectors.toSet()));
+                    .map(BattleParticipant::of).collect(Collectors.toSet()), BattleType.RANDOM);
             synchronized (userBattleMap) {
                 elements.forEach(element -> userBattleMap.put(element.getUser().getId(), battle));
             }
