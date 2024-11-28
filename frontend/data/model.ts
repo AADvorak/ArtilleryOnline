@@ -1,3 +1,5 @@
+import type {BattleType} from "~/playground/data/battle";
+
 export interface User {
   id: number
   email: string
@@ -55,4 +57,22 @@ export interface UserSettingsNameValueMapping {
 
 export interface UserSettingsValueNameMapping {
   [value: string]: string
+}
+
+interface UserBattleHistory {
+  battleHistoryId: number
+  beginTime: Date
+  battleType: BattleType
+  vehicleName: string
+  causedDamage: number
+  madeShots: number
+  causedDirectHits: number
+  causedIndirectHits: number
+  causedTrackBreaks: number
+  destroyedVehicles: number
+  receivedDamage: number
+  receivedDirectHits: number
+  receivedIndirectHits: number
+  receivedTrackBreaks: number
+  survived: boolean
 }

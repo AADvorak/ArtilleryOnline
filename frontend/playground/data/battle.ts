@@ -9,6 +9,12 @@ export enum BattleStage {
   FINISHED = 'FINISHED'
 }
 
+export enum BattleType {
+  TEST_DRIVE = 'TEST_DRIVE',
+  RANDOM = 'RANDOM',
+  ROOM = 'ROOM'
+}
+
 export interface Battle {
   id: string
   model: BattleModel
