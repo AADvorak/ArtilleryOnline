@@ -38,3 +38,8 @@ export interface UserBattleQueueResponse {
 export interface VehicleSpecsResponse {
   [name: string]: VehicleSpecs
 }
+
+export interface PageResponse<T> {
+  items: T[]
+  itemsLength: number
+}

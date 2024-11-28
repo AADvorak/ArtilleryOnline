@@ -78,8 +78,8 @@ public class BattleHistoryService {
         var page = filterUserBattleHistoryRepository.findByUserIdAndFilters(user.getId(),
                 UserBattleHistoryFilters.of(request.getFilters()), pageable);
         return new PageResponse<UserBattleHistoryResponse>()
-                .setData(page.get().map(UserBattleHistoryResponse::of).toList())
+                .setItems(page.get().map(UserBattleHistoryResponse::of).toList())
                 .setPages(page.getTotalPages())
-                .setElements(page.getTotalElements());
+                .setItemsLength(page.getTotalElements());
     }
 }

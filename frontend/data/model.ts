@@ -59,7 +59,7 @@ export interface UserSettingsValueNameMapping {
   [value: string]: string
 }
 
-interface UserBattleHistory {
+export interface UserBattleHistory {
   battleHistoryId: number
   beginTime: Date
   battleType: BattleType

@@ -11,9 +11,9 @@ import java.util.List;
 @Accessors(chain = true)
 public class PageResponse<T> {
 
-    private List<T> data;
+    private List<T> items;
 
-    private long elements;
+    private long itemsLength;
 
     private long pages;
 }
