@@ -74,7 +74,7 @@ public class ShellDamageProcessor {
                 vehicleModel, shellModel, battleModel);
         var hitPoints = vehicleModel.getState().getHitPoints() - damage;
         if (hitPoints <= 0) {
-            battleModel.removeVehicleById(vehicleModel.getId());
+            battleModel.getUpdates().removeVehicle(battleModel.getVehicleKeyById(vehicleModel.getId()));
             if (shellModel.getUserId() != null) {
                 battleModel.getStatistics().get(shellModel.getUserId()).increaseDestroyedVehicles();
             }

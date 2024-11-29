@@ -44,16 +44,20 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
                 ShellFlyProcessor.processStep(shellModel, battleModel));
 
         if (battleModel.getUpdates().getRemoved() != null) {
-            var removedExplosions = battleModel.getUpdates().getRemoved().getExplosionIds();
-            if (removedExplosions != null) {
-                removedExplosions.forEach(battleModel::removeExplosionById);
+            var removedExplosionIds = battleModel.getUpdates().getRemoved().getExplosionIds();
+            if (removedExplosionIds != null) {
+                removedExplosionIds.forEach(battleModel::removeExplosionById);
             }
-            var removedShells = battleModel.getUpdates().getRemoved().getShellIds();
-            if (removedShells != null) {
-                removedShells.forEach(id -> {
+            var removedShellIds = battleModel.getUpdates().getRemoved().getShellIds();
+            if (removedShellIds != null) {
+                removedShellIds.forEach(id -> {
                     ExplosionProcessor.initExplosion(battleModel.getShells().get(id), battleModel);
                     battleModel.removeShellById(id);
                 });
+            }
+            var removedVehicleKeys = battleModel.getUpdates().getRemoved().getVehicleKeys();
+            if (removedVehicleKeys != null) {
+                removedVehicleKeys.forEach(battleModel::removeVehicleByKey);
             }
         }
     }

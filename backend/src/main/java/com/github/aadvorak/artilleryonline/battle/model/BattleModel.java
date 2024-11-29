@@ -46,14 +46,15 @@ public class BattleModel {
         explosions.remove(id);
     }
 
-    public void removeVehicleById(int id) {
-        vehicles.entrySet().stream()
+    public void removeVehicleByKey(String key) {
+        vehicles.remove(key);
+    }
+
+    public String getVehicleKeyById(int id) {
+        return vehicles.entrySet().stream()
                 .filter(entry -> entry.getValue().getId() == id).findAny()
                 .map(Map.Entry::getKey)
-                .ifPresent(key -> {
-                    vehicles.remove(key);
-                    updates.removeVehicle(key);
-                });
+                .orElse(null);
     }
 
     public void setUpdated(boolean updated) {
