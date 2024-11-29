@@ -19,15 +19,17 @@ public class JdbcPageQueryExecutor<T> {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     public Page<T> execute(Map<String, Object> parameters, Pageable pageable) {
-        String queryTemplate = makeQueryTemplate(parameters);
-        List<T> result = jdbcTemplate.query(makeResultQuery(queryTemplate, pageable), parameters, rowMapper);
+        var queryTemplate = makeQueryTemplate(parameters);
+        var resultQuery = makeResultQuery(queryTemplate, pageable);
+        List<T> result = jdbcTemplate.query(resultQuery, parameters, rowMapper);
         if (result.isEmpty()) {
             return Page.empty(pageable);
         }
         if (pageable.getPageNumber() == 0 && pageable.getPageSize() > result.size()) {
             return new PageImpl<>(result);
         }
-        Long total = jdbcTemplate.queryForObject(makeCountQuery(queryTemplate), parameters, Long.class);
+        var countQuery = makeCountQuery(queryTemplate);
+        var total = jdbcTemplate.queryForObject(countQuery, parameters, Long.class);
         return new PageImpl<>(result, pageable, total != null ? total : 0L);
     }
 
