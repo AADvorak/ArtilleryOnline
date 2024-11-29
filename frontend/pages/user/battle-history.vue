@@ -6,12 +6,15 @@ import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import type {PageRequest, SortRequest, UserBattleHistoryFiltersRequest} from "~/data/request";
 import {DateUtils} from "~/utils/DateUtils";
+import {BattleType} from "~/playground/data/battle";
 
 const router = useRouter()
 
 const currentPage = ref(1)
 const itemsPerPage = ref(10)
 const sort = ref<SortRequest | undefined>()
+const selectedBattleType = ref<BattleType>()
+const battleTypes = ref([BattleType.RANDOM, BattleType.ROOM])
 const historyPage = ref<PageResponse<UserBattleHistory>>({
   items: [],
   itemsLength: 0
@@ -52,6 +55,8 @@ const headers = ref([
   },
 ])
 
+watch(selectedBattleType, loadHistoryPage)
+
 function onDataTableOptionsUpdate(options) {
   itemsPerPage.value = options.itemsPerPage
   currentPage.value = options.page
@@ -72,6 +77,11 @@ async function loadHistoryPage() {
   }
   if (sort.value) {
     pageRequest.sort = sort.value
+  }
+  if (selectedBattleType.value) {
+    pageRequest.filters = {
+      battleType: selectedBattleType.value
+    }
   }
   try {
     historyPage.value = await new ApiRequestSender().postJson<
@@ -94,6 +104,19 @@ function back() {
         Artillery online: user / battle history
       </v-card-title>
       <v-card-text>
+        <v-form class="mb-4">
+          <v-row no-gutters>
+            <v-col>
+              <v-select
+                  v-model="selectedBattleType"
+                  :items="battleTypes"
+                  density="compact"
+                  label="Battle type"
+                  clearable
+              />
+            </v-col>
+          </v-row>
+        </v-form>
         <v-data-table-server
             class="mb-4"
             v-model:items-per-page="itemsPerPage"
