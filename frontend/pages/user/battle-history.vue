@@ -23,6 +23,7 @@ const headers = ref([
   {title: 'Begin time', key: 'beginTime', align: 'start', sortable: true,
     value: item => DateUtils.getClientDateLocaleString(item.beginTime)},
   {title: 'Type', key: 'battleType', align: 'start', sortable: true},
+  {title: 'Vehicle name', key: 'vehicleName', align: 'start', sortable: true},
   {title: 'Survive', key: 'survived', align: 'start', sortable: false,
     value: item => item.survived ? 'Yes' : 'No'},
   {title: 'Made shots', key: 'madeShots', align: 'end', sortable: true},
