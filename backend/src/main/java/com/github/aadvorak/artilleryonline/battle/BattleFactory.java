@@ -41,6 +41,7 @@ public class BattleFactory {
                 .setType(battleType)
                 .setModel(battleModel)
                 .setUserMap(userMap)
+                .setUserVehicleNameMap(createUserVehicleNameMap(participants))
                 .setActiveUserIds(new HashSet<>(userMap.keySet()));
         battle.getQueues().setUserCommandQueues(createUserCommandQueues(participants));
         return battle;
@@ -145,6 +146,15 @@ public class BattleFactory {
                 .filter(participant -> participant.getUser() != null)
                 .forEach(element -> userNicknameMap.put(element.getUser().getId(), element.getUser()));
         return userNicknameMap;
+    }
+
+    private Map<Long, String> createUserVehicleNameMap(Set<BattleParticipant> participants) {
+        var userVehicleNameMap = new HashMap<Long, String>();
+        participants.stream()
+                .filter(participant -> participant.getUser() != null)
+                .forEach(element -> userVehicleNameMap.put(element.getUser().getId(),
+                        element.getParams().getSelectedVehicle()));
+        return userVehicleNameMap;
     }
 
     private Map<Long, UserBattleStatistics> createUserBattleStatistics(Set<BattleParticipant> participants) {

@@ -35,6 +35,8 @@ public class Battle {
 
     private Map<Long, User> userMap;
 
+    private Map<Long, String> userVehicleNameMap;
+
     private Set<Long> activeUserIds;
 
     private BattleDebug debug = new BattleDebug();
