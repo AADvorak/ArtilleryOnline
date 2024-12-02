@@ -7,13 +7,16 @@ import {ApiRequestSender} from "~/api/api-request-sender";
 import type {PageRequest, SortRequest, UserBattleHistoryFiltersRequest} from "~/data/request";
 import {DateUtils} from "~/utils/DateUtils";
 import {BattleType} from "~/playground/data/battle";
+import {usePresetsStore} from "~/stores/presets";
 
 const router = useRouter()
+const presetsStore = usePresetsStore()
 
 const currentPage = ref(1)
 const itemsPerPage = ref(10)
 const sort = ref<SortRequest | undefined>()
 const selectedBattleType = ref<BattleType>()
+const selectedVehicleName = ref<string>()
 const battleTypes = ref([BattleType.RANDOM, BattleType.ROOM])
 const historyPage = ref<PageResponse<UserBattleHistory>>({
   items: [],
@@ -56,7 +59,11 @@ const headers = ref([
   },
 ])
 
-watch(selectedBattleType, loadHistoryPage)
+const vehicles = computed(() => {
+  return Object.keys(presetsStore.vehicles)
+})
+
+watch([selectedBattleType, selectedVehicleName], loadHistoryPage)
 
 function onDataTableOptionsUpdate(options) {
   itemsPerPage.value = options.itemsPerPage
@@ -79,11 +86,7 @@ async function loadHistoryPage() {
   if (sort.value) {
     pageRequest.sort = sort.value
   }
-  if (selectedBattleType.value) {
-    pageRequest.filters = {
-      battleType: selectedBattleType.value
-    }
-  }
+  pageRequest.filters = createFilters()
   try {
     historyPage.value = await new ApiRequestSender().postJson<
         PageRequest<UserBattleHistoryFiltersRequest>, PageResponse<UserBattleHistory>
@@ -91,6 +94,17 @@ async function loadHistoryPage() {
   } catch (e) {
     useRequestErrorHandler().handle(e)
   }
+}
+
+function createFilters() {
+  const filters: UserBattleHistoryFiltersRequest = {}
+  if (selectedBattleType.value) {
+    filters.battleType = selectedBattleType.value
+  }
+  if (selectedVehicleName.value) {
+    filters.vehicleName = selectedVehicleName.value
+  }
+  return filters
 }
 
 function back() {
@@ -106,13 +120,22 @@ function back() {
       </v-card-title>
       <v-card-text>
         <v-form class="mb-4">
-          <v-row no-gutters>
+          <v-row>
             <v-col>
               <v-select
                   v-model="selectedBattleType"
                   :items="battleTypes"
                   density="compact"
                   label="Battle type"
+                  clearable
+              />
+            </v-col>
+            <v-col>
+              <v-select
+                  v-model="selectedVehicleName"
+                  :items="vehicles"
+                  density="compact"
+                  label="Select vehicle"
                   clearable
               />
             </v-col>

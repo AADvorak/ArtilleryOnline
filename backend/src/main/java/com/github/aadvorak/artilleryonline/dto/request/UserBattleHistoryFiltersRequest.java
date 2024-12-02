@@ -11,4 +11,6 @@ import lombok.experimental.Accessors;
 public class UserBattleHistoryFiltersRequest {
 
     private BattleType battleType;
+
+    private String vehicleName;
 }

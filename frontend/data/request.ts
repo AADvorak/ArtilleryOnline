@@ -1,3 +1,5 @@
+import type {BattleType} from "~/playground/data/battle";
+
 export interface RegisterRequest {
   email: string
   nickname: string
@@ -27,5 +29,6 @@ export interface PageRequest<FiltersRequest> {
 }
 
 export interface UserBattleHistoryFiltersRequest {
-  battleType: string
+  battleType?: BattleType
+  vehicleName?: string
 }

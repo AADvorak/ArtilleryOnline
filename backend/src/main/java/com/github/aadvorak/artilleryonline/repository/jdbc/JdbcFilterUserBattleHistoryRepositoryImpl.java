@@ -24,6 +24,9 @@ public class JdbcFilterUserBattleHistoryRepositoryImpl implements FilterUserBatt
     private static final String QUERY_BATTLE_TYPE_ID_CONDITION = """
                 and bh.battle_type_id = :battleTypeId
             """;
+    private static final String QUERY_VEHICLE_NAME_CONDITION = """
+                and ubh.vehicle_name = :vehicleName
+            """;
 
     private static final RowMapper<UserBattleHistoryView> ROW_MAPPER = (rs, rowNum) ->
             new UserBattleHistoryView()
@@ -47,7 +50,8 @@ public class JdbcFilterUserBattleHistoryRepositoryImpl implements FilterUserBatt
 
     public JdbcFilterUserBattleHistoryRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
         queryExecutor = new JdbcPageQueryExecutor<>(QUERY_BASE, Map.of(
-                "battleTypeId", QUERY_BATTLE_TYPE_ID_CONDITION
+                "battleTypeId", QUERY_BATTLE_TYPE_ID_CONDITION,
+                "vehicleName", QUERY_VEHICLE_NAME_CONDITION
         ), ROW_MAPPER, jdbcTemplate);
     }
     @Override
@@ -62,6 +66,7 @@ public class JdbcFilterUserBattleHistoryRepositoryImpl implements FilterUserBatt
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("battleTypeId", filters.getBattleTypeId());
+        params.put("vehicleName", filters.getVehicleName());
         return params;
     }
 }
