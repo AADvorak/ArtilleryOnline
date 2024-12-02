@@ -27,6 +27,12 @@ public class JdbcFilterUserBattleHistoryRepositoryImpl implements FilterUserBatt
     private static final String QUERY_VEHICLE_NAME_CONDITION = """
                 and ubh.vehicle_name = :vehicleName
             """;
+    private static final String QUERY_DT_FROM_CONDITION = """
+                and bh.begin_time >= :dtFrom
+            """;
+    private static final String QUERY_DT_TO_CONDITION = """
+                and bh.begin_time <= :dtTo
+            """;
 
     private static final RowMapper<UserBattleHistoryView> ROW_MAPPER = (rs, rowNum) ->
             new UserBattleHistoryView()
@@ -51,7 +57,9 @@ public class JdbcFilterUserBattleHistoryRepositoryImpl implements FilterUserBatt
     public JdbcFilterUserBattleHistoryRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
         queryExecutor = new JdbcPageQueryExecutor<>(QUERY_BASE, Map.of(
                 "battleTypeId", QUERY_BATTLE_TYPE_ID_CONDITION,
-                "vehicleName", QUERY_VEHICLE_NAME_CONDITION
+                "vehicleName", QUERY_VEHICLE_NAME_CONDITION,
+                "dtFrom", QUERY_DT_FROM_CONDITION,
+                "dtTo", QUERY_DT_TO_CONDITION
         ), ROW_MAPPER, jdbcTemplate);
     }
     @Override
@@ -67,6 +75,8 @@ public class JdbcFilterUserBattleHistoryRepositoryImpl implements FilterUserBatt
         params.put("userId", userId);
         params.put("battleTypeId", filters.getBattleTypeId());
         params.put("vehicleName", filters.getVehicleName());
+        params.put("dtFrom", filters.getDtFrom());
+        params.put("dtTo", filters.getDtTo());
         return params;
     }
 }

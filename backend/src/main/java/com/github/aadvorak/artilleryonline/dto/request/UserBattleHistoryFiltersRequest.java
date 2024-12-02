@@ -13,4 +13,8 @@ public class UserBattleHistoryFiltersRequest {
     private BattleType battleType;
 
     private String vehicleName;
+
+    private String dtFrom;
+
+    private String dtTo;
 }
