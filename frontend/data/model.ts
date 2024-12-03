@@ -76,3 +76,8 @@ export interface UserBattleHistory {
   receivedTrackBreaks: number
   survived: boolean
 }
+
+export interface DateRange {
+  from: Date
+  to: Date
+}

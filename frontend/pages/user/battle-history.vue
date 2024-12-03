@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import {useRouter} from "#app";
 import type {PageResponse} from "~/data/response";
-import type {UserBattleHistory} from "~/data/model";
+import type {DateRange, UserBattleHistory} from "~/data/model";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import type {PageRequest, SortRequest, UserBattleHistoryFiltersRequest} from "~/data/request";
 import {DateUtils} from "~/utils/DateUtils";
 import {BattleType} from "~/playground/data/battle";
 import {usePresetsStore} from "~/stores/presets";
-import DatePickerSelect from "~/components/date-picker-select.vue";
 
 const router = useRouter()
 const presetsStore = usePresetsStore()
@@ -18,8 +17,7 @@ const itemsPerPage = ref(10)
 const sort = ref<SortRequest | undefined>()
 const selectedBattleType = ref<BattleType | undefined>()
 const selectedVehicleName = ref<string | undefined>()
-const selectedDtFrom = ref<Date | undefined>()
-const selectedDtTo = ref<Date | undefined>()
+const selectedDateRange = ref<DateRange | undefined>()
 const battleTypes = ref([BattleType.RANDOM, BattleType.ROOM])
 const historyPage = ref<PageResponse<UserBattleHistory>>({
   items: [],
@@ -66,7 +64,7 @@ const vehicles = computed(() => {
   return Object.keys(presetsStore.vehicles)
 })
 
-watch([selectedBattleType, selectedVehicleName, selectedDtFrom, selectedDtTo], loadHistoryPage)
+watch([selectedBattleType, selectedVehicleName, selectedDateRange], loadHistoryPage)
 
 function onDataTableOptionsUpdate(options) {
   itemsPerPage.value = options.itemsPerPage
@@ -107,11 +105,9 @@ function createFilters() {
   if (selectedVehicleName.value) {
     filters.vehicleName = selectedVehicleName.value
   }
-  if (selectedDtFrom.value) {
-    filters.dtFrom = DateUtils.getISOString(selectedDtFrom.value)
-  }
-  if (selectedDtTo.value) {
-    filters.dtTo = DateUtils.getISOStringPlusDay(selectedDtTo.value)
+  if (selectedDateRange.value) {
+    filters.dtFrom = DateUtils.getISOString(selectedDateRange.value.from)
+    filters.dtTo = DateUtils.getISOString(selectedDateRange.value.to)
   }
   return filters
 }
@@ -151,10 +147,7 @@ function back() {
           </v-row>
           <v-row>
             <v-col>
-              <date-picker-select name="Date from" @select="v => selectedDtFrom = v"/>
-            </v-col>
-            <v-col>
-              <date-picker-select name="Date to" @select="v => selectedDtTo = v"/>
+              <date-range-picker-select name="Dates" @select="v => selectedDateRange = v"/>
             </v-col>
           </v-row>
         </v-form>
