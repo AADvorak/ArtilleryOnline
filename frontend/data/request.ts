@@ -31,4 +31,6 @@ export interface PageRequest<FiltersRequest> {
 export interface UserBattleHistoryFiltersRequest {
   battleType?: BattleType
   vehicleName?: string
+  dtFrom?: string
+  dtTo?: string
 }

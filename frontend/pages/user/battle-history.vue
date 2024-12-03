@@ -8,6 +8,7 @@ import type {PageRequest, SortRequest, UserBattleHistoryFiltersRequest} from "~/
 import {DateUtils} from "~/utils/DateUtils";
 import {BattleType} from "~/playground/data/battle";
 import {usePresetsStore} from "~/stores/presets";
+import DatePickerMenu from "~/components/date-picker-menu.vue";
 
 const router = useRouter()
 const presetsStore = usePresetsStore()
@@ -15,8 +16,10 @@ const presetsStore = usePresetsStore()
 const currentPage = ref(1)
 const itemsPerPage = ref(10)
 const sort = ref<SortRequest | undefined>()
-const selectedBattleType = ref<BattleType>()
-const selectedVehicleName = ref<string>()
+const selectedBattleType = ref<BattleType | undefined>()
+const selectedVehicleName = ref<string | undefined>()
+const selectedDtFrom = ref<Date | undefined>()
+const selectedDtTo = ref<Date | undefined>()
 const battleTypes = ref([BattleType.RANDOM, BattleType.ROOM])
 const historyPage = ref<PageResponse<UserBattleHistory>>({
   items: [],
@@ -63,7 +66,7 @@ const vehicles = computed(() => {
   return Object.keys(presetsStore.vehicles)
 })
 
-watch([selectedBattleType, selectedVehicleName], loadHistoryPage)
+watch([selectedBattleType, selectedVehicleName, selectedDtFrom, selectedDtTo], loadHistoryPage)
 
 function onDataTableOptionsUpdate(options) {
   itemsPerPage.value = options.itemsPerPage
@@ -104,6 +107,12 @@ function createFilters() {
   if (selectedVehicleName.value) {
     filters.vehicleName = selectedVehicleName.value
   }
+  if (selectedDtFrom.value) {
+    filters.dtFrom = DateUtils.getISOString(selectedDtFrom.value)
+  }
+  if (selectedDtTo.value) {
+    filters.dtTo = DateUtils.getISOStringPlusDay(selectedDtTo.value)
+  }
   return filters
 }
 
@@ -138,6 +147,14 @@ function back() {
                   label="Select vehicle"
                   clearable
               />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <date-picker-menu name="Date from" @select="v => selectedDtFrom = v"/>
+            </v-col>
+            <v-col>
+              <date-picker-menu name="Date to" @select="v => selectedDtTo = v"/>
             </v-col>
           </v-row>
         </v-form>

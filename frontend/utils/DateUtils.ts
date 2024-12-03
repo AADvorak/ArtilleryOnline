@@ -13,5 +13,15 @@ export const DateUtils = {
 
   getClientDateLocaleString(serverDate: string) {
     return this.getClientDate(serverDate).toLocaleString()
+  },
+
+  getISOString(date: Date) {
+    return date.toISOString().split('.')[0]
+  },
+
+  getISOStringPlusDay(date: Date) {
+    const datePlusDay = new Date(date)
+    datePlusDay.setDate(datePlusDay.getDate() + 1)
+    return this.getISOString(datePlusDay)
   }
 }
