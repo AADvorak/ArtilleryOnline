@@ -19,9 +19,21 @@ export const DateUtils = {
     return date.toISOString().split('.')[0]
   },
 
-  getISOStringPlusDay(date: Date) {
+  getPlusDay(date: Date) {
     const datePlusDay = new Date(date)
     datePlusDay.setDate(datePlusDay.getDate() + 1)
-    return this.getISOString(datePlusDay)
+    return datePlusDay
+  },
+
+  getMinusDays(date: Date, days: number) {
+    const datePlusDay = new Date(date)
+    datePlusDay.setDate(datePlusDay.getDate() - days)
+    return datePlusDay
+  },
+
+  getTodayBegin() {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    return today
   }
 }

@@ -9,6 +9,14 @@ import {DateUtils} from "~/utils/DateUtils";
 import {BattleType} from "~/playground/data/battle";
 import {usePresetsStore} from "~/stores/presets";
 
+const DATE_MODES = {
+  TODAY: 'Today',
+  LAST_WEEK: 'Last week',
+  LAST_MONTH: 'Last month',
+  SPECIFIC_DATE: 'Specific date',
+  SPECIFIC_DATE_RANGE: 'Specific date range'
+}
+
 const router = useRouter()
 const presetsStore = usePresetsStore()
 
@@ -18,6 +26,7 @@ const sort = ref<SortRequest | undefined>()
 const selectedBattleType = ref<BattleType | undefined>()
 const selectedVehicleName = ref<string | undefined>()
 const selectedDateRange = ref<DateRange | undefined>()
+const selectedDateMode = ref<string | undefined>()
 const battleTypes = ref([BattleType.RANDOM, BattleType.ROOM])
 const historyPage = ref<PageResponse<UserBattleHistory>>({
   items: [],
@@ -63,8 +72,36 @@ const headers = ref([
 const vehicles = computed(() => {
   return Object.keys(presetsStore.vehicles)
 })
+const dateModes = computed(() => {
+  return Object.values(DATE_MODES)
+})
 
 watch([selectedBattleType, selectedVehicleName, selectedDateRange], loadHistoryPage)
+watch(selectedDateMode, value => {
+  const todayBegin = DateUtils.getTodayBegin()
+  switch (value) {
+    case DATE_MODES.TODAY:
+      selectedDateRange.value = {
+        from: todayBegin,
+        to: DateUtils.getPlusDay(todayBegin)
+      }
+      break
+    case DATE_MODES.LAST_WEEK:
+      selectedDateRange.value = {
+        from: DateUtils.getMinusDays(todayBegin, 7),
+        to: DateUtils.getPlusDay(todayBegin)
+      }
+      break
+    case DATE_MODES.LAST_MONTH:
+      selectedDateRange.value = {
+        from: DateUtils.getMinusDays(todayBegin, 30),
+        to: DateUtils.getPlusDay(todayBegin)
+      }
+      break
+    default:
+      selectedDateRange.value = undefined
+  }
+})
 
 function onDataTableOptionsUpdate(options) {
   itemsPerPage.value = options.itemsPerPage
@@ -112,6 +149,17 @@ function createFilters() {
   return filters
 }
 
+function onDateSelect(date: Date) {
+  if (date) {
+    selectedDateRange.value = {
+      from: date,
+      to: DateUtils.getPlusDay(date)
+    }
+  } else {
+    selectedDateRange.value = undefined
+  }
+}
+
 function back() {
   router.push('/user')
 }
@@ -147,6 +195,18 @@ function back() {
           </v-row>
           <v-row>
             <v-col>
+              <v-select
+                  v-model="selectedDateMode"
+                  :items="dateModes"
+                  density="compact"
+                  label="Date filtering mode"
+                  clearable
+              />
+            </v-col>
+            <v-col v-show="selectedDateMode === DATE_MODES.SPECIFIC_DATE">
+              <date-picker-select name="Date" @select="onDateSelect"/>
+            </v-col>
+            <v-col v-show="selectedDateMode === DATE_MODES.SPECIFIC_DATE_RANGE">
               <date-range-picker-select name="Dates" @select="v => selectedDateRange = v"/>
             </v-col>
           </v-row>
