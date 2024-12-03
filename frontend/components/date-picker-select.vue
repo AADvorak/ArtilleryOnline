@@ -7,9 +7,11 @@ const props = defineProps<{
 
 const emit = defineEmits(['select'])
 
+const menuOpened = ref(false)
 const selectedDate = ref<Date | undefined>()
 
 watch(selectedDate, value => {
+  menuOpened.value = false
   emit('select', value)
 })
 </script>
@@ -17,6 +19,7 @@ watch(selectedDate, value => {
 <template>
   <v-select
       v-model="selectedDate"
+      v-model:menu="menuOpened"
       density="compact"
       :label="props.name"
       clearable
@@ -24,6 +27,8 @@ watch(selectedDate, value => {
     <template v-slot:prepend-item>
       <v-date-picker
           v-model="selectedDate"
+          hide-header
+          hide-weekdays
       />
     </template>
   </v-select>

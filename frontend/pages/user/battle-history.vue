@@ -8,7 +8,7 @@ import type {PageRequest, SortRequest, UserBattleHistoryFiltersRequest} from "~/
 import {DateUtils} from "~/utils/DateUtils";
 import {BattleType} from "~/playground/data/battle";
 import {usePresetsStore} from "~/stores/presets";
-import DatePickerMenu from "~/components/date-picker-menu.vue";
+import DatePickerSelect from "~/components/date-picker-select.vue";
 
 const router = useRouter()
 const presetsStore = usePresetsStore()
@@ -151,10 +151,10 @@ function back() {
           </v-row>
           <v-row>
             <v-col>
-              <date-picker-menu name="Date from" @select="v => selectedDtFrom = v"/>
+              <date-picker-select name="Date from" @select="v => selectedDtFrom = v"/>
             </v-col>
             <v-col>
-              <date-picker-menu name="Date to" @select="v => selectedDtTo = v"/>
+              <date-picker-select name="Date to" @select="v => selectedDtTo = v"/>
             </v-col>
           </v-row>
         </v-form>
