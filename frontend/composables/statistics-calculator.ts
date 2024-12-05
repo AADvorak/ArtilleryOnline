@@ -1,8 +1,11 @@
-import type {UserBattleStatistics, UserBattleStatisticsPerBattle} from "~/data/model";
+import type {UserBattleStatistics, UserBattleStatisticsCoefficients, UserBattleStatisticsPerBattle} from "~/data/model";
 
 export function useStatisticsCalculator() {
 
-  function calculatePerBattle(statistics: UserBattleStatistics): UserBattleStatisticsPerBattle {
+  function calculatePerBattle(statistics: UserBattleStatistics): UserBattleStatisticsPerBattle | undefined {
+    if (statistics.battlesPlayed === 0) {
+      return undefined
+    }
     return {
       causedDamage: statistics.causedDamage / statistics.battlesPlayed,
       madeShots: statistics.madeShots / statistics.battlesPlayed,
@@ -17,5 +20,15 @@ export function useStatisticsCalculator() {
     }
   }
 
-  return {calculatePerBattle}
+  function calculateCoefficients(statistics: UserBattleStatistics): UserBattleStatisticsCoefficients {
+    return {
+      survivalRate: statistics.battlesPlayed ? Math.round(100 * statistics.battlesSurvived / statistics.battlesPlayed) : 0,
+      directHitRate: statistics.madeShots ? Math.round(100 * statistics.causedDirectHits / statistics.madeShots) : 0,
+      indirectHitRate: statistics.madeShots ? Math.round(100 * statistics.causedIndirectHits / statistics.madeShots) : 0,
+      trackBreakRate: statistics.madeShots ? Math.round(100 * statistics.causedTrackBreaks / statistics.madeShots) : 0,
+      damagePerShot: statistics.madeShots ? statistics.causedDamage / statistics.madeShots : 0
+    }
+  }
+
+  return {calculatePerBattle, calculateCoefficients}
 }

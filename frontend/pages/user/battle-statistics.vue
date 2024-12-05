@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useRouter} from "#app";
 import type {UserBattleHistoryFiltersRequest} from "~/data/request";
-import type {UserBattleStatistics, UserBattleStatisticsPerBattle} from "~/data/model";
+import type {UserBattleStatistics, UserBattleStatisticsCoefficients, UserBattleStatisticsPerBattle} from "~/data/model";
 import BattleHistoryFiltersForm from "~/components/battle-history-filters-form.vue";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
@@ -35,10 +35,18 @@ const perBattleCausedReceivedConfig = ref([
   {causedKey: 'causedIndirectHits', receivedKey: 'receivedIndirectHits', name: 'Indirect hits'},
   {causedKey: 'causedTrackBreaks', receivedKey: 'receivedTrackBreaks', name: 'Track breaks'},
 ])
+const coefficientsConfig = ref([
+  {key: 'survivalRate', name: 'Survival rate', fractionDigits: 0},
+  {key: 'directHitRate', name: 'Direct hit rate', fractionDigits: 0},
+  {key: 'indirectHitRate', name: 'Indirect hit rate', fractionDigits: 0},
+  {key: 'trackBreakRate', name: 'Track break rate', fractionDigits: 0},
+  {key: 'damagePerShot', name: 'Damage per shot', fractionDigits: 2},
+])
 
 const filters = ref<UserBattleHistoryFiltersRequest | undefined>()
 const statistics = ref<UserBattleStatistics | undefined>()
 const perBattleStatistics = ref<UserBattleStatisticsPerBattle | undefined>()
+const coefficients = ref<UserBattleStatisticsCoefficients | undefined>()
 const openedPanels = ref<string[]>(['total'])
 
 watch(filters, loadStatistics)
@@ -53,6 +61,7 @@ async function loadStatistics() {
         UserBattleHistoryFiltersRequest, UserBattleStatistics
     >('/battles/statistics/filter', filters.value || {})
     perBattleStatistics.value = useStatisticsCalculator().calculatePerBattle(statistics.value)
+    coefficients.value = useStatisticsCalculator().calculateCoefficients(statistics.value)
   } catch (e) {
     useRequestErrorHandler().handle(e)
   }
@@ -103,7 +112,7 @@ function back() {
               </v-table>
             </v-expansion-panel-text>
           </v-expansion-panel>
-          <v-expansion-panel value="perBattle">
+          <v-expansion-panel v-if="perBattleStatistics" value="perBattle">
             <v-expansion-panel-title>
               Per battle
             </v-expansion-panel-title>
@@ -129,6 +138,21 @@ function back() {
                   <td>{{ item.name }}</td>
                   <td>{{ perBattleStatistics[item.causedKey].toFixed(2) }}</td>
                   <td>{{ perBattleStatistics[item.receivedKey].toFixed(2) }}</td>
+                </tr>
+                </tbody>
+              </v-table>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+          <v-expansion-panel v-if="coefficients" value="coefficients">
+            <v-expansion-panel-title>
+              Coefficients
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <v-table density="compact">
+                <tbody>
+                <tr v-for="item of coefficientsConfig">
+                  <td>{{ item.name }}</td>
+                  <td>{{ coefficients[item.key].toFixed(item.fractionDigits) }}</td>
                 </tr>
                 </tbody>
               </v-table>

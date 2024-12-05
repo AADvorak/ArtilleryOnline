@@ -105,6 +105,14 @@ export interface UserBattleStatisticsPerBattle {
   receivedTrackBreaks: number
 }
 
+export interface UserBattleStatisticsCoefficients {
+  survivalRate: number
+  directHitRate: number
+  indirectHitRate: number
+  trackBreakRate: number
+  damagePerShot: number
+}
+
 export interface DateRange {
   from: Date
   to: Date
