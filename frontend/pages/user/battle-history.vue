@@ -1,33 +1,19 @@
 <script setup lang="ts">
 import {useRouter} from "#app";
 import type {PageResponse} from "~/data/response";
-import type {DateRange, UserBattleHistory} from "~/data/model";
+import type {UserBattleHistory} from "~/data/model";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import type {PageRequest, SortRequest, UserBattleHistoryFiltersRequest} from "~/data/request";
 import {DateUtils} from "~/utils/DateUtils";
-import {BattleType} from "~/playground/data/battle";
-import {usePresetsStore} from "~/stores/presets";
-
-const DATE_MODES = {
-  TODAY: 'Today',
-  LAST_WEEK: 'Last week',
-  LAST_MONTH: 'Last month',
-  SPECIFIC_DATE: 'Specific date',
-  SPECIFIC_DATE_RANGE: 'Specific date range'
-}
+import BattleHistoryFiltersForm from "~/components/battle-history-filters-form.vue";
 
 const router = useRouter()
-const presetsStore = usePresetsStore()
 
 const currentPage = ref(1)
 const itemsPerPage = ref(10)
 const sort = ref<SortRequest | undefined>()
-const selectedBattleType = ref<BattleType | undefined>()
-const selectedVehicleName = ref<string | undefined>()
-const selectedDateRange = ref<DateRange | undefined>()
-const selectedDateMode = ref<string | undefined>()
-const battleTypes = ref([BattleType.RANDOM, BattleType.ROOM])
+const filters = ref<UserBattleHistoryFiltersRequest | undefined>()
 const historyPage = ref<PageResponse<UserBattleHistory>>({
   items: [],
   itemsLength: 0
@@ -69,38 +55,10 @@ const headers = ref([
   },
 ])
 
-const vehicles = computed(() => {
-  return Object.keys(presetsStore.vehicles)
-})
-const dateModes = computed(() => {
-  return Object.values(DATE_MODES)
-})
+watch([currentPage, itemsPerPage, sort, filters], loadHistoryPage)
 
-watch([selectedBattleType, selectedVehicleName, selectedDateRange], loadHistoryPage)
-watch(selectedDateMode, value => {
-  const todayBegin = DateUtils.getTodayBegin()
-  switch (value) {
-    case DATE_MODES.TODAY:
-      selectedDateRange.value = {
-        from: todayBegin,
-        to: DateUtils.getPlusDay(todayBegin)
-      }
-      break
-    case DATE_MODES.LAST_WEEK:
-      selectedDateRange.value = {
-        from: DateUtils.getMinusDays(todayBegin, 7),
-        to: DateUtils.getPlusDay(todayBegin)
-      }
-      break
-    case DATE_MODES.LAST_MONTH:
-      selectedDateRange.value = {
-        from: DateUtils.getMinusDays(todayBegin, 30),
-        to: DateUtils.getPlusDay(todayBegin)
-      }
-      break
-    default:
-      selectedDateRange.value = undefined
-  }
+onMounted(() => {
+  loadHistoryPage()
 })
 
 function onDataTableOptionsUpdate(options) {
@@ -112,8 +70,9 @@ function onDataTableOptionsUpdate(options) {
       by: sortBy.key,
       dir: sortBy.order
     }
+  } else {
+    sort.value = undefined
   }
-  loadHistoryPage()
 }
 
 async function loadHistoryPage() {
@@ -124,39 +83,15 @@ async function loadHistoryPage() {
   if (sort.value) {
     pageRequest.sort = sort.value
   }
-  pageRequest.filters = createFilters()
+  if (filters.value) {
+    pageRequest.filters = filters.value
+  }
   try {
     historyPage.value = await new ApiRequestSender().postJson<
         PageRequest<UserBattleHistoryFiltersRequest>, PageResponse<UserBattleHistory>
     >('/battles/history/page', pageRequest)
   } catch (e) {
     useRequestErrorHandler().handle(e)
-  }
-}
-
-function createFilters() {
-  const filters: UserBattleHistoryFiltersRequest = {}
-  if (selectedBattleType.value) {
-    filters.battleType = selectedBattleType.value
-  }
-  if (selectedVehicleName.value) {
-    filters.vehicleName = selectedVehicleName.value
-  }
-  if (selectedDateRange.value) {
-    filters.dtFrom = DateUtils.getISOString(selectedDateRange.value.from)
-    filters.dtTo = DateUtils.getISOString(selectedDateRange.value.to)
-  }
-  return filters
-}
-
-function onDateSelect(date: Date) {
-  if (date) {
-    selectedDateRange.value = {
-      from: date,
-      to: DateUtils.getPlusDay(date)
-    }
-  } else {
-    selectedDateRange.value = undefined
   }
 }
 
@@ -172,45 +107,7 @@ function back() {
         Artillery online: user / battle history
       </v-card-title>
       <v-card-text>
-        <v-form class="mb-4">
-          <v-row>
-            <v-col>
-              <v-select
-                  v-model="selectedBattleType"
-                  :items="battleTypes"
-                  density="compact"
-                  label="Battle type"
-                  clearable
-              />
-            </v-col>
-            <v-col>
-              <v-select
-                  v-model="selectedVehicleName"
-                  :items="vehicles"
-                  density="compact"
-                  label="Select vehicle"
-                  clearable
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-select
-                  v-model="selectedDateMode"
-                  :items="dateModes"
-                  density="compact"
-                  label="Date filtering mode"
-                  clearable
-              />
-            </v-col>
-            <v-col v-show="selectedDateMode === DATE_MODES.SPECIFIC_DATE">
-              <date-picker-select name="Date" @select="onDateSelect"/>
-            </v-col>
-            <v-col v-show="selectedDateMode === DATE_MODES.SPECIFIC_DATE_RANGE">
-              <date-range-picker-select name="Dates" @select="v => selectedDateRange = v"/>
-            </v-col>
-          </v-row>
-        </v-form>
+        <battle-history-filters-form class="mb-4" @change="v => filters = v"/>
         <v-data-table-server
             class="mb-4"
             v-model:items-per-page="itemsPerPage"
