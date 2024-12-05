@@ -9,29 +9,17 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Repository
-public class JdbcFilterUserBattleHistoryRepositoryImpl implements FilterUserBattleHistoryRepository {
+public class JdbcFilterUserBattleHistoryRepositoryImpl extends JdbcBattleHistoryRepositoryBase
+        implements FilterUserBattleHistoryRepository {
 
     private static final String QUERY_BASE = """
             select {}
             from battle_history bh
             join public.user_battle_history ubh on bh.id = ubh.battle_history_id
             where ubh.user_id = :userId
-            """;
-    private static final String QUERY_BATTLE_TYPE_ID_CONDITION = """
-                and bh.battle_type_id = :battleTypeId
-            """;
-    private static final String QUERY_VEHICLE_NAME_CONDITION = """
-                and ubh.vehicle_name = :vehicleName
-            """;
-    private static final String QUERY_DT_FROM_CONDITION = """
-                and bh.begin_time >= :dtFrom
-            """;
-    private static final String QUERY_DT_TO_CONDITION = """
-                and bh.begin_time <= :dtTo
             """;
 
     private static final RowMapper<UserBattleHistoryView> ROW_MAPPER = (rs, rowNum) ->
@@ -55,12 +43,7 @@ public class JdbcFilterUserBattleHistoryRepositoryImpl implements FilterUserBatt
     private final JdbcPageQueryExecutor<UserBattleHistoryView> queryExecutor;
 
     public JdbcFilterUserBattleHistoryRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
-        queryExecutor = new JdbcPageQueryExecutor<>(QUERY_BASE, Map.of(
-                "battleTypeId", QUERY_BATTLE_TYPE_ID_CONDITION,
-                "vehicleName", QUERY_VEHICLE_NAME_CONDITION,
-                "dtFrom", QUERY_DT_FROM_CONDITION,
-                "dtTo", QUERY_DT_TO_CONDITION
-        ), ROW_MAPPER, jdbcTemplate);
+        queryExecutor = new JdbcPageQueryExecutor<>(QUERY_BASE, CONDITIONS_MAP, ROW_MAPPER, jdbcTemplate);
     }
     @Override
     public Page<UserBattleHistoryView> findByUserIdAndFilters(
@@ -68,15 +51,5 @@ public class JdbcFilterUserBattleHistoryRepositoryImpl implements FilterUserBatt
     ) {
         Map<String, Object> params = makeParams(userId, filters);
         return queryExecutor.execute(params, pageable);
-    }
-
-    private Map<String, Object> makeParams(long userId, UserBattleHistoryFilters filters) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("userId", userId);
-        params.put("battleTypeId", filters.getBattleTypeId());
-        params.put("vehicleName", filters.getVehicleName());
-        params.put("dtFrom", filters.getDtFrom());
-        params.put("dtTo", filters.getDtTo());
-        return params;
     }
 }

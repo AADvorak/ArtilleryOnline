@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.repository.jdbc;
 
+import com.github.aadvorak.artilleryonline.repository.utils.SqlUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -34,15 +35,7 @@ public class JdbcPageQueryExecutor<T> {
     }
 
     public String makeQueryTemplate(Map<String, Object> parameters) {
-        StringBuilder queryBuilder = new StringBuilder(baseQuery);
-        for (String key : parameters.keySet()) {
-            Object parameter = parameters.get(key);
-            String condition = conditions.get(key);
-            if (condition != null && parameter != null) {
-                queryBuilder.append(condition);
-            }
-        }
-        return queryBuilder.toString();
+        return baseQuery + SqlUtils.makeConditionsQuery(parameters, conditions);
     }
 
     private String makeResultQuery(String queryTemplate, Pageable pageable) {
