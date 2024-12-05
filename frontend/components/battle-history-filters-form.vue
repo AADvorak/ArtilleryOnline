@@ -89,7 +89,7 @@ function onDateSelect(date: Date) {
 <template>
   <v-form>
     <v-row no-gutters>
-      <v-col class="mr-4">
+      <v-col>
         <v-select
             v-model="selectedBattleType"
             :items="battleTypes"
@@ -98,7 +98,7 @@ function onDateSelect(date: Date) {
             clearable
         />
       </v-col>
-      <v-col>
+      <v-col class="ml-4">
         <v-select
             v-model="selectedVehicleName"
             :items="vehicles"
@@ -118,10 +118,10 @@ function onDateSelect(date: Date) {
             clearable
         />
       </v-col>
-      <v-col v-show="selectedDateMode === DATE_MODES.SPECIFIC_DATE">
+      <v-col class="ml-4" v-show="selectedDateMode === DATE_MODES.SPECIFIC_DATE">
         <date-picker-select name="Date" @select="onDateSelect"/>
       </v-col>
-      <v-col v-show="selectedDateMode === DATE_MODES.SPECIFIC_DATE_RANGE">
+      <v-col class="ml-4" v-show="selectedDateMode === DATE_MODES.SPECIFIC_DATE_RANGE">
         <date-range-picker-select name="Dates" @select="v => selectedDateRange = v"/>
       </v-col>
     </v-row>
