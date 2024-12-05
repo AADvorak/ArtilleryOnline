@@ -77,6 +77,21 @@ export interface UserBattleHistory {
   survived: boolean
 }
 
+export interface UserBattleStatistics {
+  battlesPlayed: number
+  causedDamage: number
+  madeShots: number
+  causedDirectHits: number
+  causedIndirectHits: number
+  causedTrackBreaks: number
+  destroyedVehicles: number
+  receivedDamage: number
+  receivedDirectHits: number
+  receivedIndirectHits: number
+  receivedTrackBreaks: number
+  battlesSurvived: number
+}
+
 export interface DateRange {
   from: Date
   to: Date
