@@ -9,7 +9,9 @@ import type {UserBattleQueueParams, UserBattleQueueResponse} from "~/data/respon
 import {DateUtils} from "~/utils/DateUtils";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import VehicleSelector from "~/components/vehicle-selector.vue";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const router = useRouter()
 const battleStore = useBattleStore()
 const queueStore = useQueueStore()
@@ -101,7 +103,7 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: battle
+        Artillery online: {{ t('battle.title') }}
       </v-card-title>
       <v-card-text>
         <v-form>
@@ -113,12 +115,12 @@ function back() {
         </v-form>
         <v-btn class="mb-4" width="100%" color="error" :loading="!!queueStore.queue"
                :disabled="!!battleStore.battle || !selectedVehicle"
-               @click="randomBattle">Random battle</v-btn>
-        <v-btn v-show="!!queueStore.queue" class="mb-4" width="100%" @click="cancel">Cancel</v-btn>
+               @click="randomBattle">{{ t('battle.randomBattle') }}</v-btn>
+        <v-btn v-show="!!queueStore.queue" class="mb-4" width="100%" @click="cancel">{{ t('common.cancel') }}</v-btn>
         <v-btn class="mb-4" width="100%" color="secondary"
                :disabled="!!queueStore.queue || !!battleStore.battle || !selectedVehicle"
-               @click="testDrive">Test drive</v-btn>
-        <v-btn class="mb-4" width="100%" :disabled="!!queueStore.queue" @click="back">Back</v-btn>
+               @click="testDrive">{{ t('battle.testDrive') }}</v-btn>
+        <v-btn class="mb-4" width="100%" :disabled="!!queueStore.queue" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>
   </NuxtLayout>
