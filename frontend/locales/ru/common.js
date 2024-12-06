@@ -1,4 +1,6 @@
 export const common = {
   back: 'Назад',
-  cancel: 'Отмена'
+  cancel: 'Отмена',
+  logIn: 'Войти',
+  signUp: 'Зарегистрироваться',
 }

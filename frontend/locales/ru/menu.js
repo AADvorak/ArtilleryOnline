@@ -4,5 +4,5 @@ export const menu = {
   rooms: 'Комнаты',
   user: 'Пользователь',
   settings: 'Настройки',
-  logOut: 'Выход'
+  logOut: 'Выйти'
 }

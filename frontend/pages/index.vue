@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import {useRouter} from "#app";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const router = useRouter()
 
 function logIn() {
@@ -19,8 +21,8 @@ function signUp() {
         Artillery online
       </v-card-title>
       <v-card-text>
-        <v-btn class="mb-4" width="100%" color="primary" @click="logIn">Log in</v-btn>
-        <v-btn class="mb-4" width="100%" color="secondary" @click="signUp">Sign up</v-btn>
+        <v-btn class="mb-4" width="100%" color="primary" @click="logIn">{{ t('common.logIn') }}</v-btn>
+        <v-btn class="mb-4" width="100%" color="secondary" @click="signUp">{{ t('common.signUp') }}</v-btn>
       </v-card-text>
     </v-card>
   </NuxtLayout>
