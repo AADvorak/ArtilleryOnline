@@ -167,6 +167,7 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     controls,
     controlsOrDefaults,
     controlsOrDefaultsValueNameMapping,
+    appearancesMapping,
     appearancesOrDefaults,
     appearancesOrDefaultsNameValueMapping,
     soundSettingsOrDefaultsNameValueMapping,
