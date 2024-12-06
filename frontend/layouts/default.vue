@@ -14,6 +14,7 @@ import MessagesMenu from "~/components/messages-menu.vue";
     </div>
     <error-message />
     <connection-lost-dialog />
+    <locale />
   </v-app>
 </template>
 

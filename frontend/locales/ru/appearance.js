@@ -1,0 +1,8 @@
+export const appearance = {
+  title: 'настройки / внешний вид',
+  language: 'Язык',
+  vehicleColor: 'Цвет техники',
+  showNicknamesAboveVehicles: 'Показывать ники над техникой',
+  showHpBarsAboveVehicles: 'Показывать полоску ХП над техникой',
+  showAllPlayersHpBarsInTopBar: 'Показывать ХП всех игроков сверху',
+}

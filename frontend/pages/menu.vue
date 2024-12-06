@@ -3,7 +3,9 @@ import {useRouter} from "#app";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import {useUserStore} from "~/stores/user";
 import {useStompClientStore} from "~/stores/stomp-client";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const router = useRouter()
 const userStore = useUserStore()
 const stompClientStore = useStompClientStore()
@@ -36,14 +38,14 @@ async function logOut() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: menu
+        Artillery online: {{ t('menu.title') }}
       </v-card-title>
       <v-card-text>
-        <v-btn class="mb-4" width="100%" color="error" @click="toBattle">Battle</v-btn>
-        <v-btn class="mb-4" width="100%" color="primary" @click="toRooms">Rooms</v-btn>
-        <v-btn class="mb-4" width="100%" color="secondary" @click="toUser">User</v-btn>
-        <v-btn class="mb-4" width="100%" color="secondary" @click="toSettings">Settings</v-btn>
-        <v-btn class="mb-4" width="100%" @click="logOut">Log out</v-btn>
+        <v-btn class="mb-4" width="100%" color="error" @click="toBattle">{{ t('menu.battle') }}</v-btn>
+        <v-btn class="mb-4" width="100%" color="primary" @click="toRooms">{{ t('menu.rooms') }}</v-btn>
+        <v-btn class="mb-4" width="100%" color="secondary" @click="toUser">{{ t('menu.user') }}</v-btn>
+        <v-btn class="mb-4" width="100%" color="secondary" @click="toSettings">{{ t('menu.settings') }}</v-btn>
+        <v-btn class="mb-4" width="100%" @click="logOut">{{ t('menu.logOut') }}</v-btn>
       </v-card-text>
     </v-card>
   </NuxtLayout>

@@ -2,11 +2,15 @@
 import {useRouter} from "#app";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
+import {useI18n} from "vue-i18n";
 
 const router = useRouter()
 const userSettingsStore = useUserSettingsStore()
+const i18n = useI18n()
+const {t} = i18n
 
 const settings = reactive({
+  language: 'en',
   vehicleColor: '',
   showNicknamesAboveVehicles: '1',
   showHpBarsAboveVehicles: '1',
@@ -14,6 +18,16 @@ const settings = reactive({
 })
 
 const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
+
+watch(() => settings.language, value => {
+  const existingValue = appearances.value[AppearancesNames.LANGUAGE]
+  if (value && value !== existingValue) {
+    userSettingsStore.setAppearance({
+      name: AppearancesNames.LANGUAGE,
+      value
+    })
+  }
+})
 
 watch(() => settings.vehicleColor, value => {
   const existingValue = appearances.value[AppearancesNames.VEHICLE_COLOR]
@@ -56,6 +70,7 @@ watch(() => settings.showAllPlayersHpBarsInTopBar, value => {
 })
 
 onMounted(() => {
+  settings.language = appearances.value[AppearancesNames.LANGUAGE]
   settings.vehicleColor = appearances.value[AppearancesNames.VEHICLE_COLOR]
   settings.showNicknamesAboveVehicles = appearances.value[AppearancesNames.NICKNAMES_ABOVE]
   settings.showHpBarsAboveVehicles = appearances.value[AppearancesNames.HP_ABOVE]
@@ -71,13 +86,23 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: settings / appearance
+        Artillery online: {{ t('appearance.title') }}
       </v-card-title>
       <v-card-text>
         <v-table class="mb-4" density="compact">
           <tbody>
           <tr>
-            <td>Vehicle color</td>
+            <td>{{ t('appearance.language') }}</td>
+            <td>
+              <v-select
+                  v-model="settings.language"
+                  :items="i18n.availableLocales"
+                  density="compact"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>{{ t('appearance.vehicleColor') }}</td>
             <td>
               <v-color-picker
                   v-model="settings.vehicleColor"
@@ -90,7 +115,7 @@ function back() {
             </td>
           </tr>
           <tr>
-            <td>Show nicknames above vehicles</td>
+            <td>{{ t('appearance.showNicknamesAboveVehicles') }}</td>
             <td>
               <v-switch
                   v-model="settings.showNicknamesAboveVehicles"
@@ -100,7 +125,7 @@ function back() {
             </td>
           </tr>
           <tr>
-            <td>Show HP bars above vehicles</td>
+            <td>{{ t('appearance.showHpBarsAboveVehicles') }}</td>
             <td>
               <v-switch
                   v-model="settings.showHpBarsAboveVehicles"
@@ -110,7 +135,7 @@ function back() {
             </td>
           </tr>
           <tr>
-            <td>Show all players HP bars in top bar</td>
+            <td>{{ t('appearance.showAllPlayersHpBarsInTopBar') }}</td>
             <td>
               <v-switch
                   v-model="settings.showAllPlayersHpBarsInTopBar"
@@ -121,7 +146,7 @@ function back() {
           </tr>
           </tbody>
         </v-table>
-        <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
+        <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>
   </NuxtLayout>

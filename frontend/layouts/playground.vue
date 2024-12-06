@@ -3,6 +3,7 @@
     <div class="d-flex align-center justify-center flex-column default">
       <slot />
     </div>
+    <locale />
   </v-app>
 </template>
 
