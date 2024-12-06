@@ -7,21 +7,18 @@ import {useSettingsStore} from "~/stores/settings";
 import type {Battle} from "~/playground/data/battle";
 import type {UserBattleQueueParams, UserBattleQueueResponse} from "~/data/response";
 import {DateUtils} from "~/utils/DateUtils";
-import {usePresetsStore} from "~/stores/presets";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
+import VehicleSelector from "~/components/vehicle-selector.vue";
 
 const router = useRouter()
 const battleStore = useBattleStore()
 const queueStore = useQueueStore()
 const settingsStore = useSettingsStore()
-const presetsStore = usePresetsStore()
 const api = new ApiRequestSender()
 
-const selectedVehicle = ref<string>()
+const vehicleSelector = ref<InstanceType<typeof VehicleSelector> | undefined>()
 
-const vehicles = computed(() => {
-  return Object.keys(presetsStore.vehicles)
-})
+const selectedVehicle = ref<string>()
 
 watch(() => battleStore.battle, (value) => {
   if (value) {
@@ -30,14 +27,14 @@ watch(() => battleStore.battle, (value) => {
 })
 watch(() => queueStore.queue, () => {
   if (checkUserInQueue()) {
-    selectedVehicle.value = queueStore.queue!.params.selectedVehicle
+    vehicleSelector.value?.setSelectedVehicle(queueStore.queue!.params.selectedVehicle)
     loadBattle()
   }
 })
 
 onMounted(() => {
   if (checkUserInQueue()) {
-    selectedVehicle.value = queueStore.queue!.params.selectedVehicle
+    vehicleSelector.value?.setSelectedVehicle(queueStore.queue!.params.selectedVehicle)
     loadBattle()
   }
 })
@@ -108,12 +105,10 @@ function back() {
       </v-card-title>
       <v-card-text>
         <v-form>
-          <v-select
-              v-model="selectedVehicle"
-              :items="vehicles"
+          <vehicle-selector
+              ref="vehicleSelector"
               :disabled="!!queueStore.queue"
-              density="compact"
-              label="Select vehicle"
+              @select="v => selectedVehicle = v"
           />
         </v-form>
         <v-btn class="mb-4" width="100%" color="error" :loading="!!queueStore.queue"

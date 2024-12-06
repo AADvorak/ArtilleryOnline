@@ -1,28 +1,25 @@
 <script setup lang="ts">
 import {useRouter} from "#app";
 import {ApiRequestSender} from "~/api/api-request-sender";
-import {usePresetsStore} from "~/stores/presets";
 import {useRoomStore} from "~/stores/room";
 import RoomMembersTable from "~/components/room-members-table.vue";
 import {useUserStore} from "~/stores/user";
 import {mdiAccountMultiple, mdiAccountPlus} from '@mdi/js'
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
+import VehicleSelector from "~/components/vehicle-selector.vue";
 
 const api = new ApiRequestSender()
 const requestErrorHandler = useRequestErrorHandler()
 
 const router = useRouter()
 
-const presetsStore = usePresetsStore()
 const roomStore = useRoomStore()
 const userStore = useUserStore()
 
+const vehicleSelector = ref<InstanceType<typeof VehicleSelector> | undefined>()
+
 const selectedVehicle = ref<string>()
 const openedPanels = ref<string[]>(['playersPanel'])
-
-const vehicles = computed(() => {
-  return Object.keys(presetsStore.vehicles)
-})
 
 const readyToBattle = computed(() => {
   const members = roomStore.room?.members || []
@@ -64,7 +61,7 @@ function setSelectedVehicle() {
       .filter(member => member.nickname === userStore.user!.nickname)
       .map(member => member.selectedVehicle)[0]
   if (memberVehicle && selectedVehicle.value !== memberVehicle) {
-    selectedVehicle.value = memberVehicle
+    vehicleSelector.value?.setSelectedVehicle(memberVehicle)
   }
 }
 
@@ -95,11 +92,9 @@ async function exit() {
       </v-card-title>
       <v-card-text>
         <v-form>
-          <v-select
-              v-model="selectedVehicle"
-              :items="vehicles"
-              density="compact"
-              label="Select vehicle"
+          <vehicle-selector
+              ref="vehicleSelector"
+              @select="v => selectedVehicle = v"
           />
         </v-form>
         <v-btn
