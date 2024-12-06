@@ -47,8 +47,7 @@ async function randomBattle() {
     const request = {
       selectedVehicle: selectedVehicle.value!
     }
-    const response = await api.putJson<UserBattleQueueParams, UserBattleQueueResponse>('/battles/queue', request)
-    queueStore.queue = response
+    queueStore.queue = await api.putJson<UserBattleQueueParams, UserBattleQueueResponse>('/battles/queue', request)
   } catch (e) {
     useRequestErrorHandler().handle(e)
   }
@@ -70,7 +69,7 @@ async function loadBattle() {
   if (checkUserInQueue()) {
     try {
       const battle = await api.getJson<Battle>('/battles')
-      queueStore.queue = null
+      queueStore.queue = undefined
       battleStore.updateBattle(battle)
     } catch (e) {
       setTimeout(loadBattle, 1000)
@@ -85,7 +84,7 @@ function checkUserInQueue() {
   const addDate = DateUtils.getClientDate(queueStore.queue!.addTime)
   const now = new Date()
   if (now.getTime() - addDate.getTime() > settingsStore.settings!.userBattleQueueTimeout) {
-    queueStore.queue = null
+    queueStore.queue = undefined
     return false
   }
   return true
@@ -93,7 +92,7 @@ function checkUserInQueue() {
 
 async function cancel() {
   await api.delete('/battles/queue')
-  queueStore.queue = null
+  queueStore.queue = undefined
 }
 
 function back() {

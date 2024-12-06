@@ -4,7 +4,7 @@ import {ApiRequestSender} from '~/api/api-request-sender'
 import type {UserBattleQueueResponse} from '~/data/response'
 
 export const useQueueStore = defineStore('queue', () => {
-  const queue = ref<UserBattleQueueResponse>()
+  const queue = ref<UserBattleQueueResponse | undefined>()
 
   async function loadQueueIfNull() {
     if (!queue.value) {
