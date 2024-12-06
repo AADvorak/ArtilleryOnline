@@ -3,4 +3,6 @@ export const common = {
   cancel: 'Отмена',
   logIn: 'Войти',
   signUp: 'Зарегистрироваться',
+  email: 'Эл. почта',
+  password: 'Пароль',
 }

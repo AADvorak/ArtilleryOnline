@@ -5,7 +5,9 @@ import {ApiRequestSender} from "~/api/api-request-sender";
 import type {LoginRequest} from "~/data/request";
 import type {User} from "~/data/model";
 import {useFormSubmit} from "~/composables/form-submit";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const router = useRouter()
 
 const emailField = ref<HTMLInputElement | null>(null)
@@ -44,7 +46,7 @@ function signUp() {
   <NuxtLayout name="unauthenticated">
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: login
+        Artillery online: {{ t('login.title') }}
       </v-card-title>
       <v-card-text>
         <v-form @submit.prevent>
@@ -53,18 +55,18 @@ function signUp() {
               v-model="form.email"
               :error="!!validation.email.length"
               :error-messages="validation.email"
-              label="Email"
+              :label="t('common.email')"
           />
           <v-text-field
               v-model="form.password"
               :error="!!validation.password.length"
               :error-messages="validation.password"
               type="password"
-              label="Password"
+              :label="t('common.password')"
           />
           <v-btn class="mb-4" width="100%" color="primary" type="submit" :loading="submitting"
-                 @click="logIn">Log in</v-btn>
-          <v-btn class="mb-4" width="100%" color="secondary" @click="signUp">Sign up</v-btn>
+                 @click="logIn">{{ t('common.logIn') }}</v-btn>
+          <v-btn class="mb-4" width="100%" color="secondary" @click="signUp">{{ t('common.signUp') }}</v-btn>
         </v-form>
       </v-card-text>
     </v-card>

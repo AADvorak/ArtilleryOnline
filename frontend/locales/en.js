@@ -9,5 +9,8 @@ export const en = {
   appearance,
   battle,
   common,
+  login: {
+    title: 'login'
+  },
   vehicleSelector
 }
