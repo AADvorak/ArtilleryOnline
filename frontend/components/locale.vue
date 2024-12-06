@@ -20,3 +20,7 @@ watch(appearances, value => {
   }
 })
 </script>
+
+<template>
+
+</template>
