@@ -5,6 +5,7 @@ import {vehicleSelector} from "~/locales/ru/vehicle-selector.js";
 import {battle} from "~/locales/ru/battle.js";
 import {room} from "~/locales/ru/room.js";
 import {roomMembersTable} from "~/locales/ru/room-members-table.js";
+import {onlineUsersTable} from "~/locales/ru/online-users-table.js";
 
 export const ru = {
   menu,
@@ -15,6 +16,7 @@ export const ru = {
     title: 'вход'
   },
   vehicleSelector,
+  onlineUsersTable,
   rooms: {
     title: 'комнаты',
     createRoom: 'Создать комнату'

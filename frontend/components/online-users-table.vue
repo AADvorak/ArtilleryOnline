@@ -3,7 +3,9 @@ import type {User} from "~/data/model";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import {useRoomStore} from "~/stores/room";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const roomStore = useRoomStore()
 
 const onlineUsers = ref<User[]>([])
@@ -49,14 +51,14 @@ function userIsInvited(user) {
 <template>
   <v-table density="compact">
     <div v-if="!onlineUsers.length">
-      No available users
+      {{ t('onlineUsersTable.noAvailableUsers') }}
     </div>
     <tbody v-else>
     <tr v-for="onlineUser of onlineUsers">
       <td>{{ onlineUser.nickname }}</td>
       <td class="btn-column">
-        <template v-if="userIsInvited(onlineUser)">Invitation sent</template>
-        <v-btn v-else variant="text" @click="inviteUser(onlineUser)">Invite</v-btn>
+        <template v-if="userIsInvited(onlineUser)">{{ t('onlineUsersTable.invitationSent') }}</template>
+        <v-btn v-else variant="text" @click="inviteUser(onlineUser)">{{ t('onlineUsersTable.invite') }}</v-btn>
       </td>
     </tr>
     </tbody>
