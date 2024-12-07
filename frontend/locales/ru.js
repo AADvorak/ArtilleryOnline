@@ -12,5 +12,8 @@ export const ru = {
   login: {
     title: 'вход'
   },
-  vehicleSelector
+  vehicleSelector,
+  signup: {
+    title: 'регистрация'
+  },
 }

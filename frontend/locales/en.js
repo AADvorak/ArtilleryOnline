@@ -12,5 +12,8 @@ export const en = {
   login: {
     title: 'login'
   },
-  vehicleSelector
+  vehicleSelector,
+  signup: {
+    title: 'signup'
+  },
 }

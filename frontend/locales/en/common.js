@@ -5,4 +5,6 @@ export const common = {
   signUp: 'Sign up',
   email: 'Email',
   password: 'Password',
+  passwordConfirm: 'Password confirm',
+  nickname: 'Nickname',
 }

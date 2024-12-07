@@ -6,7 +6,9 @@ import type {RegisterRequest} from "~/data/request";
 import type {User} from "~/data/model";
 import {useUserStore} from "~/stores/user";
 import type {FormValidation, FormValues} from "~/data/response";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const router = useRouter()
 
 const emailField = ref<HTMLInputElement | null>(null)
@@ -59,7 +61,7 @@ function validator(form: FormValues, validation: FormValidation): boolean {
   <NuxtLayout name="unauthenticated">
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: signup
+        Artillery online: {{ t('signup.title') }}
       </v-card-title>
       <v-card-text>
         <v-form @submit.prevent>
@@ -68,31 +70,31 @@ function validator(form: FormValues, validation: FormValidation): boolean {
               v-model="form.email"
               :error="!!validation.email.length"
               :error-messages="validation.email"
-              label="Email"
+              :label="t('common.email')"
           />
           <v-text-field
               v-model="form.password"
               :error="!!validation.password.length"
               :error-messages="validation.password"
               type="password"
-              label="Password"
+              :label="t('common.password')"
           />
           <v-text-field
               v-model="form.passwordConfirm"
               :error="!!validation.passwordConfirm.length"
               :error-messages="validation.passwordConfirm"
               type="password"
-              label="Password confirm"
+              :label="t('common.passwordConfirm')"
           />
           <v-text-field
               v-model="form.nickname"
               :error="!!validation.nickname.length"
               :error-messages="validation.nickname"
-              label="Nickname"
+              :label="t('common.nickname')"
           />
           <v-btn class="mb-4" width="100%" color="primary" type="submit" :loading="submitting"
-                 @click="signUp">Sign up</v-btn>
-          <v-btn class="mb-4" width="100%" color="secondary" @click="logIn">Log in</v-btn>
+                 @click="signUp">{{ t('common.signUp') }}</v-btn>
+          <v-btn class="mb-4" width="100%" color="secondary" @click="logIn">{{ t('common.logIn') }}</v-btn>
         </v-form>
       </v-card-text>
     </v-card>
