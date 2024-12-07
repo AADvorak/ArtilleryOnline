@@ -3,6 +3,7 @@ import {appearance} from "~/locales/en/appearance.js";
 import {common} from "~/locales/en/common.js";
 import {vehicleSelector} from "~/locales/en/vehicle-selector.js";
 import {battle} from "~/locales/en/battle.js";
+import {room} from "~/locales/en/room.js";
 
 export const en = {
   menu,
@@ -17,6 +18,7 @@ export const en = {
     title: 'rooms',
     createRoom: 'Create room'
   },
+  room,
   signup: {
     title: 'signup'
   },

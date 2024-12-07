@@ -7,10 +7,12 @@ import {useUserStore} from "~/stores/user";
 import {mdiAccountMultiple, mdiAccountPlus} from '@mdi/js'
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import VehicleSelector from "~/components/vehicle-selector.vue";
+import {useI18n} from "vue-i18n";
 
 const api = new ApiRequestSender()
 const requestErrorHandler = useRequestErrorHandler()
 
+const {t} = useI18n()
 const router = useRouter()
 
 const roomStore = useRoomStore()
@@ -88,7 +90,7 @@ async function exit() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: room
+        Artillery online: {{ t('room.title') }}
       </v-card-title>
       <v-card-text>
         <v-form>
@@ -105,13 +107,13 @@ async function exit() {
             :disabled="!readyToBattle"
             @click="startBattle"
         >
-          Battle
+          {{ t('room.battle') }}
         </v-btn>
         <v-expansion-panels class="mb-4" v-model="openedPanels" multiple>
           <v-expansion-panel value="playersPanel">
             <v-expansion-panel-title>
               <v-icon class="mr-2" :icon="mdiAccountMultiple"/>
-              Players
+              {{ t('room.players') }}
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <room-members-table class="mb-4"/>
@@ -120,14 +122,14 @@ async function exit() {
           <v-expansion-panel v-if="roomStore.userIsRoomOwner" value="invitePlayersPanel">
             <v-expansion-panel-title>
               <v-icon class="mr-2" :icon="mdiAccountPlus"/>
-              Invite players
+              {{ t('room.invite') }}
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <online-users-table />
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
-        <v-btn class="mb-4" width="100%" @click="exit">Exit</v-btn>
+        <v-btn class="mb-4" width="100%" @click="exit">{{ t('common.exit') }}</v-btn>
       </v-card-text>
     </v-card>
   </NuxtLayout>

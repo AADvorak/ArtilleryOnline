@@ -7,4 +7,5 @@ export const common = {
   password: 'Пароль',
   passwordConfirm: 'Подтверждение пароля',
   nickname: 'Ник',
+  exit: 'Выйти',
 }
