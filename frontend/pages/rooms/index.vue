@@ -4,7 +4,9 @@ import {ApiRequestSender} from "~/api/api-request-sender";
 import type {Room} from "~/data/model";
 import {useRoomStore} from "~/stores/room";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const router = useRouter()
 
 const roomStore = useRoomStore()
@@ -27,11 +29,11 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: rooms
+        Artillery online: {{ t('rooms.title') }}
       </v-card-title>
       <v-card-text>
-        <v-btn class="mb-4" width="100%" color="secondary" @click="createRoom">Create room</v-btn>
-        <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
+        <v-btn class="mb-4" width="100%" color="secondary" @click="createRoom">{{ t('rooms.createRoom') }}</v-btn>
+        <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>
   </NuxtLayout>

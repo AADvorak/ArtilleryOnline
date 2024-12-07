@@ -13,6 +13,10 @@ export const en = {
     title: 'login'
   },
   vehicleSelector,
+  rooms: {
+    title: 'rooms',
+    createRoom: 'Create room'
+  },
   signup: {
     title: 'signup'
   },

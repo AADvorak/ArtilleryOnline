@@ -13,6 +13,10 @@ export const ru = {
     title: 'вход'
   },
   vehicleSelector,
+  rooms: {
+    title: 'комнаты',
+    createRoom: 'Создать комнату'
+  },
   signup: {
     title: 'регистрация'
   },
