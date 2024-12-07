@@ -4,6 +4,7 @@ import {common} from "~/locales/ru/common.js";
 import {vehicleSelector} from "~/locales/ru/vehicle-selector.js";
 import {battle} from "~/locales/ru/battle.js";
 import {room} from "~/locales/ru/room.js";
+import {roomMembersTable} from "~/locales/ru/room-members-table.js";
 
 export const ru = {
   menu,
@@ -19,6 +20,7 @@ export const ru = {
     createRoom: 'Создать комнату'
   },
   room,
+  roomMembersTable,
   signup: {
     title: 'регистрация'
   },

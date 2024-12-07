@@ -4,7 +4,9 @@ import {mdiCrown, mdiKnifeMilitary, mdiAccountRemove} from '@mdi/js'
 import type {RoomMember} from '~/data/model'
 import {ApiRequestSender} from '~/api/api-request-sender'
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const api = new ApiRequestSender()
 
 const roomStore = useRoomStore()
@@ -37,10 +39,10 @@ async function removeUserFromRoom(nickname: string) {
     <thead>
     <tr>
       <th class="text-left">
-        Nickname
+        {{ t('common.nickname') }}
       </th>
       <th class="text-left">
-        Selected vehicle
+        {{ t('roomMembersTable.selectedVehicle') }}
       </th>
       <th v-if="roomStore.userIsRoomOwner"></th>
     </tr>
@@ -57,7 +59,7 @@ async function removeUserFromRoom(nickname: string) {
             v-if="!roomMember.owner"
             color="error"
             :icon="mdiAccountRemove"
-            tooltip="Remove from room"
+            :tooltip="t('roomMembersTable.removeFromRoom')"
             @click="removeUserFromRoom(roomMember.nickname)"
         />
       </td>
