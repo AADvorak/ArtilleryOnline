@@ -22,6 +22,9 @@ export const ru = {
   },
   vehicleSelector,
   onlineUsersTable,
+  profile: {
+    title: 'пользователь / профиль'
+  },
   rooms: {
     title: 'комнаты',
     createRoom: 'Создать комнату'

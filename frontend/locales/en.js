@@ -22,6 +22,9 @@ export const en = {
   },
   vehicleSelector,
   onlineUsersTable,
+  profile: {
+    title: 'user / profile'
+  },
   rooms: {
     title: 'rooms',
     createRoom: 'Create room'

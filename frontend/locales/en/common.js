@@ -8,4 +8,5 @@ export const common = {
   passwordConfirm: 'Password confirm',
   nickname: 'Nickname',
   exit: 'Exit',
+  save: 'Save',
 }
