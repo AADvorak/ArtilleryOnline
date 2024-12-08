@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import {useRouter} from "#app";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const router = useRouter()
 
 function toProfile() {
@@ -24,13 +26,13 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: user
+        Artillery online: {{ t('user.title') }}
       </v-card-title>
       <v-card-text>
-        <v-btn class="mb-4" width="100%" color="secondary" @click="toProfile">Profile</v-btn>
-        <v-btn class="mb-4" width="100%" color="secondary" @click="toBattleHistory">Battle history</v-btn>
-        <v-btn class="mb-4" width="100%" color="secondary" @click="toBattleStatistics">Battle statistics</v-btn>
-        <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
+        <v-btn class="mb-4" width="100%" color="secondary" @click="toProfile">{{ t('user.profile') }}</v-btn>
+        <v-btn class="mb-4" width="100%" color="secondary" @click="toBattleHistory">{{ t('user.battleHistory') }}</v-btn>
+        <v-btn class="mb-4" width="100%" color="secondary" @click="toBattleStatistics">{{ t('user.battleStatistics') }}</v-btn>
+        <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>
   </NuxtLayout>

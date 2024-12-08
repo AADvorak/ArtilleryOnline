@@ -9,6 +9,7 @@ import {onlineUsersTable} from "~/locales/ru/online-users-table.js";
 import {controls} from "~/locales/ru/controls.js";
 import {settings} from "~/locales/ru/settings.js";
 import {sounds} from "~/locales/ru/sounds.js";
+import {user} from "~/locales/ru/user.js";
 
 export const ru = {
   menu,
@@ -32,4 +33,5 @@ export const ru = {
     title: 'регистрация'
   },
   sounds,
+  user,
 }
