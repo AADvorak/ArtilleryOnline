@@ -6,12 +6,14 @@ import {battle} from "~/locales/en/battle.js";
 import {room} from "~/locales/en/room.js";
 import {roomMembersTable} from "~/locales/en/room-members-table.js";
 import {onlineUsersTable} from "~/locales/en/online-users-table.js";
+import {controls} from "~/locales/en/controls.js";
 
 export const en = {
   menu,
   appearance,
   battle,
   common,
+  controls,
   login: {
     title: 'login'
   },

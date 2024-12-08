@@ -3,12 +3,14 @@ import {useRouter} from "#app";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import ControlEditor from "~/components/control-editor.vue";
 import type {UserSetting} from "~/data/model";
+import {useI18n} from "vue-i18n";
 
 const RESERVED_KEY_CODES = [
   'Escape', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12',
   'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0'
 ]
 
+const {t} = useI18n()
 const router = useRouter()
 const userSettingsStore = useUserSettingsStore()
 
@@ -42,13 +44,13 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: settings / controls
+        Artillery online: {{ t('controls.title') }}
       </v-card-title>
       <v-card-text>
         <v-table class="mb-4" density="compact">
           <tbody>
           <tr v-for="control of controls">
-            <td>{{ control.description }}</td>
+            <td>{{ t('controls.' + control.name) }}</td>
             <td>
               <control-editor
                   :control="control"
@@ -60,8 +62,8 @@ function back() {
           </tbody>
         </v-table>
         <v-btn class="mb-4" color="secondary" width="100%"
-               @click="userSettingsStore.resetControls">Reset to defaults</v-btn>
-        <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
+               @click="userSettingsStore.resetControls">{{ t('controls.resetToDefaults') }}</v-btn>
+        <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>
   </NuxtLayout>

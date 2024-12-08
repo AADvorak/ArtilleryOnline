@@ -6,12 +6,14 @@ import {battle} from "~/locales/ru/battle.js";
 import {room} from "~/locales/ru/room.js";
 import {roomMembersTable} from "~/locales/ru/room-members-table.js";
 import {onlineUsersTable} from "~/locales/ru/online-users-table.js";
+import {controls} from "~/locales/ru/controls.js";
 
 export const ru = {
   menu,
   appearance,
   battle,
   common,
+  controls,
   login: {
     title: 'вход'
   },
