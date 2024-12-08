@@ -8,6 +8,7 @@ import {roomMembersTable} from "~/locales/en/room-members-table.js";
 import {onlineUsersTable} from "~/locales/en/online-users-table.js";
 import {controls} from "~/locales/en/controls.js";
 import {settings} from "~/locales/en/settings.js";
+import {sounds} from "~/locales/en/sounds.js";
 
 export const en = {
   menu,
@@ -30,4 +31,5 @@ export const en = {
   signup: {
     title: 'signup'
   },
+  sounds,
 }

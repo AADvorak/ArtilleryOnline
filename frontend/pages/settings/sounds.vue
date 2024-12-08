@@ -2,7 +2,9 @@
 import {useRouter} from "#app";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const router = useRouter()
 const userSettingsStore = useUserSettingsStore()
 
@@ -35,13 +37,13 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: settings / sounds
+        Artillery online: {{ t('sounds.title') }}
       </v-card-title>
       <v-card-text>
         <v-table class="mb-4" density="compact">
           <tbody>
           <tr>
-            <td>Enable sounds</td>
+            <td>{{ t('sounds.enableSounds') }}</td>
             <td>
               <v-switch
                   v-model="settings.enable"
@@ -52,7 +54,7 @@ function back() {
           </tr>
           </tbody>
         </v-table>
-        <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
+        <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>
   </NuxtLayout>
