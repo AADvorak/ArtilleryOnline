@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import {useRouter} from "#app";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const router = useRouter()
 
 function toControls() {
@@ -24,13 +26,13 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: settings
+        Artillery online: {{ t('settings.title') }}
       </v-card-title>
       <v-card-text>
-        <v-btn class="mb-4" width="100%" color="secondary" @click="toControls">Controls</v-btn>
-        <v-btn class="mb-4" width="100%" color="secondary" @click="toAppearance">Appearance</v-btn>
-        <v-btn class="mb-4" width="100%" color="secondary" @click="toSounds">Sounds</v-btn>
-        <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
+        <v-btn class="mb-4" width="100%" color="secondary" @click="toControls">{{ t('settings.controls') }}</v-btn>
+        <v-btn class="mb-4" width="100%" color="secondary" @click="toAppearance">{{ t('settings.appearance') }}</v-btn>
+        <v-btn class="mb-4" width="100%" color="secondary" @click="toSounds">{{ t('settings.sounds') }}</v-btn>
+        <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>
   </NuxtLayout>
