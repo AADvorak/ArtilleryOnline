@@ -92,7 +92,7 @@ function back() {
                 <tbody>
                 <tr v-for="sum of sumsConfig">
                   <td>{{ sum.name }}</td>
-                  <td>{{ statistics[sum.key] }}</td>
+                  <td class="number-column">{{ statistics[sum.key] }}</td>
                 </tr>
                 </tbody>
               </v-table>
@@ -100,15 +100,15 @@ function back() {
                 <thead>
                 <tr>
                   <th></th>
-                  <th>{{ t('commonHistory.caused') }}</th>
-                  <th>{{ t('commonHistory.received') }}</th>
+                  <th class="text-right">{{ t('commonHistory.caused') }}</th>
+                  <th class="text-right">{{ t('commonHistory.received') }}</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr v-for="sum of sumsCausedReceivedConfig">
                   <td>{{ sum.name }}</td>
-                  <td>{{ sum.format(statistics[sum.causedKey]) }}</td>
-                  <td>{{ sum.format(statistics[sum.receivedKey]) }}</td>
+                  <td class="number-column">{{ sum.format(statistics[sum.causedKey]) }}</td>
+                  <td class="number-column">{{ sum.format(statistics[sum.receivedKey]) }}</td>
                 </tr>
                 </tbody>
               </v-table>
@@ -123,7 +123,7 @@ function back() {
                 <tbody>
                 <tr v-for="item of perBattleConfig">
                   <td>{{ item.name }}</td>
-                  <td>{{ perBattleStatistics[item.key].toFixed(2) }}</td>
+                  <td class="number-column">{{ perBattleStatistics[item.key].toFixed(2) }}</td>
                 </tr>
                 </tbody>
               </v-table>
@@ -131,15 +131,15 @@ function back() {
                 <thead>
                 <tr>
                   <th></th>
-                  <th>{{ t('commonHistory.caused') }}</th>
-                  <th>{{ t('commonHistory.received') }}</th>
+                  <th class="text-right">{{ t('commonHistory.caused') }}</th>
+                  <th class="text-right">{{ t('commonHistory.received') }}</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr v-for="item of perBattleCausedReceivedConfig">
                   <td>{{ item.name }}</td>
-                  <td>{{ perBattleStatistics[item.causedKey].toFixed(2) }}</td>
-                  <td>{{ perBattleStatistics[item.receivedKey].toFixed(2) }}</td>
+                  <td class="number-column">{{ perBattleStatistics[item.causedKey].toFixed(2) }}</td>
+                  <td class="number-column">{{ perBattleStatistics[item.receivedKey].toFixed(2) }}</td>
                 </tr>
                 </tbody>
               </v-table>
@@ -154,15 +154,21 @@ function back() {
                 <tbody>
                 <tr v-for="item of coefficientsConfig">
                   <td>{{ t('battleStatistics.' + item.key) }}</td>
-                  <td>{{ coefficients[item.key].toFixed(item.fractionDigits) }}</td>
+                  <td class="number-column">{{ coefficients[item.key].toFixed(item.fractionDigits) }}</td>
                 </tr>
                 </tbody>
               </v-table>
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
-        <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
+        <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>
   </NuxtLayout>
 </template>
+
+<style scoped>
+.number-column {
+  text-align: right;
+}
+</style>
