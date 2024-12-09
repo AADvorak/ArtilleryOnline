@@ -9,4 +9,9 @@ export const common = {
   nickname: 'Nickname',
   exit: 'Exit',
   save: 'Save',
+  yes: 'Yes',
+  no: 'No',
+  itemsPerPage: 'Items per page',
+  of: 'of',
+  noDataAvailable: 'No data available',
 }

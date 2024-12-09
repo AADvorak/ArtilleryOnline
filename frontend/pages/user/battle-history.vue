@@ -7,7 +7,9 @@ import {ApiRequestSender} from "~/api/api-request-sender";
 import type {PageRequest, SortRequest, UserBattleHistoryFiltersRequest} from "~/data/request";
 import {DateUtils} from "~/utils/DateUtils";
 import BattleHistoryFiltersForm from "~/components/battle-history-filters-form.vue";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const router = useRouter()
 
 const currentPage = ref(1)
@@ -19,38 +21,38 @@ const historyPage = ref<PageResponse<UserBattleHistory>>({
   itemsLength: 0
 })
 const headers = ref([
-  {title: 'Begin time', key: 'beginTime', align: 'start', sortable: true,
+  {title: t('battleHistory.beginTime'), key: 'beginTime', align: 'start', sortable: true,
     value: item => DateUtils.getClientDateLocaleString(item.beginTime)},
-  {title: 'Type', key: 'battleType', align: 'start', sortable: true},
-  {title: 'Vehicle name', key: 'vehicleName', align: 'start', sortable: true},
-  {title: 'Survive', key: 'survived', align: 'start', sortable: false,
-    value: item => item.survived ? 'Yes' : 'No'},
-  {title: 'Made shots', key: 'madeShots', align: 'end', sortable: true},
-  {title: 'Destroyed vehicles', key: 'destroyedVehicles', align: 'end', sortable: true},
+  {title: t('commonHistory.battleType'), key: 'battleType', align: 'start', sortable: true},
+  {title: t('commonHistory.vehicle'), key: 'vehicleName', align: 'start', sortable: true},
+  {title: t('battleHistory.survived'), key: 'survived', align: 'start', sortable: false,
+    value: item => item.survived ? t('common.yes') : t('common.no')},
+  {title: t('commonHistory.madeShots'), key: 'madeShots', align: 'end', sortable: true},
+  {title: t('commonHistory.destroyedVehicles'), key: 'destroyedVehicles', align: 'end', sortable: true},
   {
-    title: 'Damage', align: 'center', children: [
-      {title: 'Caused', key: 'causedDamage', align: 'end', sortable: true,
+    title: t('commonHistory.damage'), align: 'center', children: [
+      {title: t('commonHistory.caused'), key: 'causedDamage', align: 'end', sortable: true,
         value: item => item.causedDamage.toFixed(2)},
-      {title: 'Received', key: 'receivedDamage', align: 'end', sortable: true,
+      {title: t('commonHistory.received'), key: 'receivedDamage', align: 'end', sortable: true,
         value: item => item.receivedDamage.toFixed(2)}
     ]
   },
   {
-    title: 'Direct hits', align: 'center', children: [
-      {title: 'Caused', key: 'causedDirectHits', align: 'end', sortable: true},
-      {title: 'Received', key: 'receivedDirectHits', align: 'end', sortable: true}
+    title: t('commonHistory.directHits'), align: 'center', children: [
+      {title: t('commonHistory.caused'), key: 'causedDirectHits', align: 'end', sortable: true},
+      {title: t('commonHistory.received'), key: 'receivedDirectHits', align: 'end', sortable: true}
     ]
   },
   {
-    title: 'Indirect hits', align: 'center', children: [
-      {title: 'Caused', key: 'causedIndirectHits', align: 'end', sortable: true},
-      {title: 'Received', key: 'receivedIndirectHits', align: 'end', sortable: true}
+    title: t('commonHistory.indirectHits'), align: 'center', children: [
+      {title: t('commonHistory.caused'), key: 'causedIndirectHits', align: 'end', sortable: true},
+      {title: t('commonHistory.received'), key: 'receivedIndirectHits', align: 'end', sortable: true}
     ]
   },
   {
-    title: 'Track breaks', align: 'center', children: [
-      {title: 'Caused', key: 'causedTrackBreaks', align: 'end', sortable: true},
-      {title: 'Received', key: 'receivedTrackBreaks', align: 'end', sortable: true}
+    title: t('commonHistory.trackBreaks'), align: 'center', children: [
+      {title: t('commonHistory.caused'), key: 'causedTrackBreaks', align: 'end', sortable: true},
+      {title: t('commonHistory.received'), key: 'receivedTrackBreaks', align: 'end', sortable: true}
     ]
   },
 ])
@@ -104,7 +106,7 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="1200px">
       <v-card-title>
-        Artillery online: user / battle history
+        Artillery online: {{ t('battleHistory.title') }}
       </v-card-title>
       <v-card-text>
         <battle-history-filters-form class="mb-4" @change="v => filters = v"/>
@@ -114,12 +116,18 @@ function back() {
             :headers="headers"
             :items="historyPage.items"
             :items-length="historyPage.itemsLength"
+            :items-per-page-text="t('common.itemsPerPage')"
+            :page-text="'{0}-{1} ' + t('common.of') + ' {2}'"
             item-value="battleHistoryId"
             @update:options="onDataTableOptionsUpdate"
             density="compact"
             fixed-header
-        />
-        <v-btn class="mb-4" width="100%" @click="back">Back</v-btn>
+        >
+          <template v-slot:no-data>
+            {{ t('common.noDataAvailable') }}
+          </template>
+        </v-data-table-server>
+        <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>
   </NuxtLayout>

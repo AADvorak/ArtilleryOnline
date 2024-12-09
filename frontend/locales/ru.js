@@ -10,12 +10,20 @@ import {controls} from "~/locales/ru/controls.js";
 import {settings} from "~/locales/ru/settings.js";
 import {sounds} from "~/locales/ru/sounds.js";
 import {user} from "~/locales/ru/user.js";
+import {commonHistory} from "~/locales/ru/common-history.js";
+import {battleHistory} from "~/locales/ru/battle-history.js";
+import {battleStatistics} from "~/locales/ru/battle-statistics.js";
+import {battleHistoryFiltersForm} from "~/locales/ru/battle-history-filters-form.js";
 
 export const ru = {
   menu,
   appearance,
   battle,
+  battleHistory,
+  battleHistoryFiltersForm,
+  battleStatistics,
   common,
+  commonHistory,
   controls,
   login: {
     title: 'вход'

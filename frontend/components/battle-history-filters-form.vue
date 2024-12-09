@@ -4,17 +4,19 @@ import type {DateRange} from "~/data/model";
 import {DateUtils} from "~/utils/DateUtils";
 import {usePresetsStore} from "~/stores/presets";
 import type {UserBattleHistoryFiltersRequest} from "~/data/request";
+import {useI18n} from "vue-i18n";
 
 const DATE_MODES = {
-  TODAY: 'Today',
-  LAST_WEEK: 'Last week',
-  LAST_MONTH: 'Last month',
-  SPECIFIC_DATE: 'Specific date',
-  SPECIFIC_DATE_RANGE: 'Specific date range'
+  TODAY: 'today',
+  LAST_WEEK: 'lastWeek',
+  LAST_MONTH: 'lastMonth',
+  SPECIFIED_DATE: 'specifiedDate',
+  SPECIFIED_DATE_RANGE: 'specifiedDateRange'
 }
 
 const emit = defineEmits(['change'])
 
+const {t} = useI18n()
 const presetsStore = usePresetsStore()
 
 const selectedBattleType = ref<BattleType | undefined>()
@@ -27,7 +29,7 @@ const vehicles = computed(() => {
   return Object.keys(presetsStore.vehicles)
 })
 const dateModes = computed(() => {
-  return Object.values(DATE_MODES)
+  return Object.values(DATE_MODES).map(key => ({key, name: t('battleHistoryFiltersForm.' + key)}))
 })
 
 watch([selectedBattleType, selectedVehicleName, selectedDateRange], () => {
@@ -94,7 +96,7 @@ function onDateSelect(date: Date) {
             v-model="selectedBattleType"
             :items="battleTypes"
             density="compact"
-            label="Battle type"
+            :label="t('commonHistory.battleType')"
             clearable
         />
       </v-col>
@@ -103,7 +105,7 @@ function onDateSelect(date: Date) {
             v-model="selectedVehicleName"
             :items="vehicles"
             density="compact"
-            label="Select vehicle"
+            :label="t('commonHistory.vehicle')"
             clearable
         />
       </v-col>
@@ -113,16 +115,18 @@ function onDateSelect(date: Date) {
         <v-select
             v-model="selectedDateMode"
             :items="dateModes"
+            item-value="key"
+            item-title="name"
             density="compact"
-            label="Date filtering mode"
+            :label="t('battleHistoryFiltersForm.dateFilteringMode')"
             clearable
         />
       </v-col>
-      <v-col class="ml-4" v-show="selectedDateMode === DATE_MODES.SPECIFIC_DATE">
-        <date-picker-select name="Date" @select="onDateSelect"/>
+      <v-col class="ml-4" v-show="selectedDateMode === DATE_MODES.SPECIFIED_DATE">
+        <date-picker-select :name="t('battleHistoryFiltersForm.date')" @select="onDateSelect"/>
       </v-col>
-      <v-col class="ml-4" v-show="selectedDateMode === DATE_MODES.SPECIFIC_DATE_RANGE">
-        <date-range-picker-select name="Dates" @select="v => selectedDateRange = v"/>
+      <v-col class="ml-4" v-show="selectedDateMode === DATE_MODES.SPECIFIED_DATE_RANGE">
+        <date-range-picker-select :name="t('battleHistoryFiltersForm.dateRange')" @select="v => selectedDateRange = v"/>
       </v-col>
     </v-row>
   </v-form>

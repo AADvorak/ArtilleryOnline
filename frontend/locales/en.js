@@ -10,12 +10,20 @@ import {controls} from "~/locales/en/controls.js";
 import {settings} from "~/locales/en/settings.js";
 import {sounds} from "~/locales/en/sounds.js";
 import {user} from "~/locales/en/user.js";
+import {commonHistory} from "~/locales/en/common-history.js";
+import {battleHistory} from "~/locales/en/battle-history.js";
+import {battleStatistics} from "~/locales/en/battle-statistics.js";
+import {battleHistoryFiltersForm} from "~/locales/en/battle-history-filters-form.js";
 
 export const en = {
   menu,
   appearance,
   battle,
+  battleHistory,
+  battleHistoryFiltersForm,
+  battleStatistics,
   common,
+  commonHistory,
   controls,
   login: {
     title: 'login'

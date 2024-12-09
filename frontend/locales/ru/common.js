@@ -9,4 +9,9 @@ export const common = {
   nickname: 'Ник',
   exit: 'Выйти',
   save: 'Сохранить',
+  yes: 'Да',
+  no: 'Нет',
+  itemsPerPage: 'Записей на странице',
+  of: 'из',
+  noDataAvailable: 'Нет данных',
 }

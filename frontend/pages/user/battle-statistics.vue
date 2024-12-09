@@ -6,41 +6,43 @@ import BattleHistoryFiltersForm from "~/components/battle-history-filters-form.v
 import {ApiRequestSender} from "~/api/api-request-sender";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import {useStatisticsCalculator} from "~/composables/statistics-calculator";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const router = useRouter()
 
 const sumsConfig = ref([
-  {key: 'battlesPlayed', name: 'Battles played'},
-  {key: 'battlesSurvived', name: 'Battles survived'},
-  {key: 'madeShots', name: 'Made shots'},
-  {key: 'destroyedVehicles', name: 'Destroyed vehicles'},
+  {key: 'battlesPlayed', name: t('battleStatistics.battlesPlayed')},
+  {key: 'battlesSurvived', name: t('battleStatistics.battlesSurvived')},
+  {key: 'madeShots', name: t('commonHistory.madeShots')},
+  {key: 'destroyedVehicles', name: t('commonHistory.destroyedVehicles')},
 ])
 const sumsCausedReceivedConfig = ref([
-  {causedKey: 'causedDamage', receivedKey: 'receivedDamage', name: 'Damage',
+  {causedKey: 'causedDamage', receivedKey: 'receivedDamage', name: t('commonHistory.damage'),
     format: value => value.toFixed(2)},
-  {causedKey: 'causedDirectHits', receivedKey: 'receivedDirectHits', name: 'Direct hits',
+  {causedKey: 'causedDirectHits', receivedKey: 'receivedDirectHits', name: t('commonHistory.directHits'),
     format: value => value},
-  {causedKey: 'causedIndirectHits', receivedKey: 'receivedIndirectHits', name: 'Indirect hits',
+  {causedKey: 'causedIndirectHits', receivedKey: 'receivedIndirectHits', name: t('commonHistory.indirectHits'),
     format: value => value},
-  {causedKey: 'causedTrackBreaks', receivedKey: 'receivedTrackBreaks', name: 'Track breaks',
+  {causedKey: 'causedTrackBreaks', receivedKey: 'receivedTrackBreaks', name: t('commonHistory.trackBreaks'),
     format: value => value},
 ])
 const perBattleConfig = ref([
-  {key: 'madeShots', name: 'Made shots'},
-  {key: 'destroyedVehicles', name: 'Destroyed vehicles'},
+  {key: 'madeShots', name: t('commonHistory.madeShots')},
+  {key: 'destroyedVehicles', name: t('commonHistory.destroyedVehicles')},
 ])
 const perBattleCausedReceivedConfig = ref([
-  {causedKey: 'causedDamage', receivedKey: 'receivedDamage', name: 'Damage'},
-  {causedKey: 'causedDirectHits', receivedKey: 'receivedDirectHits', name: 'Direct hits'},
-  {causedKey: 'causedIndirectHits', receivedKey: 'receivedIndirectHits', name: 'Indirect hits'},
-  {causedKey: 'causedTrackBreaks', receivedKey: 'receivedTrackBreaks', name: 'Track breaks'},
+  {causedKey: 'causedDamage', receivedKey: 'receivedDamage', name: t('commonHistory.damage')},
+  {causedKey: 'causedDirectHits', receivedKey: 'receivedDirectHits', name: t('commonHistory.directHits')},
+  {causedKey: 'causedIndirectHits', receivedKey: 'receivedIndirectHits', name: t('commonHistory.indirectHits')},
+  {causedKey: 'causedTrackBreaks', receivedKey: 'receivedTrackBreaks', name: t('commonHistory.trackBreaks')},
 ])
 const coefficientsConfig = ref([
-  {key: 'survivalRate', name: 'Survival rate', fractionDigits: 0},
-  {key: 'directHitRate', name: 'Direct hit rate', fractionDigits: 0},
-  {key: 'indirectHitRate', name: 'Indirect hit rate', fractionDigits: 0},
-  {key: 'trackBreakRate', name: 'Track break rate', fractionDigits: 0},
-  {key: 'damagePerShot', name: 'Damage per shot', fractionDigits: 2},
+  {key: 'survivalRate', fractionDigits: 0},
+  {key: 'directHitRate', fractionDigits: 0},
+  {key: 'indirectHitRate', fractionDigits: 0},
+  {key: 'trackBreakRate', fractionDigits: 0},
+  {key: 'damagePerShot', fractionDigits: 2},
 ])
 
 const filters = ref<UserBattleHistoryFiltersRequest | undefined>()
@@ -76,14 +78,14 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: user / battle statistics
+        Artillery online: {{ t('battleStatistics.title') }}
       </v-card-title>
       <v-card-text>
         <battle-history-filters-form class="mb-4" @change="v => filters = v"/>
         <v-expansion-panels v-if="statistics" class="mb-4" v-model="openedPanels">
           <v-expansion-panel value="total">
             <v-expansion-panel-title>
-              Total
+              {{ t('battleStatistics.total') }}
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <v-table density="compact">
@@ -98,8 +100,8 @@ function back() {
                 <thead>
                 <tr>
                   <th></th>
-                  <th>Caused</th>
-                  <th>Received</th>
+                  <th>{{ t('commonHistory.caused') }}</th>
+                  <th>{{ t('commonHistory.received') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -114,7 +116,7 @@ function back() {
           </v-expansion-panel>
           <v-expansion-panel v-if="perBattleStatistics" value="perBattle">
             <v-expansion-panel-title>
-              Per battle
+              {{ t('battleStatistics.perBattle') }}
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <v-table density="compact">
@@ -129,8 +131,8 @@ function back() {
                 <thead>
                 <tr>
                   <th></th>
-                  <th>Caused</th>
-                  <th>Received</th>
+                  <th>{{ t('commonHistory.caused') }}</th>
+                  <th>{{ t('commonHistory.received') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -145,13 +147,13 @@ function back() {
           </v-expansion-panel>
           <v-expansion-panel v-if="coefficients" value="coefficients">
             <v-expansion-panel-title>
-              Coefficients
+              {{ t('battleStatistics.coefficients') }}
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <v-table density="compact">
                 <tbody>
                 <tr v-for="item of coefficientsConfig">
-                  <td>{{ item.name }}</td>
+                  <td>{{ t('battleStatistics.' + item.key) }}</td>
                   <td>{{ coefficients[item.key].toFixed(item.fractionDigits) }}</td>
                 </tr>
                 </tbody>
