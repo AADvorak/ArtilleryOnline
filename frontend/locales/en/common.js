@@ -17,4 +17,5 @@ export const common = {
   error: 'Error',
   ok: 'OK',
   notFound: 'Requested resource is not found',
+  close: 'Close',
 }

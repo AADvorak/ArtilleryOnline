@@ -17,4 +17,5 @@ export const common = {
   error: 'Ошибка',
   ok: 'OK',
   notFound: 'Запрашиваемый ресурс не найден',
+  close: 'Закрыть',
 }

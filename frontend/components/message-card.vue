@@ -5,11 +5,13 @@ import {ApiRequestSender} from "~/api/api-request-sender";
 import {useRouter} from "#app";
 import {DateUtils} from "~/utils/DateUtils";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
+import {useI18n} from "vue-i18n";
 
 const props = defineProps<{
   message: Message
 }>()
 
+const {t} = useI18n()
 const router = useRouter()
 
 const messageStore = useMessageStore()
@@ -35,7 +37,7 @@ async function deleteMessage() {
     <v-card-text>
       <div class="d-flex">{{ messageTime }}: {{ props.message.text }}</div>
       <div class="d-flex mt-4">
-        <v-btn @click="deleteMessage">Close</v-btn>
+        <v-btn @click="deleteMessage">{{ t('common.close') }}</v-btn>
       </div>
     </v-card-text>
   </v-card>
