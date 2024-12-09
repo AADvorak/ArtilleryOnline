@@ -15,4 +15,6 @@ export const common = {
   of: 'of',
   noDataAvailable: 'No data available',
   error: 'Error',
+  ok: 'OK',
+  notFound: 'Requested resource is not found',
 }

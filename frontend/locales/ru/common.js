@@ -15,4 +15,6 @@ export const common = {
   of: 'из',
   noDataAvailable: 'Нет данных',
   error: 'Ошибка',
+  ok: 'OK',
+  notFound: 'Запрашиваемый ресурс не найден',
 }

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {useErrorsStore} from "~/stores/errors";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const errorsStore = useErrorsStore()
 
 const opened = ref(false)
@@ -11,7 +13,7 @@ watch(() => errorsStore.errors, () => {
   if (errorsStore.errors.length) {
     const error = errorsStore.errors.shift()
     if (error.status === 404 && !error.error) {
-      message.value = 'Requested resource is not found'
+      message.value = t('common.notFound')
     } else if (error.error) {
       message.value = error.error.message
     }
@@ -30,11 +32,11 @@ function hideAndClear() {
 <template>
   <v-dialog :model-value="opened" :persistent="true" max-width="600px">
     <v-card width="100%">
-      <v-card-title>Error</v-card-title>
+      <v-card-title>{{ t('common.error') }}</v-card-title>
       <v-card-text>
         <div class="d-flex">{{ message }}</div>
         <div class="d-flex mt-4">
-          <v-btn color="primary" @click="hideAndClear">OK</v-btn>
+          <v-btn color="primary" @click="hideAndClear">{{ t('common.ok') }}</v-btn>
         </div>
       </v-card-text>
     </v-card>
