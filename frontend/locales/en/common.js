@@ -14,4 +14,5 @@ export const common = {
   itemsPerPage: 'Items per page',
   of: 'of',
   noDataAvailable: 'No data available',
+  error: 'Error',
 }

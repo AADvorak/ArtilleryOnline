@@ -24,6 +24,10 @@ export const en = {
   battleStatistics,
   common,
   commonHistory,
+  connectionLostDialog: {
+    message: 'Connection to server lost',
+    reload: 'Reload page'
+  },
   controls,
   login: {
     title: 'login'

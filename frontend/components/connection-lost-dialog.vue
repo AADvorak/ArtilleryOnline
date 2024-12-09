@@ -3,7 +3,9 @@ import {ref} from "vue";
 import {useStompClientStore} from "~/stores/stomp-client";
 import {useUserStore} from "~/stores/user";
 import {mdiReload} from "@mdi/js";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const stompClientStore = useStompClientStore()
 const userStore = useUserStore()
 
@@ -24,11 +26,16 @@ function hideAndReload() {
 <template>
   <v-dialog :model-value="opened" :persistent="true" max-width="600px">
     <v-card width="100%">
-      <v-card-title>Error</v-card-title>
+      <v-card-title>{{ t('common.error') }}</v-card-title>
       <v-card-text>
-        <div class="d-flex">Connection to server lost</div>
+        <div class="d-flex">{{ t('connectionLostDialog.message') }}</div>
         <div class="d-flex mt-4">
-          <v-btn :prepend-icon="mdiReload" color="primary" @click="hideAndReload">Reload page</v-btn>
+          <v-btn
+              :prepend-icon="mdiReload"
+              color="primary"
+              @click="hideAndReload">
+            {{ t('connectionLostDialog.reload') }}
+          </v-btn>
         </div>
       </v-card-text>
     </v-card>

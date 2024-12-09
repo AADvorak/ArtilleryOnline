@@ -14,4 +14,5 @@ export const common = {
   itemsPerPage: 'Записей на странице',
   of: 'из',
   noDataAvailable: 'Нет данных',
+  error: 'Ошибка',
 }

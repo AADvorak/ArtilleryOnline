@@ -24,6 +24,10 @@ export const ru = {
   battleStatistics,
   common,
   commonHistory,
+  connectionLostDialog: {
+    message: 'Соединение с сервером потеряно',
+    reload: 'Перезагрузить страницу'
+  },
   controls,
   login: {
     title: 'вход'
