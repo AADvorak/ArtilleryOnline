@@ -32,6 +32,10 @@ export const ru = {
   login: {
     title: 'вход'
   },
+  messagesMenu: {
+    messages: 'Сообщения',
+    noMessages: 'Нет сообщений'
+  },
   vehicleSelector,
   onlineUsersTable,
   profile: {

@@ -3,7 +3,9 @@ import {ref} from "vue";
 import {useMessageStore} from "~/stores/message";
 import MessageCard from "~/components/message-card.vue";
 import { mdiMessage } from '@mdi/js'
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const messageStore = useMessageStore()
 
 const opened = ref(false)
@@ -39,12 +41,14 @@ const count = computed(() => {
             activator="parent"
             location="bottom"
             open-delay="1000">
-          Messages
+          {{ t('messagesMenu.messages') }}
         </v-tooltip>
       </v-btn>
     </template>
     <v-card min-width="300" max-width="400">
-      <div class="no-messages-div" v-if="!roomInvitations.length && !messages.length">You have no messages</div>
+      <div class="no-messages-div" v-if="!roomInvitations.length && !messages.length">
+        {{ t('messagesMenu.noMessages') }}
+      </div>
       <v-list v-else>
         <v-list-item v-for="invitation in roomInvitations">
           <room-invitation-card :invitation="invitation" />

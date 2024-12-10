@@ -32,6 +32,10 @@ export const en = {
   login: {
     title: 'login'
   },
+  messagesMenu: {
+    messages: 'Messages',
+    noMessages: 'You have no messages'
+  },
   vehicleSelector,
   onlineUsersTable,
   profile: {
