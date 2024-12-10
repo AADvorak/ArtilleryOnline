@@ -34,6 +34,9 @@ export const ru = {
     reload: 'Перезагрузить страницу'
   },
   controls,
+  jetBar: {
+    title: 'Джетпак'
+  },
   leaveBattleDialog,
   login: {
     title: 'вход'

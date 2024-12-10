@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import {useBattleStore} from "~/stores/battle";
 import {useUserStore} from "~/stores/user";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const battleStore = useBattleStore()
 const userStore = useUserStore()
 
@@ -23,7 +25,7 @@ const value = computed(() => {
       color="orange"
       :model-value="value"
   >
-    <span class="progress-text">Jet</span>
+    <span class="progress-text">{{ t('jetBar.title') }}</span>
   </v-progress-linear>
 </template>
 

@@ -34,6 +34,9 @@ export const en = {
     reload: 'Reload page'
   },
   controls,
+  jetBar: {
+    title: 'Jet'
+  },
   leaveBattleDialog,
   login: {
     title: 'login'
