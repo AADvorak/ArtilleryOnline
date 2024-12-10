@@ -14,6 +14,7 @@ import {commonHistory} from "~/locales/ru/common-history.js";
 import {battleHistory} from "~/locales/ru/battle-history.js";
 import {battleStatistics} from "~/locales/ru/battle-statistics.js";
 import {battleHistoryFiltersForm} from "~/locales/ru/battle-history-filters-form.js";
+import {roomInvitationCard} from "~/locales/ru/room-invitation-card.js";
 
 export const ru = {
   menu,
@@ -46,6 +47,7 @@ export const ru = {
     createRoom: 'Создать комнату'
   },
   room,
+  roomInvitationCard,
   roomMembersTable,
   settings,
   signup: {

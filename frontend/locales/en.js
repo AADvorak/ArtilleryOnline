@@ -14,6 +14,7 @@ import {commonHistory} from "~/locales/en/common-history.js";
 import {battleHistory} from "~/locales/en/battle-history.js";
 import {battleStatistics} from "~/locales/en/battle-statistics.js";
 import {battleHistoryFiltersForm} from "~/locales/en/battle-history-filters-form.js";
+import {roomInvitationCard} from "~/locales/en/room-invitation-card.js";
 
 export const en = {
   menu,
@@ -46,6 +47,7 @@ export const en = {
     createRoom: 'Create room'
   },
   room,
+  roomInvitationCard,
   roomMembersTable,
   settings,
   signup: {
