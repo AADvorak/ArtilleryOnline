@@ -3,7 +3,9 @@ import { ref } from 'vue'
 import { useBattleStore } from '~/stores/battle'
 import {useRouter} from '#app'
 import {ApiRequestSender} from '~/api/api-request-sender'
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const battleStore = useBattleStore()
 const router = useRouter()
 
@@ -36,12 +38,12 @@ defineExpose({
 <template>
   <v-dialog :model-value="opened" :persistent="true" max-width="600px">
     <v-card width="100%">
-      <v-card-title>Leave battle</v-card-title>
+      <v-card-title>{{ t('leaveBattleDialog.title') }}</v-card-title>
       <v-card-text>
-        <div class="d-flex">Are you sure you want to leave battle? There will be no possibility to return.</div>
+        <div class="d-flex">{{ t('leaveBattleDialog.message') }}</div>
         <div class="d-flex mt-4">
-          <v-btn color="warning" @click="leaveBattle">Leave</v-btn>
-          <v-btn @click="hide">Cancel</v-btn>
+          <v-btn color="warning" @click="leaveBattle">{{ t('leaveBattleDialog.leave') }}</v-btn>
+          <v-btn @click="hide">{{ t('common.cancel') }}</v-btn>
         </div>
       </v-card-text>
     </v-card>

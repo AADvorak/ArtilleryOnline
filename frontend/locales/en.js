@@ -15,6 +15,7 @@ import {battleHistory} from "~/locales/en/battle-history.js";
 import {battleStatistics} from "~/locales/en/battle-statistics.js";
 import {battleHistoryFiltersForm} from "~/locales/en/battle-history-filters-form.js";
 import {roomInvitationCard} from "~/locales/en/room-invitation-card.js";
+import {leaveBattleDialog} from "~/locales/en/leave-battle-dialog.js";
 
 export const en = {
   menu,
@@ -33,6 +34,7 @@ export const en = {
     reload: 'Reload page'
   },
   controls,
+  leaveBattleDialog,
   login: {
     title: 'login'
   },
