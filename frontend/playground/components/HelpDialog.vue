@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import {ref} from 'vue'
 import {useUserSettingsStore} from '~/stores/user-settings'
+import {useI18n} from "vue-i18n";
+
+const {t} = useI18n()
 
 const userSettingsStore = useUserSettingsStore()
 const controls = userSettingsStore.controlsOrDefaults
@@ -41,18 +44,18 @@ defineExpose({
 <template>
   <v-dialog :model-value="opened" :persistent="true" max-width="600px">
     <v-card width="100%">
-      <v-card-title>Help</v-card-title>
+      <v-card-title>{{ t('common.help') }}</v-card-title>
       <v-card-text>
         <v-table density="compact">
           <tbody>
           <tr v-for="control of controls">
-            <td>{{ control.description }}</td>
+            <td>{{ t('controls.' + control.name) }}</td>
             <td>{{ removeKeyStr(control.value) }}</td>
           </tr>
           </tbody>
         </v-table>
         <div class="d-flex mt-4">
-          <v-btn color="primary" @click="hide">OK</v-btn>
+          <v-btn color="primary" @click="hide">{{ t('common.ok') }}</v-btn>
         </div>
       </v-card-text>
     </v-card>
