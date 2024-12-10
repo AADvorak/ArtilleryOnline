@@ -18,4 +18,5 @@ export const common = {
   ok: 'OK',
   notFound: 'Requested resource is not found',
   close: 'Close',
+  help: 'Help',
 }

@@ -14,7 +14,9 @@ import IconBtn from "~/components/icon-btn.vue";
 import HelpDialog from "~/playground/components/HelpDialog.vue";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const battleStore = useBattleStore()
 const userStore = useUserStore()
 const settingsStore = useSettingsStore()
@@ -83,13 +85,13 @@ function showHelpDialog() {
     <v-spacer/>
     <icon-btn
         :icon="mdiHelp"
-        tooltip="Help"
+        :tooltip="t('common.help')"
         @click="showHelpDialog"
     />
     <messages-menu/>
     <icon-btn
         :icon="mdiCloseThick"
-        tooltip="Leave battle"
+        :tooltip="t('battleHeader.leaveBattle')"
         @click="showLeaveBattleDialog"
     />
     <LeaveBattleDialog ref="leaveBattleDialog"/>

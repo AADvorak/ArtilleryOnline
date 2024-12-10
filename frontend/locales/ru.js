@@ -20,6 +20,9 @@ export const ru = {
   menu,
   appearance,
   battle,
+  battleHeader: {
+    leaveBattle: 'Покинуть бой'
+  },
   battleHistory,
   battleHistoryFiltersForm,
   battleStatistics,

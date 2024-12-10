@@ -20,6 +20,9 @@ export const en = {
   menu,
   appearance,
   battle,
+  battleHeader: {
+    leaveBattle: 'Leave battle'
+  },
   battleHistory,
   battleHistoryFiltersForm,
   battleStatistics,
