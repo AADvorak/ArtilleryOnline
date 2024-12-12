@@ -34,6 +34,10 @@ export const ru = {
     reload: 'Перезагрузить страницу'
   },
   controls,
+  finishBattleDialog: {
+    title: 'Конец боя',
+    message: 'Бой завершился'
+  },
   jetBar: {
     title: 'Джетпак'
   },

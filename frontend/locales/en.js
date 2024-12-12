@@ -34,6 +34,10 @@ export const en = {
     reload: 'Reload page'
   },
   controls,
+  finishBattleDialog: {
+    title: 'End of the battle',
+    message: 'The battle has finished'
+  },
   jetBar: {
     title: 'Jet'
   },
