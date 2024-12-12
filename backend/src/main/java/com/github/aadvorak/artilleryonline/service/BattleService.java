@@ -114,7 +114,8 @@ public class BattleService {
 
     private void checkReadyToBattle(BattleParticipant participant) {
         if (participant.getParams() == null || participant.getParams().getSelectedVehicle() == null) {
-            throw new ConflictAppException("Not all players have selected vehicles");
+            throw new ConflictAppException("Not all players have selected vehicles",
+                    new Locale().setCode(LocaleCode.NO_SELECTED_VEHICLES));
         }
         userAvailabilityService.checkRoomBattleAvailability(participant.getUser());
     }

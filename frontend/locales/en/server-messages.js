@@ -4,4 +4,9 @@ export const serverMessages = {
   userEnteredRoom: 'User {nickname} has entered the room',
   userLeftAndDeletedRoom: 'User {nickname} has left and deleted the room',
   userLeftBattle: 'User {nickname} has left the battle',
+  noSelectedVehicles: 'Not all players have selected vehicles',
+  notEnoughPlayers: 'Not enough players to start battle',
+  userAlreadyInRoom: 'User {nickname} is already in room',
+  userAlreadyInBattleQueue: 'User {nickname} is already in battle queue',
+  userAlreadyInBattle: 'User {nickname} is already in battle',
 }

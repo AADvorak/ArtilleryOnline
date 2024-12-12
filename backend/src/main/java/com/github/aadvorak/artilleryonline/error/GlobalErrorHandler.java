@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.error;
 
+import com.github.aadvorak.artilleryonline.dto.response.LocaleResponse;
 import com.github.aadvorak.artilleryonline.error.exception.AuthenticationAppException;
 import com.github.aadvorak.artilleryonline.error.exception.BadRequestAppException;
 import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
@@ -31,7 +32,8 @@ public class GlobalErrorHandler {
     public ErrorResponse handleConflictAppException(ConflictAppException exc) {
         return new ErrorResponse()
                 .setCode("ConflictAppException")
-                .setMessage(exc.getMessage());
+                .setMessage(exc.getMessage())
+                .setLocale(exc.getLocale() != null ? LocaleResponse.of(exc.getLocale()) : null);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

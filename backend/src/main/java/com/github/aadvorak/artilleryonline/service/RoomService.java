@@ -72,7 +72,8 @@ public class RoomService {
         var user = userService.getUserFromContext();
         var room = requireOwnRoom(user);
         if (room.getGuests().isEmpty()) {
-            throw new ConflictAppException("Not enough players to start battle");
+            throw new ConflictAppException("Not enough players to start battle",
+                    new Locale().setCode(LocaleCode.NOT_ENOUGH_PLAYERS));
         }
         battleService.createRoomBattle(room);
         removeSelectedVehicles(room);

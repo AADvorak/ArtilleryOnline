@@ -2,6 +2,7 @@
 import {ref} from "vue";
 import {useErrorsStore} from "~/stores/errors";
 import {useI18n} from "vue-i18n";
+import type {ApiErrorResponse} from "~/data/response";
 
 const {t} = useI18n()
 const errorsStore = useErrorsStore()
@@ -15,13 +16,21 @@ watch(() => errorsStore.errors, () => {
     if (error.status === 404 && !error.error) {
       message.value = t('common.notFound')
     } else if (error.error) {
-      message.value = error.error.message
+      message.value = getErrorMessage(error.error)
     }
     if (message.value) {
       opened.value = true
     }
   }
 }, {deep: true})
+
+function getErrorMessage(error: ApiErrorResponse) {
+  if (error.locale) {
+    return t('serverMessages.' + error.locale.code, error.locale.params)
+  } else {
+    return error.message
+  }
+}
 
 function hideAndClear() {
   opened.value = false

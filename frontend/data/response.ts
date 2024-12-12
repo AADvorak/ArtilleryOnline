@@ -1,4 +1,5 @@
 import type {VehicleSpecs} from "~/playground/data/specs";
+import type {Locale} from "~/data/model";
 
 export interface ValidationResponse {
   code: string
@@ -10,6 +11,7 @@ export interface ApiErrorResponse {
   code: string
   message: string
   params: object
+  locale: Locale
   validation: ValidationResponse[]
 }
 
