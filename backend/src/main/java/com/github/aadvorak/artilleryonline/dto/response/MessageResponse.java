@@ -18,12 +18,15 @@ public class MessageResponse {
 
     private String text;
 
+    private LocaleResponse locale;
+
     private LocalDateTime time;
 
     public static MessageResponse of(Message message) {
         return new MessageResponse()
                 .setId(message.getId())
                 .setText(message.getText())
+                .setLocale(message.getLocale() != null ? LocaleResponse.of(message.getLocale()) : null)
                 .setTime(LocalDateTime.ofInstant(Instant.ofEpochMilli(message.getCreateTime()),
                         ZoneId.systemDefault()));
     }

@@ -23,6 +23,16 @@ export interface Message {
   id: string
   text: string
   time: string
+  locale?: Locale
+}
+
+export interface LocaleParams {
+  [key: string]: string
+}
+
+export interface Locale {
+  code: string
+  params: LocaleParams
 }
 
 export interface RoomInvitation {

@@ -18,4 +18,6 @@ public class Message {
     private Long userId;
 
     private String text;
+
+    private Locale locale;
 }

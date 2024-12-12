@@ -16,6 +16,7 @@ import {battleStatistics} from "~/locales/ru/battle-statistics.js";
 import {battleHistoryFiltersForm} from "~/locales/ru/battle-history-filters-form.js";
 import {roomInvitationCard} from "~/locales/ru/room-invitation-card.js";
 import {leaveBattleDialog} from "~/locales/ru/leave-battle-dialog.js";
+import {serverMessages} from "~/locales/ru/server-messages.js";
 
 export const ru = {
   menu,
@@ -65,6 +66,7 @@ export const ru = {
   signup: {
     title: 'регистрация'
   },
+  serverMessages,
   sounds,
   user,
 }

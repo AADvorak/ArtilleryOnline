@@ -6,11 +6,14 @@ import com.github.aadvorak.artilleryonline.collection.UserBattleQueueParams;
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
 import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
 import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
+import com.github.aadvorak.artilleryonline.model.Locale;
+import com.github.aadvorak.artilleryonline.model.LocaleCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -98,7 +101,11 @@ public class BattleService {
                 battle.getQueues().getUserCommandQueues().remove(user.getId());
                 userBattleMap.remove(user.getId());
                 battle.getActiveUserIds().forEach(userId -> messageService.createMessage(
-                        battle.getUserMap().get(userId), "User " + user.getNickname() + " left battle"));
+                        battle.getUserMap().get(userId),
+                        "User " + user.getNickname() + " left the battle",
+                        new Locale()
+                                .setCode(LocaleCode.USER_LEFT_BATTLE)
+                                .setParams(Map.of("nickname", user.getNickname()))));
                 log.info("leaveBattle: user {}, battle {}, map size {}", user.getNickname(),
                         battle.getId(), userBattleMap.size());
             }

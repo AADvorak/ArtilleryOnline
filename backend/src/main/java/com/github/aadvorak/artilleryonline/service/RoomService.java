@@ -6,12 +6,15 @@ import com.github.aadvorak.artilleryonline.dto.response.RoomResponse;
 import com.github.aadvorak.artilleryonline.entity.User;
 import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
 import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
+import com.github.aadvorak.artilleryonline.model.Locale;
+import com.github.aadvorak.artilleryonline.model.LocaleCode;
 import com.github.aadvorak.artilleryonline.ws.RoomUpdatesSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -94,7 +97,10 @@ public class RoomService {
             room.getGuests().remove(guest.getUser().getId());
             userRoomMap.remove(guest.getUser().getId());
             messageService.createMessage(guest.getUser(),
-                    "User " + user.getNickname() + " removed you from the room");
+                    "User " + user.getNickname() + " removed you from the room",
+                    new Locale()
+                            .setCode(LocaleCode.USER_REMOVED_FROM_ROOM)
+                            .setParams(Map.of("nickname", nickname)));
             roomUpdatesSender.sendRoomUpdate(room);
             roomUpdatesSender.sendRoomDelete(room, guest.getUser());
             log.info("removeUserFromRoom: nickname {}, map size {}", user.getNickname(), userRoomMap.size());
@@ -118,7 +124,10 @@ public class RoomService {
             room.getGuests().remove(user.getId());
             roomUpdatesSender.sendRoomUpdate(room);
             messageService.createMessage(room.getOwner().getUser(),
-                    "User " + user.getNickname() + " left the room");
+                    "User " + user.getNickname() + " left the room",
+                    new Locale()
+                            .setCode(LocaleCode.USER_LEFT_ROOM)
+                            .setParams(Map.of("nickname", user.getNickname())));
             log.info("exitRoom: nickname {}, map size {}", user.getNickname(), userRoomMap.size());
         } else {
             var userIds = new HashSet<Long>();
@@ -126,7 +135,10 @@ public class RoomService {
             room.getGuests().values().forEach(guest -> {
                 userIds.add(guest.getUser().getId());
                 messageService.createMessage(guest.getUser(),
-                        "User " + user.getNickname() + " left and deleted the room");
+                        "User " + user.getNickname() + " left and deleted the room",
+                        new Locale()
+                                .setCode(LocaleCode.USER_LEFT_AND_DELETED_ROOM)
+                                .setParams(Map.of("nickname", user.getNickname())));
             });
             userIds.forEach(userRoomMap::remove);
             roomUpdatesSender.sendRoomUpdate(room, true, false);

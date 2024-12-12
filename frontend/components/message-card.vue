@@ -19,6 +19,14 @@ const messageStore = useMessageStore()
 const messageTime = computed(() => {
   return DateUtils.getClientDateLocaleString(props.message.time)
 })
+const messageText = computed(() => {
+  const locale = props.message.locale
+  if (locale) {
+    return t('serverMessages.' + locale.code, locale.params)
+  } else {
+    return props.message.text
+  }
+})
 
 async function deleteMessage() {
   const messageId = props.message!.id
@@ -35,7 +43,7 @@ async function deleteMessage() {
 <template>
   <v-card width="100%">
     <v-card-text>
-      <div class="d-flex">{{ messageTime }}: {{ props.message.text }}</div>
+      <div class="d-flex">{{ messageTime }}: {{ messageText }}</div>
       <div class="d-flex mt-4">
         <v-btn @click="deleteMessage">{{ t('common.close') }}</v-btn>
       </div>

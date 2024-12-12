@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.service;
 import com.github.aadvorak.artilleryonline.collection.UserMessageMap;
 import com.github.aadvorak.artilleryonline.dto.response.MessageResponse;
 import com.github.aadvorak.artilleryonline.entity.User;
+import com.github.aadvorak.artilleryonline.model.Locale;
 import com.github.aadvorak.artilleryonline.model.Message;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import com.github.aadvorak.artilleryonline.ws.MessagesSender;
@@ -45,9 +46,14 @@ public class MessageService {
     }
 
     public void createMessage(User user, String text) {
+        createMessage(user, text, null);
+    }
+
+    public void createMessage(User user, String text, Locale locale) {
         var message = new Message()
                 .setUserId(user.getId())
-                .setText(text);
+                .setText(text)
+                .setLocale(locale);
         userMessageMap.add(user.getId(), message);
         messagesSender.sendMessage(user, MessageResponse.of(message));
         scheduleDeleteMessage(message);

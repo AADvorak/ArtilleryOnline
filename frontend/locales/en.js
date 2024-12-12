@@ -16,6 +16,7 @@ import {battleStatistics} from "~/locales/en/battle-statistics.js";
 import {battleHistoryFiltersForm} from "~/locales/en/battle-history-filters-form.js";
 import {roomInvitationCard} from "~/locales/en/room-invitation-card.js";
 import {leaveBattleDialog} from "~/locales/en/leave-battle-dialog.js";
+import {serverMessages} from "~/locales/en/server-messages.js";
 
 export const en = {
   menu,
@@ -65,6 +66,7 @@ export const en = {
   signup: {
     title: 'signup'
   },
+  serverMessages,
   sounds,
   user,
 }

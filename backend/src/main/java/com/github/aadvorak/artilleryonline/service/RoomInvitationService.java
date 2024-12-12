@@ -8,6 +8,8 @@ import com.github.aadvorak.artilleryonline.dto.request.RoomInvitationRequest;
 import com.github.aadvorak.artilleryonline.dto.response.RoomInvitationResponse;
 import com.github.aadvorak.artilleryonline.dto.response.RoomResponse;
 import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
+import com.github.aadvorak.artilleryonline.model.Locale;
+import com.github.aadvorak.artilleryonline.model.LocaleCode;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import com.github.aadvorak.artilleryonline.ws.RoomUpdatesSender;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 
 @Service
@@ -100,7 +103,10 @@ public class RoomInvitationService {
                 userRoomMap.size(), roomInvitationMap.size());
         roomUpdatesSender.sendRoomUpdate(room);
         messageService.createMessage(invitation.getRoom().getOwner().getUser(),
-                "User " + user.getNickname() + " entered room");
+                "User " + user.getNickname() + " entered room",
+                new Locale()
+                        .setCode(LocaleCode.USER_ENTERED_ROOM)
+                        .setParams(Map.of("nickname", user.getNickname())));
         return RoomResponse.of(room);
     }
 
