@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum Validation {
-    WRONG("WRONG", "Wrong value"),
-    EXISTS("EXISTS", "Already exists");
+    WRONG("wrong", "Wrong value"),
+    EXISTS("exists", "Already exists");
 
     private final String code;
     private final String message;

@@ -7,8 +7,10 @@ import type {User} from "~/data/model";
 import {useUserStore} from "~/stores/user";
 import type {FormValidation, FormValues} from "~/data/response";
 import {useI18n} from "vue-i18n";
+import {useValidationLocaleUtil} from "~/composables/validation-locale-util";
 
 const {t} = useI18n()
+const {localize} = useValidationLocaleUtil(t)
 const router = useRouter()
 
 const emailField = ref<HTMLInputElement | null>(null)
@@ -49,8 +51,14 @@ async function signUp() {
 
 function validator(form: FormValues, validation: FormValidation): boolean {
   if (form.password !== form.passwordConfirm) {
-    validation.password.push(VALIDATION_MSG.EQUAL)
-    validation.passwordConfirm.push(VALIDATION_MSG.EQUAL)
+    const item = {
+      locale: {
+        code: VALIDATION_MSG.EQUAL,
+        params: {}
+      }
+    }
+    validation.password.push(item)
+    validation.passwordConfirm.push(item)
     return false
   }
   return true
@@ -69,27 +77,27 @@ function validator(form: FormValues, validation: FormValidation): boolean {
               ref="emailField"
               v-model="form.email"
               :error="!!validation.email.length"
-              :error-messages="validation.email"
+              :error-messages="localize(validation.email)"
               :label="t('common.email')"
           />
           <v-text-field
               v-model="form.password"
               :error="!!validation.password.length"
-              :error-messages="validation.password"
+              :error-messages="localize(validation.password)"
               type="password"
               :label="t('common.password')"
           />
           <v-text-field
               v-model="form.passwordConfirm"
               :error="!!validation.passwordConfirm.length"
-              :error-messages="validation.passwordConfirm"
+              :error-messages="localize(validation.passwordConfirm)"
               type="password"
               :label="t('common.passwordConfirm')"
           />
           <v-text-field
               v-model="form.nickname"
               :error="!!validation.nickname.length"
-              :error-messages="validation.nickname"
+              :error-messages="localize(validation.nickname)"
               :label="t('common.nickname')"
           />
           <v-btn class="mb-4" width="100%" color="primary" type="submit" :loading="submitting"

@@ -17,6 +17,7 @@ import {battleHistoryFiltersForm} from "~/locales/en/battle-history-filters-form
 import {roomInvitationCard} from "~/locales/en/room-invitation-card.js";
 import {leaveBattleDialog} from "~/locales/en/leave-battle-dialog.js";
 import {serverMessages} from "~/locales/en/server-messages.js";
+import {validationMessages} from "~/locales/en/validation-messages.js";
 
 export const en = {
   menu,
@@ -69,4 +70,5 @@ export const en = {
   serverMessages,
   sounds,
   user,
+  validationMessages,
 }

@@ -22,7 +22,10 @@ export function useRequestErrorHandler() {
   function parseValidation(validation: ValidationResponse[], formValidation: FormValidation) {
     for (const item of validation) {
       if (formValidation[item.field]) {
-        formValidation[item.field].push(item.message)
+        formValidation[item.field].push({
+          message: item.message,
+          locale: item.locale
+        })
       }
     }
   }

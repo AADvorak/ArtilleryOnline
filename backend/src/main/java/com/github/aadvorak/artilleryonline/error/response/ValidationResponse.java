@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.error.response;
 
+import com.github.aadvorak.artilleryonline.dto.response.LocaleResponse;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -9,14 +10,14 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ValidationResponse {
 
-    private String code;
+    private LocaleResponse locale;
 
     private String field;
 
     private String message;
 
     public ValidationResponse setValidation(Validation validation) {
-        code = validation.getCode();
+        locale = new LocaleResponse().setCode(validation.getCode());
         message = validation.getMessage();
         return this;
     }

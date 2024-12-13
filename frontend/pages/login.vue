@@ -6,8 +6,10 @@ import type {LoginRequest} from "~/data/request";
 import type {User} from "~/data/model";
 import {useFormSubmit} from "~/composables/form-submit";
 import {useI18n} from "vue-i18n";
+import {useValidationLocaleUtil} from "~/composables/validation-locale-util";
 
 const {t} = useI18n()
+const {localize} = useValidationLocaleUtil(t)
 const router = useRouter()
 
 const emailField = ref<HTMLInputElement | null>(null)
@@ -54,13 +56,13 @@ function signUp() {
               ref="emailField"
               v-model="form.email"
               :error="!!validation.email.length"
-              :error-messages="validation.email"
+              :error-messages="localize(validation.email)"
               :label="t('common.email')"
           />
           <v-text-field
               v-model="form.password"
               :error="!!validation.password.length"
-              :error-messages="validation.password"
+              :error-messages="localize(validation.password)"
               type="password"
               :label="t('common.password')"
           />

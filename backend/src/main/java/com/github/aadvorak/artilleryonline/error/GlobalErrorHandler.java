@@ -80,12 +80,12 @@ public class GlobalErrorHandler {
         List<ValidationResponse> errors = new ArrayList<>();
         exc.getBindingResult().getFieldErrors().forEach(fieldError ->
                 errors.add(new ValidationResponse()
-                        .setCode(fieldError.getCode())
+                        .setLocale(new LocaleResponse().setCode(fieldError.getCode()))
                         .setField(fieldError.getField())
                         .setMessage(fieldError.getDefaultMessage())));
         exc.getBindingResult().getGlobalErrors().forEach(err ->
                 errors.add(new ValidationResponse()
-                        .setCode(err.getCode())
+                        .setLocale(new LocaleResponse().setCode(err.getCode()))
                         .setField(err.getObjectName())
                         .setMessage(err.getDefaultMessage())));
         return errors;

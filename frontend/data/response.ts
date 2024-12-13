@@ -2,17 +2,17 @@ import type {VehicleSpecs} from "~/playground/data/specs";
 import type {Locale} from "~/data/model";
 
 export interface ValidationResponse {
-  code: string
+  locale?: Locale
   field: string
   message: string
 }
 
 export interface ApiErrorResponse {
   code: string
-  message: string
-  params: object
-  locale: Locale
-  validation: ValidationResponse[]
+  message?: string
+  params?: object
+  locale?: Locale
+  validation?: ValidationResponse[]
 }
 
 export interface ErrorResponse {
@@ -20,8 +20,13 @@ export interface ErrorResponse {
   error: ApiErrorResponse
 }
 
+export interface Validation {
+  locale?: Locale
+  message?: string
+}
+
 export interface FormValidation {
-  [fieldName: string]: string[]
+  [fieldName: string]: Validation[]
 }
 
 export interface FormValues {

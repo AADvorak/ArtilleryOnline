@@ -6,8 +6,10 @@ import type {EditUserRequest} from "~/data/request";
 import type {User} from "~/data/model";
 import {useFormSubmit} from "~/composables/form-submit";
 import {useI18n} from "vue-i18n";
+import {useValidationLocaleUtil} from "~/composables/validation-locale-util";
 
 const {t} = useI18n()
+const {localize} = useValidationLocaleUtil(t)
 const router = useRouter()
 const userStore = useUserStore()
 
@@ -62,13 +64,13 @@ function back() {
               ref="emailField"
               v-model="form.email"
               :error="!!validation.email.length"
-              :error-messages="validation.email"
+              :error-messages="localize(validation.email)"
               :label="t('common.email')"
           />
           <v-text-field
               v-model="form.nickname"
               :error="!!validation.nickname.length"
-              :error-messages="validation.nickname"
+              :error-messages="localize(validation.nickname)"
               :label="t('common.nickname')"
           />
           <v-btn class="mb-4" width="100%" color="success" type="submit" :loading="submitting"

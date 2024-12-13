@@ -34,7 +34,12 @@ export function useFormSubmit(params: FormSubmitParams) {
     let valid = true
     Object.keys(params.form).forEach(key => {
       if (!params.form[key].length) {
-        params.validation[key].push(VALIDATION_MSG.REQUIRED)
+        params.validation[key].push({
+          locale: {
+            code: VALIDATION_MSG.REQUIRED,
+            params: {}
+          }
+        })
         valid = false
       }
     })
