@@ -140,7 +140,7 @@ export function useEventSoundsPlayer(player: Player) {
   }
 
   function play(fileName: string, pan: number, gain: number) {
-    setTimeout(() => player.play({path: '/sounds/' +fileName + '.wav',
+    setTimeout(() => player.play({path: '/sounds/' +fileName + '.mp3',
       pan, gain, randomise: true}))
   }
 

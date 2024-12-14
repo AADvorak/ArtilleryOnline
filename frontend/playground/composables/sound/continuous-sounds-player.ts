@@ -59,10 +59,10 @@ export function useContinuousSoundsPlayer(player: Player) {
       await playContinuousSound(key, ENGINE_KEY, pan, gain / 3, 1.0, isEngineActive(vehicleState),
           'vehicle-engine.mp3', fadeOutAndStop)
       await playContinuousSound(key, JET_KEY, pan, gain, 1.0, isJetActive(vehicleState),
-          'jet.wav', fadeOutAndStop)
+          'jet.mp3', fadeOutAndStop)
       if (key === userStore.user!.nickname) {
         await playContinuousSound(key, GUN_KEY, 0, gain, 1.0, !!vehicleState.gunRotatingDirection,
-            'gun-turn.wav', stopLoop)
+            'gun-turn.mp3', stopLoop)
       }
     }
   }

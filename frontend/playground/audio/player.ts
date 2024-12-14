@@ -22,11 +22,11 @@ export interface AudioControl {
 
 // todo read from metadata
 const LOOPS = {
-  '/sounds/gun-turn.wav': {
+  '/sounds/gun-turn.mp3': {
     start: 0.433,
     end: 0.912
   },
-  '/sounds/jet.wav': {
+  '/sounds/jet.mp3': {
     start: 0.497
   }
 }
