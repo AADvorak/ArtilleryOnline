@@ -24,6 +24,11 @@ export interface Message {
   text: string
   time: string
   locale?: Locale
+  special?: MessageSpecial
+}
+
+export interface MessageSpecial {
+  userBattleResult?: UserBattleResult
 }
 
 export interface LocaleParams {
@@ -74,6 +79,20 @@ export interface UserBattleHistory {
   beginTime: Date
   battleType: BattleType
   vehicleName: string
+  causedDamage: number
+  madeShots: number
+  causedDirectHits: number
+  causedIndirectHits: number
+  causedTrackBreaks: number
+  destroyedVehicles: number
+  receivedDamage: number
+  receivedDirectHits: number
+  receivedIndirectHits: number
+  receivedTrackBreaks: number
+  survived: boolean
+}
+
+export interface UserBattleResult {
   causedDamage: number
   madeShots: number
   causedDirectHits: number

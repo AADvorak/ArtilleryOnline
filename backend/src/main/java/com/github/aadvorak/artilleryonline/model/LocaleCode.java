@@ -12,6 +12,7 @@ public enum LocaleCode {
     USER_ENTERED_ROOM("userEnteredRoom"),
     USER_LEFT_AND_DELETED_ROOM("userLeftAndDeletedRoom"),
     USER_LEFT_BATTLE("userLeftBattle"),
+    BATTLE_FINISHED("battleFinished"),
 
     NO_SELECTED_VEHICLES("noSelectedVehicles"),
     NOT_ENOUGH_PLAYERS("notEnoughPlayers"),

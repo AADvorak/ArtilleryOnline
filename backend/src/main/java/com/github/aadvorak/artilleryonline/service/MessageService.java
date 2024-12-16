@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.dto.response.MessageResponse;
 import com.github.aadvorak.artilleryonline.entity.User;
 import com.github.aadvorak.artilleryonline.model.Locale;
 import com.github.aadvorak.artilleryonline.model.Message;
+import com.github.aadvorak.artilleryonline.model.MessageSpecial;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import com.github.aadvorak.artilleryonline.ws.MessagesSender;
 import lombok.RequiredArgsConstructor;
@@ -45,15 +46,16 @@ public class MessageService {
         userMessageMap.remove(user.getId(), messageId);
     }
 
-    public void createMessage(User user, String text) {
-        createMessage(user, text, null);
+    public void createMessage(User user, String text, Locale locale) {
+        createMessage(user, text, locale, null);
     }
 
-    public void createMessage(User user, String text, Locale locale) {
+    public void createMessage(User user, String text, Locale locale, MessageSpecial special) {
         var message = new Message()
                 .setUserId(user.getId())
                 .setText(text)
-                .setLocale(locale);
+                .setLocale(locale)
+                .setSpecial(special);
         userMessageMap.add(user.getId(), message);
         messagesSender.sendMessage(user, MessageResponse.of(message));
         scheduleDeleteMessage(message);

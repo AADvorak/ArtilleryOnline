@@ -1,14 +1,19 @@
 package com.github.aadvorak.artilleryonline.battle;
 
 import com.github.aadvorak.artilleryonline.battle.events.BattleModelEvents;
+import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.processor.ActiveBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.WaitingBattleStepProcessor;
-import com.github.aadvorak.artilleryonline.battle.statistics.BattleStatisticsUtil;
 import com.github.aadvorak.artilleryonline.battle.updates.BattleModelUpdates;
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.dto.response.BattleModelStateResponse;
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
 import com.github.aadvorak.artilleryonline.dto.response.BattleUpdateResponse;
+import com.github.aadvorak.artilleryonline.entity.User;
+import com.github.aadvorak.artilleryonline.model.Locale;
+import com.github.aadvorak.artilleryonline.model.LocaleCode;
+import com.github.aadvorak.artilleryonline.model.MessageSpecial;
+import com.github.aadvorak.artilleryonline.model.UserBattleResult;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import com.github.aadvorak.artilleryonline.service.BattleHistoryService;
 import com.github.aadvorak.artilleryonline.service.MessageService;
@@ -97,7 +102,14 @@ public class BattleRunner {
 
     private void createBattleFinishedMessages(Battle battle) {
         battle.getUserMap().values().forEach(user -> messageService.createMessage(user,
-                "Battle finished. " + BattleStatisticsUtil.createUserStatisticsMsg(battle.getModel(), user)));
+                "Battle has finished",
+                new Locale().setCode(LocaleCode.BATTLE_FINISHED),
+                new MessageSpecial().setUserBattleResult(createUserBattleResult(battle.getModel(), user))));
+    }
+
+    private UserBattleResult createUserBattleResult(BattleModel battleModel, User user) {
+        return new ModelMapper().map(battleModel.getStatistics().get(user.getId()), UserBattleResult.class)
+                .setSurvived(battleModel.getVehicles().get(user.getNickname()) != null);
     }
 
     private void writeBattleToHistory(Battle battle) {

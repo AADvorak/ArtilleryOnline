@@ -20,4 +20,6 @@ public class Message {
     private String text;
 
     private Locale locale;
+
+    private MessageSpecial special;
 }

@@ -6,6 +6,7 @@ import {useRouter} from "#app";
 import {DateUtils} from "~/utils/DateUtils";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import {useI18n} from "vue-i18n";
+import BattleResultBlock from "~/components/battle-result-block.vue";
 
 const props = defineProps<{
   message: Message
@@ -22,7 +23,8 @@ const messageTime = computed(() => {
 const messageText = computed(() => {
   const locale = props.message.locale
   if (locale) {
-    return t('serverMessages.' + locale.code, locale.params)
+    const message = t('serverMessages.' + locale.code, locale.params)
+    return message.startsWith('serverMessages.') ? props.message.text : message
   } else {
     return props.message.text
   }
@@ -44,6 +46,12 @@ async function deleteMessage() {
   <v-card width="100%">
     <v-card-text>
       <div class="d-flex">{{ messageTime }}: {{ messageText }}</div>
+      <div v-if="message.special">
+        <battle-result-block
+            v-if="message.special.userBattleResult"
+            :result="message.special.userBattleResult"
+        />
+      </div>
       <div class="d-flex mt-4">
         <v-btn @click="deleteMessage">{{ t('common.close') }}</v-btn>
       </div>

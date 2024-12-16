@@ -4,6 +4,7 @@ export const serverMessages = {
   userEnteredRoom: 'Пользователь {nickname} вошел в комнату',
   userLeftAndDeletedRoom: 'Пользователь {nickname} покинул и удалил комнату',
   userLeftBattle: 'Пользователь {nickname} покинул бой',
+  battleFinished: 'Бой завершился',
   noSelectedVehicles: 'Не все игроки выбрали технику',
   notEnoughPlayers: 'Недостаточно игроков чтобы начать бой',
   userAlreadyInRoom: 'Пользователь {nickname} уже в комнате',
