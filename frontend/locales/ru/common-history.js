@@ -9,4 +9,8 @@ export const commonHistory = {
   trackBreaks: 'Сбития гусениц',
   battleType: 'Тип боя',
   vehicle: 'Техника',
+  battleTypes: {
+    RANDOM: 'Случайный',
+    ROOM: 'Комната',
+  },
 }

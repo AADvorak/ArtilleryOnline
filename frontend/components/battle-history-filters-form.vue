@@ -23,8 +23,9 @@ const selectedBattleType = ref<BattleType | undefined>()
 const selectedVehicleName = ref<string | undefined>()
 const selectedDateRange = ref<DateRange | undefined>()
 const selectedDateMode = ref<string | undefined>()
-const battleTypes = ref([BattleType.RANDOM, BattleType.ROOM])
 
+const battleTypes = computed(() => [BattleType.RANDOM, BattleType.ROOM]
+    .map(key => ({key, name: t('commonHistory.battleTypes.' + key)})))
 const vehicles = computed(() => {
   return Object.keys(presetsStore.vehicles)
 })
@@ -95,6 +96,8 @@ function onDateSelect(date: Date) {
         <v-select
             v-model="selectedBattleType"
             :items="battleTypes"
+            item-value="key"
+            item-title="name"
             density="compact"
             :label="t('commonHistory.battleType')"
             clearable

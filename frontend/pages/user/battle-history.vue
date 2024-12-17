@@ -23,7 +23,8 @@ const historyPage = ref<PageResponse<UserBattleHistory>>({
 const headers = ref([
   {title: t('battleHistory.beginTime'), key: 'beginTime', align: 'start', sortable: true,
     value: item => DateUtils.getClientDateLocaleString(item.beginTime)},
-  {title: t('commonHistory.battleType'), key: 'battleType', align: 'start', sortable: true},
+  {title: t('commonHistory.battleType'), key: 'battleType', align: 'start', sortable: true,
+    value: item => t('commonHistory.battleTypes.' + item.battleType)},
   {title: t('commonHistory.vehicle'), key: 'vehicleName', align: 'start', sortable: true},
   {title: t('battleHistory.survived'), key: 'survived', align: 'start', sortable: false,
     value: item => item.survived ? t('common.yes') : t('common.no')},

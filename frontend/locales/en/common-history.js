@@ -9,4 +9,8 @@ export const commonHistory = {
   trackBreaks: 'Track breaks',
   battleType: 'Battle type',
   vehicle: 'Vehicle',
+  battleTypes: {
+    RANDOM: 'Random',
+    ROOM: 'Room',
+  },
 }
