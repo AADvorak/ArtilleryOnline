@@ -10,9 +10,9 @@
 	</parent>
 	<groupId>com.github.aadvorak</groupId>
 	<artifactId>artilleryonline</artifactId>
-	<version>0.3.0</version>
+	<version>0.4.0</version>
 	<name>artilleryonline</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Online 2D real-time artillery game</description>
 	<url/>
 	<licenses>
 		<license/>
