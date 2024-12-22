@@ -13,6 +13,11 @@ public class Acceleration implements Vector {
 
     private double y;
 
+    public void add(Acceleration acceleration) {
+        x += acceleration.x;
+        y += acceleration.y;
+    }
+
     public static Acceleration sumOf(Acceleration... accelerations) {
         var sumX = 0.0;
         var sumY = 0.0;

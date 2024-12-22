@@ -1,14 +1,18 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
-import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
+import com.github.aadvorak.artilleryonline.battle.calculator.elasticity.ElasticityAccelerationCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelGroundState;
+import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.calculator.VehicleAccelerationCalculator;
+import com.github.aadvorak.artilleryonline.battle.common.VehicleAcceleration;
 import com.github.aadvorak.artilleryonline.battle.events.VehicleCollideEvent;
 
 public class VehicleMoveProcessor {
+
+    private static final boolean ELASTICITY = true;
 
     public static void processStep1(VehicleCalculations vehicle, BattleCalculations battle) {
         recalculateAcceleration(vehicle, battle);
@@ -17,17 +21,21 @@ public class VehicleMoveProcessor {
     }
 
     public static void processStep2(VehicleCalculations vehicle, BattleCalculations battle) {
-        if (processCollisions(vehicle, battle)) {
-            calculateNextPositionAndAngle(vehicle, battle);
-        }
-        if (vehicle.getCollisions().isEmpty()) {
+        if (ELASTICITY) {
             applyNextPositionAndAngle(vehicle);
-        } else if (checkCollisionsResolved(vehicle, battle)) {
-            vehicle.getCollisions().forEach(collideObject ->
-                    battle.getModel().getEvents().addCollide(new VehicleCollideEvent()
-                            .setVehicleId(vehicle.getModel().getId())
-                            .setObject(collideObject)));
-            applyNextPositionAndAngle(vehicle);
+        } else {
+            if (processCollisions(vehicle, battle)) {
+                calculateNextPositionAndAngle(vehicle, battle);
+            }
+            if (vehicle.getCollisions().isEmpty()) {
+                applyNextPositionAndAngle(vehicle);
+            } else if (checkCollisionsResolved(vehicle, battle)) {
+                vehicle.getCollisions().forEach(collideObject ->
+                        battle.getModel().getEvents().addCollide(new VehicleCollideEvent()
+                                .setVehicleId(vehicle.getModel().getId())
+                                .setObject(collideObject)));
+                applyNextPositionAndAngle(vehicle);
+            }
         }
         calculateOnGround(vehicle);
     }
@@ -35,7 +43,11 @@ public class VehicleMoveProcessor {
     private static void recalculateAcceleration(VehicleCalculations vehicle, BattleCalculations battle) {
         var threshold = 0.3;
         var oldAcceleration = vehicle.getModel().getState().getAcceleration();
-        var acceleration = VehicleAccelerationCalculator.getVehicleAcceleration(vehicle, battle.getModel().getRoom());
+        var vehicleAcceleration = VehicleAccelerationCalculator.getVehicleAcceleration(vehicle, battle.getModel().getRoom());
+        var elasticityAcceleration = ELASTICITY
+                ? ElasticityAccelerationCalculator.getElasticityAcceleration(vehicle, battle)
+                : new VehicleAcceleration();
+        var acceleration = VehicleAcceleration.sumOf(vehicleAcceleration, elasticityAcceleration);
         if (acceleration.getX() * oldAcceleration.getX() < 0
                 && Math.abs(acceleration.getX() - oldAcceleration.getX()) > threshold) {
             vehicle.getModel().setUpdated(true);

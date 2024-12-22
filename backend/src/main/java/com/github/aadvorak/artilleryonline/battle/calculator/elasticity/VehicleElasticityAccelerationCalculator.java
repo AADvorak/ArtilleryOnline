@@ -1,0 +1,121 @@
+package com.github.aadvorak.artilleryonline.battle.calculator.elasticity;
+
+import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.CollisionPair;
+import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
+import com.github.aadvorak.artilleryonline.battle.common.Acceleration;
+import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.utils.CollideUtils;
+import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
+import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public class VehicleElasticityAccelerationCalculator {
+
+    public static void calculate(VehicleCalculations vehicle, BattleCalculations battle) {
+        var collisionPairs = getCollisionPairs(vehicle, battle);
+        collisionPairs.forEach(VehicleElasticityAccelerationCalculator::calculateElasticityAcceleration);
+    }
+
+    private static Set<CollisionPair> getCollisionPairs(VehicleCalculations vehicle, BattleCalculations battle) {
+        var collisionPairs = new HashSet<CollisionPair>();
+        var otherVehicles = battle.getVehicles().stream()
+                .filter(value -> value.getModel().getId() != vehicle.getModel().getId())
+                .collect(Collectors.toSet());
+        var wheelRadius = vehicle.getModel().getSpecs().getWheelRadius();
+        var vehicleRadius = vehicle.getModel().getSpecs().getRadius();
+        var position = vehicle.getModel().getState().getPosition();
+        var angle = vehicle.getModel().getState().getAngle();
+        var rightWheelPosition = vehicle.getRightWheel().getPosition();
+        var leftWheelPosition = vehicle.getLeftWheel().getPosition();
+        for (var otherVehicle : otherVehicles) {
+            var otherVehiclePosition = otherVehicle.getModel().getState().getPosition();
+            var otherVehicleAngle = otherVehicle.getModel().getState().getAngle();
+            var otherWheelRadius = otherVehicle.getModel().getSpecs().getWheelRadius();
+            var otherVehicleRadius = otherVehicle.getModel().getSpecs().getRadius();
+
+            if (vehicle.collisionNotCalculated(otherVehicle) && CollideUtils.isVehicleVehicleCollide(position,
+                    otherVehiclePosition, angle, otherVehicleAngle, vehicleRadius, otherVehicleRadius)) {
+                collisionPairs.add(new CollisionPair(vehicle, otherVehicle));
+            }
+            if (otherVehicle.getLeftWheel().getPosition() == null) {
+                otherVehicle.getLeftWheel().setPosition(VehicleUtils.getLeftWheelPosition(otherVehicle.getModel()));
+            }
+            if (otherVehicle.getRightWheel().getPosition() == null) {
+                otherVehicle.getRightWheel().setPosition(VehicleUtils.getRightWheelPosition(otherVehicle.getModel()));
+            }
+            var otherLeftWheelPosition = otherVehicle.getLeftWheel().getPosition();
+            var otherRightWheelPosition = otherVehicle.getRightWheel().getPosition();
+            var otherLeftWheel = otherVehicle.getLeftWheel();
+            var otherRightWheel = otherVehicle.getRightWheel();
+            var minDistanceWheelWheel = wheelRadius + otherWheelRadius;
+            var distanceRightWheelLeftWheel = rightWheelPosition.distanceTo(otherLeftWheelPosition);
+            if (vehicle.getRightWheel().collisionNotCalculated(otherLeftWheel)
+                    && distanceRightWheelLeftWheel < minDistanceWheelWheel) {
+                collisionPairs.add(new CollisionPair(vehicle.getRightWheel(), otherLeftWheel));
+            }
+            var distanceLeftWheelRightWheel = leftWheelPosition.distanceTo(otherRightWheelPosition);
+            if (vehicle.getLeftWheel().collisionNotCalculated(otherRightWheel)
+                    && distanceLeftWheelRightWheel < minDistanceWheelWheel) {
+                collisionPairs.add(new CollisionPair(vehicle.getLeftWheel(), otherRightWheel));
+            }
+            if (vehicle.getRightWheel().collisionNotCalculated(otherVehicle)
+                    && CollideUtils.isWheelVehicleCollide(rightWheelPosition, otherVehiclePosition, otherVehicleAngle,
+                    wheelRadius, otherVehicleRadius)) {
+                collisionPairs.add(new CollisionPair(vehicle.getRightWheel(), otherVehicle));
+            }
+            if (vehicle.collisionNotCalculated(otherRightWheel)
+                    && CollideUtils.isWheelVehicleCollide(otherRightWheelPosition, position, angle,
+                    otherWheelRadius, vehicleRadius)) {
+                collisionPairs.add(new CollisionPair(vehicle, otherRightWheel));
+            }
+            if (vehicle.collisionNotCalculated(otherLeftWheel)
+                    && CollideUtils.isWheelVehicleCollide(otherLeftWheelPosition, position, angle,
+                    otherWheelRadius, vehicleRadius)) {
+                collisionPairs.add(new CollisionPair(vehicle, otherLeftWheel));
+            }
+            if (vehicle.getLeftWheel().collisionNotCalculated(otherVehicle)
+                    && CollideUtils.isWheelVehicleCollide(leftWheelPosition, otherVehiclePosition, otherVehicleAngle,
+                    wheelRadius, otherVehicleRadius)) {
+                collisionPairs.add(new CollisionPair(vehicle.getLeftWheel(), otherVehicle));
+            }
+            var distanceLeftWheelLeftWheel = leftWheelPosition.distanceTo(otherLeftWheelPosition);
+            if (vehicle.getLeftWheel().collisionNotCalculated(otherLeftWheel)
+                    && distanceLeftWheelLeftWheel < minDistanceWheelWheel) {
+                collisionPairs.add(new CollisionPair(vehicle.getLeftWheel(), otherLeftWheel));
+            }
+            var distanceRightWheelRightWheel = rightWheelPosition.distanceTo(otherRightWheelPosition);
+            if (vehicle.getRightWheel().collisionNotCalculated(otherRightWheel)
+                    && distanceRightWheelRightWheel < minDistanceWheelWheel) {
+                collisionPairs.add(new CollisionPair(vehicle.getRightWheel(), otherRightWheel));
+            }
+        }
+        return collisionPairs;
+    }
+
+    private static void calculateElasticityAcceleration(CollisionPair collisionPair) {
+        var coefficient = 100.0;
+        var collisionAngle = getCollisionAngle(collisionPair.first().getPosition(), collisionPair.second().getPosition());
+
+        // todo masses
+        var firstAcceleration = new Acceleration()
+                .setX(VectorUtils.getComponentX(coefficient, 0.0, collisionAngle))
+                .setY(VectorUtils.getComponentY(coefficient, 0.0, collisionAngle));
+        var secondAcceleration = new Acceleration()
+                .setX(VectorUtils.getComponentX(-coefficient, 0.0, collisionAngle))
+                .setY(VectorUtils.getComponentY(-coefficient, 0.0, collisionAngle));
+
+        collisionPair.first().getVehicleElasticityAcceleration().add(firstAcceleration);
+        collisionPair.second().getVehicleElasticityAcceleration().add(secondAcceleration);
+        collisionPair.first().addVehicleCollision(collisionPair.second());
+        collisionPair.second().addVehicleCollision(collisionPair.first());
+    }
+
+    private static double getCollisionAngle(Position position, Position otherPosition) {
+        return Math.asin((position.getY() - otherPosition.getY())
+                / position.distanceTo(otherPosition)) - Math.PI / 2;
+    }
+}

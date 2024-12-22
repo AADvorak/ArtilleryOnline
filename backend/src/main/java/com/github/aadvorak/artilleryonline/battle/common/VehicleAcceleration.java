@@ -26,4 +26,19 @@ public class VehicleAcceleration {
         y = acceleration.getY();
         return this;
     }
+
+    public static VehicleAcceleration sumOf(VehicleAcceleration... accelerations) {
+        var sumX = 0.0;
+        var sumY = 0.0;
+        var sumAngle = 0.0;
+        for (var acceleration : accelerations) {
+            sumX += acceleration.getX();
+            sumY += acceleration.getY();
+            sumAngle += acceleration.getAngle();
+        }
+        return new VehicleAcceleration()
+                .setX(sumX)
+                .setY(sumY)
+                .setAngle(sumAngle);
+    }
 }

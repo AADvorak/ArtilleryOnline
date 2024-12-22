@@ -7,10 +7,13 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @Accessors(chain = true)
-public class WheelCalculations {
+public class WheelCalculations implements Calculations {
 
     private WheelSign sign;
 
@@ -40,6 +43,14 @@ public class WheelCalculations {
 
     private Acceleration sumAcceleration;
 
+    private Acceleration vehicleElasticityAcceleration = new Acceleration();
+
+    private Acceleration groundElasticityAcceleration = new Acceleration();
+
+    private Acceleration sumElasticityAcceleration;
+
+    private Set<Calculations> vehicleCollisions = new HashSet<>();
+
     public Acceleration getSumAcceleration() {
         if (sumAcceleration == null) {
             sumAcceleration = Acceleration.sumOf(
@@ -51,5 +62,15 @@ public class WheelCalculations {
             );
         }
         return sumAcceleration;
+    }
+
+    public Acceleration getSumElasticityAcceleration() {
+        if (sumElasticityAcceleration == null) {
+            sumElasticityAcceleration = Acceleration.sumOf(
+                    vehicleElasticityAcceleration,
+                    groundElasticityAcceleration
+            );
+        }
+        return sumElasticityAcceleration;
     }
 }
