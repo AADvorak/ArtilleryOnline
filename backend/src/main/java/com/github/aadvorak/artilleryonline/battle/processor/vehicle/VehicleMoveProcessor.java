@@ -9,19 +9,19 @@ import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.calculator.VehicleAccelerationCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.VehicleAcceleration;
 import com.github.aadvorak.artilleryonline.battle.events.VehicleCollideEvent;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 public class VehicleMoveProcessor {
 
-    private static final boolean ELASTICITY = true;
-
-    public static void processStep1(VehicleCalculations vehicle, BattleCalculations battle) {
-        recalculateAcceleration(vehicle, battle);
+    public static void processStep1(VehicleCalculations vehicle, BattleCalculations battle, String collisionMode) {
+        recalculateAcceleration(vehicle, battle, collisionMode);
         recalculateVelocity(vehicle, battle);
         calculateNextPositionAndAngle(vehicle, battle);
     }
 
-    public static void processStep2(VehicleCalculations vehicle, BattleCalculations battle) {
-        if (ELASTICITY) {
+    public static void processStep2(VehicleCalculations vehicle, BattleCalculations battle, String collisionMode) {
+        if (getCollisionMode(collisionMode).equals(CollisionMode.ELASTICITY)) {
             applyNextPositionAndAngle(vehicle);
         } else {
             if (processCollisions(vehicle, battle)) {
@@ -40,11 +40,11 @@ public class VehicleMoveProcessor {
         calculateOnGround(vehicle);
     }
 
-    private static void recalculateAcceleration(VehicleCalculations vehicle, BattleCalculations battle) {
+    private static void recalculateAcceleration(VehicleCalculations vehicle, BattleCalculations battle, String collisionMode) {
         var threshold = 0.3;
         var oldAcceleration = vehicle.getModel().getState().getAcceleration();
         var vehicleAcceleration = VehicleAccelerationCalculator.getVehicleAcceleration(vehicle, battle.getModel().getRoom());
-        var elasticityAcceleration = ELASTICITY
+        var elasticityAcceleration = getCollisionMode(collisionMode).equals(CollisionMode.ELASTICITY)
                 ? ElasticityAccelerationCalculator.getElasticityAcceleration(vehicle, battle)
                 : new VehicleAcceleration();
         var acceleration = VehicleAcceleration.sumOf(vehicleAcceleration, elasticityAcceleration);
@@ -115,5 +115,21 @@ public class VehicleMoveProcessor {
             state.setOnGround(onGround);
             vehicle.getModel().setUpdated(true);
         }
+    }
+
+    private static CollisionMode getCollisionMode(String name) {
+        if (CollisionMode.ELASTICITY.getName().equals(name)) {
+            return CollisionMode.ELASTICITY;
+        }
+        return CollisionMode.IMPACT;
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    private enum CollisionMode {
+        ELASTICITY("elasticity"),
+        IMPACT("impact");
+
+        private final String name;
     }
 }

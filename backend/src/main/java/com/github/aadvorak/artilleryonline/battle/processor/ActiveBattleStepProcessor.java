@@ -8,10 +8,17 @@ import com.github.aadvorak.artilleryonline.battle.processor.command.CommandProce
 import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.shell.ShellFlyProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.*;
+import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
+@Component
+@RequiredArgsConstructor
 public class ActiveBattleStepProcessor extends BattleStepProcessorBase implements BattleStepProcessor {
+
+    private final ApplicationSettings applicationSettings;
 
     @Override
     protected void doStepLogic(Battle battle) {
@@ -31,11 +38,13 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
             VehicleGunRotateProcessor.processStep(vehicleModel, battleModel);
             VehicleTrackProcessor.processStep(vehicleModel, battleModel);
             VehicleJetProcessor.processStep(vehicleModel, battleModel);
-            VehicleMoveProcessor.processStep1(vehicleCalculations, battleCalculations);
+            VehicleMoveProcessor.processStep1(vehicleCalculations, battleCalculations,
+                    applicationSettings.getCollisionMode());
         });
 
         battleCalculations.getVehicles().forEach(vehicleCalculations ->
-                VehicleMoveProcessor.processStep2(vehicleCalculations, battleCalculations));
+                VehicleMoveProcessor.processStep2(vehicleCalculations, battleCalculations,
+                        applicationSettings.getCollisionMode()));
 
         battleModel.getExplosions().values().forEach(explosionModel ->
                 ExplosionProcessor.processStep(explosionModel, battleModel));

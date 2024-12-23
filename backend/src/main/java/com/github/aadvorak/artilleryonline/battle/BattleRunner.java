@@ -41,8 +41,9 @@ public class BattleRunner {
 
     private final BattleHistoryService battleHistoryService;
 
-    private final WaitingBattleStepProcessor waitingBattleStepProcessor = new WaitingBattleStepProcessor();
-    private final ActiveBattleStepProcessor activeBattleStepProcessor = new ActiveBattleStepProcessor();
+    private final WaitingBattleStepProcessor waitingBattleStepProcessor;
+
+    private final ActiveBattleStepProcessor activeBattleStepProcessor;
 
     private final ModelMapper mapper = new ModelMapper();
 
