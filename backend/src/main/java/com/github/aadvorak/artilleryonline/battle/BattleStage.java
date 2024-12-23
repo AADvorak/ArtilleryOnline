@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 public enum BattleStage {
     WAITING(5 * 1000),
     ACTIVE(5 * 60 * 1000),
-    FINISHED(0);
+    FINISHED(0),
+    ERROR(0);
 
     private final long maxTime;
 }

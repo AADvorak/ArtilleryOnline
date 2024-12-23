@@ -49,26 +49,33 @@ public class BattleRunner {
     public void runBattle(Battle battle) {
         startUpdatesSender(battle);
         new Thread(() -> {
-            while (!BattleStage.FINISHED.equals(battle.getBattleStage())
-                    && !battle.getActiveUserIds().isEmpty()) {
-                try {
-                    Thread.sleep(Battle.TIME_STEP_MS);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+            try {
+                while (!BattleStage.FINISHED.equals(battle.getBattleStage())
+                        && !battle.getActiveUserIds().isEmpty()) {
+                    try {
+                        Thread.sleep(Battle.TIME_STEP_MS);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    battle.getModel().setUpdates(new BattleModelUpdates());
+                    battle.getModel().setEvents(new BattleModelEvents());
+                    processBattleStep(battle);
+                    setBattleUpdatedByTimeout(battle);
+                    sendBattleToUpdatesQueue(battle);
+                    resetUpdatedFlags(battle);
                 }
-                battle.getModel().setUpdates(new BattleModelUpdates());
-                battle.getModel().setEvents(new BattleModelEvents());
-                processBattleStep(battle);
-                setBattleUpdatedByTimeout(battle);
+                writeBattleToHistory(battle);
+                createBattleFinishedMessages(battle);
+                log.info("Battle finished: {}, map size {}", battle.getId(), userBattleMap.size());
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                battle.setBattleStage(BattleStage.ERROR);
                 sendBattleToUpdatesQueue(battle);
-                resetUpdatedFlags(battle);
+            } finally {
+                stopUpdatesSender(battle);
+                removeBattleFromMap(battle);
+                removeBattleFromRoom(battle);
             }
-            stopUpdatesSender(battle);
-            removeBattleFromMap(battle);
-            removeBattleFromRoom(battle);
-            createBattleFinishedMessages(battle);
-            writeBattleToHistory(battle);
-            log.info("Battle finished: {}, map size {}", battle.getId(), userBattleMap.size());
         }).start();
     }
 

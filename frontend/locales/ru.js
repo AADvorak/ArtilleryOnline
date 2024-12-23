@@ -18,6 +18,7 @@ import {roomInvitationCard} from "~/locales/ru/room-invitation-card.js";
 import {leaveBattleDialog} from "~/locales/ru/leave-battle-dialog.js";
 import {serverMessages} from "~/locales/ru/server-messages.js";
 import {validationMessages} from "~/locales/ru/validation-messages.js";
+import {finishBattleDialog} from "~/locales/ru/finish-battle-dialog.js";
 
 export const ru = {
   menu,
@@ -36,10 +37,7 @@ export const ru = {
     reload: 'Перезагрузить страницу'
   },
   controls,
-  finishBattleDialog: {
-    title: 'Конец боя',
-    message: 'Бой завершился'
-  },
+  finishBattleDialog,
   jetBar: {
     title: 'Джетпак'
   },

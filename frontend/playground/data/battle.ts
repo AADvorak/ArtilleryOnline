@@ -6,7 +6,8 @@ import type {BattleModelEvents} from "~/playground/data/events";
 export enum BattleStage {
   WAITING = 'WAITING',
   ACTIVE = 'ACTIVE',
-  FINISHED = 'FINISHED'
+  FINISHED = 'FINISHED',
+  ERROR = 'ERROR'
 }
 
 export enum BattleType {

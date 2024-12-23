@@ -18,6 +18,7 @@ import {roomInvitationCard} from "~/locales/en/room-invitation-card.js";
 import {leaveBattleDialog} from "~/locales/en/leave-battle-dialog.js";
 import {serverMessages} from "~/locales/en/server-messages.js";
 import {validationMessages} from "~/locales/en/validation-messages.js";
+import {finishBattleDialog} from "~/locales/en/finish-battle-dialog.js";
 
 export const en = {
   menu,
@@ -36,10 +37,7 @@ export const en = {
     reload: 'Reload page'
   },
   controls,
-  finishBattleDialog: {
-    title: 'End of the battle',
-    message: 'The battle has finished'
-  },
+  finishBattleDialog,
   jetBar: {
     title: 'Jet'
   },
