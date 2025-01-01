@@ -51,6 +51,8 @@ public class WheelCalculations implements Calculations {
 
     private Set<Calculations> vehicleCollisions = new HashSet<>();
 
+    private Next next = new Next();
+
     public Acceleration getSumAcceleration() {
         if (sumAcceleration == null) {
             sumAcceleration = Acceleration.sumOf(
@@ -72,5 +74,15 @@ public class WheelCalculations implements Calculations {
             );
         }
         return sumElasticityAcceleration;
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    public static final class Next {
+
+        private Position position;
+
+        private Position nearestGroundPointByX;
     }
 }
