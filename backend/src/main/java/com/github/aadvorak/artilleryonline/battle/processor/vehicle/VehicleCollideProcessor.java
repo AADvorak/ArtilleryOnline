@@ -7,7 +7,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.CollideObject;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
-import com.github.aadvorak.artilleryonline.battle.utils.CollideUtils;
+import com.github.aadvorak.artilleryonline.battle.utils.InterpenetrationUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
@@ -39,55 +39,70 @@ public class VehicleCollideProcessor {
                 .collect(Collectors.toSet());
         var wheelRadius = vehicle.getModel().getSpecs().getWheelRadius();
         var vehicleRadius = vehicle.getModel().getSpecs().getRadius();
-        var nextPosition = vehicle.getNextPosition();
-        var nextAngle = vehicle.getNextAngle();
+        var position = vehicle.getNextPosition();
+        var angle = vehicle.getNextAngle();
         var rightWheelPosition = VehicleUtils.getNextRightWheelPosition(vehicle);
         var leftWheelPosition = VehicleUtils.getNextLeftWheelPosition(vehicle);
         for (var otherVehicle : otherVehicles) {
-            var otherVehiclePosition = otherVehicle.getNextPosition();
-            var otherVehicleAngle = otherVehicle.getNextAngle();
-            var otherWheelRadius = otherVehicle.getModel().getSpecs().getWheelRadius();
+            var otherPosition = otherVehicle.getNextPosition();
+            var otherAngle = otherVehicle.getNextAngle();
             var otherVehicleRadius = otherVehicle.getModel().getSpecs().getRadius();
-            var minDistanceWheelWheel = wheelRadius + otherWheelRadius;
-            if (CollideUtils.isVehicleVehicleCollide(nextPosition, otherVehiclePosition, nextAngle,
-                    otherVehicleAngle, vehicleRadius, otherVehicleRadius)) {
-                return new CollisionData(otherVehicle, null, null);
+            var vehicleVehicleInterpenetration = InterpenetrationUtils.getVehicleVehicleInterpenetration(position,
+                    otherPosition, angle, otherAngle, vehicleRadius, otherVehicleRadius);
+            if (vehicleVehicleInterpenetration > 0) {
+                return new CollisionData(otherVehicle, null, null, vehicleVehicleInterpenetration);
             }
+            var otherWheelRadius = otherVehicle.getModel().getSpecs().getWheelRadius();
             var otherLeftWheelPosition = VehicleUtils.getNextLeftWheelPosition(otherVehicle);
             var otherRightWheelPosition = VehicleUtils.getNextRightWheelPosition(otherVehicle);
             var otherLeftWheel = otherVehicle.getLeftWheel();
             var otherRightWheel = otherVehicle.getRightWheel();
-            var distanceRightWheelLeftWheel = rightWheelPosition.distanceTo(otherLeftWheelPosition);
-            if (distanceRightWheelLeftWheel < minDistanceWheelWheel) {
-                return new CollisionData(otherVehicle, vehicle.getRightWheel(), otherLeftWheel);
+            var rightWheelLeftWheelInterpenetration = InterpenetrationUtils.getWheelWheelInterpenetration(rightWheelPosition,
+                    otherLeftWheelPosition, wheelRadius, otherWheelRadius);
+            if (rightWheelLeftWheelInterpenetration > 0) {
+                return new CollisionData(otherVehicle, vehicle.getRightWheel(), otherLeftWheel,
+                        rightWheelLeftWheelInterpenetration);
             }
-            var distanceLeftWheelRightWheel = leftWheelPosition.distanceTo(otherRightWheelPosition);
-            if (distanceLeftWheelRightWheel < minDistanceWheelWheel) {
-                return new CollisionData(otherVehicle, vehicle.getLeftWheel(), otherRightWheel);
+            var leftWheelRightWheelInterpenetration = InterpenetrationUtils.getWheelWheelInterpenetration(leftWheelPosition,
+                    otherRightWheelPosition, wheelRadius, otherWheelRadius);
+            if (leftWheelRightWheelInterpenetration > 0) {
+                return new CollisionData(otherVehicle, vehicle.getLeftWheel(), otherRightWheel,
+                        leftWheelRightWheelInterpenetration);
             }
-            if (CollideUtils.isWheelVehicleCollide(rightWheelPosition, otherVehiclePosition, otherVehicleAngle,
-                    wheelRadius, otherVehicleRadius)) {
-                return new CollisionData(otherVehicle, vehicle.getRightWheel(), null);
+            var rightWheelVehicleInterpenetration = InterpenetrationUtils.getWheelVehicleInterpenetration(rightWheelPosition,
+                    otherPosition, otherAngle, wheelRadius, otherVehicleRadius);
+            if (rightWheelVehicleInterpenetration > 0) {
+                return new CollisionData(otherVehicle, vehicle.getRightWheel(), null,
+                        rightWheelVehicleInterpenetration);
             }
-            if (CollideUtils.isWheelVehicleCollide(otherRightWheelPosition, nextPosition, nextAngle,
-                    otherWheelRadius, vehicleRadius)) {
-                return new CollisionData(otherVehicle, null, otherRightWheel);
+            var vehicleRightWheelInterpenetration = InterpenetrationUtils.getWheelVehicleInterpenetration(
+                    otherRightWheelPosition, position, angle, otherWheelRadius, vehicleRadius);
+            if (vehicleRightWheelInterpenetration > 0) {
+                return new CollisionData(otherVehicle, null, otherRightWheel,
+                        vehicleRightWheelInterpenetration);
             }
-            if (CollideUtils.isWheelVehicleCollide(otherLeftWheelPosition, nextPosition, nextAngle,
-                    otherWheelRadius, vehicleRadius)) {
-                return new CollisionData(otherVehicle, null, otherLeftWheel);
+            var vehicleLeftWheelInterpenetration = InterpenetrationUtils.getWheelVehicleInterpenetration(otherLeftWheelPosition,
+                    position, angle, otherWheelRadius, vehicleRadius);
+            if (vehicleLeftWheelInterpenetration > 0) {
+                return new CollisionData(otherVehicle, null, otherLeftWheel, vehicleLeftWheelInterpenetration);
             }
-            if (CollideUtils.isWheelVehicleCollide(leftWheelPosition, otherVehiclePosition, otherVehicleAngle,
-                    wheelRadius, otherVehicleRadius)) {
-                return new CollisionData(otherVehicle, vehicle.getLeftWheel(), null);
+            var leftWheelVehicleInterpenetration = InterpenetrationUtils.getWheelVehicleInterpenetration(leftWheelPosition,
+                    otherPosition, otherAngle, wheelRadius, otherVehicleRadius);
+            if (leftWheelVehicleInterpenetration > 0) {
+                return new CollisionData(otherVehicle, vehicle.getLeftWheel(), null,
+                        leftWheelVehicleInterpenetration);
             }
-            var distanceLeftWheelLeftWheel = leftWheelPosition.distanceTo(otherLeftWheelPosition);
-            if (distanceLeftWheelLeftWheel < minDistanceWheelWheel) {
-                return new CollisionData(otherVehicle, vehicle.getLeftWheel(), otherLeftWheel);
+            var leftWheelLeftWheelInterpenetration = InterpenetrationUtils.getWheelWheelInterpenetration(leftWheelPosition,
+                    otherLeftWheelPosition, wheelRadius, otherWheelRadius);
+            if (leftWheelLeftWheelInterpenetration > 0) {
+                return new CollisionData(otherVehicle, vehicle.getLeftWheel(), otherLeftWheel,
+                        leftWheelLeftWheelInterpenetration);
             }
-            var distanceRightWheelRightWheel = rightWheelPosition.distanceTo(otherRightWheelPosition);
-            if (distanceRightWheelRightWheel < minDistanceWheelWheel) {
-                return new CollisionData(otherVehicle, vehicle.getRightWheel(), otherRightWheel);
+            var rightWheelRightWheelInterpenetration = InterpenetrationUtils.getWheelWheelInterpenetration(rightWheelPosition,
+                    otherRightWheelPosition, wheelRadius, otherWheelRadius);
+            if (rightWheelRightWheelInterpenetration > 0) {
+                return new CollisionData(otherVehicle, vehicle.getRightWheel(), otherRightWheel,
+                        rightWheelRightWheelInterpenetration);
             }
         }
         return null;
@@ -266,7 +281,8 @@ public class VehicleCollideProcessor {
     private record CollisionData(
             VehicleCalculations otherVehicle,
             WheelCalculations wheel,
-            WheelCalculations otherWheel
+            WheelCalculations otherWheel,
+            double interpenetration
     ) {
     }
 }

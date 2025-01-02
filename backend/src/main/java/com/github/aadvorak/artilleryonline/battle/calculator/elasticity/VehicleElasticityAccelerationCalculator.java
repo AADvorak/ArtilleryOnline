@@ -5,7 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.CollisionPair;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Acceleration;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
-import com.github.aadvorak.artilleryonline.battle.utils.CollideUtils;
+import com.github.aadvorak.artilleryonline.battle.utils.InterpenetrationUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
@@ -37,8 +37,8 @@ public class VehicleElasticityAccelerationCalculator {
             var otherWheelRadius = otherVehicle.getModel().getSpecs().getWheelRadius();
             var otherVehicleRadius = otherVehicle.getModel().getSpecs().getRadius();
 
-            if (vehicle.collisionNotCalculated(otherVehicle) && CollideUtils.isVehicleVehicleCollide(position,
-                    otherVehiclePosition, angle, otherVehicleAngle, vehicleRadius, otherVehicleRadius)) {
+            if (vehicle.collisionNotCalculated(otherVehicle) && InterpenetrationUtils.getVehicleVehicleInterpenetration(position,
+                    otherVehiclePosition, angle, otherVehicleAngle, vehicleRadius, otherVehicleRadius) > 0) {
                 collisionPairs.add(new CollisionPair(vehicle, otherVehicle));
             }
             if (otherVehicle.getLeftWheel().getPosition() == null) {
@@ -63,23 +63,23 @@ public class VehicleElasticityAccelerationCalculator {
                 collisionPairs.add(new CollisionPair(vehicle.getLeftWheel(), otherRightWheel));
             }
             if (vehicle.getRightWheel().collisionNotCalculated(otherVehicle)
-                    && CollideUtils.isWheelVehicleCollide(rightWheelPosition, otherVehiclePosition, otherVehicleAngle,
-                    wheelRadius, otherVehicleRadius)) {
+                    && InterpenetrationUtils.getWheelVehicleInterpenetration(rightWheelPosition, otherVehiclePosition, otherVehicleAngle,
+                    wheelRadius, otherVehicleRadius) > 0) {
                 collisionPairs.add(new CollisionPair(vehicle.getRightWheel(), otherVehicle));
             }
             if (vehicle.collisionNotCalculated(otherRightWheel)
-                    && CollideUtils.isWheelVehicleCollide(otherRightWheelPosition, position, angle,
-                    otherWheelRadius, vehicleRadius)) {
+                    && InterpenetrationUtils.getWheelVehicleInterpenetration(otherRightWheelPosition, position, angle,
+                    otherWheelRadius, vehicleRadius) > 0) {
                 collisionPairs.add(new CollisionPair(vehicle, otherRightWheel));
             }
             if (vehicle.collisionNotCalculated(otherLeftWheel)
-                    && CollideUtils.isWheelVehicleCollide(otherLeftWheelPosition, position, angle,
-                    otherWheelRadius, vehicleRadius)) {
+                    && InterpenetrationUtils.getWheelVehicleInterpenetration(otherLeftWheelPosition, position, angle,
+                    otherWheelRadius, vehicleRadius) > 0) {
                 collisionPairs.add(new CollisionPair(vehicle, otherLeftWheel));
             }
             if (vehicle.getLeftWheel().collisionNotCalculated(otherVehicle)
-                    && CollideUtils.isWheelVehicleCollide(leftWheelPosition, otherVehiclePosition, otherVehicleAngle,
-                    wheelRadius, otherVehicleRadius)) {
+                    && InterpenetrationUtils.getWheelVehicleInterpenetration(leftWheelPosition, otherVehiclePosition, otherVehicleAngle,
+                    wheelRadius, otherVehicleRadius) > 0) {
                 collisionPairs.add(new CollisionPair(vehicle.getLeftWheel(), otherVehicle));
             }
             var distanceLeftWheelLeftWheel = leftWheelPosition.distanceTo(otherLeftWheelPosition);

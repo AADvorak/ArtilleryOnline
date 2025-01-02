@@ -7,6 +7,49 @@ import java.util.stream.Collectors;
 
 public class GeometryUtils {
 
+    public static double getCirclesInterpenetration(
+            Position center1, Position center2,
+            double radius1, double radius2
+    ) {
+        var distance = center1.distanceTo(center2);
+        var minDistance = radius1 + radius2;
+        return distance < minDistance ? minDistance - distance : 0.0;
+    }
+
+    public static double getSegmentAndCircleInterpenetration(Segment segment, Position center, double radius) {
+        var distance = getDistanceFromPointToSegment(center, segment);
+        return distance < radius ? radius - distance : 0.0;
+    }
+
+    public static double getDistanceFromPointToSegment(Position point, Segment segment) {
+        var A = point.getX() - segment.begin().getX();
+        var B = point.getY() - segment.begin().getY();
+        var C = segment.end().getX() - segment.begin().getX();
+        var D = segment.end().getY() - segment.begin().getY();
+
+        var dot = A * C + B * D;
+        var squareLength = C * C + D * D;
+        var param =  squareLength != 0 ? dot / squareLength : -1.0;
+
+        var xx = 0.0;
+        var yy = 0.0;
+
+        if (param < 0) {
+            xx = segment.begin().getX();
+            yy = segment.begin().getY();
+        } else if (param > 1) {
+            xx = segment.end().getX();
+            yy = segment.end().getY();
+        } else {
+            xx = segment.begin().getX() + param * C;
+            yy = segment.begin().getY() + param * D;
+        }
+
+        var dx = point.getX() - xx;
+        var dy = point.getY() - yy;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
     public static double getPointAngleInCircle(Position center, Position point) {
         var angle = Math.atan((point.getY() - center.getY()) / (point.getX() - center.getX()));
         if (point.getX() > center.getX()) {

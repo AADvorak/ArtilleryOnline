@@ -2,29 +2,40 @@ package com.github.aadvorak.artilleryonline.battle.utils;
 
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 
-public class CollideUtils {
+public class InterpenetrationUtils {
 
-    public static boolean isWheelVehicleCollide(
+    public static double getWheelWheelInterpenetration(
+            Position position1, Position position2,
+            double radius1, double radius2
+    ) {
+        return GeometryUtils.getCirclesInterpenetration(position1, position2, radius1, radius2);
+    }
+
+    public static double getWheelVehicleInterpenetration(
             Position wheelPosition, Position vehiclePosition,
             double vehicleAngle,
             double wheelRadius, double vehicleRadius
     ) {
         if (wheelPosition.distanceTo(vehiclePosition) > vehicleRadius + wheelRadius) {
-            return false;
+            return 0.0;
         }
         var intersectionPoints = GeometryUtils.getCirclesIntersectionPoints(wheelPosition, vehiclePosition,
                 wheelRadius, vehicleRadius);
         for (var intersectionPoint : intersectionPoints) {
             var pointAngle = GeometryUtils.getPointAngleInCircle(vehiclePosition, intersectionPoint);
             if (pointAngle > vehicleAngle && pointAngle < vehicleAngle + Math.PI) {
-                return true;
+                return GeometryUtils.getCirclesInterpenetration(wheelPosition, vehiclePosition,
+                        wheelRadius, vehicleRadius);
             }
         }
         var bottom = getVehicleBottom(vehiclePosition, vehicleAngle, vehicleRadius);
-        return !GeometryUtils.getSegmentAndCircleIntersectionPoints(bottom, wheelPosition, wheelRadius).isEmpty();
+        if (!GeometryUtils.getSegmentAndCircleIntersectionPoints(bottom, wheelPosition, wheelRadius).isEmpty()) {
+            return GeometryUtils.getSegmentAndCircleInterpenetration(bottom, wheelPosition, wheelRadius);
+        }
+        return 0.0;
     }
 
-    public static boolean isVehicleVehicleCollide(
+    public static double getVehicleVehicleInterpenetration(
             Position position1, Position position2,
             double angle1, double angle2,
             double radius1, double radius2
@@ -35,11 +46,18 @@ public class CollideUtils {
             var pointAngle2 = GeometryUtils.getPointAngleInCircle(position2, intersectionPoint);
             if (pointAngle1 > angle1 && pointAngle2 > angle2
                     && pointAngle1 < angle1 + Math.PI && pointAngle2 < angle2 + Math.PI) {
-                return true;
+                return GeometryUtils.getCirclesInterpenetration(position1, position2, radius1, radius2);
             }
         }
-        return isVehicleBottomAndOtherVehicleTopCollide(position1, position2, angle1, angle2, radius1, radius2)
-                || isVehicleBottomAndOtherVehicleTopCollide(position2, position1, angle2, angle1, radius2, radius1);
+        var bottom1 = getVehicleBottom(position1, angle1, radius1);
+        if (isVehicleBottomAndOtherVehicleTopCollide(bottom1, position2, angle2, radius2)) {
+            return GeometryUtils.getSegmentAndCircleInterpenetration(bottom1, position2, radius2);
+        }
+        var bottom2 = getVehicleBottom(position2, angle2, radius2);
+        if (isVehicleBottomAndOtherVehicleTopCollide(bottom2, position1, angle1, radius1)) {
+            return GeometryUtils.getSegmentAndCircleInterpenetration(bottom2, position1, radius1);
+        }
+        return 0.0;
     }
 
     private static Segment getVehicleBottom(Position position, double angle, double radius) {
@@ -54,11 +72,9 @@ public class CollideUtils {
     }
 
     private static boolean isVehicleBottomAndOtherVehicleTopCollide(
-            Position position, Position otherPosition,
-            double angle, double otherAngle,
-            double radius, double otherRadius
+            Segment bottom, Position otherPosition,
+            double otherAngle, double otherRadius
     ) {
-        var bottom = getVehicleBottom(position, angle, radius);
         var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(bottom, otherPosition, otherRadius);
         for (var intersectionPoint : intersectionPoints) {
             var pointAngle = GeometryUtils.getPointAngleInCircle(otherPosition, intersectionPoint);
