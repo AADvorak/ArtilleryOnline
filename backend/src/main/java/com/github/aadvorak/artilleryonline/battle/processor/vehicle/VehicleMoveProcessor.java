@@ -13,13 +13,13 @@ public class VehicleMoveProcessor {
 
     public static void processStep1(VehicleCalculations vehicle, BattleCalculations battle, String collisionMode) {
         recalculateAcceleration(vehicle, battle, collisionMode);
-        recalculateVelocity(vehicle, battle);
         VehicleUtils.calculateNextPositionAndAngle(vehicle, battle);
     }
 
-    public static void processStep2(VehicleCalculations vehicle, String collisionMode) {
+    public static void processStep2(VehicleCalculations vehicle, BattleCalculations battle, String collisionMode) {
         if (CollisionMode.getCollisionMode(collisionMode).equals(CollisionMode.ELASTICITY) || !vehicle.isHasCollisions()) {
             applyNextPositionAndAngle(vehicle);
+            recalculateVelocity(vehicle, battle);
         }
         calculateOnGround(vehicle);
     }
