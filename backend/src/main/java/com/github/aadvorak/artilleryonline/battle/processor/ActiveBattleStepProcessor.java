@@ -9,6 +9,7 @@ import com.github.aadvorak.artilleryonline.battle.processor.command.CommandProce
 import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.shell.ShellFlyProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.*;
+import com.github.aadvorak.artilleryonline.battle.processor.vehicle.collisions.CollisionsProcessor;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
