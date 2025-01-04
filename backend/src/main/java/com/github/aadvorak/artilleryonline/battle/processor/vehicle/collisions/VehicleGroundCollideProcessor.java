@@ -68,10 +68,9 @@ public class VehicleGroundCollideProcessor {
 
         var groundAngle = wheelCalculations.getGroundAngle();
         var wheelVelocity = wheelCalculations.getVelocity();
-        var velocityVerticalProjection = VectorUtils.getVerticalProjection(wheelVelocity, groundAngle);
+        var velocityVerticalProjection = - 0.5 * VectorUtils.getVerticalProjection(wheelVelocity, groundAngle);
         var velocityHorizontalProjection = VectorUtils.getHorizontalProjection(wheelVelocity, groundAngle);
 
-        velocityVerticalProjection = - velocityVerticalProjection;
         wheelVelocity.setX(VectorUtils.getComponentX(velocityVerticalProjection, velocityHorizontalProjection, groundAngle));
         wheelVelocity.setY(VectorUtils.getComponentY(velocityVerticalProjection, velocityHorizontalProjection, groundAngle));
 
