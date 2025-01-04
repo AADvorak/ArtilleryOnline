@@ -36,6 +36,8 @@ public class VehicleCalculations implements Calculations {
 
     private WheelCalculations leftWheel = new WheelCalculations().setSign(WheelSign.LEFT);
 
+    private boolean hasCollisions = false;
+
     @Override
     public Position getPosition() {
         return model.getState().getPosition();

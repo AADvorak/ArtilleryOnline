@@ -4,38 +4,22 @@ import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculation
 import com.github.aadvorak.artilleryonline.battle.calculator.elasticity.ElasticityAccelerationCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelGroundState;
-import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
-import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.CollisionMode;
 import com.github.aadvorak.artilleryonline.battle.calculator.VehicleAccelerationCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.VehicleAcceleration;
-import com.github.aadvorak.artilleryonline.battle.events.VehicleCollideEvent;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 public class VehicleMoveProcessor {
 
     public static void processStep1(VehicleCalculations vehicle, BattleCalculations battle, String collisionMode) {
         recalculateAcceleration(vehicle, battle, collisionMode);
         recalculateVelocity(vehicle, battle);
-        calculateNextPositionAndAngle(vehicle, battle);
+        VehicleUtils.calculateNextPositionAndAngle(vehicle, battle);
     }
 
-    public static void processStep2(VehicleCalculations vehicle, BattleCalculations battle, String collisionMode) {
-        if (getCollisionMode(collisionMode).equals(CollisionMode.ELASTICITY)) {
+    public static void processStep2(VehicleCalculations vehicle, String collisionMode) {
+        if (CollisionMode.getCollisionMode(collisionMode).equals(CollisionMode.ELASTICITY) || !vehicle.isHasCollisions()) {
             applyNextPositionAndAngle(vehicle);
-        } else {
-            if (processCollisions(vehicle, battle)) {
-                calculateNextPositionAndAngle(vehicle, battle);
-            }
-            if (vehicle.getCollisions().isEmpty()) {
-                applyNextPositionAndAngle(vehicle);
-            } else if (checkCollisionsResolved(vehicle, battle)) {
-                vehicle.getCollisions().forEach(collideObject ->
-                        battle.getModel().getEvents().addCollide(new VehicleCollideEvent()
-                                .setVehicleId(vehicle.getModel().getId())
-                                .setObject(collideObject)));
-                applyNextPositionAndAngle(vehicle);
-            }
         }
         calculateOnGround(vehicle);
     }
@@ -44,7 +28,7 @@ public class VehicleMoveProcessor {
         var threshold = 0.3;
         var oldAcceleration = vehicle.getModel().getState().getAcceleration();
         var vehicleAcceleration = VehicleAccelerationCalculator.getVehicleAcceleration(vehicle, battle.getModel().getRoom());
-        var elasticityAcceleration = getCollisionMode(collisionMode).equals(CollisionMode.ELASTICITY)
+        var elasticityAcceleration = CollisionMode.getCollisionMode(collisionMode).equals(CollisionMode.ELASTICITY)
                 ? ElasticityAccelerationCalculator.getElasticityAcceleration(vehicle, battle)
                 : new VehicleAcceleration();
         var acceleration = VehicleAcceleration.sumOf(vehicleAcceleration, elasticityAcceleration);
@@ -64,47 +48,9 @@ public class VehicleMoveProcessor {
         vehicleVelocity.setAngle(vehicleVelocity.getAngle() + acceleration.getAngle() * timeStep);
     }
 
-    private static boolean processCollisions(VehicleCalculations vehicle, BattleCalculations battle) {
-        if (VehicleWallCollideProcessor.processCollide(vehicle, battle)) {
-            return true;
-        }
-        if (VehicleGroundCollideProcessor.processCollide(vehicle, battle)) {
-            return true;
-        }
-        if (vehicle.getCollisions().stream()
-                .anyMatch(collideObject -> CollideObjectType.VEHICLE.equals(collideObject.getType()))) {
-            return true;
-        }
-        return VehicleCollideProcessor.processCollide(vehicle, battle);
-    }
-
-    private static boolean checkCollisionsResolved(VehicleCalculations vehicle, BattleCalculations battle) {
-        return VehicleWallCollideProcessor.checkResolved(vehicle, battle)
-                && VehicleGroundCollideProcessor.checkResolved(vehicle, battle)
-                && VehicleCollideProcessor.checkResolved(vehicle, battle);
-    }
-
-    private static void calculateNextPositionAndAngle(VehicleCalculations vehicle, BattleCalculations battle) {
-        var position = vehicle.getModel().getState().getPosition();
-        var angle = vehicle.getModel().getState().getAngle();
-        var vehicleVelocity = vehicle.getModel().getState().getVelocity();
-        var timeStep = battle.getModel().getCurrentTimeStepSecs();
-        vehicle.setNextPosition(new Position()
-                .setX(position.getX() + vehicleVelocity.getX() * timeStep)
-                .setY(position.getY() + vehicleVelocity.getY() * timeStep));
-        vehicle.setNextAngle(angle + vehicleVelocity.getAngle() * timeStep);
-    }
-
     private static void applyNextPositionAndAngle(VehicleCalculations vehicle) {
         vehicle.getModel().getState().setPosition(vehicle.getNextPosition());
-        var angle = vehicle.getNextAngle();
-        if (angle > Math.PI / 2) {
-            angle = Math.PI / 2;
-        }
-        if (angle < -Math.PI / 2) {
-            angle = -Math.PI / 2;
-        }
-        vehicle.getModel().getState().setAngle(angle);
+        vehicle.getModel().getState().setAngle(vehicle.getNextAngle());
     }
 
     private static void calculateOnGround(VehicleCalculations vehicle) {
@@ -115,21 +61,5 @@ public class VehicleMoveProcessor {
             state.setOnGround(onGround);
             vehicle.getModel().setUpdated(true);
         }
-    }
-
-    private static CollisionMode getCollisionMode(String name) {
-        if (CollisionMode.ELASTICITY.getName().equals(name)) {
-            return CollisionMode.ELASTICITY;
-        }
-        return CollisionMode.IMPACT;
-    }
-
-    @Getter
-    @RequiredArgsConstructor
-    private enum CollisionMode {
-        ELASTICITY("elasticity"),
-        IMPACT("impact");
-
-        private final String name;
     }
 }

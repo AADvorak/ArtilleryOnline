@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.utils;
 
+import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
@@ -66,5 +67,23 @@ public class VehicleUtils {
                 .setAngle(angleVelocity)
                 .setX(wheelCalculations.getVelocity().getX() - wheelSign * angleVelocity * Math.sin(angle))
                 .setY(wheelCalculations.getVelocity().getY() + wheelSign * angleVelocity * Math.cos(angle));
+    }
+
+    public static void calculateNextPositionAndAngle(VehicleCalculations vehicle, BattleCalculations battle) {
+        var position = vehicle.getModel().getState().getPosition();
+        var angle = vehicle.getModel().getState().getAngle();
+        var vehicleVelocity = vehicle.getModel().getState().getVelocity();
+        var timeStep = battle.getModel().getCurrentTimeStepSecs();
+        vehicle.setNextPosition(new Position()
+                .setX(position.getX() + vehicleVelocity.getX() * timeStep)
+                .setY(position.getY() + vehicleVelocity.getY() * timeStep));
+        var nextAngle = angle + vehicleVelocity.getAngle() * timeStep;
+        if (nextAngle > Math.PI / 2) {
+            nextAngle = Math.PI / 2;
+        }
+        if (nextAngle < -Math.PI / 2) {
+            nextAngle = -Math.PI / 2;
+        }
+        vehicle.setNextAngle(nextAngle);
     }
 }

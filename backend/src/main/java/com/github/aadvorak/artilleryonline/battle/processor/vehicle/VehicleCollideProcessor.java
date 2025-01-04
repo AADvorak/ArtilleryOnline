@@ -18,6 +18,9 @@ public class VehicleCollideProcessor {
     public static boolean processCollide(VehicleCalculations vehicle, BattleCalculations battle) {
         var collisionData = vehicleCollide(vehicle, battle);
         if (collisionData != null) {
+            if (collisionAlreadyProcessed(vehicle, collisionData)) {
+                return true;
+            }
             doCollide(vehicle, collisionData);
             vehicle.getModel().setUpdated(true);
             vehicle.getCollisions().add(new CollideObject()
@@ -31,6 +34,12 @@ public class VehicleCollideProcessor {
     public static boolean checkResolved(VehicleCalculations vehicle, BattleCalculations battle) {
         var collisionData = vehicleCollide(vehicle, battle);
         return collisionData == null;
+    }
+
+    private static boolean collisionAlreadyProcessed(VehicleCalculations vehicle, CollisionData collisionData) {
+        return collisionData.otherVehicle().getCollisions().stream()
+                .anyMatch(collideObject -> collideObject.getType().equals(CollideObjectType.VEHICLE)
+                        && collideObject.getVehicleId().equals(vehicle.getModel().getId()));
     }
 
     private static CollisionData vehicleCollide(VehicleCalculations vehicle, BattleCalculations battle) {
