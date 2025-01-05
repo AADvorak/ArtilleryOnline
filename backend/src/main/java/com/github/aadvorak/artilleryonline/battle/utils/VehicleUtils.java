@@ -70,14 +70,26 @@ public class VehicleUtils {
     }
 
     public static void calculateNextPositionAndAngle(VehicleCalculations vehicle, BattleCalculations battle) {
-        var position = vehicle.getModel().getState().getPosition();
-        var angle = vehicle.getModel().getState().getAngle();
+        vehicle.setNextPosition(vehicle.getModel().getState().getPosition());
+        recalculateNextPositionAndAngle(vehicle, battle);
+    }
+
+    public static void recalculateNextPositionAndAngle(VehicleCalculations vehicle, BattleCalculations battle) {
+        vehicle.setNextAngle(vehicle.getModel().getState().getAngle());
         var vehicleVelocity = vehicle.getModel().getState().getVelocity();
         var timeStep = battle.getModel().getCurrentTimeStepSecs();
-        vehicle.setNextPosition(new Position()
-                .setX(position.getX() + vehicleVelocity.getX() * timeStep)
-                .setY(position.getY() + vehicleVelocity.getY() * timeStep));
-        var nextAngle = angle + vehicleVelocity.getAngle() * timeStep;
+        var positionShift = new Position()
+                .setX(vehicleVelocity.getX() * timeStep)
+                .setY(vehicleVelocity.getY() * timeStep);
+        addToNextPositionAndAngle(vehicle, positionShift, vehicleVelocity.getAngle() * timeStep);
+    }
+
+    private static void addToNextPositionAndAngle(VehicleCalculations vehicle, Position positionShift, double angleShift) {
+        var position = vehicle.getNextPosition();
+        position
+                .setX(position.getX() + positionShift.getX())
+                .setY(position.getY() + positionShift.getY());
+        var nextAngle = vehicle.getNextAngle() + angleShift;
         if (nextAngle > Math.PI / 2) {
             nextAngle = Math.PI / 2;
         }

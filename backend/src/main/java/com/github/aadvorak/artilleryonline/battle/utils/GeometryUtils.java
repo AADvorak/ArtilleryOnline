@@ -7,6 +7,13 @@ import java.util.stream.Collectors;
 
 public class GeometryUtils {
 
+    public static void applyNormalMoveToPosition(Position position, double normalMove, double angle) {
+        var normalProjection = VectorUtils.getVerticalProjection(position, angle) + 1.1 * normalMove;
+        var tangentialProjection = VectorUtils.getHorizontalProjection(position, angle);
+        position.setX(VectorUtils.getComponentX(normalProjection, tangentialProjection, angle));
+        position.setY(VectorUtils.getComponentY(normalProjection, tangentialProjection, angle));
+    }
+
     public static double getCirclesInterpenetration(
             Position center1, Position center2,
             double radius1, double radius2

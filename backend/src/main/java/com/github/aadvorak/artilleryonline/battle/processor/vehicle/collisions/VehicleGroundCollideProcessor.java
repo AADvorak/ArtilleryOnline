@@ -7,6 +7,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculatio
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.CollideObject;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
+import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
@@ -92,16 +93,11 @@ public class VehicleGroundCollideProcessor {
                     battle.getModel().getRoom()
             );
             var normalMove = nearestGroundPoint.distance();
-            var position = vehicle.getPosition();
-            var normalProjection = VectorUtils.getVerticalProjection(position, groundAngle);
-            var tangentialProjection = VectorUtils.getHorizontalProjection(position, groundAngle);
-            normalProjection += normalMove;
-            position.setX(VectorUtils.getComponentX(normalProjection, tangentialProjection, groundAngle));
-            position.setY(VectorUtils.getComponentY(normalProjection, tangentialProjection, groundAngle));
+            GeometryUtils.applyNormalMoveToPosition(vehicle.getNextPosition(), normalMove, groundAngle);
         } else {
             var yMove = wheelCalculations.getNext().getNearestGroundPointByX().getY()
                     - wheelCalculations.getNext().getPosition().getY();
-            vehicle.getPosition().setY(wheelCalculations.getPosition().getY() + yMove);
+            vehicle.getNextPosition().setY(wheelCalculations.getPosition().getY() + yMove);
         }
     }
 }

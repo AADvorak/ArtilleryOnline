@@ -25,14 +25,14 @@ public class CollisionsProcessor {
         battle.getVehicles().forEach(vehicle -> {
             if (VehicleGroundCollideProcessor.processCollide(vehicle, battle)) {
                 vehicle.setHasCollisions(true);
-                VehicleUtils.calculateNextPositionAndAngle(vehicle, battle);
+                VehicleUtils.recalculateNextPositionAndAngle(vehicle, battle);
             }
         });
 
         battle.getVehicles().forEach(vehicle -> {
             if (VehicleCollideProcessor.processCollide(vehicle, battle)) {
                 vehicle.setHasCollisions(true);
-                VehicleUtils.calculateNextPositionAndAngle(vehicle, battle);
+                VehicleUtils.recalculateNextPositionAndAngle(vehicle, battle);
             }
         });
     }
