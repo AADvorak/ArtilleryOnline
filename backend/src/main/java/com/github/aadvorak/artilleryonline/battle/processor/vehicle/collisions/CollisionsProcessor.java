@@ -8,6 +8,13 @@ import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 public class CollisionsProcessor {
 
     public static void process(BattleCalculations battle) {
+        processCollisions(battle);
+        if (collisionsExist(battle)) {
+            checkCollisionsResolved(battle);
+        }
+    }
+
+    private static void processCollisions(BattleCalculations battle) {
         battle.getVehicles().forEach(vehicle -> {
             if (VehicleWallCollideProcessor.processCollide(vehicle, battle)) {
                 vehicle.setHasCollisions(true);
@@ -28,11 +35,22 @@ public class CollisionsProcessor {
                 VehicleUtils.calculateNextPositionAndAngle(vehicle, battle);
             }
         });
-
-        battle.getVehicles().forEach(vehicle -> checkCollisionsResolved(vehicle, battle));
     }
 
-    private static void checkCollisionsResolved(VehicleCalculations vehicle, BattleCalculations battle) {
+    private static boolean collisionsExist(BattleCalculations battle) {
+        for (var vehicle : battle.getVehicles()) {
+            if (vehicle.isHasCollisions()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void checkCollisionsResolved(BattleCalculations battle) {
+        battle.getVehicles().forEach(vehicle -> checkCollisionResolved(vehicle, battle));
+    }
+
+    private static void checkCollisionResolved(VehicleCalculations vehicle, BattleCalculations battle) {
         var resolved = VehicleWallCollideProcessor.checkResolved(vehicle, battle)
                 && VehicleGroundCollideProcessor.checkResolved(vehicle, battle)
                 && VehicleCollideProcessor.checkResolved(vehicle, battle);
