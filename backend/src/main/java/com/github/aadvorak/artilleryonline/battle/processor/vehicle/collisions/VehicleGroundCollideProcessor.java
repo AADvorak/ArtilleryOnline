@@ -97,7 +97,7 @@ public class VehicleGroundCollideProcessor {
         } else {
             var yMove = wheelCalculations.getNext().getNearestGroundPointByX().getY()
                     - wheelCalculations.getNext().getPosition().getY();
-            vehicle.getNextPosition().setY(wheelCalculations.getPosition().getY() + yMove);
+            vehicle.getNextPosition().setY(vehicle.getNextPosition().getY() + yMove);
         }
     }
 }

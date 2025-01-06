@@ -71,11 +71,11 @@ public class VehicleUtils {
 
     public static void calculateNextPositionAndAngle(VehicleCalculations vehicle, BattleCalculations battle) {
         vehicle.setNextPosition(vehicle.getModel().getState().getPosition());
+        vehicle.setNextAngle(vehicle.getModel().getState().getAngle());
         recalculateNextPositionAndAngle(vehicle, battle);
     }
 
     public static void recalculateNextPositionAndAngle(VehicleCalculations vehicle, BattleCalculations battle) {
-        vehicle.setNextAngle(vehicle.getModel().getState().getAngle());
         var vehicleVelocity = vehicle.getModel().getState().getVelocity();
         var timeStep = battle.getModel().getCurrentTimeStepSecs();
         var positionShift = new Position()
