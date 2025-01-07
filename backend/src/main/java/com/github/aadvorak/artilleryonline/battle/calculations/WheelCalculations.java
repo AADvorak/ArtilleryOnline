@@ -1,9 +1,12 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.common.Acceleration;
+import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.Velocity;
+import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
@@ -12,10 +15,12 @@ import java.util.Set;
 
 @Getter
 @Setter
-@Accessors(chain = true)
+@RequiredArgsConstructor
 public class WheelCalculations implements Calculations {
 
-    private WheelSign sign;
+    private final WheelSign sign;
+
+    private final VehicleCalculations vehicle;
 
     private WheelGroundState groundState;
 
@@ -74,6 +79,26 @@ public class WheelCalculations implements Calculations {
             );
         }
         return sumElasticityAcceleration;
+    }
+
+    @Override
+    public Integer getVehicleId() {
+        return vehicle.getModel().getId();
+    }
+
+    @Override
+    public VehicleModel getModel() {
+        return vehicle.getModel();
+    }
+
+    @Override
+    public VehicleCalculations getVehicleCalculations() {
+        return vehicle;
+    }
+
+    @Override
+    public Set<Collision> getCollisions() {
+        return vehicle.getCollisions();
     }
 
     @Getter

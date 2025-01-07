@@ -2,8 +2,10 @@ package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.common.Acceleration;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
-import com.github.aadvorak.artilleryonline.battle.common.CollideObject;
+import com.github.aadvorak.artilleryonline.battle.common.Collision;
+import com.github.aadvorak.artilleryonline.battle.common.Velocity;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -16,13 +18,17 @@ import java.util.Set;
 @Accessors(chain = true)
 public class VehicleCalculations implements Calculations {
 
-    private VehicleModel model;
+    private final VehicleModel model;
+
+    private final WheelCalculations rightWheel;
+
+    private final WheelCalculations leftWheel;
 
     private Position nextPosition;
 
     private double nextAngle;
 
-    private Set<CollideObject> collisions = new HashSet<>();
+    private Set<Collision> collisions = new HashSet<>();
 
     private Set<Calculations> vehicleCollisions = new HashSet<>();
 
@@ -32,15 +38,39 @@ public class VehicleCalculations implements Calculations {
 
     private Acceleration sumElasticityAcceleration;
 
-    private WheelCalculations rightWheel = new WheelCalculations().setSign(WheelSign.RIGHT);
-
-    private WheelCalculations leftWheel = new WheelCalculations().setSign(WheelSign.LEFT);
-
     private boolean hasCollisions = false;
+
+    public VehicleCalculations(VehicleModel model) {
+        this.model = model;
+        rightWheel = new WheelCalculations(WheelSign.RIGHT, this);
+        leftWheel = new WheelCalculations(WheelSign.LEFT, this);
+    }
+
+    @Override
+    public Integer getVehicleId() {
+        return model.getId();
+    }
+
+    @Override
+    public VehicleCalculations getVehicleCalculations() {
+        return this;
+    }
 
     @Override
     public Position getPosition() {
         return model.getState().getPosition();
+    }
+
+    @Override
+    public Velocity getVelocity() {
+        return model.getState().getVelocity().getMovingVelocity();
+    }
+
+    @Override
+    public void setVelocity(Velocity velocity) {
+        model.getState().getVelocity()
+                .setX(velocity.getX())
+                .setY(velocity.getY());
     }
 
     public Acceleration getSumElasticityAcceleration() {
@@ -51,5 +81,14 @@ public class VehicleCalculations implements Calculations {
             );
         }
         return sumElasticityAcceleration;
+    }
+
+    public void recalculateWheelsVelocities() {
+        VehicleUtils.calculateWheelVelocity(model, rightWheel);
+        VehicleUtils.calculateWheelVelocity(model, leftWheel);
+    }
+
+    public void recalculateVelocityByWheel(WheelCalculations wheel) {
+        VehicleUtils.recalculateVehicleVelocityByWheel(this, wheel);
     }
 }

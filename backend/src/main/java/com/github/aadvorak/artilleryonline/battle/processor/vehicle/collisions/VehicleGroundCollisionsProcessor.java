@@ -5,21 +5,21 @@ import com.github.aadvorak.artilleryonline.battle.calculator.wheel.GroundPositio
 import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
-import com.github.aadvorak.artilleryonline.battle.common.CollideObject;
+import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
-public class VehicleGroundCollideProcessor {
+public class VehicleGroundCollisionsProcessor {
 
-    public static boolean processCollide(VehicleCalculations vehicle, BattleCalculations battle) {
+    public static boolean process(VehicleCalculations vehicle, BattleCalculations battle) {
         calculateNextWheelAndGroundPositions(vehicle, battle);
         var groundCollideWheel = getGroundCollideWheel(vehicle);
         if (groundCollideWheel != null) {
             doCollide(battle, vehicle, groundCollideWheel);
             vehicle.getModel().setUpdated(true);
-            vehicle.getCollisions().add(new CollideObject()
+            vehicle.getCollisions().add(new Collision()
                     .setType(CollideObjectType.GROUND));
             return true;
         }

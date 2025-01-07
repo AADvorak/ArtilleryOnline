@@ -1,6 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.events;
 
-import com.github.aadvorak.artilleryonline.battle.common.CollideObject;
+import com.github.aadvorak.artilleryonline.dto.response.CollisionResponse;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class VehicleCollideEvent {
 
-    private CollideObject object;
+    private CollisionResponse object;
 
     private int vehicleId;
 }

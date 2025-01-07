@@ -3,17 +3,17 @@ package com.github.aadvorak.artilleryonline.battle.processor.vehicle.collisions;
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
-import com.github.aadvorak.artilleryonline.battle.common.CollideObject;
+import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
-public class VehicleWallCollideProcessor {
+public class VehicleWallCollisionsProcessor {
 
-    public static boolean processCollide(VehicleCalculations vehicle, BattleCalculations battle) {
+    public static boolean process(VehicleCalculations vehicle, BattleCalculations battle) {
         if (wallCollide(vehicle, battle)) {
             doCollide(vehicle.getModel());
             vehicle.getModel().setUpdated(true);
-            vehicle.getCollisions().add(new CollideObject()
+            vehicle.getCollisions().add(new Collision()
                     .setType(CollideObjectType.WALL));
             return true;
         }

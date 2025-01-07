@@ -31,7 +31,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         var battleCalculations = new BattleCalculations()
                 .setModel(battleModel)
                 .setVehicles(battleModel.getVehicles().values().stream()
-                        .map(vehicleModel -> new VehicleCalculations().setModel(vehicleModel))
+                        .map(VehicleCalculations::new)
                         .collect(Collectors.toSet()));
 
         battleCalculations.getVehicles().forEach(vehicleCalculations -> {
