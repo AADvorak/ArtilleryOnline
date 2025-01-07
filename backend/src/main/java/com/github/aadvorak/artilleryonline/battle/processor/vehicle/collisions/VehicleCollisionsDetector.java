@@ -4,7 +4,6 @@ import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculation
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.utils.InterpenetrationUtils;
-import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,8 +28,8 @@ public class VehicleCollisionsDetector {
         var vehicleRadius = vehicle.getModel().getSpecs().getRadius();
         var position = vehicle.getNextPosition();
         var angle = vehicle.getNextAngle();
-        var rightWheelPosition = VehicleUtils.getNextRightWheelPosition(vehicle);
-        var leftWheelPosition = VehicleUtils.getNextLeftWheelPosition(vehicle);
+        var rightWheelPosition = vehicle.getRightWheel().getNext().getPosition();
+        var leftWheelPosition = vehicle.getLeftWheel().getNext().getPosition();
         for (var otherVehicle : otherVehicles) {
             var otherPosition = otherVehicle.getNextPosition();
             var otherAngle = otherVehicle.getNextAngle();
@@ -42,8 +41,8 @@ public class VehicleCollisionsDetector {
                 if (first) return collisions;
             }
             var otherWheelRadius = otherVehicle.getModel().getSpecs().getWheelRadius();
-            var otherLeftWheelPosition = VehicleUtils.getNextLeftWheelPosition(otherVehicle);
-            var otherRightWheelPosition = VehicleUtils.getNextRightWheelPosition(otherVehicle);
+            var otherLeftWheelPosition = otherVehicle.getLeftWheel().getNext().getPosition();
+            var otherRightWheelPosition = otherVehicle.getRightWheel().getNext().getPosition();
             var otherLeftWheel = otherVehicle.getLeftWheel();
             var otherRightWheel = otherVehicle.getRightWheel();
             var rightWheelLeftWheelInterpenetration = InterpenetrationUtils.getWheelWheelInterpenetration(rightWheelPosition,

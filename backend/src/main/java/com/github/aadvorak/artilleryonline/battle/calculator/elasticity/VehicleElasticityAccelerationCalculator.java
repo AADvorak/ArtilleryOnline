@@ -7,7 +7,6 @@ import com.github.aadvorak.artilleryonline.battle.common.Acceleration;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.utils.InterpenetrationUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
-import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -40,12 +39,6 @@ public class VehicleElasticityAccelerationCalculator {
             if (vehicle.collisionNotCalculated(otherVehicle) && InterpenetrationUtils.getVehicleVehicleInterpenetration(position,
                     otherVehiclePosition, angle, otherVehicleAngle, vehicleRadius, otherVehicleRadius) > 0) {
                 collisionPairs.add(new CollisionPair(vehicle, otherVehicle));
-            }
-            if (otherVehicle.getLeftWheel().getPosition() == null) {
-                otherVehicle.getLeftWheel().setPosition(VehicleUtils.getLeftWheelPosition(otherVehicle.getModel()));
-            }
-            if (otherVehicle.getRightWheel().getPosition() == null) {
-                otherVehicle.getRightWheel().setPosition(VehicleUtils.getRightWheelPosition(otherVehicle.getModel()));
             }
             var otherLeftWheelPosition = otherVehicle.getLeftWheel().getPosition();
             var otherRightWheelPosition = otherVehicle.getRightWheel().getPosition();

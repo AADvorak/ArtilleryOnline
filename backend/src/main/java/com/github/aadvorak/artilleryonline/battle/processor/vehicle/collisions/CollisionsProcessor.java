@@ -3,7 +3,6 @@ package com.github.aadvorak.artilleryonline.battle.processor.vehicle.collisions;
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.events.VehicleCollideEvent;
-import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 import com.github.aadvorak.artilleryonline.dto.response.CollisionResponse;
 
 public class CollisionsProcessor {
@@ -19,21 +18,21 @@ public class CollisionsProcessor {
         battle.getVehicles().forEach(vehicle -> {
             if (VehicleWallCollisionsProcessor.process(vehicle, battle)) {
                 vehicle.setHasCollisions(true);
-                VehicleUtils.calculateNextPositionAndAngle(vehicle, battle);
+                vehicle.calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
             }
         });
 
         battle.getVehicles().forEach(vehicle -> {
             if (VehicleGroundCollisionsProcessor.process(vehicle, battle)) {
                 vehicle.setHasCollisions(true);
-                VehicleUtils.recalculateNextPositionAndAngle(vehicle, battle);
+                vehicle.moveNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
             }
         });
 
         battle.getVehicles().forEach(vehicle -> {
             if (VehicleCollisionsProcessor.process(vehicle, battle)) {
                 vehicle.setHasCollisions(true);
-                VehicleUtils.recalculateNextPositionAndAngle(vehicle, battle);
+                vehicle.moveNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
             }
         });
     }

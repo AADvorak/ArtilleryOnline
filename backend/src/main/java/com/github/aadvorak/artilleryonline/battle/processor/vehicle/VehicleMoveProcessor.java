@@ -7,14 +7,13 @@ import com.github.aadvorak.artilleryonline.battle.calculations.WheelGroundState;
 import com.github.aadvorak.artilleryonline.battle.common.CollisionMode;
 import com.github.aadvorak.artilleryonline.battle.calculator.VehicleAccelerationCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.VehicleAcceleration;
-import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 public class VehicleMoveProcessor {
 
     public static void processStep1(VehicleCalculations vehicle, BattleCalculations battle, String collisionMode) {
         recalculateAcceleration(vehicle, battle, collisionMode);
         recalculateVelocity(vehicle, battle);
-        VehicleUtils.calculateNextPositionAndAngle(vehicle, battle);
+        vehicle.calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
     }
 
     public static void processStep2(VehicleCalculations vehicle, String collisionMode) {

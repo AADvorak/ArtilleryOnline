@@ -9,12 +9,11 @@ import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
-import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 public class VehicleGroundCollisionsProcessor {
 
     public static boolean process(VehicleCalculations vehicle, BattleCalculations battle) {
-        calculateNextWheelAndGroundPositions(vehicle, battle);
+        calculateNextGroundPositions(vehicle, battle);
         var groundCollideWheel = getGroundCollideWheel(vehicle);
         if (groundCollideWheel != null) {
             doCollide(battle, vehicle, groundCollideWheel);
@@ -27,14 +26,12 @@ public class VehicleGroundCollisionsProcessor {
     }
 
     public static boolean checkResolved(VehicleCalculations vehicle, BattleCalculations battle) {
-        calculateNextWheelAndGroundPositions(vehicle, battle);
+        calculateNextGroundPositions(vehicle, battle);
         var groundCollideWheel = getGroundCollideWheel(vehicle);
         return groundCollideWheel == null;
     }
 
-    private static void calculateNextWheelAndGroundPositions(VehicleCalculations vehicle, BattleCalculations battle) {
-        vehicle.getRightWheel().getNext().setPosition(VehicleUtils.getNextRightWheelPosition(vehicle));
-        vehicle.getLeftWheel().getNext().setPosition(VehicleUtils.getNextLeftWheelPosition(vehicle));
+    private static void calculateNextGroundPositions(VehicleCalculations vehicle, BattleCalculations battle) {
         vehicle.getRightWheel().getNext().setNearestGroundPointByX(BattleUtils.getNearestGroundPosition(
                 vehicle.getRightWheel().getNext().getPosition().getX(),
                 battle.getModel().getRoom()
@@ -64,8 +61,7 @@ public class VehicleGroundCollisionsProcessor {
     }
 
     private static void recalculateVehicleVelocity(VehicleCalculations vehicle, WheelCalculations wheelCalculations) {
-        VehicleUtils.calculateWheelVelocity(vehicle.getModel(), vehicle.getRightWheel());
-        VehicleUtils.calculateWheelVelocity(vehicle.getModel(), vehicle.getLeftWheel());
+        vehicle.recalculateWheelsVelocities();
 
         var groundAngle = wheelCalculations.getGroundAngle();
         var wheelVelocity = wheelCalculations.getVelocity();
@@ -75,7 +71,7 @@ public class VehicleGroundCollisionsProcessor {
         wheelVelocity.setX(VectorUtils.getComponentX(velocityVerticalProjection, velocityHorizontalProjection, groundAngle));
         wheelVelocity.setY(VectorUtils.getComponentY(velocityVerticalProjection, velocityHorizontalProjection, groundAngle));
 
-        VehicleUtils.recalculateVehicleVelocityByWheel(vehicle, wheelCalculations);
+        vehicle.recalculateVelocityByWheel(wheelCalculations);
     }
 
     private static void recalculateVehiclePosition(BattleCalculations battle, VehicleCalculations vehicle,

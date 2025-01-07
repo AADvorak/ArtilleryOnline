@@ -5,7 +5,6 @@ import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Velocity;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
-import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -84,11 +83,52 @@ public class VehicleCalculations implements Calculations {
     }
 
     public void recalculateWheelsVelocities() {
-        VehicleUtils.calculateWheelVelocity(model, rightWheel);
-        VehicleUtils.calculateWheelVelocity(model, leftWheel);
+        rightWheel.calculateVelocity();
+        leftWheel.calculateVelocity();
     }
 
     public void recalculateVelocityByWheel(WheelCalculations wheel) {
-        VehicleUtils.recalculateVehicleVelocityByWheel(this, wheel);
+        var rightWheelVelocity = rightWheel.getVelocity();
+        var leftWheelVelocity = leftWheel.getVelocity();
+        var angle = model.getState().getAngle();
+
+        var angleVelocity = Math.abs(angle) < Math.PI / 4
+                ? (rightWheelVelocity.getY() - leftWheelVelocity.getY()) / (2.0 * Math.cos(angle))
+                : (leftWheelVelocity.getX() - rightWheelVelocity.getX()) / (2.0 * Math.sin(angle));
+        var wheelSign = wheel.getSign().getValue();
+        model.getState().getVelocity()
+                .setAngle(angleVelocity)
+                .setX(wheel.getVelocity().getX() - wheelSign * angleVelocity * Math.sin(angle))
+                .setY(wheel.getVelocity().getY() + wheelSign * angleVelocity * Math.cos(angle));
+    }
+
+    public void calculateNextPositionAndAngle(double timeStep) {
+        setNextPosition(model.getState().getPosition());
+        setNextAngle(model.getState().getAngle());
+        moveNextPositionAndAngle(timeStep);
+    }
+
+    public void moveNextPositionAndAngle(double timeStep) {
+        var vehicleVelocity = model.getState().getVelocity();
+        var positionShift = new Position()
+                .setX(vehicleVelocity.getX() * timeStep)
+                .setY(vehicleVelocity.getY() * timeStep);
+        addToNextPositionAndAngle(positionShift, vehicleVelocity.getAngle() * timeStep);
+    }
+
+    private void addToNextPositionAndAngle(Position positionShift, double angleShift) {
+        nextPosition
+                .setX(nextPosition.getX() + positionShift.getX())
+                .setY(nextPosition.getY() + positionShift.getY());
+        var nextAngle = this.nextAngle + angleShift;
+        if (nextAngle > Math.PI / 2) {
+            nextAngle = Math.PI / 2;
+        }
+        if (nextAngle < -Math.PI / 2) {
+            nextAngle = -Math.PI / 2;
+        }
+        this.nextAngle = nextAngle;
+        rightWheel.calculateNextPosition();
+        leftWheel.calculateNextPosition();
     }
 }

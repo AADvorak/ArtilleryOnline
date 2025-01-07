@@ -5,7 +5,6 @@ import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
-import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 public class VehicleWallCollisionsProcessor {
 
@@ -30,11 +29,11 @@ public class VehicleWallCollisionsProcessor {
         var xMax = battle.getModel().getRoom().getSpecs().getRightTop().getX();
         var xMin = battle.getModel().getRoom().getSpecs().getLeftBottom().getX();
         if (velocityX > 0) {
-            var rightWheelPosition = VehicleUtils.getNextRightWheelPosition(vehicle);
+            var rightWheelPosition = vehicle.getRightWheel().getNext().getPosition();
             return rightWheelPosition.getX() + wheelRadius >= xMax;
         }
         if (velocityX < 0) {
-            var leftWheelPosition = VehicleUtils.getNextLeftWheelPosition(vehicle);
+            var leftWheelPosition = vehicle.getLeftWheel().getNext().getPosition();
             return leftWheelPosition.getX() - wheelRadius <= xMin;
         }
         return false;

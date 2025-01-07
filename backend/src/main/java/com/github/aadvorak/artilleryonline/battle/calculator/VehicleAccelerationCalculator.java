@@ -6,18 +6,13 @@ import com.github.aadvorak.artilleryonline.battle.calculator.wheel.*;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
-import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 public class VehicleAccelerationCalculator {
 
     public static VehicleAcceleration getVehicleAcceleration(VehicleCalculations vehicle, RoomModel roomModel) {
         var angle = vehicle.getModel().getState().getAngle();
 
-        VehicleUtils.calculateWheelVelocity(vehicle.getModel(), vehicle.getRightWheel());
-        VehicleUtils.calculateWheelVelocity(vehicle.getModel(), vehicle.getLeftWheel());
-
-        vehicle.getRightWheel().setPosition(VehicleUtils.getRightWheelPosition(vehicle.getModel()));
-        vehicle.getLeftWheel().setPosition(VehicleUtils.getLeftWheelPosition(vehicle.getModel()));
+        vehicle.recalculateWheelsVelocities();
 
         calculateWheelAcceleration(vehicle.getRightWheel(), vehicle.getModel(), roomModel);
         calculateWheelAcceleration(vehicle.getLeftWheel(), vehicle.getModel(), roomModel);
