@@ -103,7 +103,11 @@ public class VehicleCalculations implements Calculations {
     }
 
     public void calculateNextPositionAndAngle(double timeStep) {
-        setNextPosition(model.getState().getPosition());
+        setNextPosition(
+                new Position()
+                        .setX(model.getState().getPosition().getX())
+                        .setY(model.getState().getPosition().getY())
+        );
         setNextAngle(model.getState().getAngle());
         moveNextPositionAndAngle(timeStep);
     }
