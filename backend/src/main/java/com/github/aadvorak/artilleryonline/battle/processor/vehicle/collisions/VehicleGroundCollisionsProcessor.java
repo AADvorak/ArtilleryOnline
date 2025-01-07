@@ -16,7 +16,7 @@ public class VehicleGroundCollisionsProcessor {
         calculateNextGroundPositions(vehicle, battle);
         var groundCollideWheel = getGroundCollideWheel(vehicle);
         if (groundCollideWheel != null) {
-            doCollide(battle, vehicle, groundCollideWheel);
+            resolve(battle, vehicle, groundCollideWheel);
             vehicle.getModel().setUpdated(true);
             vehicle.getCollisions().add(new Collision()
                     .setType(CollideObjectType.GROUND));
@@ -54,9 +54,10 @@ public class VehicleGroundCollisionsProcessor {
         return null;
     }
 
-    private static void doCollide(BattleCalculations battle, VehicleCalculations vehicle,
-                                  WheelCalculations wheelCalculations) {
+    private static void resolve(BattleCalculations battle, VehicleCalculations vehicle,
+                                WheelCalculations wheelCalculations) {
         recalculateVehicleVelocity(vehicle, wheelCalculations);
+        vehicle.calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
         recalculateVehiclePosition(battle, vehicle, wheelCalculations);
     }
 

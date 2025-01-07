@@ -4,13 +4,12 @@ import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculation
 import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
-import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 
 public class VehicleWallCollisionsProcessor {
 
     public static boolean process(VehicleCalculations vehicle, BattleCalculations battle) {
         if (wallCollide(vehicle, battle)) {
-            doCollide(vehicle.getModel());
+            resolve(vehicle, battle);
             vehicle.getModel().setUpdated(true);
             vehicle.getCollisions().add(new Collision()
                     .setType(CollideObjectType.WALL));
@@ -39,8 +38,9 @@ public class VehicleWallCollisionsProcessor {
         return false;
     }
 
-    private static void doCollide(VehicleModel vehicleModel) {
-        vehicleModel.getState().getVelocity().setX(
-                - vehicleModel.getState().getVelocity().getX() / 2);
+    private static void resolve(VehicleCalculations vehicle, BattleCalculations battle) {
+        vehicle.getModel().getState().getVelocity().setX(
+                - vehicle.getModel().getState().getVelocity().getX() / 2);
+        vehicle.calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
     }
 }

@@ -18,21 +18,18 @@ public class CollisionsProcessor {
         battle.getVehicles().forEach(vehicle -> {
             if (VehicleWallCollisionsProcessor.process(vehicle, battle)) {
                 vehicle.setHasCollisions(true);
-                vehicle.calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
             }
         });
 
         battle.getVehicles().forEach(vehicle -> {
             if (VehicleGroundCollisionsProcessor.process(vehicle, battle)) {
                 vehicle.setHasCollisions(true);
-                vehicle.moveNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
             }
         });
 
         battle.getVehicles().forEach(vehicle -> {
             if (VehicleCollisionsProcessor.process(vehicle, battle)) {
                 vehicle.setHasCollisions(true);
-                vehicle.moveNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
             }
         });
     }

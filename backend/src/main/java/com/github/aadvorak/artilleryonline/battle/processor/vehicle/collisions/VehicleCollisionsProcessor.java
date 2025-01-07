@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculatio
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
+import com.github.aadvorak.artilleryonline.battle.common.Velocity;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
 
@@ -16,7 +17,7 @@ public class VehicleCollisionsProcessor {
             if (collisionAlreadyProcessed(vehicle, collision)) {
                 return true;
             }
-            resolve(collision);
+            resolve(collision, battle);
             vehicle.getModel().setUpdated(true);
             vehicle.getCollisions().add(collision);
             return true;
@@ -29,14 +30,19 @@ public class VehicleCollisionsProcessor {
         return collision == null;
     }
 
+    // todo do this check while collisions detection
     private static boolean collisionAlreadyProcessed(VehicleCalculations vehicle, Collision collision) {
         return collision.getPair().second().getCollisions().stream()
                 .anyMatch(c -> CollideObjectType.VEHICLE.equals(c.getType())
                         && c.getVehicleId().equals(vehicle.getModel().getId()));
     }
 
-    private static void resolve(Collision collision) {
+    private static void resolve(Collision collision, BattleCalculations battle) {
         recalculateVehiclesVelocities(collision);
+        collision.getPair().first().getVehicleCalculations()
+                .calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
+        collision.getPair().second().getVehicleCalculations()
+                .calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
         recalculateVehiclesNextPositions(collision);
         collision.getPair().second().getCollisions().add(Collision.inverted(collision));
         collision.getPair().second().getModel().setUpdated(true);
@@ -63,17 +69,21 @@ public class VehicleCollisionsProcessor {
         var newVelocityVerticalProjection = getNewVelocityVerticalProjection(
                 velocityVerticalProjection, otherVelocityVerticalProjection,
                 mass, otherMass);
-        collision.getPair().first().getVelocity()
-                .setX(VectorUtils.getComponentX(newVelocityVerticalProjection, velocityHorizontalProjection, collision.getAngle()))
-                .setY(VectorUtils.getComponentY(newVelocityVerticalProjection, velocityHorizontalProjection, collision.getAngle()));
+        collision.getPair().first().setVelocity(
+                new Velocity()
+                        .setX(VectorUtils.getComponentX(newVelocityVerticalProjection, velocityHorizontalProjection, collision.getAngle()))
+                        .setY(VectorUtils.getComponentY(newVelocityVerticalProjection, velocityHorizontalProjection, collision.getAngle()))
+        );
 
         var otherVelocityHorizontalProjection = VectorUtils.getHorizontalProjection(otherVelocity, collision.getAngle());
         var otherNewVelocityVerticalProjection = getNewVelocityVerticalProjection(
                 otherVelocityVerticalProjection, velocityVerticalProjection,
                 otherMass, mass);
-        collision.getPair().second().getVelocity()
-                .setX(VectorUtils.getComponentX(otherNewVelocityVerticalProjection, otherVelocityHorizontalProjection, collision.getAngle()))
-                .setY(VectorUtils.getComponentY(otherNewVelocityVerticalProjection, otherVelocityHorizontalProjection, collision.getAngle()));
+        collision.getPair().second().setVelocity(
+                new Velocity()
+                        .setX(VectorUtils.getComponentX(otherNewVelocityVerticalProjection, otherVelocityHorizontalProjection, collision.getAngle()))
+                        .setY(VectorUtils.getComponentY(otherNewVelocityVerticalProjection, otherVelocityHorizontalProjection, collision.getAngle()))
+        );
 
         if (collision.getPair().first() instanceof WheelCalculations wheelCalculations) {
             wheelCalculations.getVehicle().recalculateVelocityByWheel(wheelCalculations);
