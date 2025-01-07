@@ -21,6 +21,14 @@ public class Collision {
 
     private double angle;
 
+    public static Collision withGround(Calculations first, double interpenetration, double angle) {
+        return new Collision()
+                .setType(CollideObjectType.GROUND)
+                .setPair(new CollisionPair(first, null))
+                .setInterpenetration(interpenetration)
+                .setAngle(angle);
+    }
+
     public static Collision ofVehicles(Calculations first, Calculations second, double interpenetration) {
         return new Collision()
                 .setVehicleId(second.getVehicleId())

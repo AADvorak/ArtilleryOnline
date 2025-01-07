@@ -1,8 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle.collisions;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculator.wheel.GroundPositionCalculator;
-import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
@@ -14,12 +12,11 @@ public class VehicleGroundCollisionsProcessor {
 
     public static boolean process(VehicleCalculations vehicle, BattleCalculations battle) {
         calculateNextGroundPositions(vehicle, battle);
-        var groundCollideWheel = getGroundCollideWheel(vehicle);
-        if (groundCollideWheel != null) {
-            resolve(battle, vehicle, groundCollideWheel);
+        var collision = VehicleGroundCollisionsDetector.detectFirst(vehicle, battle);
+        if (collision != null) {
+            resolve(collision, battle);
             vehicle.getModel().setUpdated(true);
-            vehicle.getCollisions().add(new Collision()
-                    .setType(CollideObjectType.GROUND));
+            vehicle.getCollisions().add(collision);
             return true;
         }
         return false;
@@ -27,8 +24,8 @@ public class VehicleGroundCollisionsProcessor {
 
     public static boolean checkResolved(VehicleCalculations vehicle, BattleCalculations battle) {
         calculateNextGroundPositions(vehicle, battle);
-        var groundCollideWheel = getGroundCollideWheel(vehicle);
-        return groundCollideWheel == null;
+        var collision = VehicleGroundCollisionsDetector.detectFirst(vehicle, battle);
+        return collision == null;
     }
 
     private static void calculateNextGroundPositions(VehicleCalculations vehicle, BattleCalculations battle) {
@@ -42,59 +39,31 @@ public class VehicleGroundCollisionsProcessor {
         ));
     }
 
-    private static WheelCalculations getGroundCollideWheel(VehicleCalculations vehicle) {
-        if (vehicle.getRightWheel().getNext().getNearestGroundPointByX().getY()
-                >= vehicle.getRightWheel().getNext().getPosition().getY()) {
-            return vehicle.getRightWheel();
+    private static void resolve(Collision collision, BattleCalculations battle) {
+        if (collision.getPair().first() instanceof WheelCalculations wheel) {
+            recalculateVehicleVelocity(wheel);
+            collision.getPair().first().getVehicleCalculations()
+                    .calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
         }
-        if (vehicle.getLeftWheel().getNext().getNearestGroundPointByX().getY()
-                >= vehicle.getLeftWheel().getNext().getPosition().getY()) {
-            return vehicle.getLeftWheel();
-        }
-        return null;
+        recalculateVehiclePosition(collision);
     }
 
-    private static void resolve(BattleCalculations battle, VehicleCalculations vehicle,
-                                WheelCalculations wheelCalculations) {
-        recalculateVehicleVelocity(vehicle, wheelCalculations);
-        vehicle.calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
-        recalculateVehiclePosition(battle, vehicle, wheelCalculations);
-    }
+    private static void recalculateVehicleVelocity(WheelCalculations wheel) {
+        wheel.getVehicle().recalculateWheelsVelocities();
 
-    private static void recalculateVehicleVelocity(VehicleCalculations vehicle, WheelCalculations wheelCalculations) {
-        vehicle.recalculateWheelsVelocities();
-
-        var groundAngle = wheelCalculations.getGroundAngle();
-        var wheelVelocity = wheelCalculations.getVelocity();
+        var groundAngle = wheel.getGroundAngle();
+        var wheelVelocity = wheel.getVelocity();
         var velocityVerticalProjection = - 0.5 * VectorUtils.getVerticalProjection(wheelVelocity, groundAngle);
         var velocityHorizontalProjection = VectorUtils.getHorizontalProjection(wheelVelocity, groundAngle);
 
         wheelVelocity.setX(VectorUtils.getComponentX(velocityVerticalProjection, velocityHorizontalProjection, groundAngle));
         wheelVelocity.setY(VectorUtils.getComponentY(velocityVerticalProjection, velocityHorizontalProjection, groundAngle));
 
-        vehicle.recalculateVelocityByWheel(wheelCalculations);
+        wheel.getVehicle().recalculateVelocityByWheel(wheel);
     }
 
-    private static void recalculateVehiclePosition(BattleCalculations battle, VehicleCalculations vehicle,
-                                                   WheelCalculations wheelCalculations) {
-        var nearestGroundPoint = GroundPositionCalculator.getNearestGroundPoint(
-                wheelCalculations.getNext().getPosition(),
-                vehicle.getModel().getSpecs().getWheelRadius(),
-                battle.getModel().getRoom(),
-                wheelCalculations.getSign().getValue()
-        );
-        if (nearestGroundPoint != null) {
-            var groundAngle = GroundPositionCalculator.getGroundAngle(
-                    wheelCalculations.getNext().getPosition(),
-                    nearestGroundPoint,
-                    battle.getModel().getRoom()
-            );
-            var normalMove = nearestGroundPoint.distance();
-            GeometryUtils.applyNormalMoveToPosition(vehicle.getNextPosition(), normalMove, groundAngle);
-        } else {
-            var yMove = wheelCalculations.getNext().getNearestGroundPointByX().getY()
-                    - wheelCalculations.getNext().getPosition().getY();
-            vehicle.getNextPosition().setY(vehicle.getNextPosition().getY() + yMove);
-        }
+    private static void recalculateVehiclePosition(Collision collision) {
+        GeometryUtils.applyNormalMoveToPosition(collision.getPair().first().getVehicleCalculations().getNextPosition(),
+                collision.getInterpenetration(), collision.getAngle());
     }
 }
