@@ -53,7 +53,7 @@ public class VehicleGroundCollisionsProcessor {
 
         var groundAngle = wheel.getGroundAngle();
         var wheelVelocity = wheel.getVelocity();
-        var velocityVerticalProjection = - 0.5 * VectorUtils.getVerticalProjection(wheelVelocity, groundAngle);
+        var velocityVerticalProjection = - VectorUtils.getVerticalProjection(wheelVelocity, groundAngle);
         var velocityHorizontalProjection = VectorUtils.getHorizontalProjection(wheelVelocity, groundAngle);
 
         wheelVelocity.setX(VectorUtils.getComponentX(velocityVerticalProjection, velocityHorizontalProjection, groundAngle));
@@ -63,7 +63,7 @@ public class VehicleGroundCollisionsProcessor {
     }
 
     private static void recalculateVehiclePosition(Collision collision) {
-        GeometryUtils.applyNormalMoveToPosition(collision.getPair().first().getVehicleCalculations().getNextPosition(),
-                collision.getInterpenetration(), collision.getAngle());
+        collision.getPair().first().getVehicleCalculations()
+                .applyNormalMoveToNextPosition(collision.getInterpenetration(), collision.getAngle());
     }
 }

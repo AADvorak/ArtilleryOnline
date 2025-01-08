@@ -101,8 +101,8 @@ public class VehicleCollisionsProcessor {
         var normalMovePerMass = collision.getInterpenetration() / (mass + otherMass);
         var normalMove = normalMovePerMass * mass;
         var otherNormalMove = normalMovePerMass * otherMass;
-        GeometryUtils.applyNormalMoveToPosition(vehicle.getNextPosition(), normalMove, collision.getAngle());
-        GeometryUtils.applyNormalMoveToPosition(otherVehicle.getNextPosition(), - otherNormalMove, collision.getAngle());
+        vehicle.applyNormalMoveToNextPosition(normalMove, collision.getAngle());
+        otherVehicle.applyNormalMoveToNextPosition(- otherNormalMove, collision.getAngle());
     }
 
     private static double getNewVelocityVerticalProjection(

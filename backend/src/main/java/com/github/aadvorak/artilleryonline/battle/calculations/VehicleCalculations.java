@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Velocity;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -100,6 +101,13 @@ public class VehicleCalculations implements Calculations {
                 .setAngle(angleVelocity)
                 .setX(wheel.getVelocity().getX() - wheelSign * angleVelocity * Math.sin(angle))
                 .setY(wheel.getVelocity().getY() + wheelSign * angleVelocity * Math.cos(angle));
+    }
+
+    public void applyNormalMoveToNextPosition(double normalMove, double angle) {
+        var normalProjection = VectorUtils.getVerticalProjection(nextPosition, angle) + 1.1 * normalMove;
+        var tangentialProjection = VectorUtils.getHorizontalProjection(nextPosition, angle);
+        nextPosition.setX(VectorUtils.getComponentX(normalProjection, tangentialProjection, angle));
+        nextPosition.setY(VectorUtils.getComponentY(normalProjection, tangentialProjection, angle));
     }
 
     public void calculateNextPositionAndAngle(double timeStep) {
