@@ -5,7 +5,6 @@ import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculatio
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
-import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
 
 public class VehicleGroundCollisionsProcessor {
@@ -64,6 +63,6 @@ public class VehicleGroundCollisionsProcessor {
 
     private static void recalculateVehiclePosition(Collision collision) {
         collision.getPair().first().getVehicleCalculations()
-                .applyNormalMoveToNextPosition(collision.getInterpenetration(), collision.getAngle());
+                .applyNormalMoveToNextPosition(2.0 * collision.getInterpenetration(), collision.getAngle());
     }
 }

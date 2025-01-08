@@ -104,10 +104,11 @@ public class VehicleCalculations implements Calculations {
     }
 
     public void applyNormalMoveToNextPosition(double normalMove, double angle) {
-        var normalProjection = VectorUtils.getVerticalProjection(nextPosition, angle) + 1.1 * normalMove;
-        var tangentialProjection = VectorUtils.getHorizontalProjection(nextPosition, angle);
-        nextPosition.setX(VectorUtils.getComponentX(normalProjection, tangentialProjection, angle));
-        nextPosition.setY(VectorUtils.getComponentY(normalProjection, tangentialProjection, angle));
+        var tMove = 0.0;
+        var xMove = VectorUtils.getComponentX(normalMove, tMove, angle);
+        var yMove = VectorUtils.getComponentY(normalMove, tMove, angle);
+        nextPosition.setX(nextPosition.getX() + xMove);
+        nextPosition.setY(nextPosition.getY() + yMove);
     }
 
     public void calculateNextPositionAndAngle(double timeStep) {

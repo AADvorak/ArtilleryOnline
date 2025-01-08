@@ -48,7 +48,8 @@ public class Collision {
     }
 
     private static double getCollisionAngle(Position position, Position otherPosition) {
+        var sign = Math.signum(otherPosition.getX() - position.getX());
         return Math.asin((position.getY() - otherPosition.getY())
-                / position.distanceTo(otherPosition)) - Math.PI / 2;
+                / position.distanceTo(otherPosition)) + sign * Math.PI / 2;
     }
 }
