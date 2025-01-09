@@ -7,15 +7,14 @@ import com.github.aadvorak.artilleryonline.battle.common.Collision;
 
 public class VehicleWallCollisionsProcessor {
 
-    public static boolean process(VehicleCalculations vehicle, BattleCalculations battle) {
+    public static void process(VehicleCalculations vehicle, BattleCalculations battle) {
         if (wallCollide(vehicle, battle)) {
             resolve(vehicle, battle);
             vehicle.getModel().setUpdated(true);
             vehicle.getCollisions().add(new Collision()
                     .setType(CollideObjectType.WALL));
-            return true;
+            vehicle.setHasCollisions(true);
         }
-        return false;
     }
 
     public static boolean checkResolved(VehicleCalculations vehicle, BattleCalculations battle) {

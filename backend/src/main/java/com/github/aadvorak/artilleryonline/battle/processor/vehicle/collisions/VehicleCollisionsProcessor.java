@@ -10,18 +10,17 @@ import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
 
 public class VehicleCollisionsProcessor {
 
-    public static boolean process(VehicleCalculations vehicle, BattleCalculations battle) {
+    public static void process(VehicleCalculations vehicle, BattleCalculations battle) {
         var collision = VehicleCollisionsDetector.detectFirst(vehicle, battle);
         if (collision != null) {
+            vehicle.setHasCollisions(true);
             if (collisionAlreadyProcessed(vehicle, collision)) {
-                return true;
+                return;
             }
             resolve(collision, battle);
             vehicle.getModel().setUpdated(true);
             vehicle.getCollisions().add(collision);
-            return true;
         }
-        return false;
     }
 
     public static boolean checkResolved(VehicleCalculations vehicle, BattleCalculations battle) {
@@ -45,6 +44,7 @@ public class VehicleCollisionsProcessor {
         recalculateVehiclesNextPositions(collision);
         collision.getPair().second().getCollisions().add(Collision.inverted(collision));
         collision.getPair().second().getModel().setUpdated(true);
+        collision.getPair().second().getVehicleCalculations().setHasCollisions(true);
     }
 
     private static void recalculateVehiclesVelocities(Collision collision) {

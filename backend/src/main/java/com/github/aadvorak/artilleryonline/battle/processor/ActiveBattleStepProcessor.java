@@ -45,11 +45,11 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         });
 
         if (CollisionMode.getCollisionMode(applicationSettings.getCollisionMode()).equals(CollisionMode.IMPACT)) {
-            CollisionsProcessor.process(battleCalculations);
+            CollisionsProcessor.process(battleCalculations,
+                    applicationSettings.getAdditionalResolveCollisionsIterationsNumber());
         }
 
-        battleCalculations.getVehicles().forEach(vehicleCalculations ->
-                VehicleMoveProcessor.processStep2(vehicleCalculations, applicationSettings.getCollisionMode()));
+        battleCalculations.getVehicles().forEach(VehicleMoveProcessor::processStep2);
 
         battleModel.getExplosions().values().forEach(explosionModel ->
                 ExplosionProcessor.processStep(explosionModel, battleModel));

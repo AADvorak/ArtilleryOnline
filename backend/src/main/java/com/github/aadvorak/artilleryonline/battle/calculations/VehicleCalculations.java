@@ -103,6 +103,15 @@ public class VehicleCalculations implements Calculations {
                 .setY(wheel.getVelocity().getY() + wheelSign * angleVelocity * Math.cos(angle));
     }
 
+    public void applyNextPositionAndAngle() {
+        model.getState().setPosition(
+                new Position()
+                        .setX(nextPosition.getX())
+                        .setY(nextPosition.getY())
+        );
+        model.getState().setAngle(nextAngle);
+    }
+
     public void applyNormalMoveToNextPosition(double normalMove, double angle) {
         var tMove = 0.0;
         var xMove = VectorUtils.getComponentX(normalMove, tMove, angle);

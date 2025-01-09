@@ -7,31 +7,38 @@ import com.github.aadvorak.artilleryonline.dto.response.CollisionResponse;
 
 public class CollisionsProcessor {
 
-    public static void process(BattleCalculations battle) {
-        processCollisions(battle);
+    public static void process(BattleCalculations battle, long additionalIterationsNumber) {
+        processCollisions(battle, additionalIterationsNumber);
         if (collisionsExist(battle)) {
             checkCollisionsResolved(battle);
         }
     }
 
-    private static void processCollisions(BattleCalculations battle) {
-        battle.getVehicles().forEach(vehicle -> {
-            if (VehicleWallCollisionsProcessor.process(vehicle, battle)) {
-                vehicle.setHasCollisions(true);
-            }
-        });
+    private static void processCollisions(BattleCalculations battle, long additionalIterationsNumber) {
+        processCollisionsStep(battle);
+        var additionalIteration = 0;
+        while (collisionsExist(battle) && additionalIteration < additionalIterationsNumber) {
+            processCollisionsStep(battle);
+            additionalIteration++;
+        }
+    }
 
-        battle.getVehicles().forEach(vehicle -> {
-            if (VehicleGroundCollisionsProcessor.process(vehicle, battle)) {
-                vehicle.setHasCollisions(true);
-            }
-        });
+    // todo may be, may be not
+    private static void applyNextPositionsAndAngles(BattleCalculations battle) {
+        battle.getVehicles().forEach(VehicleCalculations::applyNextPositionAndAngle);
+    }
 
-        battle.getVehicles().forEach(vehicle -> {
-            if (VehicleCollisionsProcessor.process(vehicle, battle)) {
-                vehicle.setHasCollisions(true);
-            }
-        });
+    private static void processCollisionsStep(BattleCalculations battle) {
+        battle.getVehicles().forEach(vehicle -> vehicle.setHasCollisions(false));
+
+        battle.getVehicles().forEach(vehicle ->
+                VehicleWallCollisionsProcessor.process(vehicle, battle));
+
+        battle.getVehicles().forEach(vehicle ->
+                VehicleGroundCollisionsProcessor.process(vehicle, battle));
+
+        battle.getVehicles().forEach(vehicle ->
+                VehicleCollisionsProcessor.process(vehicle, battle));
     }
 
     private static boolean collisionsExist(BattleCalculations battle) {
@@ -51,7 +58,7 @@ public class CollisionsProcessor {
         var resolved = VehicleWallCollisionsProcessor.checkResolved(vehicle, battle)
                 && VehicleGroundCollisionsProcessor.checkResolved(vehicle, battle)
                 && VehicleCollisionsProcessor.checkResolved(vehicle, battle);
-        if (vehicle.isHasCollisions() && resolved) {
+        if (!vehicle.getCollisions().isEmpty() && resolved) {
             vehicle.getCollisions().forEach(collision ->
                     battle.getModel().getEvents().addCollide(new VehicleCollideEvent()
                             .setVehicleId(vehicle.getModel().getId())

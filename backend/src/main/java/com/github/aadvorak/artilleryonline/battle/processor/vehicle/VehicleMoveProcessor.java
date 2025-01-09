@@ -16,10 +16,8 @@ public class VehicleMoveProcessor {
         vehicle.calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
     }
 
-    public static void processStep2(VehicleCalculations vehicle, String collisionMode) {
-        if (CollisionMode.getCollisionMode(collisionMode).equals(CollisionMode.ELASTICITY) || !vehicle.isHasCollisions()) {
-            applyNextPositionAndAngle(vehicle);
-        }
+    public static void processStep2(VehicleCalculations vehicle) {
+        vehicle.applyNextPositionAndAngle();
         calculateOnGround(vehicle);
     }
 
@@ -45,11 +43,6 @@ public class VehicleMoveProcessor {
         vehicleVelocity.setX(vehicleVelocity.getX() + acceleration.getX() * timeStep);
         vehicleVelocity.setY(vehicleVelocity.getY() + acceleration.getY() * timeStep);
         vehicleVelocity.setAngle(vehicleVelocity.getAngle() + acceleration.getAngle() * timeStep);
-    }
-
-    private static void applyNextPositionAndAngle(VehicleCalculations vehicle) {
-        vehicle.getModel().getState().setPosition(vehicle.getNextPosition());
-        vehicle.getModel().getState().setAngle(vehicle.getNextAngle());
     }
 
     private static void calculateOnGround(VehicleCalculations vehicle) {

@@ -9,16 +9,15 @@ import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
 
 public class VehicleGroundCollisionsProcessor {
 
-    public static boolean process(VehicleCalculations vehicle, BattleCalculations battle) {
+    public static void process(VehicleCalculations vehicle, BattleCalculations battle) {
         calculateNextGroundPositions(vehicle, battle);
         var collision = VehicleGroundCollisionsDetector.detectFirst(vehicle, battle);
         if (collision != null) {
             resolve(collision, battle);
             vehicle.getModel().setUpdated(true);
             vehicle.getCollisions().add(collision);
-            return true;
+            vehicle.setHasCollisions(true);
         }
-        return false;
     }
 
     public static boolean checkResolved(VehicleCalculations vehicle, BattleCalculations battle) {

@@ -17,6 +17,8 @@ public class ApplicationSettings {
 
     private String collisionMode;
 
+    private long additionalResolveCollisionsIterationsNumber;
+
     private long battleUpdateTimeout;
 
     private long userBattleQueueTimeout;
