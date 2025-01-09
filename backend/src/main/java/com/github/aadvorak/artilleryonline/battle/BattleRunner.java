@@ -67,15 +67,15 @@ public class BattleRunner {
                 }
                 writeBattleToHistory(battle);
                 createBattleFinishedMessages(battle);
-                log.info("Battle finished: {}, map size {}", battle.getId(), userBattleMap.size());
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
-                battle.setBattleStage(BattleStage.ERROR);
+                battle.setStageAndResetTime(BattleStage.ERROR);
                 sendBattleToUpdatesQueue(battle);
             } finally {
                 stopUpdatesSender(battle);
                 removeBattleFromMap(battle);
                 removeBattleFromRoom(battle);
+                log.info("Battle finished: {}, map size {}", battle.getId(), userBattleMap.size());
             }
         }).start();
     }
