@@ -3,9 +3,8 @@ package com.github.aadvorak.artilleryonline.battle.calculator.elasticity;
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
-import com.github.aadvorak.artilleryonline.battle.common.Acceleration;
+import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
-import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,9 +38,7 @@ public class GroundElasticityAccelerationCalculator {
     private static void calculateElasticityAcceleration(WheelCalculations wheelCalculations) {
         var coefficient = 100.0;
         var groundAngle = wheelCalculations.getGroundAngle();
-        var acceleration = new Acceleration()
-                .setX(VectorUtils.getComponentX(coefficient, 0.0, groundAngle))
-                .setY(VectorUtils.getComponentY(coefficient, 0.0, groundAngle));
+        var acceleration = new VectorProjections(groundAngle).setNormal(coefficient).recoverAcceleration();
         wheelCalculations.getGroundElasticityAcceleration().add(acceleration);
     }
 }

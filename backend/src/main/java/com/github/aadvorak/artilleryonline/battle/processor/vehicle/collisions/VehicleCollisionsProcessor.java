@@ -5,8 +5,6 @@ import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculatio
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
-import com.github.aadvorak.artilleryonline.battle.common.Velocity;
-import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
 
 public class VehicleCollisionsProcessor {
 
@@ -61,28 +59,21 @@ public class VehicleCollisionsProcessor {
         var velocity = collision.getPair().first().getVelocity();
         var otherVelocity = collision.getPair().second().getVelocity();
 
-        var velocityVerticalProjection = VectorUtils.getVerticalProjection(velocity, collision.getAngle());
-        var velocityHorizontalProjection = VectorUtils.getHorizontalProjection(velocity, collision.getAngle());
-        var otherVelocityVerticalProjection = VectorUtils.getVerticalProjection(otherVelocity, collision.getAngle());
+        var velocityProjections = velocity.getProjections(collision.getAngle());
+        var otherVelocityProjections = otherVelocity.getProjections(collision.getAngle());
 
-        var newVelocityVerticalProjection = getNewVelocityVerticalProjection(
-                velocityVerticalProjection, otherVelocityVerticalProjection,
-                mass, otherMass);
-        collision.getPair().first().setVelocity(
-                new Velocity()
-                        .setX(VectorUtils.getComponentX(newVelocityVerticalProjection, velocityHorizontalProjection, collision.getAngle()))
-                        .setY(VectorUtils.getComponentY(newVelocityVerticalProjection, velocityHorizontalProjection, collision.getAngle()))
-        );
+        var velocityNormalProjection = velocityProjections.getNormal();
+        var otherVelocityNormalProjection = otherVelocityProjections.getNormal();
 
-        var otherVelocityHorizontalProjection = VectorUtils.getHorizontalProjection(otherVelocity, collision.getAngle());
-        var otherNewVelocityVerticalProjection = getNewVelocityVerticalProjection(
-                otherVelocityVerticalProjection, velocityVerticalProjection,
-                otherMass, mass);
-        collision.getPair().second().setVelocity(
-                new Velocity()
-                        .setX(VectorUtils.getComponentX(otherNewVelocityVerticalProjection, otherVelocityHorizontalProjection, collision.getAngle()))
-                        .setY(VectorUtils.getComponentY(otherNewVelocityVerticalProjection, otherVelocityHorizontalProjection, collision.getAngle()))
-        );
+        velocityProjections.setNormal(getNewVelocityVerticalProjection(
+                velocityNormalProjection, otherVelocityNormalProjection,
+                mass, otherMass));
+        collision.getPair().first().setVelocity(velocityProjections.recoverVelocity());
+
+        otherVelocityProjections.setNormal(getNewVelocityVerticalProjection(
+                otherVelocityNormalProjection, velocityNormalProjection,
+                otherMass, mass));
+        collision.getPair().second().setVelocity(otherVelocityProjections.recoverVelocity());
 
         if (collision.getPair().first() instanceof WheelCalculations wheelCalculations) {
             wheelCalculations.getVehicle().recalculateVelocityByWheel(wheelCalculations);

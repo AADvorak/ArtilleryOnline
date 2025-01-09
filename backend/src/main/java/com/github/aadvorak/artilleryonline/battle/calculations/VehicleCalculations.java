@@ -1,11 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
-import com.github.aadvorak.artilleryonline.battle.common.Acceleration;
-import com.github.aadvorak.artilleryonline.battle.common.Position;
-import com.github.aadvorak.artilleryonline.battle.common.Collision;
-import com.github.aadvorak.artilleryonline.battle.common.Velocity;
+import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
-import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -113,11 +109,9 @@ public class VehicleCalculations implements Calculations {
     }
 
     public void applyNormalMoveToNextPosition(double normalMove, double angle) {
-        var tMove = 0.0;
-        var xMove = VectorUtils.getComponentX(normalMove, tMove, angle);
-        var yMove = VectorUtils.getComponentY(normalMove, tMove, angle);
-        nextPosition.setX(nextPosition.getX() + xMove);
-        nextPosition.setY(nextPosition.getY() + yMove);
+        var move = new VectorProjections(angle).setNormal(normalMove).recoverPosition();
+        nextPosition.setX(nextPosition.getX() + move.getX());
+        nextPosition.setY(nextPosition.getY() + move.getY());
     }
 
     public void calculateNextPositionAndAngle(double timeStep) {

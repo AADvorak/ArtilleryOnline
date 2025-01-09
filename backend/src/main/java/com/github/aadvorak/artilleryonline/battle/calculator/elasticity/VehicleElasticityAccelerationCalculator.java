@@ -3,10 +3,9 @@ package com.github.aadvorak.artilleryonline.battle.calculator.elasticity;
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.CollisionPair;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
-import com.github.aadvorak.artilleryonline.battle.common.Acceleration;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
 import com.github.aadvorak.artilleryonline.battle.utils.InterpenetrationUtils;
-import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -94,12 +93,8 @@ public class VehicleElasticityAccelerationCalculator {
         var collisionAngle = getCollisionAngle(collisionPair.first().getPosition(), collisionPair.second().getPosition());
 
         // todo masses
-        var firstAcceleration = new Acceleration()
-                .setX(VectorUtils.getComponentX(coefficient, 0.0, collisionAngle))
-                .setY(VectorUtils.getComponentY(coefficient, 0.0, collisionAngle));
-        var secondAcceleration = new Acceleration()
-                .setX(VectorUtils.getComponentX(-coefficient, 0.0, collisionAngle))
-                .setY(VectorUtils.getComponentY(-coefficient, 0.0, collisionAngle));
+        var firstAcceleration = new VectorProjections(collisionAngle).setNormal(coefficient).recoverAcceleration();
+        var secondAcceleration = new VectorProjections(collisionAngle).setNormal(-coefficient).recoverAcceleration();
 
         collisionPair.first().getVehicleElasticityAcceleration().add(firstAcceleration);
         collisionPair.second().getVehicleElasticityAcceleration().add(secondAcceleration);

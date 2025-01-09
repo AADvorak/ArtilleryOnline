@@ -5,7 +5,6 @@ import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculatio
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
-import com.github.aadvorak.artilleryonline.battle.utils.VectorUtils;
 
 public class VehicleGroundCollisionsProcessor {
 
@@ -49,14 +48,10 @@ public class VehicleGroundCollisionsProcessor {
     private static void recalculateVehicleVelocity(WheelCalculations wheel) {
         wheel.getVehicle().recalculateWheelsVelocities();
 
-        var groundAngle = wheel.getGroundAngle();
-        var wheelVelocity = wheel.getVelocity();
-        var velocityVerticalProjection = - VectorUtils.getVerticalProjection(wheelVelocity, groundAngle);
-        var velocityHorizontalProjection = VectorUtils.getHorizontalProjection(wheelVelocity, groundAngle);
+        var velocityProjections = wheel.getVelocity().getProjections(wheel.getGroundAngle());
+        velocityProjections.setNormal(-velocityProjections.getNormal());
 
-        wheelVelocity.setX(VectorUtils.getComponentX(velocityVerticalProjection, velocityHorizontalProjection, groundAngle));
-        wheelVelocity.setY(VectorUtils.getComponentY(velocityVerticalProjection, velocityHorizontalProjection, groundAngle));
-
+        wheel.setVelocity(velocityProjections.recoverVelocity());
         wheel.getVehicle().recalculateVelocityByWheel(wheel);
     }
 
