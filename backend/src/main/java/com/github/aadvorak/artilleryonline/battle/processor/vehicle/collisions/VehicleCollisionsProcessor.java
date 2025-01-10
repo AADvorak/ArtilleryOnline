@@ -65,12 +65,12 @@ public class VehicleCollisionsProcessor {
         var velocityNormalProjection = velocityProjections.getNormal();
         var otherVelocityNormalProjection = otherVelocityProjections.getNormal();
 
-        velocityProjections.setNormal(getNewVelocityVerticalProjection(
+        velocityProjections.setNormal(getNewVelocityNormalProjection(
                 velocityNormalProjection, otherVelocityNormalProjection,
                 mass, otherMass));
         collision.getPair().first().setVelocity(velocityProjections.recoverVelocity());
 
-        otherVelocityProjections.setNormal(getNewVelocityVerticalProjection(
+        otherVelocityProjections.setNormal(getNewVelocityNormalProjection(
                 otherVelocityNormalProjection, velocityNormalProjection,
                 otherMass, mass));
         collision.getPair().second().setVelocity(otherVelocityProjections.recoverVelocity());
@@ -89,17 +89,17 @@ public class VehicleCollisionsProcessor {
         var mass = collision.getPair().first().getModel().getPreCalc().getMass();
         var otherMass = collision.getPair().second().getModel().getPreCalc().getMass();
         var normalMovePerMass = collision.getInterpenetration() / (mass + otherMass);
-        var normalMove = normalMovePerMass * mass;
-        var otherNormalMove = normalMovePerMass * otherMass;
+        var normalMove = normalMovePerMass * otherMass;
+        var otherNormalMove = normalMovePerMass * mass;
         vehicle.applyNormalMoveToNextPosition(normalMove, collision.getAngle());
         otherVehicle.applyNormalMoveToNextPosition(- otherNormalMove, collision.getAngle());
     }
 
-    private static double getNewVelocityVerticalProjection(
-            double velocityVerticalProjection, double otherVelocityVerticalProjection,
+    private static double getNewVelocityNormalProjection(
+            double velocityNormalProjection, double otherVelocityNormalProjection,
             double mass, double otherMass
     ) {
-        return (- Math.abs(mass - otherMass) * velocityVerticalProjection
-                + 2 * otherMass * otherVelocityVerticalProjection) / (mass + otherMass);
+        return (- Math.abs(mass - otherMass) * velocityNormalProjection
+                + 2 * otherMass * otherVelocityNormalProjection) / (mass + otherMass);
     }
 }
