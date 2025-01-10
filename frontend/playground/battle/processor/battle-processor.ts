@@ -7,7 +7,7 @@ import {ExplosionProcessor} from "@/playground/battle/processor/explosion-proces
 
 export function useBattleProcessor() {
 
-  const TIME_STEP_MS = 15
+  const TIME_STEP_MS = 10
 
   const battleStore = useBattleStore()
 

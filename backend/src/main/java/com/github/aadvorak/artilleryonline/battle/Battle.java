@@ -15,7 +15,7 @@ import java.util.UUID;
 @Accessors(chain = true)
 public class Battle {
 
-    public static final long TIME_STEP_MS = 15;
+    public static final long TIME_STEP_MS = 10;
 
     private BattleModel model;
 
