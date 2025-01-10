@@ -23,16 +23,21 @@ public class VehicleGroundCollisionsDetector {
     public static Set<Collision> detect(VehicleCalculations vehicle, BattleCalculations battle, boolean first) {
         Set<Collision> collisions = new HashSet<>();
         for (var wheel : List.of(vehicle.getRightWheel(), vehicle.getLeftWheel())) {
-            var collision = detectWheelCollision(wheel, battle);
-            if (collision != null) {
-                collisions.add(collision);
+            var groundCollision = detectWheelGroundCollision(wheel, battle);
+            if (groundCollision != null) {
+                collisions.add(groundCollision);
+                if (first) return collisions;
+            }
+            var wallCollision = detectWheelWallCollision(wheel, battle);
+            if (wallCollision != null) {
+                collisions.add(wallCollision);
                 if (first) return collisions;
             }
         }
         return collisions;
     }
 
-    private static Collision detectWheelCollision(WheelCalculations wheel, BattleCalculations battle) {
+    private static Collision detectWheelGroundCollision(WheelCalculations wheel, BattleCalculations battle) {
         if (wheel.getNext().getNearestGroundPointByX().getY() < wheel.getNext().getPosition().getY()) {
             return null;
         }
@@ -50,5 +55,21 @@ public class VehicleGroundCollisionsDetector {
                     - wheel.getNext().getPosition().getY();
             return Collision.withGround(wheel, interpenetration, groundAngle);
         }
+    }
+
+    private static Collision detectWheelWallCollision(WheelCalculations wheel, BattleCalculations battle) {
+        var wheelRadius = wheel.getVehicle().getModel().getSpecs().getWheelRadius();
+        var xMax = battle.getModel().getRoom().getSpecs().getRightTop().getX();
+        var xMin = battle.getModel().getRoom().getSpecs().getLeftBottom().getX();
+        var nextPosition = wheel.getNext().getPosition();
+        var rightWallInterpenetration = nextPosition.getX() + wheelRadius - xMax;
+        if (rightWallInterpenetration > 0) {
+            return Collision.withWall(wheel, rightWallInterpenetration, Math.PI / 2);
+        }
+        var leftWallInterpenetration = xMin - nextPosition.getX() + wheelRadius;
+        if (leftWallInterpenetration > 0) {
+            return Collision.withWall(wheel, leftWallInterpenetration, -Math.PI / 2);
+        }
+        return null;
     }
 }

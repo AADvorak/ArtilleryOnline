@@ -24,12 +24,11 @@ public class Collision {
     private double angle;
 
     public static Collision withGround(Calculations first, double interpenetration, double angle) {
-        return new Collision()
-                .setType(CollideObjectType.GROUND)
-                .setPair(new CollisionPair(first, null))
-                .setVelocitiesProjections(new VelocitiesProjections(first.getVelocity().getProjections(angle), null))
-                .setInterpenetration(interpenetration)
-                .setAngle(angle);
+        return withUnmovable(first, interpenetration, angle, CollideObjectType.GROUND);
+    }
+
+    public static Collision withWall(Calculations first, double interpenetration, double angle) {
+        return withUnmovable(first, interpenetration, angle, CollideObjectType.WALL);
     }
 
     public static Collision ofVehicles(Calculations first, Calculations second, double interpenetration) {
@@ -64,5 +63,15 @@ public class Collision {
         var sign = Math.signum(otherPosition.getX() - position.getX());
         return Math.asin((position.getY() - otherPosition.getY())
                 / position.distanceTo(otherPosition)) + sign * Math.PI / 2;
+    }
+
+    private static Collision withUnmovable(Calculations first, double interpenetration,
+                                           double angle, CollideObjectType type) {
+        return new Collision()
+                .setType(type)
+                .setPair(new CollisionPair(first, null))
+                .setVelocitiesProjections(new VelocitiesProjections(first.getVelocity().getProjections(angle), null))
+                .setInterpenetration(interpenetration)
+                .setAngle(angle);
     }
 }

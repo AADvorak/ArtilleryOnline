@@ -32,9 +32,6 @@ public class CollisionsProcessor {
         battle.getVehicles().forEach(vehicle -> vehicle.setHasCollisions(false));
 
         battle.getVehicles().forEach(vehicle ->
-                VehicleWallCollisionsProcessor.process(vehicle, battle));
-
-        battle.getVehicles().forEach(vehicle ->
                 VehicleGroundCollisionsProcessor.process(vehicle, battle));
 
         battle.getVehicles().forEach(vehicle ->
@@ -55,8 +52,7 @@ public class CollisionsProcessor {
     }
 
     private static void checkCollisionResolved(VehicleCalculations vehicle, BattleCalculations battle) {
-        var resolved = VehicleWallCollisionsProcessor.checkResolved(vehicle, battle)
-                && VehicleGroundCollisionsProcessor.checkResolved(vehicle, battle)
+        var resolved = VehicleGroundCollisionsProcessor.checkResolved(vehicle, battle)
                 && VehicleCollisionsProcessor.checkResolved(vehicle, battle);
         if (!vehicle.getCollisions().isEmpty() && resolved) {
             vehicle.getCollisions().forEach(collision ->
