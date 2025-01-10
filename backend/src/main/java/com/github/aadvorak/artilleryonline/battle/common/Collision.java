@@ -23,6 +23,15 @@ public class Collision {
 
     private double angle;
 
+    public double getSumNormalVelocity() {
+        var first = Math.abs(velocitiesProjections.first().getNormal());
+        if (velocitiesProjections.second() == null) {
+            return first;
+        }
+        var second = Math.abs(velocitiesProjections.second().getNormal());
+        return first + second;
+    }
+
     public static Collision withGround(Calculations first, double interpenetration, double angle) {
         return withUnmovable(first, interpenetration, angle, CollideObjectType.GROUND);
     }

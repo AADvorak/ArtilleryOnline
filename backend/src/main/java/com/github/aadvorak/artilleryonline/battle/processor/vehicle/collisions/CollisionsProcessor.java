@@ -55,8 +55,9 @@ public class CollisionsProcessor {
         var resolved = VehicleGroundCollisionsProcessor.checkResolved(vehicle, battle)
                 && VehicleCollisionsProcessor.checkResolved(vehicle, battle);
         if (!vehicle.getCollisions().isEmpty() && resolved) {
-            vehicle.getCollisions().forEach(collision ->
-                    battle.getModel().getEvents().addCollide(new VehicleCollideEvent()
+            vehicle.getCollisions().stream()
+                    .filter(collision -> collision.getSumNormalVelocity() > 1.0)
+                    .forEach(collision -> battle.getModel().getEvents().addCollide(new VehicleCollideEvent()
                             .setVehicleId(vehicle.getModel().getId())
                             .setObject(CollisionResponse.of(collision))));
         }
