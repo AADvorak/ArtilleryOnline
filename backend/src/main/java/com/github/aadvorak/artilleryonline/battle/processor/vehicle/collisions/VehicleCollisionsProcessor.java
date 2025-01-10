@@ -3,8 +3,8 @@ package com.github.aadvorak.artilleryonline.battle.processor.vehicle.collisions;
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
-import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
+import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
 
 public class VehicleCollisionsProcessor {
 
@@ -12,9 +12,6 @@ public class VehicleCollisionsProcessor {
         var collision = VehicleCollisionsDetector.detectFirst(vehicle, battle);
         if (collision != null) {
             vehicle.setHasCollisions(true);
-            if (collisionAlreadyProcessed(vehicle, collision)) {
-                return;
-            }
             resolve(collision, battle);
             vehicle.getModel().setUpdated(true);
             vehicle.getCollisions().add(collision);
@@ -26,19 +23,16 @@ public class VehicleCollisionsProcessor {
         return collision == null;
     }
 
-    // todo do this check while collisions detection
-    private static boolean collisionAlreadyProcessed(VehicleCalculations vehicle, Collision collision) {
-        return collision.getPair().second().getCollisions().stream()
-                .anyMatch(c -> CollideObjectType.VEHICLE.equals(c.getType())
-                        && c.getVehicleId().equals(vehicle.getModel().getId()));
-    }
-
     private static void resolve(Collision collision, BattleCalculations battle) {
         recalculateVehiclesVelocities(collision);
+
         collision.getPair().first().getVehicleCalculations()
                 .calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
         collision.getPair().second().getVehicleCalculations()
                 .calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
+        collision.getPair().first().getVehicleCalculations().recalculateWheelsVelocities();
+        collision.getPair().second().getVehicleCalculations().recalculateWheelsVelocities();
+
         recalculateVehiclesNextPositions(collision);
         collision.getPair().second().getCollisions().add(Collision.inverted(collision));
         collision.getPair().second().getModel().setUpdated(true);
@@ -49,18 +43,8 @@ public class VehicleCollisionsProcessor {
         var mass = collision.getPair().first().getModel().getPreCalc().getMass();
         var otherMass = collision.getPair().second().getModel().getPreCalc().getMass();
 
-        if (collision.getPair().first() instanceof WheelCalculations wheelCalculations) {
-            wheelCalculations.getVehicle().recalculateWheelsVelocities();
-        }
-        if (collision.getPair().second() instanceof WheelCalculations wheelCalculations) {
-            wheelCalculations.getVehicle().recalculateWheelsVelocities();
-        }
-
-        var velocity = collision.getPair().first().getVelocity();
-        var otherVelocity = collision.getPair().second().getVelocity();
-
-        var velocityProjections = velocity.getProjections(collision.getAngle());
-        var otherVelocityProjections = otherVelocity.getProjections(collision.getAngle());
+        var velocityProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().first());
+        var otherVelocityProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().second());
 
         var velocityNormalProjection = velocityProjections.getNormal();
         var otherVelocityNormalProjection = otherVelocityProjections.getNormal();

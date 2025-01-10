@@ -14,6 +14,7 @@ public class VehicleMoveProcessor {
         recalculateAcceleration(vehicle, battle, collisionMode);
         recalculateVelocity(vehicle, battle);
         vehicle.calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
+        vehicle.recalculateWheelsVelocities();
     }
 
     public static void processStep2(VehicleCalculations vehicle) {

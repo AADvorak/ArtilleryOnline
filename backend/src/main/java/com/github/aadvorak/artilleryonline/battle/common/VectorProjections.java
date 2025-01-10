@@ -17,6 +17,12 @@ public class VectorProjections {
 
     private double tangential;
 
+    public static VectorProjections copyOf(VectorProjections vectorProjections) {
+        return new VectorProjections(vectorProjections.getAngle())
+                .setNormal(vectorProjections.getNormal())
+                .setTangential(vectorProjections.getTangential());
+    }
+
     public Acceleration recoverAcceleration() {
         return new Acceleration()
                 .setX(getX())

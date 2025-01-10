@@ -17,6 +17,8 @@ public class Collision {
 
     private CollisionPair pair;
 
+    private VelocitiesProjections velocitiesProjections;
+
     private double interpenetration;
 
     private double angle;
@@ -25,17 +27,22 @@ public class Collision {
         return new Collision()
                 .setType(CollideObjectType.GROUND)
                 .setPair(new CollisionPair(first, null))
+                .setVelocitiesProjections(new VelocitiesProjections(first.getVelocity().getProjections(angle), null))
                 .setInterpenetration(interpenetration)
                 .setAngle(angle);
     }
 
     public static Collision ofVehicles(Calculations first, Calculations second, double interpenetration) {
+        var angle = getCollisionAngle(first.getPosition(), second.getPosition());
+        var firstProjections = first.getVelocity().getProjections(angle);
+        var secondProjections = second.getVelocity().getProjections(angle);
         return new Collision()
                 .setVehicleId(second.getVehicleId())
                 .setType(CollideObjectType.VEHICLE)
                 .setPair(new CollisionPair(first, second))
+                .setVelocitiesProjections(new VelocitiesProjections(firstProjections, secondProjections))
                 .setInterpenetration(interpenetration)
-                .setAngle(getCollisionAngle(first.getPosition(), second.getPosition()));
+                .setAngle(angle);
     }
 
     public static Collision inverted(Collision collision) {
@@ -43,6 +50,12 @@ public class Collision {
                 .setVehicleId(collision.getPair().first().getVehicleId())
                 .setType(collision.getType())
                 .setPair(new CollisionPair(collision.getPair().second(), collision.getPair().first()))
+                .setVelocitiesProjections(
+                        new VelocitiesProjections(
+                                collision.getVelocitiesProjections().second(),
+                                collision.getVelocitiesProjections().first()
+                        )
+                )
                 .setInterpenetration(collision.getInterpenetration())
                 .setAngle(collision.getAngle() + Math.PI);
     }

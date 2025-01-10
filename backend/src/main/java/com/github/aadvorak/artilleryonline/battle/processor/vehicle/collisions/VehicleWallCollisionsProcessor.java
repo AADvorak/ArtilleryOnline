@@ -41,5 +41,6 @@ public class VehicleWallCollisionsProcessor {
         vehicle.getModel().getState().getVelocity().setX(
                 - vehicle.getModel().getState().getVelocity().getX() / 2);
         vehicle.calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
+        vehicle.recalculateWheelsVelocities();
     }
 }

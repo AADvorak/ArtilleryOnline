@@ -4,6 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculation
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
+import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 
 public class VehicleGroundCollisionsProcessor {
@@ -37,26 +38,25 @@ public class VehicleGroundCollisionsProcessor {
     }
 
     private static void resolve(Collision collision, BattleCalculations battle) {
-        if (collision.getPair().first() instanceof WheelCalculations wheel) {
-            recalculateVehicleVelocity(wheel);
-            collision.getPair().first().getVehicleCalculations()
-                    .calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
-        }
+        recalculateVehicleVelocity(collision);
+        collision.getPair().first().getVehicleCalculations()
+                .calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
+        collision.getPair().first().getVehicleCalculations().recalculateWheelsVelocities();
         recalculateVehiclePosition(collision);
     }
 
-    private static void recalculateVehicleVelocity(WheelCalculations wheel) {
-        wheel.getVehicle().recalculateWheelsVelocities();
-
-        var velocityProjections = wheel.getVelocity().getProjections(wheel.getGroundAngle());
+    private static void recalculateVehicleVelocity(Collision collision) {
+        var velocityProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().first());
         velocityProjections.setNormal(-velocityProjections.getNormal());
 
-        wheel.setVelocity(velocityProjections.recoverVelocity());
-        wheel.getVehicle().recalculateVelocityByWheel(wheel);
+        collision.getPair().first().setVelocity(velocityProjections.recoverVelocity());
+        if (collision.getPair().first() instanceof WheelCalculations wheel) {
+            wheel.getVehicle().recalculateVelocityByWheel(wheel);
+        }
     }
 
     private static void recalculateVehiclePosition(Collision collision) {
         collision.getPair().first().getVehicleCalculations()
-                .applyNormalMoveToNextPosition(2.0 * collision.getInterpenetration(), collision.getAngle());
+                .applyNormalMoveToNextPosition(collision.getInterpenetration(), collision.getAngle());
     }
 }

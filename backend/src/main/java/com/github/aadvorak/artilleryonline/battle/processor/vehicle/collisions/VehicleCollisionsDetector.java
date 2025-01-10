@@ -2,10 +2,12 @@ package com.github.aadvorak.artilleryonline.battle.processor.vehicle.collisions;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
+import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.utils.InterpenetrationUtils;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,7 +24,8 @@ public class VehicleCollisionsDetector {
     public static Set<Collision> detect(VehicleCalculations vehicle, BattleCalculations battle, boolean first) {
         Set<Collision> collisions = new HashSet<>();
         var otherVehicles = battle.getVehicles().stream()
-                .filter(value -> value.getModel().getId() != vehicle.getModel().getId())
+                .filter(value -> !Objects.equals(value.getVehicleId(), vehicle.getVehicleId()))
+                .filter(value -> collisionNotDetected(vehicle, value.getVehicleId()))
                 .collect(Collectors.toSet());
         var wheelRadius = vehicle.getModel().getSpecs().getWheelRadius();
         var vehicleRadius = vehicle.getModel().getSpecs().getRadius();
@@ -95,5 +98,12 @@ public class VehicleCollisionsDetector {
             }
         }
         return collisions;
+    }
+
+    // todo vehicle collisions checked
+    private static boolean collisionNotDetected(VehicleCalculations vehicle, Integer otherVehicleId) {
+        return vehicle.getCollisions().stream()
+                .noneMatch(c -> CollideObjectType.VEHICLE.equals(c.getType())
+                        && c.getVehicleId().equals(otherVehicleId));
     }
 }
