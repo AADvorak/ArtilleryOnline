@@ -47,7 +47,7 @@ public class VehicleGroundCollisionsProcessor {
 
     private static void recalculateVehicleVelocity(Collision collision) {
         var velocityProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().first());
-        velocityProjections.setNormal(-velocityProjections.getNormal());
+        velocityProjections.setNormal(-0.5 * velocityProjections.getNormal());
 
         collision.getPair().first().setVelocity(velocityProjections.recoverVelocity());
         if (collision.getPair().first() instanceof WheelCalculations wheel) {
