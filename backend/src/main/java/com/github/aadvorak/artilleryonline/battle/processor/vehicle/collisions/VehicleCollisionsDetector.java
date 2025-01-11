@@ -21,6 +21,28 @@ public class VehicleCollisionsDetector {
         return collisions.iterator().next();
     }
 
+    public static Collision detectStrongest(VehicleCalculations vehicle, BattleCalculations battle) {
+        var collisions = detect(vehicle, battle, false);
+        if (collisions.isEmpty()) {
+            return null;
+        }
+        var iterator = collisions.iterator();
+        var strongest = iterator.next();
+        while (iterator.hasNext()) {
+            var collision = iterator.next();
+            var collisionVelocity = collision.getSumNormalVelocity();
+            var strongestVelocity = strongest.getSumNormalVelocity();
+            if (collisionVelocity < 1.0 && strongestVelocity < 1.0
+                    && collision.getInterpenetration() > strongest.getInterpenetration()) {
+                strongest = collision;
+            } else if (collisionVelocity > strongestVelocity) {
+                strongest = collision;
+            }
+        }
+        return strongest;
+    }
+
+    // todo refactor
     public static Set<Collision> detect(VehicleCalculations vehicle, BattleCalculations battle, boolean first) {
         Set<Collision> collisions = new HashSet<>();
         var otherVehicles = battle.getVehicles().stream()

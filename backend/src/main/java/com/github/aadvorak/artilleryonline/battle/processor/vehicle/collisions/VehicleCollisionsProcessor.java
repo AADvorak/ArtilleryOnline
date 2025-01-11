@@ -9,7 +9,7 @@ import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
 public class VehicleCollisionsProcessor {
 
     public static void process(VehicleCalculations vehicle, BattleCalculations battle) {
-        var collision = VehicleCollisionsDetector.detectFirst(vehicle, battle);
+        var collision = VehicleCollisionsDetector.detectStrongest(vehicle, battle);
         if (collision != null) {
             vehicle.setHasCollisions(true);
             resolve(collision, battle);
