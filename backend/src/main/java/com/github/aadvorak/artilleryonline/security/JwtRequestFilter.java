@@ -53,10 +53,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                             .setAuthentication(usernamePasswordAuthenticationToken);
                 }
             }
-        } catch (IllegalArgumentException e) {
-            logger.error("Unable to fetch JWT Token");
-        } catch (ExpiredJwtException e) {
-            logger.error("JWT Token is expired");
+        } catch (IllegalArgumentException | ExpiredJwtException ignored) {
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
