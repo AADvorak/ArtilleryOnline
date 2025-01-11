@@ -27,6 +27,8 @@ public class Battle {
 
     private long time;
 
+    private final FpsCalculator fpsCalculator = new FpsCalculator(20);
+
     private BattleStage battleStage;
 
     private BattleType type;
@@ -62,5 +64,6 @@ public class Battle {
         time += currentTimeStep;
         absoluteTime = currentTime;
         model.setCurrentTimeStepSecs((double) currentTimeStep / 1000);
+        fpsCalculator.addTimeStep((int) currentTimeStep);
     }
 }

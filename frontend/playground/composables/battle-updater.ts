@@ -49,6 +49,7 @@ export function useBattleUpdater(player: Player) {
     const battle = JSON.parse(JSON.stringify(battleStore.battle)) as Battle
     eventSoundsPlayer.playSounds(battleUpdate, battle)
     battle.time = battleUpdate.time
+    battle.fps = battleUpdate.fps
     if (battleUpdate.stage) {
       battle.battleStage = battleUpdate.stage
     }

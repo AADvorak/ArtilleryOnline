@@ -15,6 +15,7 @@ import HelpDialog from "~/playground/components/HelpDialog.vue";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
 import {useI18n} from "vue-i18n";
+import BattleFps from "~/playground/components/BattleFps.vue";
 
 const {t} = useI18n()
 const battleStore = useBattleStore()
@@ -73,6 +74,9 @@ function showHelpDialog() {
     <div class="ml-5 battle-timer-wrapper">
       <BattleTimer />
     </div>
+    <div class="ml-5 battle-fps-wrapper">
+      <BattleFps />
+    </div>
     <div class="ml-5 hit-points-bar-wrapper" v-for="userKeyPair in userKeyPairs">
       <HitPointsBar v-for="userKey in userKeyPair" :user-key="userKey" />
     </div>
@@ -101,6 +105,10 @@ function showHelpDialog() {
 
 <style scoped>
 .battle-timer-wrapper {
+  min-width: 50px;
+}
+
+.battle-fps-wrapper {
   min-width: 50px;
 }
 

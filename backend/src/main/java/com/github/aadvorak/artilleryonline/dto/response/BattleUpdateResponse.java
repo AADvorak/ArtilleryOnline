@@ -19,6 +19,8 @@ public class BattleUpdateResponse implements BattleUpdatesQueueElement {
 
     private long time;
 
+    private int fps;
+
     private BattleStage stage;
 
     private BattleModelStateResponse state;

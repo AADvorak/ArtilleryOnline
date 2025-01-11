@@ -20,6 +20,7 @@ export interface Battle {
   id: string
   model: BattleModel
   time: number
+  fps: number
   paused: boolean
   battleStage: BattleStage
 }
@@ -27,6 +28,7 @@ export interface Battle {
 export interface BattleUpdate {
   id: string
   time: number
+  fps: number
   stage: BattleStage
   state?: BattleModelState
   updates?: BattleModelUpdates

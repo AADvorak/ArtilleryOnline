@@ -143,6 +143,7 @@ public class BattleRunner {
                 && !updatesSent)) {
             var battleResponse = mapper.map(battle, BattleResponse.class);
             battleResponse.setPaused(battle.getDebug().isPaused());
+            battleResponse.setFps(battle.getFpsCalculator().getFps());
             battle.getQueues().getBattleUpdatesQueue().add(battleResponse);
         }
     }
@@ -156,7 +157,8 @@ public class BattleRunner {
         if (sendStage || sendState || sendUpdates || sendEvents) {
             var battleUpdateResponse = new BattleUpdateResponse()
                     .setId(battle.getId())
-                    .setTime(battle.getTime());
+                    .setTime(battle.getTime())
+                    .setFps(battle.getFpsCalculator().getFps());
             if (sendStage) {
                 battleUpdateResponse.setStage(battle.getBattleStage());
             }
