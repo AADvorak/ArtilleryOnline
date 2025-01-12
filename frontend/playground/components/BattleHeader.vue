@@ -16,6 +16,7 @@ import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
 import {useI18n} from "vue-i18n";
 import BattleFps from "~/playground/components/BattleFps.vue";
+import BattlePing from "~/playground/components/BattlePing.vue";
 
 const {t} = useI18n()
 const battleStore = useBattleStore()
@@ -77,6 +78,9 @@ function showHelpDialog() {
     <div class="ml-5 battle-fps-wrapper">
       <BattleFps />
     </div>
+    <div class="ml-5 battle-ping-wrapper">
+      <BattlePing />
+    </div>
     <div class="ml-5 hit-points-bar-wrapper" v-for="userKeyPair in userKeyPairs">
       <HitPointsBar v-for="userKey in userKeyPair" :user-key="userKey" />
     </div>
@@ -110,6 +114,10 @@ function showHelpDialog() {
 
 .battle-fps-wrapper {
   min-width: 50px;
+}
+
+.battle-ping-wrapper {
+  min-width: 70px;
 }
 
 .hit-points-bar-wrapper {
