@@ -38,23 +38,13 @@ public class VehicleGroundCollisionsDetector {
     }
 
     private static Collision detectWheelGroundCollision(WheelCalculations wheel, BattleCalculations battle) {
-        if (wheel.getNext().getNearestGroundPointByX().getY() < wheel.getNext().getPosition().getY()) {
+        GroundPositionCalculator.calculateNext(wheel, battle.getModel().getRoom());
+        var groundMaxDepth = battle.getModel().getRoom().getSpecs().getGroundMaxDepth();
+        var interpenetration = wheel.getNext().getGroundDepth() - groundMaxDepth;
+        if (interpenetration <= 0) {
             return null;
         }
-        var nearestGroundPoint = GroundPositionCalculator.getNearestGroundPoint(
-                wheel.getNext().getPosition(),
-                wheel.getVehicle().getModel().getSpecs().getWheelRadius(),
-                battle.getModel().getRoom(),
-                wheel.getSign().getValue()
-        );
-        var groundAngle = wheel.getGroundAngle();
-        if (nearestGroundPoint != null) {
-            return Collision.withGround(wheel, nearestGroundPoint.distance(), groundAngle);
-        } else {
-            var interpenetration = wheel.getNext().getNearestGroundPointByX().getY()
-                    - wheel.getNext().getPosition().getY();
-            return Collision.withGround(wheel, interpenetration, groundAngle);
-        }
+        return Collision.withGround(wheel, interpenetration, wheel.getGroundAngle());
     }
 
     private static Collision detectWheelWallCollision(WheelCalculations wheel, BattleCalculations battle) {

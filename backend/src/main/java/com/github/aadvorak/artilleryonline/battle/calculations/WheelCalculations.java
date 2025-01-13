@@ -142,5 +142,11 @@ public class WheelCalculations implements Calculations {
         private Position position;
 
         private Position nearestGroundPointByX;
+
+        private NearestGroundPoint nearestGroundPoint;
+
+        private double groundAngle;
+
+        private double groundDepth;
     }
 }

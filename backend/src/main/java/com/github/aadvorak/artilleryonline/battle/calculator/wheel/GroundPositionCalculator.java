@@ -9,23 +9,40 @@ import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 public class GroundPositionCalculator {
 
     public static void calculate(WheelCalculations wheelCalculations, double wheelRadius, RoomModel roomModel) {
-        wheelCalculations.setNearestGroundPointByX(BattleUtils.getNearestGroundPosition(
-                wheelCalculations.getPosition().getX(), roomModel));
+        var nearestGroundPointByX = BattleUtils.getNearestGroundPosition(
+                wheelCalculations.getPosition().getX(), roomModel);
+        wheelCalculations.setNearestGroundPointByX(nearestGroundPointByX);
         var nearestGroundPoint = getNearestGroundPoint(wheelCalculations.getPosition(), wheelRadius,
                 roomModel, wheelCalculations.getSign().getValue());
         if (nearestGroundPoint == null) {
+            wheelCalculations.setGroundAngle(0.0);
+            wheelCalculations.setGroundDepth(getGroundDepth(wheelCalculations.getPosition(),
+                    wheelRadius, nearestGroundPointByX));
             return;
         }
         wheelCalculations.setNearestGroundPoint(nearestGroundPoint);
         wheelCalculations.setGroundAngle(getGroundAngle(wheelCalculations.getPosition(), nearestGroundPoint, roomModel));
-        if (nearestGroundPoint.position().getY() <= wheelCalculations.getPosition().getY()) {
-            wheelCalculations.setGroundDepth(wheelRadius - nearestGroundPoint.distance());
-        } else {
-            wheelCalculations.setGroundDepth(wheelRadius + nearestGroundPoint.distance());
-        }
+        wheelCalculations.setGroundDepth(getGroundDepth(wheelCalculations.getPosition(), wheelRadius, nearestGroundPoint));
     }
 
-    public static double getGroundAngle(Position position, NearestGroundPoint nearestGroundPoint, RoomModel roomModel) {
+    public static void calculateNext(WheelCalculations wheelCalculations, RoomModel roomModel) {
+        var wheelRadius = wheelCalculations.getVehicle().getModel().getSpecs().getWheelRadius();
+        var nextPosition = wheelCalculations.getNext().getPosition();
+        var nearestGroundPointByX = BattleUtils.getNearestGroundPosition(nextPosition.getX(), roomModel);
+        wheelCalculations.setNearestGroundPointByX(nearestGroundPointByX);
+        var nearestGroundPoint = getNearestGroundPoint(nextPosition, wheelRadius,
+                roomModel, wheelCalculations.getSign().getValue());
+        if (nearestGroundPoint == null) {
+            wheelCalculations.getNext().setGroundAngle(0.0);
+            wheelCalculations.getNext().setGroundDepth(getGroundDepth(nextPosition, wheelRadius, nearestGroundPointByX));
+            return;
+        }
+        wheelCalculations.getNext().setNearestGroundPoint(nearestGroundPoint);
+        wheelCalculations.getNext().setGroundAngle(getGroundAngle(nextPosition, nearestGroundPoint, roomModel));
+        wheelCalculations.getNext().setGroundDepth(getGroundDepth(nextPosition, wheelRadius, nearestGroundPoint));
+    }
+
+    private static double getGroundAngle(Position position, NearestGroundPoint nearestGroundPoint, RoomModel roomModel) {
         if (nearestGroundPoint.index() > 0 && nearestGroundPoint.position().getX() <= position.getX()) {
             var otherGroundPosition = BattleUtils.getGroundPosition(nearestGroundPoint.index() - 1, roomModel);
             return Math.atan((nearestGroundPoint.position().getY() - otherGroundPosition.getY())
@@ -37,7 +54,7 @@ public class GroundPositionCalculator {
         }
     }
 
-    public static NearestGroundPoint getNearestGroundPoint(Position objectPosition, double objectRadius,
+    private static NearestGroundPoint getNearestGroundPoint(Position objectPosition, double objectRadius,
                                                             RoomModel roomModel, int sign) {
         var groundIndexes = BattleUtils.getGroundIndexesBetween(objectPosition.getX() - objectRadius,
                 objectPosition.getX() + objectRadius, roomModel);
@@ -64,5 +81,21 @@ public class GroundPositionCalculator {
             return null;
         }
         return new NearestGroundPoint(nearestPosition, minimalDistance, index);
+    }
+
+    private static double getGroundDepth(Position position, double radius, NearestGroundPoint nearestGroundPoint) {
+        if (nearestGroundPoint.position().getY() <= position.getY()) {
+            return radius - nearestGroundPoint.distance();
+        } else {
+            return radius + nearestGroundPoint.distance();
+        }
+    }
+
+    private static double getGroundDepth(Position position, double radius, Position nearestGroundPointByX) {
+        var depth = nearestGroundPointByX.getY() - position.getY() + radius;
+        if (depth < 0) {
+            return 0.0;
+        }
+        return depth;
     }
 }

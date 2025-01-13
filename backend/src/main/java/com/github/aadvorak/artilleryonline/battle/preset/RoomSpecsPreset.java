@@ -11,7 +11,7 @@ public enum RoomSpecsPreset {
 
     DEFAULT("default", new RoomSpecs()
             .setGravityAcceleration(9.8)
-            .setGroundMaxDepth(0.02)
+            .setGroundMaxDepth(0.04)
             .setGroundReactionCoefficient(300.0)
             .setGroundFrictionCoefficient(100.0)
             .setAirFrictionCoefficient(0.1)
