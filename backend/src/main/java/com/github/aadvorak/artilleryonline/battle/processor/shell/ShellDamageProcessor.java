@@ -71,9 +71,10 @@ public class ShellDamageProcessor {
     private static void applyDamageToVehicle(double damage, VehicleModel vehicleModel,
                                              ShellModel shellModel, BattleModel battleModel) {
         StatisticsProcessor.increaseDamage(Math.min(damage, vehicleModel.getState().getHitPoints()),
-                vehicleModel, shellModel, battleModel);
+                vehicleModel.getUserId(), shellModel.getUserId(), battleModel);
         var hitPoints = vehicleModel.getState().getHitPoints() - damage;
         if (hitPoints <= 0) {
+            vehicleModel.getState().setHitPoints(0.0);
             battleModel.getUpdates().removeVehicle(battleModel.getVehicleKeyById(vehicleModel.getId()));
             if (shellModel.getUserId() != null) {
                 battleModel.getStatistics().get(shellModel.getUserId()).increaseDestroyedVehicles();

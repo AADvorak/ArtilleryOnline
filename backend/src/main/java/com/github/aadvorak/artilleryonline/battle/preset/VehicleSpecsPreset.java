@@ -23,7 +23,10 @@ public enum VehicleSpecsPreset {
             .setMaxAngle(Math.PI)
             .setAcceleration(6.0)
             .setAvailableGuns(Map.of(GunSpecsPreset.HEAVY.getName(), GunSpecsPreset.HEAVY.getSpecs()))
-            .setAvailableJets(Map.of())),
+            .setAvailableJets(Map.of())
+            .setMinCollisionDamageImpact(0.035)
+            .setCollisionDamageCoefficient(80.0)
+    ),
 
     MEDIUM("Medium", new VehicleSpecs()
             .setName("Medium")
@@ -38,7 +41,10 @@ public enum VehicleSpecsPreset {
             .setMaxAngle(Math.PI)
             .setAcceleration(10.0)
             .setAvailableGuns(Map.of(GunSpecsPreset.MEDIUM.getName(), GunSpecsPreset.MEDIUM.getSpecs()))
-            .setAvailableJets(Map.of(JetSpecsPreset.MEDIUM.getName(), JetSpecsPreset.MEDIUM.getSpecs()))),
+            .setAvailableJets(Map.of(JetSpecsPreset.MEDIUM.getName(), JetSpecsPreset.MEDIUM.getSpecs()))
+            .setMinCollisionDamageImpact(0.03)
+            .setCollisionDamageCoefficient(90.0)
+    ),
 
     LIGHT("Light", new VehicleSpecs()
             .setName("Light")
@@ -53,7 +59,10 @@ public enum VehicleSpecsPreset {
             .setMaxAngle(Math.PI)
             .setAcceleration(14.0)
             .setAvailableGuns(Map.of(GunSpecsPreset.LIGHT.getName(), GunSpecsPreset.LIGHT.getSpecs()))
-            .setAvailableJets(Map.of(JetSpecsPreset.LIGHT.getName(), JetSpecsPreset.LIGHT.getSpecs())));
+            .setAvailableJets(Map.of(JetSpecsPreset.LIGHT.getName(), JetSpecsPreset.LIGHT.getSpecs()))
+            .setMinCollisionDamageImpact(0.025)
+            .setCollisionDamageCoefficient(100.0)
+    );
 
     private final String name;
 

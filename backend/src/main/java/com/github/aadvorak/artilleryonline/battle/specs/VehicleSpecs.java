@@ -36,4 +36,8 @@ public class VehicleSpecs implements Specs {
     private Map<String, GunSpecs> availableGuns;
 
     private Map<String, JetSpecs> availableJets;
+
+    private double minCollisionDamageImpact;
+
+    private double collisionDamageCoefficient;
 }

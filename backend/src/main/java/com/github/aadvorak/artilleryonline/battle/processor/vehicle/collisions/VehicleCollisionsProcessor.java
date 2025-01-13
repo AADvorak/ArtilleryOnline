@@ -5,6 +5,9 @@ import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculatio
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
+import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.processor.statistics.StatisticsProcessor;
 
 public class VehicleCollisionsProcessor {
 
@@ -12,6 +15,7 @@ public class VehicleCollisionsProcessor {
         var collision = VehicleCollisionsDetector.detectStrongest(vehicle, battle);
         if (collision != null) {
             vehicle.setHasCollisions(true);
+            calculateAndApplyDamage(collision, battle.getModel());
             resolve(collision, battle);
             vehicle.getModel().setUpdated(true);
             vehicle.getCollisions().add(collision);
@@ -85,5 +89,33 @@ public class VehicleCollisionsProcessor {
     ) {
         return (- Math.abs(mass - otherMass) * velocityNormalProjection
                 + 2 * otherMass * otherVelocityNormalProjection) / (mass + otherMass);
+    }
+
+    private static void calculateAndApplyDamage(Collision collision, BattleModel battleModel) {
+        var firstModel = collision.getPair().first().getModel();
+        var secondModel = collision.getPair().second().getModel();
+        calculateAndApplyDamage(collision, battleModel, firstModel, secondModel);
+        calculateAndApplyDamage(collision, battleModel, secondModel, firstModel);
+    }
+
+    private static void calculateAndApplyDamage(Collision collision, BattleModel battleModel,
+                                                VehicleModel receiver, VehicleModel causer) {
+        var minImpact = receiver.getSpecs().getMinCollisionDamageImpact();
+        var impact = collision.getImpact();
+        if (impact > minImpact) {
+            var damage = receiver.getSpecs().getCollisionDamageCoefficient() * (impact - minImpact);
+            StatisticsProcessor.increaseDamage(Math.min(damage, receiver.getState().getHitPoints()),
+                    receiver.getUserId(), causer.getUserId(), battleModel);
+            var hitPoints = receiver.getState().getHitPoints() - damage;
+            if (hitPoints <= 0) {
+                receiver.getState().setHitPoints(0.0);
+                battleModel.getUpdates().removeVehicle(battleModel.getVehicleKeyById(receiver.getId()));
+                if (causer.getUserId() != null) {
+                    battleModel.getStatistics().get(causer.getUserId()).increaseDestroyedVehicles();
+                }
+            } else {
+                receiver.getState().setHitPoints(hitPoints);
+            }
+        }
     }
 }

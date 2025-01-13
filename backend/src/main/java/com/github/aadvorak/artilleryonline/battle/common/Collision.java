@@ -23,13 +23,34 @@ public class Collision {
 
     private double angle;
 
+    private Double sumNormalVelocity;
+
+    private Double impact;
+
     public double getSumNormalVelocity() {
-        var first = Math.abs(velocitiesProjections.first().getNormal());
-        if (velocitiesProjections.second() == null) {
-            return first;
+        if (sumNormalVelocity == null) {
+            var first = Math.abs(velocitiesProjections.first().getNormal());
+            var second = 0.0;
+            if (velocitiesProjections.second() != null) {
+                second = Math.abs(velocitiesProjections.second().getNormal());
+            }
+            sumNormalVelocity = first + second;
         }
-        var second = Math.abs(velocitiesProjections.second().getNormal());
-        return first + second;
+        return sumNormalVelocity;
+    }
+
+    public double getImpact() {
+        if (impact == null) {
+            var first = Math.abs(velocitiesProjections.first().getNormal())
+                    * pair.first().getModel().getPreCalc().getMass();
+            var second = 0.0;
+            if (velocitiesProjections.second() != null && pair.second() != null) {
+                second = Math.abs(velocitiesProjections.second().getNormal())
+                        * pair.second().getModel().getPreCalc().getMass();
+            }
+            impact = first + second;
+        }
+        return impact;
     }
 
     public static Collision withGround(Calculations first, double interpenetration, double angle) {

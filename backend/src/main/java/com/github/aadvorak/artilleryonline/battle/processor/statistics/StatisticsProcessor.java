@@ -6,13 +6,13 @@ import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 
 public class StatisticsProcessor {
 
-    public static void increaseDamage(double damage, VehicleModel vehicleModel,
-                                      ShellModel shellModel, BattleModel battleModel) {
-        if (vehicleModel.getUserId() != null) {
-            battleModel.getStatistics().get(vehicleModel.getUserId()).increaseReceivedDamage(damage);
+    public static void increaseDamage(double damage, Long receiverId,
+                                      Long causerId, BattleModel battleModel) {
+        if (receiverId != null) {
+            battleModel.getStatistics().get(receiverId).increaseReceivedDamage(damage);
         }
-        if (shellModel.getUserId() != null) {
-            battleModel.getStatistics().get(shellModel.getUserId()).increaseCausedDamage(damage);
+        if (causerId != null) {
+            battleModel.getStatistics().get(causerId).increaseCausedDamage(damage);
         }
     }
 
