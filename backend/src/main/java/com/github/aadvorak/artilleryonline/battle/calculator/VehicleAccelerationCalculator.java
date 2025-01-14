@@ -72,7 +72,7 @@ public class VehicleAccelerationCalculator {
         EngineAccelerationCalculator.calculate(wheelCalculations, vehicleModel);
         JetAccelerationCalculator.calculate(wheelCalculations, vehicleModel);
         GroundFrictionAccelerationCalculator.calculate(wheelCalculations, vehicleModel, groundFrictionCoefficient);
-        GroundReactionAccelerationCalculator.calculate(wheelCalculations, groundReactionCoefficient);
+        GroundReactionAccelerationCalculator.calculate(wheelCalculations, vehicleModel, groundReactionCoefficient);
         GravityAccelerationCalculator.calculate(wheelCalculations, roomGravityAcceleration, groundGravityDepth);
     }
 }

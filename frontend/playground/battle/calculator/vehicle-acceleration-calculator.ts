@@ -111,7 +111,11 @@ export const VehicleAccelerationCalculator = {
         vehicleModel,
         groundFrictionCoefficient
     )
-    GroundReactionAccelerationCalculator.calculate(wheelCalculations, groundReactionCoefficient)
+    GroundReactionAccelerationCalculator.calculate(
+        wheelCalculations,
+        vehicleModel,
+        groundReactionCoefficient
+    )
     GravityAccelerationCalculator.calculate(
         wheelCalculations,
         roomGravityAcceleration,

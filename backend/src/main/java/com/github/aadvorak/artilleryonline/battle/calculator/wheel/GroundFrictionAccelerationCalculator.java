@@ -13,8 +13,9 @@ public class GroundFrictionAccelerationCalculator {
         }
         var depth = WheelGroundState.FULL_UNDER_GROUND.equals(wheelCalculations.getGroundState())
                 ? 2 * vehicleModel.getSpecs().getWheelRadius() : wheelCalculations.getGroundDepth();
+        var mass = vehicleModel.getPreCalc().getMass();
         wheelCalculations.getGroundFrictionAcceleration()
-                .setX( - wheelCalculations.getVelocity().getX() * depth * groundFrictionCoefficient)
-                .setY( - wheelCalculations.getVelocity().getY() * depth * groundFrictionCoefficient);
+                .setX( - wheelCalculations.getVelocity().getX() * depth * groundFrictionCoefficient / mass)
+                .setY( - wheelCalculations.getVelocity().getY() * depth * groundFrictionCoefficient / mass);
     }
 }
