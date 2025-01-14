@@ -23,7 +23,7 @@ public enum VehicleSpecsPreset {
             .setMaxAngle(Math.PI)
             .setAcceleration(6.0)
             .setAvailableGuns(Map.of(GunSpecsPreset.HEAVY.getName(), GunSpecsPreset.HEAVY.getSpecs()))
-            .setAvailableJets(Map.of())
+            .setAvailableJets(Map.of(JetSpecsPreset.HEAVY.getName(), JetSpecsPreset.HEAVY.getSpecs()))
             .setMinCollisionDamageImpact(0.035)
             .setCollisionDamageCoefficient(80.0)
     ),

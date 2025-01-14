@@ -20,8 +20,16 @@ public enum JetSpecsPreset {
     MEDIUM("medium", new JetSpecs()
             .setCapacity(30.0)
             .setConsumption(20.0)
-            .setRegeneration(1.5)
+            .setRegeneration(1.0)
             .setAcceleration(9.0)
+            .setType(JetType.HORIZONTAL)
+    ),
+
+    HEAVY("heavy", new JetSpecs()
+            .setCapacity(30.0)
+            .setConsumption(20.0)
+            .setRegeneration(1.0)
+            .setAcceleration(8.0)
             .setType(JetType.HORIZONTAL)
     );
 
