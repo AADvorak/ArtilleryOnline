@@ -12,15 +12,34 @@ const fps = computed(() => {
   return battle.fps
 })
 
+const fpsClass = computed(() => {
+  if (fps.value > 70) {
+    return 'battle-fps-green'
+  } else if (fps.value > 40) {
+    return 'battle-fps-orange'
+  } else {
+    return 'battle-fps-red'
+  }
+})
 </script>
 
 <template>
-  <div class="battle-fps">{{ fps }}fps</div>
+  <div :class="fpsClass">{{ fps }}fps</div>
 </template>
 
 <style scoped>
-.battle-fps {
-  color: greenyellow;
+.battle-fps-green {
+  color: green;
+  font-size: large;
+}
+
+.battle-fps-orange {
+  color: orange;
+  font-size: large;
+}
+
+.battle-fps-red {
+  color: crimson;
   font-size: large;
 }
 </style>
