@@ -2,14 +2,17 @@ package com.github.aadvorak.artilleryonline.battle.calculator.wheel;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelGroundState;
+import com.github.aadvorak.artilleryonline.battle.common.JetType;
 import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 
 public class EngineAccelerationCalculator {
 
     public static void calculate(WheelCalculations wheelCalculations, VehicleModel vehicleModel) {
+        var jetState = vehicleModel.getState().getJetState();
+        var jetSpecs = vehicleModel.getConfig().getJet();
         if (vehicleModel.getState().getTrackState().isBroken()
-                || vehicleModel.getState().getJetState() != null && vehicleModel.getState().getJetState().isActive()
+                || jetSpecs != null && jetState != null && jetState.isActive() && jetSpecs.getType().equals(JetType.VERTICAL)
                 || WheelGroundState.FULL_UNDER_GROUND.equals(wheelCalculations.getGroundState())
                 || WheelGroundState.FULL_OVER_GROUND.equals(wheelCalculations.getGroundState())) {
             return;

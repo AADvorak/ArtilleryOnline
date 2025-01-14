@@ -1,12 +1,14 @@
 import {type WheelCalculations, WheelGroundState} from '@/playground/data/calculations'
 import type {VehicleModel} from '@/playground/data/model'
-import {MovingDirection} from '@/playground/data/common'
+import {JetType, MovingDirection} from '@/playground/data/common'
 
 export const EngineAccelerationCalculator = {
   calculate(wheelCalculations: WheelCalculations, vehicleModel: VehicleModel): void {
+    const jetState = vehicleModel.state.jetState
+    const jetSpecs = vehicleModel.config.jet
     if (
         vehicleModel.state.trackState.broken ||
-        vehicleModel.state.jetState && vehicleModel.state.jetState.active ||
+        jetSpecs && jetState && jetState.active && JetType.VERTICAL === jetSpecs.type ||
         WheelGroundState.FULL_UNDER_GROUND === wheelCalculations.groundState ||
         WheelGroundState.FULL_OVER_GROUND === wheelCalculations.groundState
     ) {

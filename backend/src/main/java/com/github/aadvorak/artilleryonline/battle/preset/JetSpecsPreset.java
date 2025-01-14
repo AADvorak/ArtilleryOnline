@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.preset;
 
+import com.github.aadvorak.artilleryonline.battle.common.JetType;
 import com.github.aadvorak.artilleryonline.battle.specs.JetSpecs;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,13 +13,17 @@ public enum JetSpecsPreset {
             .setCapacity(30.0)
             .setConsumption(15.0)
             .setRegeneration(1.0)
-            .setAcceleration(13.0)),
+            .setAcceleration(13.0)
+            .setType(JetType.VERTICAL)
+    ),
 
     MEDIUM("medium", new JetSpecs()
             .setCapacity(30.0)
             .setConsumption(20.0)
-            .setRegeneration(0.5)
-            .setAcceleration(12.0));
+            .setRegeneration(1.5)
+            .setAcceleration(9.0)
+            .setType(JetType.HORIZONTAL)
+    );
 
     private final String name;
 

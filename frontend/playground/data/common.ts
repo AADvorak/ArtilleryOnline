@@ -17,6 +17,11 @@ export enum ShellType {
   HE = 'HE'
 }
 
+export enum JetType {
+  VERTICAL = 'VERTICAL',
+  HORIZONTAL = 'HORIZONTAL'
+}
+
 export enum ShellHitType {
   GROUND = 'GROUND',
   VEHICLE_HULL = 'VEHICLE_HULL',

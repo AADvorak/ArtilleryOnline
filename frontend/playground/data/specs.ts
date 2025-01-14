@@ -1,4 +1,4 @@
-import {type Position, ShellType} from "@/playground/data/common";
+import {JetType, type Position, ShellType} from "@/playground/data/common";
 
 export interface ShellSpecs {
   velocity: number
@@ -58,4 +58,5 @@ export interface JetSpecs {
   consumption: number
   regeneration: number
   acceleration: number
+  type: JetType
 }
