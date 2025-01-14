@@ -22,7 +22,7 @@ const selectedShell = computed(() => {
 })
 
 const ammoKeys = computed(() => {
-  return Object.keys(ammo.value)
+  return Object.keys(ammo.value || {})
 })
 
 const reloadingProgress = computed(() => {
