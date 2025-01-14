@@ -64,7 +64,7 @@ public class BattleFactory {
         var sigma = BattleUtils.generateRandom(0.9, 1.5);
         var sigma1 = BattleUtils.generateRandom(1.0, 1.5);
         var sigma2 = BattleUtils.generateRandom(1.0, 1.5);
-        var amplitude = BattleUtils.generateRandom(0.01, 0.025);
+        var amplitude = BattleUtils.generateRandom(0.01, 0.02);
         var frequency = BattleUtils.generateRandom(5.0, 20.0);
         var mu = (xMax - xMin) / 2;
         var mu1 = mu - 0.3 * mu - BattleUtils.generateRandom(0.0, 0.6 * mu);
