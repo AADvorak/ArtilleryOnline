@@ -94,7 +94,7 @@ public class VehicleCalculations implements Calculations {
                 : (leftWheelVelocity.getX() - rightWheelVelocity.getX()) / (2.0 * Math.sin(angle));
         var wheelSign = wheel.getSign().getValue();
         model.getState().getVelocity()
-                .setAngle(angleVelocity)
+                .setAngle(angleVelocity / model.getSpecs().getHullRadius())
                 .setX(wheel.getVelocity().getX() - wheelSign * angleVelocity * Math.sin(angle))
                 .setY(wheel.getVelocity().getY() + wheelSign * angleVelocity * Math.cos(angle));
     }

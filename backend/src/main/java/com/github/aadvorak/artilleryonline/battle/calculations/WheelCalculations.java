@@ -108,7 +108,7 @@ public class WheelCalculations implements Calculations {
     public void calculateVelocity() {
         var vehicleVelocity = vehicle.getModel().getState().getVelocity();
         var angle = vehicle.getModel().getState().getAngle();
-        var angleVelocity = vehicleVelocity.getAngle() * vehicle.getModel().getSpecs().getRadius();
+        var angleVelocity = vehicleVelocity.getAngle() * vehicle.getModel().getSpecs().getHullRadius();
         var velocityX = vehicleVelocity.getX() + sign.getValue() * angleVelocity * Math.sin(angle);
         var velocityY = vehicleVelocity.getY() - sign.getValue() * angleVelocity * Math.cos(angle);
         setVelocity(new Velocity()
