@@ -27,4 +27,9 @@ public class Acceleration implements Vector {
         }
         return new Acceleration().setX(sumX).setY(sumY);
     }
+
+    @Override
+    public String toString() {
+        return String.format("(%.3f, %.3f)", x, y);
+    }
 }
