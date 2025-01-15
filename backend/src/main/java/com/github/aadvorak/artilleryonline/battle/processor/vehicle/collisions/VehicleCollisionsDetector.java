@@ -4,6 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculation
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
+import com.github.aadvorak.artilleryonline.battle.common.Constants;
 import com.github.aadvorak.artilleryonline.battle.utils.InterpenetrationUtils;
 
 import java.util.HashSet;
@@ -61,7 +62,7 @@ public class VehicleCollisionsDetector {
             var otherVehicleRadius = otherVehicle.getModel().getSpecs().getRadius();
             var vehicleVehicleInterpenetration = InterpenetrationUtils.getVehicleVehicleInterpenetration(position,
                     otherPosition, angle, otherAngle, vehicleRadius, otherVehicleRadius);
-            if (vehicleVehicleInterpenetration > 0) {
+            if (vehicleVehicleInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
                 collisions.add(Collision.ofVehicles(vehicle, otherVehicle, vehicleVehicleInterpenetration));
                 if (first) return collisions;
             }
@@ -72,49 +73,49 @@ public class VehicleCollisionsDetector {
             var otherRightWheel = otherVehicle.getRightWheel();
             var rightWheelLeftWheelInterpenetration = InterpenetrationUtils.getWheelWheelInterpenetration(rightWheelPosition,
                     otherLeftWheelPosition, wheelRadius, otherWheelRadius);
-            if (rightWheelLeftWheelInterpenetration > 0) {
+            if (rightWheelLeftWheelInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
                 collisions.add(Collision.ofVehicles(vehicle.getRightWheel(), otherLeftWheel, rightWheelLeftWheelInterpenetration));
                 if (first) return collisions;
             }
             var leftWheelRightWheelInterpenetration = InterpenetrationUtils.getWheelWheelInterpenetration(leftWheelPosition,
                     otherRightWheelPosition, wheelRadius, otherWheelRadius);
-            if (leftWheelRightWheelInterpenetration > 0) {
+            if (leftWheelRightWheelInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
                 collisions.add(Collision.ofVehicles(vehicle.getLeftWheel(), otherRightWheel, leftWheelRightWheelInterpenetration));
                 if (first) return collisions;
             }
             var rightWheelVehicleInterpenetration = InterpenetrationUtils.getWheelVehicleInterpenetration(rightWheelPosition,
                     otherPosition, otherAngle, wheelRadius, otherVehicleRadius);
-            if (rightWheelVehicleInterpenetration > 0) {
+            if (rightWheelVehicleInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
                 collisions.add(Collision.ofVehicles(vehicle.getRightWheel(), otherVehicle, rightWheelVehicleInterpenetration));
                 if (first) return collisions;
             }
             var vehicleRightWheelInterpenetration = InterpenetrationUtils.getWheelVehicleInterpenetration(
                     otherRightWheelPosition, position, angle, otherWheelRadius, vehicleRadius);
-            if (vehicleRightWheelInterpenetration > 0) {
+            if (vehicleRightWheelInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
                 collisions.add(Collision.ofVehicles(vehicle, otherRightWheel, vehicleRightWheelInterpenetration));
                 if (first) return collisions;
             }
             var vehicleLeftWheelInterpenetration = InterpenetrationUtils.getWheelVehicleInterpenetration(otherLeftWheelPosition,
                     position, angle, otherWheelRadius, vehicleRadius);
-            if (vehicleLeftWheelInterpenetration > 0) {
+            if (vehicleLeftWheelInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
                 collisions.add(Collision.ofVehicles(vehicle, otherLeftWheel, vehicleLeftWheelInterpenetration));
                 if (first) return collisions;
             }
             var leftWheelVehicleInterpenetration = InterpenetrationUtils.getWheelVehicleInterpenetration(leftWheelPosition,
                     otherPosition, otherAngle, wheelRadius, otherVehicleRadius);
-            if (leftWheelVehicleInterpenetration > 0) {
+            if (leftWheelVehicleInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
                 collisions.add(Collision.ofVehicles(vehicle.getLeftWheel(), otherVehicle, leftWheelVehicleInterpenetration));
                 if (first) return collisions;
             }
             var leftWheelLeftWheelInterpenetration = InterpenetrationUtils.getWheelWheelInterpenetration(leftWheelPosition,
                     otherLeftWheelPosition, wheelRadius, otherWheelRadius);
-            if (leftWheelLeftWheelInterpenetration > 0) {
+            if (leftWheelLeftWheelInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
                 collisions.add(Collision.ofVehicles(vehicle.getLeftWheel(), otherLeftWheel, leftWheelLeftWheelInterpenetration));
                 if (first) return collisions;
             }
             var rightWheelRightWheelInterpenetration = InterpenetrationUtils.getWheelWheelInterpenetration(rightWheelPosition,
                     otherRightWheelPosition, wheelRadius, otherWheelRadius);
-            if (rightWheelRightWheelInterpenetration > 0) {
+            if (rightWheelRightWheelInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
                 collisions.add(Collision.ofVehicles(vehicle.getRightWheel(), otherRightWheel, rightWheelRightWheelInterpenetration));
                 if (first) return collisions;
             }

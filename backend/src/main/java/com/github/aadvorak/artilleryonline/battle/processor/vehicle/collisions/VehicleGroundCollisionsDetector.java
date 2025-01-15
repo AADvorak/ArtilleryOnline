@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculatio
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculator.wheel.GroundPositionCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
+import com.github.aadvorak.artilleryonline.battle.common.Constants;
 
 import java.util.HashSet;
 import java.util.List;
@@ -41,7 +42,7 @@ public class VehicleGroundCollisionsDetector {
         GroundPositionCalculator.calculateNext(wheel, battle.getModel().getRoom());
         var groundMaxDepth = battle.getModel().getRoom().getSpecs().getGroundMaxDepth();
         var interpenetration = wheel.getNext().getGroundDepth() - groundMaxDepth;
-        if (interpenetration <= 0) {
+        if (interpenetration <= Constants.INTERPENETRATION_THRESHOLD) {
             return null;
         }
         return Collision.withGround(wheel, interpenetration, wheel.getGroundAngle());
@@ -53,11 +54,11 @@ public class VehicleGroundCollisionsDetector {
         var xMin = battle.getModel().getRoom().getSpecs().getLeftBottom().getX();
         var nextPosition = wheel.getNext().getPosition();
         var rightWallInterpenetration = nextPosition.getX() + wheelRadius - xMax;
-        if (rightWallInterpenetration > 0) {
+        if (rightWallInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
             return Collision.withWall(wheel, rightWallInterpenetration, Math.PI / 2);
         }
         var leftWallInterpenetration = xMin - nextPosition.getX() + wheelRadius;
-        if (leftWallInterpenetration > 0) {
+        if (leftWallInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
             return Collision.withWall(wheel, leftWallInterpenetration, -Math.PI / 2);
         }
         return null;
