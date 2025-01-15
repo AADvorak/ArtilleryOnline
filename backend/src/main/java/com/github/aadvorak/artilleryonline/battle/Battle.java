@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle;
 
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import com.github.aadvorak.artilleryonline.entity.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -59,7 +60,7 @@ public class Battle {
         var currentTime = System.currentTimeMillis();
         var currentTimeStep = currentTime - previousTime;
         if (currentTimeStep > TIME_STEP_MS * 10) {
-            currentTimeStep = TIME_STEP_MS;
+            currentTimeStep = TIME_STEP_MS + BattleUtils.generateRandom(1, 5);
         }
         time += currentTimeStep;
         absoluteTime = currentTime;

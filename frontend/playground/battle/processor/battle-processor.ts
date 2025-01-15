@@ -32,7 +32,7 @@ export function useBattleProcessor() {
       const currentTime = new Date().getTime()
       let timeStep = currentTime - battleStore.updateTime!
       if (timeStep > 10 * TIME_STEP_MS) {
-        timeStep = TIME_STEP_MS
+        timeStep = TIME_STEP_MS + Math.ceil(Math.random() * 5)
       }
       const timeStepSecs = timeStep / 1000
       battle.time += timeStep
