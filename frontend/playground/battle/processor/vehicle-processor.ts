@@ -8,6 +8,7 @@ export const VehicleProcessor = {
     const calculations = this.initVehicleCalculations()
     this.recalculateVelocity(calculations, vehicleModel, battleModel, timeStepSecs)
     this.recalculatePositionAndAngle(vehicleModel, timeStepSecs)
+    // todo fix
     if (vehicleModel.state.gunRotatingDirection) {
       const sign = MovingDirection.RIGHT === vehicleModel.state.gunRotatingDirection ? -1 : 1
       vehicleModel.state.gunAngle += sign * vehicleModel.config.gun.rotationVelocity * timeStepSecs
@@ -15,6 +16,7 @@ export const VehicleProcessor = {
     if (vehicleModel.state.gunState.loadingShell) {
       vehicleModel.state.gunState.loadRemainTime -= timeStepSecs
     }
+    // todo fix
     if (vehicleModel.state.jetState && vehicleModel.state.jetState.volume < vehicleModel.config.jet.capacity) {
       vehicleModel.state.jetState.volume += vehicleModel.state.jetState.active
           ? - vehicleModel.config.jet.consumption * timeStepSecs
