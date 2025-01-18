@@ -93,7 +93,7 @@ export const VehicleUtils = {
   calculateWheelVelocity(vehicleModel: VehicleModel, wheelCalculations: WheelCalculations): void {
     const vehicleVelocity = vehicleModel.state.velocity
     const angle = vehicleModel.state.angle
-    const angleVelocity = vehicleVelocity.angle * vehicleModel.specs.radius
+    const angleVelocity = vehicleVelocity.angle * vehicleModel.specs.hullRadius
     const velocityX = vehicleVelocity.x + wheelCalculations.sign * angleVelocity * Math.sin(angle)
     const velocityY = vehicleVelocity.y - wheelCalculations.sign * angleVelocity * Math.cos(angle)
     wheelCalculations.velocity = {
