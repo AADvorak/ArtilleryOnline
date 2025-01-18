@@ -109,19 +109,16 @@ public class ShellDamageProcessor {
         return hitPosition.distanceTo(wheelPosition) <= 0.6 * shellHitRadius - wheelRadius;
     }
 
-    /**
-     * todo improve, smooth ground after explosion
-     */
     private static void processGroundDamage(Position hitPosition, ShellSpecs shellSpecs, BattleModel battleModel) {
         var damageRadius = shellSpecs.getRadius();
-        var groundIndexes = BattleUtils.getGroundIndexesBetween(hitPosition.getX() - damageRadius,
+        var damageIndexes = BattleUtils.getGroundIndexesBetween(hitPosition.getX() - damageRadius,
                 hitPosition.getX() + damageRadius, battleModel.getRoom());
-        if (groundIndexes.isEmpty()) {
+        if (damageIndexes.isEmpty()) {
             return;
         }
-        var roomStateUpdate = new RoomStateUpdate().setBegin(groundIndexes.get(0));
-        for (var groundIndex : groundIndexes) {
-            var groundPosition = BattleUtils.getGroundPosition(groundIndex, battleModel.getRoom());
+        // apply damage
+        for (var index : damageIndexes) {
+            var groundPosition = BattleUtils.getGroundPosition(index, battleModel.getRoom());
             var explosionShiftY = getExplosionShiftY(groundPosition.getX(), hitPosition, damageRadius);
             var minY = hitPosition.getY() - explosionShiftY;
             var groundY = groundPosition.getY();
@@ -132,8 +129,21 @@ public class ShellDamageProcessor {
                 groundY -= diffY;
             }
             groundY = groundY > 0 ? groundY : 0;
-            battleModel.getRoom().getState().getGroundLine().set(groundIndex, groundY);
-            roomStateUpdate.getGroundLinePart().add(groundY);
+            battleModel.getRoom().getState().getGroundLine().set(index, groundY);
+        }
+        // apply smooth
+        var smoothSizeCoefficient = 1.3;
+        var smoothIndexes = BattleUtils.getGroundIndexesBetween(
+                hitPosition.getX() - damageRadius * smoothSizeCoefficient,
+                hitPosition.getX() + damageRadius * smoothSizeCoefficient,
+                battleModel.getRoom()
+        );
+        BattleUtils.gaussianFilter(battleModel.getRoom().getState().getGroundLine(), smoothIndexes);
+        // create update
+        var roomStateUpdate = new RoomStateUpdate().setBegin(smoothIndexes.get(0));
+        for (var index : smoothIndexes) {
+            roomStateUpdate.getGroundLinePart()
+                    .add(battleModel.getRoom().getState().getGroundLine().get(index));
         }
         battleModel.getUpdates().addRoomStateUpdate(roomStateUpdate);
     }

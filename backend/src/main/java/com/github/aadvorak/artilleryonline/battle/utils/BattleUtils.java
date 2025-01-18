@@ -65,4 +65,32 @@ public class BattleUtils {
     public static double gaussian(double x, double sigma, double mu) {
         return (1.0 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2.0));
     }
+
+    public static void gaussianFilter(List<Double> input, List<Integer> smoothIndexes) {
+        int windowSize = Math.min(smoothIndexes.size(), 20);
+        double[] kernel = new double[windowSize];
+        double sigma = windowSize / 6.0;
+        double sum = 0;
+        // Create Gaussian kernel
+        for (int i = 0; i < windowSize; i++) {
+            int x = i - windowSize / 2;
+            kernel[i] = Math.exp(-(x * x) / (2 * sigma * sigma));
+            sum += kernel[i];
+        }
+        // Normalize kernel
+        for (int i = 0; i < windowSize; i++) {
+            kernel[i] /= sum;
+        }
+        // Apply filter
+        for (var i : smoothIndexes) {
+            double smoothedValue = 0;
+            for (int j = 0; j < windowSize; j++) {
+                int index = i + j - windowSize / 2;
+                if (index >= 0 && index < input.size()) {
+                    smoothedValue += input.get(index) * kernel[j];
+                }
+            }
+            input.set(i, smoothedValue);
+        }
+    }
 }
