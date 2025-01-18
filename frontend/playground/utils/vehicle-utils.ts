@@ -1,5 +1,5 @@
 import type {VehicleModel} from '@/playground/data/model'
-import type {Position} from '@/playground/data/common'
+import {JetType, type Position} from '@/playground/data/common'
 import type {WheelCalculations} from '@/playground/data/calculations'
 import {DefaultColors} from '~/dictionary/default-colors'
 import {useUserStore} from '~/stores/user'
@@ -107,5 +107,17 @@ export const VehicleUtils = {
       return vehicleModel.config.color
     }
     return userKey === useUserStore().user!.nickname ? DefaultColors.ALLY_VEHICLE : DefaultColors.ENEMY_VEHICLE
+  },
+
+  isJetActive(vehicleModel: VehicleModel) {
+    const jetState = vehicleModel.state.jetState
+    if (!jetState) {
+      return false
+    }
+    const jetType = vehicleModel.config.jet.type
+    if (JetType.VERTICAL === jetType) {
+      return jetState.active && jetState.volume > 0
+    }
+    return jetState.active && jetState.volume > 0 && !!vehicleModel.state.movingDirection
   }
 }

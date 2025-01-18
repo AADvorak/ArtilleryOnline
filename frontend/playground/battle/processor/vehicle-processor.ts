@@ -2,6 +2,7 @@ import type { BattleModel, VehicleModel } from '@/playground/data/model'
 import { MovingDirection } from '@/playground/data/common'
 import { VehicleAccelerationCalculator } from '@/playground/battle/calculator/vehicle-acceleration-calculator'
 import { type VehicleCalculations, type WheelCalculations, WheelSign } from '@/playground/data/calculations'
+import {VehicleUtils} from "~/playground/utils/vehicle-utils";
 
 export const VehicleProcessor = {
   processStep(vehicleModel: VehicleModel, battleModel: BattleModel, timeStepSecs: number) {
@@ -16,11 +17,10 @@ export const VehicleProcessor = {
     if (vehicleModel.state.gunState.loadingShell) {
       vehicleModel.state.gunState.loadRemainTime -= timeStepSecs
     }
-    // todo fix
     if (vehicleModel.state.jetState && vehicleModel.state.jetState.volume < vehicleModel.config.jet.capacity) {
-      vehicleModel.state.jetState.volume += vehicleModel.state.jetState.active
-          ? - vehicleModel.config.jet.consumption * timeStepSecs
-          : vehicleModel.config.jet.regeneration * timeStepSecs
+      vehicleModel.state.jetState.volume += (VehicleUtils.isJetActive(vehicleModel)
+          ? - vehicleModel.config.jet.consumption
+          : vehicleModel.config.jet.regeneration) * timeStepSecs
     }
   },
 

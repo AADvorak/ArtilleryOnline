@@ -7,6 +7,7 @@ import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
 import {useSoundsPlayerBase} from "~/playground/composables/sound/sounds-player-base";
 import {useUserStore} from "~/stores/user";
 import {JetType} from "~/playground/data/common";
+import {VehicleUtils} from "~/playground/utils/vehicle-utils";
 
 interface AudioControls {
   [userKey: string]: AudioControl | undefined
@@ -59,7 +60,7 @@ export function useContinuousSoundsPlayer(player: Player) {
           !!movingOnGroundVelocity, getVehicleMoveSoundName(acceleration), fadeOutAndStop)
       await playContinuousSound(key, ENGINE_KEY, pan, gain / 3, 1.0, isEngineActive(vehicleState),
           'vehicle-engine.mp3', fadeOutAndStop)
-      await playContinuousSound(key, JET_KEY, pan, gain, 1.0, isJetActive(vehicles[key]),
+      await playContinuousSound(key, JET_KEY, pan, gain, 1.0, VehicleUtils.isJetActive(vehicles[key]),
           'jet.mp3', fadeOutAndStop)
       if (key === userStore.user!.nickname) {
         await playContinuousSound(key, GUN_KEY, 0, gain, 1.0, !!vehicleState.gunRotatingDirection,
@@ -141,18 +142,6 @@ export function useContinuousSoundsPlayer(player: Player) {
 
   function isEngineActive(vehicleState: VehicleState) {
     return vehicleState.movingDirection && !vehicleState.jetState?.active
-  }
-
-  function isJetActive(vehicleModel: VehicleModel) {
-    const jetState = vehicleModel.state.jetState
-    if (!jetState) {
-      return false
-    }
-    const jetType = vehicleModel.config.jet.type
-    if (JetType.VERTICAL === jetType) {
-      return jetState.active && jetState.volume > 0
-    }
-    return jetState.active && jetState.volume > 0 && !!vehicleModel.state.movingDirection
   }
 
   async function playLooped(fileName: string, pan: number, gain: number, rate: number): Promise<AudioControl | undefined> {
