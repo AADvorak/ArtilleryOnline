@@ -12,7 +12,7 @@ public enum GunSpecsPreset {
 
     HEAVY("Heavy", new GunSpecs()
             .setLoadTime(5.0)
-            .setRotationVelocity(0.15)
+            .setRotationVelocity(0.35)
             .setLength(0.6)
             .setCaliber(0.07)
             .setAvailableShells(Map.of(
@@ -22,7 +22,7 @@ public enum GunSpecsPreset {
 
     MEDIUM("Medium", new GunSpecs()
             .setLoadTime(3.0)
-            .setRotationVelocity(0.2)
+            .setRotationVelocity(0.4)
             .setLength(0.6)
             .setCaliber(0.05)
             .setAvailableShells(Map.of(
@@ -32,7 +32,7 @@ public enum GunSpecsPreset {
 
     LIGHT("Light", new GunSpecs()
             .setLoadTime(0.5)
-            .setRotationVelocity(0.3)
+            .setRotationVelocity(0.45)
             .setLength(0.4)
             .setCaliber(0.03)
             .setAvailableShells(Map.of(
