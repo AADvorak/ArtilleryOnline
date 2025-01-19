@@ -9,11 +9,7 @@ export const VehicleProcessor = {
     const calculations = this.initVehicleCalculations()
     this.recalculateVelocity(calculations, vehicleModel, battleModel, timeStepSecs)
     this.recalculatePositionAndAngle(vehicleModel, timeStepSecs)
-    // todo fix
-    if (vehicleModel.state.gunRotatingDirection) {
-      const sign = MovingDirection.RIGHT === vehicleModel.state.gunRotatingDirection ? -1 : 1
-      vehicleModel.state.gunAngle += sign * vehicleModel.config.gun.rotationVelocity * timeStepSecs
-    }
+    this.recalculateGunAngle(vehicleModel, timeStepSecs)
     if (vehicleModel.state.gunState.loadingShell) {
       vehicleModel.state.gunState.loadRemainTime -= timeStepSecs
     }
@@ -81,5 +77,21 @@ export const VehicleProcessor = {
       angle = - Math.PI / 2
     }
     vehicleModel.state.angle = angle
+  },
+
+  recalculateGunAngle(vehicleModel: VehicleModel, timeStepSecs: number) {
+    if (vehicleModel.state.gunRotatingDirection) {
+      const sign = MovingDirection.RIGHT === vehicleModel.state.gunRotatingDirection ? -1 : 1
+      let newAngle = vehicleModel.state.gunAngle + sign * vehicleModel.config.gun.rotationVelocity * timeStepSecs
+      const minAngle = vehicleModel.specs.minAngle
+      const maxAngle = vehicleModel.specs.maxAngle
+      if (newAngle > maxAngle) {
+        newAngle = maxAngle
+      }
+      if (newAngle < minAngle) {
+        newAngle = minAngle
+      }
+      vehicleModel.state.gunAngle = newAngle
+    }
   }
 }
