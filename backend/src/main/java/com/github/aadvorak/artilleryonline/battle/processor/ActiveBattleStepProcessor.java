@@ -65,13 +65,20 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
             var removedShellIds = battleModel.getUpdates().getRemoved().getShellIds();
             if (removedShellIds != null) {
                 removedShellIds.forEach(id -> {
-                    ExplosionProcessor.initExplosion(battleModel.getShells().get(id), battleModel);
+                    var shellModel = battleModel.getShells().get(id);
+                    ExplosionProcessor.initExplosion(shellModel.getState().getPosition(),
+                            shellModel.getSpecs().getRadius(), battleModel);
                     battleModel.removeShellById(id);
                 });
             }
             var removedVehicleKeys = battleModel.getUpdates().getRemoved().getVehicleKeys();
             if (removedVehicleKeys != null) {
-                removedVehicleKeys.forEach(battleModel::removeVehicleByKey);
+                removedVehicleKeys.forEach(key -> {
+                    var vehicleModel = battleModel.getVehicles().get(key);
+                    ExplosionProcessor.initExplosion(vehicleModel.getState().getPosition(),
+                            vehicleModel.getSpecs().getRadius(), battleModel);
+                    battleModel.removeVehicleByKey(key);
+                });
             }
         }
     }
@@ -81,7 +88,8 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         if (super.changeStageIfNeeded(battle)) {
             return true;
         }
-        if (battle.getModel().getVehicles().size() <= 1) {
+        if (battle.getModel().getVehicles().size() <= 1 && battle.getModel().getShells().isEmpty()
+                && battle.getModel().getExplosions().isEmpty()) {
             battle.setStageAndResetTime(BattleStage.FINISHED);
             return true;
         }

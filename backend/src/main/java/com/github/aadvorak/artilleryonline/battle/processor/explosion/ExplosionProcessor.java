@@ -1,22 +1,21 @@
 package com.github.aadvorak.artilleryonline.battle.processor.explosion;
 
-import com.github.aadvorak.artilleryonline.battle.common.ShellType;
+import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.ExplosionModel;
-import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.specs.ExplosionSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.ExplosionState;
 
 public class ExplosionProcessor {
 
-    public static void initExplosion(ShellModel shellModel, BattleModel battleModel) {
+    public static void initExplosion(Position position, double radius, BattleModel battleModel) {
         var explosionSpecs = new ExplosionSpecs()
-                .setDuration(ShellType.HE.equals(shellModel.getSpecs().getType()) ? 0.4 : 0.2)
-                .setRadius(shellModel.getSpecs().getRadius());
+                .setDuration(0.8 * radius)
+                .setRadius(radius);
         var explosionState = new ExplosionState()
                 .setTime(0.0)
-                .setRadius(shellModel.getSpecs().getRadius())
-                .setPosition(shellModel.getState().getPosition());
+                .setRadius(radius)
+                .setPosition(position);
         var explosionModel = new ExplosionModel();
         explosionModel.setId(battleModel.getIdGenerator().generate());
         explosionModel.setSpecs(explosionSpecs);
