@@ -67,6 +67,19 @@ export function useContinuousSoundsPlayer(player: Player) {
             'gun-turn.mp3', stopLoop)
       }
     }
+    // todo find better solution
+    for (const controlKey in audioControls) {
+      let vehicleExists = false
+      for (const key of keys) {
+        if (controlKey.startsWith(key)) {
+          vehicleExists = true
+          break
+        }
+      }
+      if (!vehicleExists) {
+        stopByKey(controlKey)
+      }
+    }
   }
 
   function getVehicleMoveSoundName(acceleration: number) {
@@ -114,13 +127,15 @@ export function useContinuousSoundsPlayer(player: Player) {
   }
 
   function stopAll() {
-    Object.keys(audioControls).forEach(key => {
-      const audioControl = audioControls[key]
-      if (audioControl) {
-        audioControl.source.stop()
-        delete audioControls[key]
-      }
-    })
+    Object.keys(audioControls).forEach(stopByKey)
+  }
+
+  function stopByKey(key: string) {
+    const audioControl = audioControls[key]
+    if (audioControl) {
+      fadeOutAndStop(audioControl)
+      delete audioControls[key]
+    }
   }
 
   function getMovingOnGroundVelocity(vehicleState: VehicleState) {
