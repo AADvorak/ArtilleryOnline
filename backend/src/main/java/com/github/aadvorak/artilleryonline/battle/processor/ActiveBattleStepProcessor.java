@@ -34,6 +34,12 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
                         .map(VehicleCalculations::new)
                         .collect(Collectors.toSet()));
 
+        battleModel.getExplosions().values().forEach(explosionModel ->
+                ExplosionProcessor.processStep(explosionModel, battleModel));
+
+        battleModel.getShells().values().forEach(shellModel ->
+                ShellFlyProcessor.processStep(shellModel, battleModel));
+
         battleCalculations.getVehicles().forEach(vehicleCalculations -> {
             var vehicleModel = vehicleCalculations.getModel();
             VehicleGunShootProcessor.processStep(vehicleModel, battleModel);
@@ -50,12 +56,6 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         }
 
         battleCalculations.getVehicles().forEach(VehicleMoveProcessor::processStep2);
-
-        battleModel.getExplosions().values().forEach(explosionModel ->
-                ExplosionProcessor.processStep(explosionModel, battleModel));
-
-        battleModel.getShells().values().forEach(shellModel ->
-                ShellFlyProcessor.processStep(shellModel, battleModel));
 
         if (battleModel.getUpdates().getRemoved() != null) {
             var removedExplosionIds = battleModel.getUpdates().getRemoved().getExplosionIds();
