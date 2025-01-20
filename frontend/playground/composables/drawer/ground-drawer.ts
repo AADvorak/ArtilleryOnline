@@ -12,6 +12,7 @@ export function useGroundDrawer(
   function draw() {
     const roomModel = battleStore.battle?.model.room
     if (ctx.value && roomModel) {
+      ctx.value.beginPath()
       ctx.value.fillStyle = 'rgb(100 100 100)'
       ctx.value.strokeStyle = 'rgb(100 100 100)'
       ctx.value.lineWidth = 1
