@@ -1,4 +1,4 @@
-import type {Ammo, Position, VehicleVelocity} from "@/playground/data/common";
+import type {Ammo, Position, VehicleVelocity, Velocity} from "@/playground/data/common";
 import {MovingDirection} from "@/playground/data/common";
 
 export interface GunState {
@@ -21,8 +21,7 @@ export interface JetState {
 
 export interface ShellState {
   position: Position
-  angle: number
-  velocity: number
+  velocity: Velocity
 }
 
 export interface ExplosionState {

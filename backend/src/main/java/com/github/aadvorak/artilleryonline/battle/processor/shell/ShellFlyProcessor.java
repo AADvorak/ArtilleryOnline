@@ -18,15 +18,12 @@ public class ShellFlyProcessor {
     public static void processStep(ShellModel shellModel, BattleModel battleModel) {
         var prevPosition = shellModel.getState().getPosition();
         var velocity = shellModel.getState().getVelocity();
-        var angle = shellModel.getState().getAngle();
-        var velocityX = velocity * Math.cos(angle);
-        var velocityY = velocity * Math.sin(angle);
         var nextPosition = new Position()
-                .setX(prevPosition.getX() + velocityX * battleModel.getCurrentTimeStepSecs())
-                .setY(prevPosition.getY() + velocityY * battleModel.getCurrentTimeStepSecs());
+                .setX(prevPosition.getX() + velocity.getX() * battleModel.getCurrentTimeStepSecs())
+                .setY(prevPosition.getY() + velocity.getY() * battleModel.getCurrentTimeStepSecs());
         shellModel.getState().setPosition(nextPosition);
         if (positionIsOutOfRoom(nextPosition, battleModel.getRoom().getSpecs())) {
-            velocityX = - velocityX;
+            velocity.setX(-velocity.getX());
         }
         var hitTrackVehicle = getHitTrack(prevPosition, nextPosition, battleModel);
         if (hitTrackVehicle != null) {
@@ -49,11 +46,7 @@ public class ShellFlyProcessor {
             return;
         }
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
-        velocityY = velocityY - gravityAcceleration * battleModel.getCurrentTimeStepSecs();
-        velocity = Math.sqrt(Math.pow(velocityX, 2.0) + Math.pow(velocityY, 2.0));
-        angle = Math.atan(velocityY / velocityX) + (velocityX < 0 ? Math.PI : 0.0);
-        shellModel.getState().setVelocity(velocity);
-        shellModel.getState().setAngle(angle);
+        velocity.setY(velocity.getY() - gravityAcceleration * battleModel.getCurrentTimeStepSecs());
     }
 
     private static VehicleModel getHitVehicle(Position prevPosition, Position nextPosition, BattleModel battleModel) {

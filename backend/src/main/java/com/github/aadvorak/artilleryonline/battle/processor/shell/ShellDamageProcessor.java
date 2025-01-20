@@ -164,10 +164,9 @@ public class ShellDamageProcessor {
             pushCoefficient /= 2.0;
         }
         var shellVelocity = shellModel.getState().getVelocity();
-        var shellAngle = shellModel.getState().getAngle();
         vehicleVelocity
-                .setX(vehicleVelocity.getX() + pushCoefficient * shellVelocity * Math.cos(shellAngle))
-                .setY(vehicleVelocity.getY() + pushCoefficient * shellVelocity * Math.sin(shellAngle));
+                .setX(vehicleVelocity.getX() + pushCoefficient * shellVelocity.getX())
+                .setY(vehicleVelocity.getY() + pushCoefficient * shellVelocity.getY());
         vehicleModel.setUpdated(true);
     }
 }

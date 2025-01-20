@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.Velocity;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
@@ -32,10 +33,14 @@ public class VehicleGunShootProcessor {
             battleModel.getStatistics().get(vehicleModel.getUserId()).increaseMadeShots();
         }
         shellModel.setSpecs(loadedShellSpecs);
+        var shellAngle = vehicleModel.getState().getGunAngle() + vehicleModel.getState().getAngle();
+        var shellVelocity = loadedShellSpecs.getVelocity();
         shellModel.setState(new ShellState()
-                .setAngle(vehicleModel.getState().getGunAngle() + vehicleModel.getState().getAngle())
                 .setPosition(getShellInitialPosition(vehicleModel))
-                .setVelocity(loadedShellSpecs.getVelocity()));
+                .setVelocity(new Velocity()
+                        .setX(shellVelocity * Math.cos(shellAngle))
+                        .setY(shellVelocity * Math.sin(shellAngle)))
+        );
         battleModel.getShells().put(shellModel.getId(), shellModel);
         battleModel.getUpdates().addShell(shellModel);
         vehicleModel.getState().getGunState().setLoadedShell(null);
@@ -81,9 +86,8 @@ public class VehicleGunShootProcessor {
         var vehicleVelocity = vehicleModel.getState().getVelocity();
         var pushCoefficient = shellModel.getSpecs().getPushCoefficient();
         var shellVelocity = shellModel.getState().getVelocity();
-        var shellAngle = shellModel.getState().getAngle();
         vehicleVelocity
-                .setX(vehicleVelocity.getX() - pushCoefficient * shellVelocity * Math.cos(shellAngle))
-                .setY(vehicleVelocity.getY() - pushCoefficient * shellVelocity * Math.sin(shellAngle));
+                .setX(vehicleVelocity.getX() - pushCoefficient * shellVelocity.getX())
+                .setY(vehicleVelocity.getY() - pushCoefficient * shellVelocity.getY());
     }
 }

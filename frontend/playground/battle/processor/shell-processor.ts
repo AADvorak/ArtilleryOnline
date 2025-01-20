@@ -5,21 +5,14 @@ export const ShellProcessor = {
   processStep(shellModel: ShellModel, timeStepSecs: number, roomSpecs: RoomSpecs) {
     const prevPosition = shellModel.state.position
     let velocity = shellModel.state.velocity
-    let angle = shellModel.state.angle
-    let velocityX = velocity * Math.cos(angle)
-    let velocityY = velocity * Math.sin(angle)
     const nextPosition = {
-      x: prevPosition.x + velocityX * timeStepSecs,
-      y: prevPosition.y + velocityY * timeStepSecs
+      x: prevPosition.x + velocity.x * timeStepSecs,
+      y: prevPosition.y + velocity.y * timeStepSecs
     }
     if (nextPosition.x >= roomSpecs.rightTop.x || nextPosition.x <= roomSpecs.leftBottom.x) {
-      velocityX = - velocityX
+      velocity.x = - velocity.x
     }
-    velocityY -= roomSpecs.gravityAcceleration * timeStepSecs
-    velocity = Math.sqrt(Math.pow(velocityX, 2.0) + Math.pow(velocityY, 2.0))
-    angle = Math.atan(velocityY / velocityX) + (velocityX < 0 ? Math.PI : 0.0)
+    velocity.y -= roomSpecs.gravityAcceleration * timeStepSecs
     shellModel.state.position = nextPosition
-    shellModel.state.velocity = velocity
-    shellModel.state.angle = angle
   }
 }
