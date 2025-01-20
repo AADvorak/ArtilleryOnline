@@ -37,7 +37,10 @@ const opened = ref(false)
 
 watch(battle, (value) => {
   const battleStage = value?.battleStage
-  if ([BattleStage.FINISHED, BattleStage.ERROR].includes(battleStage)) {
+  if (battleStage === BattleStage.FINISHED) {
+    setTimeout(() => opened.value = true, 2000)
+  }
+  if (battleStage === BattleStage.ERROR) {
     opened.value = true
   }
 })
