@@ -14,7 +14,8 @@ public class GravityAccelerationCalculator {
         } else if (WheelGroundState.HALF_OVER_GROUND.equals(wheelCalculations.getGroundState())
                 && wheelCalculations.getGroundDepth() <= groundGravityDepth) {
             var groundAngle = wheelCalculations.getGroundAngle();
-            var groundAccelerationModule = Math.abs(roomGravityAcceleration * Math.sin(groundAngle));
+            var groundAccelerationModule = Math.abs(roomGravityAcceleration * Math.sin(groundAngle))
+                    * Math.sqrt(1 - wheelCalculations.getGroundDepth() / groundGravityDepth);
             wheelCalculations.getGravityAcceleration()
                     .setX(-groundAccelerationModule * Math.sin(groundAngle))
                     .setY(-groundAccelerationModule * Math.cos(groundAngle));

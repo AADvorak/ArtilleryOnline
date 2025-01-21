@@ -63,7 +63,7 @@ public class VehicleAccelerationCalculator {
         var roomGravityAcceleration = roomModel.getSpecs().getGravityAcceleration();
         var groundReactionCoefficient = roomModel.getSpecs().getGroundReactionCoefficient();
         var groundFrictionCoefficient = roomModel.getSpecs().getGroundFrictionCoefficient();
-        var groundGravityDepth = roomModel.getSpecs().getGroundMaxDepth() / 2;
+        var groundGravityDepth = 0.7 * roomModel.getSpecs().getGroundMaxDepth();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
 
         GroundPositionCalculator.calculate(wheelCalculations, wheelRadius, roomModel);

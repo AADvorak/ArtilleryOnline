@@ -15,6 +15,7 @@ export const GravityAccelerationCalculator = {
     ) {
       const groundAngle = wheelCalculations.groundAngle!
       const groundAccelerationModule = Math.abs(roomGravityAcceleration * Math.sin(groundAngle))
+          * Math.sqrt(1 - wheelCalculations.groundDepth! / groundGravityDepth)
       wheelCalculations.gravityAcceleration.x = -groundAccelerationModule * Math.sin(groundAngle)
       wheelCalculations.gravityAcceleration.y = -groundAccelerationModule * Math.cos(groundAngle)
     }

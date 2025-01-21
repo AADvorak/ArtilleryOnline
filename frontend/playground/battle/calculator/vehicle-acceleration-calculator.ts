@@ -98,7 +98,7 @@ export const VehicleAccelerationCalculator = {
     const roomGravityAcceleration = roomModel.specs.gravityAcceleration
     const groundReactionCoefficient = roomModel.specs.groundReactionCoefficient
     const groundFrictionCoefficient = roomModel.specs.groundFrictionCoefficient
-    const groundGravityDepth = roomModel.specs.groundMaxDepth / 2
+    const groundGravityDepth = 0.7 * roomModel.specs.groundMaxDepth
     const wheelRadius = vehicleModel.specs.wheelRadius
 
     GroundPositionCalculator.calculate(wheelCalculations, wheelRadius, roomModel)
