@@ -1,16 +1,16 @@
 import type {AudioControl, Player} from "~/playground/audio/player";
 import {useBattleStore} from "~/stores/battle";
 import type {VehicleState} from "~/playground/data/state";
-import type {VehicleModel, VehicleModels} from "~/playground/data/model";
+import type {VehicleModels} from "~/playground/data/model";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
 import {useSoundsPlayerBase} from "~/playground/composables/sound/sounds-player-base";
 import {useUserStore} from "~/stores/user";
-import {JetType} from "~/playground/data/common";
 import {VehicleUtils} from "~/playground/utils/vehicle-utils";
+import {BattleStage} from "~/playground/data/battle";
 
 interface AudioControls {
-  [userKey: string]: AudioControl | undefined
+  [key: string]: AudioControl | undefined
 }
 
 const TRACK_KEY = 'Track'
@@ -31,6 +31,7 @@ export function useContinuousSoundsPlayer(player: Player) {
   const soundsPlayerBase = useSoundsPlayerBase()
 
   const vehicles = computed(() => battleStore.vehicles)
+  const battleIsFinished = computed(() => battleStore.battle?.battleStage === BattleStage.FINISHED)
 
   function start() {
     setTimeout(playSounds, 100)
@@ -40,12 +41,14 @@ export function useContinuousSoundsPlayer(player: Player) {
     if (useUserSettingsStore().soundSettingsOrDefaultsNameValueMapping[SoundSettingsNames.ENABLE] !== '1') {
       return
     }
+    if (battleIsFinished.value) {
+      stopAll()
+      return
+    }
     if (vehicles.value) {
       await playVehicleSounds(vehicles.value!)
-      setTimeout(playSounds, 100)
-    } else {
-      stopAll()
     }
+    setTimeout(playSounds, 100)
   }
 
   async function playVehicleSounds(vehicles: VehicleModels) {
