@@ -4,7 +4,6 @@ import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.BattleStage;
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
-import com.github.aadvorak.artilleryonline.battle.common.CollisionMode;
 import com.github.aadvorak.artilleryonline.battle.processor.command.CommandProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.shell.ShellFlyProcessor;
@@ -46,14 +45,11 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
             VehicleGunRotateProcessor.processStep(vehicleModel, battleModel);
             VehicleTrackProcessor.processStep(vehicleModel, battleModel);
             VehicleJetProcessor.processStep(vehicleModel, battleModel);
-            VehicleMoveProcessor.processStep1(vehicleCalculations, battleCalculations,
-                    applicationSettings.getCollisionMode());
+            VehicleMoveProcessor.processStep1(vehicleCalculations, battleCalculations);
         });
 
-        if (CollisionMode.getCollisionMode(applicationSettings.getCollisionMode()).equals(CollisionMode.IMPACT)) {
-            CollisionsProcessor.process(battleCalculations,
-                    applicationSettings.getAdditionalResolveCollisionsIterationsNumber());
-        }
+        CollisionsProcessor.process(battleCalculations,
+                applicationSettings.getAdditionalResolveCollisionsIterationsNumber());
 
         battleCalculations.getVehicles().forEach(VehicleMoveProcessor::processStep2);
 

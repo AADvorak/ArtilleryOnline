@@ -1,17 +1,14 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculator.elasticity.ElasticityAccelerationCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelGroundState;
-import com.github.aadvorak.artilleryonline.battle.common.CollisionMode;
 import com.github.aadvorak.artilleryonline.battle.calculator.VehicleAccelerationCalculator;
-import com.github.aadvorak.artilleryonline.battle.common.VehicleAcceleration;
 
 public class VehicleMoveProcessor {
 
-    public static void processStep1(VehicleCalculations vehicle, BattleCalculations battle, String collisionMode) {
-        recalculateAcceleration(vehicle, battle, collisionMode);
+    public static void processStep1(VehicleCalculations vehicle, BattleCalculations battle) {
+        recalculateAcceleration(vehicle, battle);
         recalculateVelocity(vehicle, battle);
         vehicle.calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
         vehicle.recalculateWheelsVelocities();
@@ -22,14 +19,10 @@ public class VehicleMoveProcessor {
         calculateOnGround(vehicle);
     }
 
-    private static void recalculateAcceleration(VehicleCalculations vehicle, BattleCalculations battle, String collisionMode) {
+    private static void recalculateAcceleration(VehicleCalculations vehicle, BattleCalculations battle) {
         var threshold = 0.3;
         var oldAcceleration = vehicle.getModel().getState().getAcceleration();
-        var vehicleAcceleration = VehicleAccelerationCalculator.getVehicleAcceleration(vehicle, battle.getModel().getRoom());
-        var elasticityAcceleration = CollisionMode.getCollisionMode(collisionMode).equals(CollisionMode.ELASTICITY)
-                ? ElasticityAccelerationCalculator.getElasticityAcceleration(vehicle, battle)
-                : new VehicleAcceleration();
-        var acceleration = VehicleAcceleration.sumOf(vehicleAcceleration, elasticityAcceleration);
+        var acceleration = VehicleAccelerationCalculator.getVehicleAcceleration(vehicle, battle.getModel().getRoom());;
         if (acceleration.getX() * oldAcceleration.getX() < 0
                 && Math.abs(acceleration.getX() - oldAcceleration.getX()) > threshold) {
             vehicle.getModel().setUpdated(true);

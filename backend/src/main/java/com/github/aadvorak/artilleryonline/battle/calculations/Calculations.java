@@ -1,6 +1,5 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
-import com.github.aadvorak.artilleryonline.battle.common.Acceleration;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.Velocity;
@@ -23,16 +22,4 @@ public interface Calculations {
     void setVelocity(Velocity velocity);
 
     Set<Collision> getCollisions();
-
-    Set<Calculations> getVehicleCollisions();
-
-    Acceleration getVehicleElasticityAcceleration();
-
-    default void addVehicleCollision(Calculations vehicleCollision) {
-        getVehicleCollisions().add(vehicleCollision);
-    }
-
-    default boolean collisionNotCalculated(Calculations calculation) {
-        return !getVehicleCollisions().contains(calculation);
-    }
 }

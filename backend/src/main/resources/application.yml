@@ -2,7 +2,6 @@ application:
   settings:
     debug: ${APP_SETTINGS_DEBUG}
     client-processing: ${APP_SETTINGS_CLIENT_PROCESSING}
-    collision-mode: ${APP_SETTINGS_COLLISION_MODE}
     battle-update-timeout: 10000
     user-battle-queue-timeout: 30000
     message-timeout: 600000

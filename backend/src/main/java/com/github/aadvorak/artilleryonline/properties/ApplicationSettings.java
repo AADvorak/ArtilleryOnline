@@ -15,8 +15,6 @@ public class ApplicationSettings {
 
     private boolean clientProcessing;
 
-    private String collisionMode;
-
     private long additionalResolveCollisionsIterationsNumber;
 
     private long battleUpdateTimeout;

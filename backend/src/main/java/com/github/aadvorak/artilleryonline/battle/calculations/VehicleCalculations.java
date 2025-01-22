@@ -26,14 +26,6 @@ public class VehicleCalculations implements Calculations {
 
     private Set<Collision> collisions = new HashSet<>();
 
-    private Set<Calculations> vehicleCollisions = new HashSet<>();
-
-    private Acceleration vehicleElasticityAcceleration = new Acceleration();
-
-    private Acceleration wallElasticityAcceleration = new Acceleration();
-
-    private Acceleration sumElasticityAcceleration;
-
     private boolean hasCollisions = false;
 
     public VehicleCalculations(VehicleModel model) {
@@ -67,16 +59,6 @@ public class VehicleCalculations implements Calculations {
         model.getState().getVelocity()
                 .setX(velocity.getX())
                 .setY(velocity.getY());
-    }
-
-    public Acceleration getSumElasticityAcceleration() {
-        if (sumElasticityAcceleration == null) {
-            sumElasticityAcceleration = Acceleration.sumOf(
-                    vehicleElasticityAcceleration,
-                    wallElasticityAcceleration
-            );
-        }
-        return sumElasticityAcceleration;
     }
 
     public void recalculateWheelsVelocities() {
