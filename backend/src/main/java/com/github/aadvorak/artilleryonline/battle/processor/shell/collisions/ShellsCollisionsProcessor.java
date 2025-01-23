@@ -9,11 +9,11 @@ import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 public class ShellsCollisionsProcessor {
 
     public static void process(BattleCalculations battle) {
-        battle.getShells().forEach(shell -> ShellVehicleCollisionProcessor.process(shell, battle));
+        battle.getShells().forEach(shell -> ShellVehicleCollisionsProcessor.process(shell, battle));
 
         battle.getShells().forEach(shell -> {
             if (shell.getCollisions().isEmpty()) {
-                ShellGroundCollisionProcessor.process(shell, battle);
+                ShellGroundCollisionsProcessor.process(shell, battle);
             }
         });
 

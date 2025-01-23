@@ -8,7 +8,7 @@ import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.Segment;
 
-public class ShellVehicleCollisionDetector {
+public class ShellVehicleCollisionsDetector {
 
     public static Collision detectFirst(ShellCalculations shell, BattleCalculations battle) {
         for (var vehicle : battle.getVehicles()) {

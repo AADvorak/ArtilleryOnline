@@ -9,10 +9,10 @@ import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
 import com.github.aadvorak.artilleryonline.battle.processor.shell.ShellDamageProcessor;
 
-public class ShellVehicleCollisionProcessor {
+public class ShellVehicleCollisionsProcessor {
 
     public static void process(ShellCalculations shell, BattleCalculations battle) {
-        var collision = ShellVehicleCollisionDetector.detectFirst(shell, battle);
+        var collision = ShellVehicleCollisionsDetector.detectFirst(shell, battle);
         if (collision != null) {
             shell.getCollisions().add(collision);
             var hitObject = collision.getPair().second();

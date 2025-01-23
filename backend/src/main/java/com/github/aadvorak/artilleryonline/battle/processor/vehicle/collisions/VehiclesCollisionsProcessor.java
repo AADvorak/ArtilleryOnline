@@ -5,7 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculatio
 import com.github.aadvorak.artilleryonline.battle.events.VehicleCollideEvent;
 import com.github.aadvorak.artilleryonline.dto.response.CollisionResponse;
 
-public class CollisionsProcessor {
+public class VehiclesCollisionsProcessor {
 
     public static void process(BattleCalculations battle, long additionalIterationsNumber) {
         processCollisions(battle, additionalIterationsNumber);
@@ -35,7 +35,7 @@ public class CollisionsProcessor {
                 VehicleGroundCollisionsProcessor.process(vehicle, battle));
 
         battle.getVehicles().forEach(vehicle ->
-                VehicleCollisionsProcessor.process(vehicle, battle));
+                VehicleVehicleCollisionsProcessor.process(vehicle, battle));
     }
 
     private static boolean collisionsExist(BattleCalculations battle) {
@@ -53,7 +53,7 @@ public class CollisionsProcessor {
 
     private static void checkCollisionResolved(VehicleCalculations vehicle, BattleCalculations battle) {
         var resolved = VehicleGroundCollisionsProcessor.checkResolved(vehicle, battle)
-                && VehicleCollisionsProcessor.checkResolved(vehicle, battle);
+                && VehicleVehicleCollisionsProcessor.checkResolved(vehicle, battle);
         if (!vehicle.getCollisions().isEmpty() && resolved) {
             vehicle.getCollisions().stream()
                     .filter(collision -> collision.getSumNormalVelocity() > 1.0)

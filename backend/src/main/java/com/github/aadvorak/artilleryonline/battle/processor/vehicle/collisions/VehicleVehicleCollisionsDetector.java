@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class VehicleCollisionsDetector {
+public class VehicleVehicleCollisionsDetector {
 
     public static Collision detectFirst(VehicleCalculations vehicle, BattleCalculations battle) {
         var collisions = detect(vehicle, battle, true);

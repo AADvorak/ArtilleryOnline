@@ -5,7 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 
-public class ShellGroundCollisionDetector {
+public class ShellGroundCollisionsDetector {
 
     public static Collision detectFirst(ShellCalculations shell, BattleCalculations battle) {
         var nearestGroundPosition = BattleUtils.getNearestGroundPosition(shell.getPosition().getX(),

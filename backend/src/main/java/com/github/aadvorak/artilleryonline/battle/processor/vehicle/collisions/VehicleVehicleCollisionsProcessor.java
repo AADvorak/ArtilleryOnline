@@ -9,10 +9,10 @@ import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.processor.statistics.StatisticsProcessor;
 
-public class VehicleCollisionsProcessor {
+public class VehicleVehicleCollisionsProcessor {
 
     public static void process(VehicleCalculations vehicle, BattleCalculations battle) {
-        var collision = VehicleCollisionsDetector.detectStrongest(vehicle, battle);
+        var collision = VehicleVehicleCollisionsDetector.detectStrongest(vehicle, battle);
         if (collision != null) {
             vehicle.setHasCollisions(true);
             calculateAndApplyDamage(collision, battle.getModel());
@@ -23,7 +23,7 @@ public class VehicleCollisionsProcessor {
     }
 
     public static boolean checkResolved(VehicleCalculations vehicle, BattleCalculations battle) {
-        var collision = VehicleCollisionsDetector.detectFirst(vehicle, battle);
+        var collision = VehicleVehicleCollisionsDetector.detectFirst(vehicle, battle);
         return collision == null;
     }
 
