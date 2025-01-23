@@ -10,7 +10,7 @@ public class ShellGroundCollisionsProcessor {
         var collision = ShellGroundCollisionsDetector.detectFirst(shell, battle);
         if (collision != null) {
             shell.getCollisions().add(collision);
-            ShellDamageProcessor.processHitGround(shell.getNext().getPosition(), shell.getModel(), battle.getModel());
+            ShellDamageProcessor.processHitGround(shell, battle);
         }
     }
 }

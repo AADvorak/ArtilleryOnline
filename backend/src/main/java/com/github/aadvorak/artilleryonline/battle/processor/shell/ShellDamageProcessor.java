@@ -1,5 +1,8 @@
 package com.github.aadvorak.artilleryonline.battle.processor.shell;
 
+import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
@@ -10,60 +13,60 @@ import com.github.aadvorak.artilleryonline.battle.processor.statistics.Statistic
 import com.github.aadvorak.artilleryonline.battle.specs.ShellSpecs;
 import com.github.aadvorak.artilleryonline.battle.updates.RoomStateUpdate;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
-import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 public class ShellDamageProcessor {
 
-    public static void processHitVehicle(Position hitPosition, VehicleModel vehicleModel,
-                                         ShellModel shellModel, BattleModel battleModel) {
-        StatisticsProcessor.increaseDirectHits(vehicleModel, shellModel, battleModel);
-        var shellSpecs = shellModel.getSpecs();
+    public static void processHitVehicle(VehicleCalculations vehicle, ShellCalculations shell,
+                                         BattleCalculations battle) {
+        StatisticsProcessor.increaseDirectHits(vehicle.getModel(), shell.getModel(), battle.getModel());
+        var shellSpecs = shell.getModel().getSpecs();
         if (ShellType.AP.equals(shellSpecs.getType())) {
-            applyDamageToVehicle(shellSpecs.getDamage(), vehicleModel, shellModel, battleModel);
+            applyDamageToVehicle(shellSpecs.getDamage(), vehicle.getModel(), shell.getModel(), battle.getModel());
         } else if (ShellType.HE.equals(shellSpecs.getType())) {
-            calculateHEDamage(hitPosition, shellModel, battleModel);
-            processGroundDamage(hitPosition, shellSpecs, battleModel);
+            calculateHEDamage(shell, battle);
+            processGroundDamage(shell.getNext().getPosition(), shellSpecs, battle.getModel());
         }
     }
 
-    public static void processHitTrack(Position hitPosition, VehicleModel vehicleModel,
-                                       ShellModel shellModel, BattleModel battleModel) {
-        StatisticsProcessor.increaseDirectHits(vehicleModel, shellModel, battleModel);
-        var trackState = vehicleModel.getState().getTrackState();
-        var shellSpecs = shellModel.getSpecs();
-        if (shellSpecs.getCaliber() >= vehicleModel.getSpecs().getMinTrackHitCaliber()) {
-            StatisticsProcessor.increaseTrackBreaks(vehicleModel, shellModel, battleModel);
+    public static void processHitTrack(VehicleCalculations vehicle, ShellCalculations shell,
+                                       BattleCalculations battle) {
+        StatisticsProcessor.increaseDirectHits(vehicle.getModel(), shell.getModel(), battle.getModel());
+        var trackState = vehicle.getModel().getState().getTrackState();
+        var shellSpecs = shell.getModel().getSpecs();
+        if (shellSpecs.getCaliber() >= vehicle.getModel().getSpecs().getMinTrackHitCaliber()) {
+            StatisticsProcessor.increaseTrackBreaks(vehicle.getModel(), shell.getModel(), battle.getModel());
             trackState.setBroken(true);
-            trackState.setRepairRemainTime(vehicleModel.getSpecs().getTrackRepairTime());
-            vehicleModel.setUpdated(true);
+            trackState.setRepairRemainTime(vehicle.getModel().getSpecs().getTrackRepairTime());
+            vehicle.getModel().setUpdated(true);
         }
         if (ShellType.HE.equals(shellSpecs.getType())) {
-            calculateHEDamage(hitPosition, shellModel, battleModel);
-            processGroundDamage(hitPosition, shellSpecs, battleModel);
+            calculateHEDamage(shell, battle);
+            processGroundDamage(shell.getNext().getPosition(), shellSpecs, battle.getModel());
         }
     }
 
-    public static void processHitGround(Position hitPosition, ShellModel shellModel, BattleModel battleModel) {
-        var shellSpecs = shellModel.getSpecs();
+    public static void processHitGround(ShellCalculations shell, BattleCalculations battle) {
+        var shellSpecs = shell.getModel().getSpecs();
         if (ShellType.HE.equals(shellSpecs.getType())) {
-            calculateHEDamage(hitPosition, shellModel, battleModel);
+            calculateHEDamage(shell, battle);
         }
-        processGroundDamage(hitPosition, shellSpecs, battleModel);
+        processGroundDamage(shell.getNext().getPosition(), shellSpecs, battle.getModel());
     }
 
-    private static void calculateHEDamage(Position hitPosition, ShellModel shellModel, BattleModel battleModel) {
-        var shellSpecs = shellModel.getSpecs();
-        battleModel.getVehicles().values().forEach(vehicleModel -> {
-            var distanceToTarget = hitPosition.distanceTo(vehicleModel.getState().getPosition())
-                    - vehicleModel.getSpecs().getRadius();
+    private static void calculateHEDamage(ShellCalculations shell, BattleCalculations battle) {
+        var shellSpecs = shell.getModel().getSpecs();
+        var hitPosition = shell.getNext().getPosition();
+        battle.getVehicles().forEach(vehicle -> {
+            var distanceToTarget = hitPosition.distanceTo(vehicle.getPosition())
+                    - vehicle.getModel().getSpecs().getRadius();
             if (distanceToTarget <= 0) {
-                applyDamageToVehicle(shellSpecs.getDamage(), vehicleModel, shellModel, battleModel);
+                applyDamageToVehicle(shellSpecs.getDamage(), vehicle.getModel(), shell.getModel(), battle.getModel());
             } else if (distanceToTarget < shellSpecs.getRadius()) {
-                StatisticsProcessor.increaseIndirectHits(vehicleModel, shellModel, battleModel);
+                StatisticsProcessor.increaseIndirectHits(vehicle.getModel(), shell.getModel(), battle.getModel());
                 applyDamageToVehicle(shellSpecs.getDamage() * (shellSpecs.getRadius() - distanceToTarget)
-                        / shellSpecs.getRadius(), vehicleModel, shellModel, battleModel);
+                        / shellSpecs.getRadius(), vehicle.getModel(), shell.getModel(), battle.getModel());
             }
-            calculateHETrackDamage(hitPosition, vehicleModel, shellModel, battleModel);
+            calculateHETrackDamage(vehicle, shell, battle);
         });
     }
 
@@ -83,23 +86,24 @@ public class ShellDamageProcessor {
         }
     }
 
-    private static void calculateHETrackDamage(Position hitPosition, VehicleModel vehicleModel,
-                                               ShellModel shellModel, BattleModel battleModel) {
-        var trackState = vehicleModel.getState().getTrackState();
+    private static void calculateHETrackDamage(VehicleCalculations vehicle, ShellCalculations shell,
+                                               BattleCalculations battle) {
+        var trackState = vehicle.getModel().getState().getTrackState();
         if (trackState.isBroken()
-                || vehicleModel.getSpecs().getName().equals(VehicleSpecsPreset.HEAVY.getSpecs().getName())) {
+                || vehicle.getModel().getSpecs().getName().equals(VehicleSpecsPreset.HEAVY.getSpecs().getName())) {
             return;
         }
-        var shellHitRadius = shellModel.getSpecs().getRadius();
-        var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
-        var rightWheelPosition = VehicleUtils.getRightWheelPosition(vehicleModel);
-        var leftWheelPosition = VehicleUtils.getLeftWheelPosition(vehicleModel);
+        var shellHitRadius = shell.getModel().getSpecs().getRadius();
+        var wheelRadius = vehicle.getModel().getSpecs().getWheelRadius();
+        var rightWheelPosition = vehicle.getRightWheel().getPosition();
+        var leftWheelPosition = vehicle.getLeftWheel().getPosition();
+        var hitPosition = shell.getNext().getPosition();
         if (isWheelHitByHE(hitPosition, rightWheelPosition, shellHitRadius, wheelRadius)
                 || isWheelHitByHE(hitPosition, leftWheelPosition, shellHitRadius, wheelRadius)) {
-            StatisticsProcessor.increaseTrackBreaks(vehicleModel, shellModel, battleModel);
+            StatisticsProcessor.increaseTrackBreaks(vehicle.getModel(), shell.getModel(), battle.getModel());
             trackState.setBroken(true);
-            trackState.setRepairRemainTime(vehicleModel.getSpecs().getTrackRepairTime());
-            vehicleModel.setUpdated(true);
+            trackState.setRepairRemainTime(vehicle.getModel().getSpecs().getTrackRepairTime());
+            vehicle.getModel().setUpdated(true);
         }
     }
 

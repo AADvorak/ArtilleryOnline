@@ -17,12 +17,10 @@ public class ShellVehicleCollisionsProcessor {
             shell.getCollisions().add(collision);
             var hitObject = collision.getPair().second();
             if (hitObject instanceof VehicleCalculations vehicle) {
-                ShellDamageProcessor.processHitVehicle(shell.getNext().getPosition(), vehicle.getModel(),
-                        shell.getModel(), battle.getModel());
+                ShellDamageProcessor.processHitVehicle(vehicle, shell, battle);
             }
             if (hitObject instanceof WheelCalculations wheel) {
-                ShellDamageProcessor.processHitTrack(shell.getNext().getPosition(), wheel.getModel(),
-                        shell.getModel(), battle.getModel());
+                ShellDamageProcessor.processHitTrack(wheel.getVehicle(), shell, battle);
             }
             pushVehicle(collision);
         }
