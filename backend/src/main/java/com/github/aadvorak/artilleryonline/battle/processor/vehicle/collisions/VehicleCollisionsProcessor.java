@@ -39,13 +39,13 @@ public class VehicleCollisionsProcessor {
 
         recalculateVehiclesNextPositions(collision);
         collision.getPair().second().getCollisions().add(Collision.inverted(collision));
-        collision.getPair().second().getModel().setUpdated(true);
+        ((VehicleModel) collision.getPair().second().getModel()).setUpdated(true);
         collision.getPair().second().getVehicleCalculations().setHasCollisions(true);
     }
 
     private static void recalculateVehiclesVelocities(Collision collision) {
-        var mass = collision.getPair().first().getModel().getPreCalc().getMass();
-        var otherMass = collision.getPair().second().getModel().getPreCalc().getMass();
+        var mass = collision.getPair().first().getMass();
+        var otherMass = collision.getPair().second().getMass();
 
         var velocityProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().first());
         var otherVelocityProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().second());
@@ -74,8 +74,8 @@ public class VehicleCollisionsProcessor {
     private static void recalculateVehiclesNextPositions(Collision collision) {
         var vehicle = collision.getPair().first().getVehicleCalculations();
         var otherVehicle = collision.getPair().second().getVehicleCalculations();
-        var mass = collision.getPair().first().getModel().getPreCalc().getMass();
-        var otherMass = collision.getPair().second().getModel().getPreCalc().getMass();
+        var mass = collision.getPair().first().getMass();
+        var otherMass = collision.getPair().second().getMass();
         var normalMovePerMass = collision.getInterpenetration() / (mass + otherMass);
         var normalMove = normalMovePerMass * otherMass;
         var otherNormalMove = normalMovePerMass * mass;
@@ -92,8 +92,8 @@ public class VehicleCollisionsProcessor {
     }
 
     private static void calculateAndApplyDamage(Collision collision, BattleModel battleModel) {
-        var firstModel = collision.getPair().first().getModel();
-        var secondModel = collision.getPair().second().getModel();
+        var firstModel = (VehicleModel) collision.getPair().first().getModel();
+        var secondModel = (VehicleModel) collision.getPair().second().getModel();
         calculateAndApplyDamage(collision, battleModel, firstModel, secondModel);
         calculateAndApplyDamage(collision, battleModel, secondModel, firstModel);
     }

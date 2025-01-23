@@ -3,21 +3,22 @@ package com.github.aadvorak.artilleryonline.battle.calculations;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.Velocity;
-import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 
 import java.util.Set;
 
-public interface Calculations {
+public interface Calculations<Model> {
 
-    Integer getVehicleId();
+    Integer getId();
 
-    VehicleModel getModel();
+    Model getModel();
 
     VehicleCalculations getVehicleCalculations();
 
     Position getPosition();
 
     Velocity getVelocity();
+
+    double getMass();
 
     void setVelocity(Velocity velocity);
 

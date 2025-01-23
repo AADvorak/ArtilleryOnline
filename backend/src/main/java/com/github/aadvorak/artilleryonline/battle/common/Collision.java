@@ -2,6 +2,8 @@ package com.github.aadvorak.artilleryonline.battle.common;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.CollisionPair;
+import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
+import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -10,8 +12,6 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class Collision {
-
-    private Integer vehicleId;
 
     private CollideObjectType type;
 
@@ -27,9 +27,19 @@ public class Collision {
 
     private Double impact;
 
+    public Integer getVehicleId() {
+        if (pair.second() != null) {
+            return pair.second().getId();
+        }
+        return null;
+    }
+
     public double getSumNormalVelocity() {
         if (sumNormalVelocity == null) {
-            var first = Math.abs(velocitiesProjections.first().getNormal());
+            var first = 0.0;
+            if (velocitiesProjections.first() != null) {
+                first = Math.abs(velocitiesProjections.first().getNormal());
+            }
             var second = 0.0;
             if (velocitiesProjections.second() != null) {
                 second = Math.abs(velocitiesProjections.second().getNormal());
@@ -41,42 +51,45 @@ public class Collision {
 
     public double getImpact() {
         if (impact == null) {
-            var first = Math.abs(velocitiesProjections.first().getNormal())
-                    * pair.first().getModel().getPreCalc().getMass();
+            var first = 0.0;
+            if (velocitiesProjections.first() != null && pair.first() != null) {
+                first = Math.abs(velocitiesProjections.first().getNormal())
+                        * pair.first().getMass();
+            }
             var second = 0.0;
             if (velocitiesProjections.second() != null && pair.second() != null) {
                 second = Math.abs(velocitiesProjections.second().getNormal())
-                        * pair.second().getModel().getPreCalc().getMass();
+                        * pair.second().getMass();
             }
             impact = first + second;
         }
         return impact;
     }
 
-    public static Collision withGround(Calculations first, double interpenetration, double angle) {
-        return withUnmovable(first, interpenetration, angle, CollideObjectType.GROUND);
-    }
-
-    public static Collision withWall(Calculations first, double interpenetration, double angle) {
-        return withUnmovable(first, interpenetration, angle, CollideObjectType.WALL);
-    }
-
-    public static Collision ofVehicles(Calculations first, Calculations second, double interpenetration) {
-        var angle = getCollisionAngle(first.getPosition(), second.getPosition());
-        var firstProjections = first.getVelocity().getProjections(angle);
-        var secondProjections = second.getVelocity().getProjections(angle);
+    public static Collision ofShellWithGround(Calculations<ShellModel> first) {
         return new Collision()
-                .setVehicleId(second.getVehicleId())
-                .setType(CollideObjectType.VEHICLE)
-                .setPair(new CollisionPair(first, second))
-                .setVelocitiesProjections(new VelocitiesProjections(firstProjections, secondProjections))
-                .setInterpenetration(interpenetration)
-                .setAngle(angle);
+                .setPair(new CollisionPair(first, null));
+    }
+
+    public static Collision ofShellWithVehicle(Calculations<ShellModel> first, Calculations<VehicleModel> second) {
+        return withVehicle(first, second);
+    }
+
+    public static Collision ofVehicleWithGround(Calculations<VehicleModel> first, double interpenetration, double angle) {
+        return ofVehicleWithUnmovable(first, interpenetration, angle, CollideObjectType.GROUND);
+    }
+
+    public static Collision ofVehicleWithWall(Calculations<VehicleModel> first, double interpenetration, double angle) {
+        return ofVehicleWithUnmovable(first, interpenetration, angle, CollideObjectType.WALL);
+    }
+
+    public static Collision ofTwoVehicles(Calculations<VehicleModel> first, Calculations<VehicleModel> second, double interpenetration) {
+        return withVehicle(first, second)
+                .setInterpenetration(interpenetration);
     }
 
     public static Collision inverted(Collision collision) {
         return new Collision()
-                .setVehicleId(collision.getPair().first().getVehicleId())
                 .setType(collision.getType())
                 .setPair(new CollisionPair(collision.getPair().second(), collision.getPair().first()))
                 .setVelocitiesProjections(
@@ -89,14 +102,25 @@ public class Collision {
                 .setAngle(collision.getAngle() + Math.PI);
     }
 
+    private static Collision withVehicle(Calculations<?> first, Calculations<VehicleModel> second) {
+        var angle = getCollisionAngle(first.getPosition(), second.getPosition());
+        var firstProjections = first.getVelocity().getProjections(angle);
+        var secondProjections = second.getVelocity().getProjections(angle);
+        return new Collision()
+                .setType(CollideObjectType.VEHICLE)
+                .setPair(new CollisionPair(first, second))
+                .setVelocitiesProjections(new VelocitiesProjections(firstProjections, secondProjections))
+                .setAngle(angle);
+    }
+
     private static double getCollisionAngle(Position position, Position otherPosition) {
         var sign = Math.signum(otherPosition.getX() - position.getX());
         return Math.asin((position.getY() - otherPosition.getY())
                 / position.distanceTo(otherPosition)) + sign * Math.PI / 2;
     }
 
-    private static Collision withUnmovable(Calculations first, double interpenetration,
-                                           double angle, CollideObjectType type) {
+    private static Collision ofVehicleWithUnmovable(Calculations<VehicleModel> first, double interpenetration,
+                                                    double angle, CollideObjectType type) {
         return new Collision()
                 .setType(type)
                 .setPair(new CollisionPair(first, null))

@@ -84,7 +84,9 @@ public class VehicleGunShootProcessor {
 
     private static void pushShootingVehicle(VehicleModel vehicleModel, ShellModel shellModel) {
         var vehicleVelocity = vehicleModel.getState().getVelocity();
-        var pushCoefficient = shellModel.getSpecs().getPushCoefficient();
+        var vehicleMass = vehicleModel.getPreCalc().getMass();
+        var shellMass = shellModel.getSpecs().getMass();
+        var pushCoefficient = shellMass / vehicleMass;
         var shellVelocity = shellModel.getState().getVelocity();
         vehicleVelocity
                 .setX(vehicleVelocity.getX() - pushCoefficient * shellVelocity.getX())

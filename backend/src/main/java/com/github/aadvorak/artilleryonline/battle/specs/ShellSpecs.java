@@ -16,7 +16,11 @@ public class ShellSpecs implements Specs {
 
     private double radius;
 
+    // todo replace with mass
+    @Deprecated()
     private double pushCoefficient;
+
+    private double mass;
 
     private double caliber;
 

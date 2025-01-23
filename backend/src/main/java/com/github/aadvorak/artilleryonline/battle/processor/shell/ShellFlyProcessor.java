@@ -1,109 +1,33 @@
 package com.github.aadvorak.artilleryonline.battle.processor.shell;
 
+import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
-import com.github.aadvorak.artilleryonline.battle.common.ShellHitType;
-import com.github.aadvorak.artilleryonline.battle.events.ShellHitEvent;
-import com.github.aadvorak.artilleryonline.battle.events.ShellHitEventObject;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
-import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
-import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
-import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
-import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
-import com.github.aadvorak.artilleryonline.battle.utils.Segment;
-import com.github.aadvorak.artilleryonline.battle.utils.VehicleUtils;
 
 public class ShellFlyProcessor {
 
-    public static void processStep(ShellModel shellModel, BattleModel battleModel) {
-        var prevPosition = shellModel.getState().getPosition();
-        var velocity = shellModel.getState().getVelocity();
-        var nextPosition = new Position()
-                .setX(prevPosition.getX() + velocity.getX() * battleModel.getCurrentTimeStepSecs())
-                .setY(prevPosition.getY() + velocity.getY() * battleModel.getCurrentTimeStepSecs());
-        shellModel.getState().setPosition(nextPosition);
-        if (positionIsOutOfRoom(nextPosition, battleModel.getRoom().getSpecs())) {
+    public static void processStep1(ShellCalculations shell, BattleModel battleModel) {
+        var position = shell.getPosition();
+        var velocity = shell.getVelocity();
+        shell.getNext().setPosition(new Position()
+                .setX(position.getX() + velocity.getX() * battleModel.getCurrentTimeStepSecs())
+                .setY(position.getY() + velocity.getY() * battleModel.getCurrentTimeStepSecs()));
+    }
+
+    public static void processStep2(ShellCalculations shell, BattleModel battleModel) {
+        var velocity = shell.getVelocity();
+        if (positionIsOutOfRoom(shell.getNext().getPosition(), battleModel.getRoom().getSpecs())) {
             velocity.setX(-velocity.getX());
         }
-        var hitTrackVehicle = getHitTrack(prevPosition, nextPosition, battleModel);
-        if (hitTrackVehicle != null) {
-            ShellDamageProcessor.processHitTrack(nextPosition, hitTrackVehicle, shellModel, battleModel);
-            battleModel.getUpdates().removeShell(shellModel.getId());
-            addHitEvent(ShellHitType.VEHICLE_TRACK, shellModel.getId(), hitTrackVehicle.getId(), battleModel);
-            return;
-        }
-        var hitVehicle = getHitVehicle(prevPosition, nextPosition, battleModel);
-        if (hitVehicle != null) {
-            ShellDamageProcessor.processHitVehicle(nextPosition, hitVehicle, shellModel, battleModel);
-            battleModel.getUpdates().removeShell(shellModel.getId());
-            addHitEvent(ShellHitType.VEHICLE_HULL, shellModel.getId(), hitVehicle.getId(), battleModel);
-            return;
-        }
-        if (isHitGround(nextPosition, battleModel)) {
-            ShellDamageProcessor.processHitGround(nextPosition, shellModel, battleModel);
-            battleModel.getUpdates().removeShell(shellModel.getId());
-            addHitEvent(ShellHitType.GROUND, shellModel.getId(), null, battleModel);
-            return;
-        }
+        shell.getModel().getState().setPosition(shell.getNext().getPosition());
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
         velocity.setY(velocity.getY() - gravityAcceleration * battleModel.getCurrentTimeStepSecs());
-    }
-
-    private static VehicleModel getHitVehicle(Position prevPosition, Position nextPosition, BattleModel battleModel) {
-        for (var vehicleModel : battleModel.getVehicles().values()) {
-            if (isHitVehicle(prevPosition, nextPosition, vehicleModel)) {
-                return vehicleModel;
-            }
-        }
-        return null;
-    }
-
-    private static VehicleModel getHitTrack(Position prevPosition, Position nextPosition, BattleModel battleModel) {
-        for (var vehicleModel : battleModel.getVehicles().values()) {
-            if (isHitTrack(prevPosition, nextPosition, vehicleModel)) {
-                return vehicleModel;
-            }
-        }
-        return null;
-    }
-
-    private static boolean isHitVehicle(Position prevPosition, Position nextPosition, VehicleModel vehicleModel) {
-        // todo logic with vehicle angle
-        var vehiclePosition = vehicleModel.getState().getPosition();
-        var vehicleRadius = vehicleModel.getSpecs().getRadius();
-        return nextPosition.distanceTo(vehiclePosition) <= vehicleRadius
-                || GeometryUtils.isSegmentCrossingCircle(new Segment(prevPosition, nextPosition),
-                vehiclePosition, vehicleRadius);
-    }
-
-    private static boolean isHitTrack(Position prevPosition, Position nextPosition, VehicleModel vehicleModel) {
-        var rightWheelPosition = VehicleUtils.getRightWheelPosition(vehicleModel);
-        var leftWheelPosition = VehicleUtils.getLeftWheelPosition(vehicleModel);
-        var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
-        return nextPosition.distanceTo(rightWheelPosition) <= wheelRadius
-                || nextPosition.distanceTo(leftWheelPosition) <= wheelRadius
-                || GeometryUtils.isSegmentCrossingCircle(new Segment(prevPosition, nextPosition),
-                rightWheelPosition, wheelRadius)
-                || GeometryUtils.isSegmentCrossingCircle(new Segment(prevPosition, nextPosition),
-                leftWheelPosition, wheelRadius);
     }
 
     private static boolean positionIsOutOfRoom(Position position, RoomSpecs roomSpecs) {
         var xMax = roomSpecs.getRightTop().getX();
         var xMin = roomSpecs.getLeftBottom().getX();
         return position.getX() >= xMax || position.getX() <= xMin;
-    }
-
-    private static boolean isHitGround(Position position, BattleModel battleModel) {
-        var nearestGroundPosition = BattleUtils.getNearestGroundPosition(position.getX(), battleModel.getRoom());
-        return position.getY() <= nearestGroundPosition.getY();
-    }
-
-    private static void addHitEvent(ShellHitType type, Integer shellId, Integer vehicleId, BattleModel battleModel) {
-        battleModel.getEvents().addHit(new ShellHitEvent()
-                .setShellId(shellId)
-                .setObject(new ShellHitEventObject()
-                        .setVehicleId(vehicleId)
-                        .setType(type)));
     }
 }

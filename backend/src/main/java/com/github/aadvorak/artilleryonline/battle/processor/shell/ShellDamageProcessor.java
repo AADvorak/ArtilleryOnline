@@ -24,7 +24,6 @@ public class ShellDamageProcessor {
             calculateHEDamage(hitPosition, shellModel, battleModel);
             processGroundDamage(hitPosition, shellSpecs, battleModel);
         }
-        pushHitVehicle(vehicleModel, shellModel);
     }
 
     public static void processHitTrack(Position hitPosition, VehicleModel vehicleModel,
@@ -155,18 +154,5 @@ public class ShellDamageProcessor {
         } else {
             return Math.sqrt(discriminant) / 2;
         }
-    }
-
-    private static void pushHitVehicle(VehicleModel vehicleModel, ShellModel shellModel) {
-        var vehicleVelocity = vehicleModel.getState().getVelocity();
-        var pushCoefficient = 0.1 * shellModel.getSpecs().getPushCoefficient() / vehicleModel.getPreCalc().getMass();
-        if (ShellType.HE.equals(shellModel.getSpecs().getType())) {
-            pushCoefficient /= 2.0;
-        }
-        var shellVelocity = shellModel.getState().getVelocity();
-        vehicleVelocity
-                .setX(vehicleVelocity.getX() + pushCoefficient * shellVelocity.getX())
-                .setY(vehicleVelocity.getY() + pushCoefficient * shellVelocity.getY());
-        vehicleModel.setUpdated(true);
     }
 }

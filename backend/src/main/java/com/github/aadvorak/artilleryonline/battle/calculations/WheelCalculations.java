@@ -13,7 +13,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class WheelCalculations implements Calculations {
+public class WheelCalculations implements Calculations<VehicleModel> {
 
     private final WheelSign sign;
 
@@ -45,7 +45,7 @@ public class WheelCalculations implements Calculations {
 
     private Acceleration sumAcceleration;
 
-    private Next next = new Next();
+    private final Next next = new Next();
 
     public WheelCalculations(WheelSign sign, VehicleCalculations vehicle) {
         this.sign = sign;
@@ -67,7 +67,7 @@ public class WheelCalculations implements Calculations {
     }
 
     @Override
-    public Integer getVehicleId() {
+    public Integer getId() {
         return vehicle.getModel().getId();
     }
 
@@ -79,6 +79,11 @@ public class WheelCalculations implements Calculations {
     @Override
     public VehicleCalculations getVehicleCalculations() {
         return vehicle;
+    }
+
+    @Override
+    public double getMass() {
+        return vehicle.getMass();
     }
 
     @Override

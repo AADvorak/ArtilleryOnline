@@ -3,10 +3,12 @@ package com.github.aadvorak.artilleryonline.battle.processor;
 import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.BattleStage;
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.processor.command.CommandProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.shell.ShellFlyProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.shell.collisions.ShellsCollisionsProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.*;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.collisions.CollisionsProcessor;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
@@ -31,27 +33,35 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
                 .setModel(battleModel)
                 .setVehicles(battleModel.getVehicles().values().stream()
                         .map(VehicleCalculations::new)
+                        .collect(Collectors.toSet()))
+                .setShells(battleModel.getShells().values().stream()
+                        .map(ShellCalculations::new)
                         .collect(Collectors.toSet()));
 
         battleModel.getExplosions().values().forEach(explosionModel ->
                 ExplosionProcessor.processStep(explosionModel, battleModel));
 
-        battleModel.getShells().values().forEach(shellModel ->
-                ShellFlyProcessor.processStep(shellModel, battleModel));
+        battleCalculations.getShells().forEach(shellCalculations ->
+                ShellFlyProcessor.processStep1(shellCalculations, battleModel));
 
         battleCalculations.getVehicles().forEach(vehicleCalculations -> {
             var vehicleModel = vehicleCalculations.getModel();
-            VehicleGunShootProcessor.processStep(vehicleModel, battleModel);
             VehicleGunRotateProcessor.processStep(vehicleModel, battleModel);
             VehicleTrackProcessor.processStep(vehicleModel, battleModel);
             VehicleJetProcessor.processStep(vehicleModel, battleModel);
             VehicleMoveProcessor.processStep1(vehicleCalculations, battleCalculations);
         });
 
+        ShellsCollisionsProcessor.process(battleCalculations);
         CollisionsProcessor.process(battleCalculations,
                 applicationSettings.getAdditionalResolveCollisionsIterationsNumber());
 
+        battleCalculations.getVehicles().forEach(vehicleCalculations ->
+                VehicleGunShootProcessor.processStep(vehicleCalculations.getModel(), battleModel));
+
         battleCalculations.getVehicles().forEach(VehicleMoveProcessor::processStep2);
+        battleCalculations.getShells().forEach(shellCalculations ->
+                ShellFlyProcessor.processStep2(shellCalculations, battleModel));
 
         if (battleModel.getUpdates().getRemoved() != null) {
             var removedExplosionIds = battleModel.getUpdates().getRemoved().getExplosionIds();

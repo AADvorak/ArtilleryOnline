@@ -14,6 +14,7 @@ public enum ShellSpecsPreset {
             .setRadius(0.15)
             .setVelocity(13.0)
             .setPushCoefficient(0.08)
+            .setMass(0.0061)
             .setCaliber(0.07)
             .setType(ShellType.AP)),
     HEAVY_HE("HE-H", new ShellSpecs()
@@ -21,6 +22,7 @@ public enum ShellSpecsPreset {
             .setRadius(0.7)
             .setVelocity(12.0)
             .setPushCoefficient(0.08)
+            .setMass(0.0061)
             .setCaliber(0.07)
             .setType(ShellType.HE)),
     MEDIUM_AP("AP-M", new ShellSpecs()
@@ -28,6 +30,7 @@ public enum ShellSpecsPreset {
             .setRadius(0.1)
             .setVelocity(13.0)
             .setPushCoefficient(0.05)
+            .setMass(0.002)
             .setCaliber(0.05)
             .setType(ShellType.AP)),
     MEDIUM_HE("HE-M", new ShellSpecs()
@@ -35,6 +38,7 @@ public enum ShellSpecsPreset {
             .setRadius(0.5)
             .setVelocity(12.0)
             .setPushCoefficient(0.05)
+            .setMass(0.002)
             .setCaliber(0.05)
             .setType(ShellType.HE)),
     LIGHT_AP("AP-L", new ShellSpecs()
@@ -42,6 +46,7 @@ public enum ShellSpecsPreset {
             .setRadius(0.06)
             .setVelocity(12.0)
             .setPushCoefficient(0.015)
+            .setMass(0.00025)
             .setCaliber(0.03)
             .setType(ShellType.AP));
 

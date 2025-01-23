@@ -12,7 +12,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class VehicleCalculations implements Calculations {
+public class VehicleCalculations implements Calculations<VehicleModel> {
 
     private final VehicleModel model;
 
@@ -35,7 +35,7 @@ public class VehicleCalculations implements Calculations {
     }
 
     @Override
-    public Integer getVehicleId() {
+    public Integer getId() {
         return model.getId();
     }
 
@@ -52,6 +52,11 @@ public class VehicleCalculations implements Calculations {
     @Override
     public Velocity getVelocity() {
         return model.getState().getVelocity().getMovingVelocity();
+    }
+
+    @Override
+    public double getMass() {
+        return model.getPreCalc().getMass();
     }
 
     @Override

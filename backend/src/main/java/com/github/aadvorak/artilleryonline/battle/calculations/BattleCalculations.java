@@ -15,4 +15,6 @@ public class BattleCalculations {
     private BattleModel model;
 
     private Set<VehicleCalculations> vehicles;
+
+    private Set<ShellCalculations> shells;
 }
