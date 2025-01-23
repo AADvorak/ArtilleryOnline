@@ -7,7 +7,7 @@ import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
-import com.github.aadvorak.artilleryonline.battle.processor.statistics.StatisticsProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
 
 public class VehicleVehicleCollisionsProcessor {
 
@@ -104,18 +104,7 @@ public class VehicleVehicleCollisionsProcessor {
         var impact = collision.getImpact();
         if (impact > minImpact) {
             var damage = receiver.getSpecs().getCollisionDamageCoefficient() * (impact - minImpact);
-            StatisticsProcessor.increaseDamage(Math.min(damage, receiver.getState().getHitPoints()),
-                    receiver.getUserId(), causer.getUserId(), battleModel);
-            var hitPoints = receiver.getState().getHitPoints() - damage;
-            if (hitPoints <= 0) {
-                receiver.getState().setHitPoints(0.0);
-                battleModel.getUpdates().removeVehicle(battleModel.getVehicleKeyById(receiver.getId()));
-                if (causer.getUserId() != null) {
-                    battleModel.getStatistics().get(causer.getUserId()).increaseDestroyedVehicles();
-                }
-            } else {
-                receiver.getState().setHitPoints(hitPoints);
-            }
+            DamageProcessor.applyDamageToVehicle(damage, receiver, battleModel, causer.getUserId());
         }
     }
 }

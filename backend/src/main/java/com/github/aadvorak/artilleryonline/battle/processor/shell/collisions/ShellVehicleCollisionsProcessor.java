@@ -7,7 +7,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
-import com.github.aadvorak.artilleryonline.battle.processor.shell.ShellDamageProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
 
 public class ShellVehicleCollisionsProcessor {
 
@@ -17,10 +17,10 @@ public class ShellVehicleCollisionsProcessor {
             shell.getCollisions().add(collision);
             var hitObject = collision.getPair().second();
             if (hitObject instanceof VehicleCalculations vehicle) {
-                ShellDamageProcessor.processHitVehicle(vehicle, shell, battle);
+                DamageProcessor.processHitVehicle(vehicle, shell, battle);
             }
             if (hitObject instanceof WheelCalculations wheel) {
-                ShellDamageProcessor.processHitTrack(wheel.getVehicle(), shell, battle);
+                DamageProcessor.processHitTrack(wheel.getVehicle(), shell, battle);
             }
             pushVehicle(collision);
         }

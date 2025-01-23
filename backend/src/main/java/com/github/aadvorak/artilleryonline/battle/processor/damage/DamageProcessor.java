@@ -1,4 +1,4 @@
-package com.github.aadvorak.artilleryonline.battle.processor.shell;
+package com.github.aadvorak.artilleryonline.battle.processor.damage;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
@@ -6,7 +6,6 @@ import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculatio
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
-import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.preset.VehicleSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.processor.statistics.StatisticsProcessor;
@@ -14,14 +13,15 @@ import com.github.aadvorak.artilleryonline.battle.specs.ShellSpecs;
 import com.github.aadvorak.artilleryonline.battle.updates.RoomStateUpdate;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 
-public class ShellDamageProcessor {
+public class DamageProcessor {
 
     public static void processHitVehicle(VehicleCalculations vehicle, ShellCalculations shell,
                                          BattleCalculations battle) {
         StatisticsProcessor.increaseDirectHits(vehicle.getModel(), shell.getModel(), battle.getModel());
         var shellSpecs = shell.getModel().getSpecs();
         if (ShellType.AP.equals(shellSpecs.getType())) {
-            applyDamageToVehicle(shellSpecs.getDamage(), vehicle.getModel(), shell.getModel(), battle.getModel());
+            applyDamageToVehicle(shellSpecs.getDamage(), vehicle.getModel(), battle.getModel(),
+                    shell.getModel().getUserId());
         } else if (ShellType.HE.equals(shellSpecs.getType())) {
             calculateHEDamage(shell, battle);
             processGroundDamage(shell.getNext().getPosition(), shellSpecs, battle.getModel());
@@ -53,6 +53,21 @@ public class ShellDamageProcessor {
         processGroundDamage(shell.getNext().getPosition(), shellSpecs, battle.getModel());
     }
 
+    public static void applyDamageToVehicle(double damage, VehicleModel vehicleModel, BattleModel battleModel, Long userId) {
+        StatisticsProcessor.increaseDamage(Math.min(damage, vehicleModel.getState().getHitPoints()),
+                vehicleModel.getUserId(), userId, battleModel);
+        var hitPoints = vehicleModel.getState().getHitPoints() - damage;
+        if (hitPoints <= 0) {
+            vehicleModel.getState().setHitPoints(0.0);
+            battleModel.getUpdates().removeVehicle(battleModel.getVehicleKeyById(vehicleModel.getId()));
+            if (userId != null) {
+                battleModel.getStatistics().get(userId).increaseDestroyedVehicles();
+            }
+        } else {
+            vehicleModel.getState().setHitPoints(hitPoints);
+        }
+    }
+
     private static void calculateHEDamage(ShellCalculations shell, BattleCalculations battle) {
         var shellSpecs = shell.getModel().getSpecs();
         var hitPosition = shell.getNext().getPosition();
@@ -60,30 +75,15 @@ public class ShellDamageProcessor {
             var distanceToTarget = hitPosition.distanceTo(vehicle.getPosition())
                     - vehicle.getModel().getSpecs().getRadius();
             if (distanceToTarget <= 0) {
-                applyDamageToVehicle(shellSpecs.getDamage(), vehicle.getModel(), shell.getModel(), battle.getModel());
+                applyDamageToVehicle(shellSpecs.getDamage(), vehicle.getModel(), battle.getModel(),
+                        shell.getModel().getUserId());
             } else if (distanceToTarget < shellSpecs.getRadius()) {
                 StatisticsProcessor.increaseIndirectHits(vehicle.getModel(), shell.getModel(), battle.getModel());
                 applyDamageToVehicle(shellSpecs.getDamage() * (shellSpecs.getRadius() - distanceToTarget)
-                        / shellSpecs.getRadius(), vehicle.getModel(), shell.getModel(), battle.getModel());
+                        / shellSpecs.getRadius(), vehicle.getModel(), battle.getModel(), shell.getModel().getUserId());
             }
             calculateHETrackDamage(vehicle, shell, battle);
         });
-    }
-
-    private static void applyDamageToVehicle(double damage, VehicleModel vehicleModel,
-                                             ShellModel shellModel, BattleModel battleModel) {
-        StatisticsProcessor.increaseDamage(Math.min(damage, vehicleModel.getState().getHitPoints()),
-                vehicleModel.getUserId(), shellModel.getUserId(), battleModel);
-        var hitPoints = vehicleModel.getState().getHitPoints() - damage;
-        if (hitPoints <= 0) {
-            vehicleModel.getState().setHitPoints(0.0);
-            battleModel.getUpdates().removeVehicle(battleModel.getVehicleKeyById(vehicleModel.getId()));
-            if (shellModel.getUserId() != null) {
-                battleModel.getStatistics().get(shellModel.getUserId()).increaseDestroyedVehicles();
-            }
-        } else {
-            vehicleModel.getState().setHitPoints(hitPoints);
-        }
     }
 
     private static void calculateHETrackDamage(VehicleCalculations vehicle, ShellCalculations shell,

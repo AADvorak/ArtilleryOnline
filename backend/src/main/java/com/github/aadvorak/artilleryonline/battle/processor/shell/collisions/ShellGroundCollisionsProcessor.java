@@ -2,7 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.processor.shell.collisions;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
-import com.github.aadvorak.artilleryonline.battle.processor.shell.ShellDamageProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
 
 public class ShellGroundCollisionsProcessor {
 
@@ -10,7 +10,7 @@ public class ShellGroundCollisionsProcessor {
         var collision = ShellGroundCollisionsDetector.detectFirst(shell, battle);
         if (collision != null) {
             shell.getCollisions().add(collision);
-            ShellDamageProcessor.processHitGround(shell, battle);
+            DamageProcessor.processHitGround(shell, battle);
         }
     }
 }
