@@ -64,6 +64,35 @@ public class GeometryUtils {
         return !getSegmentAndCircleIntersectionPoints(segment, circleCenter, circleRadius).isEmpty();
     }
 
+    public static Position getSegmentsIntersectionPoint(Segment s1, Segment s2) {
+        var x1 = s1.begin().getX();
+        var y1 = s1.begin().getY();
+        var x2 = s1.end().getX();
+        var y2 = s1.end().getY();
+
+        var x3 = s2.begin().getX();
+        var y3 = s2.begin().getY();
+        var x4 = s2.end().getX();
+        var y4 = s2.end().getY();
+
+        var denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+
+        if (Math.abs(denominator) < 1e-9) {
+            return null;
+        }
+
+        var t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denominator;
+        var u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / denominator;
+
+        if (t > 0 && t < 1 && u > 0 && u < 1) {
+            var x = x1 + t * (x2 - x1);
+            var y = y1 + t * (y2 - y1);
+            return new Position().setX(x).setY(y);
+        } else {
+            return null;
+        }
+    }
+
     public static Set<Position> getSegmentAndCircleIntersectionPoints(
             Segment segment, Position circleCenter, double circleRadius
     ) {

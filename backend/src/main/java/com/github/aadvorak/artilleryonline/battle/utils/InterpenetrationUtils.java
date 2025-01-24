@@ -60,6 +60,8 @@ public class InterpenetrationUtils {
         return 0.0;
     }
 
+    // todo use method in calculations
+    @Deprecated
     private static Segment getVehicleBottom(Position position, double angle, double radius) {
         return new Segment(
                 new Position()

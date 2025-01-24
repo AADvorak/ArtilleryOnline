@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.utils.Segment;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -117,6 +118,20 @@ public class VehicleCalculations implements Calculations<VehicleModel> {
                 .setX(vehicleVelocity.getX() * timeStep)
                 .setY(vehicleVelocity.getY() * timeStep);
         addToNextPositionAndAngle(positionShift, vehicleVelocity.getAngle() * timeStep);
+    }
+
+    public Segment getBottomSegment() {
+        var position = model.getState().getPosition();
+        var angle = model.getState().getAngle();
+        var radius = model.getSpecs().getRadius();
+        return new Segment(
+                new Position()
+                        .setX(position.getX() + radius * Math.cos(angle))
+                        .setY(position.getY() + radius * Math.sin(angle)),
+                new Position()
+                        .setX(position.getX() - radius * Math.cos(angle))
+                        .setY(position.getY() - radius * Math.sin(angle))
+        );
     }
 
     private void addToNextPositionAndAngle(Position positionShift, double angleShift) {

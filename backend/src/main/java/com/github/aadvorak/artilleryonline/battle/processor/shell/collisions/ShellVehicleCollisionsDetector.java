@@ -38,9 +38,18 @@ public class ShellVehicleCollisionsDetector {
         var nextPosition = shell.getNext().getPosition();
         var vehiclePosition = vehicle.getPosition();
         var vehicleRadius = vehicle.getModel().getSpecs().getRadius();
-        var segment = new Segment(position, nextPosition);
-        if (nextPosition.distanceTo(vehiclePosition) <= vehicleRadius
-                || GeometryUtils.isSegmentCrossingCircle(segment, vehiclePosition, vehicleRadius)) {
+        var vehicleAngle = vehicle.getModel().getState().getAngle();
+        var shellTrace = new Segment(position, nextPosition);
+        var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(shellTrace,
+                vehiclePosition, vehicleRadius);
+        for (var intersectionPoint : intersectionPoints) {
+            var pointAngle = GeometryUtils.getPointAngleInCircle(vehiclePosition, intersectionPoint);
+            if (pointAngle > vehicleAngle && pointAngle < vehicleAngle + Math.PI) {
+                return Collision.ofShellWithVehicle(shell, vehicle);
+            }
+        }
+        var vehicleBottom = vehicle.getBottomSegment();
+        if (GeometryUtils.getSegmentsIntersectionPoint(shellTrace, vehicleBottom) != null) {
             return Collision.ofShellWithVehicle(shell, vehicle);
         }
         return null;
