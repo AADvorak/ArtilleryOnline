@@ -1,4 +1,4 @@
-package com.github.aadvorak.artilleryonline.battle.utils;
+package com.github.aadvorak.artilleryonline.battle.common.lines;
 
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 

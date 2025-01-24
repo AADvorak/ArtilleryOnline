@@ -6,7 +6,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculatio
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
-import com.github.aadvorak.artilleryonline.battle.utils.Segment;
+import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
 
 public class ShellVehicleCollisionsDetector {
 

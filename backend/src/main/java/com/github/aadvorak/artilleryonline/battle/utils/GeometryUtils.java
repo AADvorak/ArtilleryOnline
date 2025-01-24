@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.utils;
 
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
 
 import java.util.Set;
 import java.util.stream.Collectors;
