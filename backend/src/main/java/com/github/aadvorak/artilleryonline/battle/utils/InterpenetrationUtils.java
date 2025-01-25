@@ -6,64 +6,60 @@ import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
 
 public class InterpenetrationUtils {
 
-    public static double getWheelWheelInterpenetration(Circle wheel1, Circle wheel2) {
-        return getCirclesInterpenetration(wheel1, wheel2);
+    public static double getCirclesInterpenetration(Circle circle1, Circle circle2) {
+        var distance = circle1.center().distanceTo(circle2.center());
+        var minDistance = circle1.radius() + circle2.radius();
+        return distance < minDistance ? minDistance - distance : 0.0;
     }
 
-    public static double getWheelVehicleInterpenetration(Circle wheel, HalfCircle vehicle) {
-        if (wheel.center().distanceTo(vehicle.center()) > wheel.radius() + vehicle.radius()) {
+    public static double getCircleHalfCircleInterpenetration(Circle circle, HalfCircle halfCircle) {
+        if (circle.center().distanceTo(halfCircle.center()) > circle.radius() + halfCircle.radius()) {
             return 0.0;
         }
-        var circle = vehicle.circle();
-        var intersectionPoints = GeometryUtils.getCirclesIntersectionPoints(wheel, circle);
+        var otherCircle = halfCircle.circle();
+        var intersectionPoints = GeometryUtils.getCirclesIntersectionPoints(circle, otherCircle);
         for (var intersectionPoint : intersectionPoints) {
-            var pointAngle = GeometryUtils.getPointAngleInCircle(vehicle.center(), intersectionPoint);
-            if (pointAngle > vehicle.angle() && pointAngle < vehicle.angle() + Math.PI) {
-                return getCirclesInterpenetration(wheel, circle);
+            var pointAngle = GeometryUtils.getPointAngleInCircle(halfCircle.center(), intersectionPoint);
+            if (pointAngle > halfCircle.angle() && pointAngle < halfCircle.angle() + Math.PI) {
+                return getCirclesInterpenetration(circle, otherCircle);
             }
         }
-        var bottom = vehicle.chord();
-        return getSegmentAndCircleInterpenetration(bottom, wheel);
+        var bottom = halfCircle.chord();
+        return getSegmentAndCircleInterpenetration(bottom, circle);
     }
 
-    public static double getVehicleVehicleInterpenetration(HalfCircle vehicle1, HalfCircle vehicle2) {
-        var circle1 = vehicle1.circle();
-        var circle2 = vehicle2.circle();
+    public static double getHalfCirclesInterpenetration(HalfCircle halfCircle1, HalfCircle halfCircle2) {
+        var circle1 = halfCircle1.circle();
+        var circle2 = halfCircle2.circle();
         var intersectionPoints = GeometryUtils.getCirclesIntersectionPoints(circle1, circle2);
         for (var intersectionPoint : intersectionPoints) {
-            var pointAngle1 = GeometryUtils.getPointAngleInCircle(vehicle1.center(), intersectionPoint);
-            var pointAngle2 = GeometryUtils.getPointAngleInCircle(vehicle2.center(), intersectionPoint);
-            if (pointAngle1 > vehicle1.angle() && pointAngle2 > vehicle2.angle()
-                    && pointAngle1 < vehicle1.angle() + Math.PI && pointAngle2 < vehicle2.angle() + Math.PI) {
+            var pointAngle1 = GeometryUtils.getPointAngleInCircle(halfCircle1.center(), intersectionPoint);
+            var pointAngle2 = GeometryUtils.getPointAngleInCircle(halfCircle2.center(), intersectionPoint);
+            if (pointAngle1 > halfCircle1.angle() && pointAngle2 > halfCircle2.angle()
+                    && pointAngle1 < halfCircle1.angle() + Math.PI && pointAngle2 < halfCircle2.angle() + Math.PI) {
                 return getCirclesInterpenetration(circle1, circle2);
             }
         }
-        var bottom1 = vehicle1.chord();
-        if (isVehicleBottomAndOtherVehicleTopCollide(bottom1, vehicle2)) {
+        var bottom1 = halfCircle1.chord();
+        if (isHalfCircleBottomAndOtherHalfCircleTopInterpenetrate(bottom1, halfCircle2)) {
             return getSegmentAndCircleInterpenetration(bottom1, circle2);
         }
-        var bottom2 = vehicle2.chord();
-        if (isVehicleBottomAndOtherVehicleTopCollide(bottom2, vehicle1)) {
+        var bottom2 = halfCircle2.chord();
+        if (isHalfCircleBottomAndOtherHalfCircleTopInterpenetrate(bottom2, halfCircle1)) {
             return getSegmentAndCircleInterpenetration(bottom2, circle1);
         }
         return 0.0;
     }
 
-    private static boolean isVehicleBottomAndOtherVehicleTopCollide(Segment bottom, HalfCircle otherVehicle) {
-        var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(bottom, otherVehicle.circle());
+    private static boolean isHalfCircleBottomAndOtherHalfCircleTopInterpenetrate(Segment bottom, HalfCircle otherHalfCircle) {
+        var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(bottom, otherHalfCircle.circle());
         for (var intersectionPoint : intersectionPoints) {
-            var pointAngle = GeometryUtils.getPointAngleInCircle(otherVehicle.center(), intersectionPoint);
-            if (pointAngle > otherVehicle.angle() && pointAngle < otherVehicle.angle() + Math.PI) {
+            var pointAngle = GeometryUtils.getPointAngleInCircle(otherHalfCircle.center(), intersectionPoint);
+            if (pointAngle > otherHalfCircle.angle() && pointAngle < otherHalfCircle.angle() + Math.PI) {
                 return true;
             }
         }
         return false;
-    }
-
-    private static double getCirclesInterpenetration(Circle circle1, Circle circle2) {
-        var distance = circle1.center().distanceTo(circle2.center());
-        var minDistance = circle1.radius() + circle2.radius();
-        return distance < minDistance ? minDistance - distance : 0.0;
     }
 
     private static double getSegmentAndCircleInterpenetration(Segment segment, Circle circle) {

@@ -66,7 +66,7 @@ public class VehicleVehicleCollisionsDetector {
             var otherAngle = otherVehicle.getNextAngle();
             var otherVehicleRadius = otherVehicle.getModel().getSpecs().getRadius();
             var otherVehicleShape = new HalfCircle(otherPosition, otherVehicleRadius, otherAngle);
-            var vehicleVehicleInterpenetration = InterpenetrationUtils.getVehicleVehicleInterpenetration(vehicleShape, otherVehicleShape);
+            var vehicleVehicleInterpenetration = InterpenetrationUtils.getHalfCirclesInterpenetration(vehicleShape, otherVehicleShape);
             if (vehicleVehicleInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
                 collisions.add(Collision.ofTwoVehicles(vehicle, otherVehicle, vehicleVehicleInterpenetration));
                 if (first) return collisions;
@@ -78,42 +78,42 @@ public class VehicleVehicleCollisionsDetector {
             var otherRightWheel = otherVehicle.getRightWheel();
             var otherLeftWheelShape = new Circle(otherLeftWheelPosition, otherWheelRadius);
             var otherRightWheelShape = new Circle(otherRightWheelPosition, otherWheelRadius);
-            var rightWheelLeftWheelInterpenetration = InterpenetrationUtils.getWheelWheelInterpenetration(rightWheelShape, otherLeftWheelShape);
+            var rightWheelLeftWheelInterpenetration = InterpenetrationUtils.getCirclesInterpenetration(rightWheelShape, otherLeftWheelShape);
             if (rightWheelLeftWheelInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
                 collisions.add(Collision.ofTwoVehicles(vehicle.getRightWheel(), otherLeftWheel, rightWheelLeftWheelInterpenetration));
                 if (first) return collisions;
             }
-            var leftWheelRightWheelInterpenetration = InterpenetrationUtils.getWheelWheelInterpenetration(leftWheelShape, otherRightWheelShape);
+            var leftWheelRightWheelInterpenetration = InterpenetrationUtils.getCirclesInterpenetration(leftWheelShape, otherRightWheelShape);
             if (leftWheelRightWheelInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
                 collisions.add(Collision.ofTwoVehicles(vehicle.getLeftWheel(), otherRightWheel, leftWheelRightWheelInterpenetration));
                 if (first) return collisions;
             }
-            var rightWheelVehicleInterpenetration = InterpenetrationUtils.getWheelVehicleInterpenetration(rightWheelShape, otherVehicleShape);
+            var rightWheelVehicleInterpenetration = InterpenetrationUtils.getCircleHalfCircleInterpenetration(rightWheelShape, otherVehicleShape);
             if (rightWheelVehicleInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
                 collisions.add(Collision.ofTwoVehicles(vehicle.getRightWheel(), otherVehicle, rightWheelVehicleInterpenetration));
                 if (first) return collisions;
             }
-            var vehicleRightWheelInterpenetration = InterpenetrationUtils.getWheelVehicleInterpenetration(otherRightWheelShape, vehicleShape);
+            var vehicleRightWheelInterpenetration = InterpenetrationUtils.getCircleHalfCircleInterpenetration(otherRightWheelShape, vehicleShape);
             if (vehicleRightWheelInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
                 collisions.add(Collision.ofTwoVehicles(vehicle, otherRightWheel, vehicleRightWheelInterpenetration));
                 if (first) return collisions;
             }
-            var vehicleLeftWheelInterpenetration = InterpenetrationUtils.getWheelVehicleInterpenetration(otherLeftWheelShape, vehicleShape);
+            var vehicleLeftWheelInterpenetration = InterpenetrationUtils.getCircleHalfCircleInterpenetration(otherLeftWheelShape, vehicleShape);
             if (vehicleLeftWheelInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
                 collisions.add(Collision.ofTwoVehicles(vehicle, otherLeftWheel, vehicleLeftWheelInterpenetration));
                 if (first) return collisions;
             }
-            var leftWheelVehicleInterpenetration = InterpenetrationUtils.getWheelVehicleInterpenetration(leftWheelShape, otherVehicleShape);
+            var leftWheelVehicleInterpenetration = InterpenetrationUtils.getCircleHalfCircleInterpenetration(leftWheelShape, otherVehicleShape);
             if (leftWheelVehicleInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
                 collisions.add(Collision.ofTwoVehicles(vehicle.getLeftWheel(), otherVehicle, leftWheelVehicleInterpenetration));
                 if (first) return collisions;
             }
-            var leftWheelLeftWheelInterpenetration = InterpenetrationUtils.getWheelWheelInterpenetration(leftWheelShape, otherLeftWheelShape);
+            var leftWheelLeftWheelInterpenetration = InterpenetrationUtils.getCirclesInterpenetration(leftWheelShape, otherLeftWheelShape);
             if (leftWheelLeftWheelInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
                 collisions.add(Collision.ofTwoVehicles(vehicle.getLeftWheel(), otherLeftWheel, leftWheelLeftWheelInterpenetration));
                 if (first) return collisions;
             }
-            var rightWheelRightWheelInterpenetration = InterpenetrationUtils.getWheelWheelInterpenetration(rightWheelShape, otherRightWheelShape);
+            var rightWheelRightWheelInterpenetration = InterpenetrationUtils.getCirclesInterpenetration(rightWheelShape, otherRightWheelShape);
             if (rightWheelRightWheelInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
                 collisions.add(Collision.ofTwoVehicles(vehicle.getRightWheel(), otherRightWheel, rightWheelRightWheelInterpenetration));
                 if (first) return collisions;
