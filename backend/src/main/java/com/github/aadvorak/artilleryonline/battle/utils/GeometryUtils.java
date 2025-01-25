@@ -1,26 +1,13 @@
 package com.github.aadvorak.artilleryonline.battle.utils;
 
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class GeometryUtils {
-
-    public static double getCirclesInterpenetration(
-            Position center1, Position center2,
-            double radius1, double radius2
-    ) {
-        var distance = center1.distanceTo(center2);
-        var minDistance = radius1 + radius2;
-        return distance < minDistance ? minDistance - distance : 0.0;
-    }
-
-    public static double getSegmentAndCircleInterpenetration(Segment segment, Position center, double radius) {
-        var distance = getDistanceFromPointToSegment(center, segment);
-        return distance < radius ? radius - distance : 0.0;
-    }
 
     public static double getDistanceFromPointToSegment(Position point, Segment segment) {
         var A = point.getX() - segment.begin().getX();
@@ -59,10 +46,8 @@ public class GeometryUtils {
         return point.getY() < center.getY() ? angle - Math.PI : angle + Math.PI;
     }
 
-    public static boolean isSegmentCrossingCircle(
-            Segment segment, Position circleCenter, double circleRadius
-    ) {
-        return !getSegmentAndCircleIntersectionPoints(segment, circleCenter, circleRadius).isEmpty();
+    public static boolean isSegmentCrossingCircle(Segment segment, Circle circle) {
+        return !getSegmentAndCircleIntersectionPoints(segment, circle).isEmpty();
     }
 
     public static Position getSegmentsIntersectionPoint(Segment s1, Segment s2) {
@@ -94,20 +79,19 @@ public class GeometryUtils {
         }
     }
 
-    public static Set<Position> getSegmentAndCircleIntersectionPoints(
-            Segment segment, Position circleCenter, double circleRadius
-    ) {
+    public static Set<Position> getSegmentAndCircleIntersectionPoints(Segment segment, Circle circle) {
         if (Math.abs(segment.begin().getX() - segment.end().getX())
                 > Math.abs(segment.begin().getY() - segment.end().getY())) {
-            return getSegmentAndCircleIntersectionPointsByX(segment, circleCenter, circleRadius);
+            return getSegmentAndCircleIntersectionPointsByX(segment, circle);
         }
-        return getSegmentAndCircleIntersectionPointsByY(segment, circleCenter, circleRadius);
+        return getSegmentAndCircleIntersectionPointsByY(segment, circle);
     }
 
-    // https://debug64.page/ru/posts/math/intersection_of_two_circles/
-    public static Set<Position> getCirclesIntersectionPoints(
-            Position center1, Position center2, double radius1, double radius2
-    ) {
+    public static Set<Position> getCirclesIntersectionPoints(Circle circle1, Circle circle2) {
+        var center1 = circle1.center();
+        var center2 = circle2.center();
+        var radius1 = circle1.radius();
+        var radius2 = circle2.radius();
         var diffX = center2.getX() - center1.getX();
         var diffY = center2.getY() - center1.getY();
         var c = -0.5 * (Math.pow(radius2, 2) - Math.pow(radius1, 2) - Math.pow(diffX, 2) - Math.pow(diffY, 2));
@@ -151,16 +135,14 @@ public class GeometryUtils {
         }
     }
 
-    private static Set<Position> getSegmentAndCircleIntersectionPointsByX(
-            Segment segment, Position circleCenter, double circleRadius
-    ) {
+    private static Set<Position> getSegmentAndCircleIntersectionPointsByX(Segment segment, Circle circle) {
         var lineA = (segment.begin().getY() - segment.end().getY())
                 / (segment.begin().getX() - segment.end().getX());
         var lineB = segment.end().getY() - lineA * segment.end().getX();
         var circleA = 1 + Math.pow(lineA, 2);
-        var circleB = 2 * lineA * (lineB - circleCenter.getY()) - 2 * circleCenter.getX();
-        var circleC = Math.pow(circleCenter.getX(), 2) - Math.pow(circleRadius, 2)
-                + Math.pow(lineB - circleCenter.getY(), 2);
+        var circleB = 2 * lineA * (lineB - circle.center().getY()) - 2 * circle.center().getX();
+        var circleC = Math.pow(circle.center().getX(), 2) - Math.pow(circle.radius(), 2)
+                + Math.pow(lineB - circle.center().getY(), 2);
         var discriminant = Math.pow(circleB, 2) - 4 * circleA * circleC;
         if (discriminant < 0) {
             return Set.of();
@@ -177,16 +159,14 @@ public class GeometryUtils {
                 .collect(Collectors.toSet());
     }
 
-    private static Set<Position> getSegmentAndCircleIntersectionPointsByY(
-            Segment segment, Position circleCenter, double circleRadius
-    ) {
+    private static Set<Position> getSegmentAndCircleIntersectionPointsByY(Segment segment, Circle circle) {
         var lineA = (segment.begin().getX() - segment.end().getX())
                 / (segment.begin().getY() - segment.end().getY());
         var lineB = segment.end().getX() - lineA * segment.end().getY();
         var circleA = 1 + Math.pow(lineA, 2);
-        var circleB = 2 * lineA * (lineB - circleCenter.getX()) - 2 * circleCenter.getY();
-        var circleC = Math.pow(circleCenter.getY(), 2) - Math.pow(circleRadius, 2)
-                + Math.pow(lineB - circleCenter.getX(), 2);
+        var circleB = 2 * lineA * (lineB - circle.center().getX()) - 2 * circle.center().getY();
+        var circleC = Math.pow(circle.center().getY(), 2) - Math.pow(circle.radius(), 2)
+                + Math.pow(lineB - circle.center().getX(), 2);
         var discriminant = Math.pow(circleB, 2) - 4 * circleA * circleC;
         if (discriminant < 0) {
             return Set.of();
