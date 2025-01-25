@@ -23,10 +23,7 @@ public class InterpenetrationUtils {
             }
         }
         var bottom = vehicle.chord();
-        if (!GeometryUtils.getSegmentAndCircleIntersectionPoints(bottom, wheel).isEmpty()) {
-            return getSegmentAndCircleInterpenetration(bottom, wheel);
-        }
-        return 0.0;
+        return getSegmentAndCircleInterpenetration(bottom, wheel);
     }
 
     public static double getVehicleVehicleInterpenetration(HalfCircle vehicle1, HalfCircle vehicle2) {
