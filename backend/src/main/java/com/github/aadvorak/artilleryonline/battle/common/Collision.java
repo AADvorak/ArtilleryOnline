@@ -114,9 +114,9 @@ public class Collision {
     }
 
     private static double getCollisionAngle(Position position, Position otherPosition) {
-        var sign = Math.signum(otherPosition.getX() - position.getX());
-        return Math.asin((position.getY() - otherPosition.getY())
-                / position.distanceTo(otherPosition)) + sign * Math.PI / 2;
+        var dx = otherPosition.getX() - position.getX();
+        var dy = otherPosition.getY() - position.getY();
+        return Math.atan2(dy, dx) + Math.PI / 2;
     }
 
     private static Collision ofVehicleWithUnmovable(Calculations<VehicleModel> first, double interpenetration,
