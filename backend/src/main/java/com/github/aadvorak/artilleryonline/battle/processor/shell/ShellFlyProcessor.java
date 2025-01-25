@@ -8,11 +8,7 @@ import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
 public class ShellFlyProcessor {
 
     public static void processStep1(ShellCalculations shell, BattleModel battleModel) {
-        var position = shell.getPosition();
-        var velocity = shell.getVelocity();
-        shell.getNext().setPosition(new Position()
-                .setX(position.getX() + velocity.getX() * battleModel.getCurrentTimeStepSecs())
-                .setY(position.getY() + velocity.getY() * battleModel.getCurrentTimeStepSecs()));
+        shell.calculateNextPosition(battleModel.getCurrentTimeStepSecs());
     }
 
     public static void processStep2(ShellCalculations shell, BattleModel battleModel) {

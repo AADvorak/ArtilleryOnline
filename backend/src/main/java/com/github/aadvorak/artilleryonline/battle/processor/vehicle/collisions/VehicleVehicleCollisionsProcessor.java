@@ -4,10 +4,10 @@ import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculation
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
-import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
+import com.github.aadvorak.artilleryonline.battle.utils.CollisionUtils;
 
 public class VehicleVehicleCollisionsProcessor {
 
@@ -44,24 +44,7 @@ public class VehicleVehicleCollisionsProcessor {
     }
 
     private static void recalculateVehiclesVelocities(Collision collision) {
-        var mass = collision.getPair().first().getMass();
-        var otherMass = collision.getPair().second().getMass();
-
-        var velocityProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().first());
-        var otherVelocityProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().second());
-
-        var velocityNormalProjection = velocityProjections.getNormal();
-        var otherVelocityNormalProjection = otherVelocityProjections.getNormal();
-
-        velocityProjections.setNormal(getNewVelocityNormalProjection(
-                velocityNormalProjection, otherVelocityNormalProjection,
-                mass, otherMass));
-        collision.getPair().first().setVelocity(velocityProjections.recoverVelocity());
-
-        otherVelocityProjections.setNormal(getNewVelocityNormalProjection(
-                otherVelocityNormalProjection, velocityNormalProjection,
-                otherMass, mass));
-        collision.getPair().second().setVelocity(otherVelocityProjections.recoverVelocity());
+        CollisionUtils.recalculateVelocitiesRigid(collision);
 
         if (collision.getPair().first() instanceof WheelCalculations wheelCalculations) {
             wheelCalculations.getVehicle().recalculateVelocityByWheel(wheelCalculations);
@@ -81,14 +64,6 @@ public class VehicleVehicleCollisionsProcessor {
         var otherNormalMove = normalMovePerMass * mass;
         vehicle.applyNormalMoveToNextPosition(normalMove, collision.getAngle());
         otherVehicle.applyNormalMoveToNextPosition(- otherNormalMove, collision.getAngle());
-    }
-
-    private static double getNewVelocityNormalProjection(
-            double velocityNormalProjection, double otherVelocityNormalProjection,
-            double mass, double otherMass
-    ) {
-        return (- Math.abs(mass - otherMass) * velocityNormalProjection
-                + 2 * otherMass * otherVelocityNormalProjection) / (mass + otherMass);
     }
 
     private static void calculateAndApplyDamage(Collision collision, BattleModel battleModel) {

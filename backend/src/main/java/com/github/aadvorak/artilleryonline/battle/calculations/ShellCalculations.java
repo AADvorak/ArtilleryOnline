@@ -61,6 +61,14 @@ public class ShellCalculations implements Calculations<ShellModel> {
                 .setY(velocity.getY());
     }
 
+    public void calculateNextPosition(double timeStep) {
+        var position = getPosition();
+        var velocity = getVelocity();
+        next.setPosition(new Position()
+                .setX(position.getX() + velocity.getX() * timeStep)
+                .setY(position.getY() + velocity.getY() * timeStep));
+    }
+
     @Getter
     @Setter
     @Accessors(chain = true)

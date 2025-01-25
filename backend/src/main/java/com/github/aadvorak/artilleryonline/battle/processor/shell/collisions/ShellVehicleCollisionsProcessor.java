@@ -8,21 +8,27 @@ import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
 import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
+import com.github.aadvorak.artilleryonline.battle.utils.CollisionUtils;
 
 public class ShellVehicleCollisionsProcessor {
 
     public static void process(ShellCalculations shell, BattleCalculations battle) {
         var collision = ShellVehicleCollisionsDetector.detectFirst(shell, battle);
         if (collision != null) {
-            shell.getCollisions().add(collision);
-            var hitObject = collision.getPair().second();
-            if (hitObject instanceof VehicleCalculations vehicle) {
-                DamageProcessor.processHitVehicle(vehicle, shell, battle);
+            if (isRicochet(collision)) {
+                CollisionUtils.recalculateVelocitiesRigid(collision);
+                shell.calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
+            } else {
+                shell.getCollisions().add(collision);
+                var hitObject = collision.getPair().second();
+                if (hitObject instanceof VehicleCalculations vehicle) {
+                    DamageProcessor.processHitVehicle(vehicle, shell, battle);
+                }
+                if (hitObject instanceof WheelCalculations wheel) {
+                    DamageProcessor.processHitTrack(wheel.getVehicle(), shell, battle);
+                }
+                pushVehicle(collision);
             }
-            if (hitObject instanceof WheelCalculations wheel) {
-                DamageProcessor.processHitTrack(wheel.getVehicle(), shell, battle);
-            }
-            pushVehicle(collision);
         }
     }
 
@@ -55,5 +61,19 @@ public class ShellVehicleCollisionsProcessor {
             wheelVelocity.setY(wheelVelocity.getY() + shellMass * shellVelocity.getY() / vehicleMass);
             wheel.getVehicle().recalculateVelocityByWheel(wheel);
         }
+    }
+
+    private static boolean isRicochet(Collision collision) {
+        var shellType = ((ShellCalculations) collision.getPair().first()).getModel().getSpecs().getType();
+        if (ShellType.HE.equals(shellType)) {
+            return false;
+        }
+        if (collision.getPair().second() instanceof WheelCalculations) {
+            return false;
+        }
+        var projections = collision.getVelocitiesProjections().first();
+        var normalTangentialRatio = Math.abs(projections.getNormal() / projections.getTangential());
+        System.out.println("normalTangentialRatio " + normalTangentialRatio + ", angle " + collision.getAngle());
+        return normalTangentialRatio < 1.0;
     }
 }
