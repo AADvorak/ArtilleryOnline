@@ -57,6 +57,6 @@ public class VehicleGroundCollisionsProcessor {
 
     private static void recalculateVehiclePosition(Collision collision) {
         collision.getPair().first().getVehicleCalculations()
-                .applyNormalMoveToNextPosition(collision.getInterpenetration(), collision.getAngle());
+                .applyNormalMoveToNextPosition(collision.getInterpenetration().depth(), collision.getInterpenetration().angle());
     }
 }

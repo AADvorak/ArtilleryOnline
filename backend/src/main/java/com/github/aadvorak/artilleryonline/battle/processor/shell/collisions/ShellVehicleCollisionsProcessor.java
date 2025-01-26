@@ -73,7 +73,6 @@ public class ShellVehicleCollisionsProcessor {
         }
         var projections = collision.getVelocitiesProjections().first();
         var normalTangentialRatio = Math.abs(projections.getNormal() / projections.getTangential());
-        System.out.println("normalTangentialRatio " + normalTangentialRatio + ", angle " + collision.getAngle());
         return normalTangentialRatio < 1.0;
     }
 }

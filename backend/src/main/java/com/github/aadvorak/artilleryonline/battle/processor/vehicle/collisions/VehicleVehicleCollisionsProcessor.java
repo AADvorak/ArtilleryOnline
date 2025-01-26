@@ -59,11 +59,11 @@ public class VehicleVehicleCollisionsProcessor {
         var otherVehicle = collision.getPair().second().getVehicleCalculations();
         var mass = collision.getPair().first().getMass();
         var otherMass = collision.getPair().second().getMass();
-        var normalMovePerMass = collision.getInterpenetration() / (mass + otherMass);
+        var normalMovePerMass = collision.getInterpenetration().depth() / (mass + otherMass);
         var normalMove = normalMovePerMass * otherMass;
         var otherNormalMove = normalMovePerMass * mass;
-        vehicle.applyNormalMoveToNextPosition(normalMove, collision.getAngle());
-        otherVehicle.applyNormalMoveToNextPosition(- otherNormalMove, collision.getAngle());
+        vehicle.applyNormalMoveToNextPosition(normalMove, collision.getInterpenetration().angle());
+        otherVehicle.applyNormalMoveToNextPosition(- otherNormalMove, collision.getInterpenetration().angle());
     }
 
     private static void calculateAndApplyDamage(Collision collision, BattleModel battleModel) {

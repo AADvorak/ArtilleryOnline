@@ -1,54 +1,65 @@
 package com.github.aadvorak.artilleryonline.battle.utils;
 
+import com.github.aadvorak.artilleryonline.battle.common.Interpenetration;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
 
+import java.util.Optional;
+
 public class InterpenetrationUtils {
 
-    public static double getCirclesInterpenetration(Circle circle1, Circle circle2) {
-        var distance = circle1.center().distanceTo(circle2.center());
-        var minDistance = circle1.radius() + circle2.radius();
-        return distance < minDistance ? minDistance - distance : 0.0;
+    public static Interpenetration getCirclesInterpenetration(Circle circle, Circle otherCircle) {
+        var distance = circle.center().distanceTo(otherCircle.center());
+        var minDistance = circle.radius() + otherCircle.radius();
+        var depth = distance < minDistance ? minDistance - distance : 0.0;
+        return Interpenetration.of(depth, circle.center(), otherCircle.center());
     }
 
-    public static double getCircleHalfCircleInterpenetration(Circle circle, HalfCircle halfCircle) {
-        if (circle.center().distanceTo(halfCircle.center()) > circle.radius() + halfCircle.radius()) {
-            return 0.0;
+    public static Interpenetration getCircleHalfCircleInterpenetration(Circle circle, HalfCircle otherHalfCircle) {
+        if (circle.center().distanceTo(otherHalfCircle.center()) > circle.radius() + otherHalfCircle.radius()) {
+            return null;
         }
-        var otherCircle = halfCircle.circle();
+        var otherCircle = otherHalfCircle.circle();
         var intersectionPoints = GeometryUtils.getCirclesIntersectionPoints(circle, otherCircle);
         for (var intersectionPoint : intersectionPoints) {
-            var pointAngle = GeometryUtils.getPointAngleInCircle(halfCircle.center(), intersectionPoint);
-            if (pointAngle > halfCircle.angle() && pointAngle < halfCircle.angle() + Math.PI) {
+            var pointAngle = GeometryUtils.getPointAngleInCircle(otherHalfCircle.center(), intersectionPoint);
+            if (pointAngle > otherHalfCircle.angle() && pointAngle < otherHalfCircle.angle() + Math.PI) {
+                return getCirclesInterpenetration(circle, otherCircle);
+            }
+        }
+        var otherBottom = otherHalfCircle.chord();
+        return Optional.ofNullable(getSurfaceAndCircleInterpenetration(otherBottom, circle))
+                .map(Interpenetration::inverted)
+                .orElse(null);
+    }
+
+    public static Interpenetration getHalfCirclesInterpenetration(HalfCircle halfCircle, HalfCircle otherHalfCircle) {
+        if (halfCircle.center().distanceTo(otherHalfCircle.center()) > halfCircle.radius() + otherHalfCircle.radius()) {
+            return null;
+        }
+        var circle = halfCircle.circle();
+        var otherCircle = otherHalfCircle.circle();
+        var intersectionPoints = GeometryUtils.getCirclesIntersectionPoints(circle, otherCircle);
+        for (var intersectionPoint : intersectionPoints) {
+            var pointAngle1 = GeometryUtils.getPointAngleInCircle(halfCircle.center(), intersectionPoint);
+            var pointAngle2 = GeometryUtils.getPointAngleInCircle(otherHalfCircle.center(), intersectionPoint);
+            if (pointAngle1 > halfCircle.angle() && pointAngle2 > otherHalfCircle.angle()
+                    && pointAngle1 < halfCircle.angle() + Math.PI && pointAngle2 < otherHalfCircle.angle() + Math.PI) {
                 return getCirclesInterpenetration(circle, otherCircle);
             }
         }
         var bottom = halfCircle.chord();
-        return getSegmentAndCircleInterpenetration(bottom, circle);
-    }
-
-    public static double getHalfCirclesInterpenetration(HalfCircle halfCircle1, HalfCircle halfCircle2) {
-        var circle1 = halfCircle1.circle();
-        var circle2 = halfCircle2.circle();
-        var intersectionPoints = GeometryUtils.getCirclesIntersectionPoints(circle1, circle2);
-        for (var intersectionPoint : intersectionPoints) {
-            var pointAngle1 = GeometryUtils.getPointAngleInCircle(halfCircle1.center(), intersectionPoint);
-            var pointAngle2 = GeometryUtils.getPointAngleInCircle(halfCircle2.center(), intersectionPoint);
-            if (pointAngle1 > halfCircle1.angle() && pointAngle2 > halfCircle2.angle()
-                    && pointAngle1 < halfCircle1.angle() + Math.PI && pointAngle2 < halfCircle2.angle() + Math.PI) {
-                return getCirclesInterpenetration(circle1, circle2);
-            }
+        if (isHalfCircleBottomAndOtherHalfCircleTopInterpenetrate(bottom, otherHalfCircle)) {
+            return getSurfaceAndCircleInterpenetration(bottom, otherCircle);
         }
-        var bottom1 = halfCircle1.chord();
-        if (isHalfCircleBottomAndOtherHalfCircleTopInterpenetrate(bottom1, halfCircle2)) {
-            return getSegmentAndCircleInterpenetration(bottom1, circle2);
+        var otherBottom = otherHalfCircle.chord();
+        if (isHalfCircleBottomAndOtherHalfCircleTopInterpenetrate(otherBottom, halfCircle)) {
+            return Optional.ofNullable(getSurfaceAndCircleInterpenetration(otherBottom, circle))
+                    .map(Interpenetration::inverted)
+                    .orElse(null);
         }
-        var bottom2 = halfCircle2.chord();
-        if (isHalfCircleBottomAndOtherHalfCircleTopInterpenetrate(bottom2, halfCircle1)) {
-            return getSegmentAndCircleInterpenetration(bottom2, circle1);
-        }
-        return 0.0;
+        return null;
     }
 
     private static boolean isHalfCircleBottomAndOtherHalfCircleTopInterpenetrate(Segment bottom, HalfCircle otherHalfCircle) {
@@ -62,8 +73,13 @@ public class InterpenetrationUtils {
         return false;
     }
 
-    private static double getSegmentAndCircleInterpenetration(Segment segment, Circle circle) {
-        var distance = GeometryUtils.getDistanceFromPointToSegment(circle.center(), segment);
-        return distance < circle.radius() ? circle.radius() - distance : 0.0;
+    private static Interpenetration getSurfaceAndCircleInterpenetration(Segment surface, Circle circle) {
+        var projection = GeometryUtils.getPointToSegmentProjection(circle.center(), surface);
+        if (projection == null) {
+            return null;
+        }
+        var distance = circle.center().distanceTo(projection);
+        var depth = distance < circle.radius() ? circle.radius() - distance : 0.0;
+        return Interpenetration.of(depth, projection, circle.center());
     }
 }

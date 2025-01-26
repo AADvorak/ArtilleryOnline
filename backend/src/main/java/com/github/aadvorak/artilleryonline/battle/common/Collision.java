@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.Optional;
+
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -19,9 +21,7 @@ public class Collision {
 
     private VelocitiesProjections velocitiesProjections;
 
-    private double interpenetration;
-
-    private double angle;
+    private Interpenetration interpenetration;
 
     private Double sumNormalVelocity;
 
@@ -71,21 +71,12 @@ public class Collision {
                 .setPair(new CollisionPair(first, null));
     }
 
-    public static Collision ofShellWithVehicle(Calculations<ShellModel> first, Calculations<VehicleModel> second) {
-        return withVehicle(first, second);
+    public static Collision ofVehicleWithGround(Calculations<VehicleModel> first, Interpenetration interpenetration) {
+        return ofVehicleWithUnmovable(first, interpenetration, CollideObjectType.GROUND);
     }
 
-    public static Collision ofVehicleWithGround(Calculations<VehicleModel> first, double interpenetration, double angle) {
-        return ofVehicleWithUnmovable(first, interpenetration, angle, CollideObjectType.GROUND);
-    }
-
-    public static Collision ofVehicleWithWall(Calculations<VehicleModel> first, double interpenetration, double angle) {
-        return ofVehicleWithUnmovable(first, interpenetration, angle, CollideObjectType.WALL);
-    }
-
-    public static Collision ofTwoVehicles(Calculations<VehicleModel> first, Calculations<VehicleModel> second, double interpenetration) {
-        return withVehicle(first, second)
-                .setInterpenetration(interpenetration);
+    public static Collision ofVehicleWithWall(Calculations<VehicleModel> first, Interpenetration interpenetration) {
+        return ofVehicleWithUnmovable(first, interpenetration, CollideObjectType.WALL);
     }
 
     public static Collision inverted(Collision collision) {
@@ -98,34 +89,34 @@ public class Collision {
                                 collision.getVelocitiesProjections().first()
                         )
                 )
-                .setInterpenetration(collision.getInterpenetration())
-                .setAngle(collision.getAngle() + Math.PI);
+                .setInterpenetration(
+                        Optional.ofNullable(collision.getInterpenetration())
+                                .map(Interpenetration::inverted)
+                        .orElse(null)
+                );
     }
 
-    private static Collision withVehicle(Calculations<?> first, Calculations<VehicleModel> second) {
-        var angle = getCollisionAngle(first.getPosition(), second.getPosition());
-        var firstProjections = first.getVelocity().getProjections(angle);
-        var secondProjections = second.getVelocity().getProjections(angle);
+    public static Collision withVehicle(Calculations<?> first, Calculations<VehicleModel> second,
+                                         Interpenetration interpenetration) {
+        var firstProjections = first.getVelocity().getProjections(interpenetration.angle());
+        var secondProjections = second.getVelocity().getProjections(interpenetration.angle());
         return new Collision()
                 .setType(CollideObjectType.VEHICLE)
                 .setPair(new CollisionPair(first, second))
                 .setVelocitiesProjections(new VelocitiesProjections(firstProjections, secondProjections))
-                .setAngle(angle);
+                .setInterpenetration(interpenetration);
     }
 
-    private static double getCollisionAngle(Position position, Position otherPosition) {
-        var dx = otherPosition.getX() - position.getX();
-        var dy = otherPosition.getY() - position.getY();
-        return Math.atan2(dy, dx) + Math.PI / 2;
-    }
-
-    private static Collision ofVehicleWithUnmovable(Calculations<VehicleModel> first, double interpenetration,
-                                                    double angle, CollideObjectType type) {
+    private static Collision ofVehicleWithUnmovable(
+            Calculations<VehicleModel> first,
+            Interpenetration interpenetration,
+            CollideObjectType type
+    ) {
         return new Collision()
                 .setType(type)
                 .setPair(new CollisionPair(first, null))
-                .setVelocitiesProjections(new VelocitiesProjections(first.getVelocity().getProjections(angle), null))
-                .setInterpenetration(interpenetration)
-                .setAngle(angle);
+                .setVelocitiesProjections(new VelocitiesProjections(first.getVelocity()
+                        .getProjections(interpenetration.angle()), null))
+                .setInterpenetration(interpenetration);
     }
 }

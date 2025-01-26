@@ -5,7 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculatio
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculator.wheel.GroundPositionCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
-import com.github.aadvorak.artilleryonline.battle.common.Constants;
+import com.github.aadvorak.artilleryonline.battle.common.Interpenetration;
 
 import java.util.HashSet;
 import java.util.List;
@@ -41,11 +41,12 @@ public class VehicleGroundCollisionsDetector {
     private static Collision detectWheelGroundCollision(WheelCalculations wheel, BattleCalculations battle) {
         GroundPositionCalculator.calculateNext(wheel, battle.getModel().getRoom());
         var groundMaxDepth = battle.getModel().getRoom().getSpecs().getGroundMaxDepth();
-        var interpenetration = wheel.getNext().getGroundDepth() - groundMaxDepth;
-        if (interpenetration <= Constants.INTERPENETRATION_THRESHOLD) {
+        var depth = wheel.getNext().getGroundDepth() - groundMaxDepth;
+        var interpenetration = Interpenetration.of(depth, wheel.getGroundAngle());
+        if (interpenetration == null) {
             return null;
         }
-        return Collision.ofVehicleWithGround(wheel, interpenetration, wheel.getGroundAngle());
+        return Collision.ofVehicleWithGround(wheel, interpenetration);
     }
 
     private static Collision detectWheelWallCollision(WheelCalculations wheel, BattleCalculations battle) {
@@ -53,13 +54,15 @@ public class VehicleGroundCollisionsDetector {
         var xMax = battle.getModel().getRoom().getSpecs().getRightTop().getX();
         var xMin = battle.getModel().getRoom().getSpecs().getLeftBottom().getX();
         var nextPosition = wheel.getNext().getPosition();
-        var rightWallInterpenetration = nextPosition.getX() + wheelRadius - xMax;
-        if (rightWallInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
-            return Collision.ofVehicleWithWall(wheel, rightWallInterpenetration, Math.PI / 2);
+        var rightWallDepth = nextPosition.getX() + wheelRadius - xMax;
+        var rightWallInterpenetration = Interpenetration.of(rightWallDepth, Math.PI / 2);
+        if (rightWallInterpenetration != null) {
+            return Collision.ofVehicleWithWall(wheel, rightWallInterpenetration);
         }
-        var leftWallInterpenetration = xMin - nextPosition.getX() + wheelRadius;
-        if (leftWallInterpenetration > Constants.INTERPENETRATION_THRESHOLD) {
-            return Collision.ofVehicleWithWall(wheel, leftWallInterpenetration, -Math.PI / 2);
+        var leftWallDepth = xMin - nextPosition.getX() + wheelRadius;
+        var leftWallInterpenetration = Interpenetration.of(leftWallDepth, -Math.PI / 2);
+        if (leftWallInterpenetration != null) {
+            return Collision.ofVehicleWithWall(wheel, leftWallInterpenetration);
         }
         return null;
     }

@@ -9,33 +9,12 @@ import java.util.stream.Collectors;
 
 public class GeometryUtils {
 
-    public static double getDistanceFromPointToSegment(Position point, Segment segment) {
-        var A = point.getX() - segment.begin().getX();
-        var B = point.getY() - segment.begin().getY();
-        var C = segment.end().getX() - segment.begin().getX();
-        var D = segment.end().getY() - segment.begin().getY();
+    public static Position getPointToLineProjection(Position point, Segment line) {
+        return getPointToSegmentProjection(point, line, true);
+    }
 
-        var dot = A * C + B * D;
-        var squareLength = C * C + D * D;
-        var param =  squareLength != 0 ? dot / squareLength : -1.0;
-
-        var xx = 0.0;
-        var yy = 0.0;
-
-        if (param < 0) {
-            xx = segment.begin().getX();
-            yy = segment.begin().getY();
-        } else if (param > 1) {
-            xx = segment.end().getX();
-            yy = segment.end().getY();
-        } else {
-            xx = segment.begin().getX() + param * C;
-            yy = segment.begin().getY() + param * D;
-        }
-
-        var dx = point.getX() - xx;
-        var dy = point.getY() - yy;
-        return Math.sqrt(dx * dx + dy * dy);
+    public static Position getPointToSegmentProjection(Position point, Segment segment) {
+        return getPointToSegmentProjection(point, segment, false);
     }
 
     public static double getPointAngleInCircle(Position center, Position point) {
@@ -181,5 +160,27 @@ public class GeometryUtils {
                 .filter(y -> y <= yMax && y >= yMin)
                 .map(y -> new Position().setX(lineA * y + lineB).setY(y))
                 .collect(Collectors.toSet());
+    }
+
+    private static Position getPointToSegmentProjection(Position point, Segment segment, boolean notCheckInside) {
+        var A = point.getX() - segment.begin().getX();
+        var B = point.getY() - segment.begin().getY();
+        var C = segment.end().getX() - segment.begin().getX();
+        var D = segment.end().getY() - segment.begin().getY();
+
+        var dot = A * C + B * D;
+        var squareLength = C * C + D * D;
+        var param = squareLength != 0 ? dot / squareLength : -1.0;
+
+        var projection = new Position()
+                .setX(segment.begin().getX() + param * C)
+                .setY(segment.begin().getY() + param * D);
+        if (notCheckInside) {
+            return projection;
+        }
+        if (param >= 0 && param <= 1) {
+            return projection;
+        }
+        return null;
     }
 }

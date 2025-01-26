@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
+import com.github.aadvorak.artilleryonline.battle.common.Interpenetration;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
@@ -47,12 +48,16 @@ public class ShellVehicleCollisionsDetector {
         for (var intersectionPoint : intersectionPoints) {
             var pointAngle = GeometryUtils.getPointAngleInCircle(vehiclePosition, intersectionPoint);
             if (pointAngle > vehicleAngle && pointAngle < vehicleAngle + Math.PI) {
-                return Collision.ofShellWithVehicle(shell, vehicle);
+                // todo use the position of first intersection point
+                var interpenetration = Interpenetration.withUncheckedDepth(0.0, position, vehiclePosition);
+                return Collision.withVehicle(shell, vehicle, interpenetration);
             }
         }
         var vehicleBottom = vehicleShape.chord();
         if (GeometryUtils.getSegmentsIntersectionPoint(shellTrace, vehicleBottom) != null) {
-            return Collision.ofShellWithVehicle(shell, vehicle);
+            var projection = GeometryUtils.getPointToLineProjection(position, vehicleBottom);
+            var interpenetration = Interpenetration.withUncheckedDepth(0.0, position, projection);
+            return Collision.withVehicle(shell, vehicle, interpenetration);
         }
         return null;
     }
@@ -66,7 +71,9 @@ public class ShellVehicleCollisionsDetector {
         var wheelShape = new Circle(wheelPosition, wheelRadius);
         if (nextPosition.distanceTo(wheelPosition) <= wheelRadius
                 || GeometryUtils.isSegmentCrossingCircle(shellTrace, wheelShape)) {
-            return Collision.ofShellWithVehicle(shell, wheel);
+            // todo use the position of first intersection point
+            var interpenetration = Interpenetration.withUncheckedDepth(0.0, position, wheelPosition);
+            return Collision.withVehicle(shell, wheel, interpenetration);
         }
         return null;
     }
