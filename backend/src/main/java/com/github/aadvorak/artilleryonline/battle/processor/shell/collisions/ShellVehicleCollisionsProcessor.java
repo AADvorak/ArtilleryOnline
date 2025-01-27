@@ -7,6 +7,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
+import com.github.aadvorak.artilleryonline.battle.events.RicochetEvent;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
 import com.github.aadvorak.artilleryonline.battle.utils.CollisionUtils;
@@ -21,6 +22,7 @@ public class ShellVehicleCollisionsProcessor {
             if (isRicochet(collision)) {
                 CollisionUtils.recalculateVelocitiesRigid(collision);
                 shell.calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
+                battle.getModel().getEvents().addRicochet(new RicochetEvent().setShellId(shell.getId()));
             } else {
                 shell.getCollisions().add(collision);
                 if (hitObject instanceof VehicleCalculations vehicle) {

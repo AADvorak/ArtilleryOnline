@@ -7,7 +7,7 @@ import type {ShellModel, ShellModels, VehicleModel, VehicleModels} from "~/playg
 import {useSoundsPlayerBase} from "~/playground/composables/sound/sounds-player-base";
 import {useUserStore} from "~/stores/user";
 import type {VehicleStates} from "~/playground/data/state";
-import type {ShellHitEvent, VehicleCollideEvent} from "~/playground/data/events";
+import type {RicochetEvent, ShellHitEvent, VehicleCollideEvent} from "~/playground/data/events";
 
 export function useEventSoundsPlayer(player: Player) {
   const soundsPlayerBase = useSoundsPlayerBase()
@@ -23,6 +23,9 @@ export function useEventSoundsPlayer(player: Player) {
       }
       if (battleUpdate.events.collides) {
         battleUpdate.events.collides.forEach(collide => playCollide(collide, battle.model.vehicles))
+      }
+      if (battleUpdate.events.ricochets) {
+        battleUpdate.events.ricochets.forEach(ricochet => playRicochet(ricochet, battle.model.shells))
       }
     }
     if (battleUpdate.updates) {
@@ -58,6 +61,14 @@ export function useEventSoundsPlayer(player: Player) {
     const pan = soundsPlayerBase.calculatePan(shell.state.position.x)
     const gain = soundsPlayerBase.calculateGain(shell.state.position)
     const fileName = getHitSoundName(shellType, hitType, caliber)
+    fileName && play(fileName, pan, gain)
+  }
+
+  function playRicochet(ricochet: RicochetEvent, shellsModels: ShellModels) {
+    const shell = shellsModels[ricochet.shellId]
+    const pan = soundsPlayerBase.calculatePan(shell.state.position.x)
+    const gain = soundsPlayerBase.calculateGain(shell.state.position)
+    const fileName = getRicochetSoundName()
     fileName && play(fileName, pan, gain)
   }
 
@@ -137,6 +148,10 @@ export function useEventSoundsPlayer(player: Player) {
     } else if (type === CollideObjectType.VEHICLE) {
       return 'collide-vehicle-' + (Math.ceil(Math.random() * 6))
     }
+  }
+
+  function getRicochetSoundName() {
+    return 'ricochet-' + (Math.ceil(Math.random() * 2))
   }
 
   function play(fileName: string, pan: number, gain: number) {

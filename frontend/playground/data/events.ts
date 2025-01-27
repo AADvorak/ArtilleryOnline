@@ -15,7 +15,12 @@ export interface VehicleCollideEvent {
   object: CollideObject
 }
 
+export interface RicochetEvent {
+  shellId: number
+}
+
 export interface BattleModelEvents {
   hits: ShellHitEvent[]
   collides: VehicleCollideEvent[]
+  ricochets: RicochetEvent[]
 }

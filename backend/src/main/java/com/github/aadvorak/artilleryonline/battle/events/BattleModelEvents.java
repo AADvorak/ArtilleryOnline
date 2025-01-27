@@ -15,6 +15,8 @@ public class BattleModelEvents {
 
     private List<VehicleCollideEvent> collides;
 
+    private List<RicochetEvent> ricochets;
+
     public void addHit(ShellHitEvent hit) {
         if (hits == null) {
             hits = new ArrayList<>();
@@ -29,8 +31,15 @@ public class BattleModelEvents {
         collides.add(collide);
     }
 
+    public void addRicochet(RicochetEvent ricochet) {
+        if (ricochets == null) {
+            ricochets = new ArrayList<>();
+        }
+        ricochets.add(ricochet);
+    }
+
     @JsonIgnore
     public boolean isEmpty() {
-        return hits == null && collides == null;
+        return hits == null && collides == null && ricochets == null;
     }
 }
