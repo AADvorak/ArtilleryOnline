@@ -7,6 +7,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
+import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
 import com.github.aadvorak.artilleryonline.battle.utils.CollisionUtils;
 
@@ -15,12 +16,13 @@ public class ShellVehicleCollisionsProcessor {
     public static void process(ShellCalculations shell, BattleCalculations battle) {
         var collision = ShellVehicleCollisionsDetector.detectFirst(shell, battle);
         if (collision != null) {
+            var hitObject = collision.getPair().second();
+            ((VehicleModel) hitObject.getModel()).setUpdated(true);
             if (isRicochet(collision)) {
                 CollisionUtils.recalculateVelocitiesRigid(collision);
                 shell.calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
             } else {
                 shell.getCollisions().add(collision);
-                var hitObject = collision.getPair().second();
                 if (hitObject instanceof VehicleCalculations vehicle) {
                     DamageProcessor.processHitVehicle(vehicle, shell, battle);
                 }
@@ -73,6 +75,6 @@ public class ShellVehicleCollisionsProcessor {
         }
         var projections = collision.getVelocitiesProjections().first();
         var normalTangentialRatio = Math.abs(projections.getNormal() / projections.getTangential());
-        return normalTangentialRatio < 1.0;
+        return normalTangentialRatio < 0.4;
     }
 }
