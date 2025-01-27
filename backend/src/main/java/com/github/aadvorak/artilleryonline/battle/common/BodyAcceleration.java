@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class VehicleAcceleration {
+public class BodyAcceleration {
 
     private double x;
 
@@ -21,13 +21,13 @@ public class VehicleAcceleration {
                 .setY(y);
     }
 
-    public VehicleAcceleration setMovingAcceleration(Acceleration acceleration) {
+    public BodyAcceleration setMovingAcceleration(Acceleration acceleration) {
         x = acceleration.getX();
         y = acceleration.getY();
         return this;
     }
 
-    public static VehicleAcceleration sumOf(VehicleAcceleration... accelerations) {
+    public static BodyAcceleration sumOf(BodyAcceleration... accelerations) {
         var sumX = 0.0;
         var sumY = 0.0;
         var sumAngle = 0.0;
@@ -36,7 +36,7 @@ public class VehicleAcceleration {
             sumY += acceleration.getY();
             sumAngle += acceleration.getAngle();
         }
-        return new VehicleAcceleration()
+        return new BodyAcceleration()
                 .setX(sumX)
                 .setY(sumY)
                 .setAngle(sumAngle);

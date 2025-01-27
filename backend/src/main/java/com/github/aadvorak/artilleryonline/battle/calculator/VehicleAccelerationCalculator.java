@@ -9,7 +9,7 @@ import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 
 public class VehicleAccelerationCalculator {
 
-    public static VehicleAcceleration getVehicleAcceleration(VehicleCalculations vehicle, RoomModel roomModel) {
+    public static BodyAcceleration getVehicleAcceleration(VehicleCalculations vehicle, RoomModel roomModel) {
         var angle = vehicle.getModel().getState().getAngle();
 
         vehicle.recalculateWheelsVelocities();
@@ -30,7 +30,7 @@ public class VehicleAccelerationCalculator {
                 .setX( - vehicleVelocity.getX() * Math.abs(vehicleVelocity.getX()) * frictionCoefficient)
                 .setY( - vehicleVelocity.getY() * Math.abs(vehicleVelocity.getY()) * frictionCoefficient);
 
-        return new VehicleAcceleration()
+        return new BodyAcceleration()
                 .setMovingAcceleration(Acceleration.sumOf(
                         movingAcceleration,
                         frictionAcceleration

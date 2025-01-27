@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class VehicleVelocity {
+public class BodyVelocity {
 
     private double x;
 
