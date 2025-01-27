@@ -22,6 +22,8 @@ public class BattleModel {
 
     private Map<Integer, ShellModel> shells = new HashMap<>();
 
+    private Map<Integer, MissileModel> missiles = new HashMap<>();
+
     private Map<Integer, ExplosionModel> explosions = new HashMap<>();
 
     private RoomModel room;

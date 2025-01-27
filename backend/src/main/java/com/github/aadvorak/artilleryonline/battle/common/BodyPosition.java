@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class BodyVelocity {
+public class BodyPosition {
 
     private double x;
 
@@ -17,8 +17,8 @@ public class BodyVelocity {
     private double angle;
 
     @JsonIgnore
-    public Velocity getMovingVelocity() {
-        return new Velocity()
+    public Position getCenter() {
+        return new Position()
                 .setX(x)
                 .setY(y);
     }
