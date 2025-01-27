@@ -6,10 +6,14 @@ import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculatio
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Interpenetration;
+import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ShellVehicleCollisionsDetector {
 
@@ -44,14 +48,15 @@ public class ShellVehicleCollisionsDetector {
         var vehicleAngle = vehicle.getModel().getState().getAngle();
         var shellTrace = new Segment(position, nextPosition);
         var vehicleShape = new HalfCircle(vehiclePosition, vehicleRadius, vehicleAngle);
-        var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(shellTrace, vehicleShape.circle());
-        for (var intersectionPoint : intersectionPoints) {
-            var pointAngle = GeometryUtils.getPointAngleInCircle(vehiclePosition, intersectionPoint);
-            if (pointAngle > vehicleAngle && pointAngle < vehicleAngle + Math.PI) {
-                // todo use the position of first intersection point
-                var interpenetration = Interpenetration.withUncheckedDepth(0.0, position, vehiclePosition);
-                return Collision.withVehicle(shell, vehicle, interpenetration);
-            }
+        var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(shellTrace, vehicleShape.circle())
+                .stream().filter(intersectionPoint -> {
+                    var pointAngle = GeometryUtils.getPointAngleInCircle(vehiclePosition, intersectionPoint);
+                    return pointAngle > vehicleAngle && pointAngle < vehicleAngle + Math.PI;
+                }).collect(Collectors.toSet());
+        if (!intersectionPoints.isEmpty()) {
+            var intersectionPoint = findClosestIntersectionPoint(position, intersectionPoints);
+            var interpenetration = Interpenetration.withUncheckedDepth(0.0, intersectionPoint, vehiclePosition);
+            return Collision.withVehicle(shell, vehicle, interpenetration);
         }
         var vehicleBottom = vehicleShape.chord();
         if (GeometryUtils.getSegmentsIntersectionPoint(shellTrace, vehicleBottom) != null) {
@@ -69,12 +74,27 @@ public class ShellVehicleCollisionsDetector {
         var wheelRadius = wheel.getModel().getSpecs().getWheelRadius();
         var shellTrace = new Segment(position, nextPosition);
         var wheelShape = new Circle(wheelPosition, wheelRadius);
-        if (nextPosition.distanceTo(wheelPosition) <= wheelRadius
-                || GeometryUtils.isSegmentCrossingCircle(shellTrace, wheelShape)) {
-            // todo use the position of first intersection point
-            var interpenetration = Interpenetration.withUncheckedDepth(0.0, position, wheelPosition);
+        var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(shellTrace, wheelShape);
+        if (!intersectionPoints.isEmpty()) {
+            var intersectionPoint = findClosestIntersectionPoint(position, intersectionPoints);
+            var interpenetration = Interpenetration.withUncheckedDepth(0.0, intersectionPoint, wheelPosition);
             return Collision.withVehicle(shell, wheel, interpenetration);
         }
         return null;
+    }
+
+    private static Position findClosestIntersectionPoint(Position position, Set<Position> intersectionPoints) {
+        var iterator = intersectionPoints.iterator();
+        var closest = iterator.next();
+        var closestDistance = position.distanceTo(closest);
+        while (iterator.hasNext()) {
+            var point = iterator.next();
+            var distance = position.distanceTo(point);
+            if (distance < closestDistance) {
+                closest = point;
+                closestDistance = distance;
+            }
+        }
+        return closest;
     }
 }
