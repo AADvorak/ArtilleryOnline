@@ -10,6 +10,12 @@ import java.util.stream.IntStream;
 
 public class BattleUtils {
 
+    public static boolean positionIsOutOfRoom(Position position, RoomSpecs roomSpecs) {
+        var xMax = roomSpecs.getRightTop().getX();
+        var xMin = roomSpecs.getLeftBottom().getX();
+        return position.getX() >= xMax || position.getX() <= xMin;
+    }
+
     public static double getRoomWidth(RoomSpecs roomSpecs) {
         return roomSpecs.getRightTop().getX() - roomSpecs.getLeftBottom().getX();
     }

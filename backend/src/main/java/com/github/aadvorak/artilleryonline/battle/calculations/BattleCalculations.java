@@ -17,4 +17,6 @@ public class BattleCalculations {
     private Set<VehicleCalculations> vehicles;
 
     private Set<ShellCalculations> shells;
+
+    private Set<MissileCalculations> missiles;
 }

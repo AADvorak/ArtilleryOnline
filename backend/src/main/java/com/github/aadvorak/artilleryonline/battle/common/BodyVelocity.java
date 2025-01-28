@@ -23,6 +23,10 @@ public class BodyVelocity {
                 .setY(y);
     }
 
+    public void recalculate(BodyAcceleration acceleration, double timeStep) {
+
+    }
+
     @Override
     public String toString() {
         return String.format("(%.3f, %.3f, %.3f)", x, y, angle);

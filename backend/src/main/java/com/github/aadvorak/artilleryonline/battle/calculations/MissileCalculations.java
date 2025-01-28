@@ -62,11 +62,11 @@ public class MissileCalculations implements Calculations<MissileModel> {
     public void calculateNextPosition(double timeStep) {
         var position = model.getState().getPosition();
         var velocity = model.getState().getVelocity();
-        next.setPosition(new BodyPosition()
-                .setX(position.getX() + velocity.getX() * timeStep)
-                .setY(position.getY() + velocity.getY() * timeStep)
-                .setAngle(position.getAngle() + velocity.getAngle() * timeStep)
-        );
+        next.setPosition(position.next(velocity, timeStep));
+    }
+
+    public void applyNextPosition() {
+        model.getState().setPosition(next.getPosition());
     }
 
     @Getter

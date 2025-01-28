@@ -34,9 +34,7 @@ public class VehicleMoveProcessor {
         var acceleration = vehicle.getModel().getState().getAcceleration();
         var vehicleVelocity = vehicle.getModel().getState().getVelocity();
         var timeStep = battle.getModel().getCurrentTimeStepSecs();
-        vehicleVelocity.setX(vehicleVelocity.getX() + acceleration.getX() * timeStep);
-        vehicleVelocity.setY(vehicleVelocity.getY() + acceleration.getY() * timeStep);
-        vehicleVelocity.setAngle(vehicleVelocity.getAngle() + acceleration.getAngle() * timeStep);
+        vehicleVelocity.recalculate(acceleration, timeStep);
     }
 
     private static void calculateOnGround(VehicleCalculations vehicle) {

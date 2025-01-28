@@ -23,6 +23,14 @@ public class BodyPosition {
                 .setY(y);
     }
 
+    @JsonIgnore
+    public BodyPosition next(BodyVelocity velocity, double timeStep) {
+        return new BodyPosition()
+                .setX(x + velocity.getX() * timeStep)
+                .setY(y + velocity.getY() * timeStep)
+                .setAngle(angle + velocity.getAngle() * timeStep);
+    }
+
     @Override
     public String toString() {
         return String.format("(%.3f, %.3f, %.3f)", x, y, angle);

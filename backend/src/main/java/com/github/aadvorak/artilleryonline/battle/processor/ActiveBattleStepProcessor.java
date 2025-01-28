@@ -3,10 +3,12 @@ package com.github.aadvorak.artilleryonline.battle.processor;
 import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.BattleStage;
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.MissileCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.processor.command.CommandProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.missile.MissileFlyProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.shell.ShellFlyProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.shell.collisions.ShellsCollisionsProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.*;
@@ -36,6 +38,9 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
                         .collect(Collectors.toSet()))
                 .setShells(battleModel.getShells().values().stream()
                         .map(ShellCalculations::new)
+                        .collect(Collectors.toSet()))
+                .setMissiles(battleModel.getMissiles().values().stream()
+                        .map(MissileCalculations::new)
                         .collect(Collectors.toSet()));
 
         battleModel.getExplosions().values().forEach(explosionModel ->
@@ -43,6 +48,9 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
 
         battleCalculations.getShells().forEach(shellCalculations ->
                 ShellFlyProcessor.processStep1(shellCalculations, battleModel));
+
+        battleCalculations.getMissiles().forEach(missileCalculations ->
+                MissileFlyProcessor.processStep1(missileCalculations, battleModel));
 
         battleCalculations.getVehicles().forEach(vehicleCalculations -> {
             var vehicleModel = vehicleCalculations.getModel();
@@ -62,6 +70,8 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         battleCalculations.getVehicles().forEach(VehicleMoveProcessor::processStep2);
         battleCalculations.getShells().forEach(shellCalculations ->
                 ShellFlyProcessor.processStep2(shellCalculations, battleModel));
+        battleCalculations.getMissiles().forEach(missileCalculations ->
+                MissileFlyProcessor.processStep2(missileCalculations, battleModel));
 
         if (battleModel.getUpdates().getRemoved() != null) {
             var removedExplosionIds = battleModel.getUpdates().getRemoved().getExplosionIds();
