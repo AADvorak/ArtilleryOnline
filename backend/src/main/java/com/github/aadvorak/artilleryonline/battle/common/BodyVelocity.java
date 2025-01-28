@@ -24,7 +24,9 @@ public class BodyVelocity {
     }
 
     public void recalculate(BodyAcceleration acceleration, double timeStep) {
-
+        setX(x + acceleration.getX() * timeStep);
+        setY(y + acceleration.getY() * timeStep);
+        setAngle(angle + acceleration.getAngle() * timeStep);
     }
 
     @Override
