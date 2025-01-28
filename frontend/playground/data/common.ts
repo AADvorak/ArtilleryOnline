@@ -54,6 +54,12 @@ export interface Vector {
   y: number
 }
 
+export interface BodyVector {
+  x: number
+  y: number
+  angle: number
+}
+
 export interface Acceleration extends Vector {
 }
 
@@ -63,14 +69,11 @@ export interface Velocity extends Vector {
 export interface Position extends Vector {
 }
 
-export interface VehicleVelocity {
-  x: number
-  y: number
-  angle: number
+export interface BodyVelocity extends BodyVector {
 }
 
-export interface VehicleAcceleration {
-  x: number
-  y: number
-  angle: number
+export interface BodyAcceleration extends BodyVector{
+}
+
+export interface BodyPosition extends BodyVector {
 }

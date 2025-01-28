@@ -13,6 +13,13 @@ export interface ShellModel {
   state: ShellState
 }
 
+export interface MissileModel {
+  id: number
+  vehicleId: number
+  specs: ShellSpecs
+  state: ShellState
+}
+
 export interface ExplosionModel {
   id: number
   specs: ExplosionSpecs
@@ -41,6 +48,10 @@ export interface ShellModels {
   [id: number]: ShellModel
 }
 
+export interface MissileModels {
+  [id: number]: MissileModel
+}
+
 export interface ExplosionModels {
   [id: number]: ExplosionModel
 }
@@ -50,5 +61,6 @@ export interface BattleModel {
   shells: ShellModels
   explosions: ExplosionModels
   vehicles: VehicleModels
+  missiles: MissileModels
   updated: boolean
 }

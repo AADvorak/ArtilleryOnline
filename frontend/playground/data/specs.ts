@@ -60,3 +60,14 @@ export interface JetSpecs {
   acceleration: number
   type: JetType
 }
+
+export interface MissileSpecs {
+  pushingAcceleration: number
+  correctingAccelerationCoefficient: number
+  minCorrectingVelocity: number
+  damage: number
+  radius: number
+  mass: number
+  caliber: number
+  length: number
+}

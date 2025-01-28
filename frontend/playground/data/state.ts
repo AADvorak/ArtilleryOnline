@@ -1,4 +1,4 @@
-import type {Ammo, Position, VehicleVelocity, Velocity} from "@/playground/data/common";
+import type {Ammo, Position, BodyVelocity, Velocity, BodyPosition} from "@/playground/data/common";
 import {MovingDirection} from "@/playground/data/common";
 
 export interface GunState {
@@ -24,6 +24,11 @@ export interface ShellState {
   velocity: Velocity
 }
 
+export interface MissileState {
+  position: BodyPosition
+  velocity: BodyVelocity
+}
+
 export interface ExplosionState {
   time: number
   radius: number
@@ -31,7 +36,7 @@ export interface ExplosionState {
 }
 
 export interface VehicleState {
-  velocity: VehicleVelocity;
+  velocity: BodyVelocity
   position: Position
   movingDirection: MovingDirection
   angle: number
@@ -57,7 +62,12 @@ export interface ShellStates {
   [id: number]: ShellState
 }
 
+export interface MissileStates {
+  [id: number]: MissileState
+}
+
 export interface BattleModelState {
   vehicles: VehicleStates
   shells: ShellStates
+  missiles: MissileStates
 }

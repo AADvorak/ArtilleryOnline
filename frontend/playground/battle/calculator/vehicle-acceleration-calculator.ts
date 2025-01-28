@@ -1,4 +1,4 @@
-import type {VehicleAcceleration} from '@/playground/data/common'
+import type {BodyAcceleration} from '@/playground/data/common'
 import type {RoomModel, VehicleModel} from '@/playground/data/model'
 import type {VehicleCalculations, WheelCalculations} from '@/playground/data/calculations'
 import {VehicleUtils} from '@/playground/utils/vehicle-utils'
@@ -20,7 +20,7 @@ export const VehicleAccelerationCalculator = {
       calculations: VehicleCalculations,
       vehicleModel: VehicleModel,
       roomModel: RoomModel
-  ): VehicleAcceleration {
+  ): BodyAcceleration {
     const angle = vehicleModel.state.angle
 
     VehicleUtils.calculateWheelVelocity(vehicleModel, calculations.rightWheel)
