@@ -22,4 +22,6 @@ public class MissileSpecs implements Specs {
     private double mass;
 
     private double caliber;
+
+    private double length;
 }
