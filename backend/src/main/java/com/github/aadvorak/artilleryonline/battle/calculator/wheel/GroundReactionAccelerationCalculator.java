@@ -14,7 +14,7 @@ public class GroundReactionAccelerationCalculator {
             return;
         }
         var groundAngle = wheelCalculations.getGroundAngle();
-        var velocityNormalProjection = wheelCalculations.getVelocity().getProjections(groundAngle).getNormal();
+        var velocityNormalProjection = wheelCalculations.getVelocity().projections(groundAngle).getNormal();
         if (velocityNormalProjection < 0) {
             var mass = vehicleModel.getPreCalc().getMass();
             var accelerationProjections = new VectorProjections(groundAngle)

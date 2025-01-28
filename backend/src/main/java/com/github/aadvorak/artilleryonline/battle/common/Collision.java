@@ -98,8 +98,8 @@ public class Collision {
 
     public static Collision withVehicle(Calculations<?> first, Calculations<VehicleModel> second,
                                          Interpenetration interpenetration) {
-        var firstProjections = first.getVelocity().getProjections(interpenetration.angle());
-        var secondProjections = second.getVelocity().getProjections(interpenetration.angle());
+        var firstProjections = first.getVelocity().projections(interpenetration.angle());
+        var secondProjections = second.getVelocity().projections(interpenetration.angle());
         return new Collision()
                 .setType(CollideObjectType.VEHICLE)
                 .setPair(new CollisionPair(first, second))
@@ -116,7 +116,7 @@ public class Collision {
                 .setType(type)
                 .setPair(new CollisionPair(first, null))
                 .setVelocitiesProjections(new VelocitiesProjections(first.getVelocity()
-                        .getProjections(interpenetration.angle()), null))
+                        .projections(interpenetration.angle()), null))
                 .setInterpenetration(interpenetration);
     }
 }

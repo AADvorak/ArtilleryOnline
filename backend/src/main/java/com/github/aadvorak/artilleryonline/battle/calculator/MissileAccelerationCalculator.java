@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.calculator;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.MissileAccelerations;
 import com.github.aadvorak.artilleryonline.battle.calculations.MissileCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculator.missile.CorrectingAccelerationCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.Acceleration;
 import com.github.aadvorak.artilleryonline.battle.common.BodyAcceleration;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
@@ -15,7 +16,9 @@ public class MissileAccelerationCalculator {
                 .setY(-battleModel.getRoom().getSpecs().getGravityAcceleration());
 
         accelerations.setPushing(calculatePushing(calculations));
-        // todo
+        accelerations.setCorrecting(CorrectingAccelerationCalculator.calculate(calculations, battleModel));
+        // todo friction
+        // todo returning
         return accelerations.sum();
     }
 

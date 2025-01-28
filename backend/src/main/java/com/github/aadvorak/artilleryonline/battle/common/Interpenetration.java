@@ -25,8 +25,6 @@ public record Interpenetration(double depth, double angle) {
     }
 
     private static double getAngle(Position position, Position otherPosition) {
-        var dx = otherPosition.getX() - position.getX();
-        var dy = otherPosition.getY() - position.getY();
-        return Math.atan2(dy, dx) + Math.PI / 2;
+        return position.angleTo(otherPosition) + Math.PI / 2;
     }
 }

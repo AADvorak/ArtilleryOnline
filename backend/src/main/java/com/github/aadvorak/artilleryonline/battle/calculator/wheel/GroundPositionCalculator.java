@@ -43,15 +43,9 @@ public class GroundPositionCalculator {
     }
 
     private static double getGroundAngle(Position position, NearestGroundPoint nearestGroundPoint, RoomModel roomModel) {
-        if (nearestGroundPoint.index() > 0 && nearestGroundPoint.position().getX() <= position.getX()) {
-            var otherGroundPosition = BattleUtils.getGroundPosition(nearestGroundPoint.index() - 1, roomModel);
-            return Math.atan((nearestGroundPoint.position().getY() - otherGroundPosition.getY())
-                    / (nearestGroundPoint.position().getX() - otherGroundPosition.getX()));
-        } else {
-            var otherGroundPosition = BattleUtils.getGroundPosition(nearestGroundPoint.index() + 1, roomModel);
-            return Math.atan((otherGroundPosition.getY() - nearestGroundPoint.position().getY())
-                    / (otherGroundPosition.getX() - nearestGroundPoint.position().getX()));
-        }
+        var sign = nearestGroundPoint.index() > 0 && nearestGroundPoint.position().getX() <= position.getX() ? -1 : 1;
+        var otherGroundPosition = BattleUtils.getGroundPosition(nearestGroundPoint.index() + sign, roomModel);
+        return nearestGroundPoint.position().angleTo(otherGroundPosition);
     }
 
     private static NearestGroundPoint getNearestGroundPoint(Position objectPosition, double objectRadius,
