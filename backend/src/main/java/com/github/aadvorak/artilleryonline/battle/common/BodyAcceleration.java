@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.common;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -15,6 +16,7 @@ public class BodyAcceleration {
 
     private double angle;
 
+    @JsonIgnore
     public Acceleration getMovingAcceleration() {
         return new Acceleration()
                 .setX(x)
