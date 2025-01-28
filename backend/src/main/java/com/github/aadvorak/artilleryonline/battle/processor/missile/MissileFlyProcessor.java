@@ -13,7 +13,7 @@ public class MissileFlyProcessor {
 
     public static void processStep2(MissileCalculations missile, BattleModel battleModel) {
         if (BattleUtils.positionIsOutOfRoom(missile.getNext().getPosition().getCenter(), battleModel.getRoom().getSpecs())) {
-            // todo destroy
+            battleModel.getUpdates().removeMissile(missile.getId());
         }
         missile.applyNextPosition();
         recalculateVelocity(missile, battleModel);

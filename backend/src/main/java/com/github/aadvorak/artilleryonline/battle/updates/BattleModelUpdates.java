@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.updates;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.aadvorak.artilleryonline.battle.model.ExplosionModel;
+import com.github.aadvorak.artilleryonline.battle.model.MissileModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import lombok.Getter;
 
@@ -33,6 +34,13 @@ public class BattleModelUpdates {
         added.addShell(shell);
     }
 
+    public void addMissile(MissileModel missile) {
+        if (added == null) {
+            added = new BattleModelAdded();
+        }
+        added.addMissile(missile);
+    }
+
     public void addExplosion(ExplosionModel explosion) {
         if (added == null) {
             added = new BattleModelAdded();
@@ -45,6 +53,13 @@ public class BattleModelUpdates {
             removed = new BattleModelRemoved();
         }
         removed.addShellId(shellId);
+    }
+
+    public void removeMissile(Integer missileId) {
+        if (removed == null) {
+            removed = new BattleModelRemoved();
+        }
+        removed.addMissileId(missileId);
     }
 
     public void removeExplosion(Integer explosionId) {

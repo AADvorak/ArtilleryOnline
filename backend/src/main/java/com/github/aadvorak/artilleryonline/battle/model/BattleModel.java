@@ -44,6 +44,10 @@ public class BattleModel {
         shells.remove(id);
     }
 
+    public void removeMissileById(int id) {
+        missiles.remove(id);
+    }
+
     public void removeExplosionById(int id) {
         explosions.remove(id);
     }

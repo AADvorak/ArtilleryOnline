@@ -14,6 +14,8 @@ public class BattleModelRemoved {
 
     private List<Integer> explosionIds;
 
+    private List<Integer> missileIds;
+
     private List<String> vehicleKeys;
 
     public void addShellId(Integer shellId) {
@@ -28,6 +30,13 @@ public class BattleModelRemoved {
             explosionIds = new ArrayList<>();
         }
         explosionIds.add(explosionId);
+    }
+
+    public void addMissileId(Integer missileId) {
+        if (missileIds == null) {
+            missileIds = new ArrayList<>();
+        }
+        missileIds.add(missileId);
     }
 
     public void addVehicleKey(String vehicleKey) {
