@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.aadvorak.artilleryonline.battle.config.MissileConfig;
 import com.github.aadvorak.artilleryonline.battle.specs.MissileSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.MissileState;
@@ -14,5 +15,6 @@ public class MissileModel extends GenericSpecsConfigStateModel<MissileSpecs, Mis
 
     private int vehicleId;
 
+    @JsonIgnore
     private Long userId;
 }
