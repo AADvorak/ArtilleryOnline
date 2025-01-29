@@ -1,5 +1,5 @@
-import type {ExplosionSpecs, RoomSpecs, ShellSpecs, VehicleSpecs} from "@/playground/data/specs";
-import type {ExplosionState, RoomState, ShellState, VehicleState} from "@/playground/data/state";
+import type {ExplosionSpecs, MissileSpecs, RoomSpecs, ShellSpecs, VehicleSpecs} from "@/playground/data/specs";
+import type {ExplosionState, MissileState, RoomState, ShellState, VehicleState} from "@/playground/data/state";
 import type {VehicleConfig} from "@/playground/data/config";
 
 export interface RoomModel {
@@ -16,8 +16,8 @@ export interface ShellModel {
 export interface MissileModel {
   id: number
   vehicleId: number
-  specs: ShellSpecs
-  state: ShellState
+  specs: MissileSpecs
+  state: MissileState
 }
 
 export interface ExplosionModel {
