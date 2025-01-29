@@ -36,12 +36,12 @@ public class CorrectingAccelerationCalculator {
             }
         }
 
-        return - Math.signum(minAngleDiff) * correctingVelocity
+        return Math.signum(minAngleDiff) * correctingVelocity
                 * calculations.getModel().getSpecs().getCorrectingAccelerationCoefficient();
     }
 
     private static double calculateAngleDiff(double missileAngle, double targetAngle) {
-        double diff = missileAngle - targetAngle;
+        double diff = targetAngle - missileAngle;
         if (Math.abs(diff) > Math.PI) {
             if (diff > 0) {
                 return 2 * Math.PI - diff;
