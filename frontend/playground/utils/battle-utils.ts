@@ -57,5 +57,12 @@ export const BattleUtils = {
 
   distance(p1: Position, p2: Position) {
     return Math.sqrt(Math.pow(p1.x - p2.x, 2.0) + Math.pow(p1.y - p2.y, 2.0));
+  },
+
+  shiftedPosition(position: Position, distance: number, angle: number): Position {
+    return {
+      x: position.x + distance * Math.cos(angle),
+      y: position.y + distance * Math.sin(angle)
+    }
   }
 }
