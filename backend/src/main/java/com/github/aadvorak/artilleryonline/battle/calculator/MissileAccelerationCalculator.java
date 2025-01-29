@@ -14,10 +14,10 @@ public class MissileAccelerationCalculator {
 
         accelerations.getGravity()
                 .setY(-battleModel.getRoom().getSpecs().getGravityAcceleration());
-
+        accelerations.setFriction(calculateFriction(calculations,
+                battleModel.getRoom().getSpecs().getAirFrictionCoefficient()));
         accelerations.setPushing(calculatePushing(calculations));
         accelerations.setCorrecting(CorrectingAccelerationCalculator.calculate(calculations, battleModel));
-        // todo friction
         // todo returning
         return accelerations.sum();
     }
@@ -28,5 +28,17 @@ public class MissileAccelerationCalculator {
         return new Acceleration()
                 .setX(pushingMagnitude * Math.cos(angle))
                 .setY(pushingMagnitude * Math.sin(angle));
+    }
+
+    private static BodyAcceleration calculateFriction(MissileCalculations calculations, double frictionCoefficient) {
+        var velocity = calculations.getModel().getState().getVelocity();
+        var positionAngle = calculations.getModel().getState().getPosition().getAngle();
+        var velocityAngle = calculations.getModel().getState().getVelocity().getMovingVelocity().angle();
+        var diffAngle = positionAngle - velocityAngle;
+        var resultCoefficient = frictionCoefficient * (1 + Math.abs(Math.sin(diffAngle)));
+        return new BodyAcceleration()
+                .setX( - velocity.getX() * Math.abs(velocity.getX()) * resultCoefficient)
+                .setY( - velocity.getY() * Math.abs(velocity.getY()) * resultCoefficient)
+                .setAngle(- velocity.getAngle());
     }
 }

@@ -7,4 +7,5 @@ export const DefaultControls = [
   {name: 'rotateGunRight', value: 'ArrowRight', description: 'Rotate gun right'},
   {name: 'shoot', value: 'Space', description: 'Shoot'},
   {name: 'activateJet', value: 'KeyW', description: 'Activate jet'},
+  {name: 'launchMissile', value: 'KeyM', description: 'Launch missile'},
 ]

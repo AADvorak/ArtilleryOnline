@@ -182,9 +182,12 @@ public class BattleRunner {
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
         var shellStates = battle.getModel().getShells().entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
+        var missileStates = battle.getModel().getMissiles().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
         return new BattleModelStateResponse()
                 .setVehicles(vehicleStates)
-                .setShells(shellStates);
+                .setShells(shellStates)
+                .setMissiles(missileStates);
     }
 
     private void resetUpdatedFlags(Battle battle) {

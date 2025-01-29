@@ -36,7 +36,7 @@ public class CorrectingAccelerationCalculator {
             }
         }
 
-        return Math.signum(minAngleDiff) * correctingVelocity
+        return - Math.signum(minAngleDiff) * correctingVelocity
                 * calculations.getModel().getSpecs().getCorrectingAccelerationCoefficient();
     }
 

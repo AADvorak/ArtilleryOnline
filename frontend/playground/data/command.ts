@@ -10,6 +10,7 @@ export enum Command {
   SELECT_SHELL = 'SELECT_SHELL',
   JET_ON = 'JET_ON',
   JET_OFF = 'JET_OFF',
+  LAUNCH_MISSILE = 'LAUNCH_MISSILE',
 
   PAUSE = 'PAUSE',
   RESUME = 'RESUME',

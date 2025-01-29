@@ -13,6 +13,7 @@ public enum Command {
     SELECT_SHELL,
     JET_ON,
     JET_OFF,
+    LAUNCH_MISSILE,
 
     PAUSE,
     RESUME,

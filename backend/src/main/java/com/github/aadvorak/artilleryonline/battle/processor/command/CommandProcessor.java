@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.processor.command;
 import com.github.aadvorak.artilleryonline.battle.command.Command;
 import com.github.aadvorak.artilleryonline.battle.command.UserCommand;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleLaunchMissileProcessor;
 
 public class CommandProcessor {
 
@@ -73,6 +74,10 @@ public class CommandProcessor {
                 userVehicle.getState().getJetState().setActive(false);
                 userVehicle.setUpdated(true);
             }
+        }
+
+        if (Command.LAUNCH_MISSILE.equals(userCommand.getCommand())) {
+            VehicleLaunchMissileProcessor.launch(userVehicle, battleModel);
         }
     }
 }

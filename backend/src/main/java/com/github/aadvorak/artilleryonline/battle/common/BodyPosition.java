@@ -35,4 +35,11 @@ public class BodyPosition {
     public String toString() {
         return String.format("(%.3f, %.3f, %.3f)", x, y, angle);
     }
+
+    public static BodyPosition of(Position center, double angle) {
+        return new BodyPosition()
+                .setX(center.getX())
+                .setY(center.getY())
+                .setAngle(angle);
+    }
 }

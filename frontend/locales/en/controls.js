@@ -8,5 +8,6 @@ export const controls = {
   rotateGunRight: 'Rotate gun right',
   shoot: 'Shoot',
   activateJet: 'Activate jet',
+  launchMissile: 'Launch missile',
   resetToDefaults: 'Reset to defaults'
 }

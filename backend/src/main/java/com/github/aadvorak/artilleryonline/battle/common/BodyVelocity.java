@@ -33,4 +33,11 @@ public class BodyVelocity {
     public String toString() {
         return String.format("(%.3f, %.3f, %.3f)", x, y, angle);
     }
+
+    public static BodyVelocity of(BodyVelocity velocity) {
+        return new BodyVelocity()
+                .setX(velocity.getX())
+                .setY(velocity.getY())
+                .setAngle(velocity.getAngle());
+    }
 }

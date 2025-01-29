@@ -15,4 +15,8 @@ public interface Vector {
     default double magnitude() {
         return Math.sqrt(Math.pow(getX(), 2) + Math.pow(getY(), 2));
     }
+
+    default double angle() {
+        return Math.atan2(getY(), getX());
+    }
 }

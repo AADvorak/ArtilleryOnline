@@ -23,6 +23,12 @@ public class Position implements Vector {
         return Math.atan2(dy, dx);
     }
 
+    public Position shifted(double distance, double angle) {
+        return new Position()
+                .setX(x + distance * Math.cos(angle))
+                .setY(y + distance * Math.sin(angle));
+    }
+
     @Override
     public String toString() {
         return String.format("(%.3f, %.3f)", x, y);

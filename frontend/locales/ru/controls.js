@@ -8,5 +8,6 @@ export const controls = {
   rotateGunRight: 'Поворот башни вправо',
   shoot: 'Выстрел',
   activateJet: 'Активировать джетпак',
+  launchMissile: 'Запустить ракету',
   resetToDefaults: 'Сбросить по умолчанию'
 }

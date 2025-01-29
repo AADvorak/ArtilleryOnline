@@ -11,7 +11,7 @@ public class MissileAccelerations {
 
     private Acceleration pushing = new Acceleration();
 
-    private Acceleration friction = new Acceleration();
+    private BodyAcceleration friction = new BodyAcceleration();
 
     private Acceleration gravity = new Acceleration();
 
@@ -20,11 +20,12 @@ public class MissileAccelerations {
     private double correcting;
 
     public BodyAcceleration sum() {
-        var linear = Acceleration.sumOf(pushing, friction);
+        var linear = Acceleration.sumOf(pushing, gravity);
         var angular = returning + correcting;
-        return new BodyAcceleration()
+        var acceleration = new BodyAcceleration()
                 .setX(linear.getX())
                 .setY(linear.getY())
                 .setAngle(angular);
+        return BodyAcceleration.sumOf(acceleration, friction);
     }
 }

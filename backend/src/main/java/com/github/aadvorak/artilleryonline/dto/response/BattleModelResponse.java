@@ -1,9 +1,6 @@
 package com.github.aadvorak.artilleryonline.dto.response;
 
-import com.github.aadvorak.artilleryonline.battle.model.ExplosionModel;
-import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
-import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
-import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.model.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +11,8 @@ import java.util.Map;
 public class BattleModelResponse {
 
     private Map<Integer, ShellModel> shells;
+
+    private Map<Integer, MissileModel> missiles;
 
     private Map<Integer, ExplosionModel> explosions;
 
