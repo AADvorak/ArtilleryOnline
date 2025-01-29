@@ -6,6 +6,7 @@ import {useVehicleDrawer} from "@/playground/composables/drawer/vehicle-drawer";
 import {useShellDrawer} from "@/playground/composables/drawer/shell-drawer";
 import {useExplosionDrawer} from "@/playground/composables/drawer/explosion-drawer";
 import {useGroundDrawer} from "@/playground/composables/drawer/ground-drawer";
+import {useMissileDrawer} from "~/playground/composables/drawer/missile-drawer";
 
 const battleStore = useBattleStore()
 
@@ -26,6 +27,7 @@ const ctx = ref<CanvasRenderingContext2D>()
 const drawerBase = useDrawerBase(scaleCoefficient, canvasSize)
 const vehicleDrawer = useVehicleDrawer(drawerBase, ctx)
 const shellDrawer = useShellDrawer(drawerBase, ctx)
+const missileDrawer = useMissileDrawer(drawerBase, ctx)
 const explosionDrawer = useExplosionDrawer(drawerBase, ctx)
 const groundDrawer = useGroundDrawer(drawerBase, ctx)
 
@@ -69,6 +71,7 @@ function redrawBattle() {
   requestAnimationFrame(() => {
     clearCanvas()
     shellDrawer.draw()
+    missileDrawer.draw()
     groundDrawer.draw()
     vehicleDrawer.draw()
     explosionDrawer.draw()
