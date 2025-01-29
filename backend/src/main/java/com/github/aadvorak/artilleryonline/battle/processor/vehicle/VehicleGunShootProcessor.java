@@ -35,6 +35,7 @@ public class VehicleGunShootProcessor {
         shellModel.setSpecs(loadedShellSpecs);
         var shellAngle = vehicleModel.getState().getGunAngle() + vehicleModel.getState().getAngle();
         var shellVelocity = loadedShellSpecs.getVelocity();
+        // todo add vehicle velocity to shell velocity
         shellModel.setState(new ShellState()
                 .setPosition(getShellInitialPosition(vehicleModel))
                 .setVelocity(new Velocity()
