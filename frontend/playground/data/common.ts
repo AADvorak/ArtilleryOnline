@@ -54,9 +54,7 @@ export interface Vector {
   y: number
 }
 
-export interface BodyVector {
-  x: number
-  y: number
+export interface BodyVector extends Vector {
   angle: number
 }
 
