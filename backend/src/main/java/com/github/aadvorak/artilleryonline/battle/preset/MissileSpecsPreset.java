@@ -9,9 +9,9 @@ import lombok.RequiredArgsConstructor;
 public enum MissileSpecsPreset {
 
     DEFAULT("Default", new MissileSpecs()
-            .setPushingAcceleration(14.0)
-            .setCorrectingAccelerationCoefficient(1.0)
-            .setMinCorrectingVelocity(2.0)
+            .setPushingAcceleration(18.0)
+            .setCorrectingAccelerationCoefficient(1.5)
+            .setMinCorrectingVelocity(4.0)
             .setDamage(10.0)
             .setRadius(0.5)
             .setMass(0.007)

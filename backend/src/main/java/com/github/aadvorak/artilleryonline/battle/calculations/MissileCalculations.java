@@ -22,6 +22,10 @@ public class MissileCalculations implements Calculations<MissileModel> {
 
     private final Next next = new Next();
 
+    private Position headPosition;
+
+    private Position tailPosition;
+
     @Override
     public Integer getId() {
         return model.getId();
@@ -67,6 +71,24 @@ public class MissileCalculations implements Calculations<MissileModel> {
 
     public void applyNextPosition() {
         model.getState().setPosition(next.getPosition());
+    }
+
+    public Position getHeadPosition() {
+        var length = model.getSpecs().getLength();
+        var angle = model.getState().getPosition().getAngle();
+        if (headPosition == null) {
+            headPosition = getPosition().shifted(length / 2, angle);
+        }
+        return headPosition;
+    }
+
+    public Position getTailPosition() {
+        var length = model.getSpecs().getLength();
+        var angle = model.getState().getPosition().getAngle();
+        if (tailPosition == null) {
+            tailPosition = getPosition().shifted(- length / 2, angle);
+        }
+        return tailPosition;
     }
 
     @Getter

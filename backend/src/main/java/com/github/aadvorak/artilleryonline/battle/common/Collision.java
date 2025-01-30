@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.common;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.CollisionPair;
+import com.github.aadvorak.artilleryonline.battle.model.MissileModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import lombok.Getter;
@@ -64,6 +65,11 @@ public class Collision {
             impact = first + second;
         }
         return impact;
+    }
+
+    public static Collision ofMissileWithGround(Calculations<MissileModel> first) {
+        return new Collision()
+                .setPair(new CollisionPair(first, null));
     }
 
     public static Collision ofShellWithGround(Calculations<ShellModel> first) {

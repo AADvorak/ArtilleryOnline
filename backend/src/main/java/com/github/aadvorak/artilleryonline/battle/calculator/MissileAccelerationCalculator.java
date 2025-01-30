@@ -35,7 +35,7 @@ public class MissileAccelerationCalculator {
         var positionAngle = calculations.getModel().getState().getPosition().getAngle();
         var velocityAngle = calculations.getModel().getState().getVelocity().getMovingVelocity().angle();
         var diffAngle = positionAngle - velocityAngle;
-        var resultCoefficient = frictionCoefficient * (1 + Math.abs(Math.sin(diffAngle)));
+        var resultCoefficient = frictionCoefficient * (1 + 6 * Math.abs(Math.sin(diffAngle)));
         return new BodyAcceleration()
                 .setX( - velocity.getX() * Math.abs(velocity.getX()) * resultCoefficient)
                 .setY( - velocity.getY() * Math.abs(velocity.getY()) * resultCoefficient)

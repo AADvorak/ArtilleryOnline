@@ -3,7 +3,6 @@ package com.github.aadvorak.artilleryonline.battle.processor.missile;
 import com.github.aadvorak.artilleryonline.battle.calculations.MissileCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculator.MissileAccelerationCalculator;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
-import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 
 public class MissileFlyProcessor {
 
@@ -12,9 +11,6 @@ public class MissileFlyProcessor {
     }
 
     public static void processStep2(MissileCalculations missile, BattleModel battleModel) {
-        if (BattleUtils.positionIsOutOfRoom(missile.getNext().getPosition().getCenter(), battleModel.getRoom().getSpecs())) {
-            battleModel.getUpdates().removeMissile(missile.getId());
-        }
         missile.applyNextPosition();
         recalculateVelocity(missile, battleModel);
     }

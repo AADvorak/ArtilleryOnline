@@ -40,6 +40,11 @@ public class BattleUtils {
                 .collect(Collectors.toList());
     }
 
+    public static boolean positionIsUnderGround(Position position, RoomModel roomModel) {
+        var nearestGroundPosition = BattleUtils.getNearestGroundPosition(position.getX(), roomModel);
+        return position.getY() <= nearestGroundPosition.getY();
+    }
+
     public static Position getNearestGroundPosition(double x, RoomModel roomModel) {
         var roomWidth = getRoomWidth(roomModel.getSpecs());
         var groundPointsNumber = roomModel.getState().getGroundLine().size();

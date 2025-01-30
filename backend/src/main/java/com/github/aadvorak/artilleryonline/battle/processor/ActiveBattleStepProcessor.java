@@ -9,6 +9,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculatio
 import com.github.aadvorak.artilleryonline.battle.processor.command.CommandProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.missile.MissileFlyProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.missile.collisions.MissilesCollisionsProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.shell.ShellFlyProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.shell.collisions.ShellsCollisionsProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.*;
@@ -61,6 +62,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         });
 
         ShellsCollisionsProcessor.process(battleCalculations);
+        MissilesCollisionsProcessor.process(battleCalculations);
         VehiclesCollisionsProcessor.process(battleCalculations,
                 applicationSettings.getAdditionalResolveCollisionsIterationsNumber());
 

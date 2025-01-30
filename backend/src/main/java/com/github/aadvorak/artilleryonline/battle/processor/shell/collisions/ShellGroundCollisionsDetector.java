@@ -8,9 +8,7 @@ import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 public class ShellGroundCollisionsDetector {
 
     public static Collision detectFirst(ShellCalculations shell, BattleCalculations battle) {
-        var nearestGroundPosition = BattleUtils.getNearestGroundPosition(shell.getPosition().getX(),
-                battle.getModel().getRoom());
-        if (shell.getPosition().getY() <= nearestGroundPosition.getY()) {
+        if (BattleUtils.positionIsUnderGround(shell.getPosition(), battle.getModel().getRoom())) {
             return Collision.ofShellWithGround(shell);
         }
         return null;
