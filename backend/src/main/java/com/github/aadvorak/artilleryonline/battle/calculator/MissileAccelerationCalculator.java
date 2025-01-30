@@ -39,6 +39,6 @@ public class MissileAccelerationCalculator {
         return new BodyAcceleration()
                 .setX( - velocity.getX() * Math.abs(velocity.getX()) * resultCoefficient)
                 .setY( - velocity.getY() * Math.abs(velocity.getY()) * resultCoefficient)
-                .setAngle(- velocity.getAngle());
+                .setAngle(- 2.0 * velocity.getAngle());
     }
 }

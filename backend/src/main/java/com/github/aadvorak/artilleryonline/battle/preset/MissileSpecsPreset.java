@@ -10,8 +10,8 @@ public enum MissileSpecsPreset {
 
     DEFAULT("Default", new MissileSpecs()
             .setPushingAcceleration(18.0)
-            .setCorrectingAccelerationCoefficient(1.5)
-            .setMinCorrectingVelocity(4.0)
+            .setCorrectingAccelerationCoefficient(4.0)
+            .setMinCorrectingVelocity(5.0)
             .setDamage(10.0)
             .setRadius(0.5)
             .setMass(0.007)
