@@ -1,9 +1,61 @@
 package com.github.aadvorak.artilleryonline.battle.utils;
 
+import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
+import com.github.aadvorak.artilleryonline.battle.common.Interpenetration;
+import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
+import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
+import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
+import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CollisionUtils {
+
+    public static Collision detectWithVehicle(Calculations<?> calculations, Position position, Position nextPosition,
+                                              VehicleCalculations vehicle) {
+        var vehiclePosition = vehicle.getPosition();
+        var vehicleRadius = vehicle.getModel().getSpecs().getRadius();
+        var vehicleAngle = vehicle.getModel().getState().getAngle();
+        var shellTrace = new Segment(position, nextPosition);
+        var vehicleShape = new HalfCircle(vehiclePosition, vehicleRadius, vehicleAngle);
+        var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(shellTrace, vehicleShape.circle())
+                .stream().filter(intersectionPoint -> {
+                    var pointAngle = GeometryUtils.getPointAngleInCircle(vehiclePosition, intersectionPoint);
+                    return pointAngle > vehicleAngle && pointAngle < vehicleAngle + Math.PI;
+                }).collect(Collectors.toSet());
+        if (!intersectionPoints.isEmpty()) {
+            var intersectionPoint = findClosestIntersectionPoint(position, intersectionPoints);
+            var interpenetration = Interpenetration.withUncheckedDepth(0.0, intersectionPoint, vehiclePosition);
+            return Collision.withVehicle(calculations, vehicle, interpenetration);
+        }
+        var vehicleBottom = vehicleShape.chord();
+        if (GeometryUtils.getSegmentsIntersectionPoint(shellTrace, vehicleBottom) != null) {
+            var projection = GeometryUtils.getPointToLineProjection(position, vehicleBottom);
+            var interpenetration = Interpenetration.withUncheckedDepth(0.0, position, projection);
+            return Collision.withVehicle(calculations, vehicle, interpenetration);
+        }
+        return null;
+    }
+
+    public static Collision detectWithWheel(Calculations<?> calculations, Position position, Position nextPosition,
+                                             WheelCalculations wheel) {
+        var wheelPosition = wheel.getPosition();
+        var wheelRadius = wheel.getModel().getSpecs().getWheelRadius();
+        var shellTrace = new Segment(position, nextPosition);
+        var wheelShape = new Circle(wheelPosition, wheelRadius);
+        var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(shellTrace, wheelShape);
+        if (!intersectionPoints.isEmpty()) {
+            var intersectionPoint = findClosestIntersectionPoint(position, intersectionPoints);
+            var interpenetration = Interpenetration.withUncheckedDepth(0.0, intersectionPoint, wheelPosition);
+            return Collision.withVehicle(calculations, wheel, interpenetration);
+        }
+        return null;
+    }
 
     public static void recalculateVelocitiesRigid(Collision collision) {
         var mass = collision.getPair().first().getMass();
@@ -32,5 +84,20 @@ public class CollisionUtils {
     ) {
         return (- Math.abs(mass - otherMass) * velocityNormalProjection
                 + 2 * otherMass * otherVelocityNormalProjection) / (mass + otherMass);
+    }
+
+    private static Position findClosestIntersectionPoint(Position position, Set<Position> intersectionPoints) {
+        var iterator = intersectionPoints.iterator();
+        var closest = iterator.next();
+        var closestDistance = position.distanceTo(closest);
+        while (iterator.hasNext()) {
+            var point = iterator.next();
+            var distance = position.distanceTo(point);
+            if (distance < closestDistance) {
+                closest = point;
+                closestDistance = distance;
+            }
+        }
+        return closest;
     }
 }
