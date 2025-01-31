@@ -5,7 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculation
 public class MissilesCollisionsProcessor {
 
     public static void process(BattleCalculations battle) {
-        battle.getMissiles().forEach(missile -> MissileGroundCollisionProcessor.process(missile, battle));
+        battle.getMissiles().forEach(missile -> MissileGroundCollisionsProcessor.process(missile, battle));
 
         battle.getMissiles().forEach(missile -> {
             if (!missile.getCollisions().isEmpty()) {

@@ -4,7 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculation
 import com.github.aadvorak.artilleryonline.battle.calculations.MissileCalculations;
 import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
 
-public class MissileGroundCollisionProcessor {
+public class MissileGroundCollisionsProcessor {
 
     public static void process(MissileCalculations missile, BattleCalculations battle) {
         var collision = MissileGroundCollisionsDetector.detectFirst(missile, battle);
