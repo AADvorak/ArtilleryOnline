@@ -10,11 +10,11 @@ public class MissileGroundCollisionsDetector {
     public static Collision detectFirst(MissileCalculations missile, BattleCalculations battle) {
         var roomModel = battle.getModel().getRoom();
         if (BattleUtils.positionIsOutOfRoom(missile.getPosition(), roomModel.getSpecs())
-                || BattleUtils.positionIsOutOfRoom(missile.getHeadPosition(), roomModel.getSpecs())
-                || BattleUtils.positionIsOutOfRoom(missile.getTailPosition(), roomModel.getSpecs())
+                || BattleUtils.positionIsOutOfRoom(missile.getPositions().getHead(), roomModel.getSpecs())
+                || BattleUtils.positionIsOutOfRoom(missile.getPositions().getTail(), roomModel.getSpecs())
                 || BattleUtils.positionIsUnderGround(missile.getPosition(), roomModel)
-                || BattleUtils.positionIsUnderGround(missile.getHeadPosition(), roomModel)
-                || BattleUtils.positionIsUnderGround(missile.getTailPosition(), roomModel)) {
+                || BattleUtils.positionIsUnderGround(missile.getPositions().getHead(), roomModel)
+                || BattleUtils.positionIsUnderGround(missile.getPositions().getTail(), roomModel)) {
             return Collision.ofMissileWithGround(missile);
         }
         return null;

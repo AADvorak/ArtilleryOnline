@@ -13,18 +13,22 @@ import java.util.Set;
 @Getter
 @Setter
 @Accessors(chain = true)
-@RequiredArgsConstructor
 public class MissileCalculations implements Calculations<MissileModel> {
 
     private final MissileModel model;
 
     private final Set<Collision> collisions = new HashSet<>();
 
-    private final Next next = new Next();
+    private final Next next;
 
-    private Position headPosition;
+    private final Positions positions;
 
-    private Position tailPosition;
+    public MissileCalculations(MissileModel model) {
+        this.model = model;
+        positions = new Positions(model.getSpecs().getLength());
+        positions.setPosition(model.getState().getPosition());
+        next = new Next(new Positions(model.getSpecs().getLength()));
+    }
 
     @Override
     public Integer getId() {
@@ -66,36 +70,53 @@ public class MissileCalculations implements Calculations<MissileModel> {
     public void calculateNextPosition(double timeStep) {
         var position = model.getState().getPosition();
         var velocity = model.getState().getVelocity();
-        next.setPosition(position.next(velocity, timeStep));
+        next.getPositions().setPosition(position.next(velocity, timeStep));
     }
 
     public void applyNextPosition() {
-        model.getState().setPosition(next.getPosition());
-    }
-
-    public Position getHeadPosition() {
-        var length = model.getSpecs().getLength();
-        var angle = model.getState().getPosition().getAngle();
-        if (headPosition == null) {
-            headPosition = getPosition().shifted(length / 2, angle);
-        }
-        return headPosition;
-    }
-
-    public Position getTailPosition() {
-        var length = model.getSpecs().getLength();
-        var angle = model.getState().getPosition().getAngle();
-        if (tailPosition == null) {
-            tailPosition = getPosition().shifted(- length / 2, angle);
-        }
-        return tailPosition;
+        model.getState().setPosition(next.getPositions().getPosition());
     }
 
     @Getter
-    @Setter
-    @Accessors(chain = true)
+    @RequiredArgsConstructor
     public static final class Next {
+        private final Positions positions;
+    }
 
+    @RequiredArgsConstructor
+    public static final class Positions {
+
+        private final double length;
+
+        @Getter
         private BodyPosition position;
+
+        private Position head;
+
+        private Position tail;
+
+        public Position getHead() {
+            if (head == null) {
+                head = position.getCenter().shifted(length / 2, position.getAngle());
+            }
+            return head;
+        }
+
+        public Position getTail() {
+            if (tail == null) {
+                tail = position.getCenter().shifted(- length / 2, position.getAngle());
+            }
+            return tail;
+        }
+
+        public Position getCenter() {
+            return position.getCenter();
+        }
+
+        public void setPosition(BodyPosition position) {
+            this.position = position;
+            this.head = null;
+            this.tail = null;
+        }
     }
 }
