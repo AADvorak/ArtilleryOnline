@@ -15,6 +15,14 @@ import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 
 public class DamageProcessor {
 
+    public static void processHitVehicle(VehicleCalculations vehicle, MissileCalculations missile,
+                                         BattleCalculations battle) {
+        processHit(missile, battle);
+        var headHit = Hit.ofHead(missile);
+        applyDamageToVehicle(headHit.damage(), vehicle.getModel(),
+                battle.getModel(), missile.getModel().getUserId());
+    }
+
     public static void processHitVehicle(VehicleCalculations vehicle, ShellCalculations shell,
                                          BattleCalculations battle) {
         StatisticsProcessor.increaseDirectHits(vehicle.getModel().getUserId(), shell.getModel().getUserId(), battle.getModel());
@@ -47,7 +55,7 @@ public class DamageProcessor {
         }
     }
 
-    public static void processHitGround(ShellCalculations shell, BattleCalculations battle) {
+    public static void processHit(ShellCalculations shell, BattleCalculations battle) {
         var shellSpecs = shell.getModel().getSpecs();
         var hit = Hit.of(shell);
         if (ShellType.HE.equals(shellSpecs.getType())) {
@@ -56,7 +64,7 @@ public class DamageProcessor {
         processGroundDamage(hit, battle.getModel());
     }
 
-    public static void processHitGround(MissileCalculations missile, BattleCalculations battle) {
+    public static void processHit(MissileCalculations missile, BattleCalculations battle) {
         var hit = Hit.of(missile);
         calculateHEDamage(hit, battle);
         processGroundDamage(hit, battle.getModel());

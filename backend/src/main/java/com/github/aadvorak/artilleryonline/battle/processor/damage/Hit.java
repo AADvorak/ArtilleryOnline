@@ -23,4 +23,13 @@ public record Hit(Position position, double damage, double radius, Long userId) 
                 missile.getModel().getUserId()
         );
     }
+
+    public static Hit ofHead(MissileCalculations missile) {
+        return new Hit(
+                missile.getPositions().getHead(),
+                missile.getModel().getSpecs().getDamage(),
+                missile.getModel().getSpecs().getRadius(),
+                missile.getModel().getUserId()
+        );
+    }
 }

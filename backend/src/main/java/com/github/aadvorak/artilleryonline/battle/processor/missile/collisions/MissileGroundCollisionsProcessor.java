@@ -10,7 +10,7 @@ public class MissileGroundCollisionsProcessor {
         var collision = MissileGroundCollisionsDetector.detectFirst(missile, battle);
         if (collision != null) {
             missile.getCollisions().add(collision);
-            DamageProcessor.processHitGround(missile, battle);
+            DamageProcessor.processHit(missile, battle);
         }
     }
 }
