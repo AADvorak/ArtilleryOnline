@@ -59,6 +59,10 @@ public class GeometryUtils {
     }
 
     public static Set<Position> getSegmentAndCircleIntersectionPoints(Segment segment, Circle circle) {
+        if (segment.begin().distanceTo(circle.center()) > circle.radius()
+                && segment.end().distanceTo(circle.center()) > circle.radius()) {
+            return Set.of();
+        }
         if (Math.abs(segment.begin().getX() - segment.end().getX())
                 > Math.abs(segment.begin().getY() - segment.end().getY())) {
             return getSegmentAndCircleIntersectionPointsByX(segment, circle);
