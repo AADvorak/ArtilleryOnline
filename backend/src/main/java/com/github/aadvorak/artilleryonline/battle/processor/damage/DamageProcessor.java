@@ -17,6 +17,7 @@ public class DamageProcessor {
 
     public static void processHitVehicle(VehicleCalculations vehicle, MissileCalculations missile,
                                          BattleCalculations battle) {
+        StatisticsProcessor.increaseDirectHits(vehicle.getModel().getUserId(), missile.getModel().getUserId(), battle.getModel());
         processHit(missile, battle);
         var headHit = Hit.ofHead(missile);
         applyDamageToVehicle(headHit.damage(), vehicle.getModel(),
@@ -37,18 +38,21 @@ public class DamageProcessor {
         }
     }
 
+    public static void processHitTrack(VehicleCalculations vehicle, MissileCalculations missile,
+                                       BattleCalculations battle) {
+        StatisticsProcessor.increaseDirectHits(vehicle.getModel().getUserId(), missile.getModel().getUserId(), battle.getModel());
+        processTrackBreak(missile.getModel().getSpecs().getCaliber(), missile.getModel().getUserId(),
+                vehicle.getModel(), battle.getModel());
+        processHit(missile, battle);
+    }
+
     public static void processHitTrack(VehicleCalculations vehicle, ShellCalculations shell,
                                        BattleCalculations battle) {
         StatisticsProcessor.increaseDirectHits(vehicle.getModel().getUserId(), shell.getModel().getUserId(), battle.getModel());
-        var trackState = vehicle.getModel().getState().getTrackState();
         var shellSpecs = shell.getModel().getSpecs();
+        processTrackBreak(shellSpecs.getCaliber(), shell.getModel().getUserId(),
+                vehicle.getModel(), battle.getModel());
         var hit = Hit.of(shell);
-        if (shellSpecs.getCaliber() >= vehicle.getModel().getSpecs().getMinTrackHitCaliber()) {
-            StatisticsProcessor.increaseTrackBreaks(vehicle.getModel().getUserId(), shell.getModel().getUserId(), battle.getModel());
-            trackState.setBroken(true);
-            trackState.setRepairRemainTime(vehicle.getModel().getSpecs().getTrackRepairTime());
-            vehicle.getModel().setUpdated(true);
-        }
         if (ShellType.HE.equals(shellSpecs.getType())) {
             calculateHEDamage(hit, battle);
             processGroundDamage(hit, battle.getModel());
@@ -82,6 +86,16 @@ public class DamageProcessor {
             }
         } else {
             vehicleModel.getState().setHitPoints(hitPoints);
+        }
+    }
+
+    private static void processTrackBreak(double caliber, Long userId, VehicleModel vehicleModel, BattleModel battleModel) {
+        if (caliber >= vehicleModel.getSpecs().getMinTrackHitCaliber()) {
+            StatisticsProcessor.increaseTrackBreaks(vehicleModel.getUserId(), userId, battleModel);
+            var trackState = vehicleModel.getState().getTrackState();
+            trackState.setBroken(true);
+            trackState.setRepairRemainTime(vehicleModel.getSpecs().getTrackRepairTime());
+            vehicleModel.setUpdated(true);
         }
     }
 

@@ -18,7 +18,7 @@ public class MissileVehicleCollisionsProcessor {
                 DamageProcessor.processHitVehicle(vehicle, missile, battle);
             }
             if (hitObject instanceof WheelCalculations wheel) {
-                // todo wheel
+                DamageProcessor.processHitTrack(wheel.getVehicle(), missile, battle);
             }
             pushVehicle(collision);
         } else {
