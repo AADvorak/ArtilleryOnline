@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
 import com.github.aadvorak.artilleryonline.battle.specs.VehicleSpecs;
@@ -13,9 +14,11 @@ public class VehicleModel extends GenericSpecsConfigStateModel<VehicleSpecs, Veh
 
     private int id;
 
+    @JsonIgnore
     private Long userId;
 
     private VehiclePreCalc preCalc;
 
+    @JsonIgnore
     private boolean updated = false;
 }
