@@ -59,6 +59,10 @@ export function useBattleUpdater(player: Player) {
         if (addedShells) {
           addedShells.forEach(shell => battle.model.shells[shell.id] = shell)
         }
+        const addedMissiles = battleUpdate.updates.added.missiles
+        if (addedMissiles) {
+          addedMissiles.forEach(missile => battle.model.missiles[missile.id] = missile)
+        }
         const addedExplosions = battleUpdate.updates.added.explosions
         if (addedExplosions) {
           addedExplosions.forEach(explosion => battle.model.explosions[explosion.id] = explosion)
@@ -68,6 +72,10 @@ export function useBattleUpdater(player: Player) {
         const removedShellIds = battleUpdate.updates.removed.shellIds
         if (removedShellIds) {
           removedShellIds.forEach(shellId => delete battle.model.shells[shellId])
+        }
+        const removedMissileIds = battleUpdate.updates.removed.missileIds
+        if (removedMissileIds) {
+          removedMissileIds.forEach(missileId => delete battle.model.missiles[missileId])
         }
         const removedExplosionIds = battleUpdate.updates.removed.explosionIds
         if (removedExplosionIds) {
