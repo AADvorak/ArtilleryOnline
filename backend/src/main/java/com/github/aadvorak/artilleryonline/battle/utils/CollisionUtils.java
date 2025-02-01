@@ -16,6 +16,34 @@ import java.util.stream.Collectors;
 
 public class CollisionUtils {
 
+    public static void pushVehicleByDirectHit(Collision collision) {
+        var projectileMass = collision.getPair().first().getMass();
+        pushVehicleByDirectHit(collision, projectileMass);
+    }
+
+    public static void pushVehicleByDirectHit(Collision collision, double projectileMass) {
+        var vehicleMass = collision.getPair().second().getMass();
+        if (collision.getPair().second() instanceof VehicleCalculations vehicle) {
+            var vehicleVelocitiesProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().second());
+            var projectileVelocitiesProjections = collision.getVelocitiesProjections().first();
+            vehicleVelocitiesProjections.setNormal(vehicleVelocitiesProjections.getNormal()
+                    + projectileMass * projectileVelocitiesProjections.getNormal() / vehicleMass);
+            vehicle.setVelocity(vehicleVelocitiesProjections.recoverVelocity());
+
+            var vehicleVelocity = vehicle.getModel().getState().getVelocity();
+            var vehicleRadius = vehicle.getModel().getSpecs().getRadius();
+            vehicleVelocity.setAngle(vehicleVelocity.getAngle()
+                    + projectileVelocitiesProjections.getTangential() * (projectileMass / vehicleMass) / vehicleRadius);
+        }
+        if (collision.getPair().second() instanceof WheelCalculations wheel) {
+            var wheelVelocity = wheel.getVelocity();
+            var projectileVelocity = collision.getPair().first().getVelocity();
+            wheelVelocity.setX(wheelVelocity.getX() + projectileMass * projectileVelocity.getX() / vehicleMass);
+            wheelVelocity.setY(wheelVelocity.getY() + projectileMass * projectileVelocity.getY() / vehicleMass);
+            wheel.getVehicle().recalculateVelocityByWheel(wheel);
+        }
+    }
+
     public static Collision detectWithVehicle(Calculations<?> calculations, Position position, Position nextPosition,
                                               VehicleCalculations vehicle) {
         var vehiclePosition = vehicle.getPosition();
