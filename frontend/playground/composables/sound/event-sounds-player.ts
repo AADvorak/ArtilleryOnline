@@ -3,7 +3,7 @@ import type {Player} from "~/playground/audio/player";
 import {CollideObjectType, ShellHitType, ShellType} from "~/playground/data/common";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
-import type {ShellModel, ShellModels, VehicleModel, VehicleModels} from "~/playground/data/model";
+import type {MissileModel, ShellModel, ShellModels, VehicleModel, VehicleModels} from "~/playground/data/model";
 import {useSoundsPlayerBase} from "~/playground/composables/sound/sounds-player-base";
 import {useUserStore} from "~/stores/user";
 import type {VehicleStates} from "~/playground/data/state";
@@ -34,11 +34,19 @@ export function useEventSoundsPlayer(player: Player) {
         if (addedShells) {
           addedShells.forEach(shell => playShot(shell))
         }
+        const addedMissiles = battleUpdate.updates.added.missiles
+        if (addedMissiles) {
+          addedMissiles.forEach(missile => playMissileLaunch(missile))
+        }
       }
       if (battleUpdate.updates.removed) {
         const removedVehicleKeys = battleUpdate.updates.removed.vehicleKeys
         if (removedVehicleKeys) {
           removedVehicleKeys.forEach(vehicleKey => playVehicleDestroy(battle.model.vehicles[vehicleKey]))
+        }
+        const removedMissileIds = battleUpdate.updates.removed.missileIds
+        if (removedMissileIds) {
+          removedMissileIds.forEach(missileId => playMissileExplosion(battle.model.missiles[missileId]))
         }
       }
     }
@@ -112,6 +120,18 @@ export function useEventSoundsPlayer(player: Player) {
     } else {
       play('shot-large', pan, gain)
     }
+  }
+
+  function playMissileLaunch(missile: MissileModel) {
+    const pan = soundsPlayerBase.calculatePan(missile.state.position.x)
+    const gain = soundsPlayerBase.calculateGain(missile.state.position)
+    play('missile-launch', pan, gain)
+  }
+
+  function playMissileExplosion(missile: MissileModel) {
+    const pan = soundsPlayerBase.calculatePan(missile.state.position.x)
+    const gain = soundsPlayerBase.calculateGain(missile.state.position)
+    play('missile-explosion-' + (Math.ceil(Math.random() * 2)), pan, gain)
   }
 
   function getHitSoundName(shellType: ShellType, hitType: ShellHitType, caliber: number): string | undefined {
