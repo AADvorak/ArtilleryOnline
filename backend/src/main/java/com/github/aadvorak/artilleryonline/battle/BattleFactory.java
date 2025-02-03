@@ -104,8 +104,13 @@ public class BattleFactory {
             var ammo = new HashMap<String, Integer>();
             gun.getAvailableShells().keySet().forEach(shellName ->
                     ammo.put(shellName, vehicleModel.getSpecs().getAmmo() / availableShellsNumber));
+            var availableMissilesNumber = vehicleModel.getSpecs().getAvailableMissiles().size();
+            var missiles = new HashMap<String, Integer>();
+            vehicleModel.getSpecs().getAvailableMissiles().keySet().forEach(missileName ->
+                    missiles.put(missileName, vehicleModel.getSpecs().getMissiles() / availableMissilesNumber));
             vehicleModel.setConfig(new VehicleConfig()
                     .setAmmo(ammo)
+                    .setMissiles(missiles)
                     .setGun(gun)
                     .setJet(jet)
                     .setColor(getVehicleColor(participant)));
@@ -113,6 +118,7 @@ public class BattleFactory {
                     .setAngle(0)
                     .setGunAngle(Math.PI / 2)
                     .setAmmo(new HashMap<>(vehicleModel.getConfig().getAmmo()))
+                    .setMissiles(new HashMap<>(vehicleModel.getConfig().getMissiles()))
                     .setHitPoints(vehicleModel.getSpecs().getHitPoints())
                     .setPosition(new Position()
                             .setX(distanceBetweenVehicles * vehicleNumber)

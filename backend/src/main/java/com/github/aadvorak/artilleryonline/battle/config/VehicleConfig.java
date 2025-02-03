@@ -19,5 +19,7 @@ public class VehicleConfig implements Config {
 
     private Map<String, Integer> ammo;
 
+    private Map<String, Integer> missiles;
+
     private String color;
 }

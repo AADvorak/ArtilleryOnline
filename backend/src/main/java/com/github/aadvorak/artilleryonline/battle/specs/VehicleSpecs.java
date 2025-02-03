@@ -17,6 +17,8 @@ public class VehicleSpecs implements Specs {
 
     private int ammo;
 
+    private int missiles;
+
     private double minAngle;
 
     private double maxAngle;
@@ -36,6 +38,8 @@ public class VehicleSpecs implements Specs {
     private Map<String, GunSpecs> availableGuns;
 
     private Map<String, JetSpecs> availableJets;
+
+    private Map<String, MissileSpecs> availableMissiles;
 
     private double minCollisionDamageImpact;
 

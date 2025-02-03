@@ -11,6 +11,16 @@ import com.github.aadvorak.artilleryonline.battle.state.MissileState;
 public class VehicleLaunchMissileProcessor {
 
     public static void launch(VehicleModel vehicleModel, BattleModel battleModel) {
+        var missiles = vehicleModel.getState().getMissiles();
+        if (missiles.isEmpty()) {
+            return;
+        }
+        var missilesKey = missiles.keySet().iterator().next();
+        var missilesNumber = missiles.get(missilesKey);
+        if (missilesNumber < 1) {
+            return;
+        }
+        missiles.put(missilesKey, missilesNumber - 1);
         var vehiclePosition = vehicleModel.getState().getPosition();
         var angle = vehicleModel.getState().getAngle() + Math.PI / 2;
         var specs = MissileSpecsPreset.DEFAULT.getSpecs();
