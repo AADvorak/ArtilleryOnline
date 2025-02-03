@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.utils;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.MissileCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
@@ -44,14 +45,26 @@ public class CollisionUtils {
         }
     }
 
+    public static Collision detectWithMissile(Calculations<?> calculations, Position position, Position nextPosition,
+                                              MissileCalculations missile) {
+        var missileSegment = new Segment(missile.getPositions().getHead(), missile.getPositions().getTail());
+        var projectileTrace = new Segment(position, nextPosition);
+        if (GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, missileSegment) != null) {
+            var projection = GeometryUtils.getPointToLineProjection(position, missileSegment);
+            var interpenetration = Interpenetration.withUncheckedDepth(0.0, position, projection);
+            return Collision.withMissile(calculations, missile, interpenetration);
+        }
+        return null;
+    }
+
     public static Collision detectWithVehicle(Calculations<?> calculations, Position position, Position nextPosition,
                                               VehicleCalculations vehicle) {
         var vehiclePosition = vehicle.getPosition();
         var vehicleRadius = vehicle.getModel().getSpecs().getRadius();
         var vehicleAngle = vehicle.getModel().getState().getAngle();
-        var shellTrace = new Segment(position, nextPosition);
+        var projectileTrace = new Segment(position, nextPosition);
         var vehicleShape = new HalfCircle(vehiclePosition, vehicleRadius, vehicleAngle);
-        var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(shellTrace, vehicleShape.circle())
+        var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(projectileTrace, vehicleShape.circle())
                 .stream().filter(intersectionPoint -> {
                     var pointAngle = GeometryUtils.getPointAngleInCircle(vehiclePosition, intersectionPoint);
                     return pointAngle > vehicleAngle && pointAngle < vehicleAngle + Math.PI;
@@ -62,7 +75,7 @@ public class CollisionUtils {
             return Collision.withVehicle(calculations, vehicle, interpenetration);
         }
         var vehicleBottom = vehicleShape.chord();
-        if (GeometryUtils.getSegmentsIntersectionPoint(shellTrace, vehicleBottom) != null) {
+        if (GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, vehicleBottom) != null) {
             var projection = GeometryUtils.getPointToLineProjection(position, vehicleBottom);
             var interpenetration = Interpenetration.withUncheckedDepth(0.0, position, projection);
             return Collision.withVehicle(calculations, vehicle, interpenetration);
@@ -74,9 +87,9 @@ public class CollisionUtils {
                                              WheelCalculations wheel) {
         var wheelPosition = wheel.getPosition();
         var wheelRadius = wheel.getModel().getSpecs().getWheelRadius();
-        var shellTrace = new Segment(position, nextPosition);
+        var projectileTrace = new Segment(position, nextPosition);
         var wheelShape = new Circle(wheelPosition, wheelRadius);
-        var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(shellTrace, wheelShape);
+        var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(projectileTrace, wheelShape);
         if (!intersectionPoints.isEmpty()) {
             var intersectionPoint = findClosestIntersectionPoint(position, intersectionPoints);
             var interpenetration = Interpenetration.withUncheckedDepth(0.0, intersectionPoint, wheelPosition);

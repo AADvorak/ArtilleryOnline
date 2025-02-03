@@ -113,6 +113,17 @@ public class Collision {
                 .setInterpenetration(interpenetration);
     }
 
+    public static Collision withMissile(Calculations<?> first, Calculations<MissileModel> second,
+                                        Interpenetration interpenetration) {
+        var firstProjections = first.getVelocity().projections(interpenetration.angle());
+        var secondProjections = second.getVelocity().projections(interpenetration.angle());
+        return new Collision()
+                .setType(CollideObjectType.MISSILE)
+                .setPair(new CollisionPair(first, second))
+                .setVelocitiesProjections(new VelocitiesProjections(firstProjections, secondProjections))
+                .setInterpenetration(interpenetration);
+    }
+
     private static Collision ofVehicleWithUnmovable(
             Calculations<VehicleModel> first,
             Interpenetration interpenetration,

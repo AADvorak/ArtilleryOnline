@@ -13,6 +13,12 @@ public class ShellsCollisionsProcessor {
 
         battle.getShells().forEach(shell -> {
             if (shell.getCollisions().isEmpty()) {
+                ShellMissileCollisionsProcessor.process(shell, battle);
+            }
+        });
+
+        battle.getShells().forEach(shell -> {
+            if (shell.getCollisions().isEmpty()) {
                 ShellGroundCollisionsProcessor.process(shell, battle);
             }
         });
@@ -21,8 +27,10 @@ public class ShellsCollisionsProcessor {
             if (!shell.getCollisions().isEmpty()) {
                 battle.getModel().getUpdates().removeShell(shell.getId());
                 var collision = shell.getCollisions().iterator().next();
-                addHitEvent(ShellHitType.of(collision.getPair().second()), shell.getId(),
-                        collision.getVehicleId(), battle.getModel());
+                var hitType = ShellHitType.of(collision.getPair().second());
+                if (hitType != null) {
+                    addHitEvent(hitType, shell.getId(), collision.getVehicleId(), battle.getModel());
+                }
             }
         });
     }
