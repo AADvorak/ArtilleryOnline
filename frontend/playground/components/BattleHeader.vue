@@ -17,6 +17,7 @@ import {AppearancesNames} from "~/dictionary/appearances-names";
 import {useI18n} from "vue-i18n";
 import BattleFps from "~/playground/components/BattleFps.vue";
 import BattlePing from "~/playground/components/BattlePing.vue";
+import Missiles from "~/playground/components/Missiles.vue";
 
 const {t} = useI18n()
 const battleStore = useBattleStore()
@@ -86,6 +87,9 @@ function showHelpDialog() {
     </div>
     <div v-if="jetAvailable" class="ml-5 jet-bar-wrapper">
       <JetBar />
+    </div>
+    <div v-if="battleStore.isActive" class="ml-5">
+      <Missiles />
     </div>
     <div v-if="battleStore.isActive" class="ml-5">
       <ReloadingProgress />

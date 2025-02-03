@@ -7,6 +7,10 @@ export interface Ammo {
   [key: string]: number
 }
 
+export interface Missiles {
+  [key: string]: number
+}
+
 export enum MovingDirection {
   LEFT = 'LEFT',
   RIGHT = 'RIGHT'

@@ -37,5 +37,6 @@ public class VehicleLaunchMissileProcessor {
         missileModel.setSpecs(specs);
         battleModel.getMissiles().put(id, missileModel);
         battleModel.getUpdates().addMissile(missileModel);
+        vehicleModel.setUpdated(true);
     }
 }
