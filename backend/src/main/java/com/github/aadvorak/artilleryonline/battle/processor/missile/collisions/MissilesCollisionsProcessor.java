@@ -14,6 +14,12 @@ public class MissilesCollisionsProcessor {
         });
 
         battle.getMissiles().forEach(missile -> {
+            if (missile.getCollisions().isEmpty()) {
+                MissileMissileCollisionsProcessor.process(missile, battle);
+            }
+        });
+
+        battle.getMissiles().forEach(missile -> {
             if (!missile.getCollisions().isEmpty()) {
                 battle.getModel().getUpdates().removeMissile(missile.getId());
             }

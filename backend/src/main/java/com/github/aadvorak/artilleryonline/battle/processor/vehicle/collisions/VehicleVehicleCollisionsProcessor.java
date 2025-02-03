@@ -38,7 +38,7 @@ public class VehicleVehicleCollisionsProcessor {
         collision.getPair().second().getVehicleCalculations().recalculateWheelsVelocities();
 
         recalculateVehiclesNextPositions(collision);
-        collision.getPair().second().getCollisions().add(Collision.inverted(collision));
+        collision.getPair().second().getCollisions().add(collision.inverted());
         ((VehicleModel) collision.getPair().second().getModel()).setUpdated(true);
         collision.getPair().second().getVehicleCalculations().setHasCollisions(true);
     }

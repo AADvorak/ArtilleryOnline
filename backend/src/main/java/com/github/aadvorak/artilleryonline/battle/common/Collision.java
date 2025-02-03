@@ -67,6 +67,23 @@ public class Collision {
         return impact;
     }
 
+    public Collision inverted() {
+        return new Collision()
+                .setType(type)
+                .setPair(new CollisionPair(pair.second(), pair.first()))
+                .setVelocitiesProjections(
+                        new VelocitiesProjections(
+                                velocitiesProjections.second(),
+                                velocitiesProjections.first()
+                        )
+                )
+                .setInterpenetration(
+                        Optional.ofNullable(interpenetration)
+                                .map(Interpenetration::inverted)
+                                .orElse(null)
+                );
+    }
+
     public static Collision ofMissileWithGround(Calculations<MissileModel> first) {
         return new Collision()
                 .setPair(new CollisionPair(first, null));
@@ -83,23 +100,6 @@ public class Collision {
 
     public static Collision ofVehicleWithWall(Calculations<VehicleModel> first, Interpenetration interpenetration) {
         return ofVehicleWithUnmovable(first, interpenetration, CollideObjectType.WALL);
-    }
-
-    public static Collision inverted(Collision collision) {
-        return new Collision()
-                .setType(collision.getType())
-                .setPair(new CollisionPair(collision.getPair().second(), collision.getPair().first()))
-                .setVelocitiesProjections(
-                        new VelocitiesProjections(
-                                collision.getVelocitiesProjections().second(),
-                                collision.getVelocitiesProjections().first()
-                        )
-                )
-                .setInterpenetration(
-                        Optional.ofNullable(collision.getInterpenetration())
-                                .map(Interpenetration::inverted)
-                        .orElse(null)
-                );
     }
 
     public static Collision withVehicle(Calculations<?> first, Calculations<VehicleModel> second,
