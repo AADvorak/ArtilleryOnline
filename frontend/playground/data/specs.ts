@@ -65,6 +65,7 @@ export interface MissileSpecs {
   pushingAcceleration: number
   correctingAccelerationCoefficient: number
   minCorrectingVelocity: number
+  anglePrecision: number
   damage: number
   radius: number
   mass: number

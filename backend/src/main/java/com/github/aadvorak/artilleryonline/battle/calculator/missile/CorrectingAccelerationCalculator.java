@@ -9,8 +9,9 @@ public class CorrectingAccelerationCalculator {
 
     public static double calculate(MissileCalculations calculations, BattleModel battleModel) {
         var missileState = calculations.getModel().getState();
+        var missileSpecs = calculations.getModel().getSpecs();
         var correctingVelocity = missileState.getVelocity().getMovingVelocity().magnitude()
-                - calculations.getModel().getSpecs().getMinCorrectingVelocity();
+                - missileSpecs.getMinCorrectingVelocity();
         if (correctingVelocity <= 0) {
             return 0.0;
         }
@@ -35,9 +36,10 @@ public class CorrectingAccelerationCalculator {
                 minAngleDiff = angleDiff;
             }
         }
-
-        return Math.signum(minAngleDiff) * correctingVelocity
-                * calculations.getModel().getSpecs().getCorrectingAccelerationCoefficient();
+        if (Math.abs(minAngleDiff) < missileSpecs.getAnglePrecision()) {
+            return 0.0;
+        }
+        return Math.signum(minAngleDiff) * correctingVelocity * missileSpecs.getCorrectingAccelerationCoefficient();
     }
 
     private static double calculateAngleDiff(double missileAngle, double targetAngle) {

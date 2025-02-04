@@ -12,6 +12,7 @@ public enum MissileSpecsPreset {
             .setPushingAcceleration(18.0)
             .setCorrectingAccelerationCoefficient(4.0)
             .setMinCorrectingVelocity(5.0)
+            .setAnglePrecision(Math.PI / 8)
             .setDamage(10.0)
             .setRadius(0.6)
             .setMass(0.007)

@@ -32,6 +32,10 @@ export const CorrectingAccelerationCalculator = {
         angleDiffs[0]
     )
 
+    if (Math.abs(minAngleDiff) < missileModel.specs.anglePrecision) {
+      return 0.0
+    }
+
     return Math.sign(minAngleDiff) * correctingVelocity * missileModel.specs.correctingAccelerationCoefficient
   },
 

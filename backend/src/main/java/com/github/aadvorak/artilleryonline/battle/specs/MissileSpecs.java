@@ -15,6 +15,8 @@ public class MissileSpecs implements Specs {
 
     private double minCorrectingVelocity;
 
+    private double anglePrecision;
+
     private double damage;
 
     private double radius;
