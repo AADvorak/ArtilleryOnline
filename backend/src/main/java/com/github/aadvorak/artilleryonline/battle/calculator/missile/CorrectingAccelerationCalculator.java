@@ -10,10 +10,16 @@ public class CorrectingAccelerationCalculator {
     public static double calculate(MissileCalculations calculations, BattleModel battleModel) {
         var missileState = calculations.getModel().getState();
         var missileSpecs = calculations.getModel().getSpecs();
-        var correctingVelocity = missileState.getVelocity().getMovingVelocity().magnitude()
-                - missileSpecs.getMinCorrectingVelocity();
+        var velocityMagnitude = missileState.getVelocity().getMovingVelocity().magnitude();
+        var correctingVelocity = velocityMagnitude - missileSpecs.getMinCorrectingVelocity();
+        var missilePosition = missileState.getPosition();
         if (correctingVelocity <= 0) {
-            return 0.0;
+            var verticalAngleDiff = calculateAngleDiff(missilePosition.getAngle(), Math.PI / 2);
+            if (Math.abs(verticalAngleDiff) < missileSpecs.getAnglePrecision()) {
+                return 0.0;
+            }
+            return Math.signum(verticalAngleDiff) * velocityMagnitude
+                    * missileSpecs.getCorrectingAccelerationCoefficient() / missileSpecs.getMinCorrectingVelocity();
         }
         var targets = battleModel.getVehicles().values().stream()
                 .filter(vehicleModel -> vehicleModel.getId() != calculations.getModel().getVehicleId())
@@ -22,11 +28,8 @@ public class CorrectingAccelerationCalculator {
             return 0.0;
         }
         var angleDiffs = targets.stream()
-                .map(vehicleModel -> {
-                    var missilePosition = missileState.getPosition();
-                    return calculateAngleDiff(missilePosition.getAngle(),
-                            missilePosition.getCenter().angleTo(vehicleModel.getState().getPosition()));
-                })
+                .map(vehicleModel -> calculateAngleDiff(missilePosition.getAngle(),
+                        missilePosition.getCenter().angleTo(vehicleModel.getState().getPosition())))
                 .collect(Collectors.toSet());
         var iterator = angleDiffs.iterator();
         var minAngleDiff = iterator.next();

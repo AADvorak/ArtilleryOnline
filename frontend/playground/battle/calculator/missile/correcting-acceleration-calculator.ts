@@ -4,11 +4,17 @@ import {VectorUtils} from "~/playground/utils/vector-utils";
 export const CorrectingAccelerationCalculator = {
   calculate(missileModel: MissileModel, battleModel: BattleModel): number {
     const missileState = missileModel.state
-    const correctingVelocity = VectorUtils.getMagnitude(missileState.velocity)
-        - missileModel.specs.minCorrectingVelocity
+    const velocityMagnitude = VectorUtils.getMagnitude(missileState.velocity)
+    const correctingVelocity = velocityMagnitude - missileModel.specs.minCorrectingVelocity
+    const missilePosition = missileState.position
 
     if (correctingVelocity <= 0) {
-      return 0.0
+      const verticalAngleDiff = this.calculateAngleDiff(missilePosition.angle, Math.PI / 2)
+      if (Math.abs(verticalAngleDiff) < missileModel.specs.anglePrecision) {
+        return 0.0
+      }
+      return Math.sign(verticalAngleDiff) * velocityMagnitude
+          * missileModel.specs.correctingAccelerationCoefficient / missileModel.specs.minCorrectingVelocity
     }
 
     const targets = Object.values(battleModel.vehicles).filter(vehicleModel =>
@@ -20,7 +26,6 @@ export const CorrectingAccelerationCalculator = {
     }
 
     const angleDiffs = targets.map(vehicleModel => {
-      const missilePosition = missileState.position
       return this.calculateAngleDiff(
           missilePosition.angle,
           VectorUtils.angleFromTo(missilePosition, vehicleModel.state.position)
