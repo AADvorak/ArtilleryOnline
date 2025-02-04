@@ -9,16 +9,15 @@ public class TimeoutUpdate {
 
     private long lastUpdateTime = System.currentTimeMillis();
 
-    public void setUpdatedByTimeout() {
-        var currentTime = System.currentTimeMillis();
+    public boolean setUpdatedByTimeout(long currentTime) {
         if (currentTime - lastUpdateTime > 1000) {
-            lastUpdateTime = currentTime;
-            updated = true;
+            setUpdated(currentTime);
         }
+        return updated;
     }
 
-    public void setUpdated() {
-        lastUpdateTime = System.currentTimeMillis();
+    public void setUpdated(long currentTime) {
+        lastUpdateTime = currentTime;
         updated = true;
     }
 

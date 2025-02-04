@@ -135,7 +135,11 @@ public class BattleRunner {
             battleModel.setUpdated(true);
         }
         for (var missileModel: battleModel.getMissiles().values()) {
-            missileModel.getUpdate().setUpdatedByTimeout();
+            if (missileModel.getUpdate().setUpdatedByTimeout(battle.getAbsoluteTime())) {
+                battleModel.getMissiles().values().forEach(model ->
+                        model.getUpdate().setUpdated(battle.getAbsoluteTime()));
+                break;
+            }
         }
     }
 
@@ -199,7 +203,6 @@ public class BattleRunner {
         if (battleModel.getMissiles().values().stream()
                 .anyMatch(missileModel -> missileModel.getUpdate().isUpdated())) {
             var missileStates = battleModel.getMissiles().entrySet().stream()
-                    .filter(entry -> entry.getValue().getUpdate().isUpdated())
                     .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
             response.setMissiles(missileStates);
         }
