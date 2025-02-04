@@ -17,4 +17,7 @@ public class MissileModel extends GenericSpecsConfigStateModel<MissileSpecs, Mis
 
     @JsonIgnore
     private Long userId;
+
+    @JsonIgnore
+    private final TimeoutUpdate update = new TimeoutUpdate();
 }

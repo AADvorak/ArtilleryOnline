@@ -95,12 +95,24 @@ export function useBattleUpdater(player: Player) {
       }
     }
     if (battleUpdate.state) {
-      Object.keys(battleUpdate.state.vehicles).forEach(key => {
-        battle.model.vehicles[key].state = battleUpdate.state.vehicles[key]
-      })
-      Object.keys(battleUpdate.state.shells).forEach(key => {
-        battle.model.shells[key].state = battleUpdate.state.shells[key]
-      })
+      const vehicles = battleUpdate.state.vehicles
+      if (vehicles) {
+        Object.keys(vehicles).forEach(key => {
+          battle.model.vehicles[key].state = vehicles[key]
+        })
+      }
+      const shells = battleUpdate.state.shells
+      if (shells) {
+        Object.keys(shells).forEach(key => {
+          battle.model.shells[key].state = shells[key]
+        })
+      }
+      const missiles = battleUpdate.state.missiles
+      if (missiles) {
+        Object.keys(missiles).forEach(key => {
+          battle.model.missiles[key].state = missiles[key]
+        })
+      }
     }
     battleStore.updateBattle(battle)
   }

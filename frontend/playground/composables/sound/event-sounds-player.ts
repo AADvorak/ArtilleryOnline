@@ -50,7 +50,7 @@ export function useEventSoundsPlayer(player: Player) {
         }
       }
     }
-    if (battleUpdate.state) {
+    if (battleUpdate.state?.vehicles) {
       const prevLoadedShell = battle.model.vehicles[userStore.user!.nickname]?.state.gunState.loadedShell
       const loadedShell = battleUpdate.state.vehicles[userStore.user!.nickname]?.gunState.loadedShell
       if (loadedShell && !prevLoadedShell) {

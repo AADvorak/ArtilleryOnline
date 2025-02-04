@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle;
 
 import com.github.aadvorak.artilleryonline.battle.events.BattleModelEvents;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.processor.ActiveBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.WaitingBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.updates.BattleModelUpdates;
@@ -133,6 +134,9 @@ public class BattleRunner {
                 > applicationSettings.getBattleUpdateTimeout()) {
             battleModel.setUpdated(true);
         }
+        for (var missileModel: battleModel.getMissiles().values()) {
+            missileModel.getUpdate().setUpdatedByTimeout();
+        }
     }
 
     private void sendBattleToUpdatesQueue(Battle battle) {
@@ -150,8 +154,7 @@ public class BattleRunner {
 
     private boolean sendBattleStateToUpdatesQueue(Battle battle) {
         var sendStage = battle.isStageUpdated();
-        var sendState = battle.getModel().getVehicles().entrySet().stream()
-                .anyMatch(vehicleEntry -> vehicleEntry.getValue().isUpdated());
+        var sendState = existsUpdatedModel(battle.getModel());
         var sendUpdates = !battle.getModel().getUpdates().isEmpty();
         var sendEvents = !battle.getModel().getEvents().isEmpty();
         if (sendStage || sendState || sendUpdates || sendEvents) {
@@ -163,7 +166,7 @@ public class BattleRunner {
                 battleUpdateResponse.setStage(battle.getBattleStage());
             }
             if (sendState) {
-                battleUpdateResponse.setState(createBattleModelStateResponse(battle));
+                battleUpdateResponse.setState(createBattleModelStateResponse(battle.getModel()));
             }
             if (sendUpdates) {
                 battleUpdateResponse.setUpdates(battle.getModel().getUpdates());
@@ -177,22 +180,36 @@ public class BattleRunner {
         return false;
     }
 
-    private BattleModelStateResponse createBattleModelStateResponse(Battle battle) {
-        var vehicleStates = battle.getModel().getVehicles().entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
-        var shellStates = battle.getModel().getShells().entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
-        var missileStates = battle.getModel().getMissiles().entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
-        return new BattleModelStateResponse()
-                .setVehicles(vehicleStates)
-                .setShells(shellStates)
-                .setMissiles(missileStates);
+    private boolean existsUpdatedModel(BattleModel battleModel) {
+        var updatedVehicles = battleModel.getVehicles().values().stream()
+                .anyMatch(VehicleModel::isUpdated);
+        var updatedMissiles = battleModel.getMissiles().values().stream()
+                .anyMatch(missileModel -> missileModel.getUpdate().isUpdated());
+        return updatedVehicles || updatedMissiles;
+    }
+
+    private BattleModelStateResponse createBattleModelStateResponse(BattleModel battleModel) {
+        var response = new BattleModelStateResponse();
+        if (battleModel.getVehicles().values().stream().anyMatch(VehicleModel::isUpdated)) {
+            var vehicleStates = battleModel.getVehicles().entrySet().stream()
+                    .filter(entry -> entry.getValue().isUpdated())
+                    .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
+            response.setVehicles(vehicleStates);
+        }
+        if (battleModel.getMissiles().values().stream()
+                .anyMatch(missileModel -> missileModel.getUpdate().isUpdated())) {
+            var missileStates = battleModel.getMissiles().entrySet().stream()
+                    .filter(entry -> entry.getValue().getUpdate().isUpdated())
+                    .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
+            response.setMissiles(missileStates);
+        }
+        return response;
     }
 
     private void resetUpdatedFlags(Battle battle) {
         battle.setStageUpdated(false);
         battle.getModel().setUpdated(false);
         battle.getModel().getVehicles().values().forEach(vehicle -> vehicle.setUpdated(false));
+        battle.getModel().getMissiles().values().forEach(missile -> missile.getUpdate().resetUpdated());
     }
 }
