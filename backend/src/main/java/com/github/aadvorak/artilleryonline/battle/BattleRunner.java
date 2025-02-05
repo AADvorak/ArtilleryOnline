@@ -193,20 +193,16 @@ public class BattleRunner {
     }
 
     private BattleModelStateResponse createBattleModelStateResponse(BattleModel battleModel) {
-        var response = new BattleModelStateResponse();
-        if (battleModel.getVehicles().values().stream().anyMatch(VehicleModel::isUpdated)) {
-            var vehicleStates = battleModel.getVehicles().entrySet().stream()
-                    .filter(entry -> entry.getValue().isUpdated())
-                    .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
-            response.setVehicles(vehicleStates);
-        }
-        if (battleModel.getMissiles().values().stream()
-                .anyMatch(missileModel -> missileModel.getUpdate().isUpdated())) {
-            var missileStates = battleModel.getMissiles().entrySet().stream()
-                    .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
-            response.setMissiles(missileStates);
-        }
-        return response;
+        var shellStates = battleModel.getShells().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
+        var vehicleStates = battleModel.getVehicles().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
+        var missileStates = battleModel.getMissiles().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
+        return new BattleModelStateResponse()
+                .setShells(shellStates)
+                .setVehicles(vehicleStates)
+                .setMissiles(missileStates);
     }
 
     private void resetUpdatedFlags(Battle battle) {
