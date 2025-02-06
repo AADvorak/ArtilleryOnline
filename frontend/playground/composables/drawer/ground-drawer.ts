@@ -13,8 +13,7 @@ export function useGroundDrawer(
     const roomModel = battleStore.battle?.model.room
     if (ctx.value && roomModel) {
       ctx.value.beginPath()
-      ctx.value.fillStyle = 'rgb(100 100 100)'
-      ctx.value.strokeStyle = 'rgb(100 100 100)'
+      ctx.value.fillStyle = 'rgb(80 80 80)'
       ctx.value.lineWidth = 1
       let position = getGroundPosition(0, roomModel)
       ctx.value.moveTo(position.x, position.y)
@@ -22,7 +21,17 @@ export function useGroundDrawer(
         position = getGroundPosition(i, roomModel)
         ctx.value.lineTo(position.x, position.y)
       }
-      ctx.value.stroke()
+      position = drawerBase.transformPosition({
+        x: roomModel.specs.rightTop.x,
+        y: 0
+      })
+      ctx.value.lineTo(position.x, position.y)
+      position = drawerBase.transformPosition({
+        x: roomModel.specs.leftBottom.x,
+        y: 0
+      })
+      ctx.value.lineTo(position.x, position.y)
+      ctx.value.fill()
       ctx.value.closePath()
     }
   }
