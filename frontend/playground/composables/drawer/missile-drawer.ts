@@ -11,7 +11,7 @@ export function useMissileDrawer(
   const battleStore = useBattleStore()
 
   function draw() {
-    if (battleStore) {
+    if (battleStore.missiles) {
       Object.values(battleStore.missiles).forEach(drawMissile)
     }
   }

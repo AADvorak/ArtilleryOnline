@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle;
 
 import com.github.aadvorak.artilleryonline.battle.command.UserCommand;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.config.RoomConfig;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
@@ -51,8 +52,12 @@ public class BattleFactory {
         var roomModel = new RoomModel();
         var specs = RoomSpecsPreset.DEFAULT.getSpecs();
         var state = new RoomState().setGroundLine(createGroundLine(specs));
+        var config = new RoomConfig()
+                .setBackground(BattleUtils.generateRandom(1, 3))
+                .setGroundTexture(BattleUtils.generateRandom(1, 3));
         roomModel.setSpecs(specs);
         roomModel.setState(state);
+        roomModel.setConfig(config);
         return roomModel;
     }
 

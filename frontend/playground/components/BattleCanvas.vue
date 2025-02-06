@@ -7,9 +7,13 @@ import {useShellDrawer} from "@/playground/composables/drawer/shell-drawer";
 import {useExplosionDrawer} from "@/playground/composables/drawer/explosion-drawer";
 import {useGroundDrawer} from "@/playground/composables/drawer/ground-drawer";
 import {useMissileDrawer} from "~/playground/composables/drawer/missile-drawer";
+import {useUserSettingsStore} from "~/stores/user-settings";
+import {AppearancesNames} from "~/dictionary/appearances-names";
 
 const battleStore = useBattleStore()
+const userSettingsStore = useUserSettingsStore()
 
+const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
 const battle = computed(() => battleStore.battle)
 const battleSize = ref()
 const canvasSize = ref()
@@ -19,6 +23,13 @@ const canvasWidth = computed(() => {
 })
 const canvasHeight = computed(() => {
   return canvasSize.value ? canvasSize.value.height : window.innerHeight - 50
+})
+const canvasStyle = computed(() => {
+  if (appearances.value[AppearancesNames.GROUND_TEXTURE_BACKGROUND] === '1') {
+    return `background-image: url('/images/background-${battleStore.battle?.model.room.config.background}.jpg');`
+  } else {
+    return ''
+  }
 })
 
 const canvas = ref<HTMLCanvasElement>()
@@ -136,12 +147,14 @@ function calculateScaleCoefficient() {
         id="battle-canvas"
         :width="canvasWidth"
         :height="canvasHeight"
+        :style="canvasStyle"
     ></canvas>
   </v-main>
 </template>
 
 <style scoped>
 canvas {
-  display:block;
+  display: block;
+  background-size: cover;
 }
 </style>

@@ -1,10 +1,11 @@
 import type {ExplosionSpecs, MissileSpecs, RoomSpecs, ShellSpecs, VehicleSpecs} from "@/playground/data/specs";
 import type {ExplosionState, MissileState, RoomState, ShellState, VehicleState} from "@/playground/data/state";
-import type {VehicleConfig} from "@/playground/data/config";
+import type {RoomConfig, VehicleConfig} from "@/playground/data/config";
 
 export interface RoomModel {
   specs: RoomSpecs
   state: RoomState
+  config: RoomConfig
 }
 
 export interface ShellModel {

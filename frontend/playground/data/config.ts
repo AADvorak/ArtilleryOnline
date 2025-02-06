@@ -7,3 +7,8 @@ export interface VehicleConfig {
   ammo: Ammo
   color?: string
 }
+
+export interface RoomConfig {
+  background: number
+  groundTexture: number
+}

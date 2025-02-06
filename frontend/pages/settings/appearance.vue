@@ -14,7 +14,8 @@ const settings = reactive({
   vehicleColor: '',
   showNicknamesAboveVehicles: '1',
   showHpBarsAboveVehicles: '1',
-  showAllPlayersHpBarsInTopBar: '1'
+  showAllPlayersHpBarsInTopBar: '0',
+  showGroundTextureAndBackground: '0',
 })
 
 const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
@@ -69,12 +70,23 @@ watch(() => settings.showAllPlayersHpBarsInTopBar, value => {
   }
 })
 
+watch(() => settings.showGroundTextureAndBackground, value => {
+  const existingValue = appearances.value[AppearancesNames.GROUND_TEXTURE_BACKGROUND]
+  if (value && value !== existingValue) {
+    userSettingsStore.setAppearance({
+      name: AppearancesNames.GROUND_TEXTURE_BACKGROUND,
+      value
+    })
+  }
+})
+
 onMounted(() => {
   settings.language = appearances.value[AppearancesNames.LANGUAGE]
   settings.vehicleColor = appearances.value[AppearancesNames.VEHICLE_COLOR]
   settings.showNicknamesAboveVehicles = appearances.value[AppearancesNames.NICKNAMES_ABOVE]
   settings.showHpBarsAboveVehicles = appearances.value[AppearancesNames.HP_ABOVE]
   settings.showAllPlayersHpBarsInTopBar = appearances.value[AppearancesNames.ALL_HP_TOP]
+  settings.showGroundTextureAndBackground = appearances.value[AppearancesNames.GROUND_TEXTURE_BACKGROUND]
 })
 
 function back() {
@@ -139,6 +151,16 @@ function back() {
             <td>
               <v-switch
                   v-model="settings.showAllPlayersHpBarsInTopBar"
+                  true-value="1"
+                  false-value="0"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>{{ t('appearance.showGroundTextureAndBackground') }}</td>
+            <td>
+              <v-switch
+                  v-model="settings.showGroundTextureAndBackground"
                   true-value="1"
                   false-value="0"
               />
