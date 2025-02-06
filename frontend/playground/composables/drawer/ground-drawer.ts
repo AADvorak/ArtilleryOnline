@@ -12,9 +12,9 @@ export function useGroundDrawer(
   function draw() {
     const roomModel = battleStore.battle?.model.room
     if (ctx.value && roomModel) {
-      ctx.value.beginPath()
-      ctx.value.fillStyle = 'rgb(80 80 80)'
+      ctx.value.fillStyle = 'rgb(100 100 100)'
       ctx.value.lineWidth = 1
+      ctx.value.beginPath()
       let position = getGroundPosition(0, roomModel)
       ctx.value.moveTo(position.x, position.y)
       for (let i = 1; i < roomModel.state.groundLine.length; i++) {
