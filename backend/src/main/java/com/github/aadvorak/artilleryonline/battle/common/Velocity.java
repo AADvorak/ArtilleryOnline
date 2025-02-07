@@ -17,4 +17,14 @@ public class Velocity implements Vector {
     public String toString() {
         return String.format("(%.3f, %.3f)", x, y);
     }
+
+    public static Velocity sumOf(Velocity... velocities) {
+        var sumX = 0.0;
+        var sumY = 0.0;
+        for (var velocity : velocities) {
+            sumX += velocity.getX();
+            sumY += velocity.getY();
+        }
+        return new Velocity().setX(sumX).setY(sumY);
+    }
 }

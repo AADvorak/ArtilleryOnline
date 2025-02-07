@@ -29,6 +29,13 @@ public class BodyVelocity {
         setAngle(angle + acceleration.getAngle() * timeStep);
     }
 
+    public Velocity getPointVelocity(double pointDistance, double pointAngle) {
+        var angleVelocity = angle * pointDistance;
+        return new Velocity()
+                .setX(x - angleVelocity * Math.sin(pointAngle))
+                .setY(y + angleVelocity * Math.cos(pointAngle));
+    }
+
     @Override
     public String toString() {
         return String.format("(%.3f, %.3f, %.3f)", x, y, angle);

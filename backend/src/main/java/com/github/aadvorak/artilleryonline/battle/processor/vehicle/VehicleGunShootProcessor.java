@@ -33,14 +33,9 @@ public class VehicleGunShootProcessor {
             battleModel.getStatistics().get(vehicleModel.getUserId()).increaseMadeShots();
         }
         shellModel.setSpecs(loadedShellSpecs);
-        var shellAngle = vehicleModel.getState().getGunAngle() + vehicleModel.getState().getAngle();
-        var shellVelocity = loadedShellSpecs.getVelocity();
-        // todo add vehicle velocity to shell velocity
         shellModel.setState(new ShellState()
                 .setPosition(getShellInitialPosition(vehicleModel))
-                .setVelocity(new Velocity()
-                        .setX(shellVelocity * Math.cos(shellAngle))
-                        .setY(shellVelocity * Math.sin(shellAngle)))
+                .setVelocity(getShellInitialVelocity(vehicleModel, loadedShellSpecs.getVelocity()))
         );
         battleModel.getShells().put(shellModel.getId(), shellModel);
         battleModel.getUpdates().addShell(shellModel);
@@ -74,13 +69,19 @@ public class VehicleGunShootProcessor {
     }
 
     private static Position getShellInitialPosition(VehicleModel vehicleModel) {
-        var vehiclePosition = vehicleModel.getState().getPosition();
-        var gunAngle = vehicleModel.getState().getGunAngle();
-        var angle = vehicleModel.getState().getAngle();
+        var shellAngle = vehicleModel.getState().getGunAngle() + vehicleModel.getState().getAngle();
         var gunLength = vehicleModel.getConfig().getGun().getLength();
-        return new Position()
-                .setX(vehiclePosition.getX() + gunLength * Math.cos(gunAngle + angle))
-                .setY(vehiclePosition.getY() + gunLength * Math.sin(gunAngle + angle));
+        return vehicleModel.getState().getPosition().shifted(gunLength, shellAngle);
+    }
+
+    private static Velocity getShellInitialVelocity(VehicleModel vehicleModel, double shellVelocityModule) {
+        var shellAngle = vehicleModel.getState().getGunAngle() + vehicleModel.getState().getAngle();
+        var gunLength = vehicleModel.getConfig().getGun().getLength();
+        var pointVelocity = vehicleModel.getState().getVelocity().getPointVelocity(gunLength, shellAngle);
+        var shellVelocity = new Velocity()
+                .setX(shellVelocityModule * Math.cos(shellAngle))
+                .setY(shellVelocityModule * Math.sin(shellAngle));
+        return Velocity.sumOf(shellVelocity, pointVelocity);
     }
 
     private static void pushShootingVehicle(VehicleModel vehicleModel, ShellModel shellModel) {
