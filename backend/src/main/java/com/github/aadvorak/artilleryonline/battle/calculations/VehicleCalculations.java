@@ -71,6 +71,7 @@ public class VehicleCalculations implements Calculations<VehicleModel> {
         leftWheel.calculateVelocity();
     }
 
+    // todo fix after WheelCalculations::calculateVelocity
     public void recalculateVelocityByWheel(WheelCalculations wheel) {
         var rightWheelVelocity = rightWheel.getVelocity();
         var leftWheelVelocity = leftWheel.getVelocity();
