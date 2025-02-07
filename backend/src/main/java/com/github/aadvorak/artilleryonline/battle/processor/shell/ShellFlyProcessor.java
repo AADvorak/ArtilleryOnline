@@ -11,6 +11,9 @@ public class ShellFlyProcessor {
     }
 
     public static void processStep2(ShellCalculations shell, BattleModel battleModel) {
+        if (!shell.getCollisions().isEmpty()) {
+            return;
+        }
         var velocity = shell.getVelocity();
         if (BattleUtils.positionIsOutOfRoom(shell.getNext().getPosition(), battleModel.getRoom().getSpecs())) {
             velocity.setX(-velocity.getX());
