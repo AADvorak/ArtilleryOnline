@@ -53,8 +53,8 @@ public class BattleFactory {
         var specs = RoomSpecsPreset.DEFAULT.getSpecs();
         var state = new RoomState().setGroundLine(createGroundLine(specs));
         var config = new RoomConfig()
-                .setBackground(BattleUtils.generateRandom(1, 3))
-                .setGroundTexture(BattleUtils.generateRandom(1, 3));
+                .setBackground(BattleUtils.generateRandom(1, 7))
+                .setGroundTexture(BattleUtils.generateRandom(1, 6));
         roomModel.setSpecs(specs);
         roomModel.setState(state);
         roomModel.setConfig(config);
