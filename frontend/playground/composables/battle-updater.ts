@@ -104,12 +104,14 @@ export function useBattleUpdater(player: Player) {
       const shells = battleUpdate.state.shells
       if (shells) {
         Object.keys(shells).forEach(key => {
+          // @ts-ignore
           battle.model.shells[key].state = shells[key]
         })
       }
       const missiles = battleUpdate.state.missiles
       if (missiles) {
         Object.keys(missiles).forEach(key => {
+          // @ts-ignore
           battle.model.missiles[key].state = missiles[key]
         })
       }
