@@ -22,6 +22,7 @@ export const useStompClientStore = defineStore('stomp-client', () => {
       const headers = {}
       const csrf = csrfStore.csrf
       if (csrf) {
+        // @ts-ignore
         headers[csrf.headerName] = csrf.token
       }
       client.value.connect(headers, () => {

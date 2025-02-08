@@ -71,6 +71,7 @@ export function usePlayer(): Player {
 
   function setLoop(source: AudioBufferSourceNode, path: string) {
     source.loop = true
+    // @ts-ignore
     const loopRange = LOOPS[path]
     if (loopRange) {
       if (loopRange.start) {

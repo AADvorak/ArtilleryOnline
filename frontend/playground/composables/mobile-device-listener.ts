@@ -29,12 +29,14 @@ export function useMobileDeviceListener(commandsSender: CommandsSender) {
   }
 
   function handleTouchStart(event: TouchEvent) {
+    // @ts-ignore
     const touchPosition = getTouchPosition(event)
     const command = getCommand(TouchType.START, touchPosition)
     commandsSender.sendCommand(command)
   }
 
   function handleTouchEnd(event: TouchEvent) {
+    // @ts-ignore
     const touchPosition = getTouchPosition(event)
     const command = getCommand(TouchType.END, touchPosition)
     commandsSender.sendCommand(command)
