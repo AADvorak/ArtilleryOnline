@@ -23,7 +23,7 @@ export function useVehicleDrawer(
   }
 
   function drawVehicle(userKey: string) {
-    const vehicleModel = battleStore.vehicles[userKey]
+    const vehicleModel = battleStore.vehicles![userKey]
     const color = VehicleUtils.getColor(userKey, vehicleModel)
     if (ctx.value) {
       ctx.value.fillStyle = color
@@ -48,8 +48,8 @@ export function useVehicleDrawer(
   }
 
   function drawHull(vehicleModel: VehicleModel, position: Position, radius: number) {
-    const startAngle = Math.PI - vehicleModel.state.angle
-    const endAngle = 2 * Math.PI - vehicleModel.state.angle
+    const startAngle = Math.PI - vehicleModel.state.position.angle
+    const endAngle = 2 * Math.PI - vehicleModel.state.position.angle
     ctx.value.beginPath()
     ctx.value.arc(position.x, position.y, radius, startAngle, endAngle)
     ctx.value.fill()

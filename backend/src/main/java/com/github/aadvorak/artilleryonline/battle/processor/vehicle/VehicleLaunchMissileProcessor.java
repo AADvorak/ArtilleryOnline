@@ -22,10 +22,10 @@ public class VehicleLaunchMissileProcessor {
         }
         missiles.put(missilesKey, missilesNumber - 1);
         var vehiclePosition = vehicleModel.getState().getPosition();
-        var angle = vehicleModel.getState().getAngle() + Math.PI / 2;
+        var angle = vehiclePosition.getAngle() + Math.PI / 2;
         var specs = MissileSpecsPreset.DEFAULT.getSpecs();
         var state = new MissileState()
-                .setPosition(BodyPosition.of(vehiclePosition.shifted(specs.getLength() / 2,
+                .setPosition(BodyPosition.of(vehiclePosition.getCenter().shifted(specs.getLength() / 2,
                         angle), angle))
                 .setVelocity(BodyVelocity.of(vehicleModel.getState().getVelocity()));
         var id = battleModel.getIdGenerator().generate();

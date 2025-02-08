@@ -22,7 +22,6 @@ export const VehicleProcessor = {
 
   initVehicleCalculations(): VehicleCalculations {
     return {
-      nextAngle: undefined,
       nextPosition: undefined,
       rightWheel: this.initWheelCalculations(WheelSign.RIGHT),
       leftWheel: this.initWheelCalculations(WheelSign.LEFT)
@@ -31,6 +30,7 @@ export const VehicleProcessor = {
 
   initWheelCalculations(sign: WheelSign): WheelCalculations {
     return {
+      groundState: undefined,
       groundDepth: undefined,
       groundAngle: undefined,
       nearestGroundPoint: undefined,
@@ -69,14 +69,13 @@ export const VehicleProcessor = {
     const position = vehicleModel.state.position
     position.x += velocity.x * timeStepSecs
     position.y += velocity.y * timeStepSecs
-    let angle = vehicleModel.state.angle + velocity.angle * timeStepSecs
-    if (angle > Math.PI / 2) {
-      angle = Math.PI / 2
+    position.angle += velocity.angle * timeStepSecs
+    if (position.angle > Math.PI / 2) {
+      position.angle = Math.PI / 2
     }
-    if (angle < - Math.PI / 2) {
-      angle = - Math.PI / 2
+    if (position.angle < - Math.PI / 2) {
+      position.angle = - Math.PI / 2
     }
-    vehicleModel.state.angle = angle
   },
 
   recalculateGunAngle(vehicleModel: VehicleModel, timeStepSecs: number) {

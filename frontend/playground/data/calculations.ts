@@ -1,4 +1,4 @@
-import type {Acceleration, Position, Velocity} from "@/playground/data/common"
+import type {Acceleration, BodyPosition, Position, Velocity} from "@/playground/data/common"
 
 export enum WheelSign {
   RIGHT = -1,
@@ -20,7 +20,7 @@ export interface NearestGroundPoint {
 
 export interface WheelCalculations {
   sign: WheelSign
-  groundState: WheelGroundState
+  groundState: WheelGroundState | undefined
   position: Position | undefined
   velocity: Velocity | undefined
   nearestGroundPointByX: Position | undefined
@@ -36,8 +36,7 @@ export interface WheelCalculations {
 }
 
 export interface VehicleCalculations {
-  nextPosition: Position | undefined
-  nextAngle: number | undefined
+  nextPosition: BodyPosition | undefined
   rightWheel: WheelCalculations
   leftWheel: WheelCalculations
 }

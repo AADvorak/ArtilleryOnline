@@ -1,7 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle;
 
 import com.github.aadvorak.artilleryonline.battle.command.UserCommand;
-import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
 import com.github.aadvorak.artilleryonline.battle.config.RoomConfig;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
@@ -120,12 +120,11 @@ public class BattleFactory {
                     .setJet(jet)
                     .setColor(getVehicleColor(participant)));
             vehicleModel.setState(new VehicleState()
-                    .setAngle(0)
                     .setGunAngle(Math.PI / 2)
                     .setAmmo(new HashMap<>(vehicleModel.getConfig().getAmmo()))
                     .setMissiles(new HashMap<>(vehicleModel.getConfig().getMissiles()))
                     .setHitPoints(vehicleModel.getSpecs().getHitPoints())
-                    .setPosition(new Position()
+                    .setPosition(new BodyPosition()
                             .setX(distanceBetweenVehicles * vehicleNumber)
                             .setY(BattleUtils.getRoomHeight(battleModel.getRoom().getSpecs()) / 2))
                     .setGunState(new GunState()

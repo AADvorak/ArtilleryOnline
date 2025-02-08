@@ -21,8 +21,6 @@ export const VehicleAccelerationCalculator = {
       vehicleModel: VehicleModel,
       roomModel: RoomModel
   ): BodyAcceleration {
-    const angle = vehicleModel.state.angle
-
     VehicleUtils.calculateWheelVelocity(vehicleModel, calculations.rightWheel)
     VehicleUtils.calculateWheelVelocity(vehicleModel, calculations.leftWheel)
 
@@ -35,7 +33,7 @@ export const VehicleAccelerationCalculator = {
     this.calculateWheelSumAcceleration(calculations.rightWheel)
     this.calculateWheelSumAcceleration(calculations.leftWheel)
 
-    const rotatingAcceleration = this.getVehicleRotatingAcceleration(calculations, angle)
+    const rotatingAcceleration = this.getVehicleRotatingAcceleration(calculations, vehicleModel.state.position.angle)
     const wheelsMovingAcceleration = {
       x:
           (calculations.rightWheel.sumAcceleration!.x + calculations.leftWheel.sumAcceleration!.x) / 2,

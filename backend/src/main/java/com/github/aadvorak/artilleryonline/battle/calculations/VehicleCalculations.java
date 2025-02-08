@@ -20,9 +20,7 @@ public class VehicleCalculations implements Calculations<VehicleModel> {
 
     private final WheelCalculations leftWheel;
 
-    private Position nextPosition;
-
-    private double nextAngle;
+    private BodyPosition nextPosition;
 
     private Set<Collision> collisions = new HashSet<>();
 
@@ -46,7 +44,7 @@ public class VehicleCalculations implements Calculations<VehicleModel> {
 
     @Override
     public Position getPosition() {
-        return model.getState().getPosition();
+        return model.getState().getPosition().getCenter();
     }
 
     @Override
@@ -75,7 +73,7 @@ public class VehicleCalculations implements Calculations<VehicleModel> {
     public void recalculateVelocityByWheel(WheelCalculations wheel) {
         var rightWheelVelocity = rightWheel.getVelocity();
         var leftWheelVelocity = leftWheel.getVelocity();
-        var angle = model.getState().getAngle();
+        var angle = model.getState().getPosition().getAngle();
 
         var angleVelocity = Math.abs(angle) < Math.PI / 4
                 ? (rightWheelVelocity.getY() - leftWheelVelocity.getY()) / (2.0 * Math.cos(angle))
@@ -88,12 +86,7 @@ public class VehicleCalculations implements Calculations<VehicleModel> {
     }
 
     public void applyNextPositionAndAngle() {
-        model.getState().setPosition(
-                new Position()
-                        .setX(nextPosition.getX())
-                        .setY(nextPosition.getY())
-        );
-        model.getState().setAngle(nextAngle);
+        model.getState().setPosition(nextPosition);
     }
 
     public void applyNormalMoveToNextPosition(double normalMove, double angle) {
@@ -103,35 +96,15 @@ public class VehicleCalculations implements Calculations<VehicleModel> {
     }
 
     public void calculateNextPositionAndAngle(double timeStep) {
-        setNextPosition(
-                new Position()
-                        .setX(model.getState().getPosition().getX())
-                        .setY(model.getState().getPosition().getY())
-        );
-        setNextAngle(model.getState().getAngle());
-        moveNextPositionAndAngle(timeStep);
-    }
-
-    public void moveNextPositionAndAngle(double timeStep) {
-        var vehicleVelocity = model.getState().getVelocity();
-        var positionShift = new Position()
-                .setX(vehicleVelocity.getX() * timeStep)
-                .setY(vehicleVelocity.getY() * timeStep);
-        addToNextPositionAndAngle(positionShift, vehicleVelocity.getAngle() * timeStep);
-    }
-
-    private void addToNextPositionAndAngle(Position positionShift, double angleShift) {
-        nextPosition
-                .setX(nextPosition.getX() + positionShift.getX())
-                .setY(nextPosition.getY() + positionShift.getY());
-        var nextAngle = this.nextAngle + angleShift;
-        if (nextAngle > Math.PI / 2) {
-            nextAngle = Math.PI / 2;
+        var position = model.getState().getPosition();
+        var velocity = model.getState().getVelocity();
+        setNextPosition(position.next(velocity, timeStep));
+        if (nextPosition.getAngle() > Math.PI / 2) {
+            nextPosition.setAngle(Math.PI / 2);
         }
-        if (nextAngle < -Math.PI / 2) {
-            nextAngle = -Math.PI / 2;
+        if (nextPosition.getAngle() < -Math.PI / 2) {
+            nextPosition.setAngle(- Math.PI / 2);
         }
-        this.nextAngle = nextAngle;
         rightWheel.calculateNextPosition();
         leftWheel.calculateNextPosition();
     }

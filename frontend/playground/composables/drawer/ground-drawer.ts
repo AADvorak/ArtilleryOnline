@@ -53,7 +53,7 @@ export function useGroundDrawer(
 
   function getFillStyle() {
     if (appearances.value[AppearancesNames.GROUND_TEXTURE_BACKGROUND] === '1') {
-      return ctx.value?.createPattern(img, 'repeat')
+      return ctx.value!.createPattern(img, 'repeat')!
     } else {
       return 'rgb(80 80 80)'
     }

@@ -18,7 +18,7 @@ public class JetAccelerationCalculator {
         }
         var acceleration = jetSpecs.getAcceleration();
         var direction = vehicleModel.getState().getMovingDirection();
-        var angle = vehicleModel.getState().getAngle();
+        var angle = vehicleModel.getState().getPosition().getAngle();
         if (JetType.VERTICAL.equals(jetSpecs.getType())) {
             calculateVertical(wheelCalculations, acceleration, angle, direction);
         }

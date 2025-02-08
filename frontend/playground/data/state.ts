@@ -37,9 +37,8 @@ export interface ExplosionState {
 
 export interface VehicleState {
   velocity: BodyVelocity
-  position: Position
+  position: BodyPosition
   movingDirection: MovingDirection
-  angle: number
   gunAngle: number
   gunRotatingDirection: MovingDirection
   hitPoints: number

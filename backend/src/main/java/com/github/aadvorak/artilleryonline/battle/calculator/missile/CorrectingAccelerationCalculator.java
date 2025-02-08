@@ -29,7 +29,7 @@ public class CorrectingAccelerationCalculator {
         }
         var angleDiffs = targets.stream()
                 .map(vehicleModel -> calculateAngleDiff(missilePosition.getAngle(),
-                        missilePosition.getCenter().angleTo(vehicleModel.getState().getPosition())))
+                        missilePosition.getCenter().angleTo(vehicleModel.getState().getPosition().getCenter())))
                 .collect(Collectors.toSet());
         var iterator = angleDiffs.iterator();
         var minAngleDiff = iterator.next();

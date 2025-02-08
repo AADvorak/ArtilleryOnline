@@ -1,9 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.state;
 
-import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
-import com.github.aadvorak.artilleryonline.battle.common.Position;
-import com.github.aadvorak.artilleryonline.battle.common.BodyAcceleration;
-import com.github.aadvorak.artilleryonline.battle.common.BodyVelocity;
+import com.github.aadvorak.artilleryonline.battle.common.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -15,15 +12,13 @@ import java.util.Map;
 @Accessors(chain = true)
 public class VehicleState implements State {
 
-    private Position position;
+    private BodyPosition position = new BodyPosition();
 
     private MovingDirection movingDirection;
 
     private BodyVelocity velocity = new BodyVelocity();
 
     private BodyAcceleration acceleration = new BodyAcceleration();
-
-    private double angle;
 
     private double gunAngle;
 

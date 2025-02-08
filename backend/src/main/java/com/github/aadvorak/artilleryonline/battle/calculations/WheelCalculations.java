@@ -1,9 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
-import com.github.aadvorak.artilleryonline.battle.common.Acceleration;
-import com.github.aadvorak.artilleryonline.battle.common.Collision;
-import com.github.aadvorak.artilleryonline.battle.common.Position;
-import com.github.aadvorak.artilleryonline.battle.common.Velocity;
+import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import lombok.Getter;
 import lombok.Setter;
@@ -94,7 +91,7 @@ public class WheelCalculations implements Calculations<VehicleModel> {
     // todo use BodyVelocity::getPointVelocity
     public void calculateVelocity() {
         var vehicleVelocity = vehicle.getModel().getState().getVelocity();
-        var angle = vehicle.getModel().getState().getAngle();
+        var angle = vehicle.getModel().getState().getPosition().getAngle();
         // todo wheel distance
         var angleVelocity = vehicleVelocity.getAngle() * vehicle.getModel().getSpecs().getHullRadius();
         // todo check wheel angle
@@ -106,21 +103,21 @@ public class WheelCalculations implements Calculations<VehicleModel> {
     }
 
     public void calculatePosition() {
-        setPosition(calculatePosition(vehicle.getPosition(), vehicle.getModel().getState().getAngle()));
+        setPosition(calculatePosition(vehicle.getModel().getState().getPosition()));
     }
 
     public void calculateNextPosition() {
-        next.setPosition(calculatePosition(vehicle.getNextPosition(), vehicle.getNextAngle()));
+        next.setPosition(calculatePosition(vehicle.getNextPosition()));
     }
 
-    private Position calculatePosition(Position vehiclePosition, double vehicleAngle) {
+    private Position calculatePosition(BodyPosition vehiclePosition) {
         var wheelDistance = vehicle.getModel().getPreCalc().getWheelDistance();
         var wheelAngle = vehicle.getModel().getPreCalc().getWheelAngle();
         return new Position()
-                .setX(vehiclePosition.getX()
-                        - sign.getValue() * wheelDistance * Math.cos(vehicleAngle + sign.getValue() * wheelAngle))
-                .setY(vehiclePosition.getY()
-                        - sign.getValue() * wheelDistance * Math.sin(vehicleAngle + sign.getValue() * wheelAngle));
+                .setX(vehiclePosition.getX() - sign.getValue() * wheelDistance * Math.cos(vehiclePosition.getAngle()
+                        + sign.getValue() * wheelAngle))
+                .setY(vehiclePosition.getY() - sign.getValue() * wheelDistance * Math.sin(vehiclePosition.getAngle()
+                        + sign.getValue() * wheelAngle));
     }
 
     @Getter

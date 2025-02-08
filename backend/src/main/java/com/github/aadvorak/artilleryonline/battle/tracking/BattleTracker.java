@@ -25,7 +25,7 @@ public class BattleTracker {
             appendNumbersToRow(
                     position.getX(),
                     position.getY(),
-                    state.getAngle(),
+                    position.getAngle(),
                     velocity.getX(),
                     velocity.getY(),
                     velocity.getAngle()

@@ -8,10 +8,9 @@ import {BattleUtils} from "~/playground/utils/battle-utils";
 export const VehicleUtils = {
   getLeftWheelPosition(vehicleModel: VehicleModel) {
     const position = vehicleModel.state.position
-    const angle = vehicleModel.state.angle
     const wheelDistance = vehicleModel.preCalc.wheelDistance
     const wheelAngle = vehicleModel.preCalc.wheelAngle
-    return BattleUtils.shiftedPosition(position, - wheelDistance, angle + wheelAngle)
+    return BattleUtils.shiftedPosition(position, - wheelDistance, position.angle + wheelAngle)
   },
 
   getLeftWheelBottomPosition(vehicleModel: VehicleModel) {
@@ -24,10 +23,9 @@ export const VehicleUtils = {
 
   getRightWheelPosition(vehicleModel: VehicleModel) {
     const position = vehicleModel.state.position
-    const angle = vehicleModel.state.angle
     const wheelDistance = vehicleModel.preCalc.wheelDistance
     const wheelAngle = vehicleModel.preCalc.wheelAngle
-    return BattleUtils.shiftedPosition(position, wheelDistance, angle - wheelAngle)
+    return BattleUtils.shiftedPosition(position, wheelDistance, position.angle - wheelAngle)
   },
 
   getRightWheelBottomPosition(vehicleModel: VehicleModel) {
@@ -39,13 +37,13 @@ export const VehicleUtils = {
   },
 
   getWheelBottomPosition(wheelPosition: Position, vehicleModel: VehicleModel, coefficient: number) {
-    const angle = vehicleModel.state.angle - Math.PI / 2
+    const angle = vehicleModel.state.position.angle - Math.PI / 2
     const wheelRadius = vehicleModel.specs.wheelRadius * coefficient
     return BattleUtils.shiftedPosition(wheelPosition, wheelRadius, angle)
   },
 
   getWheelTopPosition(wheelPosition: Position, vehicleModel: VehicleModel, coefficient: number) {
-    const angle = vehicleModel.state.angle + Math.PI / 2
+    const angle = vehicleModel.state.position.angle + Math.PI / 2
     const wheelRadius = vehicleModel.specs.wheelRadius * coefficient
     return BattleUtils.shiftedPosition(wheelPosition, wheelRadius, angle)
   },
@@ -53,14 +51,13 @@ export const VehicleUtils = {
   getGunEndPosition(vehicleModel: VehicleModel) {
     const vehiclePosition = vehicleModel.state.position
     const gunAngle = vehicleModel.state.gunAngle
-    const angle = vehicleModel.state.angle
     const gunLength = vehicleModel.config.gun.length
-    return BattleUtils.shiftedPosition(vehiclePosition, gunLength, gunAngle + angle)
+    return BattleUtils.shiftedPosition(vehiclePosition, gunLength, gunAngle + vehiclePosition.angle)
   },
 
   getSmallWheels(vehicleModel: VehicleModel) {
     const hullRadius = vehicleModel.specs.hullRadius
-    const angle = vehicleModel.state.angle
+    const angle = vehicleModel.state.position.angle
     const leftWheelBottom = this.getWheelBottomPosition(
         this.getLeftWheelPosition(vehicleModel),
         vehicleModel,
@@ -75,7 +72,7 @@ export const VehicleUtils = {
 
   calculateWheelVelocity(vehicleModel: VehicleModel, wheelCalculations: WheelCalculations): void {
     const vehicleVelocity = vehicleModel.state.velocity
-    const angle = vehicleModel.state.angle
+    const angle = vehicleModel.state.position.angle
     const angleVelocity = vehicleVelocity.angle * vehicleModel.specs.hullRadius
     const velocityX = vehicleVelocity.x + wheelCalculations.sign * angleVelocity * Math.sin(angle)
     const velocityY = vehicleVelocity.y - wheelCalculations.sign * angleVelocity * Math.cos(angle)

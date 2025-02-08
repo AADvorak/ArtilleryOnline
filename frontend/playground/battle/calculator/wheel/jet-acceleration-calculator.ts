@@ -13,7 +13,7 @@ export const JetAccelerationCalculator = {
     const jetSpecs = vehicleModel.config.jet
     const acceleration = jetSpecs.acceleration
     const direction = vehicleModel.state.movingDirection
-    const angle = vehicleModel.state.angle
+    const angle = vehicleModel.state.position.angle
 
     if (jetSpecs.type === JetType.VERTICAL) {
       this.calculateVertical(wheelCalculations, acceleration, angle, direction)
