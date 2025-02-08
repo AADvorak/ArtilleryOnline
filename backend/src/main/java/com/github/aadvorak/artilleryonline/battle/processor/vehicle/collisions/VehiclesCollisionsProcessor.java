@@ -25,7 +25,7 @@ public class VehiclesCollisionsProcessor {
 
     // todo may be, may be not
     private static void applyNextPositionsAndAngles(BattleCalculations battle) {
-        battle.getVehicles().forEach(VehicleCalculations::applyNextPositionAndAngle);
+        battle.getVehicles().forEach(VehicleCalculations::applyNextPosition);
     }
 
     private static void processCollisionsStep(BattleCalculations battle) {

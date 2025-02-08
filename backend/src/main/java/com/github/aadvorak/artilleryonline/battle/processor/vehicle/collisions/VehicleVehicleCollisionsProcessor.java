@@ -31,9 +31,9 @@ public class VehicleVehicleCollisionsProcessor {
         recalculateVehiclesVelocities(collision);
 
         collision.getPair().first().getVehicleCalculations()
-                .calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
+                .calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
         collision.getPair().second().getVehicleCalculations()
-                .calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
+                .calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
         collision.getPair().first().getVehicleCalculations().recalculateWheelsVelocities();
         collision.getPair().second().getVehicleCalculations().recalculateWheelsVelocities();
 

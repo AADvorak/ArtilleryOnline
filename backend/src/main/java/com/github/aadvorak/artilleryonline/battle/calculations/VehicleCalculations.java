@@ -85,7 +85,7 @@ public class VehicleCalculations implements Calculations<VehicleModel> {
                 .setY(wheel.getVelocity().getY() + wheelSign * angleVelocity * Math.cos(angle));
     }
 
-    public void applyNextPositionAndAngle() {
+    public void applyNextPosition() {
         model.getState().setPosition(nextPosition);
     }
 
@@ -95,7 +95,7 @@ public class VehicleCalculations implements Calculations<VehicleModel> {
         nextPosition.setY(nextPosition.getY() + move.getY());
     }
 
-    public void calculateNextPositionAndAngle(double timeStep) {
+    public void calculateNextPosition(double timeStep) {
         var position = model.getState().getPosition();
         var velocity = model.getState().getVelocity();
         setNextPosition(position.next(velocity, timeStep));

@@ -40,7 +40,7 @@ public class VehicleGroundCollisionsProcessor {
     private static void resolve(Collision collision, BattleCalculations battle) {
         recalculateVehicleVelocity(collision);
         collision.getPair().first().getVehicleCalculations()
-                .calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
+                .calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
         collision.getPair().first().getVehicleCalculations().recalculateWheelsVelocities();
         recalculateVehiclePosition(collision);
     }

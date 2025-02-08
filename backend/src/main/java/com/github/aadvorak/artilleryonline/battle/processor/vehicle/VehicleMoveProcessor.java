@@ -10,12 +10,12 @@ public class VehicleMoveProcessor {
     public static void processStep1(VehicleCalculations vehicle, BattleCalculations battle) {
         recalculateAcceleration(vehicle, battle);
         recalculateVelocity(vehicle, battle);
-        vehicle.calculateNextPositionAndAngle(battle.getModel().getCurrentTimeStepSecs());
+        vehicle.calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
         vehicle.recalculateWheelsVelocities();
     }
 
     public static void processStep2(VehicleCalculations vehicle) {
-        vehicle.applyNextPositionAndAngle();
+        vehicle.applyNextPosition();
         calculateOnGround(vehicle);
     }
 
