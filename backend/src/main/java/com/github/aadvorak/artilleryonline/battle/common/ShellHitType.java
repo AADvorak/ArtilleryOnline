@@ -17,9 +17,7 @@ public enum ShellHitType implements CompactSerializable {
     }
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeString(this.name());
-        return stream.toByteArray();
     }
 }

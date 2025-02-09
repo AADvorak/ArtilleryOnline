@@ -24,14 +24,12 @@ public class BattleResponse implements BattleUpdatesQueueElement, CompactSeriali
     private BattleStage battleStage;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeString(id);
         stream.writeSerializable(model);
         stream.writeLong(time);
         stream.writeInt(fps);
         stream.writeBoolean(paused);
         stream.writeSerializable(battleStage);
-        return stream.toByteArray();
     }
 }

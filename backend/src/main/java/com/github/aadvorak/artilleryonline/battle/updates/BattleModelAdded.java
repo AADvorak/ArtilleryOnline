@@ -43,11 +43,9 @@ public class BattleModelAdded implements CompactSerializable {
     }
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeCollectionOfSerializable(shells);
         stream.writeCollectionOfSerializable(explosions);
         stream.writeCollectionOfSerializable(missiles);
-        return stream.toByteArray();
     }
 }

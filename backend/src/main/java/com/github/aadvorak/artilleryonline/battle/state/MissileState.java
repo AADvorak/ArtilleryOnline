@@ -18,10 +18,8 @@ public class MissileState implements State, CompactSerializable {
     private BodyVelocity velocity = new BodyVelocity();
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeSerializable(position);
         stream.writeSerializable(velocity);
-        return stream.toByteArray();
     }
 }

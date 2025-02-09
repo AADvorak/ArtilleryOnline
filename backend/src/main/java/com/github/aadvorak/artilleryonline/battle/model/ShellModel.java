@@ -19,11 +19,9 @@ public class ShellModel extends GenericSpecsConfigStateModel<ShellSpecs, ShellCo
     private Long userId;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(id);
         stream.writeSerializable(getSpecs());
         stream.writeSerializable(getState());
-        return stream.toByteArray();
     }
 }

@@ -29,8 +29,7 @@ public class ShellSpecs implements Specs, CompactSerializable {
     private ShellType type;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(velocity);
         stream.writeDouble(damage);
         stream.writeDouble(radius);
@@ -38,6 +37,5 @@ public class ShellSpecs implements Specs, CompactSerializable {
         stream.writeDouble(mass);
         stream.writeDouble(caliber);
         stream.writeSerializable(type);
-        return stream.toByteArray();
     }
 }

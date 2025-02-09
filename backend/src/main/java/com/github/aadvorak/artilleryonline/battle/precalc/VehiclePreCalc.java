@@ -21,11 +21,9 @@ public class VehiclePreCalc implements CompactSerializable {
     private final double mass;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(wheelDistance);
         stream.writeDouble(wheelAngle);
         stream.writeDouble(mass);
-        return stream.toByteArray();
     }
 }

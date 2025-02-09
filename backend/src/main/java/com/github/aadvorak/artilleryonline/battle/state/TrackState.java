@@ -16,10 +16,8 @@ public class TrackState implements State, CompactSerializable {
     private double repairRemainTime;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeBoolean(broken);
         stream.writeDouble(repairRemainTime);
-        return stream.toByteArray();
     }
 }

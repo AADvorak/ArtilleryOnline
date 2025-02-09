@@ -24,12 +24,10 @@ public class MissileModel extends GenericSpecsConfigStateModel<MissileSpecs, Mis
     private final TimeoutUpdate update = new TimeoutUpdate();
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(id);
         stream.writeInt(vehicleId);
         stream.writeSerializable(getSpecs());
         stream.writeSerializable(getState());
-        return stream.toByteArray();
     }
 }

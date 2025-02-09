@@ -19,10 +19,8 @@ public class RoomStateUpdate implements CompactSerializable {
     private final List<Double> groundLinePart = new ArrayList<>();
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(begin);
         stream.writeCollection(groundLinePart, stream::writeDouble);
-        return stream.toByteArray();
     }
 }

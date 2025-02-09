@@ -18,10 +18,8 @@ public class ShellState implements State, CompactSerializable {
     private Velocity velocity;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeSerializable(position);
         stream.writeSerializable(velocity);
-        return stream.toByteArray();
     }
 }

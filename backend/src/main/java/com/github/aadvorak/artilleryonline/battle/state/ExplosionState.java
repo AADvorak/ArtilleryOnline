@@ -19,11 +19,9 @@ public class ExplosionState implements State, CompactSerializable {
     private Position position;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(time);
         stream.writeDouble(radius);
         stream.writeSerializable(position);
-        return stream.toByteArray();
     }
 }

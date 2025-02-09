@@ -41,8 +41,7 @@ public class VehicleState implements State, CompactSerializable {
     private boolean onGround;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeSerializable(position);
         stream.writeSerializable(velocity);
         stream.writeSerializable(movingDirection);
@@ -55,6 +54,5 @@ public class VehicleState implements State, CompactSerializable {
         stream.writeSerializable(trackState);
         stream.writeSerializable(jetState);
         stream.writeBoolean(onGround);
-        return stream.toByteArray();
     }
 }

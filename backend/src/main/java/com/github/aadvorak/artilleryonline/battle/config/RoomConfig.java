@@ -16,10 +16,8 @@ public class RoomConfig implements Config, CompactSerializable {
     private int groundTexture;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(background);
         stream.writeInt(groundTexture);
-        return stream.toByteArray();
     }
 }

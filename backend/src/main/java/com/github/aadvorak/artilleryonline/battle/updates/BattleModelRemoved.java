@@ -49,12 +49,10 @@ public class BattleModelRemoved implements CompactSerializable {
     }
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeCollection(shellIds, stream::writeInt);
         stream.writeCollection(explosionIds, stream::writeInt);
         stream.writeCollection(missileIds, stream::writeInt);
         stream.writeCollection(vehicleKeys, stream::writeString);
-        return stream.toByteArray();
     }
 }

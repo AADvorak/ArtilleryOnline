@@ -32,8 +32,7 @@ public class BattleUpdateResponse implements BattleUpdatesQueueElement, CompactS
     private BattleModelEvents events;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeString(id);
         stream.writeLong(time);
         stream.writeInt(fps);
@@ -41,6 +40,5 @@ public class BattleUpdateResponse implements BattleUpdatesQueueElement, CompactS
         stream.writeSerializable(state);
         stream.writeSerializable(updates);
         stream.writeSerializable(events);
-        return stream.toByteArray();
     }
 }

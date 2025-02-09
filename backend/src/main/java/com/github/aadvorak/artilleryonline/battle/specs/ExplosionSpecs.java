@@ -16,10 +16,8 @@ public class ExplosionSpecs implements Specs, CompactSerializable {
     private double radius;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(duration);
         stream.writeDouble(radius);
-        return stream.toByteArray();
     }
 }

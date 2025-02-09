@@ -25,14 +25,12 @@ public class VehicleModel extends GenericSpecsConfigStateModel<VehicleSpecs, Veh
     private boolean updated = false;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(id);
         stream.writeSerializable(getSpecs());
         stream.writeSerializable(preCalc);
         stream.writeSerializable(getConfig());
         stream.writeSerializable(getState());
         stream.writeBoolean(updated);
-        return stream.toByteArray();
     }
 }

@@ -16,10 +16,8 @@ public class JetState implements State, CompactSerializable {
     private boolean active;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(volume);
         stream.writeBoolean(active);
-        return stream.toByteArray();
     }
 }

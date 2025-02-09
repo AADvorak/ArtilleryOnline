@@ -22,13 +22,11 @@ public class GunState implements State, CompactSerializable {
     private boolean triggerPushed;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeString(loadedShell);
         stream.writeString(selectedShell);
         stream.writeString(loadingShell);
         stream.writeDouble(loadRemainTime);
         stream.writeBoolean(triggerPushed);
-        return stream.toByteArray();
     }
 }

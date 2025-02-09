@@ -25,11 +25,9 @@ public class BattleModelStateResponse implements CompactSerializable {
     private Map<Integer, MissileState> missiles;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeStringMapOfSerializable(vehicles);
         stream.writeIntegerMapOfSerializable(shells);
         stream.writeIntegerMapOfSerializable(missiles);
-        return stream.toByteArray();
     }
 }

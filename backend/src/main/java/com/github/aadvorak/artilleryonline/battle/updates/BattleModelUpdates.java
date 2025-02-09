@@ -84,11 +84,9 @@ public class BattleModelUpdates implements CompactSerializable {
     }
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeSerializable(added);
         stream.writeSerializable(removed);
         stream.writeCollectionOfSerializable(roomStateUpdates);
-        return stream.toByteArray();
     }
 }

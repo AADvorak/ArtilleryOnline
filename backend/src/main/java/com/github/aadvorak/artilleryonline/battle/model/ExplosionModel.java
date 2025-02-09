@@ -15,11 +15,9 @@ public class ExplosionModel extends GenericSpecsConfigStateModel<ExplosionSpecs,
     private int id;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(id);
         stream.writeSerializable(getSpecs());
         stream.writeSerializable(getState());
-        return stream.toByteArray();
     }
 }

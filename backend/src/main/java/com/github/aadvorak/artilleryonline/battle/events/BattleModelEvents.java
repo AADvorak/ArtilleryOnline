@@ -46,11 +46,9 @@ public class BattleModelEvents implements CompactSerializable {
     }
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeCollectionOfSerializable(hits);
         stream.writeCollectionOfSerializable(collides);
         stream.writeCollectionOfSerializable(ricochets);
-        return stream.toByteArray();
     }
 }

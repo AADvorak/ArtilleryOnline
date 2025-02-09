@@ -16,10 +16,8 @@ public class ShellHitEvent implements CompactSerializable {
     private int shellId;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeSerializable(object);
         stream.writeInt(shellId);
-        return stream.toByteArray();
     }
 }

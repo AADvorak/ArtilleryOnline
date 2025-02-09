@@ -23,13 +23,11 @@ public class JetSpecs implements CompactSerializable {
     private JetType type;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(capacity);
         stream.writeDouble(consumption);
         stream.writeDouble(regeneration);
         stream.writeDouble(acceleration);
         stream.writeSerializable(type);
-        return stream.toByteArray();
     }
 }

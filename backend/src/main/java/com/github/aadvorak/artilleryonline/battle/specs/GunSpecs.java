@@ -24,13 +24,11 @@ public class GunSpecs implements Specs, CompactSerializable {
     private Map<String, ShellSpecs> availableShells;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(loadTime);
         stream.writeDouble(rotationVelocity);
         stream.writeDouble(length);
         stream.writeDouble(caliber);
         stream.writeStringMapOfSerializable(availableShells);
-        return stream.toByteArray();
     }
 }

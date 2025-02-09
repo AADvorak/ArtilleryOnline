@@ -14,9 +14,7 @@ public class RicochetEvent implements CompactSerializable {
     private int shellId;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(shellId);
-        return stream.toByteArray();
     }
 }

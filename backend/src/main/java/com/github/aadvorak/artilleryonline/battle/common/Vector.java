@@ -24,10 +24,8 @@ public interface Vector extends CompactSerializable {
     }
 
     @Override
-    default byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    default void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(getX());
         stream.writeDouble(getY());
-        return stream.toByteArray();
     }
 }

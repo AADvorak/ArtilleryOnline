@@ -17,10 +17,6 @@ public class ByteArrayOutputStreamWrapper {
         stream = new ByteArrayOutputStream();
     }
 
-    public void writeBytes(byte[] bytes) {
-        stream.writeBytes(bytes);
-    }
-
     public void writeBoolean(boolean value) {
         stream.write(value? 1 : 0);
     }
@@ -120,7 +116,7 @@ public class ByteArrayOutputStreamWrapper {
     }
 
     private void writeSerializableValue(CompactSerializable serializable) {
-        writeBytes(serializable.serialize());
+        serializable.writeToStream(this);
     }
 
     private void writeNullFlag(Object obj) {

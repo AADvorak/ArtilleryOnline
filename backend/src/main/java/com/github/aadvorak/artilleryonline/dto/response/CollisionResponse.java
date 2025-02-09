@@ -24,10 +24,8 @@ public class CollisionResponse implements CompactSerializable {
     }
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeNullable(vehicleId, stream::writeInt);
         stream.writeSerializable(type);
-        return stream.toByteArray();
     }
 }

@@ -30,8 +30,7 @@ public class MissileSpecs implements Specs, CompactSerializable {
     private double length;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(pushingAcceleration);
         stream.writeDouble(correctingAccelerationCoefficient);
         stream.writeDouble(minCorrectingVelocity);
@@ -41,6 +40,5 @@ public class MissileSpecs implements Specs, CompactSerializable {
         stream.writeDouble(mass);
         stream.writeDouble(caliber);
         stream.writeDouble(length);
-        return stream.toByteArray();
     }
 }

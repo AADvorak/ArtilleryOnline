@@ -17,10 +17,8 @@ public class VehicleCollideEvent implements CompactSerializable {
     private int vehicleId;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeSerializable(object);
         stream.writeInt(vehicleId);
-        return stream.toByteArray();
     }
 }

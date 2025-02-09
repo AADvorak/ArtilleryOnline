@@ -25,14 +25,12 @@ public class BattleModelResponse implements CompactSerializable {
     private boolean updated;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeIntegerMapOfSerializable(shells);
         stream.writeIntegerMapOfSerializable(missiles);
         stream.writeIntegerMapOfSerializable(explosions);
         stream.writeSerializable(room);
         stream.writeStringMapOfSerializable(vehicles);
         stream.writeBoolean(updated);
-        return stream.toByteArray();
     }
 }

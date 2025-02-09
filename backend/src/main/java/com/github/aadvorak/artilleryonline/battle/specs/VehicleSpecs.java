@@ -48,8 +48,7 @@ public class VehicleSpecs implements Specs, CompactSerializable {
     private double collisionDamageCoefficient;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeString(name);
         stream.writeDouble(hitPoints);
         stream.writeInt(ammo);
@@ -67,6 +66,5 @@ public class VehicleSpecs implements Specs, CompactSerializable {
         stream.writeStringMapOfSerializable(availableMissiles);
         stream.writeDouble(minCollisionDamageImpact);
         stream.writeDouble(collisionDamageCoefficient);
-        return stream.toByteArray();
     }
 }

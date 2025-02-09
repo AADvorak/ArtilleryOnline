@@ -12,11 +12,9 @@ public interface BodyVector extends CompactSerializable {
     double getAngle();
 
     @Override
-    default byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    default void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(getX());
         stream.writeDouble(getY());
         stream.writeDouble(getAngle());
-        return stream.toByteArray();
     }
 }

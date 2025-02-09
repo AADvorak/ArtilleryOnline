@@ -16,9 +16,7 @@ public enum BattleStage implements CompactSerializable {
     private final long maxTime;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeString(this.name());
-        return stream.toByteArray();
     }
 }

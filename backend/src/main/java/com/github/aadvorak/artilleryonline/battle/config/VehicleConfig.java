@@ -26,13 +26,11 @@ public class VehicleConfig implements Config, CompactSerializable {
     private String color;
 
     @Override
-    public byte[] serialize() {
-        var stream = new ByteArrayOutputStreamWrapper();
+    public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeSerializable(gun);
         stream.writeSerializable(jet);
         stream.writeMap(ammo, stream::writeString, stream::writeInt);
         stream.writeMap(missiles, stream::writeString, stream::writeInt);
         stream.writeString(color);
-        return stream.toByteArray();
     }
 }

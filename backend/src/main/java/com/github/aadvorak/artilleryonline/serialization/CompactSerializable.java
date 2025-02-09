@@ -1,5 +1,11 @@
 package com.github.aadvorak.artilleryonline.serialization;
 
 public interface CompactSerializable {
-    byte[] serialize();
+    void writeToStream(ByteArrayOutputStreamWrapper stream);
+
+    default byte[] serialize() {
+        var stream = new ByteArrayOutputStreamWrapper();
+        writeToStream(stream);
+        return stream.toByteArray();
+    }
 }
