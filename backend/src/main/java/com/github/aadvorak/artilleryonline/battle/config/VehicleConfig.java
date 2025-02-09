@@ -27,10 +27,10 @@ public class VehicleConfig implements Config, CompactSerializable {
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
-        stream.writeSerializable(gun);
-        stream.writeSerializable(jet);
+        stream.writeSerializableValue(gun);
+        stream.writeSerializableValue(jet);
         stream.writeMap(ammo, stream::writeString, stream::writeInt);
         stream.writeMap(missiles, stream::writeString, stream::writeInt);
-        stream.writeString(color);
+        stream.writeNullable(color, stream::writeString);
     }
 }

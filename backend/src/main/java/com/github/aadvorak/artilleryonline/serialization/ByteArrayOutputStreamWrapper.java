@@ -115,7 +115,7 @@ public class ByteArrayOutputStreamWrapper {
         return stream.toByteArray();
     }
 
-    private void writeSerializableValue(CompactSerializable serializable) {
+    public void writeSerializableValue(CompactSerializable serializable) {
         serializable.writeToStream(this);
     }
 

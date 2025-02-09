@@ -4,6 +4,7 @@ export interface ShellSpecs {
   velocity: number
   damage: number
   radius: number
+  mass: number
   caliber: number
   type: ShellType
 }
@@ -29,6 +30,14 @@ export interface AvailableGuns {
   [key: string]: GunSpecs
 }
 
+export interface AvailableJets {
+  [key: string]: JetSpecs
+}
+
+export interface AvailableMissiles {
+  [key: string]: MissileSpecs
+}
+
 export interface RoomSpecs {
   leftBottom: Position
   rightTop: Position
@@ -41,16 +50,21 @@ export interface RoomSpecs {
 }
 
 export interface VehicleSpecs {
-  acceleration: number;
+  name: string
+  acceleration: number
   hitPoints: number
   ammo: number
+  missiles: number
   minAngle: number
   maxAngle: number
-  movingVelocity: number
   radius: number
   wheelRadius: number
   hullRadius: number
+  trackRepairTime: number
+  minTrackHitCaliber: number
   availableGuns: AvailableGuns
+  availableJets: AvailableJets
+  availableMissiles: AvailableMissiles
 }
 
 export interface JetSpecs {
