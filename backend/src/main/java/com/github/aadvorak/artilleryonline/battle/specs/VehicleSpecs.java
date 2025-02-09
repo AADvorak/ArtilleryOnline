@@ -1,5 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.specs;
 
+import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
+import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -9,7 +11,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class VehicleSpecs implements Specs {
+public class VehicleSpecs implements Specs, CompactSerializable {
 
     private String name;
 
@@ -44,4 +46,27 @@ public class VehicleSpecs implements Specs {
     private double minCollisionDamageImpact;
 
     private double collisionDamageCoefficient;
+
+    @Override
+    public byte[] serialize() {
+        var stream = new ByteArrayOutputStreamWrapper();
+        stream.writeString(name);
+        stream.writeDouble(hitPoints);
+        stream.writeInt(ammo);
+        stream.writeInt(missiles);
+        stream.writeDouble(minAngle);
+        stream.writeDouble(maxAngle);
+        stream.writeDouble(acceleration);
+        stream.writeDouble(radius);
+        stream.writeDouble(wheelRadius);
+        stream.writeDouble(hullRadius);
+        stream.writeDouble(trackRepairTime);
+        stream.writeDouble(minTrackHitCaliber);
+        stream.writeStringMapOfSerializable(availableGuns);
+        stream.writeStringMapOfSerializable(availableJets);
+        stream.writeStringMapOfSerializable(availableMissiles);
+        stream.writeDouble(minCollisionDamageImpact);
+        stream.writeDouble(collisionDamageCoefficient);
+        return stream.toByteArray();
+    }
 }

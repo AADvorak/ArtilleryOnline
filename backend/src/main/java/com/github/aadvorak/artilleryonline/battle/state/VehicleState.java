@@ -1,6 +1,8 @@
 package com.github.aadvorak.artilleryonline.battle.state;
 
 import com.github.aadvorak.artilleryonline.battle.common.*;
+import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
+import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -10,13 +12,13 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class VehicleState implements State {
+public class VehicleState implements State, CompactSerializable {
 
     private BodyPosition position = new BodyPosition();
 
-    private MovingDirection movingDirection;
-
     private BodyVelocity velocity = new BodyVelocity();
+
+    private MovingDirection movingDirection;
 
     private BodyAcceleration acceleration = new BodyAcceleration();
 
@@ -37,4 +39,22 @@ public class VehicleState implements State {
     private JetState jetState;
 
     private boolean onGround;
+
+    @Override
+    public byte[] serialize() {
+        var stream = new ByteArrayOutputStreamWrapper();
+        stream.writeSerializable(position);
+        stream.writeSerializable(velocity);
+        stream.writeSerializable(movingDirection);
+        stream.writeDouble(gunAngle);
+        stream.writeSerializable(gunRotatingDirection);
+        stream.writeDouble(hitPoints);
+        stream.writeMap(ammo, stream::writeString, stream::writeInt);
+        stream.writeMap(missiles, stream::writeString, stream::writeInt);
+        stream.writeSerializable(gunState);
+        stream.writeSerializable(trackState);
+        stream.writeSerializable(jetState);
+        stream.writeBoolean(onGround);
+        return stream.toByteArray();
+    }
 }

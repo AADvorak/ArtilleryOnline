@@ -2,6 +2,8 @@ package com.github.aadvorak.artilleryonline.battle.events;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
+import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -9,7 +11,7 @@ import java.util.List;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BattleModelEvents {
+public class BattleModelEvents implements CompactSerializable {
 
     private List<ShellHitEvent> hits;
 
@@ -41,5 +43,14 @@ public class BattleModelEvents {
     @JsonIgnore
     public boolean isEmpty() {
         return hits == null && collides == null && ricochets == null;
+    }
+
+    @Override
+    public byte[] serialize() {
+        var stream = new ByteArrayOutputStreamWrapper();
+        stream.writeCollectionOfSerializable(hits);
+        stream.writeCollectionOfSerializable(collides);
+        stream.writeCollectionOfSerializable(ricochets);
+        return stream.toByteArray();
     }
 }

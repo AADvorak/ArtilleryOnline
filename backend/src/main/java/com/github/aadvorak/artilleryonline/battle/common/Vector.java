@@ -1,6 +1,9 @@
 package com.github.aadvorak.artilleryonline.battle.common;
 
-public interface Vector {
+import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
+import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
+
+public interface Vector extends CompactSerializable {
 
     double getX();
 
@@ -18,5 +21,13 @@ public interface Vector {
 
     default double angle() {
         return Math.atan2(getY(), getX());
+    }
+
+    @Override
+    default byte[] serialize() {
+        var stream = new ByteArrayOutputStreamWrapper();
+        stream.writeDouble(getX());
+        stream.writeDouble(getY());
+        return stream.toByteArray();
     }
 }

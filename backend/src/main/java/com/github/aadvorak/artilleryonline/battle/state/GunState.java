@@ -1,5 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.state;
 
+import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
+import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -7,7 +9,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class GunState implements State {
+public class GunState implements State, CompactSerializable {
 
     private String loadedShell;
 
@@ -18,4 +20,15 @@ public class GunState implements State {
     private double loadRemainTime;
 
     private boolean triggerPushed;
+
+    @Override
+    public byte[] serialize() {
+        var stream = new ByteArrayOutputStreamWrapper();
+        stream.writeString(loadedShell);
+        stream.writeString(selectedShell);
+        stream.writeString(loadingShell);
+        stream.writeDouble(loadRemainTime);
+        stream.writeBoolean(triggerPushed);
+        return stream.toByteArray();
+    }
 }

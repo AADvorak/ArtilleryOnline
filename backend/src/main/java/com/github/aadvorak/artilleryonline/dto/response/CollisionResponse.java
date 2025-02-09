@@ -2,6 +2,8 @@ package com.github.aadvorak.artilleryonline.dto.response;
 
 import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
+import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
+import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -9,7 +11,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class CollisionResponse {
+public class CollisionResponse implements CompactSerializable {
 
     private Integer vehicleId;
 
@@ -19,5 +21,13 @@ public class CollisionResponse {
         return new CollisionResponse()
                 .setType(collision.getType())
                 .setVehicleId(collision.getVehicleId());
+    }
+
+    @Override
+    public byte[] serialize() {
+        var stream = new ByteArrayOutputStreamWrapper();
+        stream.writeNullable(vehicleId, stream::writeInt);
+        stream.writeSerializable(type);
+        return stream.toByteArray();
     }
 }

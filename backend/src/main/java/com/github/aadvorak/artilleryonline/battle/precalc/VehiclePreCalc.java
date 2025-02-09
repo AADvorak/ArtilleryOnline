@@ -1,10 +1,12 @@
 package com.github.aadvorak.artilleryonline.battle.precalc;
 
 import com.github.aadvorak.artilleryonline.battle.specs.VehicleSpecs;
+import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
+import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
 
 @Getter
-public class VehiclePreCalc {
+public class VehiclePreCalc implements CompactSerializable {
 
     public VehiclePreCalc(VehicleSpecs specs) {
         wheelDistance = Math.sqrt(Math.pow(specs.getWheelRadius(), 2) + Math.pow(specs.getHullRadius(), 2));
@@ -17,4 +19,13 @@ public class VehiclePreCalc {
     private final double wheelAngle;
 
     private final double mass;
+
+    @Override
+    public byte[] serialize() {
+        var stream = new ByteArrayOutputStreamWrapper();
+        stream.writeDouble(wheelDistance);
+        stream.writeDouble(wheelAngle);
+        stream.writeDouble(mass);
+        return stream.toByteArray();
+    }
 }

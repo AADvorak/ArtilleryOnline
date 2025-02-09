@@ -1,6 +1,8 @@
 package com.github.aadvorak.artilleryonline.dto.response;
 
 import com.github.aadvorak.artilleryonline.battle.model.*;
+import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
+import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +10,7 @@ import java.util.Map;
 
 @Getter
 @Setter
-public class BattleModelResponse {
+public class BattleModelResponse implements CompactSerializable {
 
     private Map<Integer, ShellModel> shells;
 
@@ -21,4 +23,16 @@ public class BattleModelResponse {
     private Map<String, VehicleModel> vehicles;
 
     private boolean updated;
+
+    @Override
+    public byte[] serialize() {
+        var stream = new ByteArrayOutputStreamWrapper();
+        stream.writeIntegerMapOfSerializable(shells);
+        stream.writeIntegerMapOfSerializable(missiles);
+        stream.writeIntegerMapOfSerializable(explosions);
+        stream.writeSerializable(room);
+        stream.writeStringMapOfSerializable(vehicles);
+        stream.writeBoolean(updated);
+        return stream.toByteArray();
+    }
 }

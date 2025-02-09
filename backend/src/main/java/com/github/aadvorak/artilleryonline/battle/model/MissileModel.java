@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.aadvorak.artilleryonline.battle.config.MissileConfig;
 import com.github.aadvorak.artilleryonline.battle.specs.MissileSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.MissileState;
+import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
+import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class MissileModel extends GenericSpecsConfigStateModel<MissileSpecs, MissileConfig, MissileState> {
+public class MissileModel extends GenericSpecsConfigStateModel<MissileSpecs, MissileConfig, MissileState> implements CompactSerializable {
 
     private int id;
 
@@ -20,4 +22,14 @@ public class MissileModel extends GenericSpecsConfigStateModel<MissileSpecs, Mis
 
     @JsonIgnore
     private final TimeoutUpdate update = new TimeoutUpdate();
+
+    @Override
+    public byte[] serialize() {
+        var stream = new ByteArrayOutputStreamWrapper();
+        stream.writeInt(id);
+        stream.writeInt(vehicleId);
+        stream.writeSerializable(getSpecs());
+        stream.writeSerializable(getState());
+        return stream.toByteArray();
+    }
 }

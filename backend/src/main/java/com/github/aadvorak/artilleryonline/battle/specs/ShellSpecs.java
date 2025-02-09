@@ -1,6 +1,8 @@
 package com.github.aadvorak.artilleryonline.battle.specs;
 
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
+import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
+import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -8,7 +10,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class ShellSpecs implements Specs {
+public class ShellSpecs implements Specs, CompactSerializable {
 
     private double velocity;
 
@@ -25,4 +27,17 @@ public class ShellSpecs implements Specs {
     private double caliber;
 
     private ShellType type;
+
+    @Override
+    public byte[] serialize() {
+        var stream = new ByteArrayOutputStreamWrapper();
+        stream.writeDouble(velocity);
+        stream.writeDouble(damage);
+        stream.writeDouble(radius);
+        stream.writeDouble(pushCoefficient);
+        stream.writeDouble(mass);
+        stream.writeDouble(caliber);
+        stream.writeSerializable(type);
+        return stream.toByteArray();
+    }
 }

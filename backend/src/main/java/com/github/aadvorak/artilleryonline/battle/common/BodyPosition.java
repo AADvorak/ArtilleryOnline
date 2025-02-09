@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class BodyPosition {
+public class BodyPosition implements BodyVector {
 
     private double x;
 

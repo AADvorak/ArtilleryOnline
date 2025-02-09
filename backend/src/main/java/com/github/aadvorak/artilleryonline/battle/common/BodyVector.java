@@ -3,13 +3,20 @@ package com.github.aadvorak.artilleryonline.battle.common;
 import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 
-public enum MovingDirection implements CompactSerializable {
-    LEFT, RIGHT;
+public interface BodyVector extends CompactSerializable {
+
+    double getX();
+
+    double getY();
+
+    double getAngle();
 
     @Override
-    public byte[] serialize() {
+    default byte[] serialize() {
         var stream = new ByteArrayOutputStreamWrapper();
-        stream.writeString(this.name());
+        stream.writeDouble(getX());
+        stream.writeDouble(getY());
+        stream.writeDouble(getAngle());
         return stream.toByteArray();
     }
 }

@@ -1,5 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.specs;
 
+import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
+import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -9,7 +11,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class GunSpecs implements Specs {
+public class GunSpecs implements Specs, CompactSerializable {
 
     private double loadTime;
 
@@ -20,4 +22,15 @@ public class GunSpecs implements Specs {
     private double caliber;
 
     private Map<String, ShellSpecs> availableShells;
+
+    @Override
+    public byte[] serialize() {
+        var stream = new ByteArrayOutputStreamWrapper();
+        stream.writeDouble(loadTime);
+        stream.writeDouble(rotationVelocity);
+        stream.writeDouble(length);
+        stream.writeDouble(caliber);
+        stream.writeStringMapOfSerializable(availableShells);
+        return stream.toByteArray();
+    }
 }

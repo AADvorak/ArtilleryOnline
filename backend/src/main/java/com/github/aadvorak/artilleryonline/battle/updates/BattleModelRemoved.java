@@ -1,6 +1,8 @@
 package com.github.aadvorak.artilleryonline.battle.updates;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
+import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -8,7 +10,7 @@ import java.util.List;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BattleModelRemoved {
+public class BattleModelRemoved implements CompactSerializable {
 
     private List<Integer> shellIds;
 
@@ -44,5 +46,15 @@ public class BattleModelRemoved {
             vehicleKeys = new ArrayList<>();
         }
         vehicleKeys.add(vehicleKey);
+    }
+
+    @Override
+    public byte[] serialize() {
+        var stream = new ByteArrayOutputStreamWrapper();
+        stream.writeCollection(shellIds, stream::writeInt);
+        stream.writeCollection(explosionIds, stream::writeInt);
+        stream.writeCollection(missileIds, stream::writeInt);
+        stream.writeCollection(vehicleKeys, stream::writeString);
+        return stream.toByteArray();
     }
 }

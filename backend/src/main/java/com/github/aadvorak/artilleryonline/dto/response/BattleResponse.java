@@ -2,12 +2,14 @@ package com.github.aadvorak.artilleryonline.dto.response;
 
 import com.github.aadvorak.artilleryonline.battle.BattleStage;
 import com.github.aadvorak.artilleryonline.collection.BattleUpdatesQueueElement;
+import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
+import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class BattleResponse implements BattleUpdatesQueueElement {
+public class BattleResponse implements BattleUpdatesQueueElement, CompactSerializable {
 
     private String id;
 
@@ -20,4 +22,16 @@ public class BattleResponse implements BattleUpdatesQueueElement {
     private boolean paused;
 
     private BattleStage battleStage;
+
+    @Override
+    public byte[] serialize() {
+        var stream = new ByteArrayOutputStreamWrapper();
+        stream.writeString(id);
+        stream.writeSerializable(model);
+        stream.writeLong(time);
+        stream.writeInt(fps);
+        stream.writeBoolean(paused);
+        stream.writeSerializable(battleStage);
+        return stream.toByteArray();
+    }
 }

@@ -1,6 +1,8 @@
 package com.github.aadvorak.artilleryonline.battle.specs;
 
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
+import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -8,7 +10,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class RoomSpecs implements Specs {
+public class RoomSpecs implements Specs, CompactSerializable {
 
     private Position leftBottom;
 
@@ -25,4 +27,18 @@ public class RoomSpecs implements Specs {
     private double airFrictionCoefficient;
 
     private double groundMaxDepth;
+
+    @Override
+    public byte[] serialize() {
+        var stream = new ByteArrayOutputStreamWrapper();
+        stream.writeSerializable(leftBottom);
+        stream.writeSerializable(rightTop);
+        stream.writeDouble(step);
+        stream.writeDouble(gravityAcceleration);
+        stream.writeDouble(groundReactionCoefficient);
+        stream.writeDouble(groundFrictionCoefficient);
+        stream.writeDouble(airFrictionCoefficient);
+        stream.writeDouble(groundMaxDepth);
+        return stream.toByteArray();
+    }
 }

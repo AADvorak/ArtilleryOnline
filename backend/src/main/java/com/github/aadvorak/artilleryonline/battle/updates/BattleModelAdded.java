@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.aadvorak.artilleryonline.battle.model.ExplosionModel;
 import com.github.aadvorak.artilleryonline.battle.model.MissileModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
+import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
+import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -11,7 +13,7 @@ import java.util.List;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BattleModelAdded {
+public class BattleModelAdded implements CompactSerializable {
 
     private List<ShellModel> shells;
 
@@ -38,5 +40,14 @@ public class BattleModelAdded {
             missiles = new ArrayList<>();
         }
         missiles.add(missile);
+    }
+
+    @Override
+    public byte[] serialize() {
+        var stream = new ByteArrayOutputStreamWrapper();
+        stream.writeCollectionOfSerializable(shells);
+        stream.writeCollectionOfSerializable(explosions);
+        stream.writeCollectionOfSerializable(missiles);
+        return stream.toByteArray();
     }
 }
