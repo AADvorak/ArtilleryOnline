@@ -22,6 +22,6 @@ public class ExplosionState implements State, CompactSerializable {
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(time);
         stream.writeDouble(radius);
-        stream.writeSerializable(position);
+        stream.writeSerializableValue(position);
     }
 }

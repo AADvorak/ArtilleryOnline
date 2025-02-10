@@ -42,8 +42,8 @@ public class VehicleState implements State, CompactSerializable {
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
-        stream.writeSerializable(position);
-        stream.writeSerializable(velocity);
+        stream.writeSerializableValue(position);
+        stream.writeSerializableValue(velocity);
         stream.writeSerializable(movingDirection);
         stream.writeDouble(gunAngle);
         stream.writeSerializable(gunRotatingDirection);

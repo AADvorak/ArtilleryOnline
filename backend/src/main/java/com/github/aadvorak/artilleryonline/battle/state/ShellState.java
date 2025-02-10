@@ -19,7 +19,7 @@ public class ShellState implements State, CompactSerializable {
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
-        stream.writeSerializable(position);
-        stream.writeSerializable(velocity);
+        stream.writeSerializableValue(position);
+        stream.writeSerializableValue(velocity);
     }
 }
