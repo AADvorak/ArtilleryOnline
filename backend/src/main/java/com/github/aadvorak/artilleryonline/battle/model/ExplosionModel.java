@@ -17,7 +17,7 @@ public class ExplosionModel extends GenericSpecsConfigStateModel<ExplosionSpecs,
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(id);
-        stream.writeSerializable(getSpecs());
-        stream.writeSerializable(getState());
+        stream.writeSerializableValue(getSpecs());
+        stream.writeSerializableValue(getState());
     }
 }

@@ -27,10 +27,9 @@ public class VehicleModel extends GenericSpecsConfigStateModel<VehicleSpecs, Veh
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(id);
-        stream.writeSerializable(getSpecs());
-        stream.writeSerializable(preCalc);
-        stream.writeSerializable(getConfig());
-        stream.writeSerializable(getState());
-        stream.writeBoolean(updated);
+        stream.writeSerializableValue(getSpecs());
+        stream.writeSerializableValue(preCalc);
+        stream.writeSerializableValue(getConfig());
+        stream.writeSerializableValue(getState());
     }
 }

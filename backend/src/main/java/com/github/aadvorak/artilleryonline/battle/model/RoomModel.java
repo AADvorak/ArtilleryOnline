@@ -9,8 +9,8 @@ import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 public class RoomModel extends GenericSpecsConfigStateModel<RoomSpecs, RoomConfig, RoomState> implements CompactSerializable {
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
-        stream.writeSerializable(getSpecs());
-        stream.writeSerializable(getConfig());
-        stream.writeSerializable(getState());
+        stream.writeSerializableValue(getSpecs());
+        stream.writeSerializableValue(getConfig());
+        stream.writeSerializableValue(getState());
     }
 }

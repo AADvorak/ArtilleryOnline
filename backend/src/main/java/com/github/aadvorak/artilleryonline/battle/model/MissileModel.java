@@ -27,7 +27,7 @@ public class MissileModel extends GenericSpecsConfigStateModel<MissileSpecs, Mis
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(id);
         stream.writeInt(vehicleId);
-        stream.writeSerializable(getSpecs());
-        stream.writeSerializable(getState());
+        stream.writeSerializableValue(getSpecs());
+        stream.writeSerializableValue(getState());
     }
 }

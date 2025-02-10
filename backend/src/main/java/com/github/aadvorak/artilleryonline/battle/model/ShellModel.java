@@ -21,7 +21,7 @@ public class ShellModel extends GenericSpecsConfigStateModel<ShellSpecs, ShellCo
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(id);
-        stream.writeSerializable(getSpecs());
-        stream.writeSerializable(getState());
+        stream.writeSerializableValue(getSpecs());
+        stream.writeSerializableValue(getState());
     }
 }
