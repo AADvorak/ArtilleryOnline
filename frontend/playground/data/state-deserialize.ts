@@ -62,7 +62,7 @@ export function deserializeMissileState(input: DeserializerInput): MissileState 
 }
 
 export function deserializeRoomState(input: DeserializerInput): RoomState {
-  const groundLine = DeserializerBase.readArray(input, DeserializerBase.readDouble)
+  const groundLine = DeserializerBase.readArray(input, DeserializerBase.readDouble)!
   return {groundLine}
 }
 
@@ -93,9 +93,9 @@ export function deserializeVehicleState(input: DeserializerInput): VehicleState 
   const hitPoints = DeserializerBase.readDouble(input)
   const ammo = DeserializerBase.readMap(input, DeserializerBase.readString, DeserializerBase.readInt)!
   const missiles = DeserializerBase.readMap(input, DeserializerBase.readString, DeserializerBase.readInt)!
-  const gunState = DeserializerBase.readNullable(input, deserializeGunState)
-  const trackState = DeserializerBase.readNullable(input, deserializeTrackState)
-  const jetState = DeserializerBase.readNullable(input, deserializeJetState)
+  const gunState = DeserializerBase.readNullable(input, deserializeGunState)!
+  const trackState = DeserializerBase.readNullable(input, deserializeTrackState)!
+  const jetState = DeserializerBase.readNullable(input, deserializeJetState)!
   const onGround = DeserializerBase.readBoolean(input)
   return {
     position,
