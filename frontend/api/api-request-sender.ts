@@ -9,7 +9,7 @@ export class ApiRequestSender {
 
   async getBytes(path: string): Promise<ArrayBuffer> {
     const response = await fetch(this.BASE_PATH + path)
-    return await response.arrayBuffer()
+    return this.processResponseBinary(response)
   }
 
   async putJson<Request, Response>(path: string, body: Request): Promise<Response> {
@@ -42,7 +42,7 @@ export class ApiRequestSender {
       },
       body: JSON.stringify(body ? body : {})
     })
-    return await response.arrayBuffer()
+    return this.processResponseBinary(response)
   }
 
   async delete(path: string): Promise<void> {
@@ -60,6 +60,18 @@ export class ApiRequestSender {
     throw {
       status: response.status,
       error: json
+    }
+  }
+
+  async processResponseBinary(response: Response) {
+    const isBinary = response.headers.get('content-type')?.includes('application/octet-stream')
+    const arrayBuffer = isBinary ? await response.arrayBuffer() : null
+    if (response.ok && arrayBuffer) {
+      return arrayBuffer
+    }
+    throw {
+      status: response.status,
+      error: {}
     }
   }
 }

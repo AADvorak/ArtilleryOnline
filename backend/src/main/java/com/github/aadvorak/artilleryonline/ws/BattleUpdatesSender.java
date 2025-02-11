@@ -4,7 +4,6 @@ import com.github.aadvorak.artilleryonline.collection.BattleUpdatesQueue;
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
 import com.github.aadvorak.artilleryonline.dto.response.BattleUpdateResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +11,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BattleUpdatesSender {
 
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     public void start(BattleUpdatesQueue battleUpdatesQueue) {
         new Thread(() -> {
@@ -38,12 +36,12 @@ public class BattleUpdatesSender {
 
     private void sendBattleUpdate(BattleResponse battleResponse) {
         simpMessagingTemplate.convertAndSend("/topic/battle/"
-                        + battleResponse.getId(), battleResponse);
+                        + battleResponse.getId(), battleResponse.serialize());
     }
 
     private void sendBattleStateUpdate(BattleUpdateResponse battleUpdateResponse) {
         simpMessagingTemplate.convertAndSend("/topic/battle/"
-                + battleUpdateResponse.getId() + "/updates", battleUpdateResponse);
+                + battleUpdateResponse.getId() + "/updates", battleUpdateResponse.serialize());
     }
 
     private void sleep() {

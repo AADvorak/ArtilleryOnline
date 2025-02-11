@@ -5,6 +5,8 @@ import {useStompClientStore} from "~/stores/stomp-client";
 import type {StompSubscription} from "@stomp/stompjs";
 import {useEventSoundsPlayer} from "~/playground/composables/sound/event-sounds-player";
 import type {Player} from "~/playground/audio/player";
+import {deserializeBattle, deserializeBattleUpdate} from "~/playground/data/battle-deserialize";
+import {DeserializerInput} from "~/deserialization/deserializer-input";
 
 export function useBattleUpdater(player: Player) {
   const battleStore = useBattleStore()
@@ -17,13 +19,15 @@ export function useBattleUpdater(player: Player) {
   function subscribe() {
     const battle = battleStore.battle as Battle
     subscriptions.push(stompClientStore.client!.subscribe('/topic/battle/' + battle.id, function (msgOut) {
-      const battle = JSON.parse(msgOut.body) as Battle
+      const battleBinary = msgOut.binaryBody.buffer
+      const battle = deserializeBattle(new DeserializerInput(battleBinary))
       if (battle) {
         updateBattle(battle)
       }
     }))
     subscriptions.push(stompClientStore.client!.subscribe('/topic/battle/' + battle.id + '/updates', function (msgOut) {
-      const battleUpdate = JSON.parse(msgOut.body) as BattleUpdate
+      const battleUpdateBinary = msgOut.binaryBody.buffer
+      const battleUpdate = deserializeBattleUpdate(new DeserializerInput(battleUpdateBinary))
       if (battleUpdate) {
         updateBattleState(battleUpdate)
       }

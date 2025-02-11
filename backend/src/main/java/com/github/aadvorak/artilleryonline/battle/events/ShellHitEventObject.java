@@ -19,6 +19,6 @@ public class ShellHitEventObject implements CompactSerializable {
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeNullable(vehicleId, stream::writeInt);
-        stream.writeSerializable(type);
+        stream.writeSerializableValue(type);
     }
 }
