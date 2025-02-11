@@ -4,12 +4,13 @@ import {ApiRequestSender} from "~/api/api-request-sender";
 import {useBattleStore} from "~/stores/battle";
 import {useQueueStore} from "~/stores/queue";
 import {useSettingsStore} from "~/stores/settings";
-import type {Battle} from "~/playground/data/battle";
 import type {UserBattleQueueParams, UserBattleQueueResponse} from "~/data/response";
 import {DateUtils} from "~/utils/DateUtils";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import VehicleSelector from "~/components/vehicle-selector.vue";
 import {useI18n} from "vue-i18n";
+import {deserializeBattle} from "~/playground/data/battle-deserialize";
+import {DeserializerInput} from "~/deserialization/deserializer-input";
 
 const {t} = useI18n()
 const router = useRouter()
@@ -57,9 +58,11 @@ async function testDrive() {
     const request = {
       selectedVehicle: selectedVehicle.value!
     }
-    const battle = await api.postJson<UserBattleQueueParams, Battle>('/battles/test-drive', request)
+    const battleBinary = await api.postJsonForBinary<UserBattleQueueParams>('/battles/test-drive', request)
+    const battle = deserializeBattle(new DeserializerInput(battleBinary))
     battleStore.updateBattle(battle)
   } catch (e) {
+    console.log(e)
     useRequestErrorHandler().handle(e)
   }
 }
@@ -67,7 +70,8 @@ async function testDrive() {
 async function loadBattle() {
   if (checkUserInQueue()) {
     try {
-      const battle = await api.getJson<Battle>('/battles')
+      const battleBinary = await new ApiRequestSender().getBytes('/battles')
+      const battle = deserializeBattle(new DeserializerInput(battleBinary))
       queueStore.queue = undefined
       battleStore.updateBattle(battle)
     } catch (e) {

@@ -28,6 +28,6 @@ public class JetSpecs implements CompactSerializable {
         stream.writeDouble(consumption);
         stream.writeDouble(regeneration);
         stream.writeDouble(acceleration);
-        stream.writeSerializable(type);
+        stream.writeSerializableValue(type);
     }
 }

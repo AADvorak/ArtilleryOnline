@@ -30,8 +30,8 @@ public class RoomSpecs implements Specs, CompactSerializable {
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
-        stream.writeSerializable(leftBottom);
-        stream.writeSerializable(rightTop);
+        stream.writeSerializableValue(leftBottom);
+        stream.writeSerializableValue(rightTop);
         stream.writeDouble(step);
         stream.writeDouble(gravityAcceleration);
         stream.writeDouble(groundReactionCoefficient);

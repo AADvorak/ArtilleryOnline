@@ -7,6 +7,11 @@ export class ApiRequestSender {
     return this.processResponseJson(response)
   }
 
+  async getBytes(path: string): Promise<ArrayBuffer> {
+    const response = await fetch(this.BASE_PATH + path)
+    return await response.arrayBuffer()
+  }
+
   async putJson<Request, Response>(path: string, body: Request): Promise<Response> {
     const response = await fetch(this.BASE_PATH + path, {
       method: 'PUT',
@@ -27,6 +32,17 @@ export class ApiRequestSender {
       body: JSON.stringify(body ? body : {})
     })
     return this.processResponseJson(response)
+  }
+
+  async postJsonForBinary<Request>(path: string, body: Request): Promise<ArrayBuffer> {
+    const response = await fetch(this.BASE_PATH + path, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body ? body : {})
+    })
+    return await response.arrayBuffer()
   }
 
   async delete(path: string): Promise<void> {

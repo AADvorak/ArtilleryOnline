@@ -32,7 +32,7 @@ export const DeserializerBase = {
   },
 
   readString(input: DeserializerInput) {
-    const length = this.readInt(input)
+    const length = DeserializerBase.readInt(input)
     const bytes = new Uint8Array(input.data, input.offset, length)
     input.offset += length
     return new TextDecoder().decode(bytes)

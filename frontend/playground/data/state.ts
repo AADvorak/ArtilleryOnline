@@ -2,9 +2,9 @@ import type {Ammo, Position, BodyVelocity, Velocity, BodyPosition, Missiles} fro
 import {MovingDirection} from "@/playground/data/common";
 
 export interface GunState {
-  loadedShell: string
-  selectedShell: string
-  loadingShell: string
+  loadedShell?: string
+  selectedShell?: string
+  loadingShell?: string
   loadRemainTime: number
   triggerPushed: boolean
 }

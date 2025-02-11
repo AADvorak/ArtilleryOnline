@@ -23,9 +23,9 @@ public class GunState implements State, CompactSerializable {
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
-        stream.writeString(loadedShell);
-        stream.writeString(selectedShell);
-        stream.writeString(loadingShell);
+        stream.writeNullable(loadedShell, stream::writeString);
+        stream.writeNullable(selectedShell, stream::writeString);
+        stream.writeNullable(loadingShell, stream::writeString);
         stream.writeDouble(loadRemainTime);
         stream.writeBoolean(triggerPushed);
     }

@@ -1,9 +1,9 @@
 package com.github.aadvorak.artilleryonline.endpoint;
 
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueParams;
-import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
 import com.github.aadvorak.artilleryonline.service.BattleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,9 +13,9 @@ public class UserBattleEndpoint {
 
     private final BattleService battleService;
 
-    @GetMapping
-    public BattleResponse getBattle() {
-        return battleService.getBattle();
+    @GetMapping(produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public byte[] getBattle() {
+        return battleService.getBattle().serialize();
     }
 
     @GetMapping("/tracking")
@@ -23,9 +23,9 @@ public class UserBattleEndpoint {
         return battleService.getBattleTracking();
     }
 
-    @PostMapping("/test-drive")
-    public BattleResponse testDrive(@RequestBody UserBattleQueueParams params) {
-        return battleService.createTestDrive(params);
+    @PostMapping(path = "/test-drive", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public  byte[] testDrive(@RequestBody UserBattleQueueParams params) {
+        return battleService.createTestDrive(params).serialize();
     }
 
     @DeleteMapping("/leave")

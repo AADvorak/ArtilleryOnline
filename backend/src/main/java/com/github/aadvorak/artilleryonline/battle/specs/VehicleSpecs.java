@@ -64,7 +64,5 @@ public class VehicleSpecs implements Specs, CompactSerializable {
         stream.writeStringMapOfSerializable(availableGuns);
         stream.writeStringMapOfSerializable(availableJets);
         stream.writeStringMapOfSerializable(availableMissiles);
-        stream.writeDouble(minCollisionDamageImpact);
-        stream.writeDouble(collisionDamageCoefficient);
     }
 }

@@ -3,6 +3,8 @@ import { defineStore } from 'pinia'
 import type { Battle } from '~/playground/data/battle'
 import { BattleStage } from '~/playground/data/battle'
 import {ApiRequestSender} from "~/api/api-request-sender";
+import {deserializeBattle} from "~/playground/data/battle-deserialize";
+import {DeserializerInput} from "~/deserialization/deserializer-input";
 
 export const useBattleStore = defineStore('battle', () => {
   const clientBattle = ref<Battle>()
@@ -37,7 +39,8 @@ export const useBattleStore = defineStore('battle', () => {
   async function loadBattleIfNull() {
     if (!battle.value) {
       try {
-        const battle = await new ApiRequestSender().getJson<Battle>('/battles')
+        const battleBinary = await new ApiRequestSender().getBytes('/battles')
+        const battle = deserializeBattle(new DeserializerInput(battleBinary))
         updateBattle(battle)
       } catch (e) {
         console.log(e)

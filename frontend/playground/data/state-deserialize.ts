@@ -30,9 +30,9 @@ export function deserializeExplosionState(input: DeserializerInput): ExplosionSt
 }
 
 export function deserializeGunState(input: DeserializerInput): GunState {
-  const loadedShell = DeserializerBase.readString(input)
-  const selectedShell = DeserializerBase.readString(input)
-  const loadingShell = DeserializerBase.readString(input)
+  const loadedShell = DeserializerBase.readNullable(input, DeserializerBase.readString)
+  const selectedShell = DeserializerBase.readNullable(input, DeserializerBase.readString)
+  const loadingShell = DeserializerBase.readNullable(input, DeserializerBase.readString)
   const loadRemainTime = DeserializerBase.readDouble(input)
   const triggerPushed = DeserializerBase.readBoolean(input)
   return {

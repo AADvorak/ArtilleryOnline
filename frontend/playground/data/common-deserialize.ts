@@ -12,14 +12,14 @@ import type {
 import {DeserializerBase} from "~/deserialization/deserializer-base";
 
 export function deserializeVector(input: DeserializerInput): Vector {
-  const x = DeserializerBase.readLong(input)
-  const y = DeserializerBase.readLong(input)
+  const x = DeserializerBase.readDouble(input)
+  const y = DeserializerBase.readDouble(input)
   return {x, y}
 }
 
 export function deserializeBodyVector(input: DeserializerInput): BodyVector {
   const {x, y} = deserializeVector(input)
-  const angle = DeserializerBase.readLong(input)
+  const angle = DeserializerBase.readDouble(input)
   return {x, y, angle}
 }
 
@@ -39,10 +39,10 @@ export function deserializeBodyVelocity(input: DeserializerInput): BodyVelocity 
   return deserializeBodyVector(input)
 }
 
-export function deserializeAmmo(input: DeserializerInput): Ammo | null {
+export function deserializeAmmo(input: DeserializerInput): Ammo | undefined {
   return DeserializerBase.readMap(input, DeserializerBase.readString, DeserializerBase.readInt)
 }
 
-export function deserializeMissiles(input: DeserializerInput): Missiles | null {
+export function deserializeMissiles(input: DeserializerInput): Missiles | undefined {
   return DeserializerBase.readMap(input, DeserializerBase.readString, DeserializerBase.readInt)
 }

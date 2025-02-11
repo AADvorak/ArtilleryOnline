@@ -35,6 +35,6 @@ public class ShellSpecs implements Specs, CompactSerializable {
         stream.writeDouble(radius);
         stream.writeDouble(mass);
         stream.writeDouble(caliber);
-        stream.writeSerializable(type);
+        stream.writeSerializableValue(type);
     }
 }
