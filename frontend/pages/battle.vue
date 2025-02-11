@@ -62,7 +62,6 @@ async function testDrive() {
     const battle = deserializeBattle(new DeserializerInput(battleBinary))
     battleStore.updateBattle(battle)
   } catch (e) {
-    console.log(e)
     useRequestErrorHandler().handle(e)
   }
 }
