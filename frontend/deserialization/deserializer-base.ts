@@ -46,7 +46,7 @@ export const DeserializerBase = {
   },
 
   readArray<V>(input: DeserializerInput, valueReader: (i: DeserializerInput) => V) {
-    let array = null
+    let array = undefined
     if (DeserializerBase.readBoolean(input)) {
       array = []
       const length = DeserializerBase.readInt(input)
@@ -58,7 +58,7 @@ export const DeserializerBase = {
   },
 
   readMap<K, V>(input: DeserializerInput, keyReader: (i: DeserializerInput) => K, valueReader: (i: DeserializerInput) => V) {
-    let map = null
+    let map = undefined
     if (DeserializerBase.readBoolean(input)) {
       map = {}
       const length = DeserializerBase.readInt(input)

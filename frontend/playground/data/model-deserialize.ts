@@ -1,5 +1,6 @@
 import type {DeserializerInput} from "~/deserialization/deserializer-input";
 import type {
+  BattleModel,
   ExplosionModel,
   MissileModel,
   RoomModel,
@@ -89,5 +90,22 @@ export function deserializeVehicleModel(input: DeserializerInput): VehicleModel 
     preCalc,
     config,
     state
+  }
+}
+
+export function deserializeBattleModel(input: DeserializerInput): BattleModel {
+  const shells = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeShellModel)
+  const missiles = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeMissileModel)
+  const explosions = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeExplosionModel)
+  const room = deserializeRoomModel(input)
+  const vehicles = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeVehicleModel)
+  const updated = DeserializerBase.readBoolean(input)
+  return {
+    shells,
+    missiles,
+    explosions,
+    room,
+    vehicles,
+    updated
   }
 }

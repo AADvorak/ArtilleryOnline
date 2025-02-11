@@ -29,7 +29,7 @@ public class BattleModelResponse implements CompactSerializable {
         stream.writeIntegerMapOfSerializable(shells);
         stream.writeIntegerMapOfSerializable(missiles);
         stream.writeIntegerMapOfSerializable(explosions);
-        stream.writeSerializable(room);
+        stream.writeSerializableValue(room);
         stream.writeStringMapOfSerializable(vehicles);
         stream.writeBoolean(updated);
     }
