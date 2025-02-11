@@ -26,10 +26,9 @@ export interface Battle {
 }
 
 export interface BattleUpdate {
-  id: string
   time: number
   fps: number
-  stage: BattleStage
+  stage?: BattleStage
   state?: BattleModelState
   updates?: BattleModelUpdates
   events?: BattleModelEvents

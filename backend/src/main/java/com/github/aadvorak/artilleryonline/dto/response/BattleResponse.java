@@ -26,10 +26,10 @@ public class BattleResponse implements BattleUpdatesQueueElement, CompactSeriali
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeString(id);
-        stream.writeSerializable(model);
+        stream.writeSerializableValue(model);
         stream.writeLong(time);
         stream.writeInt(fps);
         stream.writeBoolean(paused);
-        stream.writeSerializable(battleStage);
+        stream.writeSerializableValue(battleStage);
     }
 }

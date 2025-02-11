@@ -7,6 +7,7 @@ import {
   deserializeVelocity
 } from "~/playground/data/common-deserialize";
 import type {
+  BattleModelState,
   ExplosionState,
   GunState,
   JetState,
@@ -110,5 +111,16 @@ export function deserializeVehicleState(input: DeserializerInput): VehicleState 
     trackState,
     jetState,
     onGround
+  }
+}
+
+export function deserializeBattleModelState(input: DeserializerInput): BattleModelState {
+  const vehicles = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeVehicleState)
+  const shells = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeShellState)
+  const missiles = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeMissileState)
+  return {
+    vehicles,
+    shells,
+    missiles
   }
 }

@@ -40,7 +40,7 @@ export enum CollideObjectType {
 
 export interface CollideObject {
   type: CollideObjectType
-  vehicleId: number
+  vehicleId?: number
 }
 
 export interface ApplicationSettings {

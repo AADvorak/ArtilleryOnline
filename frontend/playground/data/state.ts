@@ -67,7 +67,7 @@ export interface MissileStates {
 }
 
 export interface BattleModelState {
-  vehicles: VehicleStates
-  shells: ShellStates
-  missiles: MissileStates
+  vehicles?: VehicleStates
+  shells?: ShellStates
+  missiles?: MissileStates
 }

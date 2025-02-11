@@ -1,7 +1,7 @@
 import type {CollideObject, ShellHitType} from "~/playground/data/common";
 
 export interface ShellHitEventObject {
-  vehicleId: number
+  vehicleId?: number
   type: ShellHitType
 }
 
@@ -20,7 +20,7 @@ export interface RicochetEvent {
 }
 
 export interface BattleModelEvents {
-  hits: ShellHitEvent[]
-  collides: VehicleCollideEvent[]
-  ricochets: RicochetEvent[]
+  hits?: ShellHitEvent[]
+  collides?: VehicleCollideEvent[]
+  ricochets?: RicochetEvent[]
 }

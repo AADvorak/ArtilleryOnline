@@ -33,7 +33,6 @@ public class BattleUpdateResponse implements BattleUpdatesQueueElement, CompactS
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
-        stream.writeString(id);
         stream.writeLong(time);
         stream.writeInt(fps);
         stream.writeSerializable(stage);
