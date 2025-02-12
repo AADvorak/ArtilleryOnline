@@ -94,11 +94,11 @@ export function deserializeVehicleModel(input: DeserializerInput): VehicleModel 
 }
 
 export function deserializeBattleModel(input: DeserializerInput): BattleModel {
-  const shells = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeShellModel)
-  const missiles = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeMissileModel)
-  const explosions = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeExplosionModel)
+  const shells = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeShellModel)!
+  const missiles = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeMissileModel)!
+  const explosions = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeExplosionModel)!
   const room = deserializeRoomModel(input)
-  const vehicles = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeVehicleModel)
+  const vehicles = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeVehicleModel)!
   const updated = DeserializerBase.readBoolean(input)
   return {
     shells,

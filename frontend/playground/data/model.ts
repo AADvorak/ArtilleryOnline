@@ -59,9 +59,9 @@ export interface ExplosionModels {
 
 export interface BattleModel {
   room: RoomModel
-  shells?: ShellModels
-  explosions?: ExplosionModels
-  vehicles?: VehicleModels
-  missiles?: MissileModels
+  shells: ShellModels
+  explosions: ExplosionModels
+  vehicles: VehicleModels
+  missiles: MissileModels
   updated: boolean
 }
