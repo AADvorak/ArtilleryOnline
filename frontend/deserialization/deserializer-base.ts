@@ -1,5 +1,7 @@
 import type {DeserializerInput} from "~/deserialization/deserializer-input";
 
+const FLOAT_PRECISION = true
+
 export const DeserializerBase = {
   readBoolean(input: DeserializerInput) {
     const value = input.dataView.getInt8(input.offset)
@@ -26,6 +28,9 @@ export const DeserializerBase = {
   },
 
   readDouble(input: DeserializerInput) {
+    if (FLOAT_PRECISION) {
+      return DeserializerBase.readFloat(input)
+    }
     const value = input.dataView.getFloat64(input.offset)
     input.offset += 8
     return value

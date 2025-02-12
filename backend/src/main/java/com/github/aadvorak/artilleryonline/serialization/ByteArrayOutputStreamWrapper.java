@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 public class ByteArrayOutputStreamWrapper {
 
+    private static final boolean FLOAT_PRECISION = true;
+
     private final ByteArrayOutputStream stream;
 
     public ByteArrayOutputStreamWrapper() {
@@ -46,6 +48,10 @@ public class ByteArrayOutputStreamWrapper {
     }
 
     public void writeDouble(double value) {
+        if (FLOAT_PRECISION) {
+            writeFloat((float) value);
+            return;
+        }
         try {
             stream.write(doubleToBytes(value));
         } catch (IOException e) {
