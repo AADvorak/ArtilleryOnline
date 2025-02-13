@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.utils;
 
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
 
@@ -22,6 +23,33 @@ public class BattleUtils {
 
     public static double getRoomHeight(RoomSpecs roomSpecs) {
         return roomSpecs.getRightTop().getY() - roomSpecs.getLeftBottom().getY();
+    }
+
+    public static Position getFirstPointUnderGround(Segment segment, RoomModel roomModel) {
+        var xMin = Math.min(segment.begin().getX(), segment.end().getX());
+        var xMax = Math.max(segment.begin().getX(), segment.end().getX());
+        var indexes = getGroundIndexesBetween(xMin, xMax, roomModel);
+        if (indexes.isEmpty()) {
+            var beginNearestPosition = getNearestGroundPosition(segment.begin().getX(), roomModel);
+            var endNearestPosition = getNearestGroundPosition(segment.end().getX(), roomModel);
+            if (beginNearestPosition.getY() > segment.begin().getY()) {
+                return beginNearestPosition;
+            }
+            if (endNearestPosition.getY() > segment.end().getY()) {
+                return endNearestPosition;
+            }
+            return null;
+        }
+        var start = segment.begin().getX() < segment.end().getX() ? 0 : indexes.size() - 1;
+        var increment = segment.begin().getX() < segment.end().getX() ? 1 : -1;
+        for (var index = start; index >= 0 && index < indexes.size(); index += increment) {
+            var groundPosition = getGroundPosition(indexes.get(index), roomModel);
+            var segmentPosition = segment.findPointWithX(groundPosition.getX());
+            if (segmentPosition != null && groundPosition.getY() > segmentPosition.getY()) {
+                return segmentPosition;
+            }
+        }
+        return null;
     }
 
     public static List<Integer> getGroundIndexesBetween(double xMin, double xMax,  RoomModel roomModel) {
