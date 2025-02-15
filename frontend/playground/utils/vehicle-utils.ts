@@ -4,6 +4,7 @@ import type {WheelCalculations} from '@/playground/data/calculations'
 import {DefaultColors} from '~/dictionary/default-colors'
 import {useUserStore} from '~/stores/user'
 import {BattleUtils} from "~/playground/utils/battle-utils";
+import {VectorUtils} from "~/playground/utils/vector-utils";
 
 export const VehicleUtils = {
   getLeftWheelPosition(vehicleModel: VehicleModel) {
@@ -72,14 +73,9 @@ export const VehicleUtils = {
 
   calculateWheelVelocity(vehicleModel: VehicleModel, wheelCalculations: WheelCalculations): void {
     const vehicleVelocity = vehicleModel.state.velocity
-    const angle = vehicleModel.state.position.angle
-    const angleVelocity = vehicleVelocity.angle * vehicleModel.specs.hullRadius
-    const velocityX = vehicleVelocity.x + wheelCalculations.sign * angleVelocity * Math.sin(angle)
-    const velocityY = vehicleVelocity.y - wheelCalculations.sign * angleVelocity * Math.cos(angle)
-    wheelCalculations.velocity = {
-      x: velocityX,
-      y: velocityY
-    }
+    const wheelAngle = vehicleModel.state.position.angle + Math.PI / 2 + wheelCalculations.sign * Math.PI / 2
+    const wheelDistance = vehicleModel.preCalc.wheelDistance
+    wheelCalculations.velocity = VectorUtils.getPointVelocity(vehicleVelocity, wheelDistance, wheelAngle)
   },
 
   getColor(userKey: string, vehicleModel: VehicleModel) {

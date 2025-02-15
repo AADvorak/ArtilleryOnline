@@ -88,18 +88,12 @@ public class WheelCalculations implements Calculations<VehicleModel> {
         return vehicle.getCollisions();
     }
 
-    // todo use BodyVelocity::getPointVelocity
     public void calculateVelocity() {
         var vehicleVelocity = vehicle.getModel().getState().getVelocity();
         var angle = vehicle.getModel().getState().getPosition().getAngle();
-        // todo wheel distance
-        var angleVelocity = vehicleVelocity.getAngle() * vehicle.getModel().getSpecs().getHullRadius();
-        // todo check wheel angle
-        var velocityX = vehicleVelocity.getX() + sign.getValue() * angleVelocity * Math.sin(angle);
-        var velocityY = vehicleVelocity.getY() - sign.getValue() * angleVelocity * Math.cos(angle);
-        setVelocity(new Velocity()
-                .setX(velocityX)
-                .setY(velocityY));
+        var wheelAngle = angle + Math.PI / 2 + sign.getValue() * Math.PI / 2;
+        var wheelDistance = vehicle.getModel().getPreCalc().getWheelDistance();
+        setVelocity(vehicleVelocity.getPointVelocity(wheelDistance, wheelAngle));
     }
 
     public void calculatePosition() {

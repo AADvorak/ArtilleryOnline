@@ -1,4 +1,4 @@
-import type {BodyVector, Position, Vector} from '@/playground/data/common'
+import type {BodyVector, BodyVelocity, Position, Vector} from '@/playground/data/common'
 
 export const VectorUtils = {
   getVerticalProjection(vector: Vector, groundAngle: number): number {
@@ -10,19 +10,19 @@ export const VectorUtils = {
   },
 
   getComponentX(
-    verticalProjection: number,
-    horizontalProjection: number,
-    groundAngle: number
+      verticalProjection: number,
+      horizontalProjection: number,
+      groundAngle: number
   ): number {
     return (
-      -verticalProjection * Math.sin(groundAngle) + horizontalProjection * Math.cos(groundAngle)
+        -verticalProjection * Math.sin(groundAngle) + horizontalProjection * Math.cos(groundAngle)
     )
   },
 
   getComponentY(
-    verticalProjection: number,
-    horizontalProjection: number,
-    groundAngle: number
+      verticalProjection: number,
+      horizontalProjection: number,
+      groundAngle: number
   ): number {
     return verticalProjection * Math.cos(groundAngle) + horizontalProjection * Math.sin(groundAngle)
   },
@@ -34,7 +34,7 @@ export const VectorUtils = {
       sumX += vector.x
       sumY += vector.y
     }
-    return { x: sumX, y: sumY }
+    return {x: sumX, y: sumY}
   },
 
   sumOfBody(...vectors: BodyVector[]): BodyVector {
@@ -46,7 +46,7 @@ export const VectorUtils = {
       sumY += vector.y
       sumAngle += vector.angle
     }
-    return { x: sumX, y: sumY, angle: sumAngle }
+    return {x: sumX, y: sumY, angle: sumAngle}
   },
 
   angleFromTo(from: Position, to: Position) {
@@ -61,5 +61,13 @@ export const VectorUtils = {
 
   getAngle(vector: Vector) {
     return Math.atan2(vector.y, vector.x)
+  },
+
+  getPointVelocity(bodyVelocity: BodyVelocity, pointDistance: number, pointAngle: number) {
+    const angleVelocity = bodyVelocity.angle * pointDistance
+    return {
+      x: bodyVelocity.x - angleVelocity * Math.sin(pointAngle),
+      y: bodyVelocity.y + angleVelocity * Math.cos(pointAngle)
+    }
   }
 }
