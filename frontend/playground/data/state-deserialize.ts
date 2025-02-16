@@ -7,7 +7,7 @@ import {
   deserializeVelocity
 } from "~/playground/data/common-deserialize";
 import type {
-  BattleModelState,
+  BattleModelState, DroneInVehicleState, DroneState,
   ExplosionState,
   GunState,
   JetState,
@@ -85,6 +85,17 @@ export function deserializeTrackState(input: DeserializerInput): TrackState {
   }
 }
 
+export function deserializeDroneInVehicleState(input: DeserializerInput): DroneInVehicleState {
+  const launched = DeserializerBase.readBoolean(input)
+  const readyToLaunch = DeserializerBase.readBoolean(input)
+  const prepareToLaunchRemainTime = DeserializerBase.readDouble(input)
+  return {
+    launched,
+    readyToLaunch,
+    prepareToLaunchRemainTime
+  }
+}
+
 export function deserializeVehicleState(input: DeserializerInput): VehicleState {
   const position = deserializeBodyPosition(input)
   const velocity = deserializeBodyVelocity(input)
@@ -97,6 +108,7 @@ export function deserializeVehicleState(input: DeserializerInput): VehicleState 
   const gunState = DeserializerBase.readNullable(input, deserializeGunState)!
   const trackState = DeserializerBase.readNullable(input, deserializeTrackState)!
   const jetState = DeserializerBase.readNullable(input, deserializeJetState)!
+  const droneState = DeserializerBase.readNullable(input, deserializeDroneInVehicleState)!
   const onGround = DeserializerBase.readBoolean(input)
   return {
     position,
@@ -110,6 +122,7 @@ export function deserializeVehicleState(input: DeserializerInput): VehicleState 
     gunState,
     trackState,
     jetState,
+    droneState,
     onGround
   }
 }
@@ -118,9 +131,22 @@ export function deserializeBattleModelState(input: DeserializerInput): BattleMod
   const vehicles = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeVehicleState)
   const shells = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeShellState)
   const missiles = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeMissileState)
+  const drones = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeDroneState)
   return {
     vehicles,
     shells,
-    missiles
+    missiles,
+    drones
+  }
+}
+
+export function deserializeDroneState(input: DeserializerInput): DroneState {
+  const position = deserializeBodyPosition(input)
+  const velocity = deserializeBodyVelocity(input)
+  const ammo = DeserializerBase.readMap(input, DeserializerBase.readString, DeserializerBase.readInt)!
+  return {
+    position,
+    velocity,
+    ammo
   }
 }

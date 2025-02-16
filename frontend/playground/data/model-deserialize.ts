@@ -1,6 +1,6 @@
 import type {DeserializerInput} from "~/deserialization/deserializer-input";
 import type {
-  BattleModel,
+  BattleModel, DroneModel,
   ExplosionModel,
   MissileModel,
   RoomModel,
@@ -10,16 +10,22 @@ import type {
 } from "~/playground/data/model";
 import {DeserializerBase} from "~/deserialization/deserializer-base";
 import {
+  deserializeDroneSpecs,
   deserializeExplosionSpecs,
   deserializeMissileSpecs,
   deserializeRoomSpecs, deserializeShellSpecs, deserializeVehicleSpecs
 } from "~/playground/data/specs-deserialize";
 import {
+  deserializeDroneState,
   deserializeExplosionState,
   deserializeMissileState,
   deserializeRoomState, deserializeShellState, deserializeVehicleState
 } from "~/playground/data/state-deserialize";
-import {deserializeRoomConfig, deserializeVehicleConfig} from "~/playground/data/config-deserialize";
+import {
+  deserializeDroneConfig,
+  deserializeRoomConfig,
+  deserializeVehicleConfig
+} from "~/playground/data/config-deserialize";
 
 export function deserializeExplosionModel(input: DeserializerInput): ExplosionModel {
   const id = DeserializerBase.readInt(input)
@@ -41,6 +47,21 @@ export function deserializeMissileModel(input: DeserializerInput): MissileModel 
     id,
     vehicleId,
     specs,
+    state
+  }
+}
+
+export function deserializeDroneModel(input: DeserializerInput): DroneModel {
+  const id = DeserializerBase.readInt(input)
+  const vehicleId = DeserializerBase.readInt(input)
+  const specs = deserializeDroneSpecs(input)
+  const config = deserializeDroneConfig(input)
+  const state = deserializeDroneState(input)
+  return {
+    id,
+    vehicleId,
+    specs,
+    config,
     state
   }
 }
@@ -96,6 +117,7 @@ export function deserializeVehicleModel(input: DeserializerInput): VehicleModel 
 export function deserializeBattleModel(input: DeserializerInput): BattleModel {
   const shells = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeShellModel)!
   const missiles = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeMissileModel)!
+  const drones = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeDroneModel)!
   const explosions = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeExplosionModel)!
   const room = deserializeRoomModel(input)
   const vehicles = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeVehicleModel)!
@@ -103,6 +125,7 @@ export function deserializeBattleModel(input: DeserializerInput): BattleModel {
   return {
     shells,
     missiles,
+    drones,
     explosions,
     room,
     vehicles,

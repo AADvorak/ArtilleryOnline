@@ -1,6 +1,20 @@
-import type {ExplosionSpecs, MissileSpecs, RoomSpecs, ShellSpecs, VehicleSpecs} from "@/playground/data/specs";
-import type {ExplosionState, MissileState, RoomState, ShellState, VehicleState} from "@/playground/data/state";
-import type {RoomConfig, VehicleConfig} from "@/playground/data/config";
+import type {
+  DroneSpecs,
+  ExplosionSpecs,
+  MissileSpecs,
+  RoomSpecs,
+  ShellSpecs,
+  VehicleSpecs
+} from "@/playground/data/specs";
+import type {
+  DroneState,
+  ExplosionState,
+  MissileState,
+  RoomState,
+  ShellState,
+  VehicleState
+} from "@/playground/data/state";
+import type {DroneConfig, RoomConfig, VehicleConfig} from "@/playground/data/config";
 
 export interface RoomModel {
   specs: RoomSpecs
@@ -19,6 +33,14 @@ export interface MissileModel {
   vehicleId: number
   specs: MissileSpecs
   state: MissileState
+}
+
+export interface DroneModel {
+  id: number
+  vehicleId: number
+  specs: DroneSpecs
+  config: DroneConfig
+  state: DroneState
 }
 
 export interface ExplosionModel {
@@ -53,6 +75,10 @@ export interface MissileModels {
   [id: number]: MissileModel
 }
 
+export interface DroneModels {
+  [id: number]: DroneModel
+}
+
 export interface ExplosionModels {
   [id: number]: ExplosionModel
 }
@@ -63,5 +89,6 @@ export interface BattleModel {
   explosions: ExplosionModels
   vehicles: VehicleModels
   missiles: MissileModels
+  drones: DroneModels
   updated: boolean
 }

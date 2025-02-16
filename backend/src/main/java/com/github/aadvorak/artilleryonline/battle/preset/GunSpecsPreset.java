@@ -37,6 +37,15 @@ public enum GunSpecsPreset {
             .setCaliber(0.03)
             .setAvailableShells(Map.of(
                     ShellSpecsPreset.LIGHT_AP.getName(), ShellSpecsPreset.LIGHT_AP.getSpecs()
+            ))),
+
+    DRONE("Drone", new GunSpecs()
+            .setLoadTime(0.5)
+            .setRotationVelocity(0.0)
+            .setLength(0.4)
+            .setCaliber(0.03)
+            .setAvailableShells(Map.of(
+                    ShellSpecsPreset.LIGHT_AP.getName(), ShellSpecsPreset.LIGHT_AP.getSpecs()
             )));
 
     private final String name;

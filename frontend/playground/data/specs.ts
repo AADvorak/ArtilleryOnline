@@ -38,6 +38,10 @@ export interface AvailableMissiles {
   [key: string]: MissileSpecs
 }
 
+export interface AvailableDrones {
+  [key: string]: DroneSpecs
+}
+
 export interface RoomSpecs {
   leftBottom: Position
   rightTop: Position
@@ -65,6 +69,7 @@ export interface VehicleSpecs {
   availableGuns: AvailableGuns
   availableJets: AvailableJets
   availableMissiles: AvailableMissiles
+  availableDrones: AvailableDrones
 }
 
 export interface JetSpecs {
@@ -85,4 +90,15 @@ export interface MissileSpecs {
   mass: number
   caliber: number
   length: number
+}
+
+export interface DroneSpecs {
+  ammo: number
+  maxEngineAcceleration: number
+  hullRadius: number
+  enginesRadius: number
+  mass: number
+  flyHeight: number
+  prepareToLaunchTime: number
+  availableGuns: AvailableGuns
 }

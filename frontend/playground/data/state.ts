@@ -29,6 +29,18 @@ export interface MissileState {
   velocity: BodyVelocity
 }
 
+export interface DroneState {
+  position: BodyPosition
+  velocity: BodyVelocity
+  ammo: Ammo
+}
+
+export interface DroneInVehicleState {
+  launched: boolean
+  readyToLaunch: boolean
+  prepareToLaunchRemainTime: number
+}
+
 export interface ExplosionState {
   time: number
   radius: number
@@ -47,6 +59,7 @@ export interface VehicleState {
   gunState: GunState
   trackState: TrackState
   jetState: JetState
+  droneState: DroneInVehicleState
   onGround: boolean
 }
 
@@ -66,8 +79,13 @@ export interface MissileStates {
   [id: number]: MissileState
 }
 
+export interface DroneStates {
+  [id: number]: DroneState
+}
+
 export interface BattleModelState {
   vehicles?: VehicleStates
   shells?: ShellStates
   missiles?: MissileStates
+  drones?: DroneStates
 }

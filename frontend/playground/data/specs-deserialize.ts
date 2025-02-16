@@ -1,6 +1,7 @@
 import type {DeserializerInput} from "~/deserialization/deserializer-input";
 import {DeserializerBase} from "~/deserialization/deserializer-base";
 import type {
+  DroneSpecs,
   ExplosionSpecs,
   GunSpecs,
   JetSpecs,
@@ -125,6 +126,7 @@ export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs 
   const availableGuns = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeGunSpecs)!
   const availableJets = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeJetSpecs)!
   const availableMissiles = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeMissileSpecs)!
+  const availableDrones = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeDroneSpecs)!
   return {
     name,
     hitPoints,
@@ -140,6 +142,28 @@ export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs 
     minTrackHitCaliber,
     availableGuns,
     availableJets,
-    availableMissiles
+    availableMissiles,
+    availableDrones
+  }
+}
+
+export function deserializeDroneSpecs(input: DeserializerInput): DroneSpecs {
+  const ammo = DeserializerBase.readInt(input)
+  const maxEngineAcceleration = DeserializerBase.readDouble(input)
+  const hullRadius = DeserializerBase.readDouble(input)
+  const enginesRadius = DeserializerBase.readDouble(input)
+  const mass = DeserializerBase.readDouble(input)
+  const flyHeight = DeserializerBase.readDouble(input)
+  const prepareToLaunchTime = DeserializerBase.readDouble(input)
+  const availableGuns = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeGunSpecs)!
+  return {
+    ammo,
+    maxEngineAcceleration,
+    hullRadius,
+    enginesRadius,
+    mass,
+    flyHeight,
+    prepareToLaunchTime,
+    availableGuns
   }
 }

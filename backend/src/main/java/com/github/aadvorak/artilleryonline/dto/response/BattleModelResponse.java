@@ -16,6 +16,8 @@ public class BattleModelResponse implements CompactSerializable {
 
     private Map<Integer, MissileModel> missiles;
 
+    private Map<Integer, DroneModel> drones;
+
     private Map<Integer, ExplosionModel> explosions;
 
     private RoomModel room;
@@ -28,6 +30,7 @@ public class BattleModelResponse implements CompactSerializable {
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeIntegerMapOfSerializable(shells);
         stream.writeIntegerMapOfSerializable(missiles);
+        stream.writeIntegerMapOfSerializable(drones);
         stream.writeIntegerMapOfSerializable(explosions);
         stream.writeSerializableValue(room);
         stream.writeStringMapOfSerializable(vehicles);
