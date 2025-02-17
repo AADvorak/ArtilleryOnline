@@ -10,14 +10,12 @@ import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 public class VehicleAccelerationCalculator {
 
     public static BodyAcceleration getVehicleAcceleration(VehicleCalculations vehicle, RoomModel roomModel) {
-        var angle = vehicle.getModel().getState().getPosition().getAngle();
-
         vehicle.recalculateWheelsVelocities();
 
         calculateWheelAcceleration(vehicle.getRightWheel(), vehicle.getModel(), roomModel);
         calculateWheelAcceleration(vehicle.getLeftWheel(), vehicle.getModel(), roomModel);
 
-        var rotatingAcceleration = getVehicleRotatingAcceleration(vehicle, angle);
+        var angleAcceleration = getVehicleAngleAcceleration(vehicle);
         var movingAcceleration = new Acceleration()
                 .setX((vehicle.getRightWheel().getSumAcceleration().getX()
                         + vehicle.getLeftWheel().getSumAcceleration().getX()) / 2)
@@ -35,17 +33,17 @@ public class VehicleAccelerationCalculator {
                         movingAcceleration,
                         frictionAcceleration
                 ))
-                .setAngle(rotatingAcceleration / vehicle.getModel().getSpecs().getRadius()
-                        - vehicleVelocity.getAngle());
+                .setAngle(angleAcceleration - vehicleVelocity.getAngle());
     }
 
-    private static double getVehicleRotatingAcceleration(VehicleCalculations calculations, double angle) {
-        var rightWheelRotatingAcceleration = calculations.getRightWheel().getSumAcceleration().getX() * Math.sin(angle)
-                + calculations.getRightWheel().getSumAcceleration().getY() * Math.cos(angle);
-        var leftWheelRotatingAcceleration = calculations.getLeftWheel().getSumAcceleration().getX() * Math.sin(angle)
-                + calculations.getLeftWheel().getSumAcceleration().getY() * Math.cos(angle);
-        return (rightWheelRotatingAcceleration - leftWheelRotatingAcceleration) / 2
-                + getReturnOnWheelsRotatingAcceleration(angle);
+    private static double getVehicleAngleAcceleration(VehicleCalculations vehicle) {
+        var angle = vehicle.getModel().getState().getPosition().getAngle();
+        var rightWheelRotatingAcceleration = vehicle.getRightWheel().getSumAcceleration().getX() * Math.sin(angle)
+                + vehicle.getRightWheel().getSumAcceleration().getY() * Math.cos(angle);
+        var leftWheelRotatingAcceleration = vehicle.getLeftWheel().getSumAcceleration().getX() * Math.sin(angle)
+                + vehicle.getLeftWheel().getSumAcceleration().getY() * Math.cos(angle);
+        return ((rightWheelRotatingAcceleration - leftWheelRotatingAcceleration) / 2
+                + getReturnOnWheelsRotatingAcceleration(angle)) / vehicle.getModel().getSpecs().getRadius();
     }
 
     private static double getReturnOnWheelsRotatingAcceleration(double angle) {
