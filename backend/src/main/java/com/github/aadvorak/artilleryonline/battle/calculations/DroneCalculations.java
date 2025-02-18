@@ -68,6 +68,10 @@ public class DroneCalculations implements Calculations<DroneModel> {
         next.setPosition(position.next(velocity, timeStep));
     }
 
+    public void applyNextPosition() {
+        model.getState().setPosition(next.getPosition());
+    }
+
     @Getter
     @Setter
     @Accessors(chain = true)

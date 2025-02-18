@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.updates;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
 import com.github.aadvorak.artilleryonline.battle.model.ExplosionModel;
 import com.github.aadvorak.artilleryonline.battle.model.MissileModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
@@ -20,6 +21,8 @@ public class BattleModelAdded implements CompactSerializable {
     private List<ExplosionModel> explosions;
 
     private List<MissileModel> missiles;
+
+    private List<DroneModel> drones;
 
     public void addShell(ShellModel shell) {
         if (shells == null) {
@@ -42,10 +45,18 @@ public class BattleModelAdded implements CompactSerializable {
         missiles.add(missile);
     }
 
+    public void addDrone(DroneModel drone) {
+        if (drones == null) {
+            drones = new ArrayList<>();
+        }
+        drones.add(drone);
+    }
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeCollectionOfSerializable(shells);
         stream.writeCollectionOfSerializable(explosions);
         stream.writeCollectionOfSerializable(missiles);
+        stream.writeCollectionOfSerializable(drones);
     }
 }

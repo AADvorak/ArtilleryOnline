@@ -19,4 +19,6 @@ public class BattleCalculations {
     private Set<ShellCalculations> shells;
 
     private Set<MissileCalculations> missiles;
+
+    private Set<DroneCalculations> drones;
 }

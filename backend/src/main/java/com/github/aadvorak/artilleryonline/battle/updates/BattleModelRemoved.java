@@ -18,6 +18,8 @@ public class BattleModelRemoved implements CompactSerializable {
 
     private List<Integer> missileIds;
 
+    private List<Integer> droneIds;
+
     private List<String> vehicleKeys;
 
     public void addShellId(Integer shellId) {
@@ -41,6 +43,13 @@ public class BattleModelRemoved implements CompactSerializable {
         missileIds.add(missileId);
     }
 
+    public void addDroneId(Integer droneId) {
+        if (droneIds == null) {
+            droneIds = new ArrayList<>();
+        }
+        droneIds.add(droneId);
+    }
+
     public void addVehicleKey(String vehicleKey) {
         if (vehicleKeys == null) {
             vehicleKeys = new ArrayList<>();
@@ -53,6 +62,7 @@ public class BattleModelRemoved implements CompactSerializable {
         stream.writeCollection(shellIds, stream::writeInt);
         stream.writeCollection(explosionIds, stream::writeInt);
         stream.writeCollection(missileIds, stream::writeInt);
+        stream.writeCollection(droneIds, stream::writeInt);
         stream.writeCollection(vehicleKeys, stream::writeString);
     }
 }
