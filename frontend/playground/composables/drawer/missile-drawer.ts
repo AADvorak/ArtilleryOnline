@@ -23,11 +23,15 @@ export function useMissileDrawer(
       const length = missileModel.specs.length
       const caliber = missileModel.specs.caliber
       const tailRaw = BattleUtils.shiftedPosition(position, - length / 2, angle)
+      const headRaw = BattleUtils.shiftedPosition(position, length / 2, angle)
 
-      const width = drawerBase.scale(caliber)
       const center = drawerBase.transformPosition(position)
-      const head = drawerBase.transformPosition(BattleUtils.shiftedPosition(position, length / 2, angle))
-      const tail = drawerBase.transformPosition(tailRaw)
+      const headRight = drawerBase.transformPosition(BattleUtils.shiftedPosition(headRaw, caliber / 2, angle + Math.PI / 2))
+      const headLeft = drawerBase.transformPosition(BattleUtils.shiftedPosition(headRaw, caliber / 2, angle - Math.PI / 2))
+      const tip = drawerBase.transformPosition(BattleUtils.shiftedPosition(headRaw, caliber, angle))
+
+      const tailBodyRight = drawerBase.transformPosition(BattleUtils.shiftedPosition(tailRaw, caliber / 2, angle + Math.PI / 2))
+      const tailBodyLeft = drawerBase.transformPosition(BattleUtils.shiftedPosition(tailRaw, caliber / 2, angle - Math.PI / 2))
       const tailRight = drawerBase.transformPosition(BattleUtils.shiftedPosition(tailRaw, 2 * caliber, angle + Math.PI / 2))
       const tailLeft = drawerBase.transformPosition(BattleUtils.shiftedPosition(tailRaw, 2 * caliber, angle - Math.PI / 2))
 
@@ -36,15 +40,17 @@ export function useMissileDrawer(
       ctx.value.lineWidth = 1
       ctx.value.beginPath()
 
-      ctx.value.arc(head.x, head.y, width / 3, 0, 2 * Math.PI)
+      ctx.value.moveTo(tip.x, tip.y)
+      ctx.value.lineTo(headRight.x, headRight.y)
+      ctx.value.lineTo(headLeft.x, headLeft.y)
       ctx.value.fill()
 
-      ctx.value.lineWidth = width
-      ctx.value.moveTo(head.x, head.y)
-      ctx.value.lineTo(tail.x, tail.y)
-      ctx.value.stroke()
+      ctx.value.moveTo(headRight.x, headRight.y)
+      ctx.value.lineTo(headLeft.x, headLeft.y)
+      ctx.value.lineTo(tailBodyLeft.x, tailBodyLeft.y)
+      ctx.value.lineTo(tailBodyRight.x, tailBodyRight.y)
+      ctx.value.fill()
 
-      ctx.value.lineWidth = 1
       ctx.value.moveTo(center.x, center.y)
       ctx.value.lineTo(tailRight.x, tailRight.y)
       ctx.value.lineTo(tailLeft.x, tailLeft.y)
