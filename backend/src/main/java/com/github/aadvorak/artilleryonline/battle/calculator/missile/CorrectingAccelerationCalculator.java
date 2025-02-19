@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.calculator.missile;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.MissileCalculations;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 
 import java.util.stream.Collectors;
 
@@ -14,7 +15,7 @@ public class CorrectingAccelerationCalculator {
         var correctingVelocity = velocityMagnitude - missileSpecs.getMinCorrectingVelocity();
         var missilePosition = missileState.getPosition();
         if (correctingVelocity <= 0) {
-            var verticalAngleDiff = calculateAngleDiff(missilePosition.getAngle(), Math.PI / 2);
+            var verticalAngleDiff = GeometryUtils.calculateAngleDiff(missilePosition.getAngle(), Math.PI / 2);
             if (Math.abs(verticalAngleDiff) < missileSpecs.getAnglePrecision()) {
                 return 0.0;
             }
@@ -28,7 +29,7 @@ public class CorrectingAccelerationCalculator {
             return 0.0;
         }
         var angleDiffs = targets.stream()
-                .map(vehicleModel -> calculateAngleDiff(missilePosition.getAngle(),
+                .map(vehicleModel -> GeometryUtils.calculateAngleDiff(missilePosition.getAngle(),
                         missilePosition.getCenter().angleTo(vehicleModel.getState().getPosition().getCenter())))
                 .collect(Collectors.toSet());
         var iterator = angleDiffs.iterator();
@@ -43,18 +44,5 @@ public class CorrectingAccelerationCalculator {
             return 0.0;
         }
         return Math.signum(minAngleDiff) * correctingVelocity * missileSpecs.getCorrectingAccelerationCoefficient();
-    }
-
-    private static double calculateAngleDiff(double missileAngle, double targetAngle) {
-        double diff = targetAngle - missileAngle;
-        if (Math.abs(diff) > Math.PI) {
-            if (diff > 0) {
-                return 2 * Math.PI - diff;
-            } else {
-                return 2 * Math.PI + diff;
-            }
-        } else {
-            return diff;
-        }
     }
 }

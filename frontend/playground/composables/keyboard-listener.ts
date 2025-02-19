@@ -66,6 +66,9 @@ export function useKeyboardListener(commandsSender: CommandsSender) {
   clickCommands.set('launchMissile', {
     command: Command.LAUNCH_MISSILE
   })
+  clickCommands.set('launchDrone', {
+    command: Command.LAUNCH_DRONE
+  })
 
   const keysDown: Map<string, string> = new Map()
 

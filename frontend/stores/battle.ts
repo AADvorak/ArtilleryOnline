@@ -32,6 +32,8 @@ export const useBattleStore = defineStore('battle', () => {
 
   const missiles = computed(() => battle.value?.model?.missiles)
 
+  const drones = computed(() => battle.value?.model?.drones)
+
   const explosions = computed(() => battle.value?.model?.explosions)
 
   const isActive = computed(() => battle.value?.battleStage === BattleStage.ACTIVE)
@@ -76,6 +78,7 @@ export const useBattleStore = defineStore('battle', () => {
     vehicles,
     shells,
     missiles,
+    drones,
     explosions,
     isActive,
     loadBattleIfNull,

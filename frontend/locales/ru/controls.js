@@ -9,5 +9,6 @@ export const controls = {
   shoot: 'Выстрел',
   activateJet: 'Активировать джетпак',
   launchMissile: 'Запустить ракету',
+  launchDrone: 'Запустить дрон',
   resetToDefaults: 'Сбросить по умолчанию'
 }

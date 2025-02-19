@@ -168,15 +168,16 @@ public class BattleRunner {
                     .setFps(battle.getFpsCalculator().getFps());
             if (sendStage) {
                 battleUpdateResponse.setStage(battle.getBattleStage());
-            }
-            if (sendState) {
-                battleUpdateResponse.setState(createBattleModelStateResponse(battle.getModel()));
-            }
-            if (sendUpdates) {
-                battleUpdateResponse.setUpdates(battle.getModel().getUpdates());
-            }
-            if (sendEvents) {
-                battleUpdateResponse.setEvents(battle.getModel().getEvents());
+            } else {
+                if (sendState) {
+                    battleUpdateResponse.setState(createBattleModelStateResponse(battle.getModel()));
+                }
+                if (sendUpdates) {
+                    battleUpdateResponse.setUpdates(battle.getModel().getUpdates());
+                }
+                if (sendEvents) {
+                    battleUpdateResponse.setEvents(battle.getModel().getEvents());
+                }
             }
             battle.getQueues().getBattleUpdatesQueue().add(battleUpdateResponse);
             return true;
@@ -199,10 +200,13 @@ public class BattleRunner {
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
         var missileStates = battleModel.getMissiles().entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
+        var droneStates = battleModel.getDrones().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
         return new BattleModelStateResponse()
                 .setShells(shellStates)
                 .setVehicles(vehicleStates)
-                .setMissiles(missileStates);
+                .setMissiles(missileStates)
+                .setDrones(droneStates);
     }
 
     private void resetUpdatedFlags(Battle battle) {
@@ -210,5 +214,6 @@ public class BattleRunner {
         battle.getModel().setUpdated(false);
         battle.getModel().getVehicles().values().forEach(vehicle -> vehicle.setUpdated(false));
         battle.getModel().getMissiles().values().forEach(missile -> missile.getUpdate().resetUpdated());
+        battle.getModel().getDrones().values().forEach(drone -> drone.getUpdate().resetUpdated());
     }
 }

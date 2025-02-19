@@ -9,6 +9,7 @@ import {useGroundDrawer} from "@/playground/composables/drawer/ground-drawer";
 import {useMissileDrawer} from "~/playground/composables/drawer/missile-drawer";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
+import {useDroneDrawer} from "~/playground/composables/drawer/drone-drawer";
 
 const battleStore = useBattleStore()
 const userSettingsStore = useUserSettingsStore()
@@ -39,6 +40,7 @@ const drawerBase = useDrawerBase(scaleCoefficient, canvasSize)
 const vehicleDrawer = useVehicleDrawer(drawerBase, ctx)
 const shellDrawer = useShellDrawer(drawerBase, ctx)
 const missileDrawer = useMissileDrawer(drawerBase, ctx)
+const droneDrawer = useDroneDrawer(drawerBase, ctx)
 const explosionDrawer = useExplosionDrawer(drawerBase, ctx)
 const groundDrawer = useGroundDrawer(drawerBase, ctx)
 
@@ -83,6 +85,7 @@ function redrawBattle() {
     clearCanvas()
     shellDrawer.draw()
     missileDrawer.draw()
+    droneDrawer.draw()
     groundDrawer.draw()
     vehicleDrawer.draw()
     explosionDrawer.draw()

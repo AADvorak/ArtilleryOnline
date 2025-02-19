@@ -9,6 +9,19 @@ import java.util.stream.Collectors;
 
 public class GeometryUtils {
 
+    public static double calculateAngleDiff(double objectAngle, double targetAngle) {
+        double diff = targetAngle - objectAngle;
+        if (Math.abs(diff) > Math.PI) {
+            if (diff > 0) {
+                return 2 * Math.PI - diff;
+            } else {
+                return 2 * Math.PI + diff;
+            }
+        } else {
+            return diff;
+        }
+    }
+
     public static Position getPointToLineProjection(Position point, Segment line) {
         return getPointToSegmentProjection(point, line, true);
     }

@@ -11,6 +11,7 @@ export enum Command {
   JET_ON = 'JET_ON',
   JET_OFF = 'JET_OFF',
   LAUNCH_MISSILE = 'LAUNCH_MISSILE',
+  LAUNCH_DRONE = 'LAUNCH_DRONE',
 
   PAUSE = 'PAUSE',
   RESUME = 'RESUME',
