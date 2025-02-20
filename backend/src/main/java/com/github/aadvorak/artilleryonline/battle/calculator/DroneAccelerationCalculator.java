@@ -61,10 +61,28 @@ public class DroneAccelerationCalculator {
     private static double getEnginesAccelerationMagnitude(DroneCalculations drone, BattleModel battleModel) {
         var flyHeight = drone.getModel().getSpecs().getFlyHeight();
         var currentHeight = getHeight(drone, battleModel);
-        if (currentHeight > flyHeight) {
+        var maxAcceleration = drone.getModel().getSpecs().getMaxEngineAcceleration();
+        if (currentHeight > 1.5 * flyHeight) {
             return 0.0;
+        } else if (currentHeight < 0.5 * flyHeight) {
+            return maxAcceleration;
         } else {
-            return drone.getModel().getSpecs().getMaxEngineAcceleration();
+            var velocityY = drone.getModel().getState().getVelocity().getY();
+            var distance = flyHeight - currentHeight;
+            var timeStep = battleModel.getCurrentTimeStepSecs();
+            var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
+            var absVelocityY = Math.abs(velocityY);
+            var absDistance = Math.abs(distance);
+            if (absVelocityY < 0.1 && absDistance < 0.01) {
+                return gravityAcceleration;
+            }
+            var targetAcceleration = absVelocityY < 0.1
+                    ? gravityAcceleration + 2 * distance / (timeStep * timeStep)
+                    : gravityAcceleration - Math.signum(velocityY) * velocityY * velocityY / (2 * distance);
+            if (targetAcceleration < 0) {
+                return 0.0;
+            }
+            return Math.min(targetAcceleration, maxAcceleration);
         }
     }
 
