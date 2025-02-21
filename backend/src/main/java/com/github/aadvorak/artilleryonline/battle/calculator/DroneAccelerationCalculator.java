@@ -7,6 +7,8 @@ import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 
+import java.util.stream.Collectors;
+
 public class DroneAccelerationCalculator {
 
     public static BodyAcceleration calculate(DroneCalculations drone, BattleModel battleModel) {
@@ -36,11 +38,11 @@ public class DroneAccelerationCalculator {
         var rightEngineAccelerationMagnitude = restricted(accelerationMagnitude * (1 + accelerationDiff), maxAccelerationMagnitude);
         var leftEngineAccelerationMagnitude = restricted(accelerationMagnitude * (1 - accelerationDiff), maxAccelerationMagnitude);
         var rightEngineAcceleration = new Acceleration()
-                .setX(rightEngineAccelerationMagnitude * Math.sin(angle))
-                .setY(rightEngineAccelerationMagnitude * Math.cos(angle));
+                .setX(rightEngineAccelerationMagnitude * Math.cos(angle + Math.PI / 2))
+                .setY(rightEngineAccelerationMagnitude * Math.sin(angle + Math.PI / 2));
         var leftEngineAcceleration = new Acceleration()
-                .setX(leftEngineAccelerationMagnitude * Math.sin(angle))
-                .setY(leftEngineAccelerationMagnitude * Math.cos(angle));
+                .setX(leftEngineAccelerationMagnitude * Math.cos(angle + Math.PI / 2))
+                .setY(leftEngineAccelerationMagnitude * Math.sin(angle + Math.PI / 2));
         var rightEngineRotatingAcceleration = rightEngineAcceleration.getX() * Math.sin(angle)
                 + rightEngineAcceleration.getY() * Math.cos(angle);
         var leftEngineRotatingAcceleration = leftEngineAcceleration.getX() * Math.sin(angle)
@@ -87,7 +89,7 @@ public class DroneAccelerationCalculator {
     }
 
     private static double getEnginesAccelerationDiff(DroneCalculations drone, BattleModel battleModel) {
-        var targetAngle = 0.0;
+        var targetAngle = getTargetAngle(drone, battleModel);
         var droneAngle = drone.getModel().getState().getPosition().getAngle();
         var angleDiff = GeometryUtils.calculateAngleDiff(droneAngle, targetAngle);
         if (angleDiff > Math.PI) {
@@ -97,6 +99,43 @@ public class DroneAccelerationCalculator {
         } else {
             return 2 * angleDiff / Math.PI;
         }
+    }
+
+    private static double getTargetAngle(DroneCalculations drone, BattleModel battleModel) {
+        var flyHeight = drone.getModel().getSpecs().getFlyHeight();
+        var currentHeight = getHeight(drone, battleModel);
+        if (currentHeight < 0.8 * flyHeight) {
+            return 0.0;
+        }
+        var ammo = drone.getModel().getState().getAmmo().values().iterator().next();
+        var targetsStream = battleModel.getVehicles().values().stream();
+        if (ammo > 0) {
+            targetsStream = targetsStream.filter(vehicleModel ->
+                    vehicleModel.getId() != drone.getModel().getVehicleId());
+        } else {
+            targetsStream = targetsStream.filter(vehicleModel ->
+                    vehicleModel.getId() == drone.getModel().getVehicleId());
+        }
+        var targets = targetsStream.collect(Collectors.toSet());
+        if (targets.isEmpty()) {
+            return 0.0;
+        }
+        var droneX = drone.getModel().getState().getPosition().getX();
+        var xDiffs = targets.stream()
+                .map(vehicle -> vehicle.getState().getPosition().getX() - droneX)
+                .collect(Collectors.toSet());
+        var iterator = xDiffs.iterator();
+        var minXDiff = iterator.next();
+        while (iterator.hasNext()) {
+            var xDiff = iterator.next();
+            if (Math.abs(xDiff) < Math.abs(minXDiff)) {
+                minXDiff = xDiff;
+            }
+        }
+        if (Math.abs(minXDiff) < 1.5) {
+            return 0.0;
+        }
+        return - Math.signum(minXDiff) * Math.PI / 16;
     }
 
     private static double restricted(double value, double maxValue) {

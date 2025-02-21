@@ -8,6 +8,7 @@ import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.preset.DroneSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.preset.GunSpecsPreset;
+import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.state.DroneState;
 
 import java.util.Map;
@@ -24,7 +25,9 @@ public class VehicleLaunchDroneProcessor {
                 .setAmmo(Map.of());
         var state = new DroneState()
                 .setPosition(BodyPosition.of(vehiclePosition.getCenter().shifted(vehicleRadius, angle + Math.PI / 2), angle))
-                .setVelocity(BodyVelocity.of(vehicleModel.getState().getVelocity()));
+                .setVelocity(BodyVelocity.of(vehicleModel.getState().getVelocity()))
+                // todo
+                .setAmmo(Map.of(ShellSpecsPreset.LIGHT_AP.getName(), specs.getAmmo()));
         var id = battleModel.getIdGenerator().generate();
         var model = new DroneModel();
         model.setId(id);
