@@ -18,4 +18,5 @@ export interface RoomConfig {
 export interface DroneConfig {
   gun: GunSpecs
   ammo: Ammo
+  color?: string
 }

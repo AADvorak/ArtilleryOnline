@@ -29,8 +29,10 @@ export function deserializeVehicleConfig(input: DeserializerInput): VehicleConfi
 export function deserializeDroneConfig(input: DeserializerInput): DroneConfig {
   const gun = deserializeGunSpecs(input)
   const ammo = DeserializerBase.readMap(input, DeserializerBase.readString, DeserializerBase.readInt)!
+  const color = DeserializerBase.readNullable(input, DeserializerBase.readString)
   return {
     gun,
-    ammo
+    ammo,
+    color
   }
 }

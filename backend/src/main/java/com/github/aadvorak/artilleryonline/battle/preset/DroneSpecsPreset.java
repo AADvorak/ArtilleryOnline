@@ -12,7 +12,7 @@ public enum DroneSpecsPreset {
 
     DEFAULT("Drone", new DroneSpecs()
             .setAmmo(4)
-            .setMass(0.007)
+            .setMass(0.002)
             .setAvailableGuns(Map.of(GunSpecsPreset.DRONE.getName(), GunSpecsPreset.DRONE.getSpecs()))
             .setHullRadius(0.1)
             .setEnginesRadius(0.2)

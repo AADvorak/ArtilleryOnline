@@ -18,9 +18,12 @@ public class DroneConfig implements Config, CompactSerializable {
 
     private Map<String, Integer> ammo;
 
+    private String color;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeSerializableValue(gun);
         stream.writeMap(ammo, stream::writeString, stream::writeInt);
+        stream.writeNullable(color, stream::writeString);
     }
 }

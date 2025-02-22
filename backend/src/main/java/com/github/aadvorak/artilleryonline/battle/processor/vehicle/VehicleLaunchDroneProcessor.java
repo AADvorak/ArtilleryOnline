@@ -25,7 +25,8 @@ public class VehicleLaunchDroneProcessor {
         var config = new DroneConfig()
                 .setGun(GunSpecsPreset.DRONE.getSpecs())
                 // todo
-                .setAmmo(Map.of(ShellSpecsPreset.LIGHT_AP.getName(), specs.getAmmo()));
+                .setAmmo(Map.of(ShellSpecsPreset.LIGHT_AP.getName(), specs.getAmmo()))
+                .setColor(vehicleModel.getConfig().getColor());
         var state = new DroneState()
                 .setPosition(BodyPosition.of(vehiclePosition.getCenter().shifted(vehicleRadius, angle + Math.PI / 2), angle))
                 .setVelocity(BodyVelocity.of(vehicleModel.getState().getVelocity()))

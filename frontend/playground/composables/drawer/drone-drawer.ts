@@ -18,13 +18,11 @@ export function useDroneDrawer(
 
   function drawDrone(droneModel: DroneModel) {
     if (ctx.value) {
-      ctx.value.fillStyle = 'rgb(256 256 256)'
-      ctx.value.strokeStyle = 'rgb(256 256 256)'
-      ctx.value.lineWidth = 1
-      ctx.value.beginPath()
       const enginesRadius = droneModel.specs.enginesRadius
       const hullRadius = droneModel.specs.hullRadius
       const rawPosition = droneModel.state.position
+      const gunAngle = droneModel.state.gunAngle + rawPosition.angle
+      const gunLength = droneModel.config.gun.length
       const rawRightWingDownPosition = BattleUtils.shiftedPosition(rawPosition, enginesRadius, rawPosition.angle)
       const rawLeftWingDownPosition = BattleUtils.shiftedPosition(rawPosition, enginesRadius, rawPosition.angle - Math.PI)
       const rawRightWingUpPosition = BattleUtils.shiftedPosition(rawRightWingDownPosition, hullRadius, rawPosition.angle + Math.PI / 2)
@@ -34,6 +32,14 @@ export function useDroneDrawer(
       const leftWingDownPosition = drawerBase.transformPosition(rawLeftWingDownPosition)
       const rightWingUpPosition = drawerBase.transformPosition(rawRightWingUpPosition)
       const leftWingUpPosition = drawerBase.transformPosition(rawLeftWingUpPosition)
+      const gunEndPosition = drawerBase.transformPosition(BattleUtils.shiftedPosition(rawPosition, gunLength, gunAngle))
+      const color = droneModel.config.color || 'rgb(256 256 256)'
+
+      ctx.value.fillStyle = color
+      ctx.value.strokeStyle = color
+      ctx.value.lineWidth = 1
+      ctx.value.beginPath()
+
       ctx.value.arc(position.x, position.y, drawerBase.scale(hullRadius), 0, 2 * Math.PI)
       ctx.value.fill()
 
@@ -42,6 +48,11 @@ export function useDroneDrawer(
       ctx.value.lineTo(leftWingDownPosition.x, leftWingDownPosition.y)
       ctx.value.lineTo(rightWingDownPosition.x, rightWingDownPosition.y)
       ctx.value.lineTo(rightWingUpPosition.x, rightWingUpPosition.y)
+      ctx.value.stroke()
+
+      ctx.value.lineWidth = drawerBase.scale(droneModel.config.gun.caliber)
+      ctx.value.moveTo(position.x, position.y)
+      ctx.value.lineTo(gunEndPosition.x, gunEndPosition.y)
       ctx.value.stroke()
 
       ctx.value.closePath()
