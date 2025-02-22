@@ -10,7 +10,9 @@ import com.github.aadvorak.artilleryonline.battle.preset.DroneSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.preset.GunSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.state.DroneState;
+import com.github.aadvorak.artilleryonline.battle.state.GunState;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class VehicleLaunchDroneProcessor {
@@ -22,12 +24,17 @@ public class VehicleLaunchDroneProcessor {
         var specs = DroneSpecsPreset.DEFAULT.getSpecs();
         var config = new DroneConfig()
                 .setGun(GunSpecsPreset.DRONE.getSpecs())
-                .setAmmo(Map.of());
+                // todo
+                .setAmmo(Map.of(ShellSpecsPreset.LIGHT_AP.getName(), specs.getAmmo()));
         var state = new DroneState()
                 .setPosition(BodyPosition.of(vehiclePosition.getCenter().shifted(vehicleRadius, angle + Math.PI / 2), angle))
                 .setVelocity(BodyVelocity.of(vehicleModel.getState().getVelocity()))
                 // todo
-                .setAmmo(Map.of(ShellSpecsPreset.LIGHT_AP.getName(), specs.getAmmo()));
+                .setAmmo(new HashMap<>(config.getAmmo()))
+                .setGunState(new GunState()
+                        .setSelectedShell(ShellSpecsPreset.LIGHT_AP.getName())
+                        .setTriggerPushed(false))
+                .setGunAngle(- Math.PI / 2);
         var id = battleModel.getIdGenerator().generate();
         var model = new DroneModel();
         model.setId(id);

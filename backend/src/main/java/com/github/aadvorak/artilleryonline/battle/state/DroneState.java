@@ -21,10 +21,16 @@ public class DroneState implements State, CompactSerializable {
 
     private Map<String, Integer> ammo;
 
+    private GunState gunState;
+
+    private double gunAngle;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeSerializableValue(position);
         stream.writeSerializableValue(velocity);
         stream.writeMap(ammo, stream::writeString, stream::writeInt);
+        stream.writeSerializableValue(gunState);
+        stream.writeDouble(gunAngle);
     }
 }

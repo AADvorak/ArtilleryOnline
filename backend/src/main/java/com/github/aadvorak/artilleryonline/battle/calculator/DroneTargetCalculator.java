@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.calculator;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.DroneCalculations;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 
 import java.util.stream.Collectors;
 
@@ -35,10 +36,14 @@ public class DroneTargetCalculator {
             }
         }
         var targetPosition = xDiffMap.get(minXDiff);
+        var targetAngle = dronePosition.angleTo(targetPosition);
+        var gunAngle = drone.getModel().getState().getGunAngle() + drone.getModel().getState().getPosition().getAngle();
+        var angleDiff = GeometryUtils.calculateAngleDiff(gunAngle, targetAngle);
+        drone.getModel().getState().getGunState().setTriggerPushed(Math.abs(angleDiff) < Math.PI / 16);
         drone.setTarget(new DroneCalculations.Target()
                 .setXDiff(minXDiff)
                 .setPosition(targetPosition)
-                .setAngle(dronePosition.angleTo(targetPosition))
+                .setAngle(targetAngle)
         );
     }
 }

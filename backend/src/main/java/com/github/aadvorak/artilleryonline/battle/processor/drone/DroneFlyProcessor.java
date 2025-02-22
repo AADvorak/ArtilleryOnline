@@ -9,12 +9,12 @@ public class DroneFlyProcessor {
 
     public static void processStep1(DroneCalculations drone, BattleModel battleModel) {
         DroneTargetCalculator.calculate(drone, battleModel);
+        recalculateVelocity(drone, battleModel);
         drone.calculateNextPosition(battleModel.getCurrentTimeStepSecs());
     }
 
     public static void processStep2(DroneCalculations drone, BattleModel battleModel) {
         drone.applyNextPosition();
-        recalculateVelocity(drone, battleModel);
     }
 
     private static void recalculateVelocity(DroneCalculations drone, BattleModel battleModel) {

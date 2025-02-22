@@ -33,6 +33,8 @@ export interface DroneState {
   position: BodyPosition
   velocity: BodyVelocity
   ammo: Ammo
+  gunState: GunState
+  gunAngle: number
 }
 
 export interface DroneInVehicleState {

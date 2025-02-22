@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.BattleStage;
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.processor.command.CommandProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.drone.DroneFlyProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.drone.DroneGunShootProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.missile.MissileFlyProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.missile.collisions.MissilesCollisionsProcessor;
@@ -54,8 +55,10 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         battleCalculations.getMissiles().forEach(missileCalculations ->
                 MissileFlyProcessor.processStep1(missileCalculations, battleModel));
 
-        battleCalculations.getDrones().forEach(droneCalculations ->
-                DroneFlyProcessor.processStep1(droneCalculations, battleModel));
+        battleCalculations.getDrones().forEach(droneCalculations -> {
+            DroneFlyProcessor.processStep1(droneCalculations, battleModel);
+            DroneGunShootProcessor.processStep(droneCalculations, battleModel);
+        });
 
         battleCalculations.getVehicles().forEach(vehicleCalculations -> {
             var vehicleModel = vehicleCalculations.getModel();
