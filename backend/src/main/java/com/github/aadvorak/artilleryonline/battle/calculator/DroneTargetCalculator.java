@@ -39,7 +39,8 @@ public class DroneTargetCalculator {
         var targetAngle = dronePosition.angleTo(targetPosition);
         var gunAngle = drone.getModel().getState().getGunAngle() + drone.getModel().getState().getPosition().getAngle();
         var angleDiff = GeometryUtils.calculateAngleDiff(gunAngle, targetAngle);
-        drone.getModel().getState().getGunState().setTriggerPushed(Math.abs(angleDiff) < Math.PI / 16);
+        drone.getModel().getState().getGunState().setTriggerPushed(Math.abs(angleDiff) < Math.PI / 32
+                && dronePosition.distanceTo(targetPosition) < drone.getModel().getSpecs().getFlyHeight());
         drone.setTarget(new DroneCalculations.Target()
                 .setXDiff(minXDiff)
                 .setPosition(targetPosition)
