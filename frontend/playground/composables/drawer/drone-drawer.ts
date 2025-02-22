@@ -33,6 +33,11 @@ export function useDroneDrawer(
       const rightWingUpPosition = drawerBase.transformPosition(rawRightWingUpPosition)
       const leftWingUpPosition = drawerBase.transformPosition(rawLeftWingUpPosition)
       const gunEndPosition = drawerBase.transformPosition(BattleUtils.shiftedPosition(rawPosition, gunLength, gunAngle))
+      const leftEngineLeftPosition = drawerBase.transformPosition(BattleUtils.shiftedPosition(rawLeftWingUpPosition, enginesRadius / 3, rawPosition.angle - Math.PI))
+      const leftEngineRightPosition = drawerBase.transformPosition(BattleUtils.shiftedPosition(rawLeftWingUpPosition, enginesRadius / 3, rawPosition.angle))
+      const rightEngineLeftPosition = drawerBase.transformPosition(BattleUtils.shiftedPosition(rawRightWingUpPosition, enginesRadius / 3, rawPosition.angle - Math.PI))
+      const rightEngineRightPosition = drawerBase.transformPosition(BattleUtils.shiftedPosition(rawRightWingUpPosition, enginesRadius / 3, rawPosition.angle))
+
       const color = droneModel.config.color || 'rgb(256 256 256)'
 
       ctx.value.fillStyle = color
@@ -44,10 +49,14 @@ export function useDroneDrawer(
       ctx.value.fill()
 
       ctx.value.lineWidth = 2
+      ctx.value.moveTo(leftEngineLeftPosition.x, leftEngineLeftPosition.y)
+      ctx.value.lineTo(leftEngineRightPosition.x, leftEngineRightPosition.y)
       ctx.value.moveTo(leftWingUpPosition.x, leftWingUpPosition.y)
       ctx.value.lineTo(leftWingDownPosition.x, leftWingDownPosition.y)
       ctx.value.lineTo(rightWingDownPosition.x, rightWingDownPosition.y)
       ctx.value.lineTo(rightWingUpPosition.x, rightWingUpPosition.y)
+      ctx.value.moveTo(rightEngineLeftPosition.x, rightEngineLeftPosition.y)
+      ctx.value.lineTo(rightEngineRightPosition.x, rightEngineRightPosition.y)
       ctx.value.stroke()
 
       ctx.value.lineWidth = drawerBase.scale(droneModel.config.gun.caliber)
