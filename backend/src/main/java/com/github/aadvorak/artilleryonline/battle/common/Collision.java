@@ -94,12 +94,12 @@ public class Collision {
                 .setPair(new CollisionPair(first, null));
     }
 
-    public static Collision ofVehicleWithGround(Calculations<VehicleModel> first, Interpenetration interpenetration) {
-        return ofVehicleWithUnmovable(first, interpenetration, CollideObjectType.GROUND);
+    public static Collision withGround(Calculations<?> first, Interpenetration interpenetration) {
+        return withUnmovable(first, interpenetration, CollideObjectType.GROUND);
     }
 
-    public static Collision ofVehicleWithWall(Calculations<VehicleModel> first, Interpenetration interpenetration) {
-        return ofVehicleWithUnmovable(first, interpenetration, CollideObjectType.WALL);
+    public static Collision withWall(Calculations<?> first, Interpenetration interpenetration) {
+        return withUnmovable(first, interpenetration, CollideObjectType.WALL);
     }
 
     public static Collision withVehicle(Calculations<?> first, Calculations<VehicleModel> second,
@@ -124,8 +124,8 @@ public class Collision {
                 .setInterpenetration(interpenetration);
     }
 
-    private static Collision ofVehicleWithUnmovable(
-            Calculations<VehicleModel> first,
+    private static Collision withUnmovable(
+            Calculations<?> first,
             Interpenetration interpenetration,
             CollideObjectType type
     ) {

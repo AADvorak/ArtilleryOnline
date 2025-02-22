@@ -13,7 +13,7 @@ public class DroneGunShootProcessor {
         var gunState = drone.getModel().getState().getGunState();
         if (gunState.isTriggerPushed() && gunState.getLoadedShell() != null) {
             doShot(drone, battleModel);
-            drone.getModel().getUpdate().setUpdated(battleModel.getLastUpdateTime());
+            drone.getModel().getUpdate().setUpdated();
         }
         if (gunState.getLoadedShell() == null && gunState.getLoadingShell() == null) {
             startLoading(drone);

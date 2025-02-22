@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.calculator.wheel;
 
+import com.github.aadvorak.artilleryonline.battle.calculations.DroneCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.NearestGroundPoint;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
@@ -29,7 +30,7 @@ public class GroundPositionCalculator {
         var wheelRadius = wheelCalculations.getVehicle().getModel().getSpecs().getWheelRadius();
         var nextPosition = wheelCalculations.getNext().getPosition();
         var nearestGroundPointByX = BattleUtils.getNearestGroundPosition(nextPosition.getX(), roomModel);
-        wheelCalculations.setNearestGroundPointByX(nearestGroundPointByX);
+        wheelCalculations.getNext().setNearestGroundPointByX(nearestGroundPointByX);
         var nearestGroundPoint = getNearestGroundPoint(nextPosition, wheelRadius,
                 roomModel, wheelCalculations.getSign().getValue());
         if (nearestGroundPoint == null) {
@@ -40,6 +41,23 @@ public class GroundPositionCalculator {
         wheelCalculations.getNext().setNearestGroundPoint(nearestGroundPoint);
         wheelCalculations.getNext().setGroundAngle(getGroundAngle(nextPosition, nearestGroundPoint, roomModel));
         wheelCalculations.getNext().setGroundDepth(getGroundDepth(nextPosition, wheelRadius, nearestGroundPoint));
+    }
+
+    public static void calculateNext(DroneCalculations drone, RoomModel roomModel) {
+        var hullRadius = drone.getModel().getSpecs().getHullRadius();
+        var nextPosition = drone.getNext().getPosition().getCenter();
+        var nearestGroundPointByX = BattleUtils.getNearestGroundPosition(nextPosition.getX(), roomModel);
+        drone.getNext().setNearestGroundPointByX(nearestGroundPointByX);
+        var nearestGroundPoint = getNearestGroundPoint(nextPosition, hullRadius,
+                roomModel, 1);
+        if (nearestGroundPoint == null) {
+            drone.getNext().setGroundAngle(0.0);
+            drone.getNext().setGroundDepth(getGroundDepth(nextPosition, hullRadius, nearestGroundPointByX));
+            return;
+        }
+        drone.getNext().setNearestGroundPoint(nearestGroundPoint);
+        drone.getNext().setGroundAngle(getGroundAngle(nextPosition, nearestGroundPoint, roomModel));
+        drone.getNext().setGroundDepth(getGroundDepth(nextPosition, hullRadius, nearestGroundPoint));
     }
 
     private static double getGroundAngle(Position position, NearestGroundPoint nearestGroundPoint, RoomModel roomModel) {

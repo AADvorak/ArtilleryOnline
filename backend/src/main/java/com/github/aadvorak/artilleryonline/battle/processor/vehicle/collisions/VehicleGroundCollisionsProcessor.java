@@ -26,6 +26,7 @@ public class VehicleGroundCollisionsProcessor {
         return collision == null;
     }
 
+    // todo is it needed?
     private static void calculateNextGroundPositions(VehicleCalculations vehicle, BattleCalculations battle) {
         vehicle.getRightWheel().getNext().setNearestGroundPointByX(BattleUtils.getNearestGroundPosition(
                 vehicle.getRightWheel().getNext().getPosition().getX(),

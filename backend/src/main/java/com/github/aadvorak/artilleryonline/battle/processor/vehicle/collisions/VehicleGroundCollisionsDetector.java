@@ -46,7 +46,7 @@ public class VehicleGroundCollisionsDetector {
         if (interpenetration == null) {
             return null;
         }
-        return Collision.ofVehicleWithGround(wheel, interpenetration);
+        return Collision.withGround(wheel, interpenetration);
     }
 
     private static Collision detectWheelWallCollision(WheelCalculations wheel, BattleCalculations battle) {
@@ -57,12 +57,12 @@ public class VehicleGroundCollisionsDetector {
         var rightWallDepth = nextPosition.getX() + wheelRadius - xMax;
         var rightWallInterpenetration = Interpenetration.of(rightWallDepth, Math.PI / 2);
         if (rightWallInterpenetration != null) {
-            return Collision.ofVehicleWithWall(wheel, rightWallInterpenetration);
+            return Collision.withWall(wheel, rightWallInterpenetration);
         }
         var leftWallDepth = xMin - nextPosition.getX() + wheelRadius;
         var leftWallInterpenetration = Interpenetration.of(leftWallDepth, -Math.PI / 2);
         if (leftWallInterpenetration != null) {
-            return Collision.ofVehicleWithWall(wheel, leftWallInterpenetration);
+            return Collision.withWall(wheel, leftWallInterpenetration);
         }
         return null;
     }

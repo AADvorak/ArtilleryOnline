@@ -21,6 +21,11 @@ public class TimeoutUpdate {
         updated = true;
     }
 
+    public void setUpdated() {
+        lastUpdateTime = System.currentTimeMillis();
+        updated = true;
+    }
+
     public void resetUpdated() {
         updated = false;
     }

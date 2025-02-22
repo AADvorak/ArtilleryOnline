@@ -1,9 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
-import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
-import com.github.aadvorak.artilleryonline.battle.common.Collision;
-import com.github.aadvorak.artilleryonline.battle.common.Position;
-import com.github.aadvorak.artilleryonline.battle.common.Velocity;
+import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -76,12 +73,27 @@ public class DroneCalculations implements Calculations<DroneModel> {
         model.getState().setPosition(next.getPosition());
     }
 
+    public void applyNormalMoveToNextPosition(double normalMove, double angle) {
+        var move = new VectorProjections(angle).setNormal(normalMove).recoverPosition();
+        var nextPosition = next.getPosition();
+        nextPosition.setX(nextPosition.getX() + move.getX());
+        nextPosition.setY(nextPosition.getY() + move.getY());
+    }
+
     @Getter
     @Setter
     @Accessors(chain = true)
     public static final class Next {
 
         private BodyPosition position;
+
+        private Position nearestGroundPointByX;
+
+        private NearestGroundPoint nearestGroundPoint;
+
+        private double groundAngle;
+
+        private double groundDepth;
     }
 
     @Getter
