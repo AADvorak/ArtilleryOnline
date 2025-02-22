@@ -7,8 +7,6 @@ import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 
-import java.util.stream.Collectors;
-
 public class DroneAccelerationCalculator {
 
     public static BodyAcceleration calculate(DroneCalculations drone, BattleModel battleModel) {
@@ -70,6 +68,9 @@ public class DroneAccelerationCalculator {
             return maxAcceleration;
         } else {
             var velocityY = drone.getModel().getState().getVelocity().getY();
+            if (velocityY < -3.0) {
+                return maxAcceleration;
+            }
             var distance = flyHeight - currentHeight;
             var timeStep = battleModel.getCurrentTimeStepSecs();
             var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
@@ -107,35 +108,13 @@ public class DroneAccelerationCalculator {
         if (currentHeight < 0.8 * flyHeight) {
             return 0.0;
         }
-        var ammo = drone.getModel().getState().getAmmo().values().iterator().next();
-        var targetsStream = battleModel.getVehicles().values().stream();
-        if (ammo > 0) {
-            targetsStream = targetsStream.filter(vehicleModel ->
-                    vehicleModel.getId() != drone.getModel().getVehicleId());
-        } else {
-            targetsStream = targetsStream.filter(vehicleModel ->
-                    vehicleModel.getId() == drone.getModel().getVehicleId());
-        }
-        var targets = targetsStream.collect(Collectors.toSet());
-        if (targets.isEmpty()) {
+        if (drone.getTarget() == null) {
             return 0.0;
         }
-        var droneX = drone.getModel().getState().getPosition().getX();
-        var xDiffs = targets.stream()
-                .map(vehicle -> vehicle.getState().getPosition().getX() - droneX)
-                .collect(Collectors.toSet());
-        var iterator = xDiffs.iterator();
-        var minXDiff = iterator.next();
-        while (iterator.hasNext()) {
-            var xDiff = iterator.next();
-            if (Math.abs(xDiff) < Math.abs(minXDiff)) {
-                minXDiff = xDiff;
-            }
-        }
-        if (Math.abs(minXDiff) < 1.5) {
+        if (Math.abs(drone.getTarget().getXDiff()) < 1.5) {
             return 0.0;
         }
-        return - Math.signum(minXDiff) * Math.PI / 16;
+        return - Math.signum(drone.getTarget().getXDiff()) * Math.PI / 16;
     }
 
     private static double restricted(double value, double maxValue) {

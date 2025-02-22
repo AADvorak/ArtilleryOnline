@@ -25,6 +25,10 @@ public class DroneCalculations implements Calculations<DroneModel> {
 
     private final Next next = new Next();
 
+    private Target target;
+
+    private double height;
+
     @Override
     public Integer getId() {
         return model.getId();
@@ -78,5 +82,17 @@ public class DroneCalculations implements Calculations<DroneModel> {
     public static final class Next {
 
         private BodyPosition position;
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    public static final class Target {
+
+        private Position position;
+
+        private double xDiff;
+
+        private double angle;
     }
 }
