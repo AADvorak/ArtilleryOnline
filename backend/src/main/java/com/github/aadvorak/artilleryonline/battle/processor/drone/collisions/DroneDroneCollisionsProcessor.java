@@ -18,25 +18,7 @@ public class DroneDroneCollisionsProcessor {
     }
 
     private static void resolve(Collision collision, BattleCalculations battle) {
-        CollisionUtils.recalculateVelocitiesRigid(collision);
-
-        collision.getPair().first().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
-        collision.getPair().second().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
-
-        recalculateNextPositions(collision);
-        collision.getPair().second().getCollisions().add(collision.inverted());
+        CollisionUtils.resolveRigidCollision(collision, battle);
         ((DroneModel) collision.getPair().second().getModel()).getUpdate().setUpdated();
-    }
-
-    private static void recalculateNextPositions(Collision collision) {
-        var object = collision.getPair().first();
-        var otherObject = collision.getPair().second();
-        var mass = collision.getPair().first().getMass();
-        var otherMass = collision.getPair().second().getMass();
-        var normalMovePerMass = collision.getInterpenetration().depth() / (mass + otherMass);
-        var normalMove = normalMovePerMass * otherMass;
-        var otherNormalMove = normalMovePerMass * mass;
-        object.applyNormalMoveToNextPosition(normalMove, collision.getInterpenetration().angle());
-        otherObject.applyNormalMoveToNextPosition(- otherNormalMove, collision.getInterpenetration().angle());
     }
 }

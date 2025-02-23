@@ -2,7 +2,6 @@ package com.github.aadvorak.artilleryonline.battle.processor.vehicle.collisions;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
@@ -28,27 +27,9 @@ public class VehicleVehicleCollisionsProcessor {
     }
 
     private static void resolve(Collision collision, BattleCalculations battle) {
-        CollisionUtils.recalculateVelocitiesRigid(collision);
-
-        collision.getPair().first().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
-        collision.getPair().second().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
-
-        recalculateVehiclesNextPositions(collision);
-        collision.getPair().second().getCollisions().add(collision.inverted());
+        CollisionUtils.resolveRigidCollision(collision, battle);
         ((VehicleModel) collision.getPair().second().getModel()).setUpdated(true);
         collision.getPair().second().getVehicleCalculations().setHasCollisions(true);
-    }
-
-    private static void recalculateVehiclesNextPositions(Collision collision) {
-        var vehicle = collision.getPair().first().getVehicleCalculations();
-        var otherVehicle = collision.getPair().second().getVehicleCalculations();
-        var mass = collision.getPair().first().getMass();
-        var otherMass = collision.getPair().second().getMass();
-        var normalMovePerMass = collision.getInterpenetration().depth() / (mass + otherMass);
-        var normalMove = normalMovePerMass * otherMass;
-        var otherNormalMove = normalMovePerMass * mass;
-        vehicle.applyNormalMoveToNextPosition(normalMove, collision.getInterpenetration().angle());
-        otherVehicle.applyNormalMoveToNextPosition(- otherNormalMove, collision.getInterpenetration().angle());
     }
 
     private static void calculateAndApplyDamage(Collision collision, BattleModel battleModel) {

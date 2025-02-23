@@ -102,6 +102,26 @@ public class CollisionUtils {
                 collision.getInterpenetration().angle());
     }
 
+    public static void resolveRigidCollision(Collision collision, BattleCalculations battle) {
+        recalculateVelocitiesRigid(collision);
+        collision.getPair().first().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
+        collision.getPair().second().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
+        recalculateNextPositionsRigid(collision);
+        collision.getPair().second().getCollisions().add(collision.inverted());
+    }
+
+    public static void recalculateNextPositionsRigid(Collision collision) {
+        var object = collision.getPair().first();
+        var otherObject = collision.getPair().second();
+        var mass = collision.getPair().first().getMass();
+        var otherMass = collision.getPair().second().getMass();
+        var normalMovePerMass = collision.getInterpenetration().depth() / (mass + otherMass);
+        var normalMove = normalMovePerMass * otherMass;
+        var otherNormalMove = normalMovePerMass * mass;
+        object.applyNormalMoveToNextPosition(normalMove, collision.getInterpenetration().angle());
+        otherObject.applyNormalMoveToNextPosition(- otherNormalMove, collision.getInterpenetration().angle());
+    }
+
     public static void recalculateVelocitiesRigid(Collision collision) {
         var mass = collision.getPair().first().getMass();
         var otherMass = collision.getPair().second().getMass();
