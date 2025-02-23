@@ -109,6 +109,13 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
                     battleModel.removeMissileById(id);
                 });
             }
+            var removedDroneIds = battleModel.getUpdates().getRemoved().getDroneIds();
+            if (removedDroneIds != null) {
+                removedDroneIds.forEach(id -> {
+                    // todo explosion if destroyed
+                    battleModel.removeDroneById(id);
+                });
+            }
             var removedVehicleKeys = battleModel.getUpdates().getRemoved().getVehicleKeys();
             if (removedVehicleKeys != null) {
                 removedVehicleKeys.forEach(key -> {

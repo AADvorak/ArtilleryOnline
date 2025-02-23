@@ -50,6 +50,10 @@ public class BattleModel {
         missiles.remove(id);
     }
 
+    public void removeDroneById(int id) {
+        drones.remove(id);
+    }
+
     public void removeExplosionById(int id) {
         explosions.remove(id);
     }

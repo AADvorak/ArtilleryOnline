@@ -12,5 +12,11 @@ public class DronesCollisionsProcessor {
                 DroneDroneCollisionsProcessor.process(drone, battle);
             }
         });
+
+        battle.getDrones().forEach(drone -> {
+            if (drone.getCollisions().isEmpty()) {
+                DroneVehicleCollisionsProcessor.process(drone, battle);
+            }
+        });
     }
 }

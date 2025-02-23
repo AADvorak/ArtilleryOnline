@@ -106,5 +106,7 @@ public class DroneCalculations implements Calculations<DroneModel> {
         private double xDiff;
 
         private double angle;
+
+        private double angleDiff;
     }
 }

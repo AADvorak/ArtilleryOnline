@@ -45,6 +45,7 @@ public class DroneTargetCalculator {
                 .setXDiff(minXDiff)
                 .setPosition(targetPosition)
                 .setAngle(targetAngle)
+                .setAngleDiff(angleDiff)
         );
     }
 }

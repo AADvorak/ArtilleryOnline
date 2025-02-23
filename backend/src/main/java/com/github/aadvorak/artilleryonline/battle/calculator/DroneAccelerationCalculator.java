@@ -26,9 +26,6 @@ public class DroneAccelerationCalculator {
     }
 
     private static BodyAcceleration calculateEngines(DroneCalculations drone, BattleModel battleModel) {
-        // average acceleration depends on height over ground and velocity
-        // may be on closing objects
-        // difference of engines acceleration depends on angle and moving direction
         var angle = drone.getModel().getState().getPosition().getAngle();
         var maxAccelerationMagnitude = drone.getModel().getSpecs().getMaxEngineAcceleration();
         var accelerationMagnitude = getEnginesAccelerationMagnitude(drone, battleModel);
@@ -62,7 +59,11 @@ public class DroneAccelerationCalculator {
         var flyHeight = drone.getModel().getSpecs().getFlyHeight();
         var currentHeight = getHeight(drone, battleModel);
         var maxAcceleration = drone.getModel().getSpecs().getMaxEngineAcceleration();
-        if (currentHeight > 1.5 * flyHeight) {
+        var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
+        if (drone.getModel().getState().getAmmo().values().iterator().next() == 0
+                && Math.abs(drone.getTarget().getAngleDiff()) < Math.PI / 32) {
+            return gravityAcceleration / 2;
+        } else if (currentHeight > 1.5 * flyHeight) {
             return 0.0;
         } else if (currentHeight < 0.5 * flyHeight) {
             return maxAcceleration;
@@ -73,7 +74,6 @@ public class DroneAccelerationCalculator {
             }
             var distance = flyHeight - currentHeight;
             var timeStep = battleModel.getCurrentTimeStepSecs();
-            var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
             var absVelocityY = Math.abs(velocityY);
             var absDistance = Math.abs(distance);
             if (absVelocityY < 0.1 && absDistance < 0.01) {
