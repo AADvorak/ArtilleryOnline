@@ -19,6 +19,12 @@ public class ShellsCollisionsProcessor {
 
         battle.getShells().forEach(shell -> {
             if (shell.getCollisions().isEmpty()) {
+                ShellDroneCollisionsProcessor.process(shell, battle);
+            }
+        });
+
+        battle.getShells().forEach(shell -> {
+            if (shell.getCollisions().isEmpty()) {
                 ShellGroundCollisionsProcessor.process(shell, battle);
             }
         });

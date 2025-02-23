@@ -1,9 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.processor.damage;
 
-import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.MissileCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
@@ -33,6 +30,17 @@ public class DamageProcessor {
             applyDamageToVehicle(shellSpecs.getDamage(), vehicle.getModel(), battle.getModel(),
                     shell.getModel().getUserId());
         } else if (ShellType.HE.equals(shellSpecs.getType())) {
+            calculateHEDamage(hit, battle);
+            processGroundDamage(hit, battle.getModel());
+        }
+    }
+
+    public static void processHitDrone(DroneCalculations drone, ShellCalculations shell,
+                                         BattleCalculations battle) {
+        StatisticsProcessor.increaseDirectHits(drone.getModel().getUserId(), shell.getModel().getUserId(), battle.getModel());
+        var shellSpecs = shell.getModel().getSpecs();
+        var hit = Hit.of(shell);
+        if (ShellType.HE.equals(shellSpecs.getType())) {
             calculateHEDamage(hit, battle);
             processGroundDamage(hit, battle.getModel());
         }
@@ -100,6 +108,20 @@ public class DamageProcessor {
     }
 
     private static void calculateHEDamage(Hit hit, BattleCalculations battle) {
+        battle.getMissiles().forEach(missile -> {
+            var distanceToTarget = hit.position().distanceTo(missile.getPosition());
+            if (distanceToTarget < hit.radius()) {
+                battle.getModel().getUpdates().removeMissile(missile.getId());
+            }
+        });
+        battle.getDrones().forEach(drone -> {
+            var distanceToTarget = hit.position().distanceTo(drone.getPosition())
+                    - drone.getModel().getSpecs().getHullRadius();
+            if (distanceToTarget < hit.radius()) {
+                drone.getModel().setDestroyed(true);
+                battle.getModel().getUpdates().removeDrone(drone.getId());
+            }
+        });
         battle.getVehicles().forEach(vehicle -> {
             var distanceToTarget = hit.position().distanceTo(vehicle.getPosition())
                     - vehicle.getModel().getSpecs().getRadius();

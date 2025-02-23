@@ -2,6 +2,8 @@ package com.github.aadvorak.artilleryonline.battle.common;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.CollisionPair;
+import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
 import com.github.aadvorak.artilleryonline.battle.model.MissileModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
@@ -83,6 +85,22 @@ public class Collision {
                                 .map(Interpenetration::inverted)
                                 .orElse(null)
                 );
+    }
+
+    public boolean isRicochet() {
+        if (pair.first() instanceof ShellCalculations shell) {
+            var shellType = shell.getModel().getSpecs().getType();
+            if (ShellType.HE.equals(shellType)) {
+                return false;
+            }
+            if (pair.second() instanceof WheelCalculations) {
+                return false;
+            }
+            var projections = velocitiesProjections.first();
+            var normalTangentialRatio = Math.abs(projections.getNormal() / projections.getTangential());
+            return normalTangentialRatio < 0.4;
+        }
+        return false;
     }
 
     public static Collision ofMissileWithGround(Calculations<MissileModel> first) {

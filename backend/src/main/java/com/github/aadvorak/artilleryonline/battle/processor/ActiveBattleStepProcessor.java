@@ -104,15 +104,21 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
             if (removedMissileIds != null) {
                 removedMissileIds.forEach(id -> {
                     var missileModel = battleModel.getMissiles().get(id);
-                    ExplosionProcessor.initExplosion(missileModel.getState().getPosition().getCenter(),
-                            missileModel.getSpecs().getRadius(), battleModel);
+                    if (missileModel != null) {
+                        ExplosionProcessor.initExplosion(missileModel.getState().getPosition().getCenter(),
+                                missileModel.getSpecs().getRadius(), battleModel);
+                    }
                     battleModel.removeMissileById(id);
                 });
             }
             var removedDroneIds = battleModel.getUpdates().getRemoved().getDroneIds();
             if (removedDroneIds != null) {
                 removedDroneIds.forEach(id -> {
-                    // todo explosion if destroyed
+                    var droneModel = battleModel.getDrones().get(id);
+                    if (droneModel != null && droneModel.isDestroyed()) {
+                        ExplosionProcessor.initExplosion(droneModel.getState().getPosition().getCenter(),
+                                droneModel.getSpecs().getEnginesRadius(), battleModel);
+                    }
                     battleModel.removeDroneById(id);
                 });
             }

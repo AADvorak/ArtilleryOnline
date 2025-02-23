@@ -92,6 +92,21 @@ public class CollisionUtils {
         return null;
     }
 
+    public static Collision detectWithDrone(Calculations<?> calculations, Position position, Position nextPosition,
+                                            DroneCalculations drone) {
+        var dronePosition = drone.getPosition();
+        var droneRadius = drone.getModel().getSpecs().getHullRadius();
+        var projectileTrace = new Segment(position, nextPosition);
+        var droneShape = new Circle(dronePosition, droneRadius);
+        var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(projectileTrace, droneShape);
+        if (!intersectionPoints.isEmpty()) {
+            var intersectionPoint = findClosestIntersectionPoint(position, intersectionPoints);
+            var interpenetration = Interpenetration.withUncheckedDepth(0.0, intersectionPoint, dronePosition);
+            return Collision.withDrone(calculations, drone, interpenetration);
+        }
+        return null;
+    }
+
     public static void resolveGroundCollision(Collision collision, BattleCalculations battle) {
         var velocityProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().first());
         velocityProjections.setNormal(-0.5 * velocityProjections.getNormal());

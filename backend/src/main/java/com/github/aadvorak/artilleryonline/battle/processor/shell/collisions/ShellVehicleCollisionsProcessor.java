@@ -18,7 +18,7 @@ public class ShellVehicleCollisionsProcessor {
         if (collision != null) {
             var hitObject = collision.getPair().second();
             ((VehicleModel) hitObject.getModel()).setUpdated(true);
-            if (isRicochet(collision)) {
+            if (collision.isRicochet()) {
                 CollisionUtils.recalculateVelocitiesRigid(collision);
                 shell.calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
                 battle.getModel().getEvents().addRicochet(new RicochetEvent().setShellId(shell.getId()));
@@ -39,18 +39,5 @@ public class ShellVehicleCollisionsProcessor {
         var shellType = ((ShellCalculations) collision.getPair().first()).getModel().getSpecs().getType();
         var shellMass = (ShellType.HE.equals(shellType) ? 0.5 : 1.0) * collision.getPair().first().getMass();
         CollisionUtils.pushVehicleByDirectHit(collision, shellMass);
-    }
-
-    private static boolean isRicochet(Collision collision) {
-        var shellType = ((ShellCalculations) collision.getPair().first()).getModel().getSpecs().getType();
-        if (ShellType.HE.equals(shellType)) {
-            return false;
-        }
-        if (collision.getPair().second() instanceof WheelCalculations) {
-            return false;
-        }
-        var projections = collision.getVelocitiesProjections().first();
-        var normalTangentialRatio = Math.abs(projections.getNormal() / projections.getTangential());
-        return normalTangentialRatio < 0.4;
     }
 }
