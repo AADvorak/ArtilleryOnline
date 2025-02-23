@@ -1,9 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.utils;
 
-import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.MissileCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
@@ -93,6 +90,16 @@ public class CollisionUtils {
             return Collision.withVehicle(calculations, wheel, interpenetration);
         }
         return null;
+    }
+
+    public static void resolveGroundCollision(Collision collision, BattleCalculations battle) {
+        var velocityProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().first());
+        velocityProjections.setNormal(-0.5 * velocityProjections.getNormal());
+        collision.getPair().first().setVelocity(velocityProjections.recoverVelocity());
+
+        collision.getPair().first().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
+        collision.getPair().first().applyNormalMoveToNextPosition(collision.getInterpenetration().depth(),
+                collision.getInterpenetration().angle());
     }
 
     public static void recalculateVelocitiesRigid(Collision collision) {
