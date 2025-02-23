@@ -77,6 +77,15 @@ public class MissileCalculations implements Calculations<MissileModel> {
         model.getState().setPosition(next.getPositions().getPosition());
     }
 
+    @Override
+    public void applyNormalMoveToNextPosition(double normalMove, double angle) {
+        var move = new VectorProjections(angle).setNormal(normalMove).recoverPosition();
+        var nextPosition = next.getPositions().getPosition();
+        nextPosition.setX(nextPosition.getX() + move.getX());
+        nextPosition.setY(nextPosition.getY() + move.getY());
+        next.getPositions().setPosition(nextPosition);
+    }
+
     @Getter
     @RequiredArgsConstructor
     public static final class Next {

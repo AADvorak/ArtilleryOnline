@@ -88,12 +88,38 @@ public class WheelCalculations implements Calculations<VehicleModel> {
         return vehicle.getCollisions();
     }
 
+    public void setVelocity(Velocity velocity) {
+        this.velocity = velocity;
+        vehicle.recalculateVelocityByWheel(this);
+    }
+
+    @Override
+    public void calculateNextPosition(double timeStep) {
+        vehicle.calculateNextPosition(timeStep);
+    }
+
+    @Override
+    public void applyNextPosition() {
+        vehicle.applyNextPosition();
+    }
+
+    @Override
+    public void applyNormalMoveToNextPosition(double normalMove, double angle) {
+        vehicle.applyNormalMoveToNextPosition(normalMove, angle);
+    }
+
     public void calculateVelocity() {
         var vehicleVelocity = vehicle.getModel().getState().getVelocity();
         var angle = vehicle.getModel().getState().getPosition().getAngle();
         var wheelAngle = angle + Math.PI / 2 + sign.getValue() * Math.PI / 2;
         var wheelDistance = vehicle.getModel().getPreCalc().getWheelDistance();
-        setVelocity(vehicleVelocity.getPointVelocity(wheelDistance, wheelAngle));
+        var wheelVelocity = vehicleVelocity.getPointVelocity(wheelDistance, wheelAngle);
+        if (velocity == null) {
+            velocity = new Velocity();
+        }
+        velocity
+                .setX(wheelVelocity.getX())
+                .setY(wheelVelocity.getY());
     }
 
     public void calculatePosition() {

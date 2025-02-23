@@ -4,10 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.MissileCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
-import com.github.aadvorak.artilleryonline.battle.common.Collision;
-import com.github.aadvorak.artilleryonline.battle.common.Interpenetration;
-import com.github.aadvorak.artilleryonline.battle.common.Position;
-import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
+import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
@@ -39,9 +36,9 @@ public class CollisionUtils {
         if (collision.getPair().second() instanceof WheelCalculations wheel) {
             var wheelVelocity = wheel.getVelocity();
             var projectileVelocity = collision.getPair().first().getVelocity();
-            wheelVelocity.setX(wheelVelocity.getX() + projectileMass * projectileVelocity.getX() / vehicleMass);
-            wheelVelocity.setY(wheelVelocity.getY() + projectileMass * projectileVelocity.getY() / vehicleMass);
-            wheel.getVehicle().recalculateVelocityByWheel(wheel);
+            wheel.setVelocity(new Velocity()
+                    .setX(wheelVelocity.getX() + projectileMass * projectileVelocity.getX() / vehicleMass)
+                    .setY(wheelVelocity.getY() + projectileMass * projectileVelocity.getY() / vehicleMass));
         }
     }
 

@@ -28,30 +28,15 @@ public class VehicleVehicleCollisionsProcessor {
     }
 
     private static void resolve(Collision collision, BattleCalculations battle) {
-        recalculateVehiclesVelocities(collision);
+        CollisionUtils.recalculateVelocitiesRigid(collision);
 
-        collision.getPair().first().getVehicleCalculations()
-                .calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
-        collision.getPair().second().getVehicleCalculations()
-                .calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
-        collision.getPair().first().getVehicleCalculations().recalculateWheelsVelocities();
-        collision.getPair().second().getVehicleCalculations().recalculateWheelsVelocities();
+        collision.getPair().first().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
+        collision.getPair().second().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
 
         recalculateVehiclesNextPositions(collision);
         collision.getPair().second().getCollisions().add(collision.inverted());
         ((VehicleModel) collision.getPair().second().getModel()).setUpdated(true);
         collision.getPair().second().getVehicleCalculations().setHasCollisions(true);
-    }
-
-    private static void recalculateVehiclesVelocities(Collision collision) {
-        CollisionUtils.recalculateVelocitiesRigid(collision);
-
-        if (collision.getPair().first() instanceof WheelCalculations wheelCalculations) {
-            wheelCalculations.getVehicle().recalculateVelocityByWheel(wheelCalculations);
-        }
-        if (collision.getPair().second() instanceof WheelCalculations wheelCalculations) {
-            wheelCalculations.getVehicle().recalculateVelocityByWheel(wheelCalculations);
-        }
     }
 
     private static void recalculateVehiclesNextPositions(Collision collision) {

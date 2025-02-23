@@ -23,4 +23,10 @@ public interface Calculations<Model> {
     void setVelocity(Velocity velocity);
 
     Set<Collision> getCollisions();
+
+    void calculateNextPosition(double timeStep);
+
+    void applyNextPosition();
+
+    void applyNormalMoveToNextPosition(double normalMove, double angle);
 }

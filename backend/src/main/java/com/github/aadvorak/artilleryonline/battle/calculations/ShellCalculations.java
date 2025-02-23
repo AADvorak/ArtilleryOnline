@@ -69,6 +69,16 @@ public class ShellCalculations implements Calculations<ShellModel> {
                 .setY(position.getY() + velocity.getY() * timeStep));
     }
 
+    @Override
+    public void applyNextPosition() {
+        model.getState().setPosition(next.getPosition());
+    }
+
+    @Override
+    public void applyNormalMoveToNextPosition(double normalMove, double angle) {
+
+    }
+
     @Getter
     @Setter
     @Accessors(chain = true)

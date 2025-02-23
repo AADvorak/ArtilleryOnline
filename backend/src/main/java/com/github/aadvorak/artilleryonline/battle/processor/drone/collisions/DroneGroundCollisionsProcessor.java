@@ -18,8 +18,7 @@ public class DroneGroundCollisionsProcessor {
 
     private static void resolve(Collision collision, BattleCalculations battle) {
         recalculateVelocity(collision);
-        ((DroneCalculations) collision.getPair().first())
-                .calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
+        collision.getPair().first().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
         recalculatePosition(collision);
     }
 
@@ -30,7 +29,7 @@ public class DroneGroundCollisionsProcessor {
     }
 
     private static void recalculatePosition(Collision collision) {
-        ((DroneCalculations) collision.getPair().first())
-                .applyNormalMoveToNextPosition(collision.getInterpenetration().depth(), collision.getInterpenetration().angle());
+        collision.getPair().first().applyNormalMoveToNextPosition(collision.getInterpenetration().depth(),
+                collision.getInterpenetration().angle());
     }
 }

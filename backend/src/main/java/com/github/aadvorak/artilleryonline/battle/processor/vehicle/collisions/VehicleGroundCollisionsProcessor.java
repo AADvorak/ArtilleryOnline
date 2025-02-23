@@ -40,24 +40,18 @@ public class VehicleGroundCollisionsProcessor {
 
     private static void resolve(Collision collision, BattleCalculations battle) {
         recalculateVehicleVelocity(collision);
-        collision.getPair().first().getVehicleCalculations()
-                .calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
-        collision.getPair().first().getVehicleCalculations().recalculateWheelsVelocities();
+        collision.getPair().first().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
         recalculateVehiclePosition(collision);
     }
 
     private static void recalculateVehicleVelocity(Collision collision) {
         var velocityProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().first());
         velocityProjections.setNormal(-0.5 * velocityProjections.getNormal());
-
         collision.getPair().first().setVelocity(velocityProjections.recoverVelocity());
-        if (collision.getPair().first() instanceof WheelCalculations wheel) {
-            wheel.getVehicle().recalculateVelocityByWheel(wheel);
-        }
     }
 
     private static void recalculateVehiclePosition(Collision collision) {
-        collision.getPair().first().getVehicleCalculations()
-                .applyNormalMoveToNextPosition(collision.getInterpenetration().depth(), collision.getInterpenetration().angle());
+        collision.getPair().first().applyNormalMoveToNextPosition(collision.getInterpenetration().depth(),
+                collision.getInterpenetration().angle());
     }
 }

@@ -81,6 +81,7 @@ public class VehicleCalculations implements Calculations<VehicleModel> {
                 .setAngle(angleVelocity / model.getPreCalc().getWheelDistance())
                 .setX(wheel.getVelocity().getX() - wheelSign * angleVelocity * Math.sin(angle))
                 .setY(wheel.getVelocity().getY() + wheelSign * angleVelocity * Math.cos(angle));
+        recalculateWheelsVelocities();
     }
 
     public void applyNextPosition() {
