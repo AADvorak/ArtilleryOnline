@@ -29,7 +29,7 @@ public class ShellsCollisionsProcessor {
                 var collision = shell.getCollisions().iterator().next();
                 var hitType = ShellHitType.of(collision.getPair().second());
                 if (hitType != null) {
-                    addHitEvent(hitType, shell.getId(), collision.getVehicleId(), battle.getModel());
+                    addHitEvent(hitType, shell.getId(), collision.getSecondId(), battle.getModel());
                 }
             }
         });

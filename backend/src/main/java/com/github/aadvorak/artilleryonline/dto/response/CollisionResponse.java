@@ -20,7 +20,7 @@ public class CollisionResponse implements CompactSerializable {
     public static CollisionResponse of(Collision collision) {
         return new CollisionResponse()
                 .setType(collision.getType())
-                .setVehicleId(collision.getVehicleId());
+                .setVehicleId(collision.getSecondId());
     }
 
     @Override

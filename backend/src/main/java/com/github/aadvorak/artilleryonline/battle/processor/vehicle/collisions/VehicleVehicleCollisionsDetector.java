@@ -123,6 +123,6 @@ public class VehicleVehicleCollisionsDetector {
     private static boolean collisionNotDetected(VehicleCalculations vehicle, Integer otherVehicleId) {
         return vehicle.getCollisions().stream()
                 .noneMatch(c -> CollideObjectType.VEHICLE.equals(c.getType())
-                        && c.getVehicleId().equals(otherVehicleId));
+                        && c.getSecondId().equals(otherVehicleId));
     }
 }

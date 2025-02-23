@@ -6,5 +6,11 @@ public class DronesCollisionsProcessor {
 
     public static void process(BattleCalculations battle) {
         battle.getDrones().forEach(drone -> DroneGroundCollisionsProcessor.process(drone, battle));
+
+        battle.getDrones().forEach(drone -> {
+            if (drone.getCollisions().isEmpty()) {
+                DroneDroneCollisionsProcessor.process(drone, battle);
+            }
+        });
     }
 }

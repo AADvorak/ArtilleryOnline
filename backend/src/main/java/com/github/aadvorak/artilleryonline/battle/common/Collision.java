@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.common;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.CollisionPair;
+import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
 import com.github.aadvorak.artilleryonline.battle.model.MissileModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
@@ -28,7 +29,7 @@ public class Collision {
 
     private Double impact;
 
-    public Integer getVehicleId() {
+    public Integer getSecondId() {
         if (pair.second() != null) {
             return pair.second().getId();
         }
@@ -104,21 +105,25 @@ public class Collision {
 
     public static Collision withVehicle(Calculations<?> first, Calculations<VehicleModel> second,
                                          Interpenetration interpenetration) {
-        var firstProjections = first.getVelocity().projections(interpenetration.angle());
-        var secondProjections = second.getVelocity().projections(interpenetration.angle());
-        return new Collision()
-                .setType(CollideObjectType.VEHICLE)
-                .setPair(new CollisionPair(first, second))
-                .setVelocitiesProjections(new VelocitiesProjections(firstProjections, secondProjections))
-                .setInterpenetration(interpenetration);
+        return withMovable(first, second, interpenetration, CollideObjectType.VEHICLE);
     }
 
     public static Collision withMissile(Calculations<?> first, Calculations<MissileModel> second,
                                         Interpenetration interpenetration) {
+        return withMovable(first, second, interpenetration, CollideObjectType.MISSILE);
+    }
+
+    public static Collision withDrone(Calculations<?> first, Calculations<DroneModel> second,
+                                        Interpenetration interpenetration) {
+        return withMovable(first, second, interpenetration, CollideObjectType.DRONE);
+    }
+
+    public static Collision withMovable(Calculations<?> first, Calculations<?> second,
+                                        Interpenetration interpenetration, CollideObjectType type) {
         var firstProjections = first.getVelocity().projections(interpenetration.angle());
         var secondProjections = second.getVelocity().projections(interpenetration.angle());
         return new Collision()
-                .setType(CollideObjectType.MISSILE)
+                .setType(type)
                 .setPair(new CollisionPair(first, second))
                 .setVelocitiesProjections(new VelocitiesProjections(firstProjections, secondProjections))
                 .setInterpenetration(interpenetration);
