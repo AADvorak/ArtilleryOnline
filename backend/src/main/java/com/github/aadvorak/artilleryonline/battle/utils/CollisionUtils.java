@@ -39,6 +39,23 @@ public class CollisionUtils {
         }
     }
 
+    // todo common logic
+    public static void pushDroneByDirectHit(Collision collision) {
+        var drone = (DroneCalculations) collision.getPair().second();
+        var droneMass = collision.getPair().second().getMass();
+        var projectileMass = collision.getPair().first().getMass();
+        var droneVelocitiesProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().second());
+        var projectileVelocitiesProjections = collision.getVelocitiesProjections().first();
+        droneVelocitiesProjections.setNormal(droneVelocitiesProjections.getNormal()
+                + projectileMass * projectileVelocitiesProjections.getNormal() / droneMass);
+        drone.setVelocity(droneVelocitiesProjections.recoverVelocity());
+
+        var droneVelocity = drone.getModel().getState().getVelocity();
+        var droneRadius = drone.getModel().getSpecs().getHullRadius();
+        droneVelocity.setAngle(droneVelocity.getAngle()
+                + projectileVelocitiesProjections.getTangential() * (projectileMass / droneMass) / droneRadius);
+    }
+
     public static Collision detectWithMissile(Calculations<?> calculations, Position position, Position nextPosition,
                                               MissileCalculations missile) {
         var missileSegment = new Segment(missile.getPositions().getHead(), missile.getPositions().getTail());

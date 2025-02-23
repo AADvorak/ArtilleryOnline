@@ -9,9 +9,13 @@ public class DroneGroundCollisionsProcessor {
     public static void process(DroneCalculations drone, BattleCalculations battle) {
         var collision = DroneGroundCollisionsDetector.detectFirst(drone, battle);
         if (collision != null) {
-            CollisionUtils.resolveGroundCollision(collision, battle);
-            drone.getModel().getUpdate().setUpdated();
-            drone.getCollisions().add(collision);
+            if (drone.getModel().isDestroyed()) {
+                battle.getModel().getUpdates().removeDrone(drone.getId());
+            } else {
+                CollisionUtils.resolveGroundCollision(collision, battle);
+                drone.getModel().getUpdate().setUpdated();
+                drone.getCollisions().add(collision);
+            }
         }
     }
 }

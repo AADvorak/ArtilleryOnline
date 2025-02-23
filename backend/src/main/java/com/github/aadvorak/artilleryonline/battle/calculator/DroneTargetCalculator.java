@@ -9,6 +9,9 @@ import java.util.stream.Collectors;
 public class DroneTargetCalculator {
 
     public static void calculate(DroneCalculations drone, BattleModel battleModel) {
+        if (drone.getModel().isDestroyed()) {
+            return;
+        }
         var ammo = drone.getModel().getState().getAmmo().values().iterator().next();
         var targetsStream = battleModel.getVehicles().values().stream();
         if (ammo > 0) {
