@@ -6,9 +6,6 @@ import com.github.aadvorak.artilleryonline.battle.config.DroneConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
-import com.github.aadvorak.artilleryonline.battle.preset.DroneSpecsPreset;
-import com.github.aadvorak.artilleryonline.battle.preset.GunSpecsPreset;
-import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.state.DroneState;
 import com.github.aadvorak.artilleryonline.battle.state.GunState;
 
@@ -18,22 +15,29 @@ import java.util.Map;
 public class VehicleLaunchDroneProcessor {
 
     public static void launch(VehicleModel vehicleModel, BattleModel battleModel) {
+        if (vehicleModel.getConfig().getDrone() == null) {
+            return;
+        }
+        var inVehicleState = vehicleModel.getState().getDroneState();
+        if (inVehicleState == null || !inVehicleState.isReadyToLaunch()) {
+            return;
+        }
+        var specs = vehicleModel.getConfig().getDrone();
         var vehiclePosition = vehicleModel.getState().getPosition();
         var vehicleRadius = vehicleModel.getSpecs().getRadius();
         var angle = vehiclePosition.getAngle();
-        var specs = DroneSpecsPreset.DEFAULT.getSpecs();
+        var gunSpecs = specs.getAvailableGuns().values().iterator().next();
+        var shellName = gunSpecs.getAvailableShells().keySet().iterator().next();
         var config = new DroneConfig()
-                .setGun(GunSpecsPreset.DRONE.getSpecs())
-                // todo
-                .setAmmo(Map.of(ShellSpecsPreset.LIGHT_AP.getName(), specs.getAmmo()))
+                .setGun(gunSpecs)
+                .setAmmo(Map.of(shellName, specs.getAmmo()))
                 .setColor(vehicleModel.getConfig().getColor());
         var state = new DroneState()
                 .setPosition(BodyPosition.of(vehiclePosition.getCenter().shifted(vehicleRadius, angle + Math.PI / 2), angle))
                 .setVelocity(BodyVelocity.of(vehicleModel.getState().getVelocity()))
-                // todo
                 .setAmmo(new HashMap<>(config.getAmmo()))
                 .setGunState(new GunState()
-                        .setSelectedShell(ShellSpecsPreset.LIGHT_AP.getName())
+                        .setSelectedShell(shellName)
                         .setTriggerPushed(false))
                 .setGunAngle(- Math.PI / 2);
         var id = battleModel.getIdGenerator().generate();
@@ -47,5 +51,7 @@ public class VehicleLaunchDroneProcessor {
         battleModel.getDrones().put(id, model);
         battleModel.getUpdates().addDrone(model);
         vehicleModel.setUpdated(true);
+        inVehicleState.setReadyToLaunch(false);
+        inVehicleState.setLaunched(true);
     }
 }

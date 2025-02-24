@@ -18,7 +18,7 @@ public enum DroneSpecsPreset {
             .setEnginesRadius(0.2)
             .setFlyHeight(5.0)
             .setMaxEngineAcceleration(12.0)
-            .setPrepareToLaunchTime(60.0)
+            .setPrepareToLaunchTime(20.0)
     );
 
     private final String name;

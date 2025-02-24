@@ -11,9 +11,9 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class DroneInVehicleState implements State, CompactSerializable {
 
-    private boolean launched;
+    private boolean launched = false;
 
-    private boolean readyToLaunch;
+    private boolean readyToLaunch = true;
 
     private double prepareToLaunchRemainTime;
 

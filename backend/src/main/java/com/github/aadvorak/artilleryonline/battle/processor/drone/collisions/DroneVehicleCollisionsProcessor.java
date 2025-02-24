@@ -29,6 +29,11 @@ public class DroneVehicleCollisionsProcessor {
         var vehicle = collision.getPair().second().getVehicleCalculations();
         if (drone.getModel().getVehicleId() == vehicle.getId()) {
             battle.getModel().getUpdates().removeDrone(drone.getId());
+            var inVehicleState = vehicle.getModel().getState().getDroneState();
+            inVehicleState.setReadyToLaunch(false);
+            inVehicleState.setLaunched(false);
+            inVehicleState.setPrepareToLaunchRemainTime(
+                    vehicle.getModel().getConfig().getDrone().getPrepareToLaunchTime());
             return true;
         }
         return false;

@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.config;
 
+import com.github.aadvorak.artilleryonline.battle.specs.DroneSpecs;
 import com.github.aadvorak.artilleryonline.battle.specs.GunSpecs;
 import com.github.aadvorak.artilleryonline.battle.specs.JetSpecs;
 import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
@@ -19,7 +20,7 @@ public class VehicleConfig implements Config, CompactSerializable {
 
     private JetSpecs jet;
 
-    private DroneConfig drone;
+    private DroneSpecs drone;
 
     private Map<String, Integer> ammo;
 

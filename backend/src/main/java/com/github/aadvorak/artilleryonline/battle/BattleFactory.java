@@ -10,6 +10,7 @@ import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
 import com.github.aadvorak.artilleryonline.battle.preset.*;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleOnGroundProcessor;
+import com.github.aadvorak.artilleryonline.battle.specs.DroneSpecs;
 import com.github.aadvorak.artilleryonline.battle.specs.JetSpecs;
 import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.*;
@@ -105,6 +106,10 @@ public class BattleFactory {
             if (!vehicleModel.getSpecs().getAvailableJets().isEmpty()) {
                 jet = vehicleModel.getSpecs().getAvailableJets().values().iterator().next();
             }
+            DroneSpecs drone = null;
+            if (!vehicleModel.getSpecs().getAvailableDrones().isEmpty()) {
+                drone = vehicleModel.getSpecs().getAvailableDrones().values().iterator().next();
+            }
             var availableShellsNumber = gun.getAvailableShells().size();
             var ammo = new HashMap<String, Integer>();
             gun.getAvailableShells().keySet().forEach(shellName ->
@@ -118,6 +123,7 @@ public class BattleFactory {
                     .setMissiles(missiles)
                     .setGun(gun)
                     .setJet(jet)
+                    .setDrone(drone)
                     .setColor(getVehicleColor(participant)));
             vehicleModel.setState(new VehicleState()
                     .setGunAngle(Math.PI / 2)
@@ -133,7 +139,8 @@ public class BattleFactory {
                     .setTrackState(new TrackState())
                     .setJetState(jet == null ? null : new JetState()
                             .setVolume(jet.getCapacity())
-                            .setActive(false)));
+                            .setActive(false))
+                    .setDroneState(drone == null ? null : new DroneInVehicleState()));
             VehicleOnGroundProcessor.estimateVehicleAngleByPosition(vehicleModel, battleModel.getRoom());
             VehicleOnGroundProcessor.correctVehiclePositionAndAngleOnGround(vehicleModel, battleModel.getRoom());
             vehicles.put(participant.getNickname(), vehicleModel);

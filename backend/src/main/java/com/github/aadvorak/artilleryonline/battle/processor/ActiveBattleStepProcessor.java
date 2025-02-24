@@ -66,6 +66,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
             VehicleGunRotateProcessor.processStep(vehicleModel, battleModel);
             VehicleTrackProcessor.processStep(vehicleModel, battleModel);
             VehicleJetProcessor.processStep(vehicleModel, battleModel);
+            VehicleDroneProcessor.processStep(vehicleModel, battleModel);
             VehicleMoveProcessor.processStep1(vehicleCalculations, battleCalculations);
         });
 
