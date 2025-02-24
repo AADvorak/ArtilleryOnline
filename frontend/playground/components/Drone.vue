@@ -10,28 +10,22 @@ const userVehicle = computed(() => {
   return battleStore.battle?.model.vehicles[userStore.user!.nickname]
 })
 
-const missiles = computed(() => {
-  return userVehicle.value?.state.missiles
-})
-
-const missileKeys = computed(() => {
-  return Object.keys(missiles.value || {})
+const droneState = computed(() => {
+  return userVehicle.value?.state.droneState
 })
 </script>
 
 <template>
-  <template v-for="missileKey in missileKeys">
-    <v-btn
-        class="ml-5 missile-btn"
-        color="primary"
-    >
-      {{ missileKey }}: {{ missiles[missileKey] }}
-    </v-btn>
-  </template>
+  <v-btn v-if="droneState && !droneState.launched"
+      class="ml-5 drone-btn"
+      :color="droneState.readyToLaunch ? 'primary' : ''"
+  >
+    Drone
+  </v-btn>
 </template>
 
 <style scoped>
-.missile-btn {
+.drone-btn {
   padding: 0 8px;
 }
 </style>
