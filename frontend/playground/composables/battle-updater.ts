@@ -127,6 +127,13 @@ export function useBattleUpdater(player: Player) {
           battle.model.missiles[key].state = missiles[key]
         })
       }
+      const drones = battleUpdate.state.drones
+      if (drones) {
+        Object.keys(drones).forEach(key => {
+          // @ts-ignore
+          battle.model.drones[key].state = drones[key]
+        })
+      }
     }
     battleStore.updateBattle(battle)
   }

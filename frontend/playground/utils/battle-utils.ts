@@ -64,5 +64,19 @@ export const BattleUtils = {
       x: position.x + distance * Math.cos(angle),
       y: position.y + distance * Math.sin(angle)
     }
+  },
+
+  calculateAngleDiff(missileAngle: number, targetAngle: number): number {
+    let diff = targetAngle - missileAngle
+
+    if (Math.abs(diff) > Math.PI) {
+      if (diff > 0) {
+        return 2 * Math.PI - diff
+      } else {
+        return 2 * Math.PI + diff
+      }
+    } else {
+      return diff
+    }
   }
 }

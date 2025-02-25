@@ -190,7 +190,9 @@ public class BattleRunner {
                 .anyMatch(VehicleModel::isUpdated);
         var updatedMissiles = battleModel.getMissiles().values().stream()
                 .anyMatch(missileModel -> missileModel.getUpdate().isUpdated());
-        return updatedVehicles || updatedMissiles;
+        var updatedDrones = battleModel.getDrones().values().stream()
+                .anyMatch(droneModel -> droneModel.getUpdate().isUpdated());
+        return updatedVehicles || updatedMissiles || updatedDrones;
     }
 
     private BattleModelStateResponse createBattleModelStateResponse(BattleModel battleModel) {

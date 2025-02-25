@@ -1,5 +1,6 @@
 import type {BattleModel, MissileModel} from "~/playground/data/model";
 import {VectorUtils} from "~/playground/utils/vector-utils";
+import {BattleUtils} from "~/playground/utils/battle-utils";
 
 export const CorrectingAccelerationCalculator = {
   calculate(missileModel: MissileModel, battleModel: BattleModel): number {
@@ -9,7 +10,7 @@ export const CorrectingAccelerationCalculator = {
     const missilePosition = missileState.position
 
     if (correctingVelocity <= 0) {
-      const verticalAngleDiff = this.calculateAngleDiff(missilePosition.angle, Math.PI / 2)
+      const verticalAngleDiff = BattleUtils.calculateAngleDiff(missilePosition.angle, Math.PI / 2)
       if (Math.abs(verticalAngleDiff) < missileModel.specs.anglePrecision) {
         return 0.0
       }
@@ -26,7 +27,7 @@ export const CorrectingAccelerationCalculator = {
     }
 
     const angleDiffs = targets.map(vehicleModel => {
-      return this.calculateAngleDiff(
+      return BattleUtils.calculateAngleDiff(
           missilePosition.angle,
           VectorUtils.angleFromTo(missilePosition, vehicleModel.state.position)
       )
@@ -42,19 +43,5 @@ export const CorrectingAccelerationCalculator = {
     }
 
     return Math.sign(minAngleDiff) * correctingVelocity * missileModel.specs.correctingAccelerationCoefficient
-  },
-
-  calculateAngleDiff(missileAngle: number, targetAngle: number): number {
-    let diff = targetAngle - missileAngle
-
-    if (Math.abs(diff) > Math.PI) {
-      if (diff > 0) {
-        return 2 * Math.PI - diff
-      } else {
-        return 2 * Math.PI + diff
-      }
-    } else {
-      return diff
-    }
   }
 }

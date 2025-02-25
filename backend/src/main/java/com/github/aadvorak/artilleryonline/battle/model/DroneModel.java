@@ -26,13 +26,13 @@ public class DroneModel extends GenericSpecsConfigStateModel<DroneSpecs, DroneCo
     @JsonIgnore
     private final TimeoutUpdate update = new TimeoutUpdate();
 
-    @JsonIgnore
     private boolean destroyed = false;
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(id);
         stream.writeInt(vehicleId);
+        stream.writeBoolean(destroyed);
         stream.writeSerializableValue(getSpecs());
         stream.writeSerializableValue(getConfig());
         stream.writeSerializableValue(getState());

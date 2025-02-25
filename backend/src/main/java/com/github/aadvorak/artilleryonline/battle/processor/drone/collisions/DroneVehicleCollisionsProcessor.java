@@ -34,6 +34,7 @@ public class DroneVehicleCollisionsProcessor {
             inVehicleState.setLaunched(false);
             inVehicleState.setPrepareToLaunchRemainTime(
                     vehicle.getModel().getConfig().getDrone().getPrepareToLaunchTime());
+            vehicle.getModel().setUpdated(true);
             return true;
         }
         return false;
