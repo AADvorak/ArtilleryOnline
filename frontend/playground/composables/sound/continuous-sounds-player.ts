@@ -61,9 +61,11 @@ export function useContinuousSoundsPlayer(player: Player) {
     for (const key of keys) {
       //@ts-ignore
       const position = drones.value[key].state.position
+      //@ts-ignore
+      const destroyed = drones.value[key].destroyed
       const pan = soundsPlayerBase.calculatePan(position.x)
       const gain = soundsPlayerBase.calculateGain(position)
-      await playContinuousSound(DRONE_PREFIX, key, '', pan, gain, 0.5, true, 'drone.mp3', fadeOutAndStop)
+      await playContinuousSound(DRONE_PREFIX, key, '', pan, gain, 0.5, !destroyed, 'drone.mp3', fadeOutAndStop)
     }
     stopSoundsForNotExistingObjects(DRONE_PREFIX, keys)
   }
