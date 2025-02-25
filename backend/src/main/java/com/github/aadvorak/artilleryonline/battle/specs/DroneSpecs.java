@@ -25,6 +25,8 @@ public class DroneSpecs implements Specs, CompactSerializable {
 
     private double flyHeight;
 
+    private double criticalAngle;
+
     private double prepareToLaunchTime;
 
     private Map<String, GunSpecs> availableGuns;
@@ -37,6 +39,7 @@ public class DroneSpecs implements Specs, CompactSerializable {
         stream.writeDouble(enginesRadius);
         stream.writeDouble(mass);
         stream.writeDouble(flyHeight);
+        stream.writeDouble(criticalAngle);
         stream.writeDouble(prepareToLaunchTime);
         stream.writeStringMapOfSerializable(availableGuns);
     }

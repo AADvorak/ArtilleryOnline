@@ -154,6 +154,7 @@ export function deserializeDroneSpecs(input: DeserializerInput): DroneSpecs {
   const enginesRadius = DeserializerBase.readDouble(input)
   const mass = DeserializerBase.readDouble(input)
   const flyHeight = DeserializerBase.readDouble(input)
+  const criticalAngle = DeserializerBase.readDouble(input)
   const prepareToLaunchTime = DeserializerBase.readDouble(input)
   const availableGuns = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeGunSpecs)!
   return {
@@ -163,6 +164,7 @@ export function deserializeDroneSpecs(input: DeserializerInput): DroneSpecs {
     enginesRadius,
     mass,
     flyHeight,
+    criticalAngle,
     prepareToLaunchTime,
     availableGuns
   }

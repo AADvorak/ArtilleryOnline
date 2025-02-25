@@ -99,6 +99,7 @@ export interface DroneSpecs {
   enginesRadius: number
   mass: number
   flyHeight: number
+  criticalAngle: number
   prepareToLaunchTime: number
   availableGuns: AvailableGuns
 }

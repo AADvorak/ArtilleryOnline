@@ -28,10 +28,10 @@ public class DroneAccelerationCalculator {
     private static BodyAcceleration calculateEngines(DroneCalculations drone, BattleModel battleModel) {
         var angle = drone.getModel().getState().getPosition().getAngle();
         var maxAccelerationMagnitude = drone.getModel().getSpecs().getMaxEngineAcceleration();
-        var accelerationMagnitude = getEnginesAccelerationMagnitude(drone, battleModel);
+        var accelerationMagnitude = getEnginesAccelerationMagnitude(drone, battleModel) * Math.cos(angle);
         var accelerationDiff = getEnginesAccelerationDiff(drone, battleModel);
-        var rightEngineAccelerationMagnitude = restricted(accelerationMagnitude * (1 + accelerationDiff), maxAccelerationMagnitude);
-        var leftEngineAccelerationMagnitude = restricted(accelerationMagnitude * (1 - accelerationDiff), maxAccelerationMagnitude);
+        var rightEngineAccelerationMagnitude = restricted(accelerationMagnitude + accelerationDiff, maxAccelerationMagnitude);
+        var leftEngineAccelerationMagnitude = restricted(accelerationMagnitude - accelerationDiff, maxAccelerationMagnitude);
         var rightEngineAcceleration = new Acceleration()
                 .setX(rightEngineAccelerationMagnitude * Math.cos(angle + Math.PI / 2))
                 .setY(rightEngineAccelerationMagnitude * Math.sin(angle + Math.PI / 2));
@@ -93,28 +93,32 @@ public class DroneAccelerationCalculator {
         var targetAngle = getTargetAngle(drone, battleModel);
         var droneAngle = drone.getModel().getState().getPosition().getAngle();
         var angleDiff = GeometryUtils.calculateAngleDiff(droneAngle, targetAngle);
+        var maxAcceleration = drone.getModel().getSpecs().getMaxEngineAcceleration();
         if (angleDiff > Math.PI) {
-            return 2.0;
+            return maxAcceleration;
         } else if (angleDiff < -Math.PI) {
-            return -2.0;
+            return -maxAcceleration;
         } else {
-            return 2 * angleDiff / Math.PI;
+            return maxAcceleration * angleDiff / Math.PI;
         }
     }
 
     private static double getTargetAngle(DroneCalculations drone, BattleModel battleModel) {
         var flyHeight = drone.getModel().getSpecs().getFlyHeight();
         var currentHeight = getHeight(drone, battleModel);
-        if (currentHeight < 0.8 * flyHeight) {
+        if (currentHeight < 0.5 * flyHeight) {
             return 0.0;
         }
         if (drone.getTarget() == null) {
             return 0.0;
         }
-        if (Math.abs(drone.getTarget().getXDiff()) < 1.5) {
+        var velocityX = drone.getModel().getState().getVelocity().getX();
+        var xDiff = drone.getTarget().getXDiff();
+        var criticalAngle = drone.getModel().getSpecs().getCriticalAngle();
+        if (velocityX * xDiff > 0 && Math.abs(xDiff) / Math.abs(velocityX) < 1.0) {
             return 0.0;
         }
-        return - Math.signum(drone.getTarget().getXDiff()) * Math.PI / 16;
+        return - Math.signum(xDiff) * criticalAngle;
     }
 
     private static double restricted(double value, double maxValue) {
