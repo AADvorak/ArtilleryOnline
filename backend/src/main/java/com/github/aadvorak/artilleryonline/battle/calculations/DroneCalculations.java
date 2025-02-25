@@ -101,11 +101,7 @@ public class DroneCalculations implements Calculations<DroneModel> {
     @Accessors(chain = true)
     public static final class Target {
 
-        private Position position;
-
         private double xDiff;
-
-        private double angle;
 
         private double angleDiff;
     }

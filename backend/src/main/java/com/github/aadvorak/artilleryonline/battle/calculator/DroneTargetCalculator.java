@@ -39,15 +39,12 @@ public class DroneTargetCalculator {
             }
         }
         var targetPosition = xDiffMap.get(minXDiff);
-        var targetAngle = dronePosition.angleTo(targetPosition);
         var gunAngle = drone.getModel().getState().getGunAngle() + drone.getModel().getState().getPosition().getAngle();
-        var angleDiff = GeometryUtils.calculateAngleDiff(gunAngle, targetAngle);
+        var angleDiff = GeometryUtils.calculateAngleDiff(gunAngle, dronePosition.angleTo(targetPosition));
         drone.getModel().getState().getGunState().setTriggerPushed(Math.abs(angleDiff) < Math.PI / 32
                 && dronePosition.distanceTo(targetPosition) < drone.getModel().getSpecs().getFlyHeight());
         drone.setTarget(new DroneCalculations.Target()
                 .setXDiff(minXDiff)
-                .setPosition(targetPosition)
-                .setAngle(targetAngle)
                 .setAngleDiff(angleDiff)
         );
     }
