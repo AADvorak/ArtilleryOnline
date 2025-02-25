@@ -83,6 +83,22 @@ function showHelpDialog() {
     <div class="ml-5 battle-ping-wrapper">
       <BattlePing />
     </div>
+    <v-spacer/>
+    <icon-btn
+        :icon="mdiHelp"
+        :tooltip="t('common.help')"
+        @click="showHelpDialog"
+    />
+    <messages-menu/>
+    <icon-btn
+        :icon="mdiCloseThick"
+        :tooltip="t('battleHeader.leaveBattle')"
+        @click="showLeaveBattleDialog"
+    />
+    <LeaveBattleDialog ref="leaveBattleDialog"/>
+    <HelpDialog ref="helpDialog"/>
+  </v-app-bar>
+  <v-app-bar density="compact">
     <div class="ml-5 hit-points-bar-wrapper" v-for="userKeyPair in userKeyPairs">
       <HitPointsBar v-for="userKey in userKeyPair" :user-key="userKey" />
     </div>
@@ -98,20 +114,6 @@ function showHelpDialog() {
     <div v-if="battleStore.isActive" class="ml-5">
       <ReloadingProgress />
     </div>
-    <v-spacer/>
-    <icon-btn
-        :icon="mdiHelp"
-        :tooltip="t('common.help')"
-        @click="showHelpDialog"
-    />
-    <messages-menu/>
-    <icon-btn
-        :icon="mdiCloseThick"
-        :tooltip="t('battleHeader.leaveBattle')"
-        @click="showLeaveBattleDialog"
-    />
-    <LeaveBattleDialog ref="leaveBattleDialog"/>
-    <HelpDialog ref="helpDialog"/>
   </v-app-bar>
 </template>
 
