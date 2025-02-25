@@ -136,11 +136,24 @@ public class BattleRunner {
         }
         for (var missileModel: battleModel.getMissiles().values()) {
             if (missileModel.getUpdate().setUpdatedByTimeout(battle.getAbsoluteTime())) {
-                battleModel.getMissiles().values().forEach(model ->
-                        model.getUpdate().setUpdated(battle.getAbsoluteTime()));
+                setAllUpdatedByTimeout(battle);
                 break;
             }
         }
+        for (var droneModel: battleModel.getDrones().values()) {
+            if (droneModel.getUpdate().setUpdatedByTimeout(battle.getAbsoluteTime())) {
+                setAllUpdatedByTimeout(battle);
+                break;
+            }
+        }
+    }
+
+    private void setAllUpdatedByTimeout(Battle battle) {
+        var battleModel = battle.getModel();
+        battleModel.getMissiles().values().forEach(model ->
+                model.getUpdate().setUpdated(battle.getAbsoluteTime()));
+        battleModel.getDrones().values().forEach(model ->
+                model.getUpdate().setUpdated(battle.getAbsoluteTime()));
     }
 
     private void sendBattleToUpdatesQueue(Battle battle) {
