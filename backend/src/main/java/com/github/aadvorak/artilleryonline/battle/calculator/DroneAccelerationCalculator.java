@@ -125,8 +125,8 @@ public class DroneAccelerationCalculator {
         if (value > maxValue) {
             return maxValue;
         }
-        if (value < -maxValue) {
-            return -maxValue;
+        if (value < 0) {
+            return 0.0;
         }
         return value;
     }
