@@ -13,6 +13,9 @@ interface AudioControls {
   [key: string]: AudioControl | undefined
 }
 
+const VEHICLE_PREFIX = 'Vehicle'
+const DRONE_PREFIX = 'Drone'
+
 const TRACK_KEY = 'Track'
 const ENGINE_KEY = 'Engine'
 const GUN_KEY = 'Gun'
@@ -31,6 +34,7 @@ export function useContinuousSoundsPlayer(player: Player) {
   const soundsPlayerBase = useSoundsPlayerBase()
 
   const vehicles = computed(() => battleStore.vehicles)
+  const drones = computed(() => battleStore.drones)
   const battleIsFinished = computed(() => battleStore.battle?.battleStage === BattleStage.FINISHED)
 
   function start() {
@@ -48,7 +52,20 @@ export function useContinuousSoundsPlayer(player: Player) {
     if (vehicles.value) {
       await playVehicleSounds(vehicles.value!)
     }
+    await playDroneSounds()
     setTimeout(playSounds, 100)
+  }
+
+  async function playDroneSounds() {
+    const keys = Object.keys(drones.value || {})
+    for (const key of keys) {
+      //@ts-ignore
+      const position = drones.value[key].state.position
+      const pan = soundsPlayerBase.calculatePan(position.x)
+      const gain = soundsPlayerBase.calculateGain(position)
+      await playContinuousSound(DRONE_PREFIX, key, '', pan, gain, 0.5, true, 'drone.mp3', fadeOutAndStop)
+    }
+    stopSoundsForNotExistingObjects(DRONE_PREFIX, keys)
   }
 
   async function playVehicleSounds(vehicles: VehicleModels) {
@@ -59,27 +76,34 @@ export function useContinuousSoundsPlayer(player: Player) {
       const pan = soundsPlayerBase.calculatePan(vehicleState.position.x)
       const gain = soundsPlayerBase.calculateGain(vehicleState.position)
       const movingOnGroundVelocity = getMovingOnGroundVelocity(vehicleState)
-      await playContinuousSound(key, TRACK_KEY, pan, gain, velocityToPlayingRate(movingOnGroundVelocity),
+      await playContinuousSound(VEHICLE_PREFIX, key, TRACK_KEY, pan, gain, velocityToPlayingRate(movingOnGroundVelocity),
           !!movingOnGroundVelocity, getVehicleMoveSoundName(acceleration), fadeOutAndStop)
-      await playContinuousSound(key, ENGINE_KEY, pan, gain / 3, 1.0, isEngineActive(vehicleState),
+      await playContinuousSound(VEHICLE_PREFIX, key, ENGINE_KEY, pan, gain / 3, 1.0, isEngineActive(vehicleState),
           'vehicle-engine.mp3', fadeOutAndStop)
-      await playContinuousSound(key, JET_KEY, pan, gain, 1.0, VehicleUtils.isJetActive(vehicles[key]),
+      await playContinuousSound(VEHICLE_PREFIX, key, JET_KEY, pan, gain, 1.0, VehicleUtils.isJetActive(vehicles[key]),
           'jet.mp3', fadeOutAndStop)
       if (key === userStore.user!.nickname) {
-        await playContinuousSound(key, GUN_KEY, 0, 0.4, 1.0, !!vehicleState.gunRotatingDirection,
+        await playContinuousSound(VEHICLE_PREFIX, key, GUN_KEY, 0, 0.4, 1.0, !!vehicleState.gunRotatingDirection,
             'gun-turn.mp3', stopLoop)
       }
     }
+    stopSoundsForNotExistingObjects(VEHICLE_PREFIX, keys)
+  }
+
+  function stopSoundsForNotExistingObjects(prefix: string, keys: string[]) {
     // todo find better solution
     for (const controlKey in audioControls) {
-      let vehicleExists = false
+      if (!controlKey.startsWith(prefix)) {
+        break
+      }
+      let objectExists = false
       for (const key of keys) {
-        if (controlKey.startsWith(key)) {
-          vehicleExists = true
+        if (controlKey.startsWith(prefix + key)) {
+          objectExists = true
           break
         }
       }
-      if (!vehicleExists) {
+      if (!objectExists) {
         stopByKey(controlKey)
       }
     }
@@ -93,17 +117,18 @@ export function useContinuousSoundsPlayer(player: Player) {
     }
   }
 
-  async function playContinuousSound(key: string, addKey: string, pan: number, gain: number,
+  async function playContinuousSound(prefix: string, key: string, addKey: string, pan: number, gain: number,
                                      rate: number, condition: boolean, file: string,
                                      stopFunction: (audioControl: AudioControl) => void) {
-    const fullKey = key + addKey
+
+    const fullKey = prefix + key + addKey
     const audioControl = audioControls[fullKey]
     if (condition && !audioControl) {
       const newAudioControl = await playLooped(file, pan, gain, rate)
       if (newAudioControl) {
         audioControls[fullKey] = newAudioControl
         newAudioControl.source.addEventListener('ended', () => {
-          audioControls[fullKey] = undefined
+          delete audioControls[fullKey]
         })
       }
     }
