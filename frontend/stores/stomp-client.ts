@@ -19,6 +19,7 @@ export const useStompClientStore = defineStore('stomp-client', () => {
       }
       const socket = new WebSocket(`ws://${window.location.host}/api/ws/websocket`)
       client.value = Stomp.over(socket)
+      client.value.debug = () => {}
       const headers = {}
       const csrf = csrfStore.csrf
       if (csrf) {
