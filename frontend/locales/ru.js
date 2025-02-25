@@ -25,7 +25,10 @@ export const ru = {
   appearance,
   battle,
   battleHeader: {
-    leaveBattle: 'Покинуть бой'
+    leaveBattle: 'Покинуть бой',
+    drone: 'Дрон',
+    ready: 'готов',
+    preparing: 'подготовка'
   },
   battleHistory,
   battleHistoryFiltersForm,

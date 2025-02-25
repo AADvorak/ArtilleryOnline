@@ -2,6 +2,9 @@
 import { computed } from 'vue'
 import { useBattleStore } from '~/stores/battle'
 import {useUserStore} from '~/stores/user'
+import {useI18n} from "vue-i18n";
+
+const {t} = useI18n()
 
 const userStore = useUserStore()
 const battleStore = useBattleStore()
@@ -18,9 +21,9 @@ const droneState = computed(() => {
 <template>
   <v-btn v-if="droneState && !droneState.launched"
       class="ml-5 drone-btn"
-      :color="droneState.readyToLaunch ? 'primary' : ''"
+      :color="droneState.readyToLaunch ? 'success' : 'warning'"
   >
-    Drone
+    {{ t('battleHeader.drone') }}: {{ droneState.readyToLaunch ? t('battleHeader.ready') : t('battleHeader.preparing') }}
   </v-btn>
 </template>
 

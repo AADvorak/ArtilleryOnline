@@ -25,7 +25,10 @@ export const en = {
   appearance,
   battle,
   battleHeader: {
-    leaveBattle: 'Leave battle'
+    leaveBattle: 'Leave battle',
+    drone: 'Drone',
+    ready: 'ready',
+    preparing: 'preparing'
   },
   battleHistory,
   battleHistoryFiltersForm,
