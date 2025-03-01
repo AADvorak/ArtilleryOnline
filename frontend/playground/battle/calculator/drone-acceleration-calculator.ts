@@ -58,7 +58,8 @@ export const DroneAccelerationCalculator = {
     const currentHeight = this.getHeight(drone, battleModel)
     const maxAcceleration = drone.model.specs.maxEngineAcceleration
     const gravityAcceleration = battleModel.room.specs.gravityAcceleration
-    if (Object.values(drone.model.state.ammo)[0] == 0 && Math.abs(drone.target!.angleDiff) < Math.PI / 16) {
+    if (Object.values(drone.model.state.ammo)[0] == 0 && drone.target
+        && Math.abs(drone.target.angleDiff) < Math.PI / 16) {
       return gravityAcceleration / 2
     } else if (currentHeight > 1.5 * flyHeight) {
       return 0.0

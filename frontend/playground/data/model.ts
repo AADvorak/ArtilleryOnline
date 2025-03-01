@@ -37,7 +37,7 @@ export interface MissileModel {
 
 export interface DroneModel {
   id: number
-  vehicleId: number
+  vehicleId?: number
   destroyed: boolean
   specs: DroneSpecs
   config: DroneConfig

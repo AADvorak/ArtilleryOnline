@@ -53,7 +53,7 @@ export function deserializeMissileModel(input: DeserializerInput): MissileModel 
 
 export function deserializeDroneModel(input: DeserializerInput): DroneModel {
   const id = DeserializerBase.readInt(input)
-  const vehicleId = DeserializerBase.readInt(input)
+  const vehicleId = DeserializerBase.readNullable(input, DeserializerBase.readInt)
   const destroyed = DeserializerBase.readBoolean(input)
   const specs = deserializeDroneSpecs(input)
   const config = deserializeDroneConfig(input)

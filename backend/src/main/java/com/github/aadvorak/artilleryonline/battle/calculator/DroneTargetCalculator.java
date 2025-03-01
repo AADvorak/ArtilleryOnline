@@ -2,8 +2,10 @@ package com.github.aadvorak.artilleryonline.battle.calculator;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.DroneCalculations;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DroneTargetCalculator {
@@ -13,15 +15,7 @@ public class DroneTargetCalculator {
             return;
         }
         var ammo = drone.getModel().getState().getAmmo().values().iterator().next();
-        var targetsStream = battleModel.getVehicles().values().stream();
-        if (ammo > 0) {
-            targetsStream = targetsStream.filter(vehicleModel ->
-                    vehicleModel.getId() != drone.getModel().getVehicleId());
-        } else {
-            targetsStream = targetsStream.filter(vehicleModel ->
-                    vehicleModel.getId() == drone.getModel().getVehicleId());
-        }
-        var targets = targetsStream.collect(Collectors.toSet());
+        var targets = getTargets(drone, battleModel, ammo);
         if (targets.isEmpty()) {
             return;
         }
@@ -47,5 +41,19 @@ public class DroneTargetCalculator {
                 .setXDiff(minXDiff)
                 .setAngleDiff(angleDiff)
         );
+    }
+
+    private static Set<VehicleModel> getTargets(DroneCalculations drone, BattleModel battleModel, Integer ammo) {
+        var targetsStream = battleModel.getVehicles().values().stream();
+        if (ammo > 0) {
+            if (drone.getModel().getVehicleId() != null) {
+                targetsStream = targetsStream.filter(vehicleModel ->
+                        vehicleModel.getId() != drone.getModel().getVehicleId());
+            }
+        } else {
+            targetsStream = targetsStream.filter(vehicleModel ->
+                    drone.getModel().getVehicleId() != null && vehicleModel.getId() == drone.getModel().getVehicleId());
+        }
+        return targetsStream.collect(Collectors.toSet());
     }
 }

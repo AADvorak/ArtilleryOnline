@@ -7,6 +7,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.processor.command.CommandProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.drone.DroneFlyProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.drone.DroneGunShootProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.drone.DroneLaunchProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.drone.collisions.DronesCollisionsProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.missile.MissileFlyProcessor;
@@ -32,6 +33,8 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         var battleModel = battle.getModel();
 
         readCommandsFromQueue(battle);
+
+        DroneLaunchProcessor.launch(battle);
 
         var battleCalculations = new BattleCalculations()
                 .setModel(battleModel)
@@ -141,8 +144,15 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         if (super.changeStageIfNeeded(battle)) {
             return true;
         }
-        if ((!BattleType.DRONE_HUNT.equals(battle.getType()) && battle.getModel().getVehicles().size() <= 1
-                || BattleType.DRONE_HUNT.equals(battle.getType()) && battle.getModel().getVehicles().isEmpty())
+        if (battle.getModel().getVehicles().isEmpty()
+                && battle.getModel().getShells().isEmpty()
+                && battle.getModel().getExplosions().isEmpty()
+                && battle.getModel().getMissiles().isEmpty()) {
+            battle.setStageAndResetTime(BattleStage.FINISHED);
+            return true;
+        }
+        if (!BattleType.DRONE_HUNT.equals(battle.getType())
+                && battle.getModel().getVehicles().size() == 1
                 && battle.getModel().getShells().isEmpty()
                 && battle.getModel().getExplosions().isEmpty()
                 && battle.getModel().getMissiles().isEmpty()

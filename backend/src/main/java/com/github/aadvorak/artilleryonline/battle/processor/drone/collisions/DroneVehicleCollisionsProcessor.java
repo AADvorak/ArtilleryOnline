@@ -6,6 +6,8 @@ import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.utils.CollisionUtils;
 
+import java.util.Objects;
+
 public class DroneVehicleCollisionsProcessor {
 
     public static void process(DroneCalculations drone, BattleCalculations battle) {
@@ -27,7 +29,7 @@ public class DroneVehicleCollisionsProcessor {
             return false;
         }
         var vehicle = collision.getPair().second().getVehicleCalculations();
-        if (drone.getModel().getVehicleId() == vehicle.getId()) {
+        if (Objects.equals(drone.getModel().getVehicleId(), vehicle.getId())) {
             battle.getModel().getUpdates().removeDrone(drone.getId());
             var inVehicleState = vehicle.getModel().getState().getDroneState();
             inVehicleState.setReadyToLaunch(false);

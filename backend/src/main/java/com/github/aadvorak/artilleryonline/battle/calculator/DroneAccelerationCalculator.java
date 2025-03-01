@@ -61,6 +61,7 @@ public class DroneAccelerationCalculator {
         var maxAcceleration = drone.getModel().getSpecs().getMaxEngineAcceleration();
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
         if (drone.getModel().getState().getAmmo().values().iterator().next() == 0
+                && drone.getTarget() != null
                 && Math.abs(drone.getTarget().getAngleDiff()) < Math.PI / 16) {
             return gravityAcceleration / 2;
         } else if (currentHeight > 1.5 * flyHeight) {

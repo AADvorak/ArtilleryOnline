@@ -18,7 +18,7 @@ public class DroneModel extends GenericSpecsConfigStateModel<DroneSpecs, DroneCo
 
     private int id;
 
-    private int vehicleId;
+    private Integer vehicleId;
 
     @JsonIgnore
     private Long userId;
@@ -31,7 +31,7 @@ public class DroneModel extends GenericSpecsConfigStateModel<DroneSpecs, DroneCo
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(id);
-        stream.writeInt(vehicleId);
+        stream.writeNullable(vehicleId, stream::writeInt);
         stream.writeBoolean(destroyed);
         stream.writeSerializableValue(getSpecs());
         stream.writeSerializableValue(getConfig());
