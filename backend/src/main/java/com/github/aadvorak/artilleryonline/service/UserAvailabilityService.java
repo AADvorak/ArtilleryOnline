@@ -31,7 +31,7 @@ public class UserAvailabilityService {
         checkUserNotInBattleQueue(user);
     }
 
-    public void checkTestDriveAvailability(User user) {
+    public void checkSingleBattleAvailability(User user) {
         checkUserNotInBattle(user);
         checkUserNotInBattleQueue(user);
         checkUserNotInRoom(user);

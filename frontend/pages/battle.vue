@@ -54,11 +54,19 @@ async function randomBattle() {
 }
 
 async function testDrive() {
+  await singleBattle('/test-drive')
+}
+
+async function droneHunt() {
+  await singleBattle('/drone-hunt')
+}
+
+async function singleBattle(path) {
   try {
     const request = {
       selectedVehicle: selectedVehicle.value!
     }
-    const battleBinary = await api.postJsonForBinary<UserBattleQueueParams>('/battles/test-drive', request)
+    const battleBinary = await api.postJsonForBinary<UserBattleQueueParams>('/battles' + path, request)
     const battle = deserializeBattle(new DeserializerInput(battleBinary))
     battleStore.updateBattle(battle)
   } catch (e) {
@@ -123,6 +131,9 @@ function back() {
         <v-btn class="mb-4" width="100%" color="secondary"
                :disabled="!!queueStore.queue || !!battleStore.battle || !selectedVehicle"
                @click="testDrive">{{ t('battle.testDrive') }}</v-btn>
+        <v-btn class="mb-4" width="100%" color="secondary"
+               :disabled="!!queueStore.queue || !!battleStore.battle || !selectedVehicle"
+               @click="droneHunt">{{ t('battle.droneHunt') }}</v-btn>
         <v-btn class="mb-4" width="100%" :disabled="!!queueStore.queue" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>
