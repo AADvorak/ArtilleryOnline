@@ -4,6 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.DroneCalculations
 import com.github.aadvorak.artilleryonline.battle.calculator.DroneAccelerationCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculator.DroneTargetCalculator;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 
 public class DroneFlyProcessor {
 
@@ -15,6 +16,9 @@ public class DroneFlyProcessor {
 
     public static void processStep2(DroneCalculations drone, BattleModel battleModel) {
         drone.applyNextPosition();
+        if (drone.getPosition().getY() > 1.5 * BattleUtils.getRoomHeight(battleModel.getRoom().getSpecs())) {
+            battleModel.getUpdates().removeDrone(drone.getId());
+        }
     }
 
     private static void recalculateVelocity(DroneCalculations drone, BattleModel battleModel) {

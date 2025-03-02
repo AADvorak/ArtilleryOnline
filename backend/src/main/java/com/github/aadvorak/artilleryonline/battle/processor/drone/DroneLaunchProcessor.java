@@ -35,8 +35,9 @@ public class DroneLaunchProcessor {
         var config = new DroneConfig()
                 .setGun(gunSpecs)
                 .setAmmo(Map.of(shellName, specs.getAmmo()));
-        var x = BattleUtils.generateRandom(1.0, BattleUtils.getRoomWidth(roomSpecs) - 10.0);
-        var y = BattleUtils.getRoomHeight(roomSpecs) + 1.0;
+        var radius = specs.getEnginesRadius();
+        var x = BattleUtils.generateRandom(radius, BattleUtils.getRoomWidth(roomSpecs) - radius);
+        var y = 1.1 * BattleUtils.getRoomHeight(roomSpecs);
         var state = new DroneState()
                 .setPosition(BodyPosition.of(new Position().setX(x).setY(y), 0.0))
                 .setAmmo(new HashMap<>(config.getAmmo()))
