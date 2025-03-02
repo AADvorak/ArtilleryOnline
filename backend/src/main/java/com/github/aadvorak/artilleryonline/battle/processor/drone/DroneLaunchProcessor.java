@@ -16,11 +16,16 @@ import java.util.Map;
 
 public class DroneLaunchProcessor {
 
+    private static final long LAUNCH_DELAY = 10000;
+
     public static void launch(Battle battle) {
         if (!BattleType.DRONE_HUNT.equals(battle.getType())) {
             return;
         }
         if (battle.getModel().getDrones().size() > 5) {
+            return;
+        }
+        if (battle.getAbsoluteTime() < battle.getDroneLaunchTime() + LAUNCH_DELAY) {
             return;
         }
         var roomSpecs = battle.getModel().getRoom().getSpecs();
@@ -47,5 +52,6 @@ public class DroneLaunchProcessor {
         model.setSpecs(specs);
         battle.getModel().getDrones().put(id, model);
         battle.getModel().getUpdates().addDrone(model);
+        battle.setDroneLaunchTime(battle.getAbsoluteTime());
     }
 }
