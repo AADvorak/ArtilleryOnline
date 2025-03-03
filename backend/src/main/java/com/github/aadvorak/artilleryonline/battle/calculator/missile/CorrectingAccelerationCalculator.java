@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.calculator.missile;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.MissileCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculator.TargetCalculator;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 
@@ -22,15 +23,13 @@ public class CorrectingAccelerationCalculator {
             return Math.signum(verticalAngleDiff) * velocityMagnitude
                     * missileSpecs.getCorrectingAccelerationCoefficient() / missileSpecs.getMinCorrectingVelocity();
         }
-        var targets = battleModel.getVehicles().values().stream()
-                .filter(vehicleModel -> vehicleModel.getId() != calculations.getModel().getVehicleId())
-                .collect(Collectors.toSet());
+        var targets = TargetCalculator.calculatePositions(calculations.getModel().getVehicleId(), battleModel);
         if (targets.isEmpty()) {
             return 0.0;
         }
         var angleDiffs = targets.stream()
-                .map(vehicleModel -> GeometryUtils.calculateAngleDiff(missilePosition.getAngle(),
-                        missilePosition.getCenter().angleTo(vehicleModel.getState().getPosition().getCenter())))
+                .map(position -> GeometryUtils.calculateAngleDiff(missilePosition.getAngle(),
+                        missilePosition.getCenter().angleTo(position)))
                 .collect(Collectors.toSet());
         var iterator = angleDiffs.iterator();
         var minAngleDiff = iterator.next();
