@@ -3,18 +3,24 @@ import type {BattleModel} from "~/playground/data/model";
 import type {Position} from "~/playground/data/common";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BattleUtils} from "~/playground/utils/battle-utils";
+import {TargetCalculator} from "~/playground/battle/calculator/target-calculator";
 
 export const DroneTargetCalculator = {
   calculate(drone: DroneCalculations, battleModel: BattleModel) {
     if (drone.model.destroyed) return
 
     const ammo = Object.values(drone.model.state.ammo)[0]
-    let targets = Object.values(battleModel.vehicles)
+    let targets: Position[] = []
 
     if (ammo > 0) {
-      targets = targets.filter(vehicle => vehicle.id !== drone.model.vehicleId)
+      targets = TargetCalculator.calculatePositions(drone.model.vehicleId, battleModel)
     } else {
-      targets = targets.filter(vehicle => vehicle.id === drone.model.vehicleId)
+      targets = Object.values(battleModel.vehicles)
+          .filter(vehicle => vehicle.id === drone.model.vehicleId)
+          .map(vehicle => ({
+            x: vehicle.state.position.x,
+            y: vehicle.state.position.y
+          }))
     }
 
     if (targets.length === 0) return
@@ -22,9 +28,9 @@ export const DroneTargetCalculator = {
     const dronePosition = drone.model.state.position
     const xDiffMap: { [key: number]: Position } = {}
 
-    targets.forEach(vehicle => {
-      const xDiff = vehicle.state.position.x - dronePosition.x
-      xDiffMap[xDiff] = vehicle.state.position
+    targets.forEach(position => {
+      const xDiff = position.x - dronePosition.x
+      xDiffMap[xDiff] = position
     })
 
     let minXDiff = Math.min(...Object.keys(xDiffMap).map(Number))

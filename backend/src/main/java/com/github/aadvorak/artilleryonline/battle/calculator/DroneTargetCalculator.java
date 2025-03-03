@@ -1,8 +1,8 @@
 package com.github.aadvorak.artilleryonline.battle.calculator;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.DroneCalculations;
+import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
-import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 
 import java.util.Set;
@@ -22,8 +22,8 @@ public class DroneTargetCalculator {
         var dronePosition = drone.getModel().getState().getPosition().getCenter();
         var xDiffMap = targets.stream()
                 .collect(Collectors.toMap(
-                        vehicle -> vehicle.getState().getPosition().getX() - dronePosition.getX(),
-                        vehicle -> vehicle.getState().getPosition().getCenter()));
+                        position -> position.getX() - dronePosition.getX(),
+                        position -> position));
         var iterator = xDiffMap.keySet().iterator();
         var minXDiff = iterator.next();
         while (iterator.hasNext()) {
@@ -43,17 +43,15 @@ public class DroneTargetCalculator {
         );
     }
 
-    private static Set<VehicleModel> getTargets(DroneCalculations drone, BattleModel battleModel, Integer ammo) {
-        var targetsStream = battleModel.getVehicles().values().stream();
+    private static Set<Position> getTargets(DroneCalculations drone, BattleModel battleModel, Integer ammo) {
         if (ammo > 0) {
-            if (drone.getModel().getVehicleId() != null) {
-                targetsStream = targetsStream.filter(vehicleModel ->
-                        vehicleModel.getId() != drone.getModel().getVehicleId());
-            }
+            return TargetCalculator.calculatePositions(drone.getModel().getVehicleId(), battleModel);
         } else {
-            targetsStream = targetsStream.filter(vehicleModel ->
-                    drone.getModel().getVehicleId() != null && vehicleModel.getId() == drone.getModel().getVehicleId());
+            return battleModel.getVehicles().values().stream()
+                    .filter(vehicleModel -> drone.getModel().getVehicleId() != null
+                            && vehicleModel.getId() == drone.getModel().getVehicleId())
+                    .map(vehicleModel -> vehicleModel.getState().getPosition().getCenter())
+                    .collect(Collectors.toSet());
         }
-        return targetsStream.collect(Collectors.toSet());
     }
 }
