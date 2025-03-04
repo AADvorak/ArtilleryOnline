@@ -31,6 +31,8 @@ public class DroneSpecs implements Specs, CompactSerializable {
 
     private Map<String, GunSpecs> availableGuns;
 
+    private double minCollisionDestroyImpact;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(ammo);
