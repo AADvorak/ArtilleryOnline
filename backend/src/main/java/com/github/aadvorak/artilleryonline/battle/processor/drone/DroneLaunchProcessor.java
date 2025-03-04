@@ -12,11 +12,14 @@ import com.github.aadvorak.artilleryonline.battle.state.GunState;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DroneLaunchProcessor {
 
     private static final long LAUNCH_DELAY = 10000;
+
+    private static final List<String> colors = List.of("#ff5733", "#ffd733", "#ff9633");
 
     public static void launch(Battle battle) {
         if (!BattleType.DRONE_HUNT.equals(battle.getType())) {
@@ -34,7 +37,8 @@ public class DroneLaunchProcessor {
         var shellName = gunSpecs.getAvailableShells().keySet().iterator().next();
         var config = new DroneConfig()
                 .setGun(gunSpecs)
-                .setAmmo(Map.of(shellName, specs.getAmmo()));
+                .setAmmo(Map.of(shellName, specs.getAmmo()))
+                .setColor(colors.get(BattleUtils.generateRandom(0, colors.size())));
         var radius = specs.getEnginesRadius();
         var x = BattleUtils.generateRandom(radius, BattleUtils.getRoomWidth(roomSpecs) - radius);
         var y = 1.1 * BattleUtils.getRoomHeight(roomSpecs);
