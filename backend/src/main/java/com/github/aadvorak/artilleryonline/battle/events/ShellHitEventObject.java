@@ -12,13 +12,13 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ShellHitEventObject implements CompactSerializable {
 
-    private Integer vehicleId;
+    private Integer id;
 
     private ShellHitType type;
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
-        stream.writeNullable(vehicleId, stream::writeInt);
+        stream.writeNullable(id, stream::writeInt);
         stream.writeSerializableValue(type);
     }
 }

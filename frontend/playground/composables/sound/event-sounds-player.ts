@@ -57,7 +57,11 @@ export function useEventSoundsPlayer(player: Player) {
         }
         const removedDroneIds = battleUpdate.updates.removed.droneIds
         if (removedDroneIds) {
-          removedDroneIds.forEach(droneId => playDroneDestroy(battle.model.drones[droneId]))
+          removedDroneIds.forEach(droneId => {
+            if (isDroneDestroyed(droneId, battleUpdate)) {
+              playDroneDestroy(battle.model.drones[droneId])
+            }
+          })
         }
       }
     }
@@ -120,6 +124,15 @@ export function useEventSoundsPlayer(player: Player) {
     play('vehicle-destroy', pan, gain)
   }
 
+  function isDroneDestroyed(droneId: number, battleUpdate: BattleUpdate) {
+    const addedExplosions = battleUpdate.updates?.added?.explosions
+    if (!addedExplosions || !addedExplosions.length) {
+      return false
+    }
+    // todo search by parent id
+    return true
+  }
+
   function playDroneDestroy(drone: DroneModel) {
     const pan = soundsPlayerBase.calculatePan(drone.state.position.x)
     const gain = soundsPlayerBase.calculateGain(drone.state.position)
@@ -169,6 +182,8 @@ export function useEventSoundsPlayer(player: Player) {
         } else {
           return 'ap-hit-vehicle-small'
         }
+      } else if (hitType === ShellHitType.DRONE) {
+        return 'ap-hit-drone-' + (Math.ceil(Math.random() * 4))
       }
     }
   }

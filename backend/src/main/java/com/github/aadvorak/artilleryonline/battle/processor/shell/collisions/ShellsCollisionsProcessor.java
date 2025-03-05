@@ -41,11 +41,11 @@ public class ShellsCollisionsProcessor {
         });
     }
 
-    private static void addHitEvent(ShellHitType type, Integer shellId, Integer vehicleId, BattleModel battleModel) {
+    private static void addHitEvent(ShellHitType type, Integer shellId, Integer id, BattleModel battleModel) {
         battleModel.getEvents().addHit(new ShellHitEvent()
                 .setShellId(shellId)
                 .setObject(new ShellHitEventObject()
-                        .setVehicleId(vehicleId)
+                        .setId(id)
                         .setType(type)));
     }
 }

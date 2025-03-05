@@ -29,7 +29,8 @@ export enum JetType {
 export enum ShellHitType {
   GROUND = 'GROUND',
   VEHICLE_HULL = 'VEHICLE_HULL',
-  VEHICLE_TRACK = 'VEHICLE_TRACK'
+  VEHICLE_TRACK = 'VEHICLE_TRACK',
+  DRONE = 'DRONE'
 }
 
 export enum CollideObjectType {
