@@ -3,7 +3,14 @@ import type {Player} from "~/playground/audio/player";
 import {CollideObjectType, ShellHitType, ShellType} from "~/playground/data/common";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
-import type {MissileModel, ShellModel, ShellModels, VehicleModel, VehicleModels} from "~/playground/data/model";
+import type {
+  DroneModel,
+  MissileModel,
+  ShellModel,
+  ShellModels,
+  VehicleModel,
+  VehicleModels
+} from "~/playground/data/model";
 import {useSoundsPlayerBase} from "~/playground/composables/sound/sounds-player-base";
 import {useUserStore} from "~/stores/user";
 import type {VehicleStates} from "~/playground/data/state";
@@ -47,6 +54,10 @@ export function useEventSoundsPlayer(player: Player) {
         const removedMissileIds = battleUpdate.updates.removed.missileIds
         if (removedMissileIds) {
           removedMissileIds.forEach(missileId => playMissileExplosion(battle.model.missiles[missileId]))
+        }
+        const removedDroneIds = battleUpdate.updates.removed.droneIds
+        if (removedDroneIds) {
+          removedDroneIds.forEach(droneId => playDroneDestroy(battle.model.drones[droneId]))
         }
       }
     }
@@ -107,6 +118,12 @@ export function useEventSoundsPlayer(player: Player) {
     const pan = soundsPlayerBase.calculatePan(vehicle.state.position.x)
     const gain = soundsPlayerBase.calculateGain(vehicle.state.position)
     play('vehicle-destroy', pan, gain)
+  }
+
+  function playDroneDestroy(drone: DroneModel) {
+    const pan = soundsPlayerBase.calculatePan(drone.state.position.x)
+    const gain = soundsPlayerBase.calculateGain(drone.state.position)
+    play('drone-destroy', pan, gain)
   }
 
   function playShot(shell: ShellModel) {
