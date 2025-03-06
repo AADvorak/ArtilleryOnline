@@ -32,7 +32,7 @@ public class DroneLaunchProcessor {
             return;
         }
         var roomSpecs = battle.getModel().getRoom().getSpecs();
-        var specs = DroneSpecsPreset.DEFAULT.getSpecs();
+        var specs = DroneSpecsPreset.values()[BattleUtils.generateRandom(0, DroneSpecsPreset.values().length)].getSpecs();
         var gunSpecs = specs.getAvailableGuns().values().iterator().next();
         var shellName = gunSpecs.getAvailableShells().keySet().iterator().next();
         var config = new DroneConfig()

@@ -25,7 +25,7 @@ public enum VehicleSpecsPreset {
             .setAvailableGuns(Map.of(GunSpecsPreset.HEAVY.getName(), GunSpecsPreset.HEAVY.getSpecs()))
             .setAvailableJets(Map.of(JetSpecsPreset.HEAVY.getName(), JetSpecsPreset.HEAVY.getSpecs()))
             .setAvailableMissiles(Map.of())
-            .setAvailableDrones(Map.of(DroneSpecsPreset.DEFAULT.getName(), DroneSpecsPreset.DEFAULT.getSpecs()))
+            .setAvailableDrones(Map.of(DroneSpecsPreset.LIGHT.getName(), DroneSpecsPreset.LIGHT.getSpecs()))
             .setMinCollisionDamageImpact(0.2)
             .setCollisionDamageCoefficient(50.0)
     ),
