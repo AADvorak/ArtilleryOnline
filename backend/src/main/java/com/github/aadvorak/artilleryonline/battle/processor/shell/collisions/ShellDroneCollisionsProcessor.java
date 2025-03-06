@@ -22,6 +22,7 @@ public class ShellDroneCollisionsProcessor {
             } else {
                 shell.getCollisions().add(collision);
                 drone.getModel().setDestroyed(true);
+                drone.getModel().getUpdate().setUpdated();
                 DamageProcessor.processHitDrone(drone, shell, battle);
                 pushDrone(collision);
             }
