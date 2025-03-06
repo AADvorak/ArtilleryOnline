@@ -1,7 +1,7 @@
 import type {AudioControl, Player} from "~/playground/audio/player";
 import {useBattleStore} from "~/stores/battle";
 import type {VehicleState} from "~/playground/data/state";
-import type {VehicleModels} from "~/playground/data/model";
+import type {DroneModel, VehicleModels} from "~/playground/data/model";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
 import {useSoundsPlayerBase} from "~/playground/composables/sound/sounds-player-base";
@@ -60,12 +60,14 @@ export function useContinuousSoundsPlayer(player: Player) {
     const keys = Object.keys(drones.value || {})
     for (const key of keys) {
       //@ts-ignore
-      const position = drones.value[key].state.position
-      //@ts-ignore
-      const destroyed = drones.value[key].destroyed
+      const drone = drones.value[key] as DroneModel
+      const position = drone.state.position
+      const destroyed = drone.destroyed
+      const mass = drone.specs.mass
       const pan = soundsPlayerBase.calculatePan(position.x)
       const gain = soundsPlayerBase.calculateGain(position)
-      await playContinuousSound(DRONE_PREFIX, key, '', pan, gain, 0.5, !destroyed, 'drone.mp3', fadeOutAndStop)
+      const fileName = mass < 0.003 ? 'drone-light.mp3' : 'drone-heavy.mp3'
+      await playContinuousSound(DRONE_PREFIX, key, '', pan, gain, 0.5, !destroyed, fileName, fadeOutAndStop)
     }
     stopSoundsForNotExistingObjects(DRONE_PREFIX, keys)
   }
