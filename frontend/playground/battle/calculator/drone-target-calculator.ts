@@ -39,9 +39,6 @@ export const DroneTargetCalculator = {
     const gunAngle = drone.model.state.gunAngle + drone.model.state.position.angle
     const angleDiff = BattleUtils.calculateAngleDiff(gunAngle, VectorUtils.angleFromTo(dronePosition, targetPosition))
 
-    drone.model.state.gunState.triggerPushed = Math.abs(angleDiff) < Math.PI / 32
-        && BattleUtils.distance(dronePosition, targetPosition) < drone.model.specs.flyHeight
-
     drone.target = {
       xDiff: minXDiff,
       angleDiff: angleDiff
