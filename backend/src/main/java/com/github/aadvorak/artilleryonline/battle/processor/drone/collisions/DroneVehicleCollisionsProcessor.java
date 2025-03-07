@@ -13,7 +13,7 @@ public class DroneVehicleCollisionsProcessor {
     public static void process(DroneCalculations drone, BattleCalculations battle) {
         var collision = DroneVehicleCollisionsDetector.detectFirst(drone, battle);
         if (collision != null) {
-            if (drone.getModel().isDestroyed()) {
+            if (drone.getModel().getState().isDestroyed()) {
                 battle.getModel().getUpdates().removeDrone(drone.getId());
             } else if (!pickDrone(collision, battle)) {
                 resolve(collision, battle);

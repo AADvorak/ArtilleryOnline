@@ -118,7 +118,7 @@ public class DamageProcessor {
             var distanceToTarget = hit.position().distanceTo(drone.getPosition())
                     - drone.getModel().getSpecs().getHullRadius();
             if (distanceToTarget < hit.radius()) {
-                drone.getModel().setDestroyed(true);
+                drone.getModel().getState().setDestroyed(true);
                 battle.getModel().getUpdates().removeDrone(drone.getId());
             }
         });

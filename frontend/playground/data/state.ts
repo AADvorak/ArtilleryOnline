@@ -35,6 +35,7 @@ export interface DroneState {
   ammo: Ammo
   gunState: GunState
   gunAngle: number
+  destroyed: boolean
 }
 
 export interface DroneInVehicleState {

@@ -62,7 +62,7 @@ export function useContinuousSoundsPlayer(player: Player) {
       //@ts-ignore
       const drone = drones.value[key] as DroneModel
       const position = drone.state.position
-      const destroyed = drone.destroyed
+      const destroyed = drone.state.destroyed
       const mass = drone.specs.mass
       const pan = soundsPlayerBase.calculatePan(position.x)
       const gain = soundsPlayerBase.calculateGain(position)

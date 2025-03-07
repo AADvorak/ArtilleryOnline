@@ -7,7 +7,7 @@ import {TargetCalculator} from "~/playground/battle/calculator/target-calculator
 
 export const DroneTargetCalculator = {
   calculate(drone: DroneCalculations, battleModel: BattleModel) {
-    if (drone.model.destroyed) return
+    if (drone.model.state.destroyed) return
 
     const ammo = Object.values(drone.model.state.ammo)[0]
     let targets: Position[] = []

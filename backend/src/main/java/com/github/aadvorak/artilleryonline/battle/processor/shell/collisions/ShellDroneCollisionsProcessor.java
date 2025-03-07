@@ -21,7 +21,7 @@ public class ShellDroneCollisionsProcessor {
                 battle.getModel().getEvents().addRicochet(new RicochetEvent().setShellId(shell.getId()));
             } else {
                 shell.getCollisions().add(collision);
-                drone.getModel().setDestroyed(true);
+                drone.getModel().getState().setDestroyed(true);
                 drone.getModel().getUpdate().setUpdated();
                 DamageProcessor.processHitDrone(drone, shell, battle);
                 pushDrone(collision);

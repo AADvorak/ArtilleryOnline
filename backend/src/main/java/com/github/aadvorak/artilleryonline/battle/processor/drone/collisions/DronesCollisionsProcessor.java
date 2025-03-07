@@ -31,7 +31,7 @@ public class DronesCollisionsProcessor {
                     && !removedDroneIds.contains(drone.getId())) {
                 var collision = drone.getCollisions().iterator().next();
                 if (collision.getImpact() > drone.getModel().getSpecs().getMinCollisionDestroyImpact()) {
-                    drone.getModel().setDestroyed(true);
+                    drone.getModel().getState().setDestroyed(true);
                     battle.getModel().getUpdates().removeDrone(drone.getId());
                 }
             }

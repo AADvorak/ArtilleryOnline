@@ -11,7 +11,7 @@ public class MissileDroneCollisionsProcessor {
         var collision = MissileDroneCollisionsDetector.detectFirst(missile, battle);
         if (collision != null) {
             var drone = (DroneCalculations) collision.getPair().second();
-            drone.getModel().setDestroyed(true);
+            drone.getModel().getState().setDestroyed(true);
             battle.getModel().getUpdates().removeDrone(drone.getId());
             missile.getCollisions().add(collision);
             DamageProcessor.processHit(missile, battle);

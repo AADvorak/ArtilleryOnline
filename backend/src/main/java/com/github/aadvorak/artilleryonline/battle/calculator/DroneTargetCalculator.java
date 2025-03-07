@@ -11,7 +11,8 @@ import java.util.stream.Collectors;
 public class DroneTargetCalculator {
 
     public static void calculate(DroneCalculations drone, BattleModel battleModel) {
-        if (drone.getModel().isDestroyed()) {
+        if (drone.getModel().getState().isDestroyed()) {
+            drone.getModel().getState().getGunState().setTriggerPushed(false);
             return;
         }
         var ammo = drone.getModel().getState().getAmmo().values().iterator().next();
@@ -35,8 +36,7 @@ public class DroneTargetCalculator {
         var targetPosition = xDiffMap.get(minXDiff);
         var gunAngle = drone.getModel().getState().getGunAngle() + drone.getModel().getState().getPosition().getAngle();
         var angleDiff = GeometryUtils.calculateAngleDiff(gunAngle, dronePosition.angleTo(targetPosition));
-        drone.getModel().getState().getGunState().setTriggerPushed(!drone.getModel().isDestroyed()
-                && Math.abs(angleDiff) < Math.PI / 32
+        drone.getModel().getState().getGunState().setTriggerPushed(Math.abs(angleDiff) < Math.PI / 32
                 && dronePosition.distanceTo(targetPosition) < drone.getModel().getSpecs().getFlyHeight());
         drone.setTarget(new DroneCalculations.Target()
                 .setXDiff(minXDiff)

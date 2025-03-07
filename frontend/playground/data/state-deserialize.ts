@@ -146,11 +146,13 @@ export function deserializeDroneState(input: DeserializerInput): DroneState {
   const ammo = DeserializerBase.readMap(input, DeserializerBase.readString, DeserializerBase.readInt)!
   const gunState = deserializeGunState(input)
   const gunAngle = DeserializerBase.readDouble(input)
+  const destroyed = DeserializerBase.readBoolean(input)
   return {
     position,
     velocity,
     ammo,
     gunState,
-    gunAngle
+    gunAngle,
+    destroyed
   }
 }

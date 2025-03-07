@@ -13,7 +13,7 @@ public class DroneAccelerationCalculator {
         var gravity = new BodyAcceleration()
                 .setY(-battleModel.getRoom().getSpecs().getGravityAcceleration());
         var friction = calculateFriction(drone, battleModel.getRoom().getSpecs().getAirFrictionCoefficient());
-        var engines = drone.getModel().isDestroyed() ? new BodyAcceleration() : calculateEngines(drone, battleModel);
+        var engines = drone.getModel().getState().isDestroyed() ? new BodyAcceleration() : calculateEngines(drone, battleModel);
         return BodyAcceleration.sumOf(gravity, friction, engines);
     }
 

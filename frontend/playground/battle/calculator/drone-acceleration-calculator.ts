@@ -9,7 +9,7 @@ export const DroneAccelerationCalculator = {
   calculate(drone: DroneCalculations, battleModel: BattleModel, timeStepSecs: number): BodyAcceleration {
     const gravity = { x: 0, y: -battleModel.room.specs.gravityAcceleration, angle: 0 }
     const friction = this.calculateFriction(drone, battleModel.room.specs.airFrictionCoefficient)
-    const engines = drone.model.destroyed ? { x: 0, y: 0, angle: 0 } : this.calculateEngines(drone, battleModel, timeStepSecs)
+    const engines = drone.model.state.destroyed ? { x: 0, y: 0, angle: 0 } : this.calculateEngines(drone, battleModel, timeStepSecs)
     return VectorUtils.sumOfBody(gravity, friction, engines)
   },
 
