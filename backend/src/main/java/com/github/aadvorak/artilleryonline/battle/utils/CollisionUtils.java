@@ -28,7 +28,7 @@ public class CollisionUtils {
             var vehicleVelocity = vehicle.getModel().getState().getVelocity();
             var vehicleRadius = vehicle.getModel().getSpecs().getRadius();
             vehicleVelocity.setAngle(vehicleVelocity.getAngle()
-                    + projectileVelocitiesProjections.getTangential() * (projectileMass / vehicleMass) / vehicleRadius);
+                    - projectileVelocitiesProjections.getTangential() * (projectileMass / vehicleMass) / vehicleRadius);
         }
         if (collision.getPair().second() instanceof WheelCalculations wheel) {
             var wheelVelocity = wheel.getVelocity();
@@ -53,7 +53,7 @@ public class CollisionUtils {
         var droneVelocity = drone.getModel().getState().getVelocity();
         var droneRadius = drone.getModel().getSpecs().getHullRadius();
         droneVelocity.setAngle(droneVelocity.getAngle()
-                + projectileVelocitiesProjections.getTangential() * (projectileMass / droneMass) / droneRadius);
+                - projectileVelocitiesProjections.getTangential() * (projectileMass / droneMass) / droneRadius);
     }
 
     public static Collision detectWithMissile(Calculations<?> calculations, Position position, Position nextPosition,
@@ -119,6 +119,33 @@ public class CollisionUtils {
         if (!intersectionPoints.isEmpty()) {
             var intersectionPoint = findClosestIntersectionPoint(position, intersectionPoints);
             var interpenetration = Interpenetration.withUncheckedDepth(0.0, intersectionPoint, dronePosition);
+            return Collision.withDrone(calculations, drone, interpenetration);
+        }
+
+        var enginesRadius = drone.getModel().getSpecs().getEnginesRadius();
+        var droneAngle = drone.getModel().getState().getPosition().getAngle();
+
+        var rightEngineCenterPosition = dronePosition.shifted(enginesRadius, droneAngle)
+                .shifted(droneRadius, droneAngle + Math.PI / 2);
+        var rightEngineShape = new Segment(
+                rightEngineCenterPosition.shifted(enginesRadius / 3, droneAngle - Math.PI),
+                rightEngineCenterPosition.shifted(enginesRadius / 3, droneAngle)
+        );
+        var rightEngineIntersectionPoint = GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, rightEngineShape);
+        if (rightEngineIntersectionPoint != null) {
+            var interpenetration = Interpenetration.withUncheckedDepth(0.0, rightEngineIntersectionPoint, dronePosition);
+            return Collision.withDrone(calculations, drone, interpenetration);
+        }
+
+        var leftEngineCenterPosition = dronePosition.shifted(enginesRadius, droneAngle - Math.PI)
+                .shifted(droneRadius, droneAngle + Math.PI / 2);
+        var leftEngineShape = new Segment(
+                leftEngineCenterPosition.shifted(enginesRadius / 3, droneAngle - Math.PI),
+                leftEngineCenterPosition.shifted(enginesRadius / 3, droneAngle)
+        );
+        var leftEngineIntersectionPoint = GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, leftEngineShape);
+        if (leftEngineIntersectionPoint != null) {
+            var interpenetration = Interpenetration.withUncheckedDepth(0.0, leftEngineCenterPosition, dronePosition);
             return Collision.withDrone(calculations, drone, interpenetration);
         }
         return null;
