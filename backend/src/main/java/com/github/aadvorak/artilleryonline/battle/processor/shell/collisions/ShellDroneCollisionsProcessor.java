@@ -5,7 +5,6 @@ import com.github.aadvorak.artilleryonline.battle.calculations.DroneCalculations
 import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
-import com.github.aadvorak.artilleryonline.battle.events.RicochetEvent;
 import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
 import com.github.aadvorak.artilleryonline.battle.utils.CollisionUtils;
 
@@ -15,17 +14,11 @@ public class ShellDroneCollisionsProcessor {
         var collision = ShellDroneCollisionsDetector.detectFirst(shell, battle);
         if (collision != null) {
             var drone = (DroneCalculations) collision.getPair().second();
-            if (collision.isRicochet()) {
-                CollisionUtils.recalculateVelocitiesRigid(collision);
-                shell.calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
-                battle.getModel().getEvents().addRicochet(new RicochetEvent().setShellId(shell.getId()));
-            } else {
-                shell.getCollisions().add(collision);
-                drone.getModel().getState().setDestroyed(true);
-                drone.getModel().getUpdate().setUpdated();
-                DamageProcessor.processHitDrone(drone, shell, battle);
-                pushDrone(collision);
-            }
+            shell.getCollisions().add(collision);
+            drone.getModel().getState().setDestroyed(true);
+            drone.getModel().getUpdate().setUpdated();
+            DamageProcessor.processHitDrone(drone, shell, battle);
+            pushDrone(collision);
         }
     }
 
