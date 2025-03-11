@@ -4,7 +4,6 @@ import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculation
 import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
-import com.github.aadvorak.artilleryonline.battle.processor.shell.BombDropProcessor;
 
 public class ShellGroundCollisionsProcessor {
 
@@ -15,7 +14,6 @@ public class ShellGroundCollisionsProcessor {
                 shell.getModel().getState().setStuck(true);
                 shell.applyNextPosition();
                 shell.getModel().setUpdated(true);
-                BombDropProcessor.drop(shell.getPosition(), shell.getModel().getVehicleId(), battle.getModel());
             } else {
                 shell.getCollisions().add(collision);
                 DamageProcessor.processHit(shell, battle);

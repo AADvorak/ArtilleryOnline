@@ -19,6 +19,8 @@ public class ShellState implements State, CompactSerializable {
 
     private boolean stuck = false;
 
+    private double stuckTime;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeSerializableValue(position);

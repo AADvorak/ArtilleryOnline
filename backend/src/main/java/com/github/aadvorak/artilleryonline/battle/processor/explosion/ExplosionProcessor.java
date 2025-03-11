@@ -9,6 +9,9 @@ import com.github.aadvorak.artilleryonline.battle.state.ExplosionState;
 public class ExplosionProcessor {
 
     public static void initExplosion(Position position, double radius, BattleModel battleModel) {
+        if (radius <= 0) {
+            return;
+        }
         var explosionSpecs = new ExplosionSpecs()
                 .setDuration(0.8 * radius)
                 .setRadius(radius);
