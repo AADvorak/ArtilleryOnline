@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.processor.shell.collisions;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.ShellHitType;
 import com.github.aadvorak.artilleryonline.battle.events.ShellHitEvent;
 import com.github.aadvorak.artilleryonline.battle.events.ShellHitEventObject;
@@ -9,22 +10,26 @@ import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 public class ShellsCollisionsProcessor {
 
     public static void process(BattleCalculations battle) {
-        battle.getShells().forEach(shell -> ShellVehicleCollisionsProcessor.process(shell, battle));
+        battle.getShells().forEach(shell -> {
+            if (needProcess(shell)) {
+                ShellVehicleCollisionsProcessor.process(shell, battle);
+            }
+        });
 
         battle.getShells().forEach(shell -> {
-            if (shell.getCollisions().isEmpty()) {
+            if (needProcess(shell)) {
                 ShellMissileCollisionsProcessor.process(shell, battle);
             }
         });
 
         battle.getShells().forEach(shell -> {
-            if (shell.getCollisions().isEmpty()) {
+            if (needProcess(shell)) {
                 ShellDroneCollisionsProcessor.process(shell, battle);
             }
         });
 
         battle.getShells().forEach(shell -> {
-            if (shell.getCollisions().isEmpty()) {
+            if (needProcess(shell)) {
                 ShellGroundCollisionsProcessor.process(shell, battle);
             }
         });
@@ -47,5 +52,9 @@ public class ShellsCollisionsProcessor {
                 .setObject(new ShellHitEventObject()
                         .setId(id)
                         .setType(type)));
+    }
+
+    private static boolean needProcess(ShellCalculations shell) {
+        return !shell.getModel().getState().isStuck() && shell.getCollisions().isEmpty();
     }
 }

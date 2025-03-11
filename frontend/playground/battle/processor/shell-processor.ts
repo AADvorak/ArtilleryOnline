@@ -3,6 +3,9 @@ import type {RoomSpecs} from "~/playground/data/specs";
 
 export const ShellProcessor = {
   processStep(shellModel: ShellModel, timeStepSecs: number, roomSpecs: RoomSpecs) {
+    if (shellModel.state.stuck) {
+      return
+    }
     const prevPosition = shellModel.state.position
     let velocity = shellModel.state.velocity
     const nextPosition = {

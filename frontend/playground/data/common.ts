@@ -18,7 +18,8 @@ export enum MovingDirection {
 
 export enum ShellType {
   AP = 'AP',
-  HE = 'HE'
+  HE = 'HE',
+  SGN = 'SGN'
 }
 
 export enum JetType {

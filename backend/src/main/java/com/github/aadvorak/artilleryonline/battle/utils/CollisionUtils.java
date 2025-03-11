@@ -182,6 +182,10 @@ public class CollisionUtils {
     }
 
     public static void recalculateVelocitiesRigid(Collision collision) {
+        recalculateVelocitiesRigid(collision, 1.0);
+    }
+
+    public static void recalculateVelocitiesRigid(Collision collision, double coefficient) {
         var mass = collision.getPair().first().getMass();
         var otherMass = collision.getPair().second().getMass();
 
@@ -193,20 +197,20 @@ public class CollisionUtils {
 
         velocityProjections.setNormal(getNewVelocityNormalProjection(
                 velocityNormalProjection, otherVelocityNormalProjection,
-                mass, otherMass));
+                mass, otherMass,coefficient));
         collision.getPair().first().setVelocity(velocityProjections.recoverVelocity());
 
         otherVelocityProjections.setNormal(getNewVelocityNormalProjection(
                 otherVelocityNormalProjection, velocityNormalProjection,
-                otherMass, mass));
+                otherMass, mass, coefficient));
         collision.getPair().second().setVelocity(otherVelocityProjections.recoverVelocity());
     }
 
     private static double getNewVelocityNormalProjection(
             double velocityNormalProjection, double otherVelocityNormalProjection,
-            double mass, double otherMass
+            double mass, double otherMass, double coefficient
     ) {
-        return (- Math.abs(mass - otherMass) * velocityNormalProjection
+        return coefficient * (- Math.abs(mass - otherMass) * velocityNormalProjection
                 + 2 * otherMass * otherVelocityNormalProjection) / (mass + otherMass);
     }
 

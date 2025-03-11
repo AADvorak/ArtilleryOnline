@@ -7,10 +7,16 @@ import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 public class ShellFlyProcessor {
 
     public static void processStep1(ShellCalculations shell, BattleModel battleModel) {
+        if (shell.getModel().getState().isStuck()) {
+            return;
+        }
         shell.calculateNextPosition(battleModel.getCurrentTimeStepSecs());
     }
 
     public static void processStep2(ShellCalculations shell, BattleModel battleModel) {
+        if (shell.getModel().getState().isStuck()) {
+            return;
+        }
         if (!shell.getCollisions().isEmpty()) {
             return;
         }

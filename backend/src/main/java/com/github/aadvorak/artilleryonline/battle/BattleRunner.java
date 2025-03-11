@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle;
 
 import com.github.aadvorak.artilleryonline.battle.events.BattleModelEvents;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.processor.ActiveBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.WaitingBattleStepProcessor;
@@ -205,7 +206,9 @@ public class BattleRunner {
                 .anyMatch(missileModel -> missileModel.getUpdate().isUpdated());
         var updatedDrones = battleModel.getDrones().values().stream()
                 .anyMatch(droneModel -> droneModel.getUpdate().isUpdated());
-        return updatedVehicles || updatedMissiles || updatedDrones;
+        var updatedShells = battleModel.getShells().values().stream()
+                .anyMatch(ShellModel::isUpdated);
+        return updatedVehicles || updatedMissiles || updatedDrones || updatedShells;
     }
 
     private BattleModelStateResponse createBattleModelStateResponse(BattleModel battleModel) {

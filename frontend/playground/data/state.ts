@@ -22,6 +22,7 @@ export interface JetState {
 export interface ShellState {
   position: Position
   velocity: Velocity
+  stuck: boolean
 }
 
 export interface MissileState {

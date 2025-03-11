@@ -17,9 +17,12 @@ public class ShellState implements State, CompactSerializable {
 
     private Velocity velocity;
 
+    private boolean stuck = false;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeSerializableValue(position);
         stream.writeSerializableValue(velocity);
+        stream.writeBoolean(stuck);
     }
 }

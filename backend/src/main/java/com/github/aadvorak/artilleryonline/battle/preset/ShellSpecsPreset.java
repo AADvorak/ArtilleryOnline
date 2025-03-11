@@ -48,7 +48,12 @@ public enum ShellSpecsPreset {
             .setPushCoefficient(0.015)
             .setMass(0.00025)
             .setCaliber(0.03)
-            .setType(ShellType.AP));
+            .setType(ShellType.AP)),
+    LIGHT_SGN("SGN-L", new ShellSpecs()
+            .setVelocity(10.0)
+            .setMass(0.0002)
+            .setCaliber(0.07)
+            .setType(ShellType.SGN));
 
     private final String name;
 

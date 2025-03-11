@@ -22,6 +22,9 @@ public class ShellVehicleCollisionsProcessor {
                 CollisionUtils.recalculateVelocitiesRigid(collision);
                 shell.calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
                 battle.getModel().getEvents().addRicochet(new RicochetEvent().setShellId(shell.getId()));
+            } else if (ShellType.SGN.equals(shell.getModel().getSpecs().getType())) {
+                CollisionUtils.recalculateVelocitiesRigid(collision, 0.2);
+                shell.calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
             } else {
                 shell.getCollisions().add(collision);
                 if (hitObject instanceof VehicleCalculations vehicle) {

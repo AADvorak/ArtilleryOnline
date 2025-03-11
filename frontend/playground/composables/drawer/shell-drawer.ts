@@ -4,6 +4,7 @@ import { useBattleStore } from '~/stores/battle'
 import type { ShellModel } from '@/playground/data/model'
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BattleUtils} from "~/playground/utils/battle-utils";
+import {ShellType} from "~/playground/data/common";
 
 export function useShellDrawer(
   drawerBase: DrawerBase,
@@ -27,12 +28,17 @@ export function useShellDrawer(
       const tailRight = drawerBase.transformPosition(BattleUtils.shiftedPosition(rawTail, caliber, angle + Math.PI / 2))
       const tailLeft = drawerBase.transformPosition(BattleUtils.shiftedPosition(rawTail, caliber, angle - Math.PI / 2))
 
-      ctx.value.fillStyle = 'rgb(256 256 256)'
       ctx.value.lineWidth = 1
       ctx.value.beginPath()
-      ctx.value.moveTo(head.x, head.y)
-      ctx.value.lineTo(tailRight.x, tailRight.y)
-      ctx.value.lineTo(tailLeft.x, tailLeft.y)
+      if (ShellType.SGN === shellModel.specs.type) {
+        ctx.value.fillStyle = 'rgb(248,105,4)'
+        ctx.value.arc(head.x, head.y, drawerBase.scale(caliber / 2), 0, Math.PI * 2)
+      } else {
+        ctx.value.fillStyle = 'rgb(256 256 256)'
+        ctx.value.moveTo(head.x, head.y)
+        ctx.value.lineTo(tailRight.x, tailRight.y)
+        ctx.value.lineTo(tailLeft.x, tailLeft.y)
+      }
       ctx.value.fill()
       ctx.value.closePath()
     }

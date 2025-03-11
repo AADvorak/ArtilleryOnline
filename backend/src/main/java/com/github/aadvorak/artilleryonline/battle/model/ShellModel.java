@@ -18,6 +18,9 @@ public class ShellModel extends GenericSpecsConfigStateModel<ShellSpecs, ShellCo
     @JsonIgnore
     private Long userId;
 
+    @JsonIgnore
+    private boolean updated = false;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(id);

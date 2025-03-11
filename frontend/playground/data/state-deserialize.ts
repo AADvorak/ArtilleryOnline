@@ -70,9 +70,11 @@ export function deserializeRoomState(input: DeserializerInput): RoomState {
 export function deserializeShellState(input: DeserializerInput): ShellState {
   const position = deserializePosition(input)
   const velocity = deserializeVelocity(input)
+  const stuck = DeserializerBase.readBoolean(input)
   return {
     position,
-    velocity
+    velocity,
+    stuck
   }
 }
 
