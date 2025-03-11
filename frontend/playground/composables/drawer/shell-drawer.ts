@@ -25,22 +25,40 @@ export function useShellDrawer(
       const angle = VectorUtils.getAngle(shellModel.state.velocity)
       const rawTail = BattleUtils.shiftedPosition(rawHead, - 3 * caliber, angle)
       const head = drawerBase.transformPosition(rawHead)
-      const tailRight = drawerBase.transformPosition(BattleUtils.shiftedPosition(rawTail, caliber, angle + Math.PI / 2))
-      const tailLeft = drawerBase.transformPosition(BattleUtils.shiftedPosition(rawTail, caliber, angle - Math.PI / 2))
+      const tailRight = drawerBase.transformPosition(BattleUtils.shiftedPosition(rawTail,
+          caliber, angle + Math.PI / 2))
+      const tailLeft = drawerBase.transformPosition(BattleUtils.shiftedPosition(rawTail,
+          caliber, angle - Math.PI / 2))
 
       ctx.value.lineWidth = 1
-      ctx.value.beginPath()
+
       if (ShellType.SGN === shellModel.specs.type) {
         ctx.value.fillStyle = 'rgb(248,105,4)'
+        ctx.value.beginPath()
         ctx.value.arc(head.x, head.y, drawerBase.scale(caliber / 2), 0, Math.PI * 2)
+        ctx.value.fill()
+        ctx.value.closePath()
+      } else if (ShellType.BMB === shellModel.specs.type) {
+        const headCenter = drawerBase.transformPosition(BattleUtils.shiftedPosition(rawHead, - caliber / 2, angle))
+        const tailCenter = drawerBase.transformPosition(BattleUtils.shiftedPosition(rawHead, - 3 * caliber / 2, angle))
+        ctx.value.fillStyle = 'rgb(256 256 256)'
+        ctx.value.beginPath()
+        ctx.value.arc(headCenter.x, headCenter.y, drawerBase.scale(caliber / 2), 0, Math.PI * 2)
+        ctx.value.fill()
+        ctx.value.closePath()
+        ctx.value.beginPath()
+        ctx.value.arc(tailCenter.x, tailCenter.y, drawerBase.scale(caliber / 2), 3 * Math.PI / 2 - angle, 5 * Math.PI / 2 - angle)
+        ctx.value.fill()
+        ctx.value.closePath()
       } else {
         ctx.value.fillStyle = 'rgb(256 256 256)'
+        ctx.value.beginPath()
         ctx.value.moveTo(head.x, head.y)
         ctx.value.lineTo(tailRight.x, tailRight.y)
         ctx.value.lineTo(tailLeft.x, tailLeft.y)
+        ctx.value.fill()
+        ctx.value.closePath()
       }
-      ctx.value.fill()
-      ctx.value.closePath()
     }
   }
 

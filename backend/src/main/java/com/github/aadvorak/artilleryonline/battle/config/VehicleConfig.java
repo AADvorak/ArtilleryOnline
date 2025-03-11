@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.config;
 import com.github.aadvorak.artilleryonline.battle.specs.DroneSpecs;
 import com.github.aadvorak.artilleryonline.battle.specs.GunSpecs;
 import com.github.aadvorak.artilleryonline.battle.specs.JetSpecs;
+import com.github.aadvorak.artilleryonline.battle.specs.ShellSpecs;
 import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
@@ -22,11 +23,11 @@ public class VehicleConfig implements Config, CompactSerializable {
 
     private DroneSpecs drone;
 
+    private ShellSpecs bombs;
+
     private Map<String, Integer> ammo;
 
     private Map<String, Integer> missiles;
-
-    private Map<String, Integer> drones;
 
     private String color;
 

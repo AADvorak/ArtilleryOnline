@@ -231,6 +231,7 @@ public class BattleRunner {
         battle.setStageUpdated(false);
         battle.getModel().setUpdated(false);
         battle.getModel().getVehicles().values().forEach(vehicle -> vehicle.setUpdated(false));
+        battle.getModel().getShells().values().forEach(shell -> shell.setUpdated(false));
         battle.getModel().getMissiles().values().forEach(missile -> missile.getUpdate().resetUpdated());
         battle.getModel().getDrones().values().forEach(drone -> drone.getUpdate().resetUpdated());
     }

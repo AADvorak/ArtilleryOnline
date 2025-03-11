@@ -27,6 +27,7 @@ public class DroneGunShootProcessor {
                 .get(drone.getModel().getState().getGunState().getLoadedShell());
         var shellModel = new ShellModel();
         shellModel.setId(battleModel.getIdGenerator().generate());
+        shellModel.setVehicleId(drone.getModel().getVehicleId());
         if (drone.getModel().getUserId() != null) {
             shellModel.setUserId(drone.getModel().getUserId());
             battleModel.getStatistics().get(drone.getModel().getUserId()).increaseMadeShots();

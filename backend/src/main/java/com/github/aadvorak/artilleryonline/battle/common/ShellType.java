@@ -4,7 +4,7 @@ import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWr
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 
 public enum ShellType implements CompactSerializable {
-    AP, HE, SGN;
+    AP, HE, SGN, BMB;
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {

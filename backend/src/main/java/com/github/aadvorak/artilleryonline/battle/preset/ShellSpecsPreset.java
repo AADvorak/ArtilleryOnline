@@ -53,7 +53,14 @@ public enum ShellSpecsPreset {
             .setVelocity(10.0)
             .setMass(0.0002)
             .setCaliber(0.07)
-            .setType(ShellType.SGN));
+            .setType(ShellType.SGN)),
+    BMB("BMB", new ShellSpecs()
+            .setDamage(8.0)
+            .setRadius(0.7)
+            .setVelocity(5.0)
+            .setMass(0.008)
+            .setCaliber(0.15)
+            .setType(ShellType.BMB));
 
     private final String name;
 

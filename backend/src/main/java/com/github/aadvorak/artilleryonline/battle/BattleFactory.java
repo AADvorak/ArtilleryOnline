@@ -13,6 +13,7 @@ import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleOnGro
 import com.github.aadvorak.artilleryonline.battle.specs.DroneSpecs;
 import com.github.aadvorak.artilleryonline.battle.specs.JetSpecs;
 import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
+import com.github.aadvorak.artilleryonline.battle.specs.ShellSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.*;
 import com.github.aadvorak.artilleryonline.battle.statistics.UserBattleStatistics;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
@@ -110,6 +111,10 @@ public class BattleFactory {
             if (!vehicleModel.getSpecs().getAvailableDrones().isEmpty()) {
                 drone = vehicleModel.getSpecs().getAvailableDrones().values().iterator().next();
             }
+            ShellSpecs bombs = null;
+            if (!vehicleModel.getSpecs().getAvailableBombs().isEmpty()) {
+                bombs = vehicleModel.getSpecs().getAvailableBombs().values().iterator().next();
+            }
             var availableShellsNumber = gun.getAvailableShells().size();
             var ammo = new HashMap<String, Integer>();
             gun.getAvailableShells().keySet().forEach(shellName ->
@@ -124,6 +129,7 @@ public class BattleFactory {
                     .setGun(gun)
                     .setJet(jet)
                     .setDrone(drone)
+                    .setBombs(bombs)
                     .setColor(getVehicleColor(participant)));
             vehicleModel.setState(new VehicleState()
                     .setGunAngle(Math.PI / 2)
