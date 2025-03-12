@@ -7,7 +7,7 @@ import {
   deserializeVelocity
 } from "~/playground/data/common-deserialize";
 import type {
-  BattleModelState, DroneInVehicleState, DroneState,
+  BattleModelState, BomberState, DroneInVehicleState, DroneState,
   ExplosionState,
   GunState,
   JetState,
@@ -98,6 +98,17 @@ export function deserializeDroneInVehicleState(input: DeserializerInput): DroneI
   }
 }
 
+export function deserializeBomberState(input: DeserializerInput): BomberState {
+  const readyToFlight = DeserializerBase.readBoolean(input)
+  const prepareToFlightRemainTime = DeserializerBase.readDouble(input)
+  const remainFlights = DeserializerBase.readInt(input)
+  return {
+    readyToFlight,
+    prepareToFlightRemainTime,
+    remainFlights
+  }
+}
+
 export function deserializeVehicleState(input: DeserializerInput): VehicleState {
   const position = deserializeBodyPosition(input)
   const velocity = deserializeBodyVelocity(input)
@@ -111,6 +122,7 @@ export function deserializeVehicleState(input: DeserializerInput): VehicleState 
   const trackState = DeserializerBase.readNullable(input, deserializeTrackState)!
   const jetState = DeserializerBase.readNullable(input, deserializeJetState)!
   const droneState = DeserializerBase.readNullable(input, deserializeDroneInVehicleState)!
+  const bomberState = DeserializerBase.readNullable(input, deserializeBomberState)
   const onGround = DeserializerBase.readBoolean(input)
   return {
     position,
@@ -125,6 +137,7 @@ export function deserializeVehicleState(input: DeserializerInput): VehicleState 
     trackState,
     jetState,
     droneState,
+    bomberState,
     onGround
   }
 }

@@ -15,15 +15,18 @@ public class BombDropProcessor {
         var vehicleModel = battleModel.getVehicles().values().stream()
                 .filter(model -> model.getId() == vehicleId)
                 .findAny().orElse(null);
-        if (vehicleModel == null || vehicleModel.getConfig().getBombs() == null) {
+        if (vehicleModel == null || vehicleModel.getConfig().getBomber() == null) {
             return;
         }
-        // todo check if ready
+        var bomberState = vehicleModel.getState().getBomberState();
+        if (bomberState == null || !bomberState.isReadyToFlight()) {
+            return;
+        }
         var roomSpecs = battleModel.getRoom().getSpecs();
         var y = 1.1 * BattleUtils.getRoomHeight(roomSpecs);
         var gravityAcceleration = roomSpecs.getGravityAcceleration();
         var height = y - target.getY();
-        var specs = vehicleModel.getConfig().getBombs();
+        var specs = vehicleModel.getConfig().getBomber().getBombs();
         var velocityX = target.getX() > BattleUtils.getRoomWidth(roomSpecs) / 2
                 ? specs.getVelocity() : -specs.getVelocity();
         var x = target.getX() - velocityX * Math.sqrt(2 * height / gravityAcceleration);
@@ -44,5 +47,9 @@ public class BombDropProcessor {
             battleModel.getShells().put(id, model);
             battleModel.getUpdates().addShell(model);
         }
+        bomberState.setReadyToFlight(false);
+        bomberState.setPrepareToFlightRemainTime(vehicleModel.getConfig().getBomber().getPrepareToFlightTime());
+        bomberState.setRemainFlights(bomberState.getRemainFlights() - 1);
+        vehicleModel.setUpdated(true);
     }
 }

@@ -45,7 +45,7 @@ public class VehicleSpecs implements Specs, CompactSerializable {
 
     private Map<String, DroneSpecs> availableDrones;
 
-    private Map<String, ShellSpecs> availableBombs;
+    private Map<String, BomberSpecs> availableBombers;
 
     private double minCollisionDamageImpact;
 

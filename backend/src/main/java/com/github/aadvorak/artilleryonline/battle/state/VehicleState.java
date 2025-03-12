@@ -40,6 +40,8 @@ public class VehicleState implements State, CompactSerializable {
 
     private DroneInVehicleState droneState;
 
+    private BomberState bomberState;
+
     private boolean onGround;
 
     @Override
@@ -56,6 +58,7 @@ public class VehicleState implements State, CompactSerializable {
         stream.writeSerializable(trackState);
         stream.writeSerializable(jetState);
         stream.writeSerializable(droneState);
+        stream.writeSerializable(bomberState);
         stream.writeBoolean(onGround);
     }
 }

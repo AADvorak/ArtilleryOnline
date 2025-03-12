@@ -19,6 +19,7 @@ import BattleFps from "~/playground/components/BattleFps.vue";
 import BattlePing from "~/playground/components/BattlePing.vue";
 import Missiles from "~/playground/components/Missiles.vue";
 import Drone from "~/playground/components/Drone.vue";
+import Bomber from "~/playground/components/Bomber.vue";
 
 const {t} = useI18n()
 const battleStore = useBattleStore()
@@ -110,6 +111,9 @@ function showHelpDialog() {
     </div>
     <div v-if="battleStore.isActive">
       <Drone />
+    </div>
+    <div v-if="battleStore.isActive">
+      <Bomber />
     </div>
     <div v-if="battleStore.isActive" class="ml-5">
       <ReloadingProgress />

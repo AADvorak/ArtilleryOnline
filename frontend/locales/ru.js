@@ -27,8 +27,10 @@ export const ru = {
   battleHeader: {
     leaveBattle: 'Покинуть бой',
     drone: 'Дрон',
+    bomber: 'Авиаудар',
     ready: 'готов',
-    preparing: 'подготовка'
+    preparing: 'подготовка',
+    flights: 'вылетов'
   },
   battleHistory,
   battleHistoryFiltersForm,

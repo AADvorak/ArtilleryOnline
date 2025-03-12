@@ -10,10 +10,7 @@ import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
 import com.github.aadvorak.artilleryonline.battle.preset.*;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleOnGroundProcessor;
-import com.github.aadvorak.artilleryonline.battle.specs.DroneSpecs;
-import com.github.aadvorak.artilleryonline.battle.specs.JetSpecs;
-import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
-import com.github.aadvorak.artilleryonline.battle.specs.ShellSpecs;
+import com.github.aadvorak.artilleryonline.battle.specs.*;
 import com.github.aadvorak.artilleryonline.battle.state.*;
 import com.github.aadvorak.artilleryonline.battle.statistics.UserBattleStatistics;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
@@ -111,9 +108,12 @@ public class BattleFactory {
             if (!vehicleModel.getSpecs().getAvailableDrones().isEmpty()) {
                 drone = vehicleModel.getSpecs().getAvailableDrones().values().iterator().next();
             }
-            ShellSpecs bombs = null;
-            if (!vehicleModel.getSpecs().getAvailableBombs().isEmpty()) {
-                bombs = vehicleModel.getSpecs().getAvailableBombs().values().iterator().next();
+            BomberSpecs bomber = null;
+            BomberState bomberState = null;
+            if (!vehicleModel.getSpecs().getAvailableBombers().isEmpty()) {
+                bomber = vehicleModel.getSpecs().getAvailableBombers().values().iterator().next();
+                bomberState = new BomberState()
+                        .setRemainFlights(bomber.getFlights());
             }
             var availableShellsNumber = gun.getAvailableShells().size();
             var ammo = new HashMap<String, Integer>();
@@ -129,7 +129,7 @@ public class BattleFactory {
                     .setGun(gun)
                     .setJet(jet)
                     .setDrone(drone)
-                    .setBombs(bombs)
+                    .setBomber(bomber)
                     .setColor(getVehicleColor(participant)));
             vehicleModel.setState(new VehicleState()
                     .setGunAngle(Math.PI / 2)
@@ -146,7 +146,8 @@ public class BattleFactory {
                     .setJetState(jet == null ? null : new JetState()
                             .setVolume(jet.getCapacity())
                             .setActive(false))
-                    .setDroneState(drone == null ? null : new DroneInVehicleState()));
+                    .setDroneState(drone == null ? null : new DroneInVehicleState())
+                    .setBomberState(bomberState));
             VehicleOnGroundProcessor.estimateVehicleAngleByPosition(vehicleModel, battleModel.getRoom());
             VehicleOnGroundProcessor.correctVehiclePositionAndAngleOnGround(vehicleModel, battleModel.getRoom());
             vehicles.put(participant.getNickname(), vehicleModel);

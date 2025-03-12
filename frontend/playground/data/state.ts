@@ -45,6 +45,12 @@ export interface DroneInVehicleState {
   prepareToLaunchRemainTime: number
 }
 
+export interface BomberState {
+  readyToFlight: boolean
+  prepareToFlightRemainTime: number
+  remainFlights: number
+}
+
 export interface ExplosionState {
   time: number
   radius: number
@@ -64,6 +70,7 @@ export interface VehicleState {
   trackState: TrackState
   jetState: JetState
   droneState: DroneInVehicleState
+  bomberState?: BomberState
   onGround: boolean
 }
 

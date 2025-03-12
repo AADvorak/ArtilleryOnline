@@ -71,6 +71,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
             VehicleTrackProcessor.processStep(vehicleModel, battleModel);
             VehicleJetProcessor.processStep(vehicleModel, battleModel);
             VehicleDroneProcessor.processStep(vehicleModel, battleModel);
+            VehicleBomberProcessor.processStep(vehicleModel, battleModel);
             VehicleMoveProcessor.processStep1(vehicleCalculations, battleCalculations);
         });
 
