@@ -30,7 +30,7 @@ public class BombDropProcessor {
         var velocityX = target.getX() > BattleUtils.getRoomWidth(roomSpecs) / 2
                 ? specs.getVelocity() : -specs.getVelocity();
         var x = target.getX() - velocityX * Math.sqrt(2 * height / gravityAcceleration);
-        var singleShift = specs.getRadius() * 3;
+        var singleShift = specs.getRadius() * 2;
         var shifts = List.of(-singleShift, 0.0, singleShift);
         for (var shift : shifts) {
             var position = new Position().setX(x + shift).setY(y);
