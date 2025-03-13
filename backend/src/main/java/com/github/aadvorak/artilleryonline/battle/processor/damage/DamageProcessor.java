@@ -2,7 +2,6 @@ package com.github.aadvorak.artilleryonline.battle.processor.damage;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
-import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.preset.VehicleSpecsPreset;
@@ -26,10 +25,11 @@ public class DamageProcessor {
         StatisticsProcessor.increaseDirectHits(vehicle.getModel().getUserId(), shell.getModel().getUserId(), battle.getModel());
         var shellSpecs = shell.getModel().getSpecs();
         var hit = Hit.of(shell);
-        if (ShellType.AP.equals(shellSpecs.getType())) {
+        if (shellSpecs.getType().isAP()) {
             applyDamageToVehicle(shellSpecs.getDamage(), vehicle.getModel(), battle.getModel(),
                     shell.getModel().getUserId());
-        } else if (ShellType.HE.equals(shellSpecs.getType())) {
+        }
+        if (shellSpecs.getType().isHE()) {
             calculateHEDamage(hit, battle);
             processGroundDamage(hit, battle.getModel());
         }
@@ -40,7 +40,7 @@ public class DamageProcessor {
         StatisticsProcessor.increaseDirectHits(drone.getModel().getUserId(), shell.getModel().getUserId(), battle.getModel());
         var shellSpecs = shell.getModel().getSpecs();
         var hit = Hit.of(shell);
-        if (ShellType.HE.equals(shellSpecs.getType())) {
+        if (shellSpecs.getType().isHE()) {
             calculateHEDamage(hit, battle);
             processGroundDamage(hit, battle.getModel());
         }
@@ -61,7 +61,7 @@ public class DamageProcessor {
         processTrackBreak(shellSpecs.getCaliber(), shell.getModel().getUserId(),
                 vehicle.getModel(), battle.getModel());
         var hit = Hit.of(shell);
-        if (ShellType.HE.equals(shellSpecs.getType())) {
+        if (shellSpecs.getType().isHE()) {
             calculateHEDamage(hit, battle);
             processGroundDamage(hit, battle.getModel());
         }
@@ -70,7 +70,7 @@ public class DamageProcessor {
     public static void processHit(ShellCalculations shell, BattleCalculations battle) {
         var shellSpecs = shell.getModel().getSpecs();
         var hit = Hit.of(shell);
-        if (ShellType.HE.equals(shellSpecs.getType())) {
+        if (shellSpecs.getType().isHE()) {
             calculateHEDamage(hit, battle);
         }
         processGroundDamage(hit, battle.getModel());
