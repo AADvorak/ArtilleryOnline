@@ -90,7 +90,7 @@ public class Collision {
     public boolean isRicochet() {
         if (pair.first() instanceof ShellCalculations shell) {
             var shellType = shell.getModel().getSpecs().getType();
-            if (ShellType.HE.equals(shellType)) {
+            if (!ShellType.AP.equals(shellType)) {
                 return false;
             }
             if (pair.second() instanceof WheelCalculations) {
