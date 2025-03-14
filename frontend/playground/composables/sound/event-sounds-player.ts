@@ -143,7 +143,9 @@ export function useEventSoundsPlayer(player: Player) {
     const caliber = shell.specs.caliber
     const pan = soundsPlayerBase.calculatePan(shell.state.position.x)
     const gain = soundsPlayerBase.calculateGain(shell.state.position)
-    if (caliber <= 0.04) {
+    if (shell.specs.type === ShellType.BMB) {
+      // todo sound
+    } else if (shell.specs.type === ShellType.SGN || caliber <= 0.04) {
       play('shot-small', pan, gain)
     } else if (caliber <= 0.06) {
       play('shot-mid', pan, gain)
@@ -167,6 +169,8 @@ export function useEventSoundsPlayer(player: Player) {
   function getHitSoundName(shellType: ShellType, hitType: ShellHitType, caliber: number): string | undefined {
     if (shellType === ShellType.HE) {
       return 'he-explosion-' + (Math.ceil(Math.random() * 2))
+    } else if (shellType === ShellType.BMB) {
+      return 'bomb-explosion-' + (Math.ceil(Math.random() * 3))
     } else if (shellType === ShellType.AP) {
       if (hitType === ShellHitType.GROUND) {
         if (caliber > 0.06) {
