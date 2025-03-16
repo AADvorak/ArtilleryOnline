@@ -1,6 +1,6 @@
 import type {Battle, BattleUpdate} from "~/playground/data/battle";
 import type {Player} from "~/playground/audio/player";
-import {CollideObjectType, ShellHitType, ShellType} from "~/playground/data/common";
+import {CollideObjectType, MovingDirection, ShellHitType, ShellType} from "~/playground/data/common";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
 import type {
@@ -13,9 +13,8 @@ import type {
 } from "~/playground/data/model";
 import {useSoundsPlayerBase} from "~/playground/composables/sound/sounds-player-base";
 import {useUserStore} from "~/stores/user";
-import type {ShellState, VehicleStates} from "~/playground/data/state";
-import type {RicochetEvent, ShellHitEvent, VehicleCollideEvent} from "~/playground/data/events";
-import {BattleUtils} from "~/playground/utils/battle-utils";
+import type {VehicleStates} from "~/playground/data/state";
+import type {BomberFlyEvent, RicochetEvent, ShellHitEvent, VehicleCollideEvent} from "~/playground/data/events";
 
 export function useEventSoundsPlayer(player: Player) {
   const soundsPlayerBase = useSoundsPlayerBase()
@@ -34,6 +33,9 @@ export function useEventSoundsPlayer(player: Player) {
       }
       if (battleUpdate.events.ricochets) {
         battleUpdate.events.ricochets.forEach(ricochet => playRicochet(ricochet, battle.model.shells))
+      }
+      if (battleUpdate.events.bomberFlyEvents) {
+        battleUpdate.events.bomberFlyEvents.forEach(bomberFly => playBomberFly(bomberFly))
       }
     }
     if (battleUpdate.updates) {
@@ -74,20 +76,6 @@ export function useEventSoundsPlayer(player: Player) {
       }
       playTracksBroken(battleUpdate.state.vehicles, battle.model.vehicles)
     }
-    if (battleUpdate.state?.shells) {
-      Object.keys(battleUpdate.state?.shells).forEach(shellId => {
-        // @ts-ignore
-        const previousState = battle.model.shells[shellId]?.state as ShellState
-        // @ts-ignore
-        const currentState = battleUpdate.state!.shells![shellId] as ShellState
-        if (previousState && !previousState.stuck && currentState.stuck) {
-          const roomWidth = BattleUtils.getRoomWidth(battle.model.room.specs)
-          const fileName = currentState.position.x < roomWidth / 2
-              ? 'bomber-right-left' : 'bomber-left-right'
-          play(fileName, 0.0, 1.0)
-        }
-      })
-    }
   }
 
   function playHit(hit: ShellHitEvent, shellsModels: ShellModels) {
@@ -108,6 +96,12 @@ export function useEventSoundsPlayer(player: Player) {
     const gain = soundsPlayerBase.calculateGain(shell.state.position)
     const fileName = getRicochetSoundName()
     fileName && play(fileName, pan, gain)
+  }
+
+  function playBomberFly(bomberFlyEvent: BomberFlyEvent) {
+    const fileName = MovingDirection.LEFT === bomberFlyEvent.movingDirection
+        ? 'bomber-right-left' : 'bomber-left-right'
+    play(fileName, 0.0, 1.0)
   }
 
   function playCollide(collide: VehicleCollideEvent, vehicleModels: VehicleModels) {

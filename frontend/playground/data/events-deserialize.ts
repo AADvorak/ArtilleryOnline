@@ -1,5 +1,5 @@
 import type {
-  BattleModelEvents,
+  BattleModelEvents, BomberFlyEvent,
   RicochetEvent,
   ShellHitEvent,
   ShellHitEventObject,
@@ -7,7 +7,7 @@ import type {
 } from "~/playground/data/events";
 import type {DeserializerInput} from "~/deserialization/deserializer-input";
 import {DeserializerBase} from "~/deserialization/deserializer-base";
-import {type CollideObject, CollideObjectType, type ShellHitType} from "~/playground/data/common";
+import {type CollideObject, CollideObjectType, type MovingDirection, type ShellHitType} from "~/playground/data/common";
 
 export function deserializeShellHitEventObject(input: DeserializerInput): ShellHitEventObject {
   const vehicleId = DeserializerBase.readNullable(input, DeserializerBase.readInt)
@@ -52,13 +52,22 @@ export function deserializeRicochetEvent(input: DeserializerInput): RicochetEven
   }
 }
 
+export function deserializeBomberFlyEvent(input: DeserializerInput): BomberFlyEvent {
+  const movingDirection = DeserializerBase.readString(input) as MovingDirection
+  return {
+    movingDirection
+  }
+}
+
 export function deserializeBattleModelEvents(input: DeserializerInput): BattleModelEvents {
   const hits = DeserializerBase.readArray(input, deserializeShellHitEvent)
   const collides = DeserializerBase.readArray(input, deserializeVehicleCollideEvent)
   const ricochets = DeserializerBase.readArray(input, deserializeRicochetEvent)
+  const bomberFlyEvents = DeserializerBase.readArray(input, deserializeBomberFlyEvent)
   return {
     hits,
     collides,
-    ricochets
+    ricochets,
+    bomberFlyEvents
   }
 }
