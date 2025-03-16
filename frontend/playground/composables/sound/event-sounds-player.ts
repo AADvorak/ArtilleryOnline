@@ -13,8 +13,9 @@ import type {
 } from "~/playground/data/model";
 import {useSoundsPlayerBase} from "~/playground/composables/sound/sounds-player-base";
 import {useUserStore} from "~/stores/user";
-import type {VehicleStates} from "~/playground/data/state";
+import type {ShellState, VehicleStates} from "~/playground/data/state";
 import type {RicochetEvent, ShellHitEvent, VehicleCollideEvent} from "~/playground/data/events";
+import {BattleUtils} from "~/playground/utils/battle-utils";
 
 export function useEventSoundsPlayer(player: Player) {
   const soundsPlayerBase = useSoundsPlayerBase()
@@ -72,6 +73,20 @@ export function useEventSoundsPlayer(player: Player) {
         play('reload', 0, 1)
       }
       playTracksBroken(battleUpdate.state.vehicles, battle.model.vehicles)
+    }
+    if (battleUpdate.state?.shells) {
+      Object.keys(battleUpdate.state?.shells).forEach(shellId => {
+        // @ts-ignore
+        const previousState = battle.model.shells[shellId]?.state as ShellState
+        // @ts-ignore
+        const currentState = battleUpdate.state!.shells![shellId] as ShellState
+        if (previousState && !previousState.stuck && currentState.stuck) {
+          const roomWidth = BattleUtils.getRoomWidth(battle.model.room.specs)
+          const fileName = currentState.position.x < roomWidth / 2
+              ? 'bomber-right-left' : 'bomber-left-right'
+          play(fileName, 0.0, 1.0)
+        }
+      })
     }
   }
 
