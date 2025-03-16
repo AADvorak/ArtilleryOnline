@@ -15,12 +15,15 @@ public class BomberSpecs implements Specs, CompactSerializable {
 
     private double prepareToFlightTime;
 
+    private double flightTime;
+
     private ShellSpecs bombs;
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(flights);
         stream.writeDouble(prepareToFlightTime);
+        stream.writeDouble(flightTime);
         stream.writeSerializableValue(bombs);
     }
 }

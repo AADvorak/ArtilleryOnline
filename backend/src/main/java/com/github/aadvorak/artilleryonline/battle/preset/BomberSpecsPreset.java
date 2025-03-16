@@ -11,6 +11,7 @@ public enum BomberSpecsPreset {
     DEFAULT("Bomber", new BomberSpecs()
             .setFlights(2)
             .setPrepareToFlightTime(30.0)
+            .setFlightTime(3.0)
             .setBombs(ShellSpecsPreset.BMB.getSpecs())
     );
 

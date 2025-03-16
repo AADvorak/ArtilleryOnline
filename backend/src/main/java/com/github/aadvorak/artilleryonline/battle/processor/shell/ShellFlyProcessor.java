@@ -11,7 +11,6 @@ public class ShellFlyProcessor {
             shell.getModel().getState().setStuckTime(shell.getModel().getState().getStuckTime()
                     + battleModel.getCurrentTimeStepSecs());
             if (shell.getModel().getState().getStuckTime() > 3.0) {
-                BombDropProcessor.drop(shell.getPosition(), shell.getModel().getVehicleId(), battleModel);
                 battleModel.getUpdates().removeShell(shell.getId());
             }
             return;

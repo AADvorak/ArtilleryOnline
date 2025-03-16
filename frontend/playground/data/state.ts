@@ -47,7 +47,7 @@ export interface DroneInVehicleState {
 
 export interface BomberState {
   readyToFlight: boolean
-  prepareToFlightRemainTime: number
+  flying: boolean
   remainFlights: number
 }
 
