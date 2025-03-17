@@ -14,11 +14,16 @@ public class ShellDroneCollisionsProcessor {
         var collision = ShellDroneCollisionsDetector.detectFirst(shell, battle);
         if (collision != null) {
             var drone = (DroneCalculations) collision.getPair().second();
-            shell.getCollisions().add(collision);
-            drone.getModel().getState().setDestroyed(true);
             drone.getModel().getUpdate().setUpdated();
-            DamageProcessor.processHitDrone(drone, shell, battle);
-            pushDrone(collision);
+            if (ShellType.SGN.equals(shell.getModel().getSpecs().getType())) {
+                CollisionUtils.recalculateVelocitiesRigid(collision, 0.2);
+                shell.calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
+            } else {
+                shell.getCollisions().add(collision);
+                drone.getModel().getState().setDestroyed(true);
+                DamageProcessor.processHitDrone(drone, shell, battle);
+                pushDrone(collision);
+            }
         }
     }
 
