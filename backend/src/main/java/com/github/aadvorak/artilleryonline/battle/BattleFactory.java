@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle;
 
 import com.github.aadvorak.artilleryonline.battle.command.UserCommand;
 import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
+import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.config.RoomConfig;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
@@ -16,6 +17,7 @@ import com.github.aadvorak.artilleryonline.battle.statistics.UserBattleStatistic
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import com.github.aadvorak.artilleryonline.entity.User;
 import com.github.aadvorak.artilleryonline.entity.UserSetting;
+import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import com.github.aadvorak.artilleryonline.repository.UserSettingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -28,6 +30,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class BattleFactory {
 
     private final UserSettingRepository userSettingRepository;
+
+    private final ApplicationSettings applicationSettings;
 
     public Battle createBattle(Set<BattleParticipant> participants, BattleType battleType) {
         var battleModel = new BattleModel()
@@ -50,7 +54,9 @@ public class BattleFactory {
     private RoomModel createRoomModel() {
         var roomModel = new RoomModel();
         var specs = RoomSpecsPreset.DEFAULT.getSpecs();
-        var state = new RoomState().setGroundLine(createGroundLine(specs));
+        var state = new RoomState()
+                .setGroundLine(createGroundLine(specs))
+                .setSurfaces(applicationSettings.isCreateSurfaces() ? createSurfaces(specs) : null);
         var config = new RoomConfig()
                 .setBackground(BattleUtils.generateRandom(1, 7))
                 .setGroundTexture(BattleUtils.generateRandom(1, 6));
@@ -81,6 +87,26 @@ public class BattleFactory {
             groundLine.add(y > 0 ? y : 0.0);
         }
         return groundLine;
+    }
+
+    private List<SurfaceState> createSurfaces(RoomSpecs roomSpecs) {
+        var halfLength = 2;
+        var y = BattleUtils.getRoomHeight(roomSpecs) * 0.7;
+        var x = BattleUtils.getRoomWidth(roomSpecs) / 2;
+        var surfaces = new ArrayList<SurfaceState>();
+        surfaces.add(new SurfaceState()
+                .setBegin(new Position().setX(x - halfLength).setY(y))
+                .setEnd(new Position().setX(x + halfLength).setY(y))
+        );
+        surfaces.add(new SurfaceState()
+                .setBegin(new Position().setX(x - 4 * halfLength).setY(y - halfLength))
+                .setEnd(new Position().setX(x - 2 * halfLength).setY(y + halfLength))
+        );
+        surfaces.add(new SurfaceState()
+                .setBegin(new Position().setX(x + 4 * halfLength).setY(y - halfLength))
+                .setEnd(new Position().setX(x + 2 * halfLength).setY(y + halfLength))
+        );
+        return surfaces;
     }
 
     private Map<String, VehicleModel> createVehicles(Set<BattleParticipant> participants, BattleModel battleModel) {

@@ -35,6 +35,12 @@ public class ShellsCollisionsProcessor {
         });
 
         battle.getShells().forEach(shell -> {
+            if (needProcess(shell)) {
+                ShellSurfaceCollisionsProcessor.process(shell, battle);
+            }
+        });
+
+        battle.getShells().forEach(shell -> {
             if (!shell.getCollisions().isEmpty()) {
                 battle.getModel().getUpdates().removeShell(shell.getId());
                 var collision = shell.getCollisions().iterator().next();

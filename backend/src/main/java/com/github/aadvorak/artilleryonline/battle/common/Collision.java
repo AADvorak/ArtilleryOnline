@@ -121,6 +121,10 @@ public class Collision {
         return withUnmovable(first, interpenetration, CollideObjectType.WALL);
     }
 
+    public static Collision withSurface(Calculations<?> first, Interpenetration interpenetration) {
+        return withUnmovable(first, interpenetration, CollideObjectType.SURFACE);
+    }
+
     public static Collision withVehicle(Calculations<?> first, Calculations<VehicleModel> second,
                                          Interpenetration interpenetration) {
         return withMovable(first, second, interpenetration, CollideObjectType.VEHICLE);

@@ -10,6 +10,7 @@ import {useMissileDrawer} from "~/playground/composables/drawer/missile-drawer";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
 import {useDroneDrawer} from "~/playground/composables/drawer/drone-drawer";
+import {useSurfaceDrawer} from "~/playground/composables/drawer/surface-drawer";
 
 const battleStore = useBattleStore()
 const userSettingsStore = useUserSettingsStore()
@@ -43,6 +44,7 @@ const missileDrawer = useMissileDrawer(drawerBase, ctx)
 const droneDrawer = useDroneDrawer(drawerBase, ctx)
 const explosionDrawer = useExplosionDrawer(drawerBase, ctx)
 const groundDrawer = useGroundDrawer(drawerBase, ctx)
+const surfaceDrawer = useSurfaceDrawer(drawerBase, ctx)
 
 watch(battle, (value) => {
   if (value) {
@@ -87,6 +89,7 @@ function redrawBattle() {
     missileDrawer.draw()
     droneDrawer.draw()
     groundDrawer.draw()
+    surfaceDrawer.draw()
     vehicleDrawer.draw()
     explosionDrawer.draw()
   })

@@ -15,6 +15,8 @@ public class ApplicationSettings {
 
     private boolean clientProcessing;
 
+    private boolean createSurfaces;
+
     private long additionalResolveCollisionsIterationsNumber;
 
     private long battleUpdateTimeout;

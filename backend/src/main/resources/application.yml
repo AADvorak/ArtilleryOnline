@@ -1,7 +1,8 @@
 application:
   settings:
-    debug: ${APP_SETTINGS_DEBUG}
-    client-processing: ${APP_SETTINGS_CLIENT_PROCESSING}
+    debug: ${APP_SETTINGS_DEBUG:false}
+    client-processing: ${APP_SETTINGS_CLIENT_PROCESSING:true}
+    create-surfaces: ${APP_SETTINGS_CREATE_SURFACES:false}
     battle-update-timeout: 60000
     user-battle-queue-timeout: 30000
     message-timeout: 600000
