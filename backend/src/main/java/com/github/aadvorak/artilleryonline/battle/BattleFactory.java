@@ -118,7 +118,7 @@ public class BattleFactory {
             var availableShellsNumber = gun.getAvailableShells().size();
             var ammo = new HashMap<String, Integer>();
             gun.getAvailableShells().keySet().forEach(shellName ->
-                    ammo.put(shellName, vehicleModel.getSpecs().getAmmo() / availableShellsNumber));
+                    ammo.put(shellName, getAmmo(shellName, vehicleModel.getSpecs().getAmmo(), availableShellsNumber)));
             var availableMissilesNumber = vehicleModel.getSpecs().getAvailableMissiles().size();
             var missiles = new HashMap<String, Integer>();
             vehicleModel.getSpecs().getAvailableMissiles().keySet().forEach(missileName ->
@@ -154,6 +154,22 @@ public class BattleFactory {
             vehicleNumber++;
         }
         return vehicles;
+    }
+
+    /**
+     * todo
+     * temporal solution
+     * remove when ammo settings are ready
+     */
+    private int getAmmo(String shellName, int ammo, int availableShellsNumber) {
+        final var maxSgnShells = 10;
+        if (shellName.equals(ShellSpecsPreset.LIGHT_SGN.getName())) {
+            return maxSgnShells;
+        }
+        if (shellName.equals(ShellSpecsPreset.LIGHT_AP.getName())) {
+            return ammo - maxSgnShells;
+        }
+        return ammo / availableShellsNumber;
     }
 
     private Map<Long, Queue<UserCommand>> createUserCommandQueues(Set<BattleParticipant> participants) {
