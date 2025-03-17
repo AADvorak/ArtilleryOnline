@@ -74,8 +74,14 @@ export interface VehicleState {
   onGround: boolean
 }
 
+export interface SurfaceState {
+  begin: Position
+  end: Position
+}
+
 export interface RoomState {
   groundLine: number[]
+  surfaces?: SurfaceState[]
 }
 
 export interface VehicleStates {

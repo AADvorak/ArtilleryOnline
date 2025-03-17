@@ -13,7 +13,7 @@ import type {
   JetState,
   MissileState,
   RoomState,
-  ShellState,
+  ShellState, SurfaceState,
   TrackState, VehicleState
 } from "~/playground/data/state";
 import type {MovingDirection} from "~/playground/data/common";
@@ -62,9 +62,22 @@ export function deserializeMissileState(input: DeserializerInput): MissileState 
   }
 }
 
+export function deserializeSurfaceState(input: DeserializerInput): SurfaceState {
+  const begin = deserializePosition(input)
+  const end = deserializePosition(input)
+  return {
+    begin,
+    end
+  }
+}
+
 export function deserializeRoomState(input: DeserializerInput): RoomState {
   const groundLine = DeserializerBase.readArray(input, DeserializerBase.readDouble)!
-  return {groundLine}
+  const surfaces = DeserializerBase.readArray(input, deserializeSurfaceState)
+  return {
+    groundLine,
+    surfaces
+  }
 }
 
 export function deserializeShellState(input: DeserializerInput): ShellState {
