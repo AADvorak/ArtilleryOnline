@@ -14,7 +14,7 @@ export function useShellDrawer(
 
   function draw() {
     if (battleStore.shells) {
-      Object.values(battleStore.shells).forEach(drawShell)
+      Object.values(battleStore.shells).filter(shell => !shell.state.stuck).forEach(drawShell)
     }
   }
 
