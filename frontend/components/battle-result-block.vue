@@ -12,6 +12,8 @@ const config = ref([
   {localeKey: 'battleHistory.survived', value: props.result.survived ? t('common.yes') : t('common.no')},
   {localeKey: 'commonHistory.madeShots', value: props.result.madeShots},
   {localeKey: 'commonHistory.destroyedVehicles', value: props.result.destroyedVehicles},
+  {localeKey: 'commonHistory.destroyedDrones', value: props.result.destroyedDrones},
+  {localeKey: 'commonHistory.destroyedMissiles', value: props.result.destroyedMissiles},
 ])
 
 const causedReceivedConfig = ref([
@@ -29,10 +31,12 @@ const causedReceivedConfig = ref([
 <template>
   <v-table density="compact">
     <tbody>
-    <tr v-for="item of config">
-      <td>{{ t(item.localeKey) }}</td>
-      <td class="number-column">{{ item.value }}</td>
-    </tr>
+    <template v-for="item of config">
+      <tr v-if="item.value">
+        <td>{{ t(item.localeKey) }}</td>
+        <td class="number-column">{{ item.value }}</td>
+      </tr>
+    </template>
     </tbody>
   </v-table>
   <v-table density="compact">
@@ -44,11 +48,13 @@ const causedReceivedConfig = ref([
     </tr>
     </thead>
     <tbody>
-    <tr v-for="item of causedReceivedConfig">
-      <td>{{ t(item.localeKey) }}</td>
-      <td class="number-column">{{ item.causedValue }}</td>
-      <td class="number-column">{{ item.receivedValue }}</td>
-    </tr>
+    <template v-for="item of causedReceivedConfig">
+      <tr v-if="item.causedValue || item.receivedValue">
+        <td>{{ t(item.localeKey) }}</td>
+        <td class="number-column">{{ item.causedValue }}</td>
+        <td class="number-column">{{ item.receivedValue }}</td>
+      </tr>
+    </template>
     </tbody>
   </v-table>
 </template>

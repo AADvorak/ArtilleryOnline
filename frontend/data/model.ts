@@ -99,6 +99,8 @@ export interface UserBattleResult {
   causedIndirectHits: number
   causedTrackBreaks: number
   destroyedVehicles: number
+  destroyedDrones: number
+  destroyedMissiles: number
   receivedDamage: number
   receivedDirectHits: number
   receivedIndirectHits: number

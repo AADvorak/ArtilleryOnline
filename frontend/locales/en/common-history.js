@@ -3,6 +3,8 @@ export const commonHistory = {
   received: 'Received',
   madeShots: 'Made shots',
   destroyedVehicles: 'Destroyed vehicles',
+  destroyedDrones: 'Destroyed drones',
+  destroyedMissiles: 'Destroyed missiles',
   damage: 'Damage',
   directHits: 'Direct hits',
   indirectHits: 'Indirect hits',

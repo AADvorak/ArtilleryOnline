@@ -17,6 +17,10 @@ public class UserBattleStatistics {
 
     private int destroyedVehicles;
 
+    private int destroyedDrones;
+
+    private int destroyedMissiles;
+
     private double receivedDamage;
 
     private int receivedDirectHits;
@@ -47,6 +51,14 @@ public class UserBattleStatistics {
 
     public void increaseDestroyedVehicles() {
         destroyedVehicles++;
+    }
+
+    public void increaseDestroyedDrones() {
+        destroyedDrones++;
+    }
+
+    public void increaseDestroyedMissiles() {
+        destroyedMissiles++;
     }
 
     public void increaseReceivedDamage(double receivedDamage) {

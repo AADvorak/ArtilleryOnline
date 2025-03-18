@@ -4,6 +4,18 @@ import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 
 public class StatisticsProcessor {
 
+    public static void increaseDestroyedDrones(Long userId, BattleModel battleModel) {
+        if (userId != null) {
+            battleModel.getStatistics().get(userId).increaseDestroyedDrones();
+        }
+    }
+
+    public static void increaseDestroyedMissiles(Long userId, BattleModel battleModel) {
+        if (userId != null) {
+            battleModel.getStatistics().get(userId).increaseDestroyedMissiles();
+        }
+    }
+
     public static void increaseDamage(double damage, Long receiverId,
                                       Long causerId, BattleModel battleModel) {
         if (receiverId != null) {

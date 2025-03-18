@@ -6,6 +6,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.statistics.StatisticsProcessor;
 import com.github.aadvorak.artilleryonline.battle.utils.CollisionUtils;
 
 public class ShellDroneCollisionsProcessor {
@@ -21,6 +22,7 @@ public class ShellDroneCollisionsProcessor {
             } else {
                 shell.getCollisions().add(collision);
                 drone.getModel().getState().setDestroyed(true);
+                StatisticsProcessor.increaseDestroyedDrones(shell.getModel().getUserId(), battle.getModel());
                 DamageProcessor.processHitDrone(drone, shell, battle);
                 pushDrone(collision);
             }

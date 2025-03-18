@@ -4,6 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculation
 import com.github.aadvorak.artilleryonline.battle.calculations.MissileCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
 import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.statistics.StatisticsProcessor;
 
 public class ShellMissileCollisionsProcessor {
 
@@ -15,6 +16,7 @@ public class ShellMissileCollisionsProcessor {
             DamageProcessor.processHit(missile, battle);
             DamageProcessor.processHit(shell, battle);
             battle.getModel().getUpdates().removeMissile(missile.getId());
+            StatisticsProcessor.increaseDestroyedMissiles(shell.getModel().getUserId(), battle.getModel());
         }
     }
 }
