@@ -85,6 +85,8 @@ export interface UserBattleHistory {
   causedIndirectHits: number
   causedTrackBreaks: number
   destroyedVehicles: number
+  destroyedDrones: number
+  destroyedMissiles: number
   receivedDamage: number
   receivedDirectHits: number
   receivedIndirectHits: number
@@ -116,6 +118,8 @@ export interface UserBattleStatistics {
   causedIndirectHits: number
   causedTrackBreaks: number
   destroyedVehicles: number
+  destroyedDrones: number
+  destroyedMissiles: number
   receivedDamage: number
   receivedDirectHits: number
   receivedIndirectHits: number
@@ -130,6 +134,8 @@ export interface UserBattleStatisticsPerBattle {
   causedIndirectHits: number
   causedTrackBreaks: number
   destroyedVehicles: number
+  destroyedDrones: number
+  destroyedMissiles: number
   receivedDamage: number
   receivedDirectHits: number
   receivedIndirectHits: number

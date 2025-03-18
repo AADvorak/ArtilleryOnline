@@ -23,6 +23,8 @@ public class JdbcUserBattleStatisticsRepositoryImpl extends JdbcBattleHistoryRep
                 sum(ubh.caused_indirect_hits) as caused_indirect_hits,
                 sum(ubh.caused_track_breaks) as caused_track_breaks,
                 sum(ubh.destroyed_vehicles) as destroyed_vehicles,
+                sum(ubh.destroyed_drones) as destroyed_drones,
+                sum(ubh.destroyed_missiles) as destroyed_missiles,
                 sum(ubh.received_damage) as received_damage,
                 sum(ubh.received_direct_hits) as received_direct_hits,
                 sum(ubh.received_indirect_hits) as received_indirect_hits,
@@ -42,6 +44,8 @@ public class JdbcUserBattleStatisticsRepositoryImpl extends JdbcBattleHistoryRep
                     .setCausedIndirectHits(rs.getInt("caused_indirect_hits"))
                     .setCausedTrackBreaks(rs.getInt("caused_track_breaks"))
                     .setDestroyedVehicles(rs.getInt("destroyed_vehicles"))
+                    .setDestroyedDrones(rs.getInt("destroyed_drones"))
+                    .setDestroyedMissiles(rs.getInt("destroyed_missiles"))
                     .setReceivedDamage(rs.getFloat("received_damage"))
                     .setReceivedDirectHits(rs.getInt("received_direct_hits"))
                     .setReceivedIndirectHits(rs.getInt("received_indirect_hits"))

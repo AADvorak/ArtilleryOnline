@@ -14,5 +14,6 @@ export const commonHistory = {
   battleTypes: {
     RANDOM: 'Random',
     ROOM: 'Room',
+    DRONE_HUNT: 'Drone hunt',
   },
 }

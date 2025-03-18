@@ -13,7 +13,8 @@ export enum BattleStage {
 export enum BattleType {
   TEST_DRIVE = 'TEST_DRIVE',
   RANDOM = 'RANDOM',
-  ROOM = 'ROOM'
+  ROOM = 'ROOM',
+  DRONE_HUNT = 'DRONE_HUNT'
 }
 
 export interface Battle {

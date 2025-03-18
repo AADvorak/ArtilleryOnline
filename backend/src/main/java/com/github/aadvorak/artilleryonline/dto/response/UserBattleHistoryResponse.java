@@ -35,6 +35,10 @@ public class UserBattleHistoryResponse {
 
     private int destroyedVehicles;
 
+    private int destroyedDrones;
+
+    private int destroyedMissiles;
+
     private double receivedDamage;
 
     private int receivedDirectHits;

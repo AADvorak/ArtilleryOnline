@@ -37,6 +37,12 @@ public class UserBattleHistory {
     private int destroyedVehicles;
 
     @Column
+    private int destroyedDrones;
+
+    @Column
+    private int destroyedMissiles;
+
+    @Column
     private double receivedDamage;
 
     @Column

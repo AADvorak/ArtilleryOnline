@@ -16,6 +16,8 @@ const sumsConfig = ref([
   {key: 'battlesSurvived', name: t('battleStatistics.battlesSurvived')},
   {key: 'madeShots', name: t('commonHistory.madeShots')},
   {key: 'destroyedVehicles', name: t('commonHistory.destroyedVehicles')},
+  {key: 'destroyedDrones', name: t('commonHistory.destroyedDrones')},
+  {key: 'destroyedMissiles', name: t('commonHistory.destroyedMissiles')},
 ])
 const sumsCausedReceivedConfig = ref([
   {causedKey: 'causedDamage', receivedKey: 'receivedDamage', name: t('commonHistory.damage'),
@@ -30,6 +32,8 @@ const sumsCausedReceivedConfig = ref([
 const perBattleConfig = ref([
   {key: 'madeShots', name: t('commonHistory.madeShots')},
   {key: 'destroyedVehicles', name: t('commonHistory.destroyedVehicles')},
+  {key: 'destroyedDrones', name: t('commonHistory.destroyedDrones')},
+  {key: 'destroyedMissiles', name: t('commonHistory.destroyedMissiles')},
 ])
 const perBattleCausedReceivedConfig = ref([
   {causedKey: 'causedDamage', receivedKey: 'receivedDamage', name: t('commonHistory.damage')},

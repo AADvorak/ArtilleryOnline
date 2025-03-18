@@ -14,5 +14,6 @@ export const commonHistory = {
   battleTypes: {
     RANDOM: 'Случайный',
     ROOM: 'Комната',
+    DRONE_HUNT: 'Охота на дроны',
   },
 }

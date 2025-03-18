@@ -73,7 +73,7 @@ public class GlobalErrorHandler {
         log.error(exc.getMessage(), exc);
         return new ErrorResponse()
                 .setCode("Exception")
-                .setMessage(exc.getMessage());
+                .setMessage("Internal server error");
     }
 
     private List<ValidationResponse> makeValidation(BindException exc) {

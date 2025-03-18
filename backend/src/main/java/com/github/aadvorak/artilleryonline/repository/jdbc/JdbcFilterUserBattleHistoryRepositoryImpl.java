@@ -34,6 +34,8 @@ public class JdbcFilterUserBattleHistoryRepositoryImpl extends JdbcBattleHistory
                     .setCausedIndirectHits(rs.getInt("caused_indirect_hits"))
                     .setCausedTrackBreaks(rs.getInt("caused_track_breaks"))
                     .setDestroyedVehicles(rs.getInt("destroyed_vehicles"))
+                    .setDestroyedDrones(rs.getInt("destroyed_drones"))
+                    .setDestroyedMissiles(rs.getInt("destroyed_missiles"))
                     .setReceivedDamage(rs.getFloat("received_damage"))
                     .setReceivedDirectHits(rs.getInt("received_direct_hits"))
                     .setReceivedIndirectHits(rs.getInt("received_indirect_hits"))

@@ -30,6 +30,8 @@ const headers = ref([
     value: item => item.survived ? t('common.yes') : t('common.no')},
   {title: t('commonHistory.madeShots'), key: 'madeShots', align: 'end', sortable: true},
   {title: t('commonHistory.destroyedVehicles'), key: 'destroyedVehicles', align: 'end', sortable: true},
+  {title: t('commonHistory.destroyedDrones'), key: 'destroyedDrones', align: 'end', sortable: true},
+  {title: t('commonHistory.destroyedMissiles'), key: 'destroyedMissiles', align: 'end', sortable: true},
   {
     title: t('commonHistory.damage'), align: 'center', children: [
       {title: t('commonHistory.caused'), key: 'causedDamage', align: 'end', sortable: true,

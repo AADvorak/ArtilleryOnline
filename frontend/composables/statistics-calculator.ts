@@ -13,6 +13,8 @@ export function useStatisticsCalculator() {
       causedIndirectHits: statistics.causedIndirectHits / statistics.battlesPlayed,
       causedTrackBreaks: statistics.causedTrackBreaks / statistics.battlesPlayed,
       destroyedVehicles: statistics.destroyedVehicles / statistics.battlesPlayed,
+      destroyedDrones: statistics.destroyedDrones / statistics.battlesPlayed,
+      destroyedMissiles: statistics.destroyedMissiles / statistics.battlesPlayed,
       receivedDamage: statistics.receivedDamage / statistics.battlesPlayed,
       receivedDirectHits: statistics.receivedDirectHits / statistics.battlesPlayed,
       receivedIndirectHits: statistics.receivedIndirectHits / statistics.battlesPlayed,
