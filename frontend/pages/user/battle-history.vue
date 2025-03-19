@@ -20,7 +20,8 @@ const historyPage = ref<PageResponse<UserBattleHistory>>({
   items: [],
   itemsLength: 0
 })
-const headers = ref([
+
+const headers = computed(() => [
   {title: t('battleHistory.beginTime'), key: 'beginTime', align: 'start', sortable: true,
     value: item => DateUtils.getClientDateLocaleString(item.beginTime)},
   {title: t('commonHistory.battleType'), key: 'battleType', align: 'start', sortable: true,

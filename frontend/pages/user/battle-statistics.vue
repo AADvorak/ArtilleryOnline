@@ -11,7 +11,7 @@ import {useI18n} from "vue-i18n";
 const {t} = useI18n()
 const router = useRouter()
 
-const sumsConfig = ref([
+const sumsConfig = computed(() => [
   {key: 'battlesPlayed', name: t('battleStatistics.battlesPlayed')},
   {key: 'battlesSurvived', name: t('battleStatistics.battlesSurvived')},
   {key: 'madeShots', name: t('commonHistory.madeShots')},
@@ -19,7 +19,7 @@ const sumsConfig = ref([
   {key: 'destroyedDrones', name: t('commonHistory.destroyedDrones')},
   {key: 'destroyedMissiles', name: t('commonHistory.destroyedMissiles')},
 ])
-const sumsCausedReceivedConfig = ref([
+const sumsCausedReceivedConfig = computed(() => [
   {causedKey: 'causedDamage', receivedKey: 'receivedDamage', name: t('commonHistory.damage'),
     format: value => value.toFixed(2)},
   {causedKey: 'causedDirectHits', receivedKey: 'receivedDirectHits', name: t('commonHistory.directHits'),
@@ -29,13 +29,13 @@ const sumsCausedReceivedConfig = ref([
   {causedKey: 'causedTrackBreaks', receivedKey: 'receivedTrackBreaks', name: t('commonHistory.trackBreaks'),
     format: value => value},
 ])
-const perBattleConfig = ref([
+const perBattleConfig = computed(() => [
   {key: 'madeShots', name: t('commonHistory.madeShots')},
   {key: 'destroyedVehicles', name: t('commonHistory.destroyedVehicles')},
   {key: 'destroyedDrones', name: t('commonHistory.destroyedDrones')},
   {key: 'destroyedMissiles', name: t('commonHistory.destroyedMissiles')},
 ])
-const perBattleCausedReceivedConfig = ref([
+const perBattleCausedReceivedConfig = computed(() => [
   {causedKey: 'causedDamage', receivedKey: 'receivedDamage', name: t('commonHistory.damage')},
   {causedKey: 'causedDirectHits', receivedKey: 'receivedDirectHits', name: t('commonHistory.directHits')},
   {causedKey: 'causedIndirectHits', receivedKey: 'receivedIndirectHits', name: t('commonHistory.indirectHits')},
