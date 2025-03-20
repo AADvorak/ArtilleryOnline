@@ -19,6 +19,7 @@ import {leaveBattleDialog} from "~/locales/ru/leave-battle-dialog.js";
 import {serverMessages} from "~/locales/ru/server-messages.js";
 import {validationMessages} from "~/locales/ru/validation-messages.js";
 import {finishBattleDialog} from "~/locales/ru/finish-battle-dialog.js";
+import {vehicleConfigs} from "~/locales/ru/vehicle-configs.js";
 
 export const ru = {
   menu,
@@ -55,6 +56,7 @@ export const ru = {
     noMessages: 'Нет сообщений'
   },
   vehicleSelector,
+  vehicleConfigs,
   onlineUsersTable,
   profile: {
     title: 'пользователь / профиль'

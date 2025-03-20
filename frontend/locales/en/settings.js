@@ -3,4 +3,5 @@ export const settings = {
   controls: 'Controls',
   appearance: 'Appearance',
   sounds: 'Sounds',
+  vehicleConfigs: 'Vehicles configuration',
 }

@@ -3,4 +3,5 @@ export const settings = {
   controls: 'Управление',
   appearance: 'Внешний вид',
   sounds: 'Звуки',
+  vehicleConfigs: 'Конфигурация техники',
 }

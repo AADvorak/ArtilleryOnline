@@ -17,6 +17,10 @@ function toSounds() {
   router.push('/settings/sounds')
 }
 
+function toVehicleConfigs() {
+  router.push('/settings/vehicle-configs')
+}
+
 function back() {
   router.push('/menu')
 }
@@ -32,6 +36,7 @@ function back() {
         <v-btn class="mb-4" width="100%" color="secondary" @click="toControls">{{ t('settings.controls') }}</v-btn>
         <v-btn class="mb-4" width="100%" color="secondary" @click="toAppearance">{{ t('settings.appearance') }}</v-btn>
         <v-btn class="mb-4" width="100%" color="secondary" @click="toSounds">{{ t('settings.sounds') }}</v-btn>
+        <v-btn class="mb-4" width="100%" color="secondary" @click="toVehicleConfigs">{{ t('settings.vehicleConfigs') }}</v-btn>
         <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>
