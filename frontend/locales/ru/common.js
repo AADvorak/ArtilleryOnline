@@ -19,4 +19,5 @@ export const common = {
   notFound: 'Запрашиваемый ресурс не найден',
   close: 'Закрыть',
   help: 'Помощь',
+  specs: 'Характеристики',
 }

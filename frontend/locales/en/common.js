@@ -19,4 +19,5 @@ export const common = {
   notFound: 'Requested resource is not found',
   close: 'Close',
   help: 'Help',
+  specs: 'Specs',
 }

@@ -20,6 +20,7 @@ import {serverMessages} from "~/locales/en/server-messages.js";
 import {validationMessages} from "~/locales/en/validation-messages.js";
 import {finishBattleDialog} from "~/locales/en/finish-battle-dialog.js";
 import {vehicleConfigs} from "~/locales/en/vehicle-configs.js";
+import {vehicleSpecsDialog} from "~/locales/en/vehicle-specs-dialog.js";
 
 export const en = {
   menu,
@@ -76,4 +77,5 @@ export const en = {
   sounds,
   user,
   validationMessages,
+  vehicleSpecsDialog,
 }
