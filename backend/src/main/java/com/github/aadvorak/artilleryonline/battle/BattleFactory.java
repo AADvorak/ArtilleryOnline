@@ -15,10 +15,12 @@ import com.github.aadvorak.artilleryonline.battle.specs.*;
 import com.github.aadvorak.artilleryonline.battle.state.*;
 import com.github.aadvorak.artilleryonline.battle.statistics.UserBattleStatistics;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
+import com.github.aadvorak.artilleryonline.dto.UserVehicleConfigDto;
 import com.github.aadvorak.artilleryonline.entity.User;
 import com.github.aadvorak.artilleryonline.entity.UserSetting;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import com.github.aadvorak.artilleryonline.repository.UserSettingRepository;
+import com.github.aadvorak.artilleryonline.service.UserVehicleConfigService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +32,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class BattleFactory {
 
     private final UserSettingRepository userSettingRepository;
+
+    private final UserVehicleConfigService userVehicleConfigService;
 
     private final ApplicationSettings applicationSettings;
 
@@ -124,8 +128,12 @@ public class BattleFactory {
             vehicleModel.setSpecs(Arrays.stream(VehicleSpecsPreset.values())
                     .filter(preset -> preset.getName().equals(participant.getParams().getSelectedVehicle()))
                     .map(VehicleSpecsPreset::getSpecs).findAny().orElseThrow());
+            var userConfig = participant.getUser() != null
+                    ? userVehicleConfigService.load(participant.getParams().getSelectedVehicle(), participant.getUser().getId())
+                    : new UserVehicleConfigDto();
             vehicleModel.setPreCalc(new VehiclePreCalc(vehicleModel.getSpecs()));
-            var gun = vehicleModel.getSpecs().getAvailableGuns().get(vehicleModel.getSpecs().getDefaultGun());
+            var gun = vehicleModel.getSpecs().getAvailableGuns().get(userConfig.getGun() != null
+                    ? userConfig.getGun() : vehicleModel.getSpecs().getDefaultGun());
             JetSpecs jet = null;
             if (!vehicleModel.getSpecs().getAvailableJets().isEmpty()) {
                 jet = vehicleModel.getSpecs().getAvailableJets().values().iterator().next();
@@ -144,7 +152,7 @@ public class BattleFactory {
             var availableShellsNumber = gun.getAvailableShells().size();
             var ammo = new HashMap<String, Integer>();
             gun.getAvailableShells().keySet().forEach(shellName ->
-                    ammo.put(shellName, getAmmo(shellName, vehicleModel.getSpecs().getAmmo(), availableShellsNumber)));
+                    ammo.put(shellName, getAmmo(userConfig, shellName, vehicleModel.getSpecs().getAmmo(), availableShellsNumber)));
             var availableMissilesNumber = vehicleModel.getSpecs().getAvailableMissiles().size();
             var missiles = new HashMap<String, Integer>();
             vehicleModel.getSpecs().getAvailableMissiles().keySet().forEach(missileName ->
@@ -182,12 +190,13 @@ public class BattleFactory {
         return vehicles;
     }
 
-    /**
-     * todo
-     * temporal solution
-     * remove when ammo settings are ready
-     */
-    private int getAmmo(String shellName, int ammo, int availableShellsNumber) {
+    private int getAmmo(UserVehicleConfigDto userConfig, String shellName, int ammo, int availableShellsNumber) {
+        if (userConfig.getAmmo() != null) {
+            var userAmount = userConfig.getAmmo().get(shellName);
+            if (userAmount != null) {
+                return userAmount;
+            }
+        }
         final var maxSgnShells = 10;
         if (shellName.equals(ShellSpecsPreset.LIGHT_SGN.getName())) {
             return maxSgnShells;

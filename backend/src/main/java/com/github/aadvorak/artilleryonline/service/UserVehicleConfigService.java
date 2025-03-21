@@ -27,10 +27,21 @@ public class UserVehicleConfigService {
     private final UserVehicleConfigRepository userVehicleConfigRepository;
 
     public UserVehicleConfigDto load(String vehicleName) {
-        getVehicleSpecs(vehicleName);
         var user = userService.getUserFromContext();
-        var configs = userVehicleConfigRepository.findByUserIdAndVehicleName(user.getId(), vehicleName);
-        return createDto(configs);
+        return load(vehicleName, user.getId());
+    }
+
+    public UserVehicleConfigDto load(String vehicleName, long userId) {
+        var specs = getVehicleSpecs(vehicleName);
+        var configs = userVehicleConfigRepository.findByUserIdAndVehicleName(userId, vehicleName);
+        var dto = createDto(configs);
+        try {
+            validateDto(dto, specs);
+            return dto;
+        } catch (BadRequestAppException e) {
+            userVehicleConfigRepository.deleteAll(configs);
+            return new UserVehicleConfigDto();
+        }
     }
 
     public void save(String vehicleName, UserVehicleConfigDto dto) {
