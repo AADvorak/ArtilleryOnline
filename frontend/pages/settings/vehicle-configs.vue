@@ -10,6 +10,7 @@ import GunSpecsDialog from "~/components/gun-specs-dialog.vue";
 import {mdiInformationOutline} from "@mdi/js";
 import IconBtn from "~/components/icon-btn.vue";
 import ShellSpecsDialog from "~/components/shell-specs-dialog.vue";
+import type {Ammo} from "~/playground/data/common";
 
 const {t} = useI18n()
 const router = useRouter()
@@ -20,6 +21,8 @@ const selectedVehicle = ref<string>()
 const config = ref<UserVehicleConfig>({})
 const submitting = ref<boolean>(false)
 const savedConfigJson = ref<string>('')
+const oldAmmo = ref<Ammo>({})
+
 const gunSpecsDialog = ref<InstanceType<typeof GunSpecsDialog> | null>(null)
 const shellSpecsDialog = ref<InstanceType<typeof ShellSpecsDialog> | null>(null)
 
@@ -95,14 +98,21 @@ watch(() => config.value.ammo, () => {
   }
   const sumAmmo = Object.values(ammo).reduce((a, b) => a + b, 0)
   if (sumAmmo > maxAmmo.value) {
-    let max = keys[0]
+    let changed = ''
     for (const key of keys) {
-      if (ammo[key] > ammo[max]) {
+      if (oldAmmo.value[key] !== ammo[key]) {
+        changed = key
+      }
+    }
+    let max = ''
+    for (const key of keys) {
+      if (key !== changed && (!max || ammo[key] > ammo[max])) {
         max = key
       }
     }
     ammo[max] -= sumAmmo - maxAmmo.value
   }
+  oldAmmo.value = JSON.parse(JSON.stringify(ammo))
 }, {deep: true})
 
 async function loadConfig() {
