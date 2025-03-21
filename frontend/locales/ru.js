@@ -22,6 +22,7 @@ import {finishBattleDialog} from "~/locales/ru/finish-battle-dialog.js";
 import {vehicleConfigs} from "~/locales/ru/vehicle-configs.js";
 import {vehicleSpecsDialog} from "~/locales/ru/vehicle-specs-dialog.js";
 import {gunSpecsDialog} from "~/locales/ru/gun-specs-dialog.js";
+import {shellSpecsDialog} from "~/locales/ru/shell-specs-dialog.js";
 
 export const ru = {
   menu,
@@ -71,6 +72,7 @@ export const ru = {
   room,
   roomInvitationCard,
   roomMembersTable,
+  shellSpecsDialog,
   settings,
   signup: {
     title: 'регистрация'

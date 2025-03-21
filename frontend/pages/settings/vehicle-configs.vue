@@ -9,6 +9,7 @@ import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import GunSpecsDialog from "~/components/gun-specs-dialog.vue";
 import {mdiInformationOutline} from "@mdi/js";
 import IconBtn from "~/components/icon-btn.vue";
+import ShellSpecsDialog from "~/components/shell-specs-dialog.vue";
 
 const {t} = useI18n()
 const router = useRouter()
@@ -20,6 +21,7 @@ const config = ref<UserVehicleConfig>({})
 const submitting = ref<boolean>(false)
 const savedConfigJson = ref<string>('')
 const gunSpecsDialog = ref<InstanceType<typeof GunSpecsDialog> | null>(null)
+const shellSpecsDialog = ref<InstanceType<typeof ShellSpecsDialog> | null>(null)
 
 const vehicleSpecs = computed<VehicleSpecs | undefined>(() => {
   if (!selectedVehicle.value) {
@@ -135,6 +137,13 @@ function showGunSpecsDialog() {
   gunSpecsDialog.value?.show()
 }
 
+function showShellSpecsDialog(shellName: string) {
+  if (!gunSpecs.value) {
+    return
+  }
+  shellSpecsDialog.value?.show(shellName, gunSpecs.value.availableShells[shellName])
+}
+
 function back() {
   router.push('/settings')
 }
@@ -165,7 +174,14 @@ function back() {
           </v-select>
           <div class="mb-4" v-for="shell in shells">
             <template v-if="config.ammo && config.ammo[shell] !== undefined">
-              <div>{{ shell }}</div>
+              <div>
+                {{ shell }}
+                <icon-btn
+                    :icon="mdiInformationOutline"
+                    :tooltip="t('common.specs')"
+                    @click="showShellSpecsDialog(shell)"
+                />
+              </div>
               <v-slider
                   v-model="config.ammo[shell]"
                   :max="maxAmmo"
@@ -195,5 +211,6 @@ function back() {
       </v-card-text>
     </v-card>
     <gun-specs-dialog v-if="!!config.gun" ref="gunSpecsDialog" :gun-name="config.gun" :gun-specs="gunSpecs"/>
+    <shell-specs-dialog v-if="!!config.gun" ref="shellSpecsDialog"/>
   </NuxtLayout>
 </template>
