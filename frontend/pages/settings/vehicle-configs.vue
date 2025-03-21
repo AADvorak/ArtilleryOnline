@@ -14,6 +14,7 @@ const api = new ApiRequestSender()
 
 const selectedVehicle = ref<string>()
 const config = ref<UserVehicleConfig>({})
+const submitting = ref<boolean>(false)
 
 const vehicleSpecs = computed<VehicleSpecs | undefined>(() => {
   if (!selectedVehicle.value) {
@@ -100,9 +101,12 @@ async function loadConfig() {
 
 async function saveConfig() {
   try {
+    submitting.value = true
     await api.postJson<UserVehicleConfig, undefined>(getUrl(), config.value)
   } catch (e) {
     useRequestErrorHandler().handle(e)
+  } finally {
+    submitting.value = false
   }
 }
 
@@ -153,7 +157,10 @@ function back() {
               </v-slider>
             </template>
           </div>
-          <v-btn color="success" class="mb-4" width="100%" @click="saveConfig">{{ t('common.save') }}</v-btn>
+          <v-btn color="success" class="mb-4" width="100%"
+                 :loading="submitting" @click="saveConfig">
+            {{ t('common.save') }}
+          </v-btn>
         </div>
         <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
