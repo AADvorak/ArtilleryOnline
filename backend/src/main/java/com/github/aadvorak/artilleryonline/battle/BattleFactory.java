@@ -125,7 +125,7 @@ public class BattleFactory {
                     .filter(preset -> preset.getName().equals(participant.getParams().getSelectedVehicle()))
                     .map(VehicleSpecsPreset::getSpecs).findAny().orElseThrow());
             vehicleModel.setPreCalc(new VehiclePreCalc(vehicleModel.getSpecs()));
-            var gun = vehicleModel.getSpecs().getAvailableGuns().values().iterator().next();
+            var gun = vehicleModel.getSpecs().getAvailableGuns().get(vehicleModel.getSpecs().getDefaultGun());
             JetSpecs jet = null;
             if (!vehicleModel.getSpecs().getAvailableJets().isEmpty()) {
                 jet = vehicleModel.getSpecs().getAvailableJets().values().iterator().next();

@@ -47,6 +47,8 @@ public class VehicleSpecs implements Specs, CompactSerializable {
 
     private Map<String, BomberSpecs> availableBombers;
 
+    private String defaultGun;
+
     private double minCollisionDamageImpact;
 
     private double collisionDamageCoefficient;
@@ -69,5 +71,6 @@ public class VehicleSpecs implements Specs, CompactSerializable {
         stream.writeStringMapOfSerializable(availableJets);
         stream.writeStringMapOfSerializable(availableMissiles);
         stream.writeStringMapOfSerializable(availableDrones);
+        stream.writeString(defaultGun);
     }
 }

@@ -10,7 +10,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public enum GunSpecsPreset {
 
-    HEAVY("Heavy", new GunSpecs()
+    HEAVY("Heavy gun", new GunSpecs()
             .setLoadTime(5.0)
             .setRotationVelocity(0.35)
             .setLength(0.6)
@@ -20,7 +20,7 @@ public enum GunSpecsPreset {
                     ShellSpecsPreset.HEAVY_HE.getName(), ShellSpecsPreset.HEAVY_HE.getSpecs()
             ))),
 
-    MEDIUM("Medium", new GunSpecs()
+    MEDIUM("Medium gun", new GunSpecs()
             .setLoadTime(3.0)
             .setRotationVelocity(0.4)
             .setLength(0.6)
@@ -30,7 +30,7 @@ public enum GunSpecsPreset {
                     ShellSpecsPreset.MEDIUM_HE.getName(), ShellSpecsPreset.MEDIUM_HE.getSpecs()
             ))),
 
-    LIGHT("Light", new GunSpecs()
+    LIGHT("Light gun", new GunSpecs()
             .setLoadTime(0.5)
             .setRotationVelocity(0.45)
             .setLength(0.4)
@@ -40,7 +40,7 @@ public enum GunSpecsPreset {
                     ShellSpecsPreset.LIGHT_SGN.getName(), ShellSpecsPreset.LIGHT_SGN.getSpecs()
             ))),
 
-    DRONE_LIGHT("DroneLight", new GunSpecs()
+    DRONE_LIGHT("Drone light gun", new GunSpecs()
             .setLoadTime(1.0)
             .setRotationVelocity(0.0)
             .setLength(0.2)
@@ -49,7 +49,7 @@ public enum GunSpecsPreset {
                     ShellSpecsPreset.LIGHT_AP.getName(), ShellSpecsPreset.LIGHT_AP.getSpecs()
             ))),
 
-    DRONE_HEAVY("DroneHeavy", new GunSpecs()
+    DRONE_HEAVY("Drone heavy gun", new GunSpecs()
             .setLoadTime(3.0)
             .setRotationVelocity(0.0)
             .setLength(0.25)

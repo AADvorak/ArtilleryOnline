@@ -15,31 +15,35 @@ const api = new ApiRequestSender()
 const selectedVehicle = ref<string>()
 const config = ref<UserVehicleConfig>({})
 
-const guns = computed(() => {
-  const vehicleSpecs = presetsStore.vehicles[selectedVehicle.value] as VehicleSpecs
-  if (!vehicleSpecs) {
-    return []
+const vehicleSpecs = computed<VehicleSpecs | undefined>(() => {
+  if (!selectedVehicle.value) {
+    return undefined
   }
-  return Object.keys(vehicleSpecs.availableGuns)
+  return presetsStore.vehicles[selectedVehicle.value] as VehicleSpecs
 })
 
-const ammo = computed(() => {
-  const vehicleSpecs = presetsStore.vehicles[selectedVehicle.value] as VehicleSpecs
-  if (!vehicleSpecs) {
+const guns = computed(() => {
+  if (!vehicleSpecs.value) {
+    return []
+  }
+  return Object.keys(vehicleSpecs.value.availableGuns)
+})
+
+const maxAmmo = computed(() => {
+  if (!vehicleSpecs.value) {
     return 0
   }
-  return vehicleSpecs.ammo
+  return vehicleSpecs.value.ammo
 })
 
 const shells = computed(() => {
   if (!config.value.gun) {
     return []
   }
-  const vehicleSpecs = presetsStore.vehicles[selectedVehicle.value] as VehicleSpecs
-  if (!vehicleSpecs) {
+  if (!vehicleSpecs.value) {
     return []
   }
-  const gunSpecs = vehicleSpecs.availableGuns[config.value.gun]
+  const gunSpecs = vehicleSpecs.value.availableGuns[config.value.gun]
   if (!gunSpecs) {
     return []
   }
@@ -47,21 +51,48 @@ const shells = computed(() => {
 })
 
 watch(selectedVehicle, () => {
-  console.log('selectedVehicle')
   config.value = {}
   loadConfig()
 })
 
 watch(() => config.value.gun, () => {
-  config.value.ammo = {}
-  shells.value.forEach(shell => {
-    config.value.ammo[shell] = ammo.value / shells.value.length
-  })
+  if (!config.value.ammo) {
+    config.value.ammo = {}
+  }
+  if (!Object.keys(config.value.ammo).length) {
+    shells.value.forEach(shell => {
+      config.value.ammo[shell] = maxAmmo.value / shells.value.length
+    })
+  }
 })
+
+watch(() => config.value.ammo, () => {
+  const ammo = config.value.ammo
+  if (!ammo) {
+    return
+  }
+  const keys = Object.keys(ammo)
+  for (const key of keys) {
+    ammo[key] = parseInt(ammo[key])
+  }
+  const sumAmmo = Object.values(ammo).reduce((a, b) => a + b, 0)
+  if (sumAmmo > maxAmmo.value) {
+    let max = keys[0]
+    for (const key of keys) {
+      if (ammo[key] > ammo[max]) {
+        max = key
+      }
+    }
+    ammo[max] -= sumAmmo - maxAmmo.value
+  }
+}, {deep: true})
 
 async function loadConfig() {
   try {
     config.value = await api.getJson<UserVehicleConfig>(getUrl())
+    if (!config.value.gun) {
+      config.value.gun = vehicleSpecs.value?.defaultGun
+    }
   } catch (e) {
     useRequestErrorHandler().handle(e)
   }
@@ -100,26 +131,27 @@ function back() {
               :label="t('vehicleConfigs.selectGun')"
           />
           <div class="mb-4" v-for="shell in shells">
-            <div>{{ shell }}</div>
-            <v-slider
-                v-if="config.ammo && config.ammo[shell]"
-                v-model="config.ammo[shell]"
-                :max="ammo"
-                :min="0"
-                class="align-center"
-                hide-details
-            >
-              <template v-slot:append>
-                <v-text-field
-                    v-model="config.ammo[shell]"
-                    density="compact"
-                    style="width: 70px"
-                    type="number"
-                    hide-details
-                    single-line
-                ></v-text-field>
-              </template>
-            </v-slider>
+            <template v-if="config.ammo && config.ammo[shell] !== undefined">
+              <div>{{ shell }}</div>
+              <v-slider
+                  v-model="config.ammo[shell]"
+                  :max="maxAmmo"
+                  :min="0"
+                  class="align-center"
+                  hide-details
+              >
+                <template v-slot:append>
+                  <v-text-field
+                      v-model="config.ammo[shell]"
+                      density="compact"
+                      style="width: 90px"
+                      type="number"
+                      hide-details
+                      single-line
+                  ></v-text-field>
+                </template>
+              </v-slider>
+            </template>
           </div>
           <v-btn color="success" class="mb-4" width="100%" @click="saveConfig">{{ t('common.save') }}</v-btn>
         </div>

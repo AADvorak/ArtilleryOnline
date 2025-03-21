@@ -70,6 +70,7 @@ export interface VehicleSpecs {
   availableJets: AvailableJets
   availableMissiles: AvailableMissiles
   availableDrones: AvailableDrones
+  defaultGun: string
 }
 
 export interface JetSpecs {

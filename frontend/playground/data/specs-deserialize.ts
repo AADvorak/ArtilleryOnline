@@ -127,6 +127,7 @@ export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs 
   const availableJets = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeJetSpecs)!
   const availableMissiles = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeMissileSpecs)!
   const availableDrones = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeDroneSpecs)!
+  const defaultGun = DeserializerBase.readString(input)
   return {
     name,
     hitPoints,
@@ -143,7 +144,8 @@ export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs 
     availableGuns,
     availableJets,
     availableMissiles,
-    availableDrones
+    availableDrones,
+    defaultGun
   }
 }
 
