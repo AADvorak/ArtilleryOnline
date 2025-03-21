@@ -21,6 +21,7 @@ import {validationMessages} from "~/locales/en/validation-messages.js";
 import {finishBattleDialog} from "~/locales/en/finish-battle-dialog.js";
 import {vehicleConfigs} from "~/locales/en/vehicle-configs.js";
 import {vehicleSpecsDialog} from "~/locales/en/vehicle-specs-dialog.js";
+import {gunSpecsDialog} from "~/locales/en/gun-specs-dialog.js";
 
 export const en = {
   menu,
@@ -45,6 +46,7 @@ export const en = {
   },
   controls,
   finishBattleDialog,
+  gunSpecsDialog,
   jetBar: {
     title: 'Jet'
   },

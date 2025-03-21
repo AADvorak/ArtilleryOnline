@@ -21,6 +21,7 @@ import {validationMessages} from "~/locales/ru/validation-messages.js";
 import {finishBattleDialog} from "~/locales/ru/finish-battle-dialog.js";
 import {vehicleConfigs} from "~/locales/ru/vehicle-configs.js";
 import {vehicleSpecsDialog} from "~/locales/ru/vehicle-specs-dialog.js";
+import {gunSpecsDialog} from "~/locales/ru/gun-specs-dialog.js";
 
 export const ru = {
   menu,
@@ -45,6 +46,7 @@ export const ru = {
   },
   controls,
   finishBattleDialog,
+  gunSpecsDialog,
   jetBar: {
     title: 'Джетпак'
   },

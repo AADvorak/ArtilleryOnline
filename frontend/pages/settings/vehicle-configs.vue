@@ -6,6 +6,9 @@ import type {VehicleSpecs} from "~/playground/data/specs";
 import type {UserVehicleConfig} from "~/data/model";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
+import GunSpecsDialog from "~/components/gun-specs-dialog.vue";
+import {mdiInformationOutline} from "@mdi/js";
+import IconBtn from "~/components/icon-btn.vue";
 
 const {t} = useI18n()
 const router = useRouter()
@@ -16,6 +19,7 @@ const selectedVehicle = ref<string>()
 const config = ref<UserVehicleConfig>({})
 const submitting = ref<boolean>(false)
 const savedConfigJson = ref<string>('')
+const gunSpecsDialog = ref<InstanceType<typeof GunSpecsDialog> | null>(null)
 
 const vehicleSpecs = computed<VehicleSpecs | undefined>(() => {
   if (!selectedVehicle.value) {
@@ -38,18 +42,21 @@ const maxAmmo = computed(() => {
   return vehicleSpecs.value.ammo
 })
 
-const shells = computed(() => {
+const gunSpecs = computed(() => {
   if (!config.value.gun) {
-    return []
+    return undefined
   }
   if (!vehicleSpecs.value) {
+    return undefined
+  }
+  return vehicleSpecs.value.availableGuns[config.value.gun]
+})
+
+const shells = computed(() => {
+  if (!gunSpecs.value) {
     return []
   }
-  const gunSpecs = vehicleSpecs.value.availableGuns[config.value.gun]
-  if (!gunSpecs) {
-    return []
-  }
-  return Object.keys(gunSpecs.availableShells)
+  return Object.keys(gunSpecs.value.availableShells)
 })
 
 const noChanges = computed(() => {
@@ -124,6 +131,10 @@ function getUrl() {
   return `/user-vehicle-configs/${selectedVehicle.value}`
 }
 
+function showGunSpecsDialog() {
+  gunSpecsDialog.value?.show()
+}
+
 function back() {
   router.push('/settings')
 }
@@ -143,7 +154,15 @@ function back() {
               :items="guns"
               density="compact"
               :label="t('vehicleConfigs.selectGun')"
-          />
+          >
+            <template v-if="!!config.gun" v-slot:append>
+              <icon-btn
+                  :icon="mdiInformationOutline"
+                  :tooltip="t('common.specs')"
+                  @click="showGunSpecsDialog"
+              />
+            </template>
+          </v-select>
           <div class="mb-4" v-for="shell in shells">
             <template v-if="config.ammo && config.ammo[shell] !== undefined">
               <div>{{ shell }}</div>
@@ -175,5 +194,6 @@ function back() {
         <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>
+    <gun-specs-dialog v-if="!!config.gun" ref="gunSpecsDialog" :gun-name="config.gun" :gun-specs="gunSpecs"/>
   </NuxtLayout>
 </template>

@@ -48,9 +48,8 @@ defineExpose({
       density="compact"
       :label="t('vehicleSelector.selectVehicle')"
   >
-    <template v-slot:append>
+    <template v-if="!!selectedVehicle" v-slot:append>
       <icon-btn
-          v-show="!!selectedVehicle"
           :icon="mdiInformationOutline"
           :tooltip="t('common.specs')"
           @click="showSpecsDialog"
