@@ -15,6 +15,7 @@ const api = new ApiRequestSender()
 const selectedVehicle = ref<string>()
 const config = ref<UserVehicleConfig>({})
 const submitting = ref<boolean>(false)
+const savedConfigJson = ref<string>('')
 
 const vehicleSpecs = computed<VehicleSpecs | undefined>(() => {
   if (!selectedVehicle.value) {
@@ -49,6 +50,13 @@ const shells = computed(() => {
     return []
   }
   return Object.keys(gunSpecs.availableShells)
+})
+
+const noChanges = computed(() => {
+  if (!savedConfigJson.value) {
+    return true
+  }
+  return JSON.stringify(config.value) === savedConfigJson.value
 })
 
 watch(selectedVehicle, () => {
@@ -94,6 +102,7 @@ async function loadConfig() {
     if (!config.value.gun) {
       config.value.gun = vehicleSpecs.value?.defaultGun
     }
+    savedConfigJson.value = JSON.stringify(config.value)
   } catch (e) {
     useRequestErrorHandler().handle(e)
   }
@@ -103,6 +112,7 @@ async function saveConfig() {
   try {
     submitting.value = true
     await api.postJson<UserVehicleConfig, undefined>(getUrl(), config.value)
+    savedConfigJson.value = JSON.stringify(config.value)
   } catch (e) {
     useRequestErrorHandler().handle(e)
   } finally {
@@ -158,7 +168,7 @@ function back() {
             </template>
           </div>
           <v-btn color="success" class="mb-4" width="100%"
-                 :loading="submitting" @click="saveConfig">
+                 :loading="submitting" :disabled="noChanges" @click="saveConfig">
             {{ t('common.save') }}
           </v-btn>
         </div>
