@@ -81,8 +81,16 @@ watch(() => config.value.gun, () => {
     config.value.ammo = {}
   }
   if (!Object.keys(config.value.ammo).length) {
+    // todo set default number of shells
+    const maxSgnLShells = 10
     shells.value.forEach(shell => {
-      config.value.ammo[shell] = maxAmmo.value / shells.value.length
+      if (shell === 'SGN-L') {
+        config.value.ammo[shell] = maxSgnLShells
+      } else if (shell === 'AP-L') {
+        config.value.ammo[shell] = maxAmmo.value - maxSgnLShells
+      } else {
+        config.value.ammo[shell] = maxAmmo.value / shells.value.length
+      }
     })
   }
 })

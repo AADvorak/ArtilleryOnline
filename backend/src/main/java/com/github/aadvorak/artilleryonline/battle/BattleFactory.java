@@ -197,6 +197,7 @@ public class BattleFactory {
                 return userAmount;
             }
         }
+        // todo set default number of shells
         final var maxSgnShells = 10;
         if (shellName.equals(ShellSpecsPreset.LIGHT_SGN.getName())) {
             return maxSgnShells;
