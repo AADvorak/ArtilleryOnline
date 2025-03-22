@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.state;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
@@ -43,6 +44,14 @@ public class VehicleState implements State, CompactSerializable {
     private BomberState bomberState;
 
     private boolean onGround;
+
+    @JsonIgnore
+    public String getExistingAmmoShellName() {
+        return ammo.entrySet().stream()
+                .filter(entry -> entry.getValue() > 0)
+                .map(Map.Entry::getKey)
+                .findAny().orElse(null);
+    }
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {

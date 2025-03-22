@@ -51,7 +51,11 @@ public class VehicleGunShootProcessor {
         var gunState = vehicleModel.getState().getGunState();
         var ammo = vehicleModel.getState().getAmmo().get(gunState.getSelectedShell());
         if (ammo <= 0) {
-            return false;
+            var anotherShell = vehicleModel.getState().getExistingAmmoShellName();
+            if (anotherShell == null) {
+                return false;
+            }
+            gunState.setSelectedShell(anotherShell);
         }
         gunState.setLoadingShell(gunState.getSelectedShell());
         gunState.setLoadRemainTime(vehicleModel.getConfig().getGun().getLoadTime());
