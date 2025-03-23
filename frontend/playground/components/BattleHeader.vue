@@ -109,7 +109,7 @@ function showHelpDialog() {
     <Missiles />
     <Drone />
     <Bomber />
-    <ReloadingProgress class="ml-5" />
+    <ReloadingProgress />
   </v-app-bar>
 </template>
 

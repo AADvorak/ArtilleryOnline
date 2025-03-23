@@ -24,6 +24,7 @@ const missileKeys = computed(() => {
     <v-btn
         class="ml-5 missile-btn"
         color="primary"
+        :disabled="!missiles[missileKey]"
     >
       {{ missileKey }}: {{ missiles[missileKey] }}
     </v-btn>

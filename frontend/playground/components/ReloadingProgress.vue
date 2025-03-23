@@ -74,6 +74,7 @@ function selectShell(key) {
     <v-btn
         class="ammo-btn"
         :color="ammoKey === selectedShell ? 'primary' : ''"
+        :disabled="!ammo[ammoKey]"
         @click="() => selectShell(ammoKey)"
     >
       {{ ammoKey }}({{ index + 1 }}): {{ ammo[ammoKey] }}
