@@ -70,7 +70,6 @@ function selectShell(key) {
 </script>
 
 <template>
-  <v-progress-circular v-if="showProgress" color="lime" :model-value="reloadingProgress" />
   <template v-for="(ammoKey, index) in ammoKeys">
     <v-btn
         class="ammo-btn"
@@ -80,6 +79,7 @@ function selectShell(key) {
       {{ ammoKey }}({{ index + 1 }}): {{ ammo[ammoKey] }}
     </v-btn>
   </template>
+  <v-progress-circular v-if="showProgress" color="lime" :model-value="reloadingProgress" />
 </template>
 
 <style scoped>

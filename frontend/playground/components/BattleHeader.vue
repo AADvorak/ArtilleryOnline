@@ -106,18 +106,10 @@ function showHelpDialog() {
     <div v-if="jetAvailable" class="ml-5 jet-bar-wrapper">
       <JetBar />
     </div>
-    <div v-if="battleStore.isActive">
-      <Missiles />
-    </div>
-    <div v-if="battleStore.isActive">
-      <Drone />
-    </div>
-    <div v-if="battleStore.isActive">
-      <Bomber />
-    </div>
-    <div v-if="battleStore.isActive" class="ml-5">
-      <ReloadingProgress />
-    </div>
+    <Missiles />
+    <Drone />
+    <Bomber />
+    <ReloadingProgress class="ml-5" />
   </v-app-bar>
 </template>
 
