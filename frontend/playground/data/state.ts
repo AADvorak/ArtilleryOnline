@@ -25,6 +25,12 @@ export interface ShellState {
   stuck: boolean
 }
 
+export interface ParticleState {
+  position: Position
+  velocity: Velocity
+  remainTime: number
+}
+
 export interface MissileState {
   position: BodyPosition
   velocity: BodyVelocity

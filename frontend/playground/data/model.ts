@@ -10,6 +10,7 @@ import type {
   DroneState,
   ExplosionState,
   MissileState,
+  ParticleState,
   RoomState,
   ShellState,
   VehicleState
@@ -26,6 +27,11 @@ export interface ShellModel {
   id: number
   specs: ShellSpecs
   state: ShellState
+}
+
+export interface ParticleModel {
+  id: number
+  state: ParticleState
 }
 
 export interface MissileModel {
@@ -81,6 +87,10 @@ export interface DroneModels {
 
 export interface ExplosionModels {
   [id: number]: ExplosionModel
+}
+
+export interface ParticleModels {
+  [id: number]: ParticleModel
 }
 
 export interface BattleModel {

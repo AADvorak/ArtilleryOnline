@@ -6,6 +6,10 @@ import {ShellProcessor} from "@/playground/battle/processor/shell-processor";
 import {ExplosionProcessor} from "@/playground/battle/processor/explosion-processor";
 import {MissileProcessor} from "~/playground/battle/processor/missile-processor";
 import {DroneProcessor} from "~/playground/battle/processor/drone-processor";
+import {ParticleProcessor} from "~/playground/battle/processor/particle-processor";
+import type {ParticleModel, ShellModel} from "~/playground/data/model";
+import type {Position} from "~/playground/data/common";
+import type {ParticleState} from "~/playground/data/state";
 
 export function useBattleProcessor() {
 
@@ -40,6 +44,7 @@ export function useBattleProcessor() {
       battle.time += timeStep
       if (BattleStage.ACTIVE === battleStage) {
         processStepActive(battle, timeStepSecs)
+        processStepActiveParticles(battle, timeStepSecs)
       }
       battleStore.updateClientBattle(battle, currentTime)
       setTimeout(processStep, TIME_STEP_MS)
@@ -62,6 +67,35 @@ export function useBattleProcessor() {
     Object.values(battle.model.drones).forEach(drone => {
       DroneProcessor.processStep(drone, battle.model, timeStepSecs)
     })
+  }
+
+  function processStepActiveParticles(battle: Battle, timeStepSecs: number) {
+    Object.values(battle.model.shells).forEach((shell: ShellModel) => {
+      if (shell.state.stuck) {
+        battleStore.addParticle(generateParticle(shell.state.position))
+      }
+    })
+    Object.values(battleStore.particles).forEach((particle: ParticleModel) => {
+      if (particle.state.remainTime <= 0) {
+        battleStore.removeParticle(particle.id)
+      }
+      ParticleProcessor.processStep(particle, timeStepSecs, battle.model.room.specs)
+    })
+  }
+
+  function generateParticle(position: Position): ParticleState {
+    const velocityMagnitude = 2 + 0.5 * Math.random()
+    const velocityAngle = Math.PI / 4 + Math.PI * Math.random() / 2
+    const remainTime = 0.3 * Math.random()
+    const {x, y} = position
+    return {
+      position: {x, y},
+      velocity: {
+        x: velocityMagnitude * Math.cos(velocityAngle),
+        y: velocityMagnitude * Math.sin(velocityAngle),
+      },
+      remainTime
+    }
   }
 
   return { startProcessing }

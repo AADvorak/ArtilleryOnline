@@ -5,11 +5,17 @@ import { BattleStage } from '~/playground/data/battle'
 import {ApiRequestSender} from "~/api/api-request-sender";
 import {deserializeBattle} from "~/playground/data/battle-deserialize";
 import {DeserializerInput} from "~/deserialization/deserializer-input";
+import type {ParticleModels} from "~/playground/data/model";
+import type {ParticleState} from "~/playground/data/state";
 
 export const useBattleStore = defineStore('battle', () => {
   const clientBattle = ref<Battle>()
 
   const serverBattle = ref<Battle>()
+
+  const particles = ref<ParticleModels>({})
+
+  const currentId = ref<number>(0)
 
   const battle = computed(() => {
     if (showServerState.value) {
@@ -68,9 +74,20 @@ export const useBattleStore = defineStore('battle', () => {
     updateTime.value = time ? time : new Date().getTime()
   }
 
+  function addParticle(state: ParticleState) {
+    const id = currentId.value++
+    particles.value[id] = {id, state}
+  }
+
+  function removeParticle(id: number) {
+    delete particles.value[id]
+  }
+
   function clear() {
     clientBattle.value = undefined
     serverBattle.value = undefined
+    currentId.value = 0
+    particles.value = {}
   }
 
   return {
@@ -80,11 +97,14 @@ export const useBattleStore = defineStore('battle', () => {
     missiles,
     drones,
     explosions,
+    particles,
     isActive,
     loadBattleIfNull,
     updateBattle,
     updateClientBattle,
     updateServerBattle,
+    addParticle,
+    removeParticle,
     clear,
     paused,
     doStep,
