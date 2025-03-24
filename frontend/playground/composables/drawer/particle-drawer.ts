@@ -17,11 +17,20 @@ export function useParticleDrawer(
 
   function drawParticle(particleModel: ParticleModel) {
     if (ctx.value) {
-      const position = drawerBase.transformPosition(particleModel.state.position)
-      ctx.value.fillStyle = 'rgb(256 256 256)'
+      const timeStep = 0.03
+      const rawPosition = particleModel.state.position
+      const velocity = particleModel.state.velocity
+      const position = drawerBase.transformPosition(rawPosition)
+      const nextPosition = drawerBase.transformPosition({
+        x: rawPosition.x + velocity.x * timeStep,
+        y: rawPosition.y + velocity.y * timeStep,
+      })
+      ctx.value.strokeStyle = 'rgb(256 256 256)'
+      ctx.value.lineWidth = 1
       ctx.value.beginPath()
-      ctx.value.arc(position.x, position.y, 1, 0, 2 * Math.PI)
-      ctx.value.fill()
+      ctx.value.moveTo(position.x, position.y)
+      ctx.value.lineTo(nextPosition.x, nextPosition.y)
+      ctx.value.stroke()
       ctx.value.closePath()
     }
   }
