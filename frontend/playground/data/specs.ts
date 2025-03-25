@@ -94,7 +94,6 @@ export interface MissileSpecs {
 }
 
 export interface DroneSpecs {
-  ammo: number
   maxEngineAcceleration: number
   hullRadius: number
   enginesRadius: number

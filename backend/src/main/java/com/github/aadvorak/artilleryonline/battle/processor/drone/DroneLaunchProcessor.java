@@ -37,7 +37,7 @@ public class DroneLaunchProcessor {
         var shellName = gunSpecs.getAvailableShells().keySet().iterator().next();
         var config = new DroneConfig()
                 .setGun(gunSpecs)
-                .setAmmo(Map.of(shellName, specs.getAmmo()))
+                .setAmmo(Map.of(shellName, gunSpecs.getAmmo()))
                 .setColor(colors.get(BattleUtils.generateRandom(0, colors.size())));
         var radius = specs.getEnginesRadius();
         var x = BattleUtils.generateRandom(radius, BattleUtils.getRoomWidth(roomSpecs) - radius);

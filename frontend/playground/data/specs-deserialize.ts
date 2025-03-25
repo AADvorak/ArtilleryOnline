@@ -150,7 +150,6 @@ export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs 
 }
 
 export function deserializeDroneSpecs(input: DeserializerInput): DroneSpecs {
-  const ammo = DeserializerBase.readInt(input)
   const maxEngineAcceleration = DeserializerBase.readDouble(input)
   const hullRadius = DeserializerBase.readDouble(input)
   const enginesRadius = DeserializerBase.readDouble(input)
@@ -160,7 +159,6 @@ export function deserializeDroneSpecs(input: DeserializerInput): DroneSpecs {
   const prepareToLaunchTime = DeserializerBase.readDouble(input)
   const availableGuns = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeGunSpecs)!
   return {
-    ammo,
     maxEngineAcceleration,
     hullRadius,
     enginesRadius,

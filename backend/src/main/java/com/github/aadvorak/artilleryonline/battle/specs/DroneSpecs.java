@@ -13,8 +13,6 @@ import java.util.Map;
 @Accessors(chain = true)
 public class DroneSpecs implements Specs, CompactSerializable {
 
-    private int ammo;
-
     private double maxEngineAcceleration;
 
     private double hullRadius;
@@ -35,7 +33,6 @@ public class DroneSpecs implements Specs, CompactSerializable {
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
-        stream.writeInt(ammo);
         stream.writeDouble(maxEngineAcceleration);
         stream.writeDouble(hullRadius);
         stream.writeDouble(enginesRadius);

@@ -11,7 +11,6 @@ import java.util.Map;
 public enum DroneSpecsPreset {
 
     LIGHT("Light", new DroneSpecs()
-            .setAmmo(4)
             .setMass(0.002)
             .setAvailableGuns(Map.of(GunSpecsPreset.DRONE_LIGHT.getName(), GunSpecsPreset.DRONE_LIGHT.getSpecs()))
             .setHullRadius(0.1)
@@ -24,7 +23,6 @@ public enum DroneSpecsPreset {
     ),
 
     HEAVY("Heavy", new DroneSpecs()
-            .setAmmo(1)
             .setMass(0.005)
             .setAvailableGuns(Map.of(GunSpecsPreset.DRONE_HEAVY.getName(), GunSpecsPreset.DRONE_HEAVY.getSpecs()))
             .setHullRadius(0.12)
