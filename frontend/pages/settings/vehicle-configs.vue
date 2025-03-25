@@ -159,7 +159,7 @@ function showShellSpecsDialog(shellName: string) {
   if (!gunSpecs.value) {
     return
   }
-  shellSpecsDialog.value?.show(shellName, gunSpecs.value.availableShells[shellName])
+  shellSpecsDialog.value?.show(shellName, gunSpecs.value.availableShells[shellName], gunSpecs.value)
 }
 
 function back() {

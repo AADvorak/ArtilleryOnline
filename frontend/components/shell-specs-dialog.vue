@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import {ref} from 'vue'
 import {useI18n} from "vue-i18n";
-import type {ShellSpecs} from "~/playground/data/specs";
+import type {GunSpecs, ShellSpecs} from "~/playground/data/specs";
+import {ShellType} from "~/playground/data/common";
 
 const {t} = useI18n()
 
@@ -9,11 +10,16 @@ const opened = ref(false)
 
 const shellName = ref<string | undefined>()
 const shellSpecs = ref<ShellSpecs | undefined>()
+const gunSpecs = ref<GunSpecs | undefined>()
 
 const specsToShow = computed(() => [
   {
     key: 'damage',
-    value: shellSpecs.value?.damage
+    value: calculateDamage()
+  },
+  {
+    key: 'dpm',
+    value: (60 * calculateDamage() / gunSpecs.value?.loadTime).toFixed(0)
   },
   {
     key: 'velocity',
@@ -29,9 +35,19 @@ const specsToShow = computed(() => [
   },
 ])
 
-function show(name: string, specs: ShellSpecs) {
+function calculateDamage() {
+  if (shellSpecs.value) {
+    const damage = shellSpecs.value.damage
+    return shellSpecs.value.type === ShellType.BMB ? 2 * damage : damage
+  } else {
+    return 0
+  }
+}
+
+function show(name: string, specs: ShellSpecs, gun: GunSpecs) {
   shellName.value = name
   shellSpecs.value = specs
+  gunSpecs.value = gun
   opened.value = true
 }
 
