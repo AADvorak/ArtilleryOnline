@@ -71,7 +71,10 @@ public enum VehicleSpecsPreset {
             .setMinAngle(0.0)
             .setMaxAngle(Math.PI)
             .setAcceleration(14.0)
-            .setAvailableGuns(Map.of(GunSpecsPreset.LIGHT.getName(), GunSpecsPreset.LIGHT.getSpecs()))
+            .setAvailableGuns(Map.of(
+                    GunSpecsPreset.LIGHT.getName(), GunSpecsPreset.LIGHT.getSpecs(),
+                    GunSpecsPreset.LIGHT_H.getName(), GunSpecsPreset.LIGHT_H.getSpecs()
+            ))
             .setAvailableJets(Map.of(JetSpecsPreset.LIGHT.getName(), JetSpecsPreset.LIGHT.getSpecs()))
             .setAvailableMissiles(Map.of())
             .setAvailableDrones(Map.of())

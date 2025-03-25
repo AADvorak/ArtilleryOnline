@@ -65,6 +65,13 @@ public enum ShellSpecsPreset {
             .setMass(0.00025)
             .setCaliber(0.03)
             .setType(ShellType.AP)),
+    LIGHT_HE("HE-L", new ShellSpecs()
+            .setDamage(4.0)
+            .setRadius(0.4)
+            .setVelocity(11.0)
+            .setMass(0.001)
+            .setCaliber(0.04)
+            .setType(ShellType.HE)),
     LIGHT_SGN("SGN-L", new ShellSpecs()
             .setVelocity(10.0)
             .setMass(0.0002)

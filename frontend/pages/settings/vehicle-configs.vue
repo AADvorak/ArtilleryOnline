@@ -86,7 +86,7 @@ watch(() => config.value.gun, (value, oldValue) => {
     shells.value.forEach(shell => {
       if (shell === 'SGN-L') {
         config.value.ammo[shell] = maxSgnLShells
-      } else if (shell === 'AP-L') {
+      } else if (['AP-L', 'HE-L'].includes(shell)) {
         config.value.ammo[shell] = maxAmmo.value - maxSgnLShells
       } else {
         config.value.ammo[shell] = maxAmmo.value / shells.value.length

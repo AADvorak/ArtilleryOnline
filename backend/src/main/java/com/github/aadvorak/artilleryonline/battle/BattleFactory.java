@@ -174,7 +174,7 @@ public class BattleFactory {
                             .setX(distanceBetweenVehicles * vehicleNumber)
                             .setY(BattleUtils.getRoomHeight(battleModel.getRoom().getSpecs()) / 2))
                     .setGunState(new GunState()
-                            .setSelectedShell(ammo.keySet().stream().findAny().orElseThrow())
+                            .setSelectedShell(ammo.keySet().stream().sorted().findFirst().orElseThrow())
                             .setTriggerPushed(false))
                     .setTrackState(new TrackState())
                     .setJetState(jet == null ? null : new JetState()
@@ -199,10 +199,11 @@ public class BattleFactory {
         }
         // todo set default number of shells
         final var maxSgnShells = 10;
+        final var nonSignalLightShells = List.of(ShellSpecsPreset.LIGHT_AP.getName(), ShellSpecsPreset.LIGHT_HE.getName());
         if (shellName.equals(ShellSpecsPreset.LIGHT_SGN.getName())) {
             return maxSgnShells;
         }
-        if (shellName.equals(ShellSpecsPreset.LIGHT_AP.getName())) {
+        if (nonSignalLightShells.contains(shellName)) {
             return ammo - maxSgnShells;
         }
         return ammo / availableShellsNumber;

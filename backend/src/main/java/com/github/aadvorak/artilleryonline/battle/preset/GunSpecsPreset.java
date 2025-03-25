@@ -74,6 +74,17 @@ public enum GunSpecsPreset {
                     ShellSpecsPreset.LIGHT_SGN.getName(), ShellSpecsPreset.LIGHT_SGN.getSpecs()
             ))),
 
+    LIGHT_H("Light heavy gun", new GunSpecs()
+            .setAmmo(100)
+            .setLoadTime(2.0)
+            .setRotationVelocity(0.42)
+            .setLength(0.45)
+            .setCaliber(0.04)
+            .setAvailableShells(Map.of(
+                    ShellSpecsPreset.LIGHT_HE.getName(), ShellSpecsPreset.LIGHT_HE.getSpecs(),
+                    ShellSpecsPreset.LIGHT_SGN.getName(), ShellSpecsPreset.LIGHT_SGN.getSpecs()
+            ))),
+
     DRONE_LIGHT("Drone light gun", new GunSpecs()
             .setAmmo(4)
             .setLoadTime(1.0)
