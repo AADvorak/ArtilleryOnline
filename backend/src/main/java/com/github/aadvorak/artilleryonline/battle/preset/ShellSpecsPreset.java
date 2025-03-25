@@ -13,7 +13,6 @@ public enum ShellSpecsPreset {
             .setDamage(15.0)
             .setRadius(0.15)
             .setVelocity(13.0)
-            .setPushCoefficient(0.08)
             .setMass(0.0061)
             .setCaliber(0.07)
             .setType(ShellType.AP)),
@@ -21,7 +20,6 @@ public enum ShellSpecsPreset {
             .setDamage(8.0)
             .setRadius(0.7)
             .setVelocity(12.0)
-            .setPushCoefficient(0.08)
             .setMass(0.0061)
             .setCaliber(0.07)
             .setType(ShellType.HE)),
@@ -29,7 +27,6 @@ public enum ShellSpecsPreset {
             .setDamage(10.0)
             .setRadius(0.1)
             .setVelocity(13.0)
-            .setPushCoefficient(0.05)
             .setMass(0.002)
             .setCaliber(0.05)
             .setType(ShellType.AP)),
@@ -37,7 +34,6 @@ public enum ShellSpecsPreset {
             .setDamage(5.0)
             .setRadius(0.5)
             .setVelocity(12.0)
-            .setPushCoefficient(0.05)
             .setMass(0.002)
             .setCaliber(0.05)
             .setType(ShellType.HE)),
@@ -45,7 +41,6 @@ public enum ShellSpecsPreset {
             .setDamage(3.0)
             .setRadius(0.06)
             .setVelocity(12.0)
-            .setPushCoefficient(0.015)
             .setMass(0.00025)
             .setCaliber(0.03)
             .setType(ShellType.AP)),

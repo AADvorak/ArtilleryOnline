@@ -18,10 +18,6 @@ public class ShellSpecs implements Specs, CompactSerializable {
 
     private double radius;
 
-    // todo replace with mass
-    @Deprecated()
-    private double pushCoefficient;
-
     private double mass;
 
     private double caliber;
