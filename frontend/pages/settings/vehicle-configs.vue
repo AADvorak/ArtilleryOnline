@@ -61,7 +61,7 @@ const shells = computed(() => {
   if (!gunSpecs.value) {
     return []
   }
-  return Object.keys(gunSpecs.value.availableShells)
+  return Object.keys(gunSpecs.value.availableShells).sort()
 })
 
 const noChanges = computed(() => {
