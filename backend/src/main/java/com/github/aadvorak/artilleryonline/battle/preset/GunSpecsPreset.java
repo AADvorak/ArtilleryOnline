@@ -23,7 +23,7 @@ public enum GunSpecsPreset {
 
     HEAVY_MORTAR("Heavy mortar", new GunSpecs()
             .setAmmo(30)
-            .setLoadTime(10.0)
+            .setLoadTime(9.0)
             .setRotationVelocity(0.3)
             .setLength(0.6)
             .setCaliber(0.12)
@@ -55,7 +55,7 @@ public enum GunSpecsPreset {
 
     MEDIUM_L("Medium light gun", new GunSpecs()
             .setAmmo(360)
-            .setLoadTime(0.25)
+            .setLoadTime(0.3)
             .setRotationVelocity(0.45)
             .setLength(0.5)
             .setCaliber(0.03)
@@ -76,7 +76,7 @@ public enum GunSpecsPreset {
 
     LIGHT_H("Light heavy gun", new GunSpecs()
             .setAmmo(100)
-            .setLoadTime(2.0)
+            .setLoadTime(2.2)
             .setRotationVelocity(0.42)
             .setLength(0.45)
             .setCaliber(0.04)
