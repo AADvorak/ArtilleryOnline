@@ -19,6 +19,7 @@ export interface AvailableShells {
 }
 
 export interface GunSpecs {
+  ammo: number
   loadTime: number
   rotationVelocity: number
   length: number
@@ -57,7 +58,6 @@ export interface VehicleSpecs {
   name: string
   acceleration: number
   hitPoints: number
-  ammo: number
   missiles: number
   minAngle: number
   maxAngle: number

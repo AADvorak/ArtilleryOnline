@@ -13,6 +13,8 @@ import java.util.Map;
 @Accessors(chain = true)
 public class GunSpecs implements Specs, CompactSerializable {
 
+    private int ammo;
+
     private double loadTime;
 
     private double rotationVelocity;
@@ -25,6 +27,7 @@ public class GunSpecs implements Specs, CompactSerializable {
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
+        stream.writeInt(ammo);
         stream.writeDouble(loadTime);
         stream.writeDouble(rotationVelocity);
         stream.writeDouble(length);

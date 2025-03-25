@@ -41,10 +41,10 @@ const guns = computed(() => {
 })
 
 const maxAmmo = computed(() => {
-  if (!vehicleSpecs.value) {
+  if (!gunSpecs.value) {
     return 0
   }
-  return vehicleSpecs.value.ammo
+  return gunSpecs.value.ammo
 })
 
 const gunSpecs = computed(() => {

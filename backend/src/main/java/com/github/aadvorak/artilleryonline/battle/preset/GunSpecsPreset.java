@@ -11,6 +11,7 @@ import java.util.Map;
 public enum GunSpecsPreset {
 
     HEAVY("Heavy gun", new GunSpecs()
+            .setAmmo(60)
             .setLoadTime(5.0)
             .setRotationVelocity(0.35)
             .setLength(0.6)
@@ -21,6 +22,7 @@ public enum GunSpecsPreset {
             ))),
 
     MEDIUM("Medium gun", new GunSpecs()
+            .setAmmo(80)
             .setLoadTime(3.0)
             .setRotationVelocity(0.4)
             .setLength(0.6)
@@ -31,6 +33,7 @@ public enum GunSpecsPreset {
             ))),
 
     LIGHT("Light gun", new GunSpecs()
+            .setAmmo(320)
             .setLoadTime(0.5)
             .setRotationVelocity(0.45)
             .setLength(0.4)
@@ -41,6 +44,7 @@ public enum GunSpecsPreset {
             ))),
 
     DRONE_LIGHT("Drone light gun", new GunSpecs()
+            .setAmmo(4)
             .setLoadTime(1.0)
             .setRotationVelocity(0.0)
             .setLength(0.2)
@@ -50,6 +54,7 @@ public enum GunSpecsPreset {
             ))),
 
     DRONE_HEAVY("Drone heavy gun", new GunSpecs()
+            .setAmmo(1)
             .setLoadTime(3.0)
             .setRotationVelocity(0.0)
             .setLength(0.25)

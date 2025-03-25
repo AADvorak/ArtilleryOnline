@@ -20,12 +20,14 @@ export function deserializeExplosionSpecs(input: DeserializerInput): ExplosionSp
 }
 
 export function deserializeGunSpecs(input: DeserializerInput): GunSpecs {
+  const ammo = DeserializerBase.readInt(input)
   const loadTime = DeserializerBase.readDouble(input)
   const rotationVelocity = DeserializerBase.readDouble(input)
   const length = DeserializerBase.readDouble(input)
   const caliber = DeserializerBase.readDouble(input)
   const availableShells = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeShellSpecs)!
   return {
+    ammo,
     loadTime,
     rotationVelocity,
     length,
@@ -113,7 +115,6 @@ export function deserializeShellSpecs(input: DeserializerInput): ShellSpecs {
 export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs {
   const name = DeserializerBase.readString(input)
   const hitPoints = DeserializerBase.readDouble(input)
-  const ammo = DeserializerBase.readInt(input)
   const missiles = DeserializerBase.readInt(input)
   const minAngle = DeserializerBase.readDouble(input)
   const maxAngle = DeserializerBase.readDouble(input)
@@ -131,7 +132,6 @@ export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs 
   return {
     name,
     hitPoints,
-    ammo,
     missiles,
     minAngle,
     maxAngle,

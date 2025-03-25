@@ -145,7 +145,7 @@ public class UserVehicleConfigService {
             }
         });
         var sumAmount = dto.getAmmo().values().stream().reduce(0, Integer::sum);
-        if (sumAmount > vehicleSpecs.getAmmo()) {
+        if (sumAmount > gunSpecs.getAmmo()) {
             errors.add(new ValidationResponse()
                     .setValidation(Validation.WRONG)
                     .setField(ConfigName.AMMO.getName()));

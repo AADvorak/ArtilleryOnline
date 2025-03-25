@@ -17,8 +17,6 @@ public class VehicleSpecs implements Specs, CompactSerializable {
 
     private double hitPoints;
 
-    private int ammo;
-
     private int missiles;
 
     private double minAngle;
@@ -57,7 +55,6 @@ public class VehicleSpecs implements Specs, CompactSerializable {
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeString(name);
         stream.writeDouble(hitPoints);
-        stream.writeInt(ammo);
         stream.writeInt(missiles);
         stream.writeDouble(minAngle);
         stream.writeDouble(maxAngle);

@@ -152,7 +152,7 @@ public class BattleFactory {
             var availableShellsNumber = gun.getAvailableShells().size();
             var ammo = new HashMap<String, Integer>();
             gun.getAvailableShells().keySet().forEach(shellName ->
-                    ammo.put(shellName, getAmmo(userConfig, shellName, vehicleModel.getSpecs().getAmmo(), availableShellsNumber)));
+                    ammo.put(shellName, getAmmo(userConfig, shellName, gun.getAmmo(), availableShellsNumber)));
             var availableMissilesNumber = vehicleModel.getSpecs().getAvailableMissiles().size();
             var missiles = new HashMap<String, Integer>();
             vehicleModel.getSpecs().getAvailableMissiles().keySet().forEach(missileName ->

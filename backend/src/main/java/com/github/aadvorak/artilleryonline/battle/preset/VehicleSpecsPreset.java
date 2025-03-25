@@ -12,7 +12,6 @@ public enum VehicleSpecsPreset {
 
     HEAVY("Heavy", new VehicleSpecs()
             .setName("Heavy")
-            .setAmmo(60)
             .setRadius(0.45)
             .setHullRadius(0.5)
             .setWheelRadius(0.12)
@@ -34,7 +33,6 @@ public enum VehicleSpecsPreset {
 
     MEDIUM("Medium", new VehicleSpecs()
             .setName("Medium")
-            .setAmmo(80)
             .setMissiles(4)
             .setRadius(0.4)
             .setHullRadius(0.4)
@@ -57,7 +55,6 @@ public enum VehicleSpecsPreset {
 
     LIGHT("Light", new VehicleSpecs()
             .setName("Light")
-            .setAmmo(320)
             .setRadius(0.3)
             .setHullRadius(0.35)
             .setWheelRadius(0.08)
