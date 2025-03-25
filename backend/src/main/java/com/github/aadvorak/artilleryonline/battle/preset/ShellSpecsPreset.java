@@ -23,6 +23,20 @@ public enum ShellSpecsPreset {
             .setMass(0.0061)
             .setCaliber(0.07)
             .setType(ShellType.HE)),
+    HEAVY_AP_L("AP-HL", new ShellSpecs()
+            .setDamage(10.0)
+            .setRadius(0.1)
+            .setVelocity(13.5)
+            .setMass(0.002)
+            .setCaliber(0.05)
+            .setType(ShellType.AP)),
+    HEAVY_HE_L("HE-HL", new ShellSpecs()
+            .setDamage(5.0)
+            .setRadius(0.5)
+            .setVelocity(12.5)
+            .setMass(0.002)
+            .setCaliber(0.05)
+            .setType(ShellType.HE)),
     MEDIUM_AP("AP-M", new ShellSpecs()
             .setDamage(10.0)
             .setRadius(0.1)
@@ -37,6 +51,13 @@ public enum ShellSpecsPreset {
             .setMass(0.002)
             .setCaliber(0.05)
             .setType(ShellType.HE)),
+    MEDIUM_AP_L("AP-ML", new ShellSpecs()
+            .setDamage(2.0)
+            .setRadius(0.04)
+            .setVelocity(13.0)
+            .setMass(0.0002)
+            .setCaliber(0.03)
+            .setType(ShellType.AP)),
     LIGHT_AP("AP-L", new ShellSpecs()
             .setDamage(3.0)
             .setRadius(0.06)
@@ -49,6 +70,13 @@ public enum ShellSpecsPreset {
             .setMass(0.0002)
             .setCaliber(0.07)
             .setType(ShellType.SGN)),
+    BMB_H("BMB-H", new ShellSpecs()
+            .setDamage(15.0)
+            .setRadius(0.9)
+            .setVelocity(11.0)
+            .setMass(0.007)
+            .setCaliber(0.12)
+            .setType(ShellType.BMB)),
     BMB("BMB", new ShellSpecs()
             .setDamage(8.0)
             .setRadius(0.7)

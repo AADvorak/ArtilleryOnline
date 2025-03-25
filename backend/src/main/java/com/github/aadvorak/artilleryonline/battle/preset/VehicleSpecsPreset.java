@@ -21,7 +21,11 @@ public enum VehicleSpecsPreset {
             .setMinAngle(0.0)
             .setMaxAngle(Math.PI)
             .setAcceleration(6.0)
-            .setAvailableGuns(Map.of(GunSpecsPreset.HEAVY.getName(), GunSpecsPreset.HEAVY.getSpecs()))
+            .setAvailableGuns(Map.of(
+                    GunSpecsPreset.HEAVY.getName(), GunSpecsPreset.HEAVY.getSpecs(),
+                    GunSpecsPreset.HEAVY_L.getName(), GunSpecsPreset.HEAVY_L.getSpecs(),
+                    GunSpecsPreset.HEAVY_MORTAR.getName(), GunSpecsPreset.HEAVY_MORTAR.getSpecs()
+            ))
             .setAvailableJets(Map.of(JetSpecsPreset.HEAVY.getName(), JetSpecsPreset.HEAVY.getSpecs()))
             .setAvailableMissiles(Map.of())
             .setAvailableDrones(Map.of(DroneSpecsPreset.LIGHT.getName(), DroneSpecsPreset.LIGHT.getSpecs()))
@@ -43,7 +47,10 @@ public enum VehicleSpecsPreset {
             .setMinAngle(0.0)
             .setMaxAngle(Math.PI)
             .setAcceleration(10.0)
-            .setAvailableGuns(Map.of(GunSpecsPreset.MEDIUM.getName(), GunSpecsPreset.MEDIUM.getSpecs()))
+            .setAvailableGuns(Map.of(
+                    GunSpecsPreset.MEDIUM.getName(), GunSpecsPreset.MEDIUM.getSpecs(),
+                    GunSpecsPreset.MEDIUM_L.getName(), GunSpecsPreset.MEDIUM_L.getSpecs()
+            ))
             .setAvailableJets(Map.of(JetSpecsPreset.MEDIUM.getName(), JetSpecsPreset.MEDIUM.getSpecs()))
             .setAvailableMissiles(Map.of(MissileSpecsPreset.DEFAULT.getName(), MissileSpecsPreset.DEFAULT.getSpecs()))
             .setAvailableDrones(Map.of())

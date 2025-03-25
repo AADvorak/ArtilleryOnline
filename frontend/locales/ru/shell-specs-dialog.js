@@ -7,6 +7,7 @@ export const shellSpecsDialog = {
   types: {
     AP: 'Бронебойный',
     HE: 'Осколочный',
-    SGN: 'Сигнальный'
+    SGN: 'Сигнальный',
+    BMB: 'Бомба'
   }
 }

@@ -21,6 +21,27 @@ public enum GunSpecsPreset {
                     ShellSpecsPreset.HEAVY_HE.getName(), ShellSpecsPreset.HEAVY_HE.getSpecs()
             ))),
 
+    HEAVY_MORTAR("Heavy mortar", new GunSpecs()
+            .setAmmo(30)
+            .setLoadTime(10.0)
+            .setRotationVelocity(0.3)
+            .setLength(0.6)
+            .setCaliber(0.12)
+            .setAvailableShells(Map.of(
+                    ShellSpecsPreset.BMB_H.getName(), ShellSpecsPreset.BMB_H.getSpecs()
+            ))),
+
+    HEAVY_L("Heavy light gun", new GunSpecs()
+            .setAmmo(80)
+            .setLoadTime(3.0)
+            .setRotationVelocity(0.4)
+            .setLength(0.65)
+            .setCaliber(0.05)
+            .setAvailableShells(Map.of(
+                    ShellSpecsPreset.HEAVY_AP_L.getName(), ShellSpecsPreset.HEAVY_AP_L.getSpecs(),
+                    ShellSpecsPreset.HEAVY_HE_L.getName(), ShellSpecsPreset.HEAVY_HE_L.getSpecs()
+            ))),
+
     MEDIUM("Medium gun", new GunSpecs()
             .setAmmo(80)
             .setLoadTime(3.0)
@@ -30,6 +51,16 @@ public enum GunSpecsPreset {
             .setAvailableShells(Map.of(
                     ShellSpecsPreset.MEDIUM_AP.getName(), ShellSpecsPreset.MEDIUM_AP.getSpecs(),
                     ShellSpecsPreset.MEDIUM_HE.getName(), ShellSpecsPreset.MEDIUM_HE.getSpecs()
+            ))),
+
+    MEDIUM_L("Medium light gun", new GunSpecs()
+            .setAmmo(360)
+            .setLoadTime(0.25)
+            .setRotationVelocity(0.45)
+            .setLength(0.5)
+            .setCaliber(0.03)
+            .setAvailableShells(Map.of(
+                    ShellSpecsPreset.MEDIUM_AP_L.getName(), ShellSpecsPreset.MEDIUM_AP_L.getSpecs()
             ))),
 
     LIGHT("Light gun", new GunSpecs()

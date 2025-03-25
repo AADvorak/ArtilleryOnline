@@ -7,6 +7,7 @@ export const shellSpecsDialog = {
   types: {
     AP: 'Armour-piercing',
     HE: 'High-explosive',
-    SGN: 'Signal'
+    SGN: 'Signal',
+    BMB: 'Bomb'
   }
 }
