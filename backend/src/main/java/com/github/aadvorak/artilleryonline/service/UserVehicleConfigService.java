@@ -52,6 +52,10 @@ public class UserVehicleConfigService {
         saveGunConfig(configs, user.getId(), vehicleName, dto);
         dto.getAmmo().entrySet().forEach(entry ->
                 saveAmmoConfig(configs, user.getId(), vehicleName, entry));
+        configs.stream()
+                .filter(config -> ConfigName.AMMO.getName().equals(config.getName()))
+                .filter(config -> !dto.getAmmo().containsKey(config.getValue()))
+                .forEach(userVehicleConfigRepository::delete);
     }
 
     private void saveGunConfig(List<UserVehicleConfig> configs, long userId, String vehicleName, UserVehicleConfigDto dto) {

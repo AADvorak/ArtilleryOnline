@@ -76,8 +76,8 @@ watch(selectedVehicle, () => {
   loadConfig()
 })
 
-watch(() => config.value.gun, () => {
-  if (!config.value.ammo) {
+watch(() => config.value.gun, (value, oldValue) => {
+  if (!value || value && oldValue || !config.value.ammo) {
     config.value.ammo = {}
   }
   if (!Object.keys(config.value.ammo).length) {
