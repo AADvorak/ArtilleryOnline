@@ -3,7 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.processor.drone.collisions;
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.updates.BattleModelRemoved;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 
 public class DronesCollisionsProcessor {
@@ -26,7 +26,7 @@ public class DronesCollisionsProcessor {
         battle.getDrones().forEach(drone -> {
             var removedDroneIds = Optional.ofNullable(battle.getModel().getUpdates().getRemoved())
                     .map(BattleModelRemoved::getDroneIds)
-                    .orElse(new ArrayList<>());
+                    .orElse(new HashSet<>());
             if (!drone.getCollisions().isEmpty()
                     && !removedDroneIds.contains(drone.getId())) {
                 var collision = drone.getCollisions().iterator().next();

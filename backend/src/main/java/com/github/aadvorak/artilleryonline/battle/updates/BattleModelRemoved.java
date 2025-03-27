@@ -5,54 +5,54 @@ import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWr
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BattleModelRemoved implements CompactSerializable {
 
-    private List<Integer> shellIds;
+    private Set<Integer> shellIds;
 
-    private List<Integer> explosionIds;
+    private Set<Integer> explosionIds;
 
-    private List<Integer> missileIds;
+    private Set<Integer> missileIds;
 
-    private List<Integer> droneIds;
+    private Set<Integer> droneIds;
 
-    private List<String> vehicleKeys;
+    private Set<String> vehicleKeys;
 
     public void addShellId(Integer shellId) {
         if (shellIds == null) {
-            shellIds = new ArrayList<>();
+            shellIds = new HashSet<>();
         }
         shellIds.add(shellId);
     }
 
     public void addExplosionId(Integer explosionId) {
         if (explosionIds == null) {
-            explosionIds = new ArrayList<>();
+            explosionIds = new HashSet<>();
         }
         explosionIds.add(explosionId);
     }
 
     public void addMissileId(Integer missileId) {
         if (missileIds == null) {
-            missileIds = new ArrayList<>();
+            missileIds = new HashSet<>();
         }
         missileIds.add(missileId);
     }
 
     public void addDroneId(Integer droneId) {
         if (droneIds == null) {
-            droneIds = new ArrayList<>();
+            droneIds = new HashSet<>();
         }
         droneIds.add(droneId);
     }
 
     public void addVehicleKey(String vehicleKey) {
         if (vehicleKeys == null) {
-            vehicleKeys = new ArrayList<>();
+            vehicleKeys = new HashSet<>();
         }
         vehicleKeys.add(vehicleKey);
     }
