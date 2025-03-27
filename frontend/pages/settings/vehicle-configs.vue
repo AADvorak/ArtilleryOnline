@@ -4,18 +4,18 @@ import {useRouter} from "#app";
 import {usePresetsStore} from "~/stores/presets";
 import type {VehicleSpecs} from "~/playground/data/specs";
 import type {UserVehicleConfig} from "~/data/model";
-import {ApiRequestSender} from "~/api/api-request-sender";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import GunSpecsDialog from "~/components/gun-specs-dialog.vue";
 import {mdiInformationOutline} from "@mdi/js";
 import IconBtn from "~/components/icon-btn.vue";
 import ShellSpecsDialog from "~/components/shell-specs-dialog.vue";
 import type {Ammo} from "~/playground/data/common";
+import {useConfigsStore} from "~/stores/configs";
 
 const {t} = useI18n()
 const router = useRouter()
 const presetsStore = usePresetsStore()
-const api = new ApiRequestSender()
+const configsStore = useConfigsStore()
 
 const selectedVehicle = ref<string>()
 const config = ref<UserVehicleConfig>({})
@@ -125,7 +125,7 @@ watch(() => config.value.ammo, () => {
 
 async function loadConfig() {
   try {
-    config.value = await api.getJson<UserVehicleConfig>(getUrl())
+    config.value = await configsStore.loadVehicleConfig(selectedVehicle.value!)
     if (!config.value.gun) {
       config.value.gun = vehicleSpecs.value?.defaultGun
     }
@@ -138,17 +138,13 @@ async function loadConfig() {
 async function saveConfig() {
   try {
     submitting.value = true
-    await api.postJson<UserVehicleConfig, undefined>(getUrl(), config.value)
+    await configsStore.saveVehicleConfig(selectedVehicle.value!, config.value)
     savedConfigJson.value = JSON.stringify(config.value)
   } catch (e) {
     useRequestErrorHandler().handle(e)
   } finally {
     submitting.value = false
   }
-}
-
-function getUrl() {
-  return `/user-vehicle-configs/${selectedVehicle.value}`
 }
 
 function showGunSpecsDialog() {

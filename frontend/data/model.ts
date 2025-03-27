@@ -160,3 +160,7 @@ export interface UserVehicleConfig {
   gun?: string
   ammo?: Ammo
 }
+
+export interface UserVehicleConfigs {
+  [name: string]: UserVehicleConfig
+}
