@@ -2,7 +2,7 @@
 import {ref} from 'vue'
 import {useI18n} from "vue-i18n";
 import type {GunSpecs} from "~/playground/data/specs";
-import GunSpecsTable from "~/components/gun-specs-table.vue";
+import GunShellsSpecsTables from "~/components/gun-shells-specs-tables.vue";
 
 const props = defineProps<{
   gunName: string | undefined
@@ -31,7 +31,7 @@ defineExpose({
     <v-card v-if="!!props.gunSpecs && !!props.gunName" width="100%">
       <v-card-title>{{ t('gunSpecsDialog.title') }}: {{ props.gunName }}</v-card-title>
       <v-card-text>
-        <gun-specs-table :gun-specs="props.gunSpecs" />
+        <gun-shells-specs-tables :gun-specs="props.gunSpecs" />
         <div class="d-flex mt-4">
           <v-btn color="primary" @click="hide">{{ t('common.ok') }}</v-btn>
         </div>

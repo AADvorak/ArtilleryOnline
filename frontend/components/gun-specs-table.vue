@@ -8,8 +8,6 @@ const props = defineProps<{
 
 const {t} = useI18n()
 
-const openedPanels = ref<string[]>([])
-
 const specsToShow = computed(() => [
   {
     key: 'loadTime',
@@ -29,10 +27,6 @@ const specsToShow = computed(() => [
         .reduce((a, b) => a + (a ? ', ' : '') + b, '')
   },
 ])
-
-const shellNames = computed(() => {
-  return Object.keys(props.gunSpecs.availableShells).sort()
-})
 </script>
 
 <template>
@@ -44,16 +38,4 @@ const shellNames = computed(() => {
     </tr>
     </tbody>
   </v-table>
-  <v-expansion-panels class="mt-4" v-model="openedPanels">
-    <template v-for="shellName of shellNames">
-      <v-expansion-panel :value="shellName">
-        <v-expansion-panel-title>
-          {{ t('shellSpecsDialog.title') }}: {{ shellName }}
-        </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <shell-specs-table :gun-specs="gunSpecs" :shell-specs="gunSpecs.availableShells[shellName]" />
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-    </template>
-  </v-expansion-panels>
 </template>
