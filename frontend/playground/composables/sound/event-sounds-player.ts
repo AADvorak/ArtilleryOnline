@@ -152,7 +152,8 @@ export function useEventSoundsPlayer(player: Player) {
     const caliber = shell.specs.caliber
     const pan = soundsPlayerBase.calculatePan(shell.state.position.x)
     const gain = soundsPlayerBase.calculateGain(shell.state.position)
-    if (shell.specs.type === ShellType.BMB) {
+    // todo how to check if bomb is shot or thrown
+    if (shell.specs.type === ShellType.BMB && shell.specs.velocity < 10.0) {
       // todo sound
     } else if (shell.specs.type === ShellType.SGN || caliber <= 0.04) {
       play('shot-small', pan, gain)
