@@ -68,6 +68,11 @@ export const useMessageStore = defineStore('message', () => {
     }
   }
 
+  function clear() {
+    messages.value = undefined
+    roomInvitations.value = undefined
+  }
+
   return {
     messages,
     roomInvitations,
@@ -75,6 +80,7 @@ export const useMessageStore = defineStore('message', () => {
     loadMessagesIfNull,
     loadInvitationsIfNull,
     removeMessageById,
-    removeRoomInvitationById
+    removeRoomInvitationById,
+    clear
   }
 })

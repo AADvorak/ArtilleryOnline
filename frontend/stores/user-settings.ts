@@ -163,6 +163,10 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     return mapping
   }
 
+  function clear() {
+    settings.value = undefined
+  }
+
   return {
     controls,
     controlsOrDefaults,
@@ -175,6 +179,7 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     setAppearance,
     setSoundSetting,
     resetControls,
-    loadSettingsIfNull
+    loadSettingsIfNull,
+    clear
   }
 })

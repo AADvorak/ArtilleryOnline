@@ -8,6 +8,7 @@ import {useStompClientStore} from "~/stores/stomp-client";
 import {usePresetsStore} from "~/stores/presets";
 import {useRoomStore} from "~/stores/room";
 import {useMessageStore} from "~/stores/message";
+import {useConfigsStore} from "~/stores/configs";
 
 const ROOT_PATH = '/'
 const MENU_PATH = '/menu'
@@ -28,6 +29,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const presetsStore = usePresetsStore()
   const roomStore = useRoomStore()
   const messageStore = useMessageStore()
+  const configsStore = useConfigsStore()
 
   await settingsStore.loadIfNull()
   await userStore.loadUserIfNull()
@@ -42,6 +44,10 @@ export default defineNuxtRouteMiddleware(async (to) => {
     await csrfStore.loadCsrfIfNull()
     await battleStore.loadBattleIfNull()
     messageStore.subscribe()
+  } else {
+    messageStore.clear()
+    userSettingsStore.clear()
+    configsStore.clear()
   }
 
   if (!!userStore.user && !battleStore.battle) {

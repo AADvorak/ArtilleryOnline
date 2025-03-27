@@ -71,9 +71,9 @@ const noChanges = computed(() => {
   return JSON.stringify(config.value) === savedConfigJson.value
 })
 
-watch(selectedVehicle, () => {
+watch(vehicleSpecs, value => {
   config.value = {}
-  loadConfig()
+  value && loadConfig()
 })
 
 watch(() => config.value.gun, (value, oldValue) => {
@@ -125,10 +125,7 @@ watch(() => config.value.ammo, () => {
 
 async function loadConfig() {
   try {
-    config.value = await configsStore.loadVehicleConfig(selectedVehicle.value!)
-    if (!config.value.gun) {
-      config.value.gun = vehicleSpecs.value?.defaultGun
-    }
+    config.value = await configsStore.loadVehicleConfig(vehicleSpecs.value!)
     savedConfigJson.value = JSON.stringify(config.value)
   } catch (e) {
     useRequestErrorHandler().handle(e)

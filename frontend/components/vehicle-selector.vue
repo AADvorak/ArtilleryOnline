@@ -56,5 +56,5 @@ defineExpose({
       />
     </template>
   </v-select>
-  <vehicle-specs-dialog ref="specsDialog" :selected-vehicle="selectedVehicle"/>
+  <vehicle-specs-dialog v-if="!!selectedVehicle" ref="specsDialog" :selected-vehicle="selectedVehicle"/>
 </template>
