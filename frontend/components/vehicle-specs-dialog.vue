@@ -62,8 +62,12 @@ defineExpose({
       <v-card-text>
         <vehicle-specs-table :vehicle-specs="vehicleSpecs"/>
         <div class="mt-4" v-if="gunSpecs">
-          <h4>{{ t('gunSpecsDialog.title') }}: {{ vehicleConfig.gun }}</h4>
-          <gun-shells-specs-tables class="mt-4" :gun-specs="gunSpecs"/>
+          <div class="subheader">
+            {{ t('gunSpecsDialog.title') }}: {{ vehicleConfig.gun }}
+          </div>
+          <div class="mt-4">
+            <gun-shells-specs-tables :gun-specs="gunSpecs"/>
+          </div>
         </div>
         <div class="d-flex mt-4">
           <v-btn color="primary" @click="hide">{{ t('common.ok') }}</v-btn>
@@ -72,3 +76,9 @@ defineExpose({
     </v-card>
   </v-dialog>
 </template>
+
+<style scoped>
+.subheader {
+  font-size: 18px;
+}
+</style>
