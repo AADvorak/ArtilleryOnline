@@ -101,10 +101,11 @@ public class RoomService {
                     "User " + user.getNickname() + " removed you from the room",
                     new Locale()
                             .setCode(LocaleCode.USER_REMOVED_FROM_ROOM)
-                            .setParams(Map.of("nickname", nickname)));
+                            .setParams(Map.of("nickname", user.getNickname())));
             roomUpdatesSender.sendRoomUpdate(room);
             roomUpdatesSender.sendRoomDelete(room, guest.getUser());
-            log.info("removeUserFromRoom: nickname {}, map size {}", user.getNickname(), userRoomMap.size());
+            log.info("removeUserFromRoom: nickname {}, removed by {}, map size {}", nickname,
+                    user.getNickname(), userRoomMap.size());
         });
     }
 
