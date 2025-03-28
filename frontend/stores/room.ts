@@ -6,7 +6,7 @@ import {useUserStore} from '~/stores/user'
 import {useStompClientStore} from "~/stores/stomp-client";
 
 export const useRoomStore = defineStore('room', () => {
-  const room = ref<Room | null>()
+  const room = ref<Room | undefined>()
 
   const subscription = ref()
 
@@ -39,7 +39,7 @@ export const useRoomStore = defineStore('room', () => {
       subscription.value = stompClientStore.client!.subscribe('/user/topic/room/updates', function (msgOut) {
         room.value = JSON.parse(msgOut.body) as Room
         if (room.value.deleted) {
-          room.value = null
+          room.value = undefined
         }
       })
     }
@@ -52,5 +52,9 @@ export const useRoomStore = defineStore('room', () => {
     }
   }
 
-  return {room, loadRoomIfNull, userIsRoomOwner}
+  function clear() {
+    room.value = undefined
+  }
+
+  return {room, loadRoomIfNull, userIsRoomOwner, clear}
 })

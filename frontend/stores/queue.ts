@@ -17,5 +17,9 @@ export const useQueueStore = defineStore('queue', () => {
     }
   }
 
-  return {queue, loadQueueIfNull}
+  function clear() {
+    queue.value = undefined
+  }
+
+  return {queue, loadQueueIfNull, clear}
 })

@@ -6,6 +6,8 @@ import com.github.aadvorak.artilleryonline.dto.request.RegisterRequest;
 import com.github.aadvorak.artilleryonline.dto.response.ShortUserResponse;
 import com.github.aadvorak.artilleryonline.dto.response.UserResponse;
 import com.github.aadvorak.artilleryonline.service.OnlineUserService;
+import com.github.aadvorak.artilleryonline.service.RoomService;
+import com.github.aadvorak.artilleryonline.service.UserBattleQueueService;
 import com.github.aadvorak.artilleryonline.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +27,10 @@ public class UserEndpoint {
     private final UserService userService;
 
     private final OnlineUserService onlineUserService;
+
+    private final RoomService roomService;
+
+    private final UserBattleQueueService userBattleQueueService;
 
     @GetMapping("/online")
     public List<ShortUserResponse> getOnlineUsers() {
@@ -61,6 +67,8 @@ public class UserEndpoint {
 
     @DeleteMapping("/logout")
     public void logout(HttpServletResponse response) {
+        roomService.exitRoom();
+        userBattleQueueService.removeUserFromQueue();
         setCookieWithTokenToResponse(null, response);
     }
 

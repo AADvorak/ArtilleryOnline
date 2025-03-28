@@ -48,6 +48,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
     messageStore.clear()
     userSettingsStore.clear()
     configsStore.clear()
+    roomStore.clear()
+    queueStore.clear()
   }
 
   if (!!userStore.user && !battleStore.battle) {

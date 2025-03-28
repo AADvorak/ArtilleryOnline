@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
 import MessagesMenu from "~/components/messages-menu.vue";
+import UserMenu from "~/components/user-menu.vue";
 </script>
 
 <template>
@@ -8,6 +9,7 @@ import MessagesMenu from "~/components/messages-menu.vue";
     <v-app-bar density="compact">
       <v-spacer />
       <messages-menu />
+      <user-menu />
     </v-app-bar>
     <div class="d-flex align-center justify-center flex-column default">
       <slot />

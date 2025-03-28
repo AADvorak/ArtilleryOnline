@@ -82,7 +82,7 @@ async function loadBattle() {
       queueStore.queue = undefined
       battleStore.updateBattle(battle)
     } catch (e) {
-      setTimeout(loadBattle, 1000)
+      e.status === 404 && setTimeout(loadBattle, 1000)
     }
   }
 }

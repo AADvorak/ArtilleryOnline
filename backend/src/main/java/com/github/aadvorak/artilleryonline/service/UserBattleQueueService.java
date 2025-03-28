@@ -47,8 +47,10 @@ public class UserBattleQueueService {
 
     public void removeUserFromQueue() {
         var user = userService.getUserFromContext();
-        userBattleQueue.remove(user.getId());
-        log.info("removeUserFromQueue: {}, queue size: {}", user.getNickname(), userBattleQueue.size());
+        if (userBattleQueue.getByUserId(user.getId()) != null) {
+            userBattleQueue.remove(user.getId());
+            log.info("removeUserFromQueue: {}, queue size: {}", user.getNickname(), userBattleQueue.size());
+        }
     }
 
     private UserBattleQueueResponse createUserBattleQueueResponse(UserBattleQueueElement element) {
