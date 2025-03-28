@@ -37,7 +37,7 @@ async function logOut() {
       </v-btn>
     </template>
     <v-card>
-      <v-btn width="100%" @click="logOut">{{ t('menu.logOut') }}</v-btn>
+      <v-btn class="mt-2" width="100%" @click="logOut">{{ t('menu.logOut') }}</v-btn>
     </v-card>
   </v-menu>
 </template>

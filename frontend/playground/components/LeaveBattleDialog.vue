@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useBattleStore } from '~/stores/battle'
-import {useRouter} from '#app'
 import {ApiRequestSender} from '~/api/api-request-sender'
 import {useI18n} from "vue-i18n";
 
 const {t} = useI18n()
 const battleStore = useBattleStore()
-const router = useRouter()
 
 const opened = ref(false)
 
@@ -16,7 +14,6 @@ async function leaveBattle() {
   try {
     await new ApiRequestSender().delete('/battles/leave')
     battleStore.clear()
-    setTimeout(() => router.push('/'))
   } catch (e) {
     console.log(e)
   }

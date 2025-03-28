@@ -9,6 +9,7 @@ import UserMenu from "~/components/user-menu.vue";
     <v-app-bar density="compact">
       <v-spacer />
       <messages-menu />
+      <room-menu />
       <user-menu />
     </v-app-bar>
     <div class="d-flex align-center justify-center flex-column default">

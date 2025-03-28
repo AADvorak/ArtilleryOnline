@@ -49,8 +49,6 @@ watch(selectedVehicle, async (value) => {
 watch(() => roomStore.room, value => {
   if (!value) {
     router.push('/rooms')
-  } else if (value.inBattle) {
-    router.push('/playground')
   }
 })
 
@@ -78,11 +76,15 @@ async function startBattle() {
 async function exit() {
   try {
     await api.delete('/rooms/exit')
-    roomStore.room = null
+    roomStore.room = undefined
     await router.push('/rooms')
   } catch (e) {
     requestErrorHandler.handle(e)
   }
+}
+
+function back() {
+  router.push('/menu')
 }
 </script>
 
@@ -129,7 +131,8 @@ async function exit() {
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
-        <v-btn class="mb-4" width="100%" @click="exit">{{ t('common.exit') }}</v-btn>
+        <v-btn class="mb-4" color="warning" width="100%" @click="exit">{{ t('common.exit') }}</v-btn>
+        <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>
   </NuxtLayout>

@@ -67,7 +67,8 @@ export const ru = {
   },
   rooms: {
     title: 'комнаты',
-    createRoom: 'Создать комнату'
+    createRoom: 'Создать комнату',
+    backToRoom: 'Вернуться в комнату'
   },
   room,
   roomInvitationCard,

@@ -67,7 +67,8 @@ export const en = {
   },
   rooms: {
     title: 'rooms',
-    createRoom: 'Create room'
+    createRoom: 'Create room',
+    backToRoom: 'Back to room'
   },
   room,
   roomInvitationCard,

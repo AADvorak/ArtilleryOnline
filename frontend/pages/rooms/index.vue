@@ -14,10 +14,14 @@ const roomStore = useRoomStore()
 async function createRoom() {
   try {
     roomStore.room = await new ApiRequestSender().putJson<undefined, Room>('/rooms', undefined)
-    await router.push('/rooms/room')
+    await toRoom()
   } catch (e) {
     useRequestErrorHandler().handle(e)
   }
+}
+
+async function toRoom() {
+  await router.push('/rooms/room')
 }
 
 function back() {
@@ -32,7 +36,12 @@ function back() {
         Artillery online: {{ t('rooms.title') }}
       </v-card-title>
       <v-card-text>
-        <v-btn class="mb-4" width="100%" color="secondary" @click="createRoom">{{ t('rooms.createRoom') }}</v-btn>
+        <v-btn v-if="!roomStore.room" class="mb-4" width="100%" color="secondary" @click="createRoom">
+          {{ t('rooms.createRoom') }}
+        </v-btn>
+        <v-btn v-else class="mb-4" width="100%" color="secondary" @click="toRoom">
+          {{ t('rooms.backToRoom') }}
+        </v-btn>
         <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>
