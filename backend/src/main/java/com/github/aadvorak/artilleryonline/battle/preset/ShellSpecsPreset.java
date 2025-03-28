@@ -52,14 +52,14 @@ public enum ShellSpecsPreset {
             .setCaliber(0.05)
             .setType(ShellType.HE)),
     MEDIUM_AP_L("AP-ML", new ShellSpecs()
-            .setDamage(1.5)
+            .setDamage(1.2)
             .setRadius(0.04)
             .setVelocity(13.0)
             .setMass(0.0002)
             .setCaliber(0.03)
             .setType(ShellType.AP)),
     LIGHT_AP("AP-L", new ShellSpecs()
-            .setDamage(3.0)
+            .setDamage(2.0)
             .setRadius(0.06)
             .setVelocity(12.0)
             .setMass(0.00025)
