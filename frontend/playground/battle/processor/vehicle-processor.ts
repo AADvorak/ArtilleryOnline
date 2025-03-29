@@ -79,19 +79,32 @@ export const VehicleProcessor = {
   },
 
   recalculateGunAngle(vehicleModel: VehicleModel, timeStepSecs: number) {
-    if (vehicleModel.state.gunRotatingDirection) {
-      const sign = MovingDirection.RIGHT === vehicleModel.state.gunRotatingDirection ? -1 : 1
-      let newAngle = vehicleModel.state.gunState.angle
-          + sign * vehicleModel.config.gun.rotationVelocity * timeStepSecs
-      const minAngle = vehicleModel.specs.minAngle
-      const maxAngle = vehicleModel.specs.maxAngle
-      if (newAngle > maxAngle) {
-        newAngle = maxAngle
-      }
-      if (newAngle < minAngle) {
-        newAngle = minAngle
-      }
-      vehicleModel.state.gunState.angle = newAngle
+    const rotatingDirection = vehicleModel.state.gunRotatingDirection
+    const rotatingVelocity = vehicleModel.config.gun.rotationVelocity
+    const maxGunAngle = vehicleModel.specs.maxAngle
+    const minGunAngle = vehicleModel.specs.minAngle
+    const vehicleAngle = vehicleModel.state.position.angle
+    let targetAngle = vehicleModel.state.gunState.targetAngle
+    if (rotatingDirection) {
+      const sign = MovingDirection.RIGHT === rotatingDirection ? -1 : 1
+      targetAngle += sign * rotatingVelocity * timeStepSecs
     }
+    targetAngle = this.restrictValue(targetAngle, minGunAngle + vehicleAngle, maxGunAngle + vehicleAngle)
+    vehicleModel.state.gunState.targetAngle = targetAngle
+    let gunAngle = vehicleModel.state.gunState.angle
+    const angleDiff = targetAngle - vehicleAngle - gunAngle
+    if (Math.abs(angleDiff) > rotatingVelocity * 0.01) {
+      const angleStep = Math.sign(angleDiff) * rotatingVelocity * timeStepSecs
+      gunAngle += Math.min(angleStep, angleDiff)
+      gunAngle = this.restrictValue(gunAngle, minGunAngle, maxGunAngle)
+      vehicleModel.state.gunState.angle = gunAngle
+    }
+  },
+
+  restrictValue(value: number, min: number, max: number) {
+    if (value < min) {
+      return min
+    }
+    return Math.min(value, max)
   }
 }
