@@ -86,23 +86,23 @@ public enum GunSpecsPreset {
             ))),
 
     DRONE_LIGHT("Drone light gun", new GunSpecs()
-            .setAmmo(4)
-            .setLoadTime(1.0)
+            .setAmmo(8)
+            .setLoadTime(0.3)
             .setRotationVelocity(0.0)
             .setLength(0.2)
             .setCaliber(0.03)
             .setAvailableShells(Map.of(
-                    ShellSpecsPreset.LIGHT_AP.getName(), ShellSpecsPreset.LIGHT_AP.getSpecs()
+                    ShellSpecsPreset.DRONE_AP.getName(), ShellSpecsPreset.DRONE_AP.getSpecs()
             ))),
 
     DRONE_HEAVY("Drone heavy gun", new GunSpecs()
-            .setAmmo(1)
-            .setLoadTime(3.0)
+            .setAmmo(3)
+            .setLoadTime(2.0)
             .setRotationVelocity(0.0)
             .setLength(0.25)
-            .setCaliber(0.05)
+            .setCaliber(0.04)
             .setAvailableShells(Map.of(
-                    ShellSpecsPreset.MEDIUM_HE.getName(), ShellSpecsPreset.MEDIUM_HE.getSpecs()
+                    ShellSpecsPreset.DRONE_HE.getName(), ShellSpecsPreset.DRONE_HE.getSpecs()
             )));
 
     private final String name;

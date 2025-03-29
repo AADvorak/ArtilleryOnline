@@ -77,6 +77,20 @@ public enum ShellSpecsPreset {
             .setMass(0.0002)
             .setCaliber(0.07)
             .setType(ShellType.SGN)),
+    DRONE_AP("AP-D", new ShellSpecs()
+            .setDamage(2.0)
+            .setRadius(0.06)
+            .setVelocity(12.0)
+            .setMass(0.00025)
+            .setCaliber(0.03)
+            .setType(ShellType.AP)),
+    DRONE_HE("HE-D", new ShellSpecs()
+            .setDamage(4.0)
+            .setRadius(0.4)
+            .setVelocity(11.0)
+            .setMass(0.001)
+            .setCaliber(0.04)
+            .setType(ShellType.HE)),
     BMB_H("BMB-H", new ShellSpecs()
             .setDamage(15.0)
             .setRadius(0.9)
