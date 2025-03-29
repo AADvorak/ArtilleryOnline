@@ -13,6 +13,8 @@ public class GunState implements State, CompactSerializable {
 
     private double angle;
 
+    private double targetAngle;
+
     private String loadedShell;
 
     private String selectedShell;
@@ -26,6 +28,7 @@ public class GunState implements State, CompactSerializable {
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(angle);
+        stream.writeDouble(targetAngle);
         stream.writeNullable(loadedShell, stream::writeString);
         stream.writeNullable(selectedShell, stream::writeString);
         stream.writeNullable(loadingShell, stream::writeString);

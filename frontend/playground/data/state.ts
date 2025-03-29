@@ -3,6 +3,7 @@ import {MovingDirection} from "@/playground/data/common";
 
 export interface GunState {
   angle: number
+  targetAngle: number
   loadedShell?: string
   selectedShell?: string
   loadingShell?: string
