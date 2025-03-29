@@ -174,6 +174,7 @@ public class BattleFactory {
                             .setY(BattleUtils.getRoomHeight(battleModel.getRoom().getSpecs()) / 2))
                     .setGunState(new GunState()
                             .setAngle(Math.PI / 2)
+                            .setTargetAngle(Math.PI / 2)
                             .setSelectedShell(ammo.keySet().stream().sorted().findFirst().orElseThrow())
                             .setTriggerPushed(false))
                     .setTrackState(new TrackState())
