@@ -25,7 +25,7 @@ export function useParticleDrawer(
         x: rawPosition.x + velocity.x * timeStep,
         y: rawPosition.y + velocity.y * timeStep,
       })
-      ctx.value.strokeStyle = 'rgb(256 256 256)'
+      ctx.value.strokeStyle = particleModel.config.color || 'rgb(256 256 256)'
       ctx.value.lineWidth = 1
       ctx.value.beginPath()
       ctx.value.moveTo(position.x, position.y)

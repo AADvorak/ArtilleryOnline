@@ -72,7 +72,7 @@ export function useBattleProcessor() {
   function processStepActiveParticles(battle: Battle, timeStepSecs: number) {
     Object.values(battle.model.shells).forEach((shell: ShellModel) => {
       if (shell.state.stuck) {
-        battleStore.addParticle(generateParticle(shell.state.position))
+        battleStore.addParticle(generateParticle(shell.state.position), {color: 'rgb(248,105,4)'})
       }
     })
     Object.values(battleStore.particles).forEach((particle: ParticleModel) => {

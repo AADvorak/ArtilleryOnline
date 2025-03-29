@@ -7,6 +7,7 @@ import {deserializeBattle} from "~/playground/data/battle-deserialize";
 import {DeserializerInput} from "~/deserialization/deserializer-input";
 import type {ParticleModels} from "~/playground/data/model";
 import type {ParticleState} from "~/playground/data/state";
+import type {ParticleConfig} from "~/playground/data/config";
 
 export const useBattleStore = defineStore('battle', () => {
   const clientBattle = ref<Battle>()
@@ -74,9 +75,9 @@ export const useBattleStore = defineStore('battle', () => {
     updateTime.value = time ? time : new Date().getTime()
   }
 
-  function addParticle(state: ParticleState) {
+  function addParticle(state: ParticleState, config: ParticleConfig) {
     const id = currentId.value++
-    particles.value[id] = {id, state}
+    particles.value[id] = {id, state, config}
   }
 
   function removeParticle(id: number) {

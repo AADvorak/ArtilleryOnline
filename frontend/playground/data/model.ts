@@ -15,7 +15,7 @@ import type {
   ShellState,
   VehicleState
 } from "@/playground/data/state";
-import type {DroneConfig, RoomConfig, VehicleConfig} from "@/playground/data/config";
+import type {DroneConfig, ParticleConfig, RoomConfig, VehicleConfig} from "@/playground/data/config";
 
 export interface RoomModel {
   specs: RoomSpecs
@@ -32,6 +32,7 @@ export interface ShellModel {
 export interface ParticleModel {
   id: number
   state: ParticleState
+  config: ParticleConfig
 }
 
 export interface MissileModel {

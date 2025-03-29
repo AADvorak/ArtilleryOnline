@@ -20,3 +20,7 @@ export interface DroneConfig {
   ammo: Ammo
   color?: string
 }
+
+export interface ParticleConfig {
+  color?: string
+}
