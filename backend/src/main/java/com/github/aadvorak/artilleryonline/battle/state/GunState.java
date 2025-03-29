@@ -11,6 +11,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class GunState implements State, CompactSerializable {
 
+    private double angle;
+
     private String loadedShell;
 
     private String selectedShell;
@@ -23,6 +25,7 @@ public class GunState implements State, CompactSerializable {
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
+        stream.writeDouble(angle);
         stream.writeNullable(loadedShell, stream::writeString);
         stream.writeNullable(selectedShell, stream::writeString);
         stream.writeNullable(loadingShell, stream::writeString);

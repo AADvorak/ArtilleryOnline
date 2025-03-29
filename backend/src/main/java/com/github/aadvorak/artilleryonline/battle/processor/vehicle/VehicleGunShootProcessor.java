@@ -76,13 +76,15 @@ public class VehicleGunShootProcessor {
     }
 
     private static Position getShellInitialPosition(VehicleModel vehicleModel) {
-        var shellAngle = vehicleModel.getState().getGunAngle() + vehicleModel.getState().getPosition().getAngle();
+        var shellAngle = vehicleModel.getState().getGunState().getAngle()
+                + vehicleModel.getState().getPosition().getAngle();
         var gunLength = vehicleModel.getConfig().getGun().getLength();
         return vehicleModel.getState().getPosition().getCenter().shifted(gunLength, shellAngle);
     }
 
     private static Velocity getShellInitialVelocity(VehicleModel vehicleModel, double shellVelocityModule) {
-        var shellAngle = vehicleModel.getState().getGunAngle() + vehicleModel.getState().getPosition().getAngle();
+        var shellAngle = vehicleModel.getState().getGunState().getAngle()
+                + vehicleModel.getState().getPosition().getAngle();
         var gunLength = vehicleModel.getConfig().getGun().getLength();
         var pointVelocity = vehicleModel.getState().getVelocity().getPointVelocity(gunLength, shellAngle);
         var shellVelocity = new Velocity()

@@ -81,7 +81,8 @@ export const VehicleProcessor = {
   recalculateGunAngle(vehicleModel: VehicleModel, timeStepSecs: number) {
     if (vehicleModel.state.gunRotatingDirection) {
       const sign = MovingDirection.RIGHT === vehicleModel.state.gunRotatingDirection ? -1 : 1
-      let newAngle = vehicleModel.state.gunAngle + sign * vehicleModel.config.gun.rotationVelocity * timeStepSecs
+      let newAngle = vehicleModel.state.gunState.angle
+          + sign * vehicleModel.config.gun.rotationVelocity * timeStepSecs
       const minAngle = vehicleModel.specs.minAngle
       const maxAngle = vehicleModel.specs.maxAngle
       if (newAngle > maxAngle) {
@@ -90,7 +91,7 @@ export const VehicleProcessor = {
       if (newAngle < minAngle) {
         newAngle = minAngle
       }
-      vehicleModel.state.gunAngle = newAngle
+      vehicleModel.state.gunState.angle = newAngle
     }
   }
 }

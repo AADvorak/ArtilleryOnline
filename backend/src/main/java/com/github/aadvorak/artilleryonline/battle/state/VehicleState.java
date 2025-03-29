@@ -23,8 +23,6 @@ public class VehicleState implements State, CompactSerializable {
 
     private BodyAcceleration acceleration = new BodyAcceleration();
 
-    private double gunAngle;
-
     private MovingDirection gunRotatingDirection;
 
     private double hitPoints;
@@ -58,7 +56,6 @@ public class VehicleState implements State, CompactSerializable {
         stream.writeSerializableValue(position);
         stream.writeSerializableValue(velocity);
         stream.writeSerializable(movingDirection);
-        stream.writeDouble(gunAngle);
         stream.writeSerializable(gunRotatingDirection);
         stream.writeDouble(hitPoints);
         stream.writeMap(ammo, stream::writeString, stream::writeInt);

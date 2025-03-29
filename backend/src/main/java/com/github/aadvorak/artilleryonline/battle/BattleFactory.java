@@ -166,7 +166,6 @@ public class BattleFactory {
                     .setBomber(bomber)
                     .setColor(getVehicleColor(participant)));
             vehicleModel.setState(new VehicleState()
-                    .setGunAngle(Math.PI / 2)
                     .setAmmo(new HashMap<>(vehicleModel.getConfig().getAmmo()))
                     .setMissiles(new HashMap<>(vehicleModel.getConfig().getMissiles()))
                     .setHitPoints(vehicleModel.getSpecs().getHitPoints())
@@ -174,6 +173,7 @@ public class BattleFactory {
                             .setX(distanceBetweenVehicles * vehicleNumber)
                             .setY(BattleUtils.getRoomHeight(battleModel.getRoom().getSpecs()) / 2))
                     .setGunState(new GunState()
+                            .setAngle(Math.PI / 2)
                             .setSelectedShell(ammo.keySet().stream().sorted().findFirst().orElseThrow())
                             .setTriggerPushed(false))
                     .setTrackState(new TrackState())

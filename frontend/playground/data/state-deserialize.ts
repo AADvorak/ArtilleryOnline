@@ -30,12 +30,14 @@ export function deserializeExplosionState(input: DeserializerInput): ExplosionSt
 }
 
 export function deserializeGunState(input: DeserializerInput): GunState {
+  const angle = DeserializerBase.readDouble(input)
   const loadedShell = DeserializerBase.readNullable(input, DeserializerBase.readString)
   const selectedShell = DeserializerBase.readNullable(input, DeserializerBase.readString)
   const loadingShell = DeserializerBase.readNullable(input, DeserializerBase.readString)
   const loadRemainTime = DeserializerBase.readDouble(input)
   const triggerPushed = DeserializerBase.readBoolean(input)
   return {
+    angle,
     loadedShell,
     selectedShell,
     loadingShell,
@@ -126,7 +128,6 @@ export function deserializeVehicleState(input: DeserializerInput): VehicleState 
   const position = deserializeBodyPosition(input)
   const velocity = deserializeBodyVelocity(input)
   const movingDirection = DeserializerBase.readNullable(input, DeserializerBase.readString) as MovingDirection
-  const gunAngle = DeserializerBase.readDouble(input)
   const gunRotatingDirection = DeserializerBase.readNullable(input, DeserializerBase.readString) as MovingDirection
   const hitPoints = DeserializerBase.readDouble(input)
   const ammo = DeserializerBase.readMap(input, DeserializerBase.readString, DeserializerBase.readInt)!
@@ -141,7 +142,6 @@ export function deserializeVehicleState(input: DeserializerInput): VehicleState 
     position,
     velocity,
     movingDirection,
-    gunAngle,
     gunRotatingDirection,
     hitPoints,
     ammo,

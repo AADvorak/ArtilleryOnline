@@ -51,7 +51,7 @@ export const VehicleUtils = {
 
   getGunEndPosition(vehicleModel: VehicleModel) {
     const vehiclePosition = vehicleModel.state.position
-    const gunAngle = vehicleModel.state.gunAngle
+    const gunAngle = vehicleModel.state.gunState.angle
     const gunLength = vehicleModel.config.gun.length
     return BattleUtils.shiftedPosition(vehiclePosition, gunLength, gunAngle + vehiclePosition.angle)
   },

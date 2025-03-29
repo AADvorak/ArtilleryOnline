@@ -11,7 +11,7 @@ public class VehicleGunRotateProcessor {
         if (rotatingDirection == null) {
             return;
         }
-        var gunAngle = vehicleModel.getState().getGunAngle();
+        var gunAngle = vehicleModel.getState().getGunState().getAngle();
         gunAngle += (MovingDirection.RIGHT.equals(rotatingDirection) ? -1 : 1)
                 * battleModel.getCurrentTimeStepSecs()
                 * vehicleModel.getConfig().getGun().getRotationVelocity();
@@ -23,6 +23,6 @@ public class VehicleGunRotateProcessor {
         if (gunAngle < minAngle) {
             gunAngle = minAngle;
         }
-        vehicleModel.getState().setGunAngle(gunAngle);
+        vehicleModel.getState().getGunState().setAngle(gunAngle);
     }
 }
