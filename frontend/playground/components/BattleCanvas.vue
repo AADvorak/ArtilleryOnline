@@ -12,6 +12,7 @@ import {AppearancesNames} from "~/dictionary/appearances-names";
 import {useDroneDrawer} from "~/playground/composables/drawer/drone-drawer";
 import {useSurfaceDrawer} from "~/playground/composables/drawer/surface-drawer";
 import {useParticleDrawer} from "~/playground/composables/drawer/particle-drawer";
+import {useShellTrajectoryDrawer} from "~/playground/composables/drawer/shell-trajectory-drawer";
 
 const battleStore = useBattleStore()
 const userSettingsStore = useUserSettingsStore()
@@ -47,6 +48,7 @@ const explosionDrawer = useExplosionDrawer(drawerBase, ctx)
 const groundDrawer = useGroundDrawer(drawerBase, ctx)
 const surfaceDrawer = useSurfaceDrawer(drawerBase, ctx)
 const particleDrawer = useParticleDrawer(drawerBase, ctx)
+const shellTrajectoryDrawer = useShellTrajectoryDrawer(drawerBase, ctx)
 
 watch(battle, (value) => {
   if (value) {
@@ -87,6 +89,7 @@ function initCanvasAndCtx() {
 function redrawBattle() {
   requestAnimationFrame(() => {
     clearCanvas()
+    shellTrajectoryDrawer.draw()
     particleDrawer.draw()
     shellDrawer.draw()
     missileDrawer.draw()
