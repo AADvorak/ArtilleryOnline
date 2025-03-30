@@ -3,7 +3,6 @@ import type {Ref} from 'vue'
 import {useBattleStore} from '~/stores/battle'
 import {VehicleUtils} from '@/playground/utils/vehicle-utils'
 import type {VehicleModel} from "~/playground/data/model";
-import {useUserSettingsStore} from "~/stores/user-settings";
 import {useUserStore} from "~/stores/user";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import type {RoomSpecs} from "~/playground/data/specs";
@@ -14,9 +13,6 @@ export function useShellTrajectoryDrawer(
 ) {
   const battleStore = useBattleStore()
   const userStore = useUserStore()
-  const userSettingsStore = useUserSettingsStore()
-
-  const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
 
   function draw() {
     if (battleStore.vehicles) {
