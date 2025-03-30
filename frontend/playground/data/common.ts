@@ -47,7 +47,8 @@ export interface CollideObject {
 }
 
 export interface ApplicationSettings {
-  debug: boolean,
+  debug: boolean
+  showShellTrajectory: boolean
   clientProcessing: boolean
   userBattleQueueTimeout: number
 }

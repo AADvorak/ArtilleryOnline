@@ -17,6 +17,8 @@ public class ApplicationSettings {
 
     private boolean createSurfaces;
 
+    private boolean showShellTrajectory;
+
     private long additionalResolveCollisionsIterationsNumber;
 
     private long battleUpdateTimeout;

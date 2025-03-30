@@ -6,6 +6,7 @@ import type {VehicleModel} from "~/playground/data/model";
 import {useUserStore} from "~/stores/user";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import type {RoomSpecs} from "~/playground/data/specs";
+import {useSettingsStore} from "~/stores/settings";
 
 export function useShellTrajectoryDrawer(
     drawerBase: DrawerBase,
@@ -13,9 +14,10 @@ export function useShellTrajectoryDrawer(
 ) {
   const battleStore = useBattleStore()
   const userStore = useUserStore()
+  const settingsStore = useSettingsStore()
 
   function draw() {
-    if (battleStore.vehicles) {
+    if (settingsStore.settings?.debug && settingsStore.settings?.showShellTrajectory && battleStore.vehicles) {
       const roomSpecs = battleStore.battle!.model.room.specs
       Object.keys(battleStore.vehicles)
           .filter(key => key === userStore.user!.nickname)
