@@ -4,6 +4,7 @@ import {MovingDirection} from "@/playground/data/common";
 export interface GunState {
   angle: number
   targetAngle: number
+  rotatingDirection: MovingDirection
   loadedShell?: string
   selectedShell?: string
   loadingShell?: string
@@ -69,7 +70,6 @@ export interface VehicleState {
   position: BodyPosition
   velocity: BodyVelocity
   movingDirection: MovingDirection
-  gunRotatingDirection: MovingDirection
   hitPoints: number
   ammo: Ammo
   missiles: Missiles

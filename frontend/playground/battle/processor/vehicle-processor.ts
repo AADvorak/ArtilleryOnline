@@ -79,7 +79,7 @@ export const VehicleProcessor = {
   },
 
   recalculateGunAngle(vehicleModel: VehicleModel, timeStepSecs: number) {
-    const rotatingDirection = vehicleModel.state.gunRotatingDirection
+    const rotatingDirection = vehicleModel.state.gunState.rotatingDirection
     const rotatingVelocity = vehicleModel.config.gun.rotationVelocity
     const maxGunAngle = vehicleModel.specs.maxAngle
     const minGunAngle = vehicleModel.specs.minAngle

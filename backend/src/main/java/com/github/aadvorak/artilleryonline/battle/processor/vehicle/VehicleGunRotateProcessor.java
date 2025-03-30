@@ -8,7 +8,7 @@ import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 public class VehicleGunRotateProcessor {
 
     public static void processStep(VehicleModel vehicleModel, BattleModel battleModel) {
-        var rotatingDirection = vehicleModel.getState().getGunRotatingDirection();
+        var rotatingDirection = vehicleModel.getState().getGunState().getRotatingDirection();
         var rotatingVelocity = vehicleModel.getConfig().getGun().getRotationVelocity();
         var maxGunAngle = vehicleModel.getSpecs().getMaxAngle();
         var minGunAngle = vehicleModel.getSpecs().getMinAngle();

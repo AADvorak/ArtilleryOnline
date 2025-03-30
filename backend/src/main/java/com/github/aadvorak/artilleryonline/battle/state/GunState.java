@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.state;
 
+import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
 import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
@@ -15,6 +16,8 @@ public class GunState implements State, CompactSerializable {
 
     private double targetAngle;
 
+    private MovingDirection rotatingDirection;
+
     private String loadedShell;
 
     private String selectedShell;
@@ -29,6 +32,7 @@ public class GunState implements State, CompactSerializable {
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(angle);
         stream.writeDouble(targetAngle);
+        stream.writeSerializable(rotatingDirection);
         stream.writeNullable(loadedShell, stream::writeString);
         stream.writeNullable(selectedShell, stream::writeString);
         stream.writeNullable(loadingShell, stream::writeString);
