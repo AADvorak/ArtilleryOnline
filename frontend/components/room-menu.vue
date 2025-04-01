@@ -20,12 +20,6 @@ const isShow = computed(() => {
   return !!roomStore.room && !route.path.endsWith('/rooms/room')
 })
 
-watch(() => roomStore.room, value => {
-  if (value?.inBattle) {
-    router.push('/playground')
-  }
-})
-
 async function toRoom() {
   await router.push('/rooms/room')
 }

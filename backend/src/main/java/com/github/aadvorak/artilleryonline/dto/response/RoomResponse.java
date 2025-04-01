@@ -15,16 +15,10 @@ public class RoomResponse {
 
     private Set<RoomMemberResponse> members = new HashSet<>();
 
-    private boolean inBattle = false;
-
     private boolean deleted = false;
 
     public static RoomResponse deletedOf(Room room) {
         return of(room).setDeleted(true);
-    }
-
-    public static RoomResponse inBattleOf(Room room) {
-        return of(room).setInBattle(true);
     }
 
     public static RoomResponse of(Room room) {

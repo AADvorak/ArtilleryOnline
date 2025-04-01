@@ -8,6 +8,7 @@ import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
 import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
 import com.github.aadvorak.artilleryonline.model.Locale;
 import com.github.aadvorak.artilleryonline.model.LocaleCode;
+import com.github.aadvorak.artilleryonline.ws.BattleStartedSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -32,6 +33,8 @@ public class BattleService {
     private final UserAvailabilityService userAvailabilityService;
 
     private final MessageService messageService;
+
+    private final BattleStartedSender battleStartedSender;
 
     private final ModelMapper mapper = new ModelMapper();
 
@@ -105,6 +108,9 @@ public class BattleService {
             participants.forEach(participant -> userBattleMap.put(participant.getUser().getId(), battle));
             battleRunner.runBattle(battle);
             var nicknames = participants.stream().map(BattleParticipant::getNickname).toList();
+            participants.stream()
+                    .map(BattleParticipant::getUser)
+                    .forEach(battleStartedSender::send);
             log.info("startBattle: users {}, battle {}, map size {}", nicknames,
                     battle.getId(), userBattleMap.size());
         }

@@ -77,7 +77,6 @@ public class RoomService {
         }
         battleService.createRoomBattle(room);
         removeSelectedVehicles(room);
-        roomUpdatesSender.sendRoomUpdate(room, false, true);
     }
 
     public void exitRoom() {
@@ -143,7 +142,7 @@ public class RoomService {
                                 .setParams(Map.of("nickname", user.getNickname())));
             });
             userIds.forEach(userRoomMap::remove);
-            roomUpdatesSender.sendRoomUpdate(room, true, false);
+            roomUpdatesSender.sendRoomUpdate(room, true);
             log.info("exitRoom: (room deleted) nickname {}, map size {}", user.getNickname(), userRoomMap.size());
         }
     }

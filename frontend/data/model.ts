@@ -16,7 +16,6 @@ export interface RoomMember {
 
 export interface Room {
   members: RoomMember[]
-  inBattle: boolean
   deleted: boolean
 }
 
