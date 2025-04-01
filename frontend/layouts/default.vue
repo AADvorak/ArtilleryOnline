@@ -1,7 +1,30 @@
 <script setup lang="ts">
-
 import MessagesMenu from "~/components/messages-menu.vue";
 import UserMenu from "~/components/user-menu.vue";
+import {useStompClientStore} from "~/stores/stomp-client";
+import {ref} from "vue";
+import type {StompSubscription} from "@stomp/stompjs";
+import {useRouter} from "#app";
+import {useQueueStore} from "~/stores/queue";
+
+const stompClientStore = useStompClientStore()
+const queueStore = useQueueStore()
+const router = useRouter()
+
+const subscriptions = ref<StompSubscription[]>([])
+
+onMounted(() => {
+  subscribe()
+})
+
+function subscribe() {
+  if (!subscriptions.value.length) {
+    subscriptions.value.push(stompClientStore.client!.subscribe('/user/topic/battle-started', function () {
+      queueStore.queue = undefined
+      router.push('/playground')
+    }))
+  }
+}
 </script>
 
 <template>

@@ -31,17 +31,11 @@ watch(() => battleStore.battle, (value) => {
   }
 })
 watch(() => queueStore.queue, () => {
-  if (checkUserInQueue()) {
-    vehicleSelector.value?.setSelectedVehicle(queueStore.queue!.params.selectedVehicle)
-    loadBattle()
-  }
+  processUserInQueue()
 })
 
 onMounted(() => {
-  if (checkUserInQueue()) {
-    vehicleSelector.value?.setSelectedVehicle(queueStore.queue!.params.selectedVehicle)
-    loadBattle()
-  }
+  processUserInQueue()
 })
 
 async function randomBattle() {
@@ -76,30 +70,29 @@ async function singleBattle(path) {
   }
 }
 
-async function loadBattle() {
-  if (checkUserInQueue()) {
-    try {
-      const battleBinary = await new ApiRequestSender().getBytes('/battles')
-      const battle = deserializeBattle(new DeserializerInput(battleBinary))
-      queueStore.queue = undefined
-      battleStore.updateBattle(battle)
-    } catch (e) {
-      e.status === 404 && setTimeout(loadBattle, 1000)
-    }
+function processUserInQueue() {
+  if (queueStore.queue) {
+    vehicleSelector.value?.setSelectedVehicle(queueStore.queue!.params.selectedVehicle)
+    checkUserInQueueWithTimeout()
   }
 }
 
-function checkUserInQueue() {
+function checkUserInQueueWithTimeout() {
   if (!queueStore.queue) {
-    return false
+    return
   }
+  const remainTime = getUserInQueueRemainTime()
+  if (remainTime <= 0) {
+    queueStore.queue = undefined
+  } else {
+    setTimeout(checkUserInQueueWithTimeout, remainTime)
+  }
+}
+
+function getUserInQueueRemainTime(): number {
   const addDate = DateUtils.getClientDate(queueStore.queue!.addTime)
   const now = new Date()
-  if (now.getTime() - addDate.getTime() > settingsStore.settings!.userBattleQueueTimeout) {
-    queueStore.queue = undefined
-    return false
-  }
-  return true
+  return settingsStore.settings!.userBattleQueueTimeout - now.getTime() + addDate.getTime()
 }
 
 async function cancel() {

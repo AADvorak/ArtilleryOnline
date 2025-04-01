@@ -6,6 +6,7 @@ import com.github.aadvorak.artilleryonline.battle.BattleRunner;
 import com.github.aadvorak.artilleryonline.battle.BattleType;
 import com.github.aadvorak.artilleryonline.collection.*;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
+import com.github.aadvorak.artilleryonline.ws.BattleStartedSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -30,6 +31,8 @@ public class UserBattleQueueConsumer implements Runnable {
 
     private final BattleRunner battleRunner;
 
+    private final BattleStartedSender battleStartedSender;
+
     @EventListener(ApplicationReadyEvent.class)
     public void startConsumer() {
         new Thread(this).start();
@@ -52,6 +55,9 @@ public class UserBattleQueueConsumer implements Runnable {
             var nicknames = elements.stream()
                     .map(element -> element.getUser().getNickname())
                     .collect(Collectors.toSet());
+            elements.stream()
+                    .map(UserBattleQueueElement::getUser)
+                    .forEach(battleStartedSender::send);
             log.info("Battle started for users: {}, queue size: {}", nicknames, userBattleQueue.size());
         }
     }
