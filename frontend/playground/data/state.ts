@@ -10,6 +10,7 @@ export interface GunState {
   loadingShell?: string
   loadRemainTime: number
   triggerPushed: boolean
+  fixed: boolean
 }
 
 export interface TrackState {

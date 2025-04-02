@@ -26,7 +26,9 @@ public class GunState implements State, CompactSerializable {
 
     private double loadRemainTime;
 
-    private boolean triggerPushed;
+    private boolean triggerPushed = false;
+
+    private boolean fixed = false;
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
@@ -38,5 +40,6 @@ public class GunState implements State, CompactSerializable {
         stream.writeNullable(loadingShell, stream::writeString);
         stream.writeDouble(loadRemainTime);
         stream.writeBoolean(triggerPushed);
+        stream.writeBoolean(fixed);
     }
 }

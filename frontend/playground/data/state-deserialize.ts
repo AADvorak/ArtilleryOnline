@@ -38,6 +38,7 @@ export function deserializeGunState(input: DeserializerInput): GunState {
   const loadingShell = DeserializerBase.readNullable(input, DeserializerBase.readString)
   const loadRemainTime = DeserializerBase.readDouble(input)
   const triggerPushed = DeserializerBase.readBoolean(input)
+  const fixed = DeserializerBase.readBoolean(input)
   return {
     angle,
     targetAngle,
@@ -46,7 +47,8 @@ export function deserializeGunState(input: DeserializerInput): GunState {
     selectedShell,
     loadingShell,
     loadRemainTime,
-    triggerPushed
+    triggerPushed,
+    fixed
   }
 }
 
