@@ -84,5 +84,10 @@ public class CommandProcessor {
         if (Command.LAUNCH_DRONE.equals(userCommand.getCommand())) {
             VehicleLaunchDroneProcessor.launch(userVehicle, battleModel);
         }
+
+        if (Command.SWITCH_GUN_MODE.equals(userCommand.getCommand())) {
+            userVehicle.getState().getGunState().setFixed(!userVehicle.getState().getGunState().isFixed());
+            userVehicle.setUpdated(true);
+        }
     }
 }

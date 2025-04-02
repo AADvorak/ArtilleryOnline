@@ -69,6 +69,9 @@ export function useKeyboardListener(commandsSender: CommandsSender) {
   clickCommands.set('launchDrone', {
     command: Command.LAUNCH_DRONE
   })
+  clickCommands.set('switchGunMode', {
+    command: Command.SWITCH_GUN_MODE
+  })
 
   const keysDown: Map<string, string> = new Map()
 

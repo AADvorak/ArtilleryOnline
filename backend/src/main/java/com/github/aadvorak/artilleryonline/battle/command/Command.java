@@ -15,6 +15,7 @@ public enum Command {
     JET_OFF,
     LAUNCH_MISSILE,
     LAUNCH_DRONE,
+    SWITCH_GUN_MODE,
 
     PAUSE,
     RESUME,
