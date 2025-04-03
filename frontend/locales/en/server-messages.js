@@ -10,4 +10,5 @@ export const serverMessages = {
   userAlreadyInRoom: 'User {nickname} is already in room',
   userAlreadyInBattleQueue: 'User {nickname} is already in battle queue',
   userAlreadyInBattle: 'User {nickname} is already in battle',
+  roomIsFull: 'Room is already full'
 }

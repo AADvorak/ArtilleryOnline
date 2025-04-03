@@ -7,9 +7,11 @@ import com.github.aadvorak.artilleryonline.collection.UserRoomMap;
 import com.github.aadvorak.artilleryonline.dto.request.RoomInvitationRequest;
 import com.github.aadvorak.artilleryonline.dto.response.RoomInvitationResponse;
 import com.github.aadvorak.artilleryonline.dto.response.RoomResponse;
+import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
 import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
 import com.github.aadvorak.artilleryonline.model.Locale;
 import com.github.aadvorak.artilleryonline.model.LocaleCode;
+import com.github.aadvorak.artilleryonline.properties.ApplicationLimits;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import com.github.aadvorak.artilleryonline.ws.RoomUpdatesSender;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +47,8 @@ public class RoomInvitationService {
     private final MessageService messageService;
 
     private final ApplicationSettings applicationSettings;
+
+    private final ApplicationLimits applicationLimits;
 
     private final TaskScheduler taskScheduler =
             new ConcurrentTaskScheduler(Executors.newSingleThreadScheduledExecutor());
@@ -89,6 +93,11 @@ public class RoomInvitationService {
             throw new NotFoundAppException();
         }
         userAvailabilityService.checkRoomAvailability(user);
+        var room = invitation.getRoom();
+        if (room.getGuests().size() + 1 >= applicationLimits.getMaxRoomMembers()) {
+            throw new ConflictAppException("Room is already full",
+                    new Locale().setCode(LocaleCode.ROOM_IS_FULL));
+        }
         var existingRoom = userRoomMap.get(user.getId());
         if (existingRoom != null) {
             if (existingRoom.getGuests().containsKey(user.getId())) {
@@ -96,7 +105,6 @@ public class RoomInvitationService {
             }
             roomService.exitRoom(user, existingRoom);
         }
-        var room = invitation.getRoom();
         room.getGuests().put(user.getId(), BattleParticipant.of(user));
         userRoomMap.put(user.getId(), room);
         log.info("acceptInvitation: nickname {}, map size {}, invitation map size {}", user.getNickname(),

@@ -1,4 +1,6 @@
 application:
+  limits:
+    max-room-members: ${APP_LIMITS_MAX_ROOM_MEMBERS:3}
   settings:
     debug: ${APP_SETTINGS_DEBUG:false}
     client-processing: ${APP_SETTINGS_CLIENT_PROCESSING:true}

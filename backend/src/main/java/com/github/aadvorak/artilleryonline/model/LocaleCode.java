@@ -18,7 +18,8 @@ public enum LocaleCode {
     NOT_ENOUGH_PLAYERS("notEnoughPlayers"),
     USER_ALREADY_IN_ROOM("userAlreadyInRoom"),
     USER_ALREADY_IN_BATTLE_QUEUE("userAlreadyInBattleQueue"),
-    USER_ALREADY_IN_BATTLE("userAlreadyInBattle"),;
+    USER_ALREADY_IN_BATTLE("userAlreadyInBattle"),
+    ROOM_IS_FULL("roomIsFull"),;
 
     private final String value;
 }

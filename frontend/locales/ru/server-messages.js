@@ -10,4 +10,5 @@ export const serverMessages = {
   userAlreadyInRoom: 'Пользователь {nickname} уже в комнате',
   userAlreadyInBattleQueue: 'Пользователь {nickname} уже в очереди на бой',
   userAlreadyInBattle: 'Пользователь {nickname} уже в бою',
+  roomIsFull: 'Комната уже заполнена'
 }
