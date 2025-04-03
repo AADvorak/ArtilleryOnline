@@ -12,4 +12,6 @@ import org.springframework.stereotype.Component;
 public class ApplicationLimits {
 
     private int maxRoomMembers;
+
+    private int maxBattles;
 }

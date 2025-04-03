@@ -26,8 +26,6 @@ public class BattleService {
 
     private final UserService userService;
 
-    private final BattleRunner battleRunner;
-
     private final BattleFactory battleFactory;
 
     private final UserAvailabilityService userAvailabilityService;
@@ -71,10 +69,6 @@ public class BattleService {
                     .setParams(new BattleParticipantParams()
                             .setSelectedVehicle(params.getSelectedVehicle()));
             var battle = battleFactory.createBattle(Set.of(userParticipant, otherParticipant), BattleType.TEST_DRIVE);
-            userBattleMap.put(user.getId(), battle);
-            battleRunner.runBattle(battle);
-            log.info("createTestDrive: user {}, battle {}, map size {}", user.getNickname(),
-                    battle.getId(), userBattleMap.size());
             return mapper.map(battle, BattleResponse.class);
         }
     }
@@ -89,10 +83,6 @@ public class BattleService {
                     .setParams(new BattleParticipantParams()
                             .setSelectedVehicle(params.getSelectedVehicle()));
             var battle = battleFactory.createBattle(Set.of(userParticipant), BattleType.DRONE_HUNT);
-            userBattleMap.put(user.getId(), battle);
-            battleRunner.runBattle(battle);
-            log.info("createDroneHunt: user {}, battle {}, map size {}", user.getNickname(),
-                    battle.getId(), userBattleMap.size());
             return mapper.map(battle, BattleResponse.class);
         }
     }
@@ -105,14 +95,9 @@ public class BattleService {
             var battle = battleFactory.createBattle(participants, BattleType.ROOM);
             room.setBattle(battle);
             battle.setRoom(room);
-            participants.forEach(participant -> userBattleMap.put(participant.getUser().getId(), battle));
-            battleRunner.runBattle(battle);
-            var nicknames = participants.stream().map(BattleParticipant::getNickname).toList();
             participants.stream()
                     .map(BattleParticipant::getUser)
                     .forEach(battleStartedSender::send);
-            log.info("startBattle: users {}, battle {}, map size {}", nicknames,
-                    battle.getId(), userBattleMap.size());
         }
     }
 

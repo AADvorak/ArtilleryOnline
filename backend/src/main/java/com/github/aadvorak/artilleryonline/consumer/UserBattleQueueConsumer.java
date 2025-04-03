@@ -2,9 +2,9 @@ package com.github.aadvorak.artilleryonline.consumer;
 
 import com.github.aadvorak.artilleryonline.battle.BattleFactory;
 import com.github.aadvorak.artilleryonline.battle.BattleParticipant;
-import com.github.aadvorak.artilleryonline.battle.BattleRunner;
 import com.github.aadvorak.artilleryonline.battle.BattleType;
 import com.github.aadvorak.artilleryonline.collection.*;
+import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import com.github.aadvorak.artilleryonline.ws.BattleStartedSender;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +29,6 @@ public class UserBattleQueueConsumer implements Runnable {
 
     private final ApplicationSettings applicationSettings;
 
-    private final BattleRunner battleRunner;
-
     private final BattleStartedSender battleStartedSender;
 
     @EventListener(ApplicationReadyEvent.class)
@@ -46,19 +44,23 @@ public class UserBattleQueueConsumer implements Runnable {
                 sleep();
                 continue;
             }
-            var battle = battleFactory.createBattle(elements.stream()
-                    .map(BattleParticipant::of).collect(Collectors.toSet()), BattleType.RANDOM);
-            synchronized (userBattleMap) {
-                elements.forEach(element -> userBattleMap.put(element.getUser().getId(), battle));
-            }
-            battleRunner.runBattle(battle);
             var nicknames = elements.stream()
                     .map(element -> element.getUser().getNickname())
                     .collect(Collectors.toSet());
-            elements.stream()
-                    .map(UserBattleQueueElement::getUser)
-                    .forEach(battleStartedSender::send);
-            log.info("Battle started for users: {}, queue size: {}", nicknames, userBattleQueue.size());
+            synchronized (userBattleMap) {
+                try {
+                    battleFactory.createBattle(elements.stream()
+                            .map(BattleParticipant::of).collect(Collectors.toSet()), BattleType.RANDOM);
+                    elements.stream()
+                            .map(UserBattleQueueElement::getUser)
+                            .forEach(battleStartedSender::send);
+                    log.info("Users {} removed from queue to battle, queue size: {}",
+                            nicknames, userBattleQueue.size());
+                } catch (ConflictAppException ex) {
+                    log.info("Users {} removed from queue but battle not started, queue size: {}",
+                            nicknames, userBattleQueue.size());
+                }
+            }
         }
     }
 
