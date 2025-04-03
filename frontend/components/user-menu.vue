@@ -30,6 +30,7 @@ async function logOut() {
   >
     <template v-slot:activator="{ props }">
       <v-btn
+          class="user-btn"
           v-bind="props"
       >
         <v-icon :icon="mdiAccount" />
@@ -41,3 +42,9 @@ async function logOut() {
     </v-card>
   </v-menu>
 </template>
+
+<style scoped>
+.user-btn {
+  padding: 0 8px;
+}
+</style>
