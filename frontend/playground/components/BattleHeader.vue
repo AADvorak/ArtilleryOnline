@@ -20,6 +20,7 @@ import BattlePing from "~/playground/components/BattlePing.vue";
 import Missiles from "~/playground/components/Missiles.vue";
 import Drone from "~/playground/components/Drone.vue";
 import Bomber from "~/playground/components/Bomber.vue";
+import Gun from "~/playground/components/Gun.vue";
 
 const {t} = useI18n()
 const battleStore = useBattleStore()
@@ -106,6 +107,7 @@ function showHelpDialog() {
     <div v-if="jetAvailable" class="ml-5 jet-bar-wrapper">
       <JetBar />
     </div>
+    <Gun />
     <Missiles />
     <Drone />
     <Bomber />

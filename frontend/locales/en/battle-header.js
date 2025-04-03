@@ -4,5 +4,8 @@ export const battleHeader = {
   bomber: 'Airstrike',
   ready: 'ready',
   preparing: 'preparing',
-  flights: 'flights'
+  flights: 'flights',
+  gun: 'Gun',
+  fixed: 'fixed',
+  autoAngle: 'auto-angle'
 }
