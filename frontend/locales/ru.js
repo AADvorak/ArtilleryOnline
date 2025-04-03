@@ -23,19 +23,13 @@ import {vehicleConfigs} from "~/locales/ru/vehicle-configs.js";
 import {vehicleSpecsDialog} from "~/locales/ru/vehicle-specs-dialog.js";
 import {gunSpecsDialog} from "~/locales/ru/gun-specs-dialog.js";
 import {shellSpecsDialog} from "~/locales/ru/shell-specs-dialog.js";
+import {battleHeader} from "~/locales/ru/battle-header.js";
 
 export const ru = {
   menu,
   appearance,
   battle,
-  battleHeader: {
-    leaveBattle: 'Покинуть бой',
-    drone: 'Дрон',
-    bomber: 'Авиаудар',
-    ready: 'готов',
-    preparing: 'подготовка',
-    flights: 'вылетов'
-  },
+  battleHeader,
   battleHistory,
   battleHistoryFiltersForm,
   battleStatistics,
