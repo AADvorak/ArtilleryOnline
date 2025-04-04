@@ -9,7 +9,7 @@ export function useRequestErrorHandler() {
 
   function handle(errorResponse: ErrorResponse, formValidation?: FormValidation) {
     if (errorResponse.status === 401) {
-      router.push('/sign-in').then()
+      router.push('/login').then()
       return
     }
     if (errorResponse.status === 400 && errorResponse.error.validation && formValidation) {
