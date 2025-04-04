@@ -10,5 +10,6 @@ export const serverMessages = {
   userAlreadyInRoom: 'User {nickname} is already in room',
   userAlreadyInBattleQueue: 'User {nickname} is already in battle queue',
   userAlreadyInBattle: 'User {nickname} is already in battle',
-  roomIsFull: 'Room is already full'
+  roomIsFull: 'Room is already full',
+  maxBattlesLimitExceed: 'Max server battles limit reached. Please try later.'
 }
