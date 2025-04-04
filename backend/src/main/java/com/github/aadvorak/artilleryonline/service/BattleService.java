@@ -26,7 +26,7 @@ public class BattleService {
 
     private final UserService userService;
 
-    private final BattleFactory battleFactory;
+    private final BattleStarter battleStarter;
 
     private final UserAvailabilityService userAvailabilityService;
 
@@ -68,7 +68,7 @@ public class BattleService {
                     .setNickname("Dummy player")
                     .setParams(new BattleParticipantParams()
                             .setSelectedVehicle(params.getSelectedVehicle()));
-            var battle = battleFactory.createBattle(Set.of(userParticipant, otherParticipant), BattleType.TEST_DRIVE);
+            var battle = battleStarter.start(Set.of(userParticipant, otherParticipant), BattleType.TEST_DRIVE);
             return mapper.map(battle, BattleResponse.class);
         }
     }
@@ -82,7 +82,7 @@ public class BattleService {
                     .setNickname(user.getNickname())
                     .setParams(new BattleParticipantParams()
                             .setSelectedVehicle(params.getSelectedVehicle()));
-            var battle = battleFactory.createBattle(Set.of(userParticipant), BattleType.DRONE_HUNT);
+            var battle = battleStarter.start(Set.of(userParticipant), BattleType.DRONE_HUNT);
             return mapper.map(battle, BattleResponse.class);
         }
     }
@@ -92,7 +92,7 @@ public class BattleService {
             checkReadyToBattle(room.getOwner());
             room.getGuests().values().forEach(this::checkReadyToBattle);
             var participants = room.getParticipants();
-            var battle = battleFactory.createBattle(participants, BattleType.ROOM);
+            var battle = battleStarter.start(participants, BattleType.ROOM);
             room.setBattle(battle);
             battle.setRoom(room);
             participants.stream()

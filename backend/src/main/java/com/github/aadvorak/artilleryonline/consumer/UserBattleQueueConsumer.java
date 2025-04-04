@@ -1,7 +1,7 @@
 package com.github.aadvorak.artilleryonline.consumer;
 
-import com.github.aadvorak.artilleryonline.battle.BattleFactory;
 import com.github.aadvorak.artilleryonline.battle.BattleParticipant;
+import com.github.aadvorak.artilleryonline.battle.BattleStarter;
 import com.github.aadvorak.artilleryonline.battle.BattleType;
 import com.github.aadvorak.artilleryonline.collection.*;
 import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
@@ -23,7 +23,7 @@ public class UserBattleQueueConsumer implements Runnable {
 
     private final UserBattleQueue userBattleQueue;
 
-    private final BattleFactory battleFactory;
+    private final BattleStarter battleStarter;
 
     private final UserBattleMap userBattleMap;
 
@@ -49,7 +49,7 @@ public class UserBattleQueueConsumer implements Runnable {
                     .collect(Collectors.toSet());
             synchronized (userBattleMap) {
                 try {
-                    battleFactory.createBattle(elements.stream()
+                    battleStarter.start(elements.stream()
                             .map(BattleParticipant::of).collect(Collectors.toSet()), BattleType.RANDOM);
                     elements.stream()
                             .map(UserBattleQueueElement::getUser)

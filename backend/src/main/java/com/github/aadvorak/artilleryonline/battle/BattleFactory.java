@@ -9,20 +9,20 @@ import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
-import com.github.aadvorak.artilleryonline.battle.preset.*;
+import com.github.aadvorak.artilleryonline.battle.preset.RoomSpecsPreset;
+import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
+import com.github.aadvorak.artilleryonline.battle.preset.VehicleSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleOnGroundProcessor;
-import com.github.aadvorak.artilleryonline.battle.specs.*;
+import com.github.aadvorak.artilleryonline.battle.specs.BomberSpecs;
+import com.github.aadvorak.artilleryonline.battle.specs.DroneSpecs;
+import com.github.aadvorak.artilleryonline.battle.specs.JetSpecs;
+import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.*;
 import com.github.aadvorak.artilleryonline.battle.statistics.UserBattleStatistics;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
-import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.dto.UserVehicleConfigDto;
 import com.github.aadvorak.artilleryonline.entity.User;
 import com.github.aadvorak.artilleryonline.entity.UserSetting;
-import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
-import com.github.aadvorak.artilleryonline.model.Locale;
-import com.github.aadvorak.artilleryonline.model.LocaleCode;
-import com.github.aadvorak.artilleryonline.properties.ApplicationLimits;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import com.github.aadvorak.artilleryonline.repository.UserSettingRepository;
 import com.github.aadvorak.artilleryonline.service.UserVehicleConfigService;
@@ -32,7 +32,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -45,14 +44,7 @@ public class BattleFactory {
 
     private final ApplicationSettings applicationSettings;
 
-    private final ApplicationLimits applicationLimits;
-
-    private final UserBattleMap userBattleMap;
-
-    private final BattleRunner battleRunner;
-
     public Battle createBattle(Set<BattleParticipant> participants, BattleType battleType) {
-        checkMaxBattles();
         var battleModel = new BattleModel()
                 .setRoom(createRoomModel());
         battleModel.setVehicles(createVehicles(participants, battleModel));
@@ -67,24 +59,7 @@ public class BattleFactory {
                 .setUserVehicleNameMap(createUserVehicleNameMap(participants))
                 .setActiveUserIds(new HashSet<>(userMap.keySet()));
         battle.getQueues().setUserCommandQueues(createUserCommandQueues(participants));
-        participants.stream()
-                .filter(participant -> participant.getUser() != null)
-                .forEach(participant -> userBattleMap.put(participant.getUser().getId(), battle));
-        battleRunner.runBattle(battle);
-        var nicknames = participants.stream()
-                .filter(participant -> participant.getUser() != null)
-                .map(BattleParticipant::getNickname)
-                .collect(Collectors.toSet());
-        log.info("Battle of type {} started for users: {}, map size: {}",
-                battleType.name(), nicknames, userBattleMap.size());
         return battle;
-    }
-
-    private void checkMaxBattles() {
-        if (userBattleMap.battlesCount() >= applicationLimits.getMaxBattles()) {
-            throw new ConflictAppException("Max battles limit reached",
-                    new Locale().setCode(LocaleCode.MAX_BATTLES_LIMIT_EXCEED));
-        }
     }
 
     private RoomModel createRoomModel() {
