@@ -24,11 +24,14 @@ watch(() => errorsStore.errors, () => {
   }
 }, {deep: true})
 
-function getErrorMessage(error: ApiErrorResponse) {
+function getErrorMessage(error: ApiErrorResponse): string {
+  const errorMessage = error.message || ''
   if (error.locale) {
-    return t('serverMessages.' + error.locale.code, error.locale.params)
+    const key = 'serverMessages.' + error.locale.code
+    const message = t(key, error.locale.params)
+    return key === message ? errorMessage : message
   } else {
-    return error.message
+    return errorMessage
   }
 }
 
