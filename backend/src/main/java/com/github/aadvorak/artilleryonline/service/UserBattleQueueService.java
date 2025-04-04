@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.service;
 
+import com.github.aadvorak.artilleryonline.battle.BattleStarter;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueue;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueElement;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueParams;
@@ -24,7 +25,10 @@ public class UserBattleQueueService {
 
     private final UserAvailabilityService userAvailabilityService;
 
+    private final BattleStarter battleStarter;
+
     public UserBattleQueueResponse addUserToQueue(UserBattleQueueParams params) {
+        battleStarter.checkMaxBattles();
         var user = userService.getUserFromContext();
         userAvailabilityService.checkBattleQueueAvailability(user);
         var element = new UserBattleQueueElement()

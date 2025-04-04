@@ -44,7 +44,7 @@ public class BattleStarter {
         return battle;
     }
 
-    private void checkMaxBattles() {
+    public void checkMaxBattles() {
         if (userBattleMap.battlesCount() >= applicationLimits.getMaxBattles()) {
             throw new ConflictAppException("Max battles limit reached",
                     new Locale().setCode(LocaleCode.MAX_BATTLES_LIMIT_EXCEED));
