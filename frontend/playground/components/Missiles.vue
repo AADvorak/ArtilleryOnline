@@ -22,7 +22,7 @@ const missileKeys = computed(() => {
 <template>
   <template v-for="missileKey in missileKeys">
     <v-btn
-        class="ml-5 missile-btn"
+        class="missile-btn"
         color="primary"
         :disabled="!missiles[missileKey]"
     >

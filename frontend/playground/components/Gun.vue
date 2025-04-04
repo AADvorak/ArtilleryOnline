@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useBattleStore } from '~/stores/battle'
 import {useUserStore} from '~/stores/user'
 import {useI18n} from "vue-i18n";
+import {mdiCrosshairs, mdiCrosshairsOff} from "@mdi/js";
 
 const {t} = useI18n()
 
@@ -19,16 +20,10 @@ const gunState = computed(() => {
 </script>
 
 <template>
-  <v-btn
+  <icon-btn
+      class="ml-2"
       v-if="!!gunState"
-      class="ml-5 gun-btn"
-  >
-    {{ t('battleHeader.gun') }}: {{ gunState.fixed ? t('battleHeader.fixed') : t('battleHeader.autoAngle') }}
-  </v-btn>
+      :icon="gunState.fixed ? mdiCrosshairsOff : mdiCrosshairs"
+      :tooltip="t('battleHeader.gun') + ': ' + (gunState.fixed ? t('battleHeader.fixed') : t('battleHeader.autoAngle'))"
+  />
 </template>
-
-<style scoped>
-.gun-btn {
-  padding: 0 8px;
-}
-</style>

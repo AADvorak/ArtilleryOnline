@@ -20,7 +20,7 @@ const droneState = computed(() => {
 
 <template>
   <v-btn v-if="droneState && !droneState.launched"
-      class="ml-5 drone-btn"
+      class="drone-btn"
       :color="droneState.readyToLaunch ? 'success' : 'warning'"
   >
     {{ t('battleHeader.drone') }}: {{ droneState.readyToLaunch ? t('battleHeader.ready') : t('battleHeader.preparing') }}

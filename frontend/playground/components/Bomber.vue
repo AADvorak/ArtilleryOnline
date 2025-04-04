@@ -20,7 +20,7 @@ const bomberState = computed(() => {
 
 <template>
   <v-btn v-if="bomberState && bomberState.remainFlights > 0"
-      class="ml-5 bomber-btn"
+      class="bomber-btn"
       :color="bomberState.readyToFlight ? 'success' : 'warning'"
   >
     {{ t('battleHeader.bomber') }}:
