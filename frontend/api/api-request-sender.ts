@@ -71,7 +71,7 @@ export class ApiRequestSender {
     }
     throw {
       status: response.status,
-      error: {}
+      error: await response.json()
     }
   }
 }
