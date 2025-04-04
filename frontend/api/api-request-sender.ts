@@ -52,8 +52,7 @@ export class ApiRequestSender {
   }
 
   async processResponseJson(response: Response) {
-    const isJson = response.headers.get('content-type')?.includes('application/json')
-    const json = isJson ? await response.json() : null
+    const json = await this.getJsonFromResponse(response)
     if (response.ok) {
       return json
     }
@@ -64,14 +63,24 @@ export class ApiRequestSender {
   }
 
   async processResponseBinary(response: Response) {
-    const isBinary = response.headers.get('content-type')?.includes('application/octet-stream')
-    const arrayBuffer = isBinary ? await response.arrayBuffer() : null
+    const arrayBuffer = await this.getBinaryFromResponse(response)
     if (response.ok && arrayBuffer) {
       return arrayBuffer
     }
+    const error = await this.getJsonFromResponse(response)
     throw {
       status: response.status,
-      error: await response.json()
+      error
     }
+  }
+
+  async getJsonFromResponse(response: Response) {
+    const isJson = response.headers.get('content-type')?.includes('application/json')
+    return isJson ? await response.json() : null
+  }
+
+  async getBinaryFromResponse(response: Response) {
+    const isBinary = response.headers.get('content-type')?.includes('application/octet-stream')
+    return isBinary ? await response.arrayBuffer() : null
   }
 }
