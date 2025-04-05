@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import {mdiArrowLeftBox, mdiArrowLeftCircle, mdiArrowRightBox, mdiArrowRightCircle, mdiTarget} from "@mdi/js";
+import {mdiArrowLeftBox, mdiArrowLeftCircle, mdiArrowRightBox,
+  mdiArrowRightCircle, mdiTarget, mdiTurbine} from "@mdi/js";
 import IconBtn from "~/components/icon-btn.vue";
 import {useCommandsSender} from "~/playground/composables/commands-sender";
 import {Command} from "~/playground/data/command";
@@ -77,6 +78,18 @@ function releaseTrigger() {
     command: Command.RELEASE_TRIGGER
   })
 }
+
+function jetOn() {
+  commandsSender.sendCommand({
+    command: Command.JET_ON
+  })
+}
+
+function jetOff() {
+  commandsSender.sendCommand({
+    command: Command.JET_OFF
+  })
+}
 </script>
 
 <template>
@@ -99,8 +112,16 @@ function releaseTrigger() {
     <icon-btn
         :icon="mdiTarget"
         :tooltip="t('controls.shoot')"
+        color="error"
         @mousedown="pushTrigger"
         @mouseup="releaseTrigger"
+    />
+    <icon-btn
+        :icon="mdiTurbine"
+        :tooltip="t('controls.activateJet')"
+        color="warning"
+        @mousedown="jetOn"
+        @mouseup="jetOff"
     />
     <icon-btn
         :icon="mdiArrowLeftCircle"
