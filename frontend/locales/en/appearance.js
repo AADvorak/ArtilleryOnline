@@ -6,4 +6,5 @@ export const appearance = {
   showHpBarsAboveVehicles: 'Show HP bars above vehicles',
   showAllPlayersHpBarsInTopBar: 'Show all players HP bars in top bar',
   showGroundTextureAndBackground: 'Show ground texture and background',
+  showControlButtons: 'Show control buttons',
 }

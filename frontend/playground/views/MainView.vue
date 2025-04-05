@@ -14,6 +14,8 @@ import {useRoomStore} from "~/stores/room";
 import {useBattleStore} from "~/stores/battle";
 import {useRouter} from "#app";
 import ControlButtons from "~/playground/components/ControlButtons.vue";
+import {AppearancesNames} from "~/dictionary/appearances-names";
+import {useUserSettingsStore} from "~/stores/user-settings";
 
 const player = usePlayer()
 const battleUpdater = useBattleUpdater(player)
@@ -25,6 +27,8 @@ const roomStore = useRoomStore()
 const router = useRouter()
 
 const isClientProcessing = computed(() => useSettingsStore().settings?.clientProcessing)
+const showControlButtons = computed(() => useUserSettingsStore()
+    .appearancesOrDefaultsNameValueMapping[AppearancesNames.SHOW_CONTROL_BUTTONS] === '1')
 
 watch(() => battleStore.battle, value => {
   if (!value) {
@@ -49,7 +53,7 @@ onBeforeUnmount(() => {
 <template>
   <BattleHeader />
   <BattleCanvas />
-  <ControlButtons />
+  <ControlButtons v-if="showControlButtons" />
   <FinishBattleDialog />
   <connection-lost-dialog />
 </template>

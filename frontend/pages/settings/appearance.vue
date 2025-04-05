@@ -16,6 +16,7 @@ const settings = reactive({
   showHpBarsAboveVehicles: '1',
   showAllPlayersHpBarsInTopBar: '0',
   showGroundTextureAndBackground: '0',
+  showControlButtons: '0'
 })
 
 const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
@@ -80,6 +81,16 @@ watch(() => settings.showGroundTextureAndBackground, value => {
   }
 })
 
+watch(() => settings.showControlButtons, value => {
+  const existingValue = appearances.value[AppearancesNames.SHOW_CONTROL_BUTTONS]
+  if (value && value !== existingValue) {
+    userSettingsStore.setAppearance({
+      name: AppearancesNames.SHOW_CONTROL_BUTTONS,
+      value
+    })
+  }
+})
+
 onMounted(() => {
   settings.language = appearances.value[AppearancesNames.LANGUAGE]
   settings.vehicleColor = appearances.value[AppearancesNames.VEHICLE_COLOR]
@@ -87,6 +98,7 @@ onMounted(() => {
   settings.showHpBarsAboveVehicles = appearances.value[AppearancesNames.HP_ABOVE]
   settings.showAllPlayersHpBarsInTopBar = appearances.value[AppearancesNames.ALL_HP_TOP]
   settings.showGroundTextureAndBackground = appearances.value[AppearancesNames.GROUND_TEXTURE_BACKGROUND]
+  settings.showControlButtons = appearances.value[AppearancesNames.SHOW_CONTROL_BUTTONS]
 })
 
 function back() {
@@ -161,6 +173,16 @@ function back() {
             <td>
               <v-switch
                   v-model="settings.showGroundTextureAndBackground"
+                  true-value="1"
+                  false-value="0"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>{{ t('appearance.showControlButtons') }}</td>
+            <td>
+              <v-switch
+                  v-model="settings.showControlButtons"
                   true-value="1"
                   false-value="0"
               />
