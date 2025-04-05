@@ -2,6 +2,10 @@
 import { computed } from 'vue'
 import { useBattleStore } from '~/stores/battle'
 import {useUserStore} from '~/stores/user'
+import {useCommandsSender} from "~/playground/composables/commands-sender";
+import {Command} from "~/playground/data/command";
+
+const commandsSender = useCommandsSender()
 
 const userStore = useUserStore()
 const battleStore = useBattleStore()
@@ -17,6 +21,12 @@ const missiles = computed(() => {
 const missileKeys = computed(() => {
   return Object.keys(missiles.value || {})
 })
+
+function launch() {
+  commandsSender.sendCommand({
+    command: Command.LAUNCH_MISSILE
+  })
+}
 </script>
 
 <template>
@@ -25,6 +35,7 @@ const missileKeys = computed(() => {
         class="missile-btn"
         color="primary"
         :disabled="!missiles[missileKey]"
+        @click="launch"
     >
       {{ missileKey }}: {{ missiles[missileKey] }}
     </v-btn>
