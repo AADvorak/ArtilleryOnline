@@ -2,3 +2,7 @@ html {
     -webkit-user-select: none;
     -webkit-touch-callout: none;
 }
+
+body {
+    touch-action: manipulation;
+}
