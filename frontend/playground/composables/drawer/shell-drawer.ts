@@ -5,6 +5,7 @@ import type { ShellModel } from '@/playground/data/model'
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {ShellType} from "~/playground/data/common";
+import {DefaultColors} from "~/dictionary/default-colors";
 
 export function useShellDrawer(
   drawerBase: DrawerBase,
@@ -33,7 +34,7 @@ export function useShellDrawer(
       ctx.value.lineWidth = 1
 
       if (ShellType.SGN === shellModel.specs.type) {
-        ctx.value.fillStyle = 'rgb(248,105,4)'
+        ctx.value.fillStyle = DefaultColors.SIGNAL_SHELL
         ctx.value.beginPath()
         ctx.value.arc(head.x, head.y, drawerBase.scale(caliber / 2), 0, Math.PI * 2)
         ctx.value.fill()

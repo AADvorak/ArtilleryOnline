@@ -10,6 +10,7 @@ import {ParticleProcessor} from "~/playground/battle/processor/particle-processo
 import type {ParticleModel, ShellModel} from "~/playground/data/model";
 import type {Position} from "~/playground/data/common";
 import type {ParticleState} from "~/playground/data/state";
+import {DefaultColors} from "~/dictionary/default-colors";
 
 export function useBattleProcessor() {
 
@@ -72,7 +73,7 @@ export function useBattleProcessor() {
   function processStepActiveParticles(battle: Battle, timeStepSecs: number) {
     Object.values(battle.model.shells).forEach((shell: ShellModel) => {
       if (shell.state.stuck) {
-        battleStore.addParticle(generateParticle(shell.state.position), {color: 'rgb(248,105,4)'})
+        battleStore.addParticle(generateParticle(shell.state.position), {color: DefaultColors.SIGNAL_SHELL})
       }
     })
     Object.values(battleStore.particles).forEach((particle: ParticleModel) => {
