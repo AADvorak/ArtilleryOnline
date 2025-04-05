@@ -95,45 +95,51 @@ function jetOff() {
 <template>
   <v-toolbar absolute class="bottom-left-toolbar" color="transparent">
     <icon-btn
+        class="mr-2" large
         :icon="mdiArrowLeftBox"
         :tooltip="t('controls.moveLeft')"
-        @mousedown="startMoveLeft"
-        @mouseup="stopMoveLeft"
+        @touchstart="startMoveLeft"
+        @touchend="stopMoveLeft"
     />
     <icon-btn
+        class="mr-2" large
         :icon="mdiArrowRightBox"
         :tooltip="t('controls.moveRight')"
-        @mousedown="startMoveRight"
-        @mouseup="stopMoveRight"
+        @touchstart="startMoveRight"
+        @touchend="stopMoveRight"
     />
     <v-spacer/>
   </v-toolbar>
   <v-toolbar absolute class="bottom-right-toolbar" color="transparent">
     <icon-btn
+        class="ml-2" large
         :icon="mdiTarget"
         :tooltip="t('controls.shoot')"
         color="error"
-        @mousedown="pushTrigger"
-        @mouseup="releaseTrigger"
+        @touchstart="pushTrigger"
+        @touchend="releaseTrigger"
     />
     <icon-btn
+        class="ml-2" large
         :icon="mdiTurbine"
         :tooltip="t('controls.activateJet')"
         color="warning"
-        @mousedown="jetOn"
-        @mouseup="jetOff"
+        @touchstart="jetOn"
+        @touchend="jetOff"
     />
     <icon-btn
+        class="ml-2" large
         :icon="mdiArrowLeftCircle"
         :tooltip="t('controls.rotateGunLeft')"
-        @mousedown="startRotateGunLeft"
-        @mouseup="stopRotateGunLeft"
+        @touchstart="startRotateGunLeft"
+        @touchend="stopRotateGunLeft"
     />
     <icon-btn
+        class="ml-2" large
         :icon="mdiArrowRightCircle"
         :tooltip="t('controls.rotateGunRight')"
-        @mousedown="startRotateGunRight"
-        @mouseup="stopRotateGunRight"
+        @touchstart="startRotateGunRight"
+        @touchend="stopRotateGunRight"
     />
   </v-toolbar>
 </template>
