@@ -10,17 +10,16 @@ import {computed} from "vue";
 import {useSettingsStore} from "~/stores/settings";
 import {useContinuousSoundsPlayer} from "~/playground/composables/sound/continuous-sounds-player";
 import {usePlayer} from "~/playground/audio/player";
-import {useMobileDeviceListener} from "~/playground/composables/mobile-device-listener";
 import {useRoomStore} from "~/stores/room";
 import {useBattleStore} from "~/stores/battle";
 import {useRouter} from "#app";
+import ControlButtons from "~/playground/components/ControlButtons.vue";
 
 const player = usePlayer()
 const battleUpdater = useBattleUpdater(player)
 const continuousSoundsPlayer = useContinuousSoundsPlayer(player)
 const commandsSender = useCommandsSender()
 const keyboardListener = useKeyboardListener(commandsSender)
-const mobileDeviceListener = useMobileDeviceListener(commandsSender)
 const battleStore = useBattleStore()
 const roomStore = useRoomStore()
 const router = useRouter()
@@ -35,7 +34,6 @@ watch(() => battleStore.battle, value => {
 
 onMounted(() => {
   keyboardListener.startListening()
-  mobileDeviceListener.startListening()
   battleUpdater.subscribe()
   isClientProcessing.value && useBattleProcessor().startProcessing()
   continuousSoundsPlayer.start()
@@ -43,7 +41,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   keyboardListener.stopListening()
-  mobileDeviceListener.stopListening()
   battleUpdater.unsubscribe()
   continuousSoundsPlayer.stopAll()
 })
@@ -52,6 +49,7 @@ onBeforeUnmount(() => {
 <template>
   <BattleHeader />
   <BattleCanvas />
+  <ControlButtons />
   <FinishBattleDialog />
   <connection-lost-dialog />
 </template>
