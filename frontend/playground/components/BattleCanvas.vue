@@ -26,7 +26,7 @@ const canvasWidth = computed(() => {
   return canvasSize.value ? canvasSize.value.width : window.innerWidth
 })
 const canvasHeight = computed(() => {
-  return canvasSize.value ? canvasSize.value.height : window.innerHeight - 50
+  return canvasSize.value ? canvasSize.value.height : window.innerHeight
 })
 const canvasStyle = computed(() => {
   if (appearances.value[AppearancesNames.GROUND_TEXTURE_BACKGROUND] === '1') {
@@ -62,6 +62,7 @@ onMounted(() => {
   calculateCanvasSize()
   calculateScaleCoefficient()
   addEventListener('resize', onWindowResize)
+  scrollDown()
 })
 
 onBeforeUnmount(() => {
@@ -77,6 +78,11 @@ function onWindowResize() {
     canvas.value.width = canvasWidth.value
     canvas.value.height = canvasHeight.value
   }
+  scrollDown()
+}
+
+function scrollDown() {
+  setTimeout(() => window.scrollTo(0, window.innerHeight), 500)
 }
 
 function initCanvasAndCtx() {
@@ -129,7 +135,7 @@ function calculateCanvasSize() {
   if (battleSize.value) {
     const battleWidthToHeight = battleSize.value.width / battleSize.value.height
     const screenWidth = window.innerWidth
-    const screenHeight = window.innerHeight - 50
+    const screenHeight = window.innerHeight
     const screenWidthToHeight = screenWidth / screenHeight
     if (battleWidthToHeight > screenWidthToHeight) {
       const width = screenWidth

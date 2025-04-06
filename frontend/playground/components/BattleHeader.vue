@@ -72,7 +72,7 @@ function showHelpDialog() {
 </script>
 
 <template>
-  <v-app-bar density="compact">
+  <v-app-bar color="transparent" flat density="compact">
     <div v-if="isDebugMode" class="ml-5">
       <BattleDebugButtons />
     </div>
@@ -84,6 +84,9 @@ function showHelpDialog() {
     </div>
     <div class="ml-5 battle-ping-wrapper">
       <BattlePing />
+    </div>
+    <div class="ml-5 hit-points-bar-wrapper" v-for="userKeyPair in userKeyPairs">
+      <HitPointsBar v-for="userKey in userKeyPair" :user-key="userKey" />
     </div>
     <v-spacer/>
     <icon-btn
@@ -100,10 +103,7 @@ function showHelpDialog() {
     <LeaveBattleDialog ref="leaveBattleDialog"/>
     <HelpDialog ref="helpDialog"/>
   </v-app-bar>
-  <v-app-bar density="compact">
-    <div class="ml-5 hit-points-bar-wrapper" v-for="userKeyPair in userKeyPairs">
-      <HitPointsBar v-for="userKey in userKeyPair" :user-key="userKey" />
-    </div>
+  <v-app-bar color="transparent" flat density="compact">
     <div v-if="jetAvailable" class="ml-5 jet-bar-wrapper">
       <JetBar />
     </div>
