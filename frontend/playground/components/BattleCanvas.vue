@@ -22,6 +22,7 @@ const battle = computed(() => battleStore.battle)
 const battleSize = ref()
 const canvasSize = ref()
 const scaleCoefficient = ref()
+const canvasClass = ref<string>('')
 const canvasWidth = computed(() => {
   return canvasSize.value ? canvasSize.value.width : window.innerWidth
 })
@@ -61,8 +62,8 @@ onMounted(() => {
   calculateBattleSize()
   calculateCanvasSize()
   calculateScaleCoefficient()
+  calculateCanvasClass()
   addEventListener('resize', onWindowResize)
-  scrollDown()
 })
 
 onBeforeUnmount(() => {
@@ -78,11 +79,15 @@ function onWindowResize() {
     canvas.value.width = canvasWidth.value
     canvas.value.height = canvasHeight.value
   }
-  scrollDown()
+  calculateCanvasClass()
 }
 
-function scrollDown() {
-  setTimeout(() => window.scrollTo(0, window.innerHeight), 500)
+function calculateCanvasClass() {
+  if (canvasHeight.value > window.innerHeight - 100) {
+    canvasClass.value = 'canvas-absolute-bottom'
+  } else {
+    canvasClass.value = ''
+  }
 }
 
 function initCanvasAndCtx() {
@@ -166,6 +171,7 @@ function calculateScaleCoefficient() {
         :width="canvasWidth"
         :height="canvasHeight"
         :style="canvasStyle"
+        :class="canvasClass"
     ></canvas>
   </v-main>
 </template>
@@ -174,5 +180,12 @@ function calculateScaleCoefficient() {
 canvas {
   display: block;
   background-size: cover;
+}
+
+.canvas-absolute-bottom {
+  bottom: 0;
+  left: auto;
+  transform: translateX(-50%);
+  position: absolute;
 }
 </style>
