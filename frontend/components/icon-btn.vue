@@ -11,6 +11,7 @@ const props = defineProps<{
   icon: string
   tooltip: string
   large?: boolean
+  preventShowTooltip?: boolean
 }>()
 
 const btn = ref<InstanceType<typeof VBtn> | undefined>()
@@ -63,6 +64,7 @@ function touchEnd() {
         :icon="props.icon"
     />
     <v-tooltip
+        v-if="!props.preventShowTooltip"
         activator="parent"
         location="bottom"
         open-delay="1000">
