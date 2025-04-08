@@ -65,6 +65,14 @@ const jetAvailable = computed(() => {
 
 const isDebugMode = computed(() => settingsStore.settings?.debug)
 
+onMounted(() => {
+  addEventListener('keyup', showHelp)
+})
+
+onUnmounted(() => {
+  removeEventListener('keyup', showHelp)
+})
+
 function showLeaveBattleDialog() {
   leaveBattleDialog.value?.show()
 }

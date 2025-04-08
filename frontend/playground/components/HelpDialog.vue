@@ -10,20 +10,6 @@ const controls = userSettingsStore.controlsOrDefaults
 
 const opened = ref(false)
 
-onMounted(() => {
-  addEventListener('keyup', showHelpIfF1Pressed)
-})
-
-onBeforeUnmount(() => {
-  removeEventListener('keyup', showHelpIfF1Pressed)
-})
-
-function showHelpIfF1Pressed(e) {
-  if (e.code === 'F1') {
-    show()
-  }
-}
-
 function removeKeyStr(str: string) {
   return str.replace('Key', '')
 }
