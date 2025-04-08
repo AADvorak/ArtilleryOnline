@@ -67,15 +67,21 @@ const jetAvailable = computed(() => {
 const isDebugMode = computed(() => settingsStore.settings?.debug)
 
 onMounted(() => {
-  addEventListener('keyup', showHelp)
+  addEventListener('keyup', showHelpIfF1Pressed)
 })
 
 onUnmounted(() => {
-  removeEventListener('keyup', showHelp)
+  removeEventListener('keyup', showHelpIfF1Pressed)
 })
 
 function showLeaveBattleDialog() {
   leaveBattleDialog.value?.show()
+}
+
+function showHelpIfF1Pressed(e) {
+  if (e.code === 'F1') {
+    showHelp()
+  }
 }
 
 function showHelp() {
