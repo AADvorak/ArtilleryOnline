@@ -88,7 +88,7 @@ function selectShell(key) {
       <vertical-tooltip
           :location="VerticalTooltipLocation.BOTTOM"
           :tooltip="ammoKey === selectedShell ? t('controls.selectedShell') : t('controls.selectShell')"
-          :show="globalStateStore.showHelp"
+          :show="globalStateStore.showHelp === VerticalTooltipLocation.BOTTOM"
       />
     </v-btn>
   </template>

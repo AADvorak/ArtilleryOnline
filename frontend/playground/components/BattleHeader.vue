@@ -9,7 +9,7 @@ import {useSettingsStore} from "~/stores/settings";
 import JetBar from "~/playground/components/JetBar.vue";
 import LeaveBattleDialog from "~/playground/components/LeaveBattleDialog.vue";
 import {useUserStore} from "~/stores/user";
-import { mdiCloseThick, mdiHelp } from '@mdi/js'
+import {mdiCloseThick, mdiHelp} from '@mdi/js'
 import IconBtn from "~/components/icon-btn.vue";
 import HelpDialog from "~/playground/components/HelpDialog.vue";
 import {useUserSettingsStore} from "~/stores/user-settings";
@@ -22,6 +22,7 @@ import Drone from "~/playground/components/Drone.vue";
 import Bomber from "~/playground/components/Bomber.vue";
 import Gun from "~/playground/components/Gun.vue";
 import {useGlobalStateStore} from "~/stores/global-state";
+import {VerticalTooltipLocation} from "~/data/model";
 
 const {t} = useI18n()
 const battleStore = useBattleStore()
@@ -79,8 +80,9 @@ function showLeaveBattleDialog() {
 
 function showHelp() {
   if (showControlButtons.value && !globalStateStore.showHelp) {
-    globalStateStore.showHelp = true
-    setTimeout(() => globalStateStore.showHelp = false, 5000)
+    globalStateStore.showHelp = VerticalTooltipLocation.TOP
+    setTimeout(() => globalStateStore.showHelp = VerticalTooltipLocation.BOTTOM, 3000)
+    setTimeout(() => globalStateStore.showHelp = undefined, 6000)
   } else {
     helpDialog.value?.show()
   }

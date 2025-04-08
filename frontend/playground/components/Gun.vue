@@ -38,7 +38,7 @@ function switchMode() {
       v-if="!!gunState"
       :icon="gunState.fixed ? mdiCrosshairsOff : mdiCrosshairs"
       :tooltip="t('controls.switchGunMode')"
-      :show-tooltip="globalStateStore.showHelp"
+      :show-tooltip="globalStateStore.showHelp === VerticalTooltipLocation.BOTTOM"
       :tooltip-location="VerticalTooltipLocation.BOTTOM"
       prevent-show-tooltip
       @click="switchMode"

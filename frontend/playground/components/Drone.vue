@@ -46,7 +46,7 @@ function launch() {
     <vertical-tooltip
         :location="VerticalTooltipLocation.BOTTOM"
         :tooltip="t('controls.launchDrone')"
-        :show="globalStateStore.showHelp"
+        :show="globalStateStore.showHelp === VerticalTooltipLocation.BOTTOM"
     />
   </v-btn>
 </template>

@@ -48,7 +48,7 @@ function launch() {
       <vertical-tooltip
           :location="VerticalTooltipLocation.BOTTOM"
           :tooltip="t('controls.launchMissile')"
-          :show="globalStateStore.showHelp"
+          :show="globalStateStore.showHelp === VerticalTooltipLocation.BOTTOM"
       />
     </v-btn>
   </template>
