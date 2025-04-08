@@ -21,17 +21,20 @@ import Missiles from "~/playground/components/Missiles.vue";
 import Drone from "~/playground/components/Drone.vue";
 import Bomber from "~/playground/components/Bomber.vue";
 import Gun from "~/playground/components/Gun.vue";
+import {useGlobalStateStore} from "~/stores/global-state";
 
 const {t} = useI18n()
 const battleStore = useBattleStore()
 const userStore = useUserStore()
 const settingsStore = useSettingsStore()
 const userSettingsStore = useUserSettingsStore()
+const globalStateStore = useGlobalStateStore()
 
 const leaveBattleDialog = ref<InstanceType<typeof LeaveBattleDialog> | null>(null)
 const helpDialog = ref<InstanceType<typeof HelpDialog> | null>(null)
 
 const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
+const showControlButtons = computed(() => appearances.value[AppearancesNames.SHOW_CONTROL_BUTTONS] === '1')
 
 const userKeys = computed(() => {
   if (appearances.value[AppearancesNames.ALL_HP_TOP] === '1') {
@@ -66,8 +69,13 @@ function showLeaveBattleDialog() {
   leaveBattleDialog.value?.show()
 }
 
-function showHelpDialog() {
-  helpDialog.value?.show()
+function showHelp() {
+  if (showControlButtons.value && !globalStateStore.showHelp) {
+    globalStateStore.showHelp = true
+    setTimeout(() => globalStateStore.showHelp = false, 5000)
+  } else {
+    helpDialog.value?.show()
+  }
 }
 </script>
 
@@ -92,7 +100,7 @@ function showHelpDialog() {
     <icon-btn
         :icon="mdiHelp"
         :tooltip="t('common.help')"
-        @click="showHelpDialog"
+        @click="showHelp"
     />
     <messages-menu/>
     <icon-btn

@@ -6,10 +6,12 @@ import {useCommandsSender} from "~/playground/composables/commands-sender";
 import {Command} from "~/playground/data/command";
 import {MovingDirection} from "~/playground/data/common";
 import {useI18n} from "vue-i18n";
+import {useGlobalStateStore} from "~/stores/global-state";
 
 const {t} = useI18n()
 
 const commandsSender = useCommandsSender()
+const globalStateStore = useGlobalStateStore()
 
 function startMoveRight() {
   commandsSender.sendCommand({
@@ -98,6 +100,7 @@ function jetOff() {
         class="mr-2" large prevent-show-tooltip
         :icon="mdiArrowLeftBox"
         :tooltip="t('controls.moveLeft')"
+        :show-tooltip="globalStateStore.showHelp"
         @touchstart="startMoveLeft"
         @touchend="stopMoveLeft"
     />
@@ -105,6 +108,7 @@ function jetOff() {
         class="mr-2" large prevent-show-tooltip
         :icon="mdiArrowRightBox"
         :tooltip="t('controls.moveRight')"
+        :show-tooltip="globalStateStore.showHelp"
         @touchstart="startMoveRight"
         @touchend="stopMoveRight"
     />
@@ -112,6 +116,7 @@ function jetOff() {
         class="mr-2" large prevent-show-tooltip
         :icon="mdiTarget"
         :tooltip="t('controls.shoot')"
+        :show-tooltip="globalStateStore.showHelp"
         color="error"
         @touchstart="pushTrigger"
         @touchend="releaseTrigger"
@@ -122,6 +127,7 @@ function jetOff() {
         class="ml-2" large prevent-show-tooltip
         :icon="mdiTarget"
         :tooltip="t('controls.shoot')"
+        :show-tooltip="globalStateStore.showHelp"
         color="error"
         @touchstart="pushTrigger"
         @touchend="releaseTrigger"
@@ -130,6 +136,7 @@ function jetOff() {
         class="ml-2" large prevent-show-tooltip
         :icon="mdiTurbine"
         :tooltip="t('controls.activateJet')"
+        :show-tooltip="globalStateStore.showHelp"
         color="warning"
         @touchstart="jetOn"
         @touchend="jetOff"
@@ -138,6 +145,7 @@ function jetOff() {
         class="ml-2" large prevent-show-tooltip
         :icon="mdiArrowLeftCircle"
         :tooltip="t('controls.rotateGunLeft')"
+        :show-tooltip="globalStateStore.showHelp"
         @touchstart="startRotateGunLeft"
         @touchend="stopRotateGunLeft"
     />
@@ -145,6 +153,7 @@ function jetOff() {
         class="ml-2" large prevent-show-tooltip
         :icon="mdiArrowRightCircle"
         :tooltip="t('controls.rotateGunRight')"
+        :show-tooltip="globalStateStore.showHelp"
         @touchstart="startRotateGunRight"
         @touchend="stopRotateGunRight"
     />

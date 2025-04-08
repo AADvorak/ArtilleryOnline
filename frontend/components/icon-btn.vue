@@ -12,6 +12,7 @@ const props = defineProps<{
   tooltip: string
   large?: boolean
   preventShowTooltip?: boolean
+  showTooltip?: boolean
 }>()
 
 const btn = ref<InstanceType<typeof VBtn> | undefined>()
@@ -67,8 +68,19 @@ function touchEnd() {
         v-if="!props.preventShowTooltip"
         activator="parent"
         location="bottom"
-        open-delay="1000">
+        open-delay="1000"
+    >
       {{ props.tooltip }}
+    </v-tooltip>
+    <v-tooltip
+        v-else
+        :model-value="props.showTooltip"
+        activator="parent"
+        location="top"
+        width="30px"
+        height="180px"
+    >
+      <div class="vertical-tooltip">{{ props.tooltip }}</div>
     </v-tooltip>
   </v-btn>
 </template>
@@ -89,5 +101,10 @@ function touchEnd() {
 .icon-large {
   width: 28px;
   height: 28px;
+}
+
+.vertical-tooltip {
+  transform: rotate(-90deg) translateX(-150px);
+  white-space: nowrap;
 }
 </style>
