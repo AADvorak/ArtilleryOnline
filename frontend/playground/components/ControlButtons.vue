@@ -108,7 +108,14 @@ function jetOff() {
         @touchstart="startMoveRight"
         @touchend="stopMoveRight"
     />
-    <v-spacer/>
+    <icon-btn
+        class="mr-2" large prevent-show-tooltip
+        :icon="mdiTarget"
+        :tooltip="t('controls.shoot')"
+        color="error"
+        @touchstart="pushTrigger"
+        @touchend="releaseTrigger"
+    />
   </v-toolbar>
   <v-toolbar absolute class="bottom-right-toolbar" color="transparent">
     <icon-btn
