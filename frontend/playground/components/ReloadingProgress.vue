@@ -1,12 +1,19 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useBattleStore } from '~/stores/battle'
+import {computed} from 'vue'
+import {useBattleStore} from '~/stores/battle'
 import {useCommandsSender} from "@/playground/composables/commands-sender";
 import {Command} from "@/playground/data/command";
 import {useUserStore} from "~/stores/user";
+import {useGlobalStateStore} from "~/stores/global-state";
+import VerticalTooltip from "~/components/vertical-tooltip.vue";
+import {useI18n} from "vue-i18n";
+import {VerticalTooltipLocation} from "~/data/model";
+
+const {t} = useI18n()
 
 const userStore = useUserStore()
 const battleStore = useBattleStore()
+const globalStateStore = useGlobalStateStore()
 const commandsSender = useCommandsSender()
 
 const userVehicle = computed(() => {
@@ -78,6 +85,11 @@ function selectShell(key) {
         @click="() => selectShell(ammoKey)"
     >
       {{ ammoKey }}({{ index + 1 }}): {{ ammo[ammoKey] }}
+      <vertical-tooltip
+          :location="VerticalTooltipLocation.BOTTOM"
+          :tooltip="ammoKey === selectedShell ? t('controls.selectedShell') : t('controls.selectShell')"
+          :show="globalStateStore.showHelp"
+      />
     </v-btn>
   </template>
   <v-progress-circular v-if="showProgress" color="lime" :model-value="reloadingProgress" />

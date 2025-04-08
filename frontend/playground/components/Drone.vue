@@ -1,12 +1,17 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useBattleStore } from '~/stores/battle'
+import {computed} from 'vue'
+import {useBattleStore} from '~/stores/battle'
 import {useUserStore} from '~/stores/user'
 import {useI18n} from "vue-i18n";
 import {useCommandsSender} from "~/playground/composables/commands-sender";
 import {Command} from "~/playground/data/command";
+import VerticalTooltip from "~/components/vertical-tooltip.vue";
+import {useGlobalStateStore} from "~/stores/global-state";
+import {VerticalTooltipLocation} from "~/data/model";
 
 const {t} = useI18n()
+
+const globalStateStore = useGlobalStateStore()
 
 const commandsSender = useCommandsSender()
 
@@ -38,6 +43,11 @@ function launch() {
     {{ t('battleHeader.drone') }}: {{
       droneState.readyToLaunch ? t('battleHeader.ready') : t('battleHeader.preparing')
     }}
+    <vertical-tooltip
+        :location="VerticalTooltipLocation.BOTTOM"
+        :tooltip="t('controls.launchDrone')"
+        :show="globalStateStore.showHelp"
+    />
   </v-btn>
 </template>
 

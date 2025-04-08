@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type {VBtn} from "vuetify/components";
+import VerticalTooltip from "~/components/vertical-tooltip.vue";
+import {VerticalTooltipLocation} from "~/data/model";
 
 enum TouchType {
   START = 'touchstart',
@@ -13,6 +15,7 @@ const props = defineProps<{
   large?: boolean
   preventShowTooltip?: boolean
   showTooltip?: boolean
+  tooltipLocation?: VerticalTooltipLocation
 }>()
 
 const btn = ref<InstanceType<typeof VBtn> | undefined>()
@@ -72,16 +75,12 @@ function touchEnd() {
     >
       {{ props.tooltip }}
     </v-tooltip>
-    <v-tooltip
+    <vertical-tooltip
         v-else
-        :model-value="props.showTooltip"
-        activator="parent"
-        location="top"
-        width="30px"
-        height="180px"
-    >
-      <div class="vertical-tooltip">{{ props.tooltip }}</div>
-    </v-tooltip>
+        :location="props.tooltipLocation"
+        :tooltip="props.tooltip"
+        :show="props.showTooltip"
+    />
   </v-btn>
 </template>
 
@@ -101,10 +100,5 @@ function touchEnd() {
 .icon-large {
   width: 28px;
   height: 28px;
-}
-
-.vertical-tooltip {
-  transform: rotate(-90deg) translateX(-150px);
-  white-space: nowrap;
 }
 </style>

@@ -163,3 +163,8 @@ export interface UserVehicleConfig {
 export interface UserVehicleConfigs {
   [name: string]: UserVehicleConfig
 }
+
+export enum VerticalTooltipLocation {
+  TOP = 'top',
+  BOTTOM = 'bottom'
+}

@@ -4,11 +4,18 @@ import { useBattleStore } from '~/stores/battle'
 import {useUserStore} from '~/stores/user'
 import {useCommandsSender} from "~/playground/composables/commands-sender";
 import {Command} from "~/playground/data/command";
+import {useGlobalStateStore} from "~/stores/global-state";
+import {VerticalTooltipLocation} from "~/data/model";
+import VerticalTooltip from "~/components/vertical-tooltip.vue";
+import {useI18n} from "vue-i18n";
+
+const {t} = useI18n()
 
 const commandsSender = useCommandsSender()
 
 const userStore = useUserStore()
 const battleStore = useBattleStore()
+const globalStateStore = useGlobalStateStore()
 
 const userVehicle = computed(() => {
   return battleStore.battle?.model.vehicles[userStore.user!.nickname]
@@ -38,6 +45,11 @@ function launch() {
         @click="launch"
     >
       {{ missileKey }}: {{ missiles[missileKey] }}
+      <vertical-tooltip
+          :location="VerticalTooltipLocation.BOTTOM"
+          :tooltip="t('controls.launchMissile')"
+          :show="globalStateStore.showHelp"
+      />
     </v-btn>
   </template>
 </template>

@@ -11,5 +11,7 @@ export const controls = {
   launchMissile: 'Launch missile',
   launchDrone: 'Launch drone',
   switchGunMode: 'Switch gun mode',
-  resetToDefaults: 'Reset to defaults'
+  resetToDefaults: 'Reset to defaults',
+  selectShell: 'Select shell',
+  selectedShell: 'Selected shell',
 }

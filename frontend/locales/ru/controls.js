@@ -11,5 +11,7 @@ export const controls = {
   launchMissile: 'Запустить ракету',
   launchDrone: 'Запустить дрон',
   switchGunMode: 'Переключить режим орудия',
-  resetToDefaults: 'Сбросить по умолчанию'
+  resetToDefaults: 'Сбросить по умолчанию',
+  selectShell: 'Выбрать снаряд',
+  selectedShell: 'Выбранный снаряд',
 }
