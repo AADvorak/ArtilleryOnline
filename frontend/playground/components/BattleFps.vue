@@ -24,7 +24,7 @@ const fpsClass = computed(() => {
 </script>
 
 <template>
-  <div :class="fpsClass">{{ fps }}fps</div>
+  <div :class="fpsClass">{{ fps }} fps</div>
 </template>
 
 <style scoped>
