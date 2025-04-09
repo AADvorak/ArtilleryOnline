@@ -57,11 +57,11 @@ function padStart(value: number, maxLength: number = 2) {
 <style scoped>
 .battle-timer {
   color: aquamarine;
-  font-size: large;
+  font-size: 16px;
 }
 
 .battle-timer_waiting {
   color: crimson;
-  font-size: large;
+  font-size: 16px;
 }
 </style>

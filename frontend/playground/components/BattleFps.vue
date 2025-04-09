@@ -30,16 +30,16 @@ const fpsClass = computed(() => {
 <style scoped>
 .battle-fps-green {
   color: green;
-  font-size: large;
+  font-size: 16px;
 }
 
 .battle-fps-orange {
   color: orange;
-  font-size: large;
+  font-size: 16px;
 }
 
 .battle-fps-red {
   color: crimson;
-  font-size: large;
+  font-size: 16px;
 }
 </style>

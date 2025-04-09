@@ -26,16 +26,16 @@ const pingClass = computed(() => {
 <style scoped>
 .battle-ping-green {
   color: green;
-  font-size: large;
+  font-size: 16px;
 }
 
 .battle-ping-orange {
   color: orange;
-  font-size: large;
+  font-size: 16px;
 }
 
 .battle-ping-red {
   color: crimson;
-  font-size: large;
+  font-size: 16px;
 }
 </style>
