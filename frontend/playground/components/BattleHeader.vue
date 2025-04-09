@@ -103,10 +103,10 @@ function showHelp() {
     <div class="ml-4 battle-timer-wrapper">
       <BattleTimer />
     </div>
-    <div class="ml-4 battle-fps-wrapper">
+    <div class="ml-2 battle-fps-wrapper">
       <BattleFps />
     </div>
-    <div class="ml-4 battle-ping-wrapper">
+    <div class="ml-2 battle-ping-wrapper">
       <BattlePing />
     </div>
     <div class="ml-4 hit-points-bar-wrapper" v-for="userKeyPair in userKeyPairs">
