@@ -4,8 +4,13 @@ import {useStompClientStore} from "~/stores/stomp-client";
 
 const stompClientStore = useStompClientStore()
 
-const pingTime = computed(() => {
-  return stompClientStore.pingTime
+const pingTime = computed(() => stompClientStore.pingTime)
+
+const pingTimeRestricted = computed(() => {
+  if (!pingTime.value || pingTime.value < 0) {
+    return 0
+  }
+  return pingTime.value
 })
 
 const pingClass = computed(() => {
@@ -20,7 +25,12 @@ const pingClass = computed(() => {
 </script>
 
 <template>
-  <div :class="pingClass">Ping {{ pingTime }}ms</div>
+  <div :class="pingClass">
+    Ping
+    <span v-if="pingTime < 1000">{{ pingTimeRestricted }}</span>
+    <span v-else>&infin;</span>
+    ms
+  </div>
 </template>
 
 <style scoped>
