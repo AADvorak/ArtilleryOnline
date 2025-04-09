@@ -96,20 +96,20 @@ function showHelp() {
 </script>
 
 <template>
-  <v-app-bar color="transparent" flat density="compact">
-    <div v-if="isDebugMode" class="ml-5">
+  <v-toolbar height="36px" color="transparent" class="toolbar">
+    <div v-if="isDebugMode" class="ml-4">
       <BattleDebugButtons />
     </div>
-    <div class="ml-5 battle-timer-wrapper">
+    <div class="ml-4 battle-timer-wrapper">
       <BattleTimer />
     </div>
-    <div class="ml-5 battle-fps-wrapper">
+    <div class="ml-4 battle-fps-wrapper">
       <BattleFps />
     </div>
-    <div class="ml-5 battle-ping-wrapper">
+    <div class="ml-4 battle-ping-wrapper">
       <BattlePing />
     </div>
-    <div class="ml-5 hit-points-bar-wrapper" v-for="userKeyPair in userKeyPairs">
+    <div class="ml-4 hit-points-bar-wrapper" v-for="userKeyPair in userKeyPairs">
       <HitPointsBar v-for="userKey in userKeyPair" :user-key="userKey" />
     </div>
     <v-spacer/>
@@ -126,9 +126,9 @@ function showHelp() {
     />
     <LeaveBattleDialog ref="leaveBattleDialog"/>
     <HelpDialog ref="helpDialog"/>
-  </v-app-bar>
-  <v-app-bar color="transparent" flat density="compact">
-    <div v-if="jetAvailable" class="ml-5 jet-bar-wrapper">
+  </v-toolbar>
+  <v-toolbar height="36px" color="transparent" class="toolbar">
+    <div v-if="jetAvailable" class="ml-4 jet-bar-wrapper">
       <JetBar />
     </div>
     <Gun />
@@ -136,7 +136,7 @@ function showHelp() {
     <Drone />
     <Bomber />
     <ReloadingProgress />
-  </v-app-bar>
+  </v-toolbar>
 </template>
 
 <style scoped>
@@ -158,5 +158,9 @@ function showHelp() {
 
 .jet-bar-wrapper {
   min-width: 200px;
+}
+
+.toolbar {
+  z-index: 10;
 }
 </style>
