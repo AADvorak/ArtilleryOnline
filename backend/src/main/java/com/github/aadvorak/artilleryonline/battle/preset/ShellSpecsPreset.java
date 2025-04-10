@@ -99,7 +99,7 @@ public enum ShellSpecsPreset {
             .setCaliber(0.12)
             .setType(ShellType.BMB)),
     BMB("BMB", new ShellSpecs()
-            .setDamage(8.0)
+            .setDamage(12.0)
             .setRadius(0.7)
             .setVelocity(5.0)
             .setMass(0.008)
