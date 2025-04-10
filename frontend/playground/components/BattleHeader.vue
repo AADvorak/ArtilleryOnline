@@ -24,12 +24,17 @@ import Gun from "~/playground/components/Gun.vue";
 import {useGlobalStateStore} from "~/stores/global-state";
 import {VerticalTooltipLocation} from "~/data/model";
 
+const RESERVED_WIDTH = 344
+const HP_BAR_WIDTH = 216
+
 const {t} = useI18n()
 const battleStore = useBattleStore()
 const userStore = useUserStore()
 const settingsStore = useSettingsStore()
 const userSettingsStore = useUserSettingsStore()
 const globalStateStore = useGlobalStateStore()
+
+const availableHpSlots = ref<number>(0)
 
 const leaveBattleDialog = ref<InstanceType<typeof LeaveBattleDialog> | null>(null)
 const helpDialog = ref<InstanceType<typeof HelpDialog> | null>(null)
@@ -38,23 +43,36 @@ const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameVa
 const showControlButtons = computed(() => appearances.value[AppearancesNames.SHOW_CONTROL_BUTTONS] === '1')
 
 const userKeys = computed(() => {
-  if (appearances.value[AppearancesNames.ALL_HP_TOP] === '1') {
-    return Object.keys(battleStore.vehicles || [])
+  if (!availableHpSlots.value) {
+    return []
   }
-  return [userStore.user!.nickname]
+  const keys = Object.keys(battleStore.vehicles || [])
+  if (appearances.value[AppearancesNames.ALL_HP_TOP] !== '1' || keys.length > 2 * availableHpSlots.value) {
+    return [userStore.user!.nickname]
+  }
+  return keys
 })
 
 const userKeyPairs = computed(() => {
   const usersCount = userKeys.value.length
-  const pairsCount = Math.ceil(usersCount / 2)
   const pairs = []
-  for (let pairNumber = 0; pairNumber < pairsCount; pairNumber++) {
-    const pair = []
-    const first = userKeys.value[2 * pairNumber]
-    first && pair.push(first)
-    const second = userKeys.value[2 * pairNumber + 1]
-    second && pair.push(second)
-    pairs.push(pair)
+  if (usersCount === 0) {
+    return pairs
+  }
+  if (usersCount <= availableHpSlots.value) {
+    for (const userKey of userKeys.value) {
+      pairs.push([userKey])
+    }
+  } else {
+    const pairsCount = Math.ceil(usersCount / 2)
+    for (let pairNumber = 0; pairNumber < pairsCount; pairNumber++) {
+      const pair = []
+      const first = userKeys.value[2 * pairNumber]
+      first && pair.push(first)
+      const second = userKeys.value[2 * pairNumber + 1]
+      second && pair.push(second)
+      pairs.push(pair)
+    }
   }
   return pairs
 })
@@ -67,10 +85,13 @@ const jetAvailable = computed(() => {
 const isDebugMode = computed(() => settingsStore.settings?.debug)
 
 onMounted(() => {
+  calculateAvailableHpSlots()
+  addEventListener('resize', calculateAvailableHpSlots)
   addEventListener('keyup', showHelpIfF1Pressed)
 })
 
 onUnmounted(() => {
+  removeEventListener('resize', calculateAvailableHpSlots)
   removeEventListener('keyup', showHelpIfF1Pressed)
 })
 
@@ -92,6 +113,12 @@ function showHelp() {
   } else {
     helpDialog.value?.show()
   }
+}
+
+function calculateAvailableHpSlots() {
+  let availableWidth = window.innerWidth - RESERVED_WIDTH
+  if (availableWidth < 0) availableWidth = 0
+  availableHpSlots.value = Math.floor(availableWidth / HP_BAR_WIDTH)
 }
 </script>
 
