@@ -14,6 +14,8 @@ import {useSurfaceDrawer} from "~/playground/composables/drawer/surface-drawer";
 import {useParticleDrawer} from "~/playground/composables/drawer/particle-drawer";
 import {useShellTrajectoryDrawer} from "~/playground/composables/drawer/shell-trajectory-drawer";
 
+const HEADER_HEIGHT = 72
+
 const battleStore = useBattleStore()
 const userSettingsStore = useUserSettingsStore()
 
@@ -83,7 +85,7 @@ function onWindowResize() {
 }
 
 function calculateCanvasClass() {
-  if (canvasHeight.value > window.innerHeight - 100) {
+  if (canvasHeight.value > window.innerHeight - HEADER_HEIGHT) {
     canvasClass.value = 'canvas-absolute-bottom'
   } else {
     canvasClass.value = ''
