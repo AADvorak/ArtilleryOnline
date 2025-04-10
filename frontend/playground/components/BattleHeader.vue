@@ -34,13 +34,16 @@ const settingsStore = useSettingsStore()
 const userSettingsStore = useUserSettingsStore()
 const globalStateStore = useGlobalStateStore()
 
+const props = defineProps<{
+  showControlButtons: boolean
+}>()
+
 const availableHpSlots = ref<number>(0)
 
 const leaveBattleDialog = ref<InstanceType<typeof LeaveBattleDialog> | null>(null)
 const helpDialog = ref<InstanceType<typeof HelpDialog> | null>(null)
 
 const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
-const showControlButtons = computed(() => appearances.value[AppearancesNames.SHOW_CONTROL_BUTTONS] === '1')
 
 const userKeys = computed(() => {
   if (!availableHpSlots.value) {
@@ -106,7 +109,7 @@ function showHelpIfF1Pressed(e) {
 }
 
 function showHelp() {
-  if (showControlButtons.value && !globalStateStore.showHelp) {
+  if (props.showControlButtons && !globalStateStore.showHelp) {
     globalStateStore.showHelp = VerticalTooltipLocation.TOP
     setTimeout(() => globalStateStore.showHelp = VerticalTooltipLocation.BOTTOM, 3000)
     setTimeout(() => globalStateStore.showHelp = undefined, 6000)
