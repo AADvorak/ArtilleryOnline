@@ -26,9 +26,13 @@ const battleStore = useBattleStore()
 const roomStore = useRoomStore()
 const router = useRouter()
 
+const isMobileBrowser = ref<boolean>(false)
+
 const isClientProcessing = computed(() => useSettingsStore().settings?.clientProcessing)
-const showControlButtons = computed(() => useUserSettingsStore()
-    .appearancesOrDefaultsNameValueMapping[AppearancesNames.SHOW_CONTROL_BUTTONS] === '1')
+const showControlButtons = computed(() => {
+  return isMobileBrowser.value || useUserSettingsStore()
+      .appearancesOrDefaultsNameValueMapping[AppearancesNames.SHOW_CONTROL_BUTTONS] === '1'
+})
 
 watch(() => battleStore.battle, value => {
   if (!value) {
@@ -37,6 +41,7 @@ watch(() => battleStore.battle, value => {
 })
 
 onMounted(() => {
+  calculateIsMobileBrowser()
   keyboardListener.startListening()
   battleUpdater.subscribe()
   isClientProcessing.value && useBattleProcessor().startProcessing()
@@ -48,6 +53,11 @@ onBeforeUnmount(() => {
   battleUpdater.unsubscribe()
   continuousSoundsPlayer.stopAll()
 })
+
+function calculateIsMobileBrowser() {
+  const userAgent = navigator.userAgent || navigator.vendor
+  isMobileBrowser.value = /Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(userAgent)
+}
 </script>
 
 <template>
