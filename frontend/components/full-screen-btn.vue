@@ -8,7 +8,12 @@ const {t} = useI18n()
 const isFullScreen = ref<boolean>(false)
 
 onMounted(() => {
+  addEventListener('fullscreenchange', checkFullScreen)
   checkFullScreen()
+})
+
+onUnmounted(() => {
+  removeEventListener('fullscreenchange', checkFullScreen)
 })
 
 async function toggleFullScreen() {
@@ -17,7 +22,6 @@ async function toggleFullScreen() {
   } else if (document.exitFullscreen) {
     await document.exitFullscreen()
   }
-  checkFullScreen()
 }
 
 function checkFullScreen() {
