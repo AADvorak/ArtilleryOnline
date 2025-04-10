@@ -29,7 +29,7 @@ public enum DroneSpecsPreset {
             .setEnginesRadius(0.22)
             .setFlyHeight(6.0)
             .setCriticalAngle(Math.PI / 25)
-            .setMaxEngineAcceleration(10.0)
+            .setMaxEngineAcceleration(11.0)
             .setPrepareToLaunchTime(20.0)
             .setMinCollisionDestroyImpact(0.05)
     );

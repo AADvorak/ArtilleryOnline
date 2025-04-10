@@ -37,7 +37,7 @@ public enum VehicleSpecsPreset {
 
     MEDIUM("Medium", new VehicleSpecs()
             .setName("Medium")
-            .setMissiles(4)
+            .setMissiles(3)
             .setRadius(0.4)
             .setHullRadius(0.4)
             .setWheelRadius(0.1)
