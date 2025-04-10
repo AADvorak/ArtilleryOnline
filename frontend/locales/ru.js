@@ -43,7 +43,8 @@ export const ru = {
   finishBattleDialog,
   fullScreenBtn: {
     enter: 'На полный экран',
-    exit: 'Полный экран - выход'
+    exit: 'Полный экран - выход',
+    error: 'Не удалось перейти в полноэкранный режим'
   },
   gunSpecsDialog,
   jetBar: {

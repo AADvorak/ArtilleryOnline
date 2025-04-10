@@ -43,7 +43,8 @@ export const en = {
   finishBattleDialog,
   fullScreenBtn: {
     enter: 'Enter full screen',
-    exit: 'Exit full screen'
+    exit: 'Exit full screen',
+    error: 'Unable to enter full screen mode'
   },
   gunSpecsDialog,
   jetBar: {

@@ -24,6 +24,13 @@ watch(() => errorsStore.errors, () => {
   }
 }, {deep: true})
 
+watch(() => errorsStore.messages, () => {
+  if (errorsStore.messages.length) {
+    message.value = errorsStore.messages.shift() as string
+    opened.value = true
+  }
+}, {deep: true})
+
 function getErrorMessage(error: ApiErrorResponse): string {
   const errorMessage = error.message || ''
   if (error.locale) {
