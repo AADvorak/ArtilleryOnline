@@ -6,6 +6,7 @@ import {ref} from "vue";
 import type {StompSubscription} from "@stomp/stompjs";
 import {useRouter} from "#app";
 import {useQueueStore} from "~/stores/queue";
+import FullScreenBtn from "~/components/full-screen-btn.vue";
 
 const stompClientStore = useStompClientStore()
 const queueStore = useQueueStore()
@@ -33,6 +34,7 @@ function subscribe() {
       <v-spacer />
       <messages-menu />
       <room-menu />
+      <full-screen-btn />
       <user-menu />
     </v-app-bar>
     <div class="d-flex align-center justify-center flex-column default">

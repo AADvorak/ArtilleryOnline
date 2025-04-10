@@ -41,6 +41,10 @@ export const en = {
   },
   controls,
   finishBattleDialog,
+  fullScreenBtn: {
+    enter: 'Enter full screen',
+    exit: 'Exit full screen'
+  },
   gunSpecsDialog,
   jetBar: {
     title: 'Jet'

@@ -23,8 +23,9 @@ import Bomber from "~/playground/components/Bomber.vue";
 import Gun from "~/playground/components/Gun.vue";
 import {useGlobalStateStore} from "~/stores/global-state";
 import {VerticalTooltipLocation} from "~/data/model";
+import FullScreenBtn from "~/components/full-screen-btn.vue";
 
-const RESERVED_WIDTH = 344
+const RESERVED_WIDTH = 380
 const HP_BAR_WIDTH = 216
 
 const {t} = useI18n()
@@ -149,6 +150,7 @@ function calculateAvailableHpSlots() {
         @click="showHelp"
     />
     <messages-menu/>
+    <full-screen-btn />
     <icon-btn
         :icon="mdiCloseThick"
         :tooltip="t('battleHeader.leaveBattle')"

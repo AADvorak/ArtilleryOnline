@@ -41,6 +41,10 @@ export const ru = {
   },
   controls,
   finishBattleDialog,
+  fullScreenBtn: {
+    enter: 'На полный экран',
+    exit: 'Полный экран - выход'
+  },
   gunSpecsDialog,
   jetBar: {
     title: 'Джетпак'
