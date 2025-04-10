@@ -70,6 +70,8 @@ function touchEnd() {
     <v-tooltip
         v-if="!props.preventShowTooltip"
         activator="parent"
+        :open-on-click="false"
+        :open-on-focus="false"
         location="bottom"
         open-delay="1000"
     >
