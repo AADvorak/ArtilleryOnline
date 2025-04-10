@@ -16,6 +16,9 @@ const textClass = computed(() => `vertical-tooltip-${location.value}`)
   <v-tooltip
       :model-value="props.show"
       activator="parent"
+      :open-on-click="false"
+      :open-on-hover="false"
+      :open-on-focus="false"
       :location="location"
       width="30px"
       height="180px"
