@@ -43,6 +43,7 @@ function stopListening() {
 }
 
 function click() {
+  btn.value?.$el.blur()
   emit('click')
 }
 
