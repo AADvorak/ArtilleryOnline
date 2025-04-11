@@ -38,6 +38,7 @@ const guns = computed(() => {
     return []
   }
   return Object.keys(vehicleSpecs.value.availableGuns)
+      .map(key => ({key, title: t(`names.guns.${key}`)}))
 })
 
 const maxAmmo = computed(() => {
@@ -172,6 +173,8 @@ function back() {
           <v-select
               v-model="config.gun"
               :items="guns"
+              item-value="key"
+              item-title="title"
               density="compact"
               :label="t('vehicleConfigs.selectGun')"
           >

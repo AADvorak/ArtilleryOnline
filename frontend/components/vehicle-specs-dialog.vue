@@ -64,7 +64,7 @@ defineExpose({
         <vehicle-specs-table :vehicle-specs="vehicleSpecs"/>
         <div class="mt-4" v-if="gunSpecs">
           <div class="subheader">
-            {{ t('gunSpecsDialog.title') }}: {{ vehicleConfig.gun }}
+            {{ t('gunSpecsDialog.title') }}: {{ t(`names.guns.${vehicleConfig.gun}`) }}
           </div>
           <div class="mt-4">
             <gun-shells-specs-tables :gun-specs="gunSpecs"/>

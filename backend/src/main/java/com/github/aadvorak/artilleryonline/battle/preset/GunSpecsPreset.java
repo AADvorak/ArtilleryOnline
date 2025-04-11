@@ -10,7 +10,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public enum GunSpecsPreset {
 
-    HEAVY("Heavy gun", new GunSpecs()
+    HEAVY("Heavy", new GunSpecs()
             .setAmmo(60)
             .setLoadTime(5.0)
             .setRotationVelocity(0.35)
@@ -21,7 +21,7 @@ public enum GunSpecsPreset {
                     ShellSpecsPreset.HEAVY_HE.getName(), ShellSpecsPreset.HEAVY_HE.getSpecs()
             ))),
 
-    HEAVY_MORTAR("Heavy mortar", new GunSpecs()
+    HEAVY_MORTAR("HeavyMortar", new GunSpecs()
             .setAmmo(30)
             .setLoadTime(9.0)
             .setRotationVelocity(0.3)
@@ -31,7 +31,7 @@ public enum GunSpecsPreset {
                     ShellSpecsPreset.BMB_H.getName(), ShellSpecsPreset.BMB_H.getSpecs()
             ))),
 
-    HEAVY_L("Heavy light gun", new GunSpecs()
+    HEAVY_L("HeavyL", new GunSpecs()
             .setAmmo(80)
             .setLoadTime(3.0)
             .setRotationVelocity(0.4)
@@ -42,7 +42,7 @@ public enum GunSpecsPreset {
                     ShellSpecsPreset.HEAVY_HE_L.getName(), ShellSpecsPreset.HEAVY_HE_L.getSpecs()
             ))),
 
-    MEDIUM("Medium gun", new GunSpecs()
+    MEDIUM("Medium", new GunSpecs()
             .setAmmo(80)
             .setLoadTime(3.0)
             .setRotationVelocity(0.4)
@@ -53,7 +53,7 @@ public enum GunSpecsPreset {
                     ShellSpecsPreset.MEDIUM_HE.getName(), ShellSpecsPreset.MEDIUM_HE.getSpecs()
             ))),
 
-    MEDIUM_L("Medium light gun", new GunSpecs()
+    MEDIUM_L("MediumL", new GunSpecs()
             .setAmmo(360)
             .setLoadTime(0.3)
             .setRotationVelocity(0.45)
@@ -63,7 +63,7 @@ public enum GunSpecsPreset {
                     ShellSpecsPreset.MEDIUM_AP_L.getName(), ShellSpecsPreset.MEDIUM_AP_L.getSpecs()
             ))),
 
-    LIGHT("Light gun", new GunSpecs()
+    LIGHT("Light", new GunSpecs()
             .setAmmo(320)
             .setLoadTime(0.5)
             .setRotationVelocity(0.45)
@@ -74,7 +74,7 @@ public enum GunSpecsPreset {
                     ShellSpecsPreset.LIGHT_SGN.getName(), ShellSpecsPreset.LIGHT_SGN.getSpecs()
             ))),
 
-    LIGHT_H("Light heavy gun", new GunSpecs()
+    LIGHT_H("LightH", new GunSpecs()
             .setAmmo(100)
             .setLoadTime(2.2)
             .setRotationVelocity(0.42)
@@ -85,7 +85,7 @@ public enum GunSpecsPreset {
                     ShellSpecsPreset.LIGHT_SGN.getName(), ShellSpecsPreset.LIGHT_SGN.getSpecs()
             ))),
 
-    DRONE_LIGHT("Drone light gun", new GunSpecs()
+    DRONE_LIGHT("DroneLight", new GunSpecs()
             .setAmmo(8)
             .setLoadTime(0.3)
             .setRotationVelocity(0.0)
@@ -95,7 +95,7 @@ public enum GunSpecsPreset {
                     ShellSpecsPreset.DRONE_AP.getName(), ShellSpecsPreset.DRONE_AP.getSpecs()
             ))),
 
-    DRONE_HEAVY("Drone heavy gun", new GunSpecs()
+    DRONE_HEAVY("DroneHeavy", new GunSpecs()
             .setAmmo(3)
             .setLoadTime(2.0)
             .setRotationVelocity(0.0)
