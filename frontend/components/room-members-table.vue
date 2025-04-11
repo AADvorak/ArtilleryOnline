@@ -53,7 +53,7 @@ async function removeUserFromRoom(nickname: string) {
         <v-icon :icon="roomMember.owner ? mdiCrown : mdiKnifeMilitary" />
         {{ roomMember.nickname }}
       </td>
-      <td>{{ roomMember.selectedVehicle }}</td>
+      <td>{{ roomMember.selectedVehicle ? t(`names.vehicles.${roomMember.selectedVehicle}`) : '' }}</td>
       <td v-if="roomStore.userIsRoomOwner" class="btn-column">
         <icon-btn
             v-if="!roomMember.owner"

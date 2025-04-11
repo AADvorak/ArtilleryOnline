@@ -28,6 +28,7 @@ const battleTypes = computed(() => [BattleType.RANDOM, BattleType.ROOM, BattleTy
     .map(key => ({key, name: t('commonHistory.battleTypes.' + key)})))
 const vehicles = computed(() => {
   return Object.keys(presetsStore.vehicles)
+      .map(key => ({key, title: getVehicleTitle(key)}))
 })
 const dateModes = computed(() => {
   return Object.values(DATE_MODES).map(key => ({key, name: t('battleHistoryFiltersForm.' + key)}))
@@ -87,6 +88,10 @@ function onDateSelect(date: Date) {
     selectedDateRange.value = undefined
   }
 }
+
+function getVehicleTitle(key: string) {
+  return t(`names.vehicles.${key}`)
+}
 </script>
 
 <template>
@@ -107,6 +112,8 @@ function onDateSelect(date: Date) {
         <v-select
             v-model="selectedVehicleName"
             :items="vehicles"
+            item-value="key"
+            item-title="title"
             density="compact"
             :label="t('commonHistory.vehicle')"
             clearable
