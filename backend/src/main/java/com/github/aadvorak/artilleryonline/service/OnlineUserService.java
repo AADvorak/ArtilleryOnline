@@ -3,8 +3,8 @@ package com.github.aadvorak.artilleryonline.service;
 import com.github.aadvorak.artilleryonline.dto.response.ShortUserResponse;
 import com.github.aadvorak.artilleryonline.entity.User;
 import com.github.aadvorak.artilleryonline.security.ArtilleryOnlineUserDetails;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.user.SimpUser;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,10 +15,10 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
+@RequiredArgsConstructor
 public class OnlineUserService {
 
-    @Autowired
-    private SimpUserRegistry registry;
+    private final SimpUserRegistry registry;
 
     private final ModelMapper mapper = new ModelMapper();
 
@@ -32,6 +32,10 @@ public class OnlineUserService {
         return getOnlineUsers()
                 .filter(user -> user.getNickname().equals(nickname))
                 .findAny();
+    }
+
+    public long count() {
+        return registry.getUsers().size();
     }
 
     private Stream<User> getOnlineUsers() {

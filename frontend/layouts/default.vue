@@ -31,6 +31,7 @@ function subscribe() {
 <template>
   <v-app full-height theme="dark">
     <v-app-bar density="compact">
+      <server-counts />
       <v-spacer />
       <messages-menu />
       <room-menu />
