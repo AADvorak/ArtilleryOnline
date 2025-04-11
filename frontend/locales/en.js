@@ -26,6 +26,7 @@ import {shellSpecsDialog} from "~/locales/en/shell-specs-dialog.js";
 import {battleHeader} from "~/locales/en/battle-header.js";
 import {names} from "~/locales/en/names.js";
 import {descriptions} from "~/locales/en/descriptions.js";
+import {serverCounts} from "~/locales/en/server-counts.js";
 
 export const en = {
   menu,
@@ -77,6 +78,7 @@ export const en = {
   roomInvitationCard,
   roomMembersTable,
   shellSpecsDialog,
+  serverCounts,
   settings,
   signup: {
     title: 'signup'
