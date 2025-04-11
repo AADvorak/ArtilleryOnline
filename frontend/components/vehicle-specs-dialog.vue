@@ -58,8 +58,9 @@ defineExpose({
 <template>
   <v-dialog :model-value="opened" :persistent="true" max-width="600px">
     <v-card width="100%">
-      <v-card-title>{{ t('vehicleSpecsDialog.title') }}: {{ vehicleSpecs.name }}</v-card-title>
+      <v-card-title>{{ t('vehicleSpecsDialog.title') }}: {{ t(`names.vehicles.${vehicleSpecs.name}`) }}</v-card-title>
       <v-card-text>
+        <div>{{ t(`descriptions.vehicles.${vehicleSpecs.name}.full`) }}</div>
         <vehicle-specs-table :vehicle-specs="vehicleSpecs"/>
         <div class="mt-4" v-if="gunSpecs">
           <div class="subheader">

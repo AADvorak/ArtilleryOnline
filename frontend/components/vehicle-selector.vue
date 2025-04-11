@@ -21,6 +21,7 @@ const selectedVehicle = ref<string>()
 
 const vehicles = computed(() => {
   return Object.keys(presetsStore.vehicles)
+      .map(key => ({key, title: getTitle(key)}))
 })
 
 watch(selectedVehicle, value => {
@@ -35,6 +36,10 @@ function showSpecsDialog() {
   specsDialog.value?.show()
 }
 
+function getTitle(key: string) {
+  return t(`names.vehicles.${key}`) + ' (' + t(`descriptions.vehicles.${key}.short`) + ')'
+}
+
 defineExpose({
   setSelectedVehicle
 })
@@ -44,9 +49,12 @@ defineExpose({
   <v-select
       v-model="selectedVehicle"
       :items="vehicles"
+      item-value="key"
+      item-title="title"
       :disabled="props.disabled"
       density="compact"
       :label="t('vehicleSelector.selectVehicle')"
+      clearable
   >
     <template v-if="!!selectedVehicle" v-slot:append>
       <icon-btn

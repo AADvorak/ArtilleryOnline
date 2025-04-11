@@ -24,6 +24,8 @@ import {vehicleSpecsDialog} from "~/locales/ru/vehicle-specs-dialog.js";
 import {gunSpecsDialog} from "~/locales/ru/gun-specs-dialog.js";
 import {shellSpecsDialog} from "~/locales/ru/shell-specs-dialog.js";
 import {battleHeader} from "~/locales/ru/battle-header.js";
+import {names} from "~/locales/ru/names.js";
+import {descriptions} from "~/locales/ru/descriptions.js";
 
 export const ru = {
   menu,
@@ -40,6 +42,7 @@ export const ru = {
     reload: 'Перезагрузить страницу'
   },
   controls,
+  descriptions,
   finishBattleDialog,
   fullScreenBtn: {
     enter: 'На полный экран',
@@ -58,6 +61,7 @@ export const ru = {
     messages: 'Сообщения',
     noMessages: 'Нет сообщений'
   },
+  names,
   vehicleSelector,
   vehicleConfigs,
   onlineUsersTable,

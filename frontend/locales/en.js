@@ -24,6 +24,8 @@ import {vehicleSpecsDialog} from "~/locales/en/vehicle-specs-dialog.js";
 import {gunSpecsDialog} from "~/locales/en/gun-specs-dialog.js";
 import {shellSpecsDialog} from "~/locales/en/shell-specs-dialog.js";
 import {battleHeader} from "~/locales/en/battle-header.js";
+import {names} from "~/locales/en/names.js";
+import {descriptions} from "~/locales/en/descriptions.js";
 
 export const en = {
   menu,
@@ -40,6 +42,7 @@ export const en = {
     reload: 'Reload page'
   },
   controls,
+  descriptions,
   finishBattleDialog,
   fullScreenBtn: {
     enter: 'Enter full screen',
@@ -58,6 +61,7 @@ export const en = {
     messages: 'Messages',
     noMessages: 'You have no messages'
   },
+  names,
   vehicleSelector,
   vehicleConfigs,
   onlineUsersTable,
