@@ -24,6 +24,7 @@ const specsToShow = computed(() => [
   {
     key: 'availableShells',
     value: Object.keys(props.gunSpecs.availableShells || {})
+        .map(key => t(`names.shells.${key}`))
         .reduce((a, b) => a + (a ? ', ' : '') + b, '')
   },
 ])

@@ -84,7 +84,7 @@ function selectShell(key) {
         :disabled="!ammo[ammoKey]"
         @click="() => selectShell(ammoKey)"
     >
-      {{ ammoKey }}({{ index + 1 }}): {{ ammo[ammoKey] }}
+      [{{ index + 1 }}] {{ t(`names.shells.${ammoKey}`) }}: {{ ammo[ammoKey] }}
       <vertical-tooltip
           :location="VerticalTooltipLocation.BOTTOM"
           :tooltip="ammoKey === selectedShell ? t('controls.selectedShell') : t('controls.selectShell')"

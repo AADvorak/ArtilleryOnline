@@ -21,7 +21,7 @@ const shellNames = computed(() => {
     <template v-for="shellName of shellNames">
       <v-expansion-panel :value="shellName">
         <v-expansion-panel-title>
-          {{ t('shellSpecsDialog.title') }}: {{ shellName }}
+          {{ t('shellSpecsDialog.title') }}: {{ t(`names.shells.${shellName}`) }}
         </v-expansion-panel-title>
         <v-expansion-panel-text>
           <shell-specs-table :gun-specs="gunSpecs" :shell-specs="gunSpecs.availableShells[shellName]" />

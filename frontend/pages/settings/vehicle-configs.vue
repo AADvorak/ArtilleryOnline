@@ -189,7 +189,7 @@ function back() {
           <div class="mb-4" v-for="shell in shells">
             <template v-if="config.ammo && config.ammo[shell] !== undefined">
               <div>
-                {{ shell }}
+                {{ t(`names.shells.${shell}`) }}
                 <icon-btn
                     :icon="mdiInformationOutline"
                     :tooltip="t('common.specs')"
