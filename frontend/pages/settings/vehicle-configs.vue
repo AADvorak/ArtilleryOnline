@@ -38,7 +38,7 @@ const guns = computed(() => {
     return []
   }
   return Object.keys(vehicleSpecs.value.availableGuns)
-      .map(key => ({key, title: t(`names.guns.${key}`)}))
+      .map(key => ({key, title: getGunTitle(key)}))
 })
 
 const maxAmmo = computed(() => {
@@ -154,6 +154,10 @@ function showShellSpecsDialog(shellName: string) {
     return
   }
   shellSpecsDialog.value?.show(shellName, gunSpecs.value.availableShells[shellName], gunSpecs.value)
+}
+
+function getGunTitle(key: string) {
+  return t(`names.guns.${key}`) + ' (' + t(`descriptions.guns.${key}.short`) + ')'
 }
 
 function back() {

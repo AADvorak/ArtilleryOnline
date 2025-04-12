@@ -31,6 +31,7 @@ defineExpose({
     <v-card v-if="!!props.gunSpecs && !!props.gunName" width="100%">
       <v-card-title>{{ t('gunSpecsDialog.title') }}: {{ t(`names.guns.${props.gunName}`) }}</v-card-title>
       <v-card-text>
+        <div>{{ t(`descriptions.guns.${props.gunName}.full`) }}</div>
         <gun-shells-specs-tables :gun-specs="props.gunSpecs" />
         <div class="d-flex mt-4">
           <v-btn color="primary" @click="hide">{{ t('common.ok') }}</v-btn>

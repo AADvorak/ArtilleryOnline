@@ -67,6 +67,7 @@ defineExpose({
             {{ t('gunSpecsDialog.title') }}: {{ t(`names.guns.${vehicleConfig.gun}`) }}
           </div>
           <div class="mt-4">
+            <div>{{ t(`descriptions.guns.${vehicleConfig.gun}.full`) }}</div>
             <gun-shells-specs-tables :gun-specs="gunSpecs"/>
           </div>
         </div>
