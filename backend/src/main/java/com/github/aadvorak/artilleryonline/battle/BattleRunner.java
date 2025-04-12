@@ -123,7 +123,7 @@ public class BattleRunner {
     }
 
     private void writeBattleToHistory(Battle battle) {
-        if (!battle.getType().equals(BattleType.TEST_DRIVE)) {
+        if (!battle.getType().equals(BattleType.TEST_DRIVE) && !battle.getType().equals(BattleType.DRONE_HUNT)) {
             battleHistoryService.writeHistory(battle);
         }
     }
