@@ -12,14 +12,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class VehicleModel extends GenericSpecsConfigStateModel<VehicleSpecs, VehicleConfig, VehicleState> implements CompactSerializable {
+public class VehicleModel
+        extends BodyModel<VehicleSpecs, VehiclePreCalc, VehicleConfig, VehicleState>
+        implements CompactSerializable {
 
     private int id;
 
     @JsonIgnore
     private Long userId;
-
-    private VehiclePreCalc preCalc;
 
     @JsonIgnore
     private boolean updated = false;
@@ -28,7 +28,7 @@ public class VehicleModel extends GenericSpecsConfigStateModel<VehicleSpecs, Veh
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(id);
         stream.writeSerializableValue(getSpecs());
-        stream.writeSerializableValue(preCalc);
+        stream.writeSerializableValue(getPreCalc());
         stream.writeSerializableValue(getConfig());
         stream.writeSerializableValue(getState());
     }

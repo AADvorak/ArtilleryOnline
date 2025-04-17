@@ -13,7 +13,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class VehicleState implements State, CompactSerializable {
+public class VehicleState implements BodyState, CompactSerializable {
 
     private BodyPosition position = new BodyPosition();
 
