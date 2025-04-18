@@ -23,6 +23,28 @@ public interface Vector extends CompactSerializable {
         return Math.atan2(getY(), getX());
     }
 
+    default double dotProduct(Vector vector) {
+        return getX() * vector.getX() + getY() * vector.getY();
+    }
+
+    default double vectorProduct(Vector vector) {
+        return getX() * vector.getY() - getY() * vector.getX();
+    }
+
+    default Vector projectionOnto(Vector vector) {
+        var dotProduct = dotProduct(vector);
+        var magnitudeSquared = Math.pow(vector.magnitude(), 2);
+        if (magnitudeSquared == 0) {
+            return new VectorImpl()
+                    .setX(getX())
+                    .setY(getY());
+        }
+        var scalar = dotProduct / magnitudeSquared;
+        return new VectorImpl()
+                .setX(scalar * vector.getX())
+                .setY(scalar * vector.getY());
+    }
+
     @Override
     default void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(getX());

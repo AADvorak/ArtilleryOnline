@@ -23,6 +23,12 @@ public class Position implements Vector {
         return Math.atan2(dy, dx);
     }
 
+    public Vector vectorTo(Position other) {
+        return new VectorImpl()
+                .setX(other.getX() - getX())
+                .setY(other.getY() - getY());
+    }
+
     public Position shifted(double distance, double angle) {
         return new Position()
                 .setX(x + distance * Math.cos(angle))
