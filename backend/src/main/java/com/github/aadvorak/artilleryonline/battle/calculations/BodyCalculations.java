@@ -6,5 +6,11 @@ import com.github.aadvorak.artilleryonline.battle.precalc.BodyPreCalc;
 import com.github.aadvorak.artilleryonline.battle.specs.Specs;
 import com.github.aadvorak.artilleryonline.battle.state.BodyState;
 
-public interface BodyCalculations extends Calculations<BodyModel<Specs, BodyPreCalc, Config, BodyState>> {
+public interface BodyCalculations<
+        S extends Specs,
+        P extends BodyPreCalc,
+        C extends Config,
+        St extends BodyState,
+        M extends BodyModel<S, P, C, St>
+        > extends Calculations<M> {
 }

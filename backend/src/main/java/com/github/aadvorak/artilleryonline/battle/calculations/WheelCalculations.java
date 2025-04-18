@@ -1,7 +1,11 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.common.*;
+import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
+import com.github.aadvorak.artilleryonline.battle.specs.VehicleSpecs;
+import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -10,7 +14,8 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class WheelCalculations implements Calculations<VehicleModel> {
+public class WheelCalculations
+        implements BodyCalculations<VehicleSpecs, VehiclePreCalc, VehicleConfig, VehicleState, VehicleModel> {
 
     private final WheelSign sign;
 

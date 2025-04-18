@@ -23,6 +23,12 @@ public class VectorProjections {
                 .setTangential(vectorProjections.getTangential());
     }
 
+    public Force recoverForce() {
+        return new Force()
+                .setX(getX())
+                .setY(getY());
+    }
+
     public Acceleration recoverAcceleration() {
         return new Acceleration()
                 .setX(getX())
