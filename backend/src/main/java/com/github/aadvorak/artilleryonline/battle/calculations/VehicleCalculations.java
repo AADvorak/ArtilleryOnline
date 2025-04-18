@@ -100,9 +100,14 @@ public class VehicleCalculations
     }
 
     public void calculateNextPosition(double timeStep) {
-        var position = model.getState().getPosition();
+        var centerOfMass = model.getCenterOfMass();
+        var position = new BodyPosition()
+                .setX(centerOfMass.getX())
+                .setY(centerOfMass.getY())
+                .setAngle(model.getState().getPosition().getAngle());
         var velocity = model.getState().getVelocity();
-        setNextPosition(position.next(velocity, timeStep));
+        setNextPosition(position.next(velocity, timeStep)
+                .shifted(model.getPreCalc().getCenterOfMassShift().inverted().plusAngle(position.getAngle())));
         if (nextPosition.getAngle() > Math.PI / 2) {
             nextPosition.setAngle(Math.PI / 2);
         }

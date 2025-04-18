@@ -31,6 +31,13 @@ public class BodyPosition implements BodyVector {
                 .setAngle(angle + velocity.getAngle() * timeStep);
     }
 
+    public BodyPosition shifted(Shift shift) {
+        return new BodyPosition()
+                .setX(x + shift.distance() * Math.cos(shift.angle()))
+                .setY(y + shift.distance() * Math.sin(shift.angle()))
+                .setAngle(angle);
+    }
+
     @Override
     public String toString() {
         return String.format("(%.3f, %.3f, %.3f)", x, y, angle);

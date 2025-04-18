@@ -18,6 +18,6 @@ public class BodyModel<S extends Specs,  P extends BodyPreCalc, C extends Config
     public Position getCenterOfMass() {
         var position = getState().getPosition();
         var shift = preCalc.getCenterOfMassShift();
-        return position.getCenter().shifted(shift.distance(), shift.angle() + position.getAngle());
+        return position.getCenter().shifted(shift.plusAngle(position.getAngle()));
     }
 }

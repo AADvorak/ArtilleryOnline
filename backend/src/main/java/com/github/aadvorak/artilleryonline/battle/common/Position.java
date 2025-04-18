@@ -30,9 +30,13 @@ public class Position implements Vector {
     }
 
     public Position shifted(double distance, double angle) {
+        return shifted(new Shift(distance, angle));
+    }
+
+    public Position shifted(Shift shift) {
         return new Position()
-                .setX(x + distance * Math.cos(angle))
-                .setY(y + distance * Math.sin(angle));
+                .setX(x + shift.distance() * Math.cos(shift.angle()))
+                .setY(y + shift.distance() * Math.sin(shift.angle()));
     }
 
     @Override
