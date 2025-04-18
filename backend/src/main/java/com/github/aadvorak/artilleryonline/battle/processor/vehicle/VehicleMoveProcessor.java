@@ -22,7 +22,7 @@ public class VehicleMoveProcessor {
     private static void recalculateAcceleration(VehicleCalculations vehicle, BattleCalculations battle) {
         var threshold = 0.3;
         var oldAcceleration = vehicle.getModel().getState().getAcceleration();
-        var acceleration = VehicleAccelerationCalculator.getVehicleAcceleration(vehicle, battle.getModel().getRoom());;
+        var acceleration = VehicleAccelerationCalculator.getVehicleAcceleration(vehicle, battle.getModel());;
         if (acceleration.getX() * oldAcceleration.getX() < 0
                 && Math.abs(acceleration.getX() - oldAcceleration.getX()) > threshold) {
             vehicle.getModel().setUpdated(true);
