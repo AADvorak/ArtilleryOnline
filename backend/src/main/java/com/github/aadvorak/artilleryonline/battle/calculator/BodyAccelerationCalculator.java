@@ -37,17 +37,14 @@ public class BodyAccelerationCalculator<
 
     private BodyAcceleration toAcceleration(ForceAtPoint force, C calculations) {
         var mass = calculations.getMass();
-        var acceleration = new BodyAcceleration();
+        var acceleration = new BodyAcceleration()
+                .setX(force.force().getX() / mass)
+                .setY(force.force().getY() / mass);
         if (force.point() == null) {
-            return acceleration
-                    .setX(force.force().getX() / mass)
-                    .setY(force.force().getY() / mass);
+            return acceleration;
         }
         var centerOfMass = calculations.getModel().getCenterOfMass();
         var radiusVector = centerOfMass.vectorTo(force.point());
-        var movingForce = force.force().projectionOnto(radiusVector);
-        acceleration.setX(movingForce.getX() / mass);
-        acceleration.setY(movingForce.getY() / mass);
         var momentOfInertia = calculations.getModel().getPreCalc().getMomentOfInertia();
         var torque = radiusVector.vectorProduct(force.force());
         acceleration.setAngle(torque / momentOfInertia);
