@@ -43,7 +43,7 @@ public class BodyAccelerationCalculator<
         if (force.point() == null) {
             return acceleration;
         }
-        var centerOfMass = calculations.getModel().getCenterOfMass();
+        var centerOfMass = calculations.getPosition();
         var radiusVector = centerOfMass.vectorTo(force.point());
         var momentOfInertia = calculations.getModel().getPreCalc().getMomentOfInertia();
         var torque = radiusVector.vectorProduct(force.force());

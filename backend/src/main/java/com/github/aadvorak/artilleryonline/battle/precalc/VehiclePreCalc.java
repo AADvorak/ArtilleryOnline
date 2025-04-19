@@ -10,14 +10,14 @@ import lombok.Getter;
 public class VehiclePreCalc implements BodyPreCalc, CompactSerializable {
 
     public VehiclePreCalc(VehicleSpecs specs) {
-        wheelDistance = Math.sqrt(Math.pow(specs.getWheelRadius(), 2) + Math.pow(specs.getHullRadius(), 2));
-        wheelAngle = Math.atan(specs.getWheelRadius() / specs.getHullRadius());
-        // todo fix mistake + instead of *
-        mass = 0.5 * Math.PI * Math.pow(specs.getRadius(), 2) * 4 * specs.getHullRadius() * specs.getWheelRadius();
+        var comDistance = (- 2 * Math.PI * Math.pow(specs.getWheelRadius(), 3) + 2 * Math.pow(specs.getRadius(), 3) / 3)
+                / (2 * Math.PI * Math.pow(specs.getWheelRadius(), 2) + Math.PI * Math.pow(specs.getRadius(), 2) / 2);
+        wheelDistance = Math.sqrt(Math.pow(specs.getWheelRadius() + comDistance, 2) + Math.pow(specs.getHullRadius(), 2));
+        wheelAngle = Math.atan((specs.getWheelRadius() + comDistance) / specs.getHullRadius());
+        mass = 0.5 * Math.PI * Math.pow(specs.getRadius(), 2) + 2 * Math.PI * Math.pow(specs.getWheelRadius(), 2);
         // todo write accurate formula
-        momentOfInertia = Math.PI * Math.pow(specs.getRadius(), 4) / 2;
-        centerOfMassShift = new Shift((- 2 * Math.PI * Math.pow(specs.getWheelRadius(), 3) + 2 * Math.pow(specs.getRadius(), 3) / 3)
-                / (2 * Math.PI * Math.pow(specs.getWheelRadius(), 2) + Math.PI * Math.pow(specs.getRadius(), 2) / 2), Math.PI / 2);
+        momentOfInertia = 2 * Math.PI * Math.pow(specs.getRadius(), 4);
+        centerOfMassShift = new Shift(comDistance, Math.PI / 2);
     }
 
     private final double wheelDistance;
@@ -35,5 +35,7 @@ public class VehiclePreCalc implements BodyPreCalc, CompactSerializable {
         stream.writeDouble(wheelDistance);
         stream.writeDouble(wheelAngle);
         stream.writeDouble(mass);
+        stream.writeDouble(momentOfInertia);
+        stream.writeSerializableValue(centerOfMassShift);
     }
 }

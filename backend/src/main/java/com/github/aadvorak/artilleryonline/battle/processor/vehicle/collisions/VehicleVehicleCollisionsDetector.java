@@ -53,14 +53,14 @@ public class VehicleVehicleCollisionsDetector {
                 .collect(Collectors.toSet());
         var wheelRadius = vehicle.getModel().getSpecs().getWheelRadius();
         var vehicleRadius = vehicle.getModel().getSpecs().getRadius();
-        var position = vehicle.getNextPosition();
+        var position = vehicle.getGeometryNextPosition();
         var rightWheelPosition = vehicle.getRightWheel().getNext().getPosition();
         var leftWheelPosition = vehicle.getLeftWheel().getNext().getPosition();
         var vehicleShape = HalfCircle.of(position, vehicleRadius);
         var rightWheelShape = new Circle(rightWheelPosition, wheelRadius);
         var leftWheelShape = new Circle(leftWheelPosition, wheelRadius);
         for (var otherVehicle : otherVehicles) {
-            var otherPosition = otherVehicle.getNextPosition();
+            var otherPosition = otherVehicle.getGeometryNextPosition();
             var otherVehicleRadius = otherVehicle.getModel().getSpecs().getRadius();
             var otherVehicleShape = HalfCircle.of(otherPosition, otherVehicleRadius);
             var vehicleVehicleInterpenetration = InterpenetrationUtils.getHalfCirclesInterpenetration(vehicleShape, otherVehicleShape);

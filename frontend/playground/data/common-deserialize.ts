@@ -5,7 +5,7 @@ import type {
   BodyVector,
   BodyVelocity,
   Missiles,
-  Position,
+  Position, Shift,
   Vector,
   Velocity
 } from "~/playground/data/common";
@@ -45,4 +45,10 @@ export function deserializeAmmo(input: DeserializerInput): Ammo | undefined {
 
 export function deserializeMissiles(input: DeserializerInput): Missiles | undefined {
   return DeserializerBase.readMap(input, DeserializerBase.readString, DeserializerBase.readInt)
+}
+
+export function deserializeShift(input: DeserializerInput): Shift {
+  const distance = DeserializerBase.readDouble(input)
+  const angle = DeserializerBase.readDouble(input)
+  return {distance, angle}
 }

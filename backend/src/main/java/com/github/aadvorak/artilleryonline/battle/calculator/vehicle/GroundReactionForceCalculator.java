@@ -20,6 +20,8 @@ public class GroundReactionForceCalculator implements ForceCalculator<
         VehicleModel,
         VehicleCalculations> {
 
+    private static final String FORCE_DESCRIPTION = "Ground reaction";
+
     @Override
     public List<ForceAtPoint> calculate(VehicleCalculations calculations, BattleModel battleModel) {
         var groundReactionCoefficient = battleModel.getRoom().getSpecs().getGroundReactionCoefficient();
@@ -42,7 +44,7 @@ public class GroundReactionForceCalculator implements ForceCalculator<
                     .setNormal(- velocityNormalProjection * calculations.getGroundDepth()
                             * groundReactionCoefficient);
             var force = forceProjections.recoverForce();
-            forces.add(new ForceAtPoint(force, calculations.getNearestGroundPoint().position()));
+            forces.add(new ForceAtPoint(force, calculations.getNearestGroundPoint().position(), FORCE_DESCRIPTION));
         }
     }
 }

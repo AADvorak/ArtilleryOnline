@@ -116,7 +116,7 @@ public class WheelCalculations
     public void calculateVelocity() {
         var vehicleVelocity = vehicle.getModel().getState().getVelocity();
         var angle = vehicle.getModel().getState().getPosition().getAngle();
-        var wheelAngle = angle + Math.PI / 2 + sign.getValue() * Math.PI / 2;
+        var wheelAngle = angle + Math.PI / 2 + sign.getValue() * vehicle.getModel().getPreCalc().getWheelAngle();
         var wheelDistance = vehicle.getModel().getPreCalc().getWheelDistance();
         var wheelVelocity = vehicleVelocity.getPointVelocity(wheelDistance, wheelAngle);
         if (velocity == null) {

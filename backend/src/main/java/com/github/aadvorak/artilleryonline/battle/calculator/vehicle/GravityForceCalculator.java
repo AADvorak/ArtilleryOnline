@@ -20,6 +20,8 @@ public class GravityForceCalculator implements ForceCalculator<
         VehicleModel,
         VehicleCalculations> {
 
+    private static final String FORCE_DESCRIPTION = "Gravity";
+
     @Override
     public List<ForceAtPoint> calculate(VehicleCalculations calculations, BattleModel battleModel) {
         var roomGravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
@@ -27,7 +29,10 @@ public class GravityForceCalculator implements ForceCalculator<
         var forces = new ArrayList<ForceAtPoint>();
         if (WheelGroundState.FULL_OVER_GROUND.equals(calculations.getRightWheel().getGroundState())
                 || WheelGroundState.FULL_OVER_GROUND.equals(calculations.getLeftWheel().getGroundState())) {
-            forces.add(ForceAtPoint.atCOM(new Force().setX(0.0).setY(-roomGravityAcceleration * mass)));
+            forces.add(ForceAtPoint.atCOM(
+                    new Force().setX(0.0).setY(-roomGravityAcceleration * mass),
+                    FORCE_DESCRIPTION
+            ));
         } else {
             var groundGravityDepth = 0.7 * battleModel.getRoom().getSpecs().getGroundMaxDepth();
             addWheelHalfOverGroundAcceleration(forces, calculations.getRightWheel(), mass,
@@ -53,7 +58,8 @@ public class GravityForceCalculator implements ForceCalculator<
             forces.add(ForceAtPoint.atCOM(
                     new Force()
                             .setX(-groundAccelerationModule * Math.sin(groundAngle))
-                            .setY(-groundAccelerationModule * Math.cos(groundAngle))
+                            .setY(-groundAccelerationModule * Math.cos(groundAngle)),
+                    FORCE_DESCRIPTION
             ));
         }
     }

@@ -25,6 +25,8 @@ public class JetForceCalculator implements ForceCalculator<
         VehicleModel,
         VehicleCalculations> {
 
+    private static final String FORCE_DESCRIPTION = "Jet";
+
     @Override
     public List<ForceAtPoint> calculate(VehicleCalculations calculations, BattleModel battleModel) {
         var forces = new ArrayList<ForceAtPoint>();
@@ -69,7 +71,7 @@ public class JetForceCalculator implements ForceCalculator<
                     .setX(-acceleration / Math.sqrt(2))
                     .setY(acceleration * angleCoefficient / Math.sqrt(2));
         }
-        forces.add(new ForceAtPoint(force, wheelCalculations.getPosition()));
+        forces.add(new ForceAtPoint(force, wheelCalculations.getPosition(), FORCE_DESCRIPTION));
     }
 
     private void addHorizontal(List<ForceAtPoint> forces, double acceleration,
@@ -79,13 +81,13 @@ public class JetForceCalculator implements ForceCalculator<
             var force = new Force()
                     .setX(acceleration * Math.cos(angle + additionalAngle))
                     .setY(acceleration * Math.sin(angle + additionalAngle));
-            forces.add(ForceAtPoint.atCOM(force));
+            forces.add(ForceAtPoint.atCOM(force, FORCE_DESCRIPTION));
         }
         if (MovingDirection.LEFT.equals(direction)) {
             var force = new Force()
                     .setX(acceleration * Math.cos(angle - additionalAngle + Math.PI))
                     .setY(acceleration * Math.sin(angle - additionalAngle + Math.PI));
-            forces.add(ForceAtPoint.atCOM(force));
+            forces.add(ForceAtPoint.atCOM(force, FORCE_DESCRIPTION));
         }
     }
 }

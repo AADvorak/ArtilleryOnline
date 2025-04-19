@@ -29,15 +29,14 @@ export function useVehicleDrawer(
       ctx.value.fillStyle = color
       ctx.value.strokeStyle = color
 
-      const position = drawerBase.transformPosition(vehicleModel.state.position)
       const radius = drawerBase.scale(vehicleModel.specs.radius)
       const wheelRadius = drawerBase.scale(vehicleModel.specs.wheelRadius)
 
-      drawHull(vehicleModel, position, radius)
+      drawHull(vehicleModel, radius)
       drawWheels(vehicleModel, wheelRadius)
       drawSmallWheels(vehicleModel, wheelRadius)
       drawTrack(vehicleModel)
-      drawGun(vehicleModel, position)
+      drawGun(vehicleModel)
       if (appearances.value[AppearancesNames.HP_ABOVE] === '1') {
         drawHpBar(vehicleModel)
       }
@@ -47,7 +46,8 @@ export function useVehicleDrawer(
     }
   }
 
-  function drawHull(vehicleModel: VehicleModel, position: Position, radius: number) {
+  function drawHull(vehicleModel: VehicleModel, radius: number) {
+    const position = drawerBase.transformPosition(VehicleUtils.getGeometryPosition(vehicleModel))
     const startAngle = Math.PI - vehicleModel.state.position.angle
     const endAngle = 2 * Math.PI - vehicleModel.state.position.angle
     ctx.value!.beginPath()
@@ -108,13 +108,16 @@ export function useVehicleDrawer(
     }
   }
 
-  function drawGun(vehicleModel: VehicleModel, position: Position) {
+  function drawGun(vehicleModel: VehicleModel) {
+    const gunBeginPosition = drawerBase.transformPosition(
+        vehicleModel.state.position
+    )
     const gunEndPosition = drawerBase.transformPosition(
         VehicleUtils.getGunEndPosition(vehicleModel)
     )
     ctx.value!.beginPath()
     ctx.value!.lineWidth = drawerBase.scale(vehicleModel.config.gun.caliber)
-    ctx.value!.moveTo(position.x, position.y)
+    ctx.value!.moveTo(gunBeginPosition.x, gunBeginPosition.y)
     ctx.value!.lineTo(gunEndPosition.x, gunEndPosition.y)
     ctx.value!.stroke()
     ctx.value!.closePath()

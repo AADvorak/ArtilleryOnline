@@ -16,6 +16,7 @@ import type {
   VehicleState
 } from "@/playground/data/state";
 import type {DroneConfig, ParticleConfig, RoomConfig, VehicleConfig} from "@/playground/data/config";
+import type {Shift} from "~/playground/data/common";
 
 export interface RoomModel {
   specs: RoomSpecs
@@ -60,6 +61,8 @@ export interface VehiclePreCalc {
   wheelDistance: number
   wheelAngle: number
   mass: number
+  momentOfInertia: number
+  centerOfMassShift: Shift
 }
 
 export interface VehicleModel {

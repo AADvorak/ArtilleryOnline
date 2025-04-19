@@ -26,6 +26,7 @@ import {
   deserializeRoomConfig,
   deserializeVehicleConfig
 } from "~/playground/data/config-deserialize";
+import {deserializeShift} from "~/playground/data/common-deserialize";
 
 export function deserializeExplosionModel(input: DeserializerInput): ExplosionModel {
   const id = DeserializerBase.readInt(input)
@@ -93,10 +94,14 @@ export function deserializeVehiclePreCalc(input: DeserializerInput): VehiclePreC
   const wheelDistance = DeserializerBase.readDouble(input)
   const wheelAngle = DeserializerBase.readDouble(input)
   const mass = DeserializerBase.readDouble(input)
+  const momentOfInertia = DeserializerBase.readDouble(input)
+  const centerOfMassShift = deserializeShift(input)
   return {
     wheelDistance,
     wheelAngle,
-    mass
+    mass,
+    momentOfInertia,
+    centerOfMassShift
   }
 }
 

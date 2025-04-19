@@ -40,7 +40,7 @@ public class DroneVehicleCollisionsDetector {
         var shape = new Circle(position.getCenter(), radius);
         if (other instanceof VehicleCalculations vehicle) {
             var otherRadius = vehicle.getModel().getSpecs().getRadius();
-            var otherPosition = vehicle.getNextPosition();
+            var otherPosition = vehicle.getGeometryNextPosition();
             var otherShape = HalfCircle.of(otherPosition, otherRadius);
             var interpenetration = InterpenetrationUtils.getCircleHalfCircleInterpenetration(shape, otherShape);
             if (interpenetration != null) {
@@ -49,7 +49,7 @@ public class DroneVehicleCollisionsDetector {
         }
         if (other instanceof WheelCalculations wheel) {
             var otherRadius = wheel.getModel().getSpecs().getWheelRadius();
-            var otherPosition = wheel.getPosition();
+            var otherPosition = wheel.getNext().getPosition();
             var otherShape = new Circle(otherPosition, otherRadius);
             var interpenetration = InterpenetrationUtils.getCirclesInterpenetration(shape, otherShape);
             if (interpenetration != null) {

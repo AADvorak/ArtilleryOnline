@@ -11,7 +11,6 @@ import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class GroundFrictionForceCalculator implements ForceCalculator<
         VehicleSpecs,
@@ -20,6 +19,8 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
         VehicleState,
         VehicleModel,
         VehicleCalculations> {
+
+    private static final String FORCE_DESCRIPTION = "Ground Friction";
 
     @Override
     public List<ForceAtPoint> calculate(VehicleCalculations calculations, BattleModel battleModel) {
@@ -43,6 +44,6 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
         var point = wheelCalculations.getNearestGroundPoint().position() != null
                 ? wheelCalculations.getNearestGroundPoint().position()
                 : wheelCalculations.getPosition();
-        forces.add(new ForceAtPoint(force, point));
+        forces.add(new ForceAtPoint(force, point, FORCE_DESCRIPTION));
     }
 }

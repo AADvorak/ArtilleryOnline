@@ -70,7 +70,7 @@ public class CollisionUtils {
 
     public static Collision detectWithVehicle(Calculations<?> calculations, Position position, Position nextPosition,
                                               VehicleCalculations vehicle) {
-        var vehiclePosition = vehicle.getPosition();
+        var vehiclePosition = vehicle.getGeometryPosition();
         var vehicleRadius = vehicle.getModel().getSpecs().getRadius();
         var vehicleAngle = vehicle.getModel().getState().getPosition().getAngle();
         var projectileTrace = new Segment(position, nextPosition);

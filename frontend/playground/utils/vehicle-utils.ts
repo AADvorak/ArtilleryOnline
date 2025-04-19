@@ -7,6 +7,12 @@ import {BattleUtils} from "~/playground/utils/battle-utils";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 
 export const VehicleUtils = {
+  getGeometryPosition(vehicleModel: VehicleModel) {
+    const position = vehicleModel.state.position
+    const comShift = vehicleModel.preCalc.centerOfMassShift
+    return BattleUtils.shiftedPosition(position, - comShift.distance, position.angle + comShift.angle)
+  },
+
   getLeftWheelPosition(vehicleModel: VehicleModel) {
     const position = vehicleModel.state.position
     const wheelDistance = vehicleModel.preCalc.wheelDistance

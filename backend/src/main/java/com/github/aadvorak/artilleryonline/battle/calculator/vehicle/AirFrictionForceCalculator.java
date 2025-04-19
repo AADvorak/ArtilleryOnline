@@ -21,6 +21,8 @@ public class AirFrictionForceCalculator implements ForceCalculator<
         VehicleModel,
         VehicleCalculations> {
 
+    private static final String FORCE_DESCRIPTION = "Air Friction";
+
     @Override
     public List<ForceAtPoint> calculate(VehicleCalculations calculations, BattleModel battleModel) {
         var frictionCoefficient = battleModel.getRoom().getSpecs().getAirFrictionCoefficient();
@@ -30,6 +32,6 @@ public class AirFrictionForceCalculator implements ForceCalculator<
         var frictionForce = new Force()
                 .setX( - velocity.getX() * Math.abs(velocity.getX()) * frictionCoefficient * mass)
                 .setY( - velocity.getY() * Math.abs(velocity.getY()) * frictionCoefficient * mass);
-        return List.of(ForceAtPoint.atCOM(frictionForce));
+        return List.of(ForceAtPoint.atCOM(frictionForce, FORCE_DESCRIPTION));
     }
 }

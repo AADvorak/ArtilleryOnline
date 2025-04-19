@@ -83,3 +83,8 @@ export interface BodyAcceleration extends BodyVector{
 
 export interface BodyPosition extends BodyVector {
 }
+
+export interface Shift {
+  distance: number
+  angle: number
+}

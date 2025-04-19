@@ -52,6 +52,14 @@ public class VehicleCalculations
         return model.getState().getPosition().getCenter();
     }
 
+    public Position getGeometryPosition() {
+        return getPosition().shifted(model.getPreCalc().getCenterOfMassShift().inverted());
+    }
+
+    public BodyPosition getGeometryNextPosition() {
+        return nextPosition.shifted(model.getPreCalc().getCenterOfMassShift().inverted());
+    }
+
     @Override
     public Velocity getVelocity() {
         return model.getState().getVelocity().getMovingVelocity();
@@ -100,14 +108,9 @@ public class VehicleCalculations
     }
 
     public void calculateNextPosition(double timeStep) {
-        var centerOfMass = model.getCenterOfMass();
-        var position = new BodyPosition()
-                .setX(centerOfMass.getX())
-                .setY(centerOfMass.getY())
-                .setAngle(model.getState().getPosition().getAngle());
+        var position = model.getState().getPosition();
         var velocity = model.getState().getVelocity();
-        setNextPosition(position.next(velocity, timeStep)
-                .shifted(model.getPreCalc().getCenterOfMassShift().inverted().plusAngle(position.getAngle())));
+        setNextPosition(position.next(velocity, timeStep));
         if (nextPosition.getAngle() > Math.PI / 2) {
             nextPosition.setAngle(Math.PI / 2);
         }

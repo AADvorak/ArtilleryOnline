@@ -21,6 +21,8 @@ public class EngineForceCalculator implements ForceCalculator<
         VehicleModel,
         VehicleCalculations> {
 
+    private static final String FORCE_DESCRIPTION = "Engine";
+
     @Override
     public List<ForceAtPoint> calculate(VehicleCalculations calculations, BattleModel battleModel) {
         return List.of(
@@ -33,15 +35,15 @@ public class EngineForceCalculator implements ForceCalculator<
         var vehicleModel = calculations.getModel();
         var jetState = vehicleModel.getState().getJetState();
         var jetSpecs = vehicleModel.getConfig().getJet();
-        if (vehicleModel.getState().getTrackState().isBroken()
+        var direction = vehicleModel.getState().getMovingDirection();
+        if (direction == null || vehicleModel.getState().getTrackState().isBroken()
                 || jetSpecs != null && jetState != null && jetState.isActive() && jetSpecs.getType().equals(JetType.VERTICAL)
                 || WheelGroundState.FULL_UNDER_GROUND.equals(calculations.getGroundState())
                 || WheelGroundState.FULL_OVER_GROUND.equals(calculations.getGroundState())) {
-            return ForceAtPoint.zero();
+            return ForceAtPoint.zero(FORCE_DESCRIPTION);
         }
         var depth = calculations.getGroundDepth();
         var groundAngle = calculations.getGroundAngle();
-        var direction = vehicleModel.getState().getMovingDirection();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
         var depthCoefficient = 1 - depth * 0.5 / wheelRadius;
         var forceMagnitude = calculations.getMass() * depthCoefficient * vehicleModel.getSpecs().getAcceleration() / 2;
@@ -58,6 +60,6 @@ public class EngineForceCalculator implements ForceCalculator<
                     .setX( - forceMagnitude * Math.cos(groundAngle - depthAngle))
                     .setY( - forceMagnitude * Math.sin(groundAngle - depthAngle));
         }
-        return new ForceAtPoint(force, calculations.getNearestGroundPoint().position());
+        return new ForceAtPoint(force, calculations.getNearestGroundPoint().position(), FORCE_DESCRIPTION);
     }
 }
