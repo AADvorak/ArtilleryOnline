@@ -1,14 +1,17 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle.collisions;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.NearestGroundPoint;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculator.wheel.GroundPositionCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
-import com.github.aadvorak.artilleryonline.battle.common.Interpenetration;
+import com.github.aadvorak.artilleryonline.battle.common.Contact;
+import com.github.aadvorak.artilleryonline.battle.common.Position;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class VehicleGroundCollisionsDetector {
@@ -42,11 +45,14 @@ public class VehicleGroundCollisionsDetector {
         GroundPositionCalculator.calculateNext(wheel, battle.getModel().getRoom());
         var groundMaxDepth = battle.getModel().getRoom().getSpecs().getGroundMaxDepth();
         var depth = wheel.getNext().getGroundDepth() - groundMaxDepth;
-        var interpenetration = Interpenetration.of(depth, wheel.getGroundAngle());
-        if (interpenetration == null) {
+        var position = Optional.ofNullable(wheel.getNearestGroundPoint())
+                .map(NearestGroundPoint::position)
+                .orElse(null);
+        var contact = Contact.of(depth, wheel.getGroundAngle(), position);
+        if (contact == null) {
             return null;
         }
-        return Collision.withGround(wheel, interpenetration);
+        return Collision.withGround(wheel, contact);
     }
 
     private static Collision detectWheelWallCollision(WheelCalculations wheel, BattleCalculations battle) {
@@ -55,14 +61,16 @@ public class VehicleGroundCollisionsDetector {
         var xMin = battle.getModel().getRoom().getSpecs().getLeftBottom().getX();
         var nextPosition = wheel.getNext().getPosition();
         var rightWallDepth = nextPosition.getX() + wheelRadius - xMax;
-        var rightWallInterpenetration = Interpenetration.of(rightWallDepth, Math.PI / 2);
-        if (rightWallInterpenetration != null) {
-            return Collision.withWall(wheel, rightWallInterpenetration);
+        var rightWallContact = Contact.of(rightWallDepth, Math.PI / 2,
+                new Position().setX(xMax).setY(nextPosition.getY()));
+        if (rightWallContact != null) {
+            return Collision.withWall(wheel, rightWallContact);
         }
         var leftWallDepth = xMin - nextPosition.getX() + wheelRadius;
-        var leftWallInterpenetration = Interpenetration.of(leftWallDepth, -Math.PI / 2);
-        if (leftWallInterpenetration != null) {
-            return Collision.withWall(wheel, leftWallInterpenetration);
+        var leftWallContact = Contact.of(leftWallDepth, -Math.PI / 2,
+                new Position().setX(xMin).setY(nextPosition.getY()));
+        if (leftWallContact != null) {
+            return Collision.withWall(wheel, leftWallContact);
         }
         return null;
     }

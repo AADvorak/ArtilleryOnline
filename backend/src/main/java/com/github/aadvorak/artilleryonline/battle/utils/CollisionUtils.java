@@ -60,10 +60,12 @@ public class CollisionUtils {
                                               MissileCalculations missile) {
         var missileSegment = new Segment(missile.getPositions().getHead(), missile.getPositions().getTail());
         var projectileTrace = new Segment(position, nextPosition);
-        if (GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, missileSegment) != null) {
+        var intersectionPoint = GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, missileSegment);
+        if (intersectionPoint != null) {
             var projection = GeometryUtils.getPointToLineProjection(position, missileSegment);
-            var interpenetration = Interpenetration.withUncheckedDepth(0.0, position, projection);
-            return Collision.withMissile(calculations, missile, interpenetration);
+            var contact = Contact.withUncheckedDepthOf(0.0,
+                    position.vectorTo(projection).normalized(), intersectionPoint);
+            return Collision.withMissile(calculations, missile, contact);
         }
         return null;
     }
@@ -82,14 +84,17 @@ public class CollisionUtils {
                 }).collect(Collectors.toSet());
         if (!intersectionPoints.isEmpty()) {
             var intersectionPoint = findClosestIntersectionPoint(position, intersectionPoints);
-            var interpenetration = Interpenetration.withUncheckedDepth(0.0, intersectionPoint, vehiclePosition);
-            return Collision.withVehicle(calculations, vehicle, interpenetration);
+            var contact = Contact.withUncheckedDepthOf(0.0,
+                    intersectionPoint.vectorTo(vehiclePosition).normalized(), vehiclePosition);
+            return Collision.withVehicle(calculations, vehicle, contact);
         }
         var vehicleBottom = vehicleShape.chord();
-        if (GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, vehicleBottom) != null) {
+        var intersectionPoint = GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, vehicleBottom);
+        if (intersectionPoint != null) {
             var projection = GeometryUtils.getPointToLineProjection(position, vehicleBottom);
-            var interpenetration = Interpenetration.withUncheckedDepth(0.0, position, projection);
-            return Collision.withVehicle(calculations, vehicle, interpenetration);
+            var contact = Contact.withUncheckedDepthOf(0.0,
+                    position.vectorTo(projection).normalized(), intersectionPoint);
+            return Collision.withVehicle(calculations, vehicle, contact);
         }
         return null;
     }
@@ -103,8 +108,9 @@ public class CollisionUtils {
         var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(projectileTrace, wheelShape);
         if (!intersectionPoints.isEmpty()) {
             var intersectionPoint = findClosestIntersectionPoint(position, intersectionPoints);
-            var interpenetration = Interpenetration.withUncheckedDepth(0.0, intersectionPoint, wheelPosition);
-            return Collision.withVehicle(calculations, wheel, interpenetration);
+            var contact = Contact.withUncheckedDepthOf(0.0,
+                    intersectionPoint.vectorTo(wheelPosition).normalized(), intersectionPoint);
+            return Collision.withVehicle(calculations, wheel, contact);
         }
         return null;
     }
@@ -118,8 +124,9 @@ public class CollisionUtils {
         var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(projectileTrace, droneShape);
         if (!intersectionPoints.isEmpty()) {
             var intersectionPoint = findClosestIntersectionPoint(position, intersectionPoints);
-            var interpenetration = Interpenetration.withUncheckedDepth(0.0, intersectionPoint, dronePosition);
-            return Collision.withDrone(calculations, drone, interpenetration);
+            var contact = Contact.withUncheckedDepthOf(0.0,
+                    intersectionPoint.vectorTo(dronePosition).normalized(), intersectionPoint);
+            return Collision.withDrone(calculations, drone, contact);
         }
 
         var enginesRadius = drone.getModel().getSpecs().getEnginesRadius();
@@ -133,8 +140,10 @@ public class CollisionUtils {
         );
         var rightEngineIntersectionPoint = GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, rightEngineShape);
         if (rightEngineIntersectionPoint != null) {
-            var interpenetration = Interpenetration.withUncheckedDepth(0.0, rightEngineIntersectionPoint, dronePosition);
-            return Collision.withDrone(calculations, drone, interpenetration);
+            // todo fix normal
+            var contact = Contact.withUncheckedDepthOf(0.0,
+                    rightEngineIntersectionPoint.vectorTo(dronePosition).normalized(), rightEngineIntersectionPoint);
+            return Collision.withDrone(calculations, drone, contact);
         }
 
         var leftEngineCenterPosition = dronePosition.shifted(enginesRadius, droneAngle - Math.PI)
@@ -145,8 +154,10 @@ public class CollisionUtils {
         );
         var leftEngineIntersectionPoint = GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, leftEngineShape);
         if (leftEngineIntersectionPoint != null) {
-            var interpenetration = Interpenetration.withUncheckedDepth(0.0, leftEngineCenterPosition, dronePosition);
-            return Collision.withDrone(calculations, drone, interpenetration);
+            // todo fix normal
+            var contact = Contact.withUncheckedDepthOf(0.0,
+                    leftEngineIntersectionPoint.vectorTo(dronePosition).normalized(), leftEngineIntersectionPoint);
+            return Collision.withDrone(calculations, drone, contact);
         }
         return null;
     }
@@ -157,8 +168,8 @@ public class CollisionUtils {
         collision.getPair().first().setVelocity(velocityProjections.recoverVelocity());
 
         collision.getPair().first().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
-        collision.getPair().first().applyNormalMoveToNextPosition(collision.getInterpenetration().depth(),
-                collision.getInterpenetration().angle());
+        collision.getPair().first().applyNormalMoveToNextPosition(collision.getContact().depth(),
+                collision.getContact().angle());
     }
 
     public static void resolveRigidCollision(Collision collision, BattleCalculations battle) {
@@ -174,11 +185,11 @@ public class CollisionUtils {
         var otherObject = collision.getPair().second();
         var mass = collision.getPair().first().getMass();
         var otherMass = collision.getPair().second().getMass();
-        var normalMovePerMass = collision.getInterpenetration().depth() / (mass + otherMass);
+        var normalMovePerMass = collision.getContact().depth() / (mass + otherMass);
         var normalMove = normalMovePerMass * otherMass;
         var otherNormalMove = normalMovePerMass * mass;
-        object.applyNormalMoveToNextPosition(normalMove, collision.getInterpenetration().angle());
-        otherObject.applyNormalMoveToNextPosition(- otherNormalMove, collision.getInterpenetration().angle());
+        object.applyNormalMoveToNextPosition(normalMove, collision.getContact().angle());
+        otherObject.applyNormalMoveToNextPosition(- otherNormalMove, collision.getContact().angle());
     }
 
     public static void recalculateVelocitiesRigid(Collision collision) {

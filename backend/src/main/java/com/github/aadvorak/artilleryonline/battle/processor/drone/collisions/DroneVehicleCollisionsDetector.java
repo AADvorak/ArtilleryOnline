@@ -4,7 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
-import com.github.aadvorak.artilleryonline.battle.utils.InterpenetrationUtils;
+import com.github.aadvorak.artilleryonline.battle.utils.ContactUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -42,18 +42,18 @@ public class DroneVehicleCollisionsDetector {
             var otherRadius = vehicle.getModel().getSpecs().getRadius();
             var otherPosition = vehicle.getGeometryNextPosition();
             var otherShape = HalfCircle.of(otherPosition, otherRadius);
-            var interpenetration = InterpenetrationUtils.getCircleHalfCircleInterpenetration(shape, otherShape);
-            if (interpenetration != null) {
-                return Collision.withVehicle(drone, vehicle, interpenetration);
+            var contact = ContactUtils.getCircleHalfCircleContact(shape, otherShape);
+            if (contact != null) {
+                return Collision.withVehicle(drone, vehicle, contact);
             }
         }
         if (other instanceof WheelCalculations wheel) {
             var otherRadius = wheel.getModel().getSpecs().getWheelRadius();
             var otherPosition = wheel.getNext().getPosition();
             var otherShape = new Circle(otherPosition, otherRadius);
-            var interpenetration = InterpenetrationUtils.getCirclesInterpenetration(shape, otherShape);
-            if (interpenetration != null) {
-                return Collision.withVehicle(drone, wheel, interpenetration);
+            var contact = ContactUtils.getCirclesContact(shape, otherShape);
+            if (contact != null) {
+                return Collision.withVehicle(drone, wheel, contact);
             }
         }
         return null;

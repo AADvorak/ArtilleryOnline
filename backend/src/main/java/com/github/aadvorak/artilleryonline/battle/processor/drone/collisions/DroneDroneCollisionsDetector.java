@@ -5,7 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.DroneCalculations
 import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
-import com.github.aadvorak.artilleryonline.battle.utils.InterpenetrationUtils;
+import com.github.aadvorak.artilleryonline.battle.utils.ContactUtils;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -38,9 +38,9 @@ public class DroneDroneCollisionsDetector {
             var otherRadius = otherDrone.getModel().getSpecs().getHullRadius();
             var otherPosition = otherDrone.getNext().getPosition();
             var otherShape = new Circle(otherPosition.getCenter(), otherRadius);
-            var interpenetration = InterpenetrationUtils.getCirclesInterpenetration(shape, otherShape);
-            if (interpenetration != null) {
-                collisions.add(Collision.withDrone(drone, otherDrone, interpenetration));
+            var contact = ContactUtils.getCirclesContact(shape, otherShape);
+            if (contact != null) {
+                collisions.add(Collision.withDrone(drone, otherDrone, contact));
                 if (first) return collisions;
             }
         }

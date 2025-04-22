@@ -25,7 +25,7 @@ public class Collision {
 
     private VelocitiesProjections velocitiesProjections;
 
-    private Interpenetration interpenetration;
+    private Contact contact;
 
     private Double sumNormalVelocity;
 
@@ -80,9 +80,9 @@ public class Collision {
                                 velocitiesProjections.first()
                         )
                 )
-                .setInterpenetration(
-                        Optional.ofNullable(interpenetration)
-                                .map(Interpenetration::inverted)
+                .setContact(
+                        Optional.ofNullable(contact)
+                                .map(Contact::inverted)
                                 .orElse(null)
                 );
     }
@@ -113,54 +113,54 @@ public class Collision {
                 .setPair(new CollisionPair(first, null));
     }
 
-    public static Collision withGround(Calculations<?> first, Interpenetration interpenetration) {
-        return withUnmovable(first, interpenetration, CollideObjectType.GROUND);
+    public static Collision withGround(Calculations<?> first, Contact contact) {
+        return withUnmovable(first, contact, CollideObjectType.GROUND);
     }
 
-    public static Collision withWall(Calculations<?> first, Interpenetration interpenetration) {
-        return withUnmovable(first, interpenetration, CollideObjectType.WALL);
+    public static Collision withWall(Calculations<?> first, Contact contact) {
+        return withUnmovable(first, contact, CollideObjectType.WALL);
     }
 
-    public static Collision withSurface(Calculations<?> first, Interpenetration interpenetration) {
-        return withUnmovable(first, interpenetration, CollideObjectType.SURFACE);
+    public static Collision withSurface(Calculations<?> first, Contact contact) {
+        return withUnmovable(first, contact, CollideObjectType.SURFACE);
     }
 
     public static Collision withVehicle(Calculations<?> first, Calculations<VehicleModel> second,
-                                         Interpenetration interpenetration) {
-        return withMovable(first, second, interpenetration, CollideObjectType.VEHICLE);
+                                         Contact contact) {
+        return withMovable(first, second, contact, CollideObjectType.VEHICLE);
     }
 
     public static Collision withMissile(Calculations<?> first, Calculations<MissileModel> second,
-                                        Interpenetration interpenetration) {
-        return withMovable(first, second, interpenetration, CollideObjectType.MISSILE);
+                                        Contact contact) {
+        return withMovable(first, second, contact, CollideObjectType.MISSILE);
     }
 
     public static Collision withDrone(Calculations<?> first, Calculations<DroneModel> second,
-                                        Interpenetration interpenetration) {
-        return withMovable(first, second, interpenetration, CollideObjectType.DRONE);
+                                        Contact contact) {
+        return withMovable(first, second, contact, CollideObjectType.DRONE);
     }
 
     public static Collision withMovable(Calculations<?> first, Calculations<?> second,
-                                        Interpenetration interpenetration, CollideObjectType type) {
-        var firstProjections = first.getVelocity().projections(interpenetration.angle());
-        var secondProjections = second.getVelocity().projections(interpenetration.angle());
+                                        Contact contact, CollideObjectType type) {
+        var firstProjections = first.getVelocity().projections(contact.angle());
+        var secondProjections = second.getVelocity().projections(contact.angle());
         return new Collision()
                 .setType(type)
                 .setPair(new CollisionPair(first, second))
                 .setVelocitiesProjections(new VelocitiesProjections(firstProjections, secondProjections))
-                .setInterpenetration(interpenetration);
+                .setContact(contact);
     }
 
     private static Collision withUnmovable(
             Calculations<?> first,
-            Interpenetration interpenetration,
+            Contact contact,
             CollideObjectType type
     ) {
         return new Collision()
                 .setType(type)
                 .setPair(new CollisionPair(first, null))
                 .setVelocitiesProjections(new VelocitiesProjections(first.getVelocity()
-                        .projections(interpenetration.angle()), null))
-                .setInterpenetration(interpenetration);
+                        .projections(contact.angle()), null))
+                .setContact(contact);
     }
 }

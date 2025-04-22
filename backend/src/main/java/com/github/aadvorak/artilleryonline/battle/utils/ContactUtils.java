@@ -1,22 +1,24 @@
 package com.github.aadvorak.artilleryonline.battle.utils;
 
-import com.github.aadvorak.artilleryonline.battle.common.Interpenetration;
+import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
 
 import java.util.Optional;
 
-public class InterpenetrationUtils {
+public class ContactUtils {
 
-    public static Interpenetration getCirclesInterpenetration(Circle circle, Circle otherCircle) {
+    public static Contact getCirclesContact(Circle circle, Circle otherCircle) {
         var distance = circle.center().distanceTo(otherCircle.center());
         var minDistance = circle.radius() + otherCircle.radius();
         var depth = distance < minDistance ? minDistance - distance : 0.0;
-        return Interpenetration.of(depth, circle.center(), otherCircle.center());
+        var normal = circle.center().vectorTo(otherCircle.center()).normalized();
+        var position = circle.center().shifted(normal.multiply(circle.radius() - depth / 2));
+        return Contact.of(depth, normal, position);
     }
 
-    public static Interpenetration getCircleHalfCircleInterpenetration(Circle circle, HalfCircle otherHalfCircle) {
+    public static Contact getCircleHalfCircleContact(Circle circle, HalfCircle otherHalfCircle) {
         if (circle.center().distanceTo(otherHalfCircle.center()) > circle.radius() + otherHalfCircle.radius()) {
             return null;
         }
@@ -25,16 +27,16 @@ public class InterpenetrationUtils {
         for (var intersectionPoint : intersectionPoints) {
             var pointAngle = GeometryUtils.getPointAngleInCircle(otherHalfCircle.center(), intersectionPoint);
             if (pointAngle > otherHalfCircle.angle() && pointAngle < otherHalfCircle.angle() + Math.PI) {
-                return getCirclesInterpenetration(circle, otherCircle);
+                return getCirclesContact(circle, otherCircle);
             }
         }
         var otherBottom = otherHalfCircle.chord();
-        return Optional.ofNullable(getSurfaceAndCircleInterpenetration(otherBottom, circle))
-                .map(Interpenetration::inverted)
+        return Optional.ofNullable(getSurfaceAndCircleContact(otherBottom, circle))
+                .map(Contact::inverted)
                 .orElse(null);
     }
 
-    public static Interpenetration getHalfCirclesInterpenetration(HalfCircle halfCircle, HalfCircle otherHalfCircle) {
+    public static Contact getHalfCirclesContact(HalfCircle halfCircle, HalfCircle otherHalfCircle) {
         if (halfCircle.center().distanceTo(otherHalfCircle.center()) > halfCircle.radius() + otherHalfCircle.radius()) {
             return null;
         }
@@ -46,23 +48,23 @@ public class InterpenetrationUtils {
             var pointAngle2 = GeometryUtils.getPointAngleInCircle(otherHalfCircle.center(), intersectionPoint);
             if (pointAngle1 > halfCircle.angle() && pointAngle2 > otherHalfCircle.angle()
                     && pointAngle1 < halfCircle.angle() + Math.PI && pointAngle2 < otherHalfCircle.angle() + Math.PI) {
-                return getCirclesInterpenetration(circle, otherCircle);
+                return getCirclesContact(circle, otherCircle);
             }
         }
         var bottom = halfCircle.chord();
-        if (isHalfCircleBottomAndOtherHalfCircleTopInterpenetrate(bottom, otherHalfCircle)) {
-            return getSurfaceAndCircleInterpenetration(bottom, otherCircle);
+        if (isHalfCircleBottomAndOtherHalfCircleTopContact(bottom, otherHalfCircle)) {
+            return getSurfaceAndCircleContact(bottom, otherCircle);
         }
         var otherBottom = otherHalfCircle.chord();
-        if (isHalfCircleBottomAndOtherHalfCircleTopInterpenetrate(otherBottom, halfCircle)) {
-            return Optional.ofNullable(getSurfaceAndCircleInterpenetration(otherBottom, circle))
-                    .map(Interpenetration::inverted)
+        if (isHalfCircleBottomAndOtherHalfCircleTopContact(otherBottom, halfCircle)) {
+            return Optional.ofNullable(getSurfaceAndCircleContact(otherBottom, circle))
+                    .map(Contact::inverted)
                     .orElse(null);
         }
         return null;
     }
 
-    private static boolean isHalfCircleBottomAndOtherHalfCircleTopInterpenetrate(Segment bottom, HalfCircle otherHalfCircle) {
+    private static boolean isHalfCircleBottomAndOtherHalfCircleTopContact(Segment bottom, HalfCircle otherHalfCircle) {
         var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(bottom, otherHalfCircle.circle());
         for (var intersectionPoint : intersectionPoints) {
             var pointAngle = GeometryUtils.getPointAngleInCircle(otherHalfCircle.center(), intersectionPoint);
@@ -73,13 +75,14 @@ public class InterpenetrationUtils {
         return false;
     }
 
-    private static Interpenetration getSurfaceAndCircleInterpenetration(Segment surface, Circle circle) {
+    private static Contact getSurfaceAndCircleContact(Segment surface, Circle circle) {
         var projection = GeometryUtils.getPointToSegmentProjection(circle.center(), surface);
         if (projection == null) {
             return null;
         }
         var distance = circle.center().distanceTo(projection);
         var depth = distance < circle.radius() ? circle.radius() - distance : 0.0;
-        return Interpenetration.of(depth, projection, circle.center());
+        var normal = circle.center().vectorTo(projection).normalized();
+        return Contact.of(depth, normal, projection);
     }
 }

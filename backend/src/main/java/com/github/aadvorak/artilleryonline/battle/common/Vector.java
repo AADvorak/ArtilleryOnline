@@ -45,6 +45,29 @@ public interface Vector extends CompactSerializable {
                 .setY(scalar * vector.getY());
     }
 
+    default Vector normalized() {
+        var magnitude = magnitude();
+        return new VectorImpl()
+                .setX(getX() / magnitude)
+                .setY(getY() / magnitude);
+    }
+
+    default Vector multiply(double scalar) {
+        return new VectorImpl()
+                .setX(getX() * scalar)
+                .setY(getY() * scalar);
+    }
+
+    default Vector inverted() {
+        return new VectorImpl()
+                .setX(-getX())
+                .setY(-getY());
+    }
+
+    default double angleWithX() {
+        return Math.atan2(getY(), getX());
+    }
+
     @Override
     default void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(getX());

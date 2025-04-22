@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.common;
 
+import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -37,6 +38,12 @@ public class Position implements Vector {
         return new Position()
                 .setX(x + shift.distance() * Math.cos(shift.angle()))
                 .setY(y + shift.distance() * Math.sin(shift.angle()));
+    }
+
+    public Position shifted(Vector vector) {
+        return new Position()
+                .setX(x + vector.getX())
+                .setY(y + vector.getY());
     }
 
     @Override
