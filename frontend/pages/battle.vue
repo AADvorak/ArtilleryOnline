@@ -9,8 +9,6 @@ import {DateUtils} from "~/utils/DateUtils";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import VehicleSelector from "~/components/vehicle-selector.vue";
 import {useI18n} from "vue-i18n";
-import {deserializeBattle} from "~/playground/data/battle-deserialize";
-import {DeserializerInput} from "~/deserialization/deserializer-input";
 import {useRoomStore} from "~/stores/room";
 
 const {t} = useI18n()
@@ -25,11 +23,6 @@ const vehicleSelector = ref<InstanceType<typeof VehicleSelector> | undefined>()
 
 const selectedVehicle = ref<string>()
 
-watch(() => battleStore.battle, (value) => {
-  if (value) {
-    setTimeout(() => router.push('/playground'))
-  }
-})
 watch(() => queueStore.queue, () => {
   processUserInQueue()
 })
@@ -62,9 +55,8 @@ async function singleBattle(path) {
     const request = {
       selectedVehicle: selectedVehicle.value!
     }
-    const battleBinary = await api.postJsonForBinary<UserBattleQueueParams>('/battles' + path, request)
-    const battle = deserializeBattle(new DeserializerInput(battleBinary))
-    battleStore.updateBattle(battle)
+    await api.postJson<UserBattleQueueParams, void>('/battles' + path, request)
+    await router.push('/playground')
   } catch (e) {
     useRequestErrorHandler().handle(e)
   }

@@ -24,13 +24,13 @@ public class UserBattleEndpoint {
     }
 
     @PostMapping(path = "/test-drive", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public  byte[] testDrive(@RequestBody UserBattleQueueParams params) {
-        return battleService.createTestDrive(params).serialize();
+    public void testDrive(@RequestBody UserBattleQueueParams params) {
+        battleService.createTestDrive(params);
     }
 
     @PostMapping(path = "/drone-hunt", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public  byte[] droneHunt(@RequestBody UserBattleQueueParams params) {
-        return battleService.createDroneHunt(params).serialize();
+    public void droneHunt(@RequestBody UserBattleQueueParams params) {
+        battleService.createDroneHunt(params);
     }
 
     @DeleteMapping("/leave")
