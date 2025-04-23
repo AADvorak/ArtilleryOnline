@@ -4,5 +4,6 @@ export const menu = {
   rooms: 'Комнаты',
   user: 'Пользователь',
   settings: 'Настройки',
-  logOut: 'Выйти'
+  logOut: 'Выйти',
+  backToBattle: 'Вернуться в бой'
 }

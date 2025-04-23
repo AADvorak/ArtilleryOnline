@@ -32,6 +32,7 @@ function subscribe() {
   <v-app full-height theme="dark">
     <v-app-bar density="compact">
       <server-counts />
+      <battle-menu />
       <v-spacer />
       <messages-menu />
       <room-menu />
