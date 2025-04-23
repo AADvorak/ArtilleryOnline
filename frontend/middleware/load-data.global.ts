@@ -42,7 +42,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
     await presetsStore.loadVehiclesIfNull()
     await roomStore.loadRoomIfNull()
     await csrfStore.loadCsrfIfNull()
-    await battleStore.loadBattleIfNull()
+    to.path === PLAYGROUND_PATH ? await battleStore.loadBattle() : await battleStore.loadBattleIfNull()
     messageStore.subscribe()
   } else {
     messageStore.clear()

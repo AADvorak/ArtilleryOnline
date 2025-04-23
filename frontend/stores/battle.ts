@@ -47,13 +47,17 @@ export const useBattleStore = defineStore('battle', () => {
 
   async function loadBattleIfNull() {
     if (!battle.value) {
-      try {
-        const battleBinary = await new ApiRequestSender().getBytes('/battles')
-        const battle = deserializeBattle(new DeserializerInput(battleBinary))
-        updateBattle(battle)
-      } catch (e) {
-        console.log(e)
-      }
+      await loadBattle()
+    }
+  }
+
+  async function loadBattle() {
+    try {
+      const battleBinary = await new ApiRequestSender().getBytes('/battles')
+      const battle = deserializeBattle(new DeserializerInput(battleBinary))
+      updateBattle(battle)
+    } catch (e) {
+      console.log(e)
     }
   }
 
@@ -101,6 +105,7 @@ export const useBattleStore = defineStore('battle', () => {
     particles,
     isActive,
     loadBattleIfNull,
+    loadBattle,
     updateBattle,
     updateClientBattle,
     updateServerBattle,
