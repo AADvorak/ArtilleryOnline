@@ -67,7 +67,8 @@ export const ru = {
   vehicleConfigs,
   onlineUsersTable,
   profile: {
-    title: 'пользователь / профиль'
+    title: 'пользователь / профиль',
+    cannotBeChanged: 'Нельзя изменить находясь в комнате или в бою'
   },
   rooms: {
     title: 'комнаты',

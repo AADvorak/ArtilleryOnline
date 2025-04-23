@@ -67,7 +67,8 @@ export const en = {
   vehicleConfigs,
   onlineUsersTable,
   profile: {
-    title: 'user / profile'
+    title: 'user / profile',
+    cannotBeChanged: 'Cannot be changed while being in room or in battle'
   },
   rooms: {
     title: 'rooms',
