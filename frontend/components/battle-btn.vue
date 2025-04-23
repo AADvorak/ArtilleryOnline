@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {ref} from "vue";
-import { mdiSword } from '@mdi/js'
+import { mdiSwordCross } from '@mdi/js'
 import {useI18n} from "vue-i18n";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import {useRouter} from "#app";
@@ -11,14 +11,37 @@ const {t} = useI18n()
 const battleStore = useBattleStore()
 const router = useRouter()
 
-const opened = ref(false)
+const mounted = ref(false)
+
+const largeScale = ref(false)
 
 const isShow = computed(() => {
   return !!battleStore.battle
 })
 
+const iconClass = computed(() => {
+  return `icon ${largeScale.value ? 'icon-large-scale' : 'icon-normal-scale'}`
+})
+
+onMounted(() => {
+  mounted.value = true
+  startAnimation()
+})
+
+onUnmounted(() => {
+  mounted.value = false
+})
+
 async function toBattle() {
   await router.push('/playground')
+}
+
+function startAnimation() {
+  if (!isShow.value || !mounted.value) {
+    return
+  }
+  largeScale.value = !largeScale.value
+  setTimeout(startAnimation, 500)
 }
 </script>
 
@@ -29,7 +52,7 @@ async function toBattle() {
       color="error"
       @click="toBattle"
   >
-    <v-icon class="icon-large" :icon="mdiSword" />
+    <v-icon :class="iconClass" :icon="mdiSwordCross" />
     <v-tooltip
         activator="parent"
         location="bottom"
@@ -51,8 +74,17 @@ async function toBattle() {
   transform: translate(-50%, -50%);
 }
 
-.icon-large {
+.icon {
   width: 28px;
   height: 28px;
+  transition: transform 0.5s ease;
+}
+
+.icon-large-scale {
+  transform: scale(1.4);
+}
+
+.icon-normal-scale {
+  transform: scale(1);
 }
 </style>
