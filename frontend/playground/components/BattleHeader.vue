@@ -9,7 +9,7 @@ import {useSettingsStore} from "~/stores/settings";
 import JetBar from "~/playground/components/JetBar.vue";
 import LeaveBattleDialog from "~/playground/components/LeaveBattleDialog.vue";
 import {useUserStore} from "~/stores/user";
-import {mdiCloseThick, mdiHelp} from '@mdi/js'
+import {mdiCloseThick, mdiHelp, mdiMenu} from '@mdi/js'
 import IconBtn from "~/components/icon-btn.vue";
 import HelpDialog from "~/playground/components/HelpDialog.vue";
 import {useUserSettingsStore} from "~/stores/user-settings";
@@ -24,8 +24,9 @@ import Gun from "~/playground/components/Gun.vue";
 import {useGlobalStateStore} from "~/stores/global-state";
 import {VerticalTooltipLocation} from "~/data/model";
 import FullScreenBtn from "~/components/full-screen-btn.vue";
+import {useRouter} from "#app";
 
-const RESERVED_WIDTH = 380
+const RESERVED_WIDTH = 416
 const HP_BAR_WIDTH = 216
 
 const {t} = useI18n()
@@ -34,6 +35,7 @@ const userStore = useUserStore()
 const settingsStore = useSettingsStore()
 const userSettingsStore = useUserSettingsStore()
 const globalStateStore = useGlobalStateStore()
+const router = useRouter()
 
 const props = defineProps<{
   showControlButtons: boolean
@@ -119,6 +121,10 @@ function showHelp() {
   }
 }
 
+function toMenu() {
+  router.push('/menu')
+}
+
 function calculateAvailableHpSlots() {
   let availableWidth = window.innerWidth - RESERVED_WIDTH
   if (availableWidth < 0) availableWidth = 0
@@ -151,6 +157,11 @@ function calculateAvailableHpSlots() {
     />
     <messages-menu/>
     <full-screen-btn />
+    <icon-btn
+        :icon="mdiMenu"
+        :tooltip="t('menu.title')"
+        @click="toMenu"
+    />
     <icon-btn
         :icon="mdiCloseThick"
         :tooltip="t('battleHeader.leaveBattle')"

@@ -42,13 +42,15 @@ export default defineNuxtRouteMiddleware(async (to) => {
     await presetsStore.loadVehiclesIfNull()
     await roomStore.loadRoomIfNull()
     await csrfStore.loadCsrfIfNull()
-    await battleStore.loadBattleIfNull()
+    to.path === PLAYGROUND_PATH ? await battleStore.loadBattle() : await battleStore.loadBattleIfNull()
     messageStore.subscribe()
   } else {
     messageStore.clear()
     userSettingsStore.clear()
     configsStore.clear()
     roomStore.clear()
+    queueStore.clear()
+    battleStore.clear()
     queueStore.clear()
   }
 
@@ -62,7 +64,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (!!userStore.user && !!queueStore.queue && to.path !== BATTLE_PATH) {
     return navigateTo(BATTLE_PATH)
   }
-  if (!!userStore.user && !!battleStore.battle && to.path !== PLAYGROUND_PATH) {
+  if (!!userStore.user && !!battleStore.battle && to.path === BATTLE_PATH) {
     return navigateTo(PLAYGROUND_PATH)
   }
   if (!!userStore.user && !roomStore.room && to.path === ROOM_PATH) {

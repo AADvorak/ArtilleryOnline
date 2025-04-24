@@ -25,6 +25,7 @@ const keyboardListener = useKeyboardListener(commandsSender)
 const battleStore = useBattleStore()
 const roomStore = useRoomStore()
 const router = useRouter()
+const battleProcessor = useBattleProcessor()
 
 const isMobileBrowser = ref<boolean>(false)
 
@@ -44,12 +45,13 @@ onMounted(() => {
   calculateIsMobileBrowser()
   keyboardListener.startListening()
   battleUpdater.subscribe()
-  isClientProcessing.value && useBattleProcessor().startProcessing()
+  isClientProcessing.value && battleProcessor.startProcessing()
   continuousSoundsPlayer.start()
 })
 
 onBeforeUnmount(() => {
   keyboardListener.stopListening()
+  battleProcessor.stopProcessing()
   battleUpdater.unsubscribe()
   continuousSoundsPlayer.stopAll()
 })

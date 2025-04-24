@@ -16,14 +16,20 @@ export function useBattleProcessor() {
 
   const TIME_STEP_MS = 10
 
+  const processing = ref(true)
+
   const battleStore = useBattleStore()
 
   function startProcessing() {
     setTimeout(processStep, TIME_STEP_MS)
   }
 
+  function stopProcessing() {
+    processing.value = false
+  }
+
   function processStep() {
-    if (!battleStore.battle) {
+    if (!battleStore.battle || !processing.value) {
       return
     }
     const battle = JSON.parse(JSON.stringify(battleStore.battle)) as Battle
@@ -99,5 +105,5 @@ export function useBattleProcessor() {
     }
   }
 
-  return { startProcessing }
+  return { startProcessing, stopProcessing }
 }

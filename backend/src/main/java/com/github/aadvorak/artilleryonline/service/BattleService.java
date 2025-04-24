@@ -55,7 +55,7 @@ public class BattleService {
         return battle.getDebug().getTracking();
     }
 
-    public BattleResponse createTestDrive(UserBattleQueueParams params) {
+    public void createTestDrive(UserBattleQueueParams params) {
         var user = userService.getUserFromContext();
         synchronized (userBattleMap) {
             userAvailabilityService.checkSingleBattleAvailability(user);
@@ -68,12 +68,11 @@ public class BattleService {
                     .setNickname("Dummy player")
                     .setParams(new BattleParticipantParams()
                             .setSelectedVehicle(params.getSelectedVehicle()));
-            var battle = battleStarter.start(Set.of(userParticipant, otherParticipant), BattleType.TEST_DRIVE);
-            return mapper.map(battle, BattleResponse.class);
+            battleStarter.start(Set.of(userParticipant, otherParticipant), BattleType.TEST_DRIVE);
         }
     }
 
-    public BattleResponse createDroneHunt(UserBattleQueueParams params) {
+    public void createDroneHunt(UserBattleQueueParams params) {
         var user = userService.getUserFromContext();
         synchronized (userBattleMap) {
             userAvailabilityService.checkSingleBattleAvailability(user);
@@ -82,8 +81,7 @@ public class BattleService {
                     .setNickname(user.getNickname())
                     .setParams(new BattleParticipantParams()
                             .setSelectedVehicle(params.getSelectedVehicle()));
-            var battle = battleStarter.start(Set.of(userParticipant), BattleType.DRONE_HUNT);
-            return mapper.map(battle, BattleResponse.class);
+            battleStarter.start(Set.of(userParticipant), BattleType.DRONE_HUNT);
         }
     }
 

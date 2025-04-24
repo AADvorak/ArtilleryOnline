@@ -7,6 +7,7 @@ import type {StompSubscription} from "@stomp/stompjs";
 import {useRouter} from "#app";
 import {useQueueStore} from "~/stores/queue";
 import FullScreenBtn from "~/components/full-screen-btn.vue";
+import BattleBtn from "~/components/battle-btn.vue";
 
 const stompClientStore = useStompClientStore()
 const queueStore = useQueueStore()
@@ -32,6 +33,7 @@ function subscribe() {
   <v-app full-height theme="dark">
     <v-app-bar density="compact">
       <server-counts />
+      <battle-btn />
       <v-spacer />
       <messages-menu />
       <room-menu />

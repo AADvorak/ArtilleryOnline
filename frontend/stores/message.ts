@@ -4,12 +4,18 @@ import type {Message, RoomInvitation} from '~/data/model'
 import {ApiRequestSender} from '~/api/api-request-sender'
 import {useStompClientStore} from "~/stores/stomp-client";
 import type {StompSubscription} from "@stomp/stompjs";
+import {useBattleStore} from "~/stores/battle";
+import {useRoute} from "#app";
 
 export const useMessageStore = defineStore('message', () => {
   const messages = ref<Message[]>()
   const roomInvitations = ref<RoomInvitation[]>()
 
   const stompClientStore = useStompClientStore()
+
+  const battleStore = useBattleStore()
+
+  const route = useRoute()
 
   const subscriptions = ref<StompSubscription[]>([])
 
@@ -36,6 +42,10 @@ export const useMessageStore = defineStore('message', () => {
   }
 
   function addMessage(message: Message) {
+    // todo not a good solution
+    if (message.special?.userBattleResult && !route.path.endsWith('/playground')) {
+      battleStore.clear()
+    }
     messages.value && messages.value.unshift(message)
   }
 
