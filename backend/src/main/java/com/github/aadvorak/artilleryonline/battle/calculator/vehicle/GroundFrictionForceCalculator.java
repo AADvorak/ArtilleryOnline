@@ -41,7 +41,8 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
         var force = new Force()
                 .setX( - wheelCalculations.getVelocity().getX() * depth * groundFrictionCoefficient)
                 .setY( - wheelCalculations.getVelocity().getY() * depth * groundFrictionCoefficient);
-        var point = wheelCalculations.getNearestGroundPoint().position() != null
+        var point = wheelCalculations.getNearestGroundPoint() != null
+                && wheelCalculations.getNearestGroundPoint().position() != null
                 ? wheelCalculations.getNearestGroundPoint().position()
                 : wheelCalculations.getPosition();
         forces.add(new ForceAtPoint(force, point, FORCE_DESCRIPTION));
