@@ -4,7 +4,7 @@ import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWr
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 
 public enum MovingDirection implements CompactSerializable {
-    LEFT, RIGHT;
+    LEFT, RIGHT, UP, DOWN;
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {

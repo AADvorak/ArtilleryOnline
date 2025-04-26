@@ -16,12 +16,15 @@ import {useRouter} from "#app";
 import ControlButtons from "~/playground/components/ControlButtons.vue";
 import {AppearancesNames} from "~/dictionary/appearances-names";
 import {useUserSettingsStore} from "~/stores/user-settings";
+import {useColliderKeyboardListener} from "~/playground/composables/collider-keyboard-listener";
+import {BattleType} from "~/playground/data/battle";
 
 const player = usePlayer()
 const battleUpdater = useBattleUpdater(player)
 const continuousSoundsPlayer = useContinuousSoundsPlayer(player)
 const commandsSender = useCommandsSender()
 const keyboardListener = useKeyboardListener(commandsSender)
+const colliderKeyboardListener = useColliderKeyboardListener(commandsSender)
 const battleStore = useBattleStore()
 const roomStore = useRoomStore()
 const router = useRouter()
@@ -34,6 +37,9 @@ const showControlButtons = computed(() => {
   return isMobileBrowser.value || useUserSettingsStore()
       .appearancesOrDefaultsNameValueMapping[AppearancesNames.SHOW_CONTROL_BUTTONS] === '1'
 })
+const isCollider = computed(() => {
+  return battleStore.battle?.type === BattleType.COLLIDER
+})
 
 watch(() => battleStore.battle, value => {
   if (!value) {
@@ -43,14 +49,14 @@ watch(() => battleStore.battle, value => {
 
 onMounted(() => {
   calculateIsMobileBrowser()
-  keyboardListener.startListening()
+  isCollider.value ? colliderKeyboardListener.startListening() : keyboardListener.startListening()
   battleUpdater.subscribe()
   isClientProcessing.value && battleProcessor.startProcessing()
   continuousSoundsPlayer.start()
 })
 
 onBeforeUnmount(() => {
-  keyboardListener.stopListening()
+  isCollider.value ? colliderKeyboardListener.stopListening() : keyboardListener.stopListening()
   battleProcessor.stopProcessing()
   battleUpdater.unsubscribe()
   continuousSoundsPlayer.stopAll()

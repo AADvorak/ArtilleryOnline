@@ -23,12 +23,17 @@ public class UserBattleEndpoint {
         return battleService.getBattleTracking();
     }
 
-    @PostMapping(path = "/test-drive", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @PostMapping("/test-drive")
     public void testDrive(@RequestBody UserBattleQueueParams params) {
         battleService.createTestDrive(params);
     }
 
-    @PostMapping(path = "/drone-hunt", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @PostMapping("/collider")
+    public void collider(@RequestBody UserBattleQueueParams params) {
+        battleService.createCollider(params);
+    }
+
+    @PostMapping("/drone-hunt")
     public void droneHunt(@RequestBody UserBattleQueueParams params) {
         battleService.createDroneHunt(params);
     }

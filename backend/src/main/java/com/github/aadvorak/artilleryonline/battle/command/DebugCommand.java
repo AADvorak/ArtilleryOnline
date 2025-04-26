@@ -10,4 +10,6 @@ import lombok.experimental.Accessors;
 public class DebugCommand {
 
     private Command command;
+
+    private CommandParams params;
 }

@@ -46,7 +46,7 @@ public class BattleFactory {
 
     public Battle createBattle(Set<BattleParticipant> participants, BattleType battleType) {
         var battleModel = new BattleModel()
-                .setRoom(createRoomModel());
+                .setRoom(createRoomModel(battleType));
         battleModel.setVehicles(createVehicles(participants, battleModel));
         battleModel.setStatistics(createUserBattleStatistics(participants));
         var userMap = createUserMap(participants);
@@ -62,9 +62,11 @@ public class BattleFactory {
         return battle;
     }
 
-    private RoomModel createRoomModel() {
+    private RoomModel createRoomModel(BattleType battleType) {
         var roomModel = new RoomModel();
-        var specs = RoomSpecsPreset.DEFAULT.getSpecs();
+        var specs = BattleType.COLLIDER.equals(battleType)
+                ? RoomSpecsPreset.NO_GRAVITY.getSpecs()
+                : RoomSpecsPreset.DEFAULT.getSpecs();
         var state = new RoomState()
                 .setGroundLine(createGroundLine(specs))
                 .setSurfaces(applicationSettings.isCreateSurfaces() ? createSurfaces(specs) : null);

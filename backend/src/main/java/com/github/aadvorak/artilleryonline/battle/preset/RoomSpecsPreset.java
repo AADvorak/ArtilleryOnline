@@ -17,6 +17,16 @@ public enum RoomSpecsPreset {
             .setAirFrictionCoefficient(0.1)
             .setStep(0.01)
             .setLeftBottom(new Position().setX(0.0).setY(0.0))
+            .setRightTop(new Position().setX(20.0).setY(9.0))),
+
+    NO_GRAVITY("noGravity", new RoomSpecs()
+            .setGravityAcceleration(0.0)
+            .setGroundMaxDepth(0.04)
+            .setGroundReactionCoefficient(5.4)
+            .setGroundFrictionCoefficient(1.8)
+            .setAirFrictionCoefficient(0.1)
+            .setStep(0.01)
+            .setLeftBottom(new Position().setX(0.0).setY(0.0))
             .setRightTop(new Position().setX(20.0).setY(9.0)));
 
     private final String name;

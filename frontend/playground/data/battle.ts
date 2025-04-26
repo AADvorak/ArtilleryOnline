@@ -14,7 +14,8 @@ export enum BattleType {
   TEST_DRIVE = 'TEST_DRIVE',
   RANDOM = 'RANDOM',
   ROOM = 'ROOM',
-  DRONE_HUNT = 'DRONE_HUNT'
+  DRONE_HUNT = 'DRONE_HUNT',
+  COLLIDER = 'COLLIDER'
 }
 
 export interface Battle {
@@ -24,6 +25,7 @@ export interface Battle {
   fps: number
   paused: boolean
   battleStage: BattleStage
+  type: BattleType
 }
 
 export interface BattleUpdate {

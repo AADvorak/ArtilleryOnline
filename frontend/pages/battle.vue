@@ -50,6 +50,10 @@ async function droneHunt() {
   await singleBattle('/drone-hunt')
 }
 
+async function collider() {
+  await singleBattle('/collider')
+}
+
 async function singleBattle(path) {
   try {
     const request = {
@@ -122,6 +126,9 @@ function back() {
         <v-btn class="mb-4" width="100%" color="secondary"
                :disabled="!!queueStore.queue || !!battleStore.battle || !selectedVehicle || !!roomStore.room"
                @click="droneHunt">{{ t('battle.droneHunt') }}</v-btn>
+        <v-btn v-if="settingsStore.settings?.debug" class="mb-4" width="100%" color="secondary"
+               :disabled="!!queueStore.queue || !!battleStore.battle || !selectedVehicle || !!roomStore.room"
+               @click="collider">COLLIDER</v-btn>
         <v-btn class="mb-4" width="100%" :disabled="!!queueStore.queue" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>

@@ -24,6 +24,9 @@ public class BodyAccelerationCalculator<
         M extends BodyModel<S, P, Cf, St>,
         C extends BodyCalculations<S, P, Cf, St, M>> {
 
+    private static final double COLLIDER_PUSHING = 5.0;
+    private static final double COLLIDER_ROTATING = 2.0;
+
     private final List<ForceCalculator<S, P, Cf, St, M, C>> forceCalculators;
 
     public BodyAcceleration calculate(C calculations, BattleModel battleModel) {
@@ -32,6 +35,7 @@ public class BodyAccelerationCalculator<
         forceCalculators.forEach(forceCalculator ->
                 forces.addAll(forceCalculator.calculate(calculations, battleModel)));
         forces.forEach(force -> accelerations.add(toAcceleration(force, calculations)));
+        addColliderAcceleration(accelerations, calculations);
         return BodyAcceleration.sumOf(accelerations);
     }
 
@@ -49,5 +53,24 @@ public class BodyAccelerationCalculator<
         var torque = radiusVector.vectorProduct(force.force());
         acceleration.setAngle(torque / momentOfInertia);
         return acceleration;
+    }
+
+    private void addColliderAcceleration(List<BodyAcceleration> accelerations, C calculations) {
+        var pushingDirection = calculations.getModel().getState().getPushingDirection();
+        var rotatingDirection = calculations.getModel().getState().getRotatingDirection();
+        if (pushingDirection != null) {
+            switch (pushingDirection) {
+                case UP -> accelerations.add(new BodyAcceleration().setY(COLLIDER_PUSHING));
+                case DOWN -> accelerations.add(new BodyAcceleration().setY(-COLLIDER_PUSHING));
+                case LEFT -> accelerations.add(new BodyAcceleration().setX(-COLLIDER_PUSHING));
+                case RIGHT -> accelerations.add(new BodyAcceleration().setX(COLLIDER_PUSHING));
+            }
+        }
+        if (rotatingDirection != null) {
+            switch (rotatingDirection) {
+                case RIGHT -> accelerations.add(new BodyAcceleration().setAngle(-COLLIDER_ROTATING));
+                case LEFT -> accelerations.add(new BodyAcceleration().setAngle(COLLIDER_ROTATING));
+            }
+        }
     }
 }

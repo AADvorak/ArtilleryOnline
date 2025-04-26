@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.dto.response;
 
 import com.github.aadvorak.artilleryonline.battle.BattleStage;
+import com.github.aadvorak.artilleryonline.battle.BattleType;
 import com.github.aadvorak.artilleryonline.collection.BattleUpdatesQueueElement;
 import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
@@ -23,6 +24,8 @@ public class BattleResponse implements BattleUpdatesQueueElement, CompactSeriali
 
     private BattleStage battleStage;
 
+    private BattleType type;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeString(id);
@@ -31,5 +34,6 @@ public class BattleResponse implements BattleUpdatesQueueElement, CompactSeriali
         stream.writeInt(fps);
         stream.writeBoolean(paused);
         stream.writeSerializableValue(battleStage);
+        stream.writeSerializableValue(type);
     }
 }

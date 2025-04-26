@@ -21,6 +21,10 @@ public class VehicleState implements BodyState, CompactSerializable {
 
     private MovingDirection movingDirection;
 
+    private MovingDirection pushingDirection;
+
+    private MovingDirection rotatingDirection;
+
     private BodyAcceleration acceleration = new BodyAcceleration();
 
     private double hitPoints;

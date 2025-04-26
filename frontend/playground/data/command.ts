@@ -18,7 +18,11 @@ export enum Command {
   RESUME = 'RESUME',
   STEP = 'STEP',
   START_TRACKING = 'START_TRACKING',
-  STOP_TRACKING = 'STOP_TRACKING'
+  STOP_TRACKING = 'STOP_TRACKING',
+  START_ROTATING = 'START_ROTATING',
+  STOP_ROTATING = 'STOP_ROTATING',
+  START_PUSHING = 'START_PUSHING',
+  STOP_PUSHING = 'STOP_PUSHING',
 }
 
 export interface CommandParams {
@@ -33,4 +37,5 @@ export interface UserCommand {
 
 export interface DebugCommand {
   command: Command
+  params?: CommandParams
 }

@@ -13,7 +13,9 @@ export interface Missiles {
 
 export enum MovingDirection {
   LEFT = 'LEFT',
-  RIGHT = 'RIGHT'
+  RIGHT = 'RIGHT',
+  UP = 'UP',
+  DOWN = 'DOWN'
 }
 
 export enum ShellType {

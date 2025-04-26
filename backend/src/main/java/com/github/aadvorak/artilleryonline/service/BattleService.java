@@ -56,20 +56,11 @@ public class BattleService {
     }
 
     public void createTestDrive(UserBattleQueueParams params) {
-        var user = userService.getUserFromContext();
-        synchronized (userBattleMap) {
-            userAvailabilityService.checkSingleBattleAvailability(user);
-            var userParticipant = new BattleParticipant()
-                    .setUser(user)
-                    .setNickname(user.getNickname())
-                    .setParams(new BattleParticipantParams()
-                            .setSelectedVehicle(params.getSelectedVehicle()));
-            var otherParticipant = new BattleParticipant()
-                    .setNickname("Dummy player")
-                    .setParams(new BattleParticipantParams()
-                            .setSelectedVehicle(params.getSelectedVehicle()));
-            battleStarter.start(Set.of(userParticipant, otherParticipant), BattleType.TEST_DRIVE);
-        }
+        createTestBattle(params, BattleType.TEST_DRIVE);
+    }
+
+    public void createCollider(UserBattleQueueParams params) {
+        createTestBattle(params, BattleType.COLLIDER);
     }
 
     public void createDroneHunt(UserBattleQueueParams params) {
@@ -125,5 +116,22 @@ public class BattleService {
                     new Locale().setCode(LocaleCode.NO_SELECTED_VEHICLES));
         }
         userAvailabilityService.checkRoomBattleAvailability(participant.getUser());
+    }
+
+    private void createTestBattle(UserBattleQueueParams params, BattleType battleType) {
+        var user = userService.getUserFromContext();
+        synchronized (userBattleMap) {
+            userAvailabilityService.checkSingleBattleAvailability(user);
+            var userParticipant = new BattleParticipant()
+                    .setUser(user)
+                    .setNickname(user.getNickname())
+                    .setParams(new BattleParticipantParams()
+                            .setSelectedVehicle(params.getSelectedVehicle()));
+            var otherParticipant = new BattleParticipant()
+                    .setNickname("Dummy player")
+                    .setParams(new BattleParticipantParams()
+                            .setSelectedVehicle(params.getSelectedVehicle()));
+            battleStarter.start(Set.of(userParticipant, otherParticipant), battleType);
+        }
     }
 }

@@ -21,5 +21,9 @@ public enum Command {
     RESUME,
     STEP,
     START_TRACKING,
-    STOP_TRACKING
+    STOP_TRACKING,
+    START_PUSHING,
+    STOP_PUSHING,
+    START_ROTATING,
+    STOP_ROTATING,
 }
