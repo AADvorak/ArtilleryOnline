@@ -53,11 +53,13 @@ public class VehicleCalculations
     }
 
     public Position getGeometryPosition() {
-        return getPosition().shifted(model.getPreCalc().getCenterOfMassShift().inverted());
+        return getPosition().shifted(model.getPreCalc().getCenterOfMassShift()
+                .plusAngle(model.getState().getPosition().getAngle()).inverted());
     }
 
     public BodyPosition getGeometryNextPosition() {
-        return nextPosition.shifted(model.getPreCalc().getCenterOfMassShift().inverted());
+        return nextPosition.shifted(model.getPreCalc().getCenterOfMassShift()
+                .plusAngle(nextPosition.getAngle()).inverted());
     }
 
     @Override
