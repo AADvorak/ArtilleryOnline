@@ -30,18 +30,6 @@ public class GeometryUtils {
         return getPointToSegmentProjection(point, segment, false);
     }
 
-    public static double getPointAngleInCircle(Position center, Position point) {
-        var angle = Math.atan((point.getY() - center.getY()) / (point.getX() - center.getX()));
-        if (point.getX() > center.getX()) {
-            return angle;
-        }
-        return point.getY() < center.getY() ? angle - Math.PI : angle + Math.PI;
-    }
-
-    public static boolean isSegmentCrossingCircle(Segment segment, Circle circle) {
-        return !getSegmentAndCircleIntersectionPoints(segment, circle).isEmpty();
-    }
-
     public static Position getSegmentsIntersectionPoint(Segment s1, Segment s2) {
         var x1 = s1.begin().getX();
         var y1 = s1.begin().getY();

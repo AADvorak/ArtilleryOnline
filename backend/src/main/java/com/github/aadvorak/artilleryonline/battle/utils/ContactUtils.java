@@ -25,7 +25,7 @@ public class ContactUtils {
         var otherCircle = otherHalfCircle.circle();
         var intersectionPoints = GeometryUtils.getCirclesIntersectionPoints(circle, otherCircle);
         for (var intersectionPoint : intersectionPoints) {
-            var pointAngle = GeometryUtils.getPointAngleInCircle(otherHalfCircle.center(), intersectionPoint);
+            var pointAngle = otherHalfCircle.center().angleTo(intersectionPoint);
             if (pointAngle > otherHalfCircle.angle() && pointAngle < otherHalfCircle.angle() + Math.PI) {
                 return getCirclesContact(circle, otherCircle);
             }
@@ -44,8 +44,8 @@ public class ContactUtils {
         var otherCircle = otherHalfCircle.circle();
         var intersectionPoints = GeometryUtils.getCirclesIntersectionPoints(circle, otherCircle);
         for (var intersectionPoint : intersectionPoints) {
-            var pointAngle1 = GeometryUtils.getPointAngleInCircle(halfCircle.center(), intersectionPoint);
-            var pointAngle2 = GeometryUtils.getPointAngleInCircle(otherHalfCircle.center(), intersectionPoint);
+            var pointAngle1 = halfCircle.center().angleTo(intersectionPoint);
+            var pointAngle2 = otherHalfCircle.center().angleTo(intersectionPoint);
             if (pointAngle1 > halfCircle.angle() && pointAngle2 > otherHalfCircle.angle()
                     && pointAngle1 < halfCircle.angle() + Math.PI && pointAngle2 < otherHalfCircle.angle() + Math.PI) {
                 return getCirclesContact(circle, otherCircle);
@@ -67,7 +67,7 @@ public class ContactUtils {
     private static boolean isHalfCircleBottomAndOtherHalfCircleTopContact(Segment bottom, HalfCircle otherHalfCircle) {
         var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(bottom, otherHalfCircle.circle());
         for (var intersectionPoint : intersectionPoints) {
-            var pointAngle = GeometryUtils.getPointAngleInCircle(otherHalfCircle.center(), intersectionPoint);
+            var pointAngle = otherHalfCircle.center().angleTo(intersectionPoint);
             if (pointAngle > otherHalfCircle.angle() && pointAngle < otherHalfCircle.angle() + Math.PI) {
                 return true;
             }
