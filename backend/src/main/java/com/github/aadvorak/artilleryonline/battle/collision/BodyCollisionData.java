@@ -34,7 +34,7 @@ public class BodyCollisionData {
                 .setVelocity(velocityAtPosition)
                 .setVelocityProjections(velocityAtPosition.projections(contact.angle()))
                 .setInertiaToMassCoefficient(inertiaToMassCoefficient)
-                .setRotationSign((byte) Math.signum(radiusAndNormalVectorProduct))
+                .setRotationSign((byte) -Math.signum(radiusAndNormalVectorProduct))
                 .setDistanceToAxis(distanceToAxis)
                 .setResultMass(getResultMass(bodyModel, distanceToAxis, inertiaToMassCoefficient));
     }
