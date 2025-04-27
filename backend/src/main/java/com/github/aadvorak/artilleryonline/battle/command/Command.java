@@ -22,8 +22,10 @@ public enum Command {
     STEP,
     START_TRACKING,
     STOP_TRACKING,
+
     START_PUSHING,
     STOP_PUSHING,
     START_ROTATING,
     STOP_ROTATING,
+    STOP_ALL,
 }

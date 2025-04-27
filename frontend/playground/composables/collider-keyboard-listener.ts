@@ -29,6 +29,9 @@ export function useColliderKeyboardListener(commandsSender: CommandsSender) {
     command: Command.START_ROTATING,
     params: { direction: MovingDirection.RIGHT }
   })
+  keyDownCommands.set('Space', {
+    command: Command.STOP_ALL
+  })
 
   const keyUpCommands: Map<string, UserCommand> = new Map()
   keyUpCommands.set('KeyD', {

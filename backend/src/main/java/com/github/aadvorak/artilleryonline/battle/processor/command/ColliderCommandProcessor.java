@@ -7,6 +7,11 @@ import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 public class ColliderCommandProcessor {
 
     public static void process(DebugCommand command, BattleModel battleModel) {
+        if (Command.STOP_ALL.equals(command.getCommand())) {
+            stopAll(battleModel);
+            return;
+        }
+
         var vehicle = battleModel.getVehicles().values().iterator().next();
 
         if (vehicle == null) {
@@ -42,5 +47,14 @@ public class ColliderCommandProcessor {
                 vehicle.setUpdated(true);
             }
         }
+    }
+
+    private static void stopAll(BattleModel battleModel) {
+        battleModel.getVehicles().values().forEach(vehicle -> {
+            vehicle.getState().getVelocity()
+                    .setX(0)
+                    .setY(0)
+                    .setAngle(0);
+        });
     }
 }
