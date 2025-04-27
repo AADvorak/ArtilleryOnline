@@ -113,12 +113,6 @@ public class VehicleCalculations
         var position = model.getState().getPosition();
         var velocity = model.getState().getVelocity();
         setNextPosition(position.next(velocity, timeStep));
-        if (nextPosition.getAngle() > Math.PI / 2) {
-            nextPosition.setAngle(Math.PI / 2);
-        }
-        if (nextPosition.getAngle() < -Math.PI / 2) {
-            nextPosition.setAngle(- Math.PI / 2);
-        }
         rightWheel.calculateNextPosition();
         leftWheel.calculateNextPosition();
     }

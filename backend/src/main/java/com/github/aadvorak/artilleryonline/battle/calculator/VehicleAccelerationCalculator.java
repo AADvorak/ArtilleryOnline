@@ -41,21 +41,9 @@ public class VehicleAccelerationCalculator {
 
         var acceleration = calculator.calculate(vehicle, battleModel);
         var angleVelocity = vehicle.getModel().getState().getVelocity().getAngle();
-        var angle = vehicle.getModel().getState().getPosition().getAngle();
-        var returnOnWheelAcceleration = getReturnOnWheelsRotatingAcceleration(angle) / vehicle.getModel().getSpecs().getRadius();
-        acceleration.setAngle(acceleration.getAngle() - angleVelocity + returnOnWheelAcceleration);
+        acceleration.setAngle(acceleration.getAngle() - angleVelocity);
 
         return acceleration;
-    }
-
-    private static double getReturnOnWheelsRotatingAcceleration(double angle) {
-        if (angle >= Math.PI / 2 - 0.1) {
-            return -2.0;
-        }
-        if (angle <= -Math.PI / 2 + 0.1) {
-            return 2.0;
-        }
-        return 0.0;
     }
 
     private static void calculateGroundPositionAndState(WheelCalculations wheelCalculations,
