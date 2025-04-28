@@ -66,10 +66,10 @@ public class BodyCollisionData {
 
     private static double getInertiaToMassCoefficient(double vectorProduct) {
         var inertiaToMassCoefficient = Math.abs(vectorProduct);
-        if (inertiaToMassCoefficient < 0.1) {
+        if (inertiaToMassCoefficient < 0.01) {
             return 0;
         }
-        if (inertiaToMassCoefficient > 0.9) {
+        if (inertiaToMassCoefficient > 0.99) {
             return 1;
         }
         return inertiaToMassCoefficient;
