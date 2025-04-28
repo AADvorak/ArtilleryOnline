@@ -45,9 +45,12 @@ public class VehicleGroundCollisionsDetector {
         GroundPositionCalculator.calculateNext(wheel, battle.getModel().getRoom());
         var groundMaxDepth = battle.getModel().getRoom().getSpecs().getGroundMaxDepth();
         var depth = wheel.getNext().getGroundDepth() - groundMaxDepth;
-        var position = Optional.ofNullable(wheel.getNearestGroundPoint())
+        var position = Optional.ofNullable(wheel.getNext().getNearestGroundPoint())
                 .map(NearestGroundPoint::position)
                 .orElse(null);
+        if (position == null) {
+            return null;
+        }
         var contact = Contact.of(depth, wheel.getGroundAngle(), position);
         if (contact == null) {
             return null;
