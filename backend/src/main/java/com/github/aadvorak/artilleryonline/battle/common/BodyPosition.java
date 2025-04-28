@@ -16,6 +16,15 @@ public class BodyPosition implements BodyVector {
 
     private double angle;
 
+    public BodyPosition setAngle(double angle) {
+        if (angle < -Math.PI || angle > Math.PI) {
+            this.angle = Math.atan2(Math.sin(angle), Math.cos(angle));
+        } else {
+            this.angle = angle;
+        }
+        return this;
+    }
+
     @JsonIgnore
     public Position getCenter() {
         return new Position()
