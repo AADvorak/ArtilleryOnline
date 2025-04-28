@@ -47,6 +47,11 @@ public class VectorProjections {
                 .setY(getY());
     }
 
+    @Override
+    public String toString() {
+        return String.format("(%.3f, %.3f)", normal, tangential);
+    }
+
     private double getX() {
         return - normal * Math.sin(angle) + tangential * Math.cos(angle);
     }

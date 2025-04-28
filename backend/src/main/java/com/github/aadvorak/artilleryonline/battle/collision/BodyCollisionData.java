@@ -25,6 +25,13 @@ public class BodyCollisionData {
 
     private double resultMass;
 
+    @Override
+    public String toString() {
+        return String.format("BodyCollisionData [velocity = %s, velocityProjections = %s, " +
+                "inertiaToMassCoefficient = %.3f, rotationSign = %d, distanceToAxis = %.3f, resultMass = %.3f]",
+                velocity, velocityProjections, inertiaToMassCoefficient, rotationSign, distanceToAxis, resultMass);
+    }
+
     public static BodyCollisionData of(BodyModel<?, ?, ?, ?> bodyModel, Contact contact) {
         var velocityAtPosition = getVelocityAtPosition(bodyModel, contact.position());
         var radiusAndNormalVectorProduct = getRadiusAndNormalVectorProduct(bodyModel, contact);
