@@ -37,7 +37,9 @@ public class CollisionResolver {
             return;
         }
         if (secondData == null) {
-            // todo
+            var impulseDelta = firstData.getResultMass() * closingVelocity * (1 + RESTITUTION);
+            recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
+                    firstData, impulseDelta, 1);
         } else {
             var impulseDelta = firstData.getResultMass() * secondData.getResultMass() * closingVelocity
                     * (1 + RESTITUTION) / (secondData.getResultMass() + firstData.getResultMass());
