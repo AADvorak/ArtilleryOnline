@@ -26,7 +26,8 @@ public class ContactUtils {
         var intersectionPoints = GeometryUtils.getCirclesIntersectionPoints(circle, otherCircle);
         for (var intersectionPoint : intersectionPoints) {
             var pointAngle = otherHalfCircle.center().angleTo(intersectionPoint);
-            if (pointAngle > otherHalfCircle.angle() && pointAngle < otherHalfCircle.angle() + Math.PI) {
+            if (GeometryUtils.isPointLyingOnArc(pointAngle, otherHalfCircle.angle(),
+                    otherHalfCircle.angle() + Math.PI)) {
                 return getCirclesContact(circle, otherCircle);
             }
         }
@@ -46,8 +47,10 @@ public class ContactUtils {
         for (var intersectionPoint : intersectionPoints) {
             var pointAngle1 = halfCircle.center().angleTo(intersectionPoint);
             var pointAngle2 = otherHalfCircle.center().angleTo(intersectionPoint);
-            if (pointAngle1 > halfCircle.angle() && pointAngle2 > otherHalfCircle.angle()
-                    && pointAngle1 < halfCircle.angle() + Math.PI && pointAngle2 < otherHalfCircle.angle() + Math.PI) {
+            if (GeometryUtils.isPointLyingOnArc(pointAngle1, halfCircle.angle(),
+                    halfCircle.angle() + Math.PI)
+                    && GeometryUtils.isPointLyingOnArc(pointAngle2, otherHalfCircle.angle(),
+                    otherHalfCircle.angle() + Math.PI)) {
                 return getCirclesContact(circle, otherCircle);
             }
         }

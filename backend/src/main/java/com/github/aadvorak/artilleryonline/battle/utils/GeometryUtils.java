@@ -9,6 +9,12 @@ import java.util.stream.Collectors;
 
 public class GeometryUtils {
 
+    public static boolean isPointLyingOnArc(double pointAngle, double beginAngle, double endAngle) {
+        var shiftedPointAngle = pointAngle + 2 * Math.PI;
+        return pointAngle > beginAngle && pointAngle < endAngle
+                || shiftedPointAngle > beginAngle && shiftedPointAngle < endAngle;
+    }
+
     public static double calculateAngleDiff(double objectAngle, double targetAngle) {
         double diff = targetAngle - objectAngle;
         if (Math.abs(diff) > Math.PI) {
