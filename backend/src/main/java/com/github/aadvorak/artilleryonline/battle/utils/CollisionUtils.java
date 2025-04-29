@@ -6,10 +6,31 @@ import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CollisionUtils {
+
+    public static Collision findStrongestCollision(Collection<Collision> collisions) {
+        if (collisions.isEmpty()) {
+            return null;
+        }
+        var iterator = collisions.iterator();
+        var strongest = iterator.next();
+        while (iterator.hasNext()) {
+            var collision = iterator.next();
+            var collisionVelocity = collision.getSumNormalVelocity();
+            var strongestVelocity = strongest.getSumNormalVelocity();
+            if (collisionVelocity < 1.0 && strongestVelocity < 1.0
+                    && collision.getContact().depth() > strongest.getContact().depth()) {
+                strongest = collision;
+            } else if (collisionVelocity > strongestVelocity) {
+                strongest = collision;
+            }
+        }
+        return strongest;
+    }
 
     public static void pushVehicleByDirectHit(Collision collision) {
         var projectileMass = collision.getPair().first().getMass();

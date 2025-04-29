@@ -8,6 +8,7 @@ import com.github.aadvorak.artilleryonline.battle.calculator.wheel.GroundPositio
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.utils.CollisionUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +23,11 @@ public class VehicleGroundCollisionsDetector {
             return null;
         }
         return collisions.iterator().next();
+    }
+
+    public static Collision detectStrongest(VehicleCalculations vehicle, BattleCalculations battle) {
+        var collisions = detect(vehicle, battle, false);
+        return CollisionUtils.findStrongestCollision(collisions);
     }
 
     public static Set<Collision> detect(VehicleCalculations vehicle, BattleCalculations battle, boolean first) {

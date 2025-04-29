@@ -14,7 +14,7 @@ public class VehicleVehicleCollisionsProcessor {
         var collision = VehicleVehicleCollisionsDetector.detectStrongest(vehicle, battle);
         if (collision != null) {
             vehicle.setHasCollisions(true);
-            calculateAndApplyDamage(collision, battle.getModel());
+            //calculateAndApplyDamage(collision, battle.getModel());
             resolve(collision, battle);
             vehicle.getModel().setUpdated(true);
             vehicle.getCollisions().add(collision);

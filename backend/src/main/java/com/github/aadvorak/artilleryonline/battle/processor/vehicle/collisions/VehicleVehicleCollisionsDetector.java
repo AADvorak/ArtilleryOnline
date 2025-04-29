@@ -6,6 +6,7 @@ import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
+import com.github.aadvorak.artilleryonline.battle.utils.CollisionUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.ContactUtils;
 
 import java.util.HashSet;
@@ -25,23 +26,7 @@ public class VehicleVehicleCollisionsDetector {
 
     public static Collision detectStrongest(VehicleCalculations vehicle, BattleCalculations battle) {
         var collisions = detect(vehicle, battle, false);
-        if (collisions.isEmpty()) {
-            return null;
-        }
-        var iterator = collisions.iterator();
-        var strongest = iterator.next();
-        while (iterator.hasNext()) {
-            var collision = iterator.next();
-            var collisionVelocity = collision.getSumNormalVelocity();
-            var strongestVelocity = strongest.getSumNormalVelocity();
-            if (collisionVelocity < 1.0 && strongestVelocity < 1.0
-                    && collision.getContact().depth() > strongest.getContact().depth()) {
-                strongest = collision;
-            } else if (collisionVelocity > strongestVelocity) {
-                strongest = collision;
-            }
-        }
-        return strongest;
+        return CollisionUtils.findStrongestCollision(collisions);
     }
 
     // todo refactor

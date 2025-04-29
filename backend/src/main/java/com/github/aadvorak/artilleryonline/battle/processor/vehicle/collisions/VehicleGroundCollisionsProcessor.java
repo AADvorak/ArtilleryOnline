@@ -7,7 +7,7 @@ import com.github.aadvorak.artilleryonline.battle.utils.CollisionUtils;
 public class VehicleGroundCollisionsProcessor {
 
     public static void process(VehicleCalculations vehicle, BattleCalculations battle) {
-        var collision = VehicleGroundCollisionsDetector.detectFirst(vehicle, battle);
+        var collision = VehicleGroundCollisionsDetector.detectStrongest(vehicle, battle);
         if (collision != null) {
             CollisionUtils.resolveGroundCollision(collision, battle);
             vehicle.getModel().setUpdated(true);
