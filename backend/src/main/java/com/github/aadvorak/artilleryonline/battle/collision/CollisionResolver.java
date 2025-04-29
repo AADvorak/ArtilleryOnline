@@ -40,7 +40,7 @@ public class CollisionResolver {
         }
         if (secondData == null) {
             if (LOGGING) System.out.printf("Collision with unmovable of body id = %d\n", collision.getPair().first().getId());
-            var impulseDelta = firstData.getResultMass() * closingVelocity * (1 + RESTITUTION);
+            var impulseDelta = firstData.getResultMass() * closingVelocity * RESTITUTION;
             recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
                     firstData, impulseDelta, 1);
         } else {
@@ -48,14 +48,14 @@ public class CollisionResolver {
                     collision.getPair().first().getId(), collision.getPair().second().getId());
             var impulseDelta = firstData.getResultMass() * secondData.getResultMass() * closingVelocity
                     * (1 + RESTITUTION) / (secondData.getResultMass() + firstData.getResultMass());
-            if (LOGGING) System.out.printf("First body: \n");
+            if (LOGGING) System.out.print("First body: \n");
             recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
                     firstData, impulseDelta, 1);
-            if (LOGGING) System.out.printf("Second body: \n");
+            if (LOGGING) System.out.print("Second body: \n");
             recalculateBodyVelocity(secondModel.getState().getVelocity(), collision.getContact(),
                     secondData, impulseDelta, -1);
         }
-        if (LOGGING) System.out.printf("----------------End collision resolution------------------\n");
+        if (LOGGING) System.out.print("----------------End collision resolution------------------\n");
     }
 
     private void recalculateBodyVelocity(
