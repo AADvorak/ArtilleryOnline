@@ -25,6 +25,8 @@ public class VehicleCalculations
 
     private final WheelCalculations leftWheel;
 
+    private Contact groundContact;
+
     private BodyPosition nextPosition;
 
     private Set<Collision> collisions = new HashSet<>();

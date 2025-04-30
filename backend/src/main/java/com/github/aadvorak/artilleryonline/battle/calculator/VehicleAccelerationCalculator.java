@@ -38,8 +38,9 @@ public class VehicleAccelerationCalculator {
     public static BodyAcceleration getVehicleAcceleration(VehicleCalculations vehicle, BattleModel battleModel) {
         vehicle.recalculateWheelsVelocities();
 
-        calculateGroundPositionAndState(vehicle.getRightWheel(), battleModel.getRoom());
-        calculateGroundPositionAndState(vehicle.getLeftWheel(), battleModel.getRoom());
+        calculateGroundContactAndState(vehicle.getRightWheel(), battleModel.getRoom());
+        calculateGroundContactAndState(vehicle.getLeftWheel(), battleModel.getRoom());
+        calculateGroundContact(vehicle, battleModel.getRoom());
 
         var acceleration = calculator.calculate(vehicle, battleModel);
         var angleVelocity = vehicle.getModel().getState().getVelocity().getAngle();
@@ -48,10 +49,26 @@ public class VehicleAccelerationCalculator {
         return acceleration;
     }
 
-    private static void calculateGroundPositionAndState(WheelCalculations wheel, RoomModel roomModel) {
+    private static void calculateGroundContactAndState(WheelCalculations wheel, RoomModel roomModel) {
         wheel.setGroundContact(GroundContactUtils.getGroundContact(
                 new Circle(wheel.getPosition(), wheel.getModel().getSpecs().getWheelRadius()),
                 roomModel, false));
         GroundStateCalculator.calculate(wheel);
+    }
+
+    private static void calculateGroundContact(VehicleCalculations vehicle, RoomModel roomModel) {
+        var position = vehicle.getGeometryPosition();
+        var angle = vehicle.getModel().getState().getPosition().getAngle();
+        var contact = GroundContactUtils.getGroundContact(
+                new Circle(position, vehicle.getModel().getSpecs().getRadius()),
+                roomModel, false);
+        if (contact == null) {
+            return;
+        }
+        var hullVector = position.vectorTo(position.shifted(1.0,angle + Math.PI / 2));
+        if (hullVector.dotProduct(contact.normal()) < 0) {
+            return;
+        }
+        vehicle.setGroundContact(contact);
     }
 }

@@ -28,6 +28,7 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
         var forces = new ArrayList<ForceAtPoint>();
         addWheelFriction(forces, calculations.getRightWheel(), groundFrictionCoefficient);
         addWheelFriction(forces, calculations.getLeftWheel(), groundFrictionCoefficient);
+        addHullFriction(forces, calculations, groundFrictionCoefficient);
         return forces;
     }
 
@@ -36,12 +37,25 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
         if (WheelGroundState.FULL_OVER_GROUND.equals(wheelCalculations.getGroundState())) {
             return;
         }
-        var depth = WheelGroundState.FULL_UNDER_GROUND.equals(wheelCalculations.getGroundState())
-                ? 2 * wheelCalculations.getModel().getSpecs().getWheelRadius()
-                : wheelCalculations.getGroundContact().depth();
+        var depth = wheelCalculations.getGroundContact().depth();
+        var position = wheelCalculations.getGroundContact().position();
         var force = new Force()
                 .setX( - wheelCalculations.getVelocity().getX() * depth * groundFrictionCoefficient)
                 .setY( - wheelCalculations.getVelocity().getY() * depth * groundFrictionCoefficient);
-        forces.add(new ForceAtPoint(force, wheelCalculations.getGroundContact().position(), FORCE_DESCRIPTION));
+        forces.add(new ForceAtPoint(force, position, FORCE_DESCRIPTION + " Wheel"));
+    }
+
+    private void addHullFriction(List<ForceAtPoint> forces, VehicleCalculations calculations,
+                                 double groundFrictionCoefficient) {
+        if (calculations.getGroundContact() == null) {
+            return;
+        }
+        var depth = calculations.getGroundContact().depth();
+        var position = calculations.getGroundContact().position();
+        var velocity = calculations.getModel().getState().getVelocityAt(position);
+        var force = new Force()
+                .setX( - velocity.getX() * depth * groundFrictionCoefficient * 100)
+                .setY( - velocity.getY() * depth * groundFrictionCoefficient * 100);
+        forces.add(new ForceAtPoint(force, position, FORCE_DESCRIPTION + " Hull"));
     }
 }

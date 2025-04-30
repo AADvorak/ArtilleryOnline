@@ -33,7 +33,7 @@ public class BodyCollisionData {
     }
 
     public static BodyCollisionData of(BodyModel<?, ?, ?, ?> bodyModel, Contact contact) {
-        var velocityAtPosition = getVelocityAtPosition(bodyModel, contact.position());
+        var velocityAtPosition = bodyModel.getState().getVelocityAt(contact.position());
         var radiusAndNormalVectorProduct = getRadiusAndNormalVectorProduct(bodyModel, contact);
         var inertiaToMassCoefficient = getInertiaToMassCoefficient(radiusAndNormalVectorProduct);
         var distanceToAxis = getDistanceToAxis(bodyModel, contact);
@@ -44,18 +44,6 @@ public class BodyCollisionData {
                 .setRotationSign((byte) -Math.signum(radiusAndNormalVectorProduct))
                 .setDistanceToAxis(distanceToAxis)
                 .setResultMass(getResultMass(bodyModel, distanceToAxis, inertiaToMassCoefficient));
-    }
-
-    private static Velocity getVelocityAtPosition(BodyModel<?, ?, ?, ?> bodyModel, Position position) {
-        var bodyVelocity = bodyModel.getState().getVelocity();
-        var comPosition = bodyModel.getState().getPosition().getCenter();
-        var angle = comPosition.angleTo(position);
-        var distance = comPosition.distanceTo(position);
-        var rvx = bodyVelocity.getAngle() * distance * Math.sin(angle);
-        var rvy = bodyVelocity.getAngle() * distance * Math.cos(angle);
-        return new Velocity()
-                .setX(bodyVelocity.getX() + rvx)
-                .setY(bodyVelocity.getY() + rvy);
     }
 
     private static double getRadiusAndNormalVectorProduct(BodyModel<?, ?, ?, ?> bodyModel, Contact contact) {
