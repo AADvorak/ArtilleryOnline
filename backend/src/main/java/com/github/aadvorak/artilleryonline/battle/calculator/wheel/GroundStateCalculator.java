@@ -6,17 +6,17 @@ import com.github.aadvorak.artilleryonline.battle.calculations.WheelGroundState;
 public class GroundStateCalculator {
 
     public static void calculate(WheelCalculations wheelCalculations) {
-        if (wheelCalculations.getNearestGroundPoint() == null) {
-            if (wheelCalculations.getNearestGroundPointByX().getY() >= wheelCalculations.getPosition().getY()) {
-                wheelCalculations.setGroundState(WheelGroundState.FULL_UNDER_GROUND);
-            } else {
-                wheelCalculations.setGroundState(WheelGroundState.FULL_OVER_GROUND);
-            }
+        if (wheelCalculations.getGroundContact() == null) {
+            wheelCalculations.setGroundState(WheelGroundState.FULL_OVER_GROUND);
         } else {
-            if (wheelCalculations.getNearestGroundPointByX().getY() >= wheelCalculations.getPosition().getY()) {
+            var depth = wheelCalculations.getGroundContact().depth();
+            var radius = wheelCalculations.getModel().getSpecs().getWheelRadius();
+            if (depth < radius / 2) {
+                wheelCalculations.setGroundState(WheelGroundState.HALF_OVER_GROUND);
+            } else if (depth < radius) {
                 wheelCalculations.setGroundState(WheelGroundState.HALF_UNDER_GROUND);
             } else {
-                wheelCalculations.setGroundState(WheelGroundState.HALF_OVER_GROUND);
+                wheelCalculations.setGroundState(WheelGroundState.FULL_UNDER_GROUND);
             }
         }
     }

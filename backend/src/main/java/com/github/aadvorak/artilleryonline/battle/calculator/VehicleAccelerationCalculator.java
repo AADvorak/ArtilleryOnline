@@ -6,6 +6,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations
 import com.github.aadvorak.artilleryonline.battle.calculator.vehicle.*;
 import com.github.aadvorak.artilleryonline.battle.calculator.wheel.*;
 import com.github.aadvorak.artilleryonline.battle.common.*;
+import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
@@ -13,6 +14,7 @@ import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
 import com.github.aadvorak.artilleryonline.battle.specs.VehicleSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
+import com.github.aadvorak.artilleryonline.battle.utils.GroundContactUtils;
 
 import java.util.List;
 
@@ -36,8 +38,8 @@ public class VehicleAccelerationCalculator {
     public static BodyAcceleration getVehicleAcceleration(VehicleCalculations vehicle, BattleModel battleModel) {
         vehicle.recalculateWheelsVelocities();
 
-        calculateGroundPositionAndState(vehicle.getRightWheel(), vehicle.getModel(), battleModel.getRoom());
-        calculateGroundPositionAndState(vehicle.getLeftWheel(), vehicle.getModel(), battleModel.getRoom());
+        calculateGroundPositionAndState(vehicle.getRightWheel(), battleModel.getRoom());
+        calculateGroundPositionAndState(vehicle.getLeftWheel(), battleModel.getRoom());
 
         var acceleration = calculator.calculate(vehicle, battleModel);
         var angleVelocity = vehicle.getModel().getState().getVelocity().getAngle();
@@ -46,10 +48,10 @@ public class VehicleAccelerationCalculator {
         return acceleration;
     }
 
-    private static void calculateGroundPositionAndState(WheelCalculations wheelCalculations,
-                                                        VehicleModel vehicleModel, RoomModel roomModel) {
-        var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
-        GroundPositionCalculator.calculate(wheelCalculations, wheelRadius, roomModel);
-        GroundStateCalculator.calculate(wheelCalculations);
+    private static void calculateGroundPositionAndState(WheelCalculations wheel, RoomModel roomModel) {
+        wheel.setGroundContact(GroundContactUtils.getGroundContact(
+                new Circle(wheel.getPosition(), wheel.getModel().getSpecs().getWheelRadius()),
+                roomModel, false));
+        GroundStateCalculator.calculate(wheel);
     }
 }

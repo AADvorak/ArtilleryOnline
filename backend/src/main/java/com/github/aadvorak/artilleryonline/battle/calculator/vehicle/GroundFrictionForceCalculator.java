@@ -37,14 +37,11 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
             return;
         }
         var depth = WheelGroundState.FULL_UNDER_GROUND.equals(wheelCalculations.getGroundState())
-                ? 2 * wheelCalculations.getModel().getSpecs().getWheelRadius() : wheelCalculations.getGroundDepth();
+                ? 2 * wheelCalculations.getModel().getSpecs().getWheelRadius()
+                : wheelCalculations.getGroundContact().depth();
         var force = new Force()
                 .setX( - wheelCalculations.getVelocity().getX() * depth * groundFrictionCoefficient)
                 .setY( - wheelCalculations.getVelocity().getY() * depth * groundFrictionCoefficient);
-        var point = wheelCalculations.getNearestGroundPoint() != null
-                && wheelCalculations.getNearestGroundPoint().position() != null
-                ? wheelCalculations.getNearestGroundPoint().position()
-                : wheelCalculations.getPosition();
-        forces.add(new ForceAtPoint(force, point, FORCE_DESCRIPTION));
+        forces.add(new ForceAtPoint(force, wheelCalculations.getGroundContact().position(), FORCE_DESCRIPTION));
     }
 }

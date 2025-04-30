@@ -7,7 +7,7 @@ import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 
 public class GroundContactUtils {
 
-    public static Contact getGroundContact(Circle circle, RoomModel roomModel, int sign) {
+    public static Contact getGroundContact(Circle circle, RoomModel roomModel, boolean withMaxDepth) {
         var groundIndexes = BattleUtils.getGroundIndexesBetween(circle.center().getX() - circle.radius(),
                 circle.center().getX() + circle.radius(), roomModel);
         if (groundIndexes.isEmpty()) {
@@ -16,7 +16,7 @@ public class GroundContactUtils {
         Position nearestPosition = null;
         Double minimalDistance = null;
         Integer index = null;
-        var i = sign > 0 ? 0 : groundIndexes.size() - 1;
+        var i = 0;
         while (i >= 0 && i < groundIndexes.size()) {
             var position = BattleUtils.getGroundPosition(groundIndexes.get(i), roomModel);
             var distance = position.distanceTo(circle.center());
@@ -27,18 +27,22 @@ public class GroundContactUtils {
                     index = groundIndexes.get(i);
                 }
             }
-            i += sign;
+            i++;
         }
         if (nearestPosition != null) {
+            var depth = getGroundDepth(circle, nearestPosition.getY(), minimalDistance);
+            if (withMaxDepth) depth -= roomModel.getSpecs().getGroundMaxDepth();
             return Contact.of(
-                    getGroundDepth(circle, nearestPosition.getY(), minimalDistance),
+                    depth,
                     getGroundAngle(circle.center(), nearestPosition, index, roomModel),
                     nearestPosition
             );
         }
         nearestPosition = BattleUtils.getNearestGroundPosition(circle.center().getX(), roomModel);
+        var depth = getGroundDepth(circle, nearestPosition.getY());
+        if (withMaxDepth) depth -= roomModel.getSpecs().getGroundMaxDepth();
         return Contact.of(
-                getGroundDepth(circle, nearestPosition.getY()),
+                depth,
                 0.0,
                 nearestPosition
         );

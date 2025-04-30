@@ -1,10 +1,8 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle.collisions;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.NearestGroundPoint;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculator.wheel.GroundPositionCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
@@ -14,7 +12,6 @@ import com.github.aadvorak.artilleryonline.battle.utils.GroundContactUtils;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 public class VehicleGroundCollisionsDetector {
@@ -54,19 +51,9 @@ public class VehicleGroundCollisionsDetector {
     }
 
     private static Collision detectWheelGroundCollision(WheelCalculations wheel, BattleCalculations battle) {
-        GroundPositionCalculator.calculateNext(wheel, battle.getModel().getRoom());
-        var groundMaxDepth = battle.getModel().getRoom().getSpecs().getGroundMaxDepth();
-        var depth = wheel.getNext().getGroundDepth() - groundMaxDepth;
-        var contact = Optional.ofNullable(wheel.getNext().getNearestGroundPoint())
-                .map(NearestGroundPoint::position)
-                .map(position -> Contact.of(depth, wheel.getGroundAngle(), position))
-                .orElseGet(() -> {
-                    var ngp = wheel.getNext().getNearestGroundPointByX();
-                    var wheelPosition = wheel.getNext().getPosition();
-                    var depth1 = ngp.getY() - wheelPosition.getY()
-                            + wheel.getModel().getSpecs().getWheelRadius() - groundMaxDepth;
-                    return Contact.of(depth1, 0.0, wheelPosition);
-                });
+        var contact = GroundContactUtils.getGroundContact(
+                new Circle(wheel.getNext().getPosition(), wheel.getModel().getSpecs().getWheelRadius()),
+                battle.getModel().getRoom(), true);
         if (contact == null) {
             return null;
         }
@@ -77,7 +64,7 @@ public class VehicleGroundCollisionsDetector {
         var position = vehicle.getGeometryNextPosition();
         var contact = GroundContactUtils.getGroundContact(
                 new Circle(position.getCenter(), vehicle.getModel().getSpecs().getRadius()),
-                battle.getModel().getRoom(), 1);
+                battle.getModel().getRoom(), true);
         if (contact == null) {
             return null;
         }

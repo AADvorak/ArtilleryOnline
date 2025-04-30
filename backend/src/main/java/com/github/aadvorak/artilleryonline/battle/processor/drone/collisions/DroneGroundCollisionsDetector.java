@@ -2,13 +2,11 @@ package com.github.aadvorak.artilleryonline.battle.processor.drone.collisions;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.DroneCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.NearestGroundPoint;
-import com.github.aadvorak.artilleryonline.battle.calculator.wheel.GroundPositionCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
-
-import java.util.Optional;
+import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
+import com.github.aadvorak.artilleryonline.battle.utils.GroundContactUtils;
 
 public class DroneGroundCollisionsDetector {
 
@@ -25,12 +23,9 @@ public class DroneGroundCollisionsDetector {
     }
 
     private static Collision detectGroundCollision(DroneCalculations drone, BattleCalculations battle) {
-        GroundPositionCalculator.calculateNext(drone, battle.getModel().getRoom());
-        var depth = drone.getNext().getGroundDepth();
-        var position = Optional.ofNullable(drone.getNext().getNearestGroundPoint())
-                .map(NearestGroundPoint::position)
-                .orElse(null);
-        var contact = Contact.of(depth, drone.getNext().getGroundAngle(), position);
+        var contact = GroundContactUtils.getGroundContact(
+                new Circle(drone.getNext().getPosition().getCenter(), drone.getModel().getSpecs().getHullRadius()),
+                battle.getModel().getRoom(), true);
         if (contact == null) {
             return null;
         }

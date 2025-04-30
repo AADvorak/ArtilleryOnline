@@ -51,10 +51,10 @@ public class GravityForceCalculator implements ForceCalculator<
             double groundGravityDepth
     ) {
         if (WheelGroundState.HALF_OVER_GROUND.equals(calculations.getGroundState())
-                && calculations.getGroundDepth() <= groundGravityDepth) {
-            var groundAngle = calculations.getGroundAngle();
+                && calculations.getGroundContact().depth() <= groundGravityDepth) {
+            var groundAngle = calculations.getGroundContact().angle();
             var groundAccelerationModule = Math.abs(roomGravityAcceleration * Math.sin(groundAngle))
-                    * Math.sqrt(1 - calculations.getGroundDepth() / groundGravityDepth) * mass / 2;
+                    * Math.sqrt(1 - calculations.getGroundContact().depth() / groundGravityDepth) * mass / 2;
             forces.add(ForceAtPoint.atCOM(
                     new Force()
                             .setX(-groundAccelerationModule * Math.sin(groundAngle))

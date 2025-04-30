@@ -42,8 +42,8 @@ public class EngineForceCalculator implements ForceCalculator<
                 || WheelGroundState.FULL_OVER_GROUND.equals(calculations.getGroundState())) {
             return ForceAtPoint.zero(FORCE_DESCRIPTION);
         }
-        var depth = calculations.getGroundDepth();
-        var groundAngle = calculations.getGroundAngle();
+        var depth = calculations.getGroundContact().depth();
+        var groundAngle = calculations.getGroundContact().angle();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
         var depthCoefficient = 1 - depth * 0.5 / wheelRadius;
         var forceMagnitude = calculations.getMass() * depthCoefficient * vehicleModel.getSpecs().getAcceleration() / 2;
@@ -60,6 +60,6 @@ public class EngineForceCalculator implements ForceCalculator<
                     .setX( - forceMagnitude * Math.cos(groundAngle - depthAngle))
                     .setY( - forceMagnitude * Math.sin(groundAngle - depthAngle));
         }
-        return new ForceAtPoint(force, calculations.getNearestGroundPoint().position(), FORCE_DESCRIPTION);
+        return new ForceAtPoint(force, calculations.getGroundContact().position(), FORCE_DESCRIPTION);
     }
 }

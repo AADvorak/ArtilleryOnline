@@ -37,14 +37,14 @@ public class GroundReactionForceCalculator implements ForceCalculator<
                 || WheelGroundState.FULL_UNDER_GROUND.equals(calculations.getGroundState())) {
             return;
         }
-        var groundAngle = calculations.getGroundAngle();
+        var groundAngle = calculations.getGroundContact().angle();
         var velocityNormalProjection = calculations.getVelocity().projections(groundAngle).getNormal();
         if (velocityNormalProjection < 0) {
             var forceProjections = new VectorProjections(groundAngle)
-                    .setNormal(- velocityNormalProjection * calculations.getGroundDepth()
+                    .setNormal(- velocityNormalProjection * calculations.getGroundContact().depth()
                             * groundReactionCoefficient);
             var force = forceProjections.recoverForce();
-            forces.add(new ForceAtPoint(force, calculations.getNearestGroundPoint().position(), FORCE_DESCRIPTION));
+            forces.add(new ForceAtPoint(force, calculations.getGroundContact().position(), FORCE_DESCRIPTION));
         }
     }
 }

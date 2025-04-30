@@ -27,13 +27,7 @@ public class WheelCalculations
 
     private Velocity velocity;
 
-    private Position nearestGroundPointByX;
-
-    private NearestGroundPoint nearestGroundPoint;
-
-    private double groundAngle;
-
-    private double groundDepth;
+    private Contact groundContact;
 
     private Acceleration gravityAcceleration = new Acceleration();
 
@@ -53,19 +47,6 @@ public class WheelCalculations
         this.sign = sign;
         this.vehicle = vehicle;
         this.calculatePosition();
-    }
-
-    public Acceleration getSumAcceleration() {
-        if (sumAcceleration == null) {
-            sumAcceleration = Acceleration.sumOf(
-                    gravityAcceleration,
-                    groundReactionAcceleration,
-                    groundFrictionAcceleration,
-                    engineAcceleration,
-                    jetAcceleration
-            );
-        }
-        return sumAcceleration;
     }
 
     @Override
@@ -149,15 +130,6 @@ public class WheelCalculations
     @Setter
     @Accessors(chain = true)
     public static final class Next {
-
         private Position position;
-
-        private Position nearestGroundPointByX;
-
-        private NearestGroundPoint nearestGroundPoint;
-
-        private double groundAngle;
-
-        private double groundDepth;
     }
 }

@@ -84,16 +84,7 @@ public class DroneCalculations implements Calculations<DroneModel> {
     @Setter
     @Accessors(chain = true)
     public static final class Next {
-
         private BodyPosition position;
-
-        private Position nearestGroundPointByX;
-
-        private NearestGroundPoint nearestGroundPoint;
-
-        private double groundAngle;
-
-        private double groundDepth;
     }
 
     @Getter
