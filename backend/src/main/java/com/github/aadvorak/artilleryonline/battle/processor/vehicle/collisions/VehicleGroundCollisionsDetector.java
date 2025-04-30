@@ -8,7 +8,9 @@ import com.github.aadvorak.artilleryonline.battle.calculator.wheel.GroundPositio
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.utils.CollisionUtils;
+import com.github.aadvorak.artilleryonline.battle.utils.GroundContactUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +46,10 @@ public class VehicleGroundCollisionsDetector {
                 if (first) return collisions;
             }
         }
+        var hullGroundCollision = detectHullGroundCollision(vehicle, battle);
+        if (hullGroundCollision != null) {
+            collisions.add(hullGroundCollision);
+        }
         return collisions;
     }
 
@@ -65,6 +71,22 @@ public class VehicleGroundCollisionsDetector {
             return null;
         }
         return Collision.withGround(wheel, contact);
+    }
+
+    private static Collision detectHullGroundCollision(VehicleCalculations vehicle, BattleCalculations battle) {
+        var position = vehicle.getGeometryNextPosition();
+        var contact = GroundContactUtils.getGroundContact(
+                new Circle(position.getCenter(), vehicle.getModel().getSpecs().getRadius()),
+                battle.getModel().getRoom(), 1);
+        if (contact == null) {
+            return null;
+        }
+        var hullVector = position.getCenter().vectorTo(position.getCenter()
+                .shifted(1.0, position.getAngle() + Math.PI / 2));
+        if (hullVector.dotProduct(contact.normal()) < 0) {
+            return null;
+        }
+        return Collision.withGround(vehicle, contact);
     }
 
     private static Collision detectWheelWallCollision(WheelCalculations wheel, BattleCalculations battle) {
