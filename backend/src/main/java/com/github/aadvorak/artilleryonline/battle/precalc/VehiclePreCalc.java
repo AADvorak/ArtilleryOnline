@@ -18,6 +18,7 @@ public class VehiclePreCalc implements BodyPreCalc, CompactSerializable {
         // todo write accurate formula
         momentOfInertia = 2 * Math.PI * Math.pow(specs.getRadius(), 4);
         centerOfMassShift = new Shift(comDistance, Math.PI / 2);
+        maxRadius = wheelDistance + specs.getWheelRadius();
     }
 
     private final double wheelDistance;
@@ -30,6 +31,8 @@ public class VehiclePreCalc implements BodyPreCalc, CompactSerializable {
 
     private final Shift centerOfMassShift;
 
+    private final double maxRadius;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(wheelDistance);
@@ -37,5 +40,6 @@ public class VehiclePreCalc implements BodyPreCalc, CompactSerializable {
         stream.writeDouble(mass);
         stream.writeDouble(momentOfInertia);
         stream.writeSerializableValue(centerOfMassShift);
+        stream.writeDouble(maxRadius);
     }
 }

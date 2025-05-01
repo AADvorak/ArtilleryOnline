@@ -96,12 +96,14 @@ export function deserializeVehiclePreCalc(input: DeserializerInput): VehiclePreC
   const mass = DeserializerBase.readDouble(input)
   const momentOfInertia = DeserializerBase.readDouble(input)
   const centerOfMassShift = deserializeShift(input)
+  const maxRadius = DeserializerBase.readDouble(input)
   return {
     wheelDistance,
     wheelAngle,
     mass,
     momentOfInertia,
-    centerOfMassShift
+    centerOfMassShift,
+    maxRadius
   }
 }
 

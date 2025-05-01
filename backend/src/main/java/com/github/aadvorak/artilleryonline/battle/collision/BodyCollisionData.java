@@ -35,8 +35,9 @@ public class BodyCollisionData {
     public static BodyCollisionData of(BodyModel<?, ?, ?, ?> bodyModel, Contact contact) {
         var velocityAtPosition = bodyModel.getState().getVelocityAt(contact.position());
         var radiusAndNormalVectorProduct = getRadiusAndNormalVectorProduct(bodyModel, contact);
-        var inertiaToMassCoefficient = getInertiaToMassCoefficient(radiusAndNormalVectorProduct);
         var distanceToAxis = getDistanceToAxis(bodyModel, contact);
+        var inertiaToMassCoefficient = getInertiaToMassCoefficient(radiusAndNormalVectorProduct,
+                distanceToAxis, bodyModel.getPreCalc().getMaxRadius());
         return new BodyCollisionData()
                 .setVelocity(velocityAtPosition)
                 .setVelocityProjections(velocityAtPosition.projections(contact.angle()))
@@ -52,15 +53,14 @@ public class BodyCollisionData {
         return radiusNormalized.vectorProduct(contact.normal());
     }
 
-    private static double getInertiaToMassCoefficient(double vectorProduct) {
-        var inertiaToMassCoefficient = Math.abs(vectorProduct);
-        if (inertiaToMassCoefficient < 0.01) {
-            return 0;
+    private static double getInertiaToMassCoefficient(double vectorProduct, double distanceToAxis, double maxRadius) {
+        var distanceCoefficient = 0.0;
+        if (distanceToAxis > maxRadius) {
+            distanceCoefficient = 1.0;
+        } else if (distanceToAxis > 0.05 * maxRadius) {
+            distanceCoefficient = distanceToAxis / (0.95 * maxRadius) - 0.05263158;
         }
-        if (inertiaToMassCoefficient > 0.99) {
-            return 1;
-        }
-        return inertiaToMassCoefficient;
+        return Math.abs(vectorProduct) * distanceCoefficient;
     }
 
     private static double getDistanceToAxis(BodyModel<?, ?, ?, ?> bodyModel, Contact contact) {

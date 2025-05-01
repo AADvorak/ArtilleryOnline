@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.utils;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
+import com.github.aadvorak.artilleryonline.battle.collision.CollisionResolver;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
@@ -184,17 +185,18 @@ public class CollisionUtils {
     }
 
     public static void resolveGroundCollision(Collision collision, BattleCalculations battle) {
-        var velocityProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().first());
-        velocityProjections.setNormal(-0.5 * velocityProjections.getNormal());
-        collision.getPair().first().setVelocity(velocityProjections.recoverVelocity());
-
+//        var velocityProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().first());
+//        velocityProjections.setNormal(-0.5 * velocityProjections.getNormal());
+//        collision.getPair().first().setVelocity(velocityProjections.recoverVelocity());
+        new CollisionResolver().resolve(collision);
         collision.getPair().first().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
         collision.getPair().first().applyNormalMoveToNextPosition(collision.getContact().depth(),
                 collision.getContact().angle());
     }
 
     public static void resolveRigidCollision(Collision collision, BattleCalculations battle) {
-        recalculateVelocitiesRigid(collision);
+        //recalculateVelocitiesRigid(collision);
+        new CollisionResolver().resolve(collision);
         collision.getPair().first().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
         collision.getPair().second().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
         recalculateNextPositionsRigid(collision);

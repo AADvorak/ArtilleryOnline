@@ -63,6 +63,7 @@ export interface VehiclePreCalc {
   mass: number
   momentOfInertia: number
   centerOfMassShift: Shift
+  maxRadius: number
 }
 
 export interface VehicleModel {

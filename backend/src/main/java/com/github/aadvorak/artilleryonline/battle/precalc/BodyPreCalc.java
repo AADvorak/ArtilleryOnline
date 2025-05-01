@@ -9,4 +9,6 @@ public interface BodyPreCalc {
     double getMomentOfInertia();
 
     Shift getCenterOfMassShift();
+
+    double getMaxRadius();
 }
