@@ -17,55 +17,53 @@ public class BodyCollisionData {
 
     private VectorProjections velocityProjections;
 
-    private double inertiaToMassCoefficient;
+    private ComponentData normalData;
 
-    private byte rotationSign;
-
-    private double distanceToAxis;
-
-    private double resultMass;
+    private ComponentData tangentialData;
 
     @Override
     public String toString() {
         return String.format("BodyCollisionData [velocity = %s, velocityProjections = %s, " +
-                "inertiaToMassCoefficient = %.3f, rotationSign = %d, distanceToAxis = %.3f, resultMass = %.3f]",
-                velocity, velocityProjections, inertiaToMassCoefficient, rotationSign, distanceToAxis, resultMass);
+                "normalData = %s, tangentialData = %s]",
+                velocity, velocityProjections, normalData, tangentialData);
     }
 
     public static BodyCollisionData of(BodyModel<?, ?, ?, ?> bodyModel, Contact contact) {
+        var comPosition = bodyModel.getState().getPosition().getCenter();
+        var radiusNormalized = comPosition.vectorTo(contact.position()).normalized();
         var velocityAtPosition = bodyModel.getState().getVelocityAt(contact.position());
-        var radiusAndNormalVectorProduct = getRadiusAndNormalVectorProduct(bodyModel, contact);
-        var distanceToAxis = getDistanceToAxis(bodyModel, contact);
-        var inertiaToMassCoefficient = getInertiaToMassCoefficient(radiusAndNormalVectorProduct,
-                distanceToAxis, bodyModel.getPreCalc().getMaxRadius());
         return new BodyCollisionData()
                 .setVelocity(velocityAtPosition)
                 .setVelocityProjections(velocityAtPosition.projections(contact.angle()))
-                .setInertiaToMassCoefficient(inertiaToMassCoefficient)
-                .setRotationSign((byte) -Math.signum(radiusAndNormalVectorProduct))
-                .setDistanceToAxis(distanceToAxis)
-                .setResultMass(getResultMass(bodyModel, distanceToAxis, inertiaToMassCoefficient));
+                .setNormalData(getComponentData(bodyModel, contact.position(), comPosition, contact.normal(), radiusNormalized));
     }
 
-    private static double getRadiusAndNormalVectorProduct(BodyModel<?, ?, ?, ?> bodyModel, Contact contact) {
-        var comPosition = bodyModel.getState().getPosition().getCenter();
-        var radiusNormalized = comPosition.vectorTo(contact.position()).normalized();
-        return radiusNormalized.vectorProduct(contact.normal());
+    private static ComponentData getComponentData(BodyModel<?, ?, ?, ?> bodyModel,
+                                                  Position contactPosition, Position comPosition,
+                                                  Vector component, Vector radiusNormalized) {
+        var radiusAndComponentVectorProduct = radiusNormalized.vectorProduct(component);
+        var distanceToAxis = getDistanceToAxis(comPosition, contactPosition, component);
+        var inertiaToMassCoefficient = getInertiaToMassCoefficient(radiusAndComponentVectorProduct,
+                distanceToAxis, bodyModel.getPreCalc().getMaxRadius());
+        return new ComponentData()
+                .setDistanceToAxis(distanceToAxis)
+                .setInertiaToMassCoefficient(inertiaToMassCoefficient)
+                .setRotationSign((byte) -Math.signum(radiusAndComponentVectorProduct))
+                .setResultMass(getResultMass(bodyModel, distanceToAxis, inertiaToMassCoefficient));
     }
 
     private static double getInertiaToMassCoefficient(double vectorProduct, double distanceToAxis, double maxRadius) {
         var distanceCoefficient = 0.0;
         if (distanceToAxis > maxRadius) {
             distanceCoefficient = 1.0;
-        } else if (distanceToAxis > 0.05 * maxRadius) {
-            distanceCoefficient = distanceToAxis / (0.95 * maxRadius) - 0.05263158;
+        } else {
+            distanceCoefficient = distanceToAxis / maxRadius;
         }
         return Math.abs(vectorProduct) * distanceCoefficient;
     }
 
-    private static double getDistanceToAxis(BodyModel<?, ?, ?, ?> bodyModel, Contact contact) {
-        var axis = new Segment(contact.position(), contact.position().shifted(contact.normal()));
-        var comPosition = bodyModel.getState().getPosition().getCenter();
+    private static double getDistanceToAxis(Position comPosition, Position contactPosition, Vector component) {
+        var axis = new Segment(contactPosition, contactPosition.shifted(component));
         var axisProjection = GeometryUtils.getPointToLineProjection(comPosition, axis);
         return comPosition.distanceTo(axisProjection);
     }
@@ -79,5 +77,26 @@ public class BodyCollisionData {
         var momentOfInertia = bodyModel.getPreCalc().getMomentOfInertia();
         return inertiaToMassCoefficient * momentOfInertia / Math.pow(distanceToAxis, 2)
                 + (1 - inertiaToMassCoefficient) * mass;
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    public static final class ComponentData {
+
+        private double inertiaToMassCoefficient;
+
+        private byte rotationSign;
+
+        private double distanceToAxis;
+
+        private double resultMass;
+
+        @Override
+        public String toString() {
+            return String.format("[inertiaToMassCoefficient = %.3f, rotationSign = %d," +
+                            "distanceToAxis = %.3f, resultMass = %.3f]",
+                    inertiaToMassCoefficient, rotationSign, distanceToAxis, resultMass);
+        }
     }
 }

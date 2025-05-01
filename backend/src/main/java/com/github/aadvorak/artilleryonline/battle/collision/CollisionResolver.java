@@ -39,21 +39,23 @@ public class CollisionResolver {
             return;
         }
         if (secondData == null) {
-            if (LOGGING) System.out.printf("Collision with unmovable of body id = %d\n", collision.getPair().first().getId());
-            var impulseDelta = firstData.getResultMass() * closingVelocity * RESTITUTION;
+            if (LOGGING) System.out.printf("Collision with unmovable of body id = %d\n%s\n%s\n",
+                    collision.getPair().first().getId(), collision.getContact(), firstData);
+            var impulseDelta = firstData.getNormalData().getResultMass() * closingVelocity * RESTITUTION;
             recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
-                    firstData, impulseDelta, 1);
+                    firstData.getNormalData(), impulseDelta, 1);
         } else {
-            if (LOGGING) System.out.printf("Collision of bodies ids = [%d, %d]\n",
-                    collision.getPair().first().getId(), collision.getPair().second().getId());
-            var impulseDelta = firstData.getResultMass() * secondData.getResultMass() * closingVelocity
-                    * (1 + RESTITUTION) / (secondData.getResultMass() + firstData.getResultMass());
-            if (LOGGING) System.out.print("First body: \n");
+            if (LOGGING) System.out.printf("Collision of bodies ids = [%d, %d]\n%s\n",
+                    collision.getPair().first().getId(), collision.getPair().second().getId(), collision.getContact());
+            var impulseDelta = firstData.getNormalData().getResultMass() * secondData.getNormalData().getResultMass()
+                    * closingVelocity * (1 + RESTITUTION)
+                    / (secondData.getNormalData().getResultMass() + firstData.getNormalData().getResultMass());
+            if (LOGGING) System.out.printf("First body:\n%s\n", firstData);
             recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
-                    firstData, impulseDelta, 1);
-            if (LOGGING) System.out.print("Second body: \n");
+                    firstData.getNormalData(), impulseDelta, 1);
+            if (LOGGING) System.out.printf("Second body:\n%s\n", secondData);
             recalculateBodyVelocity(secondModel.getState().getVelocity(), collision.getContact(),
-                    secondData, impulseDelta, -1);
+                    secondData.getNormalData(), impulseDelta, -1);
         }
         if (LOGGING) System.out.print("----------------End collision resolution------------------\n");
     }
@@ -61,20 +63,20 @@ public class CollisionResolver {
     private void recalculateBodyVelocity(
             BodyVelocity velocity,
             Contact contact,
-            BodyCollisionData collisionData,
+            BodyCollisionData.ComponentData componentData,
             double impulseDelta,
             int sign
     ) {
-        var velocityDelta = sign * impulseDelta / collisionData.getResultMass();
-        if (LOGGING) System.out.printf("%s\n%s\nvelocityDelta = %.3f\n", contact, collisionData, velocityDelta);
-        if (collisionData.getInertiaToMassCoefficient() > 0) {
-            var angleVelocityDelta = collisionData.getRotationSign() * collisionData.getInertiaToMassCoefficient()
-                    * velocityDelta / collisionData.getDistanceToAxis();
+        var velocityDelta = sign * impulseDelta / componentData.getResultMass();
+        if (LOGGING) System.out.printf("velocityDelta = %.3f\n", velocityDelta);
+        if (componentData.getInertiaToMassCoefficient() > 0) {
+            var angleVelocityDelta = componentData.getRotationSign() * componentData.getInertiaToMassCoefficient()
+                    * velocityDelta / componentData.getDistanceToAxis();
             if (LOGGING) System.out.printf("angleVelocityDelta = %.3f\n", angleVelocityDelta);
             velocity.setAngle(velocity.getAngle() + angleVelocityDelta);
         }
-        if (collisionData.getInertiaToMassCoefficient() < 1) {
-            var movingVelocityDeltaMagnitude = (1 - collisionData.getInertiaToMassCoefficient()) * velocityDelta;
+        if (componentData.getInertiaToMassCoefficient() < 1) {
+            var movingVelocityDeltaMagnitude = (1 - componentData.getInertiaToMassCoefficient()) * velocityDelta;
             var movingVelocityDelta = new VectorProjections(contact.angle())
                     .setNormal(movingVelocityDeltaMagnitude)
                     .recoverVelocity();
