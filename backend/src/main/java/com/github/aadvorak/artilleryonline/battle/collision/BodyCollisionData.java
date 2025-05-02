@@ -32,10 +32,12 @@ public class BodyCollisionData {
         var comPosition = bodyModel.getState().getPosition().getCenter();
         var radiusNormalized = comPosition.vectorTo(contact.position()).normalized();
         var velocityAtPosition = bodyModel.getState().getVelocityAt(contact.position());
+        var tangential = Vector.tangential(contact.angle());
         return new BodyCollisionData()
                 .setVelocity(velocityAtPosition)
                 .setVelocityProjections(velocityAtPosition.projections(contact.angle()))
-                .setNormalData(getComponentData(bodyModel, contact.position(), comPosition, contact.normal(), radiusNormalized));
+                .setNormalData(getComponentData(bodyModel, contact.position(), comPosition, contact.normal(), radiusNormalized))
+                .setTangentialData(getComponentData(bodyModel, contact.position(), comPosition, tangential, radiusNormalized));
     }
 
     private static ComponentData getComponentData(BodyModel<?, ?, ?, ?> bodyModel,
@@ -48,7 +50,7 @@ public class BodyCollisionData {
         return new ComponentData()
                 .setDistanceToAxis(distanceToAxis)
                 .setInertiaToMassCoefficient(inertiaToMassCoefficient)
-                .setRotationSign((byte) -Math.signum(radiusAndComponentVectorProduct))
+                .setRotationSign((byte) Math.signum(radiusAndComponentVectorProduct))
                 .setResultMass(getResultMass(bodyModel, distanceToAxis, inertiaToMassCoefficient));
     }
 

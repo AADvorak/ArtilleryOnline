@@ -53,10 +53,10 @@ public class VectorProjections {
     }
 
     private double getX() {
-        return - normal * Math.sin(angle) + tangential * Math.cos(angle);
+        return normal * Math.sin(angle) + tangential * Math.cos(angle);
     }
 
     private double getY() {
-        return normal * Math.cos(angle) + tangential * Math.sin(angle);
+        return - normal * Math.cos(angle) + tangential * Math.sin(angle);
     }
 }

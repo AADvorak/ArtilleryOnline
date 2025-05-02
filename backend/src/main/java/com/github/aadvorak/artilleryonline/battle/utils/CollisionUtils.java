@@ -190,7 +190,7 @@ public class CollisionUtils {
 //        collision.getPair().first().setVelocity(velocityProjections.recoverVelocity());
         new CollisionResolver().resolve(collision);
         collision.getPair().first().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
-        collision.getPair().first().applyNormalMoveToNextPosition(collision.getContact().depth(),
+        collision.getPair().first().applyNormalMoveToNextPosition(-collision.getContact().depth(),
                 collision.getContact().angle());
     }
 
@@ -211,8 +211,8 @@ public class CollisionUtils {
         var normalMovePerMass = collision.getContact().depth() / (mass + otherMass);
         var normalMove = normalMovePerMass * otherMass;
         var otherNormalMove = normalMovePerMass * mass;
-        object.applyNormalMoveToNextPosition(normalMove, collision.getContact().angle());
-        otherObject.applyNormalMoveToNextPosition(- otherNormalMove, collision.getContact().angle());
+        object.applyNormalMoveToNextPosition(- normalMove, collision.getContact().angle());
+        otherObject.applyNormalMoveToNextPosition(otherNormalMove, collision.getContact().angle());
     }
 
     public static void recalculateVelocitiesRigid(Collision collision) {

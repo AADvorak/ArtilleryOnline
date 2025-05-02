@@ -21,12 +21,6 @@ public record Contact(double depth, double angle, Vector normal, Position positi
         if (depth < Constants.INTERPENETRATION_THRESHOLD) {
             return null;
         }
-        return new Contact(depth, angle, getNormal(angle), position);
-    }
-
-    private static Vector getNormal(double angle) {
-        return new VectorImpl()
-                .setX(Math.cos(angle - Math.PI / 2))
-                .setY(Math.sin(angle - Math.PI / 2));
+        return new Contact(depth, angle, Vector.normal(angle), position);
     }
 }

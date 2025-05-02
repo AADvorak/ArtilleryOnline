@@ -9,9 +9,21 @@ public interface Vector extends CompactSerializable {
 
     double getY();
 
+    static Vector normal(double angle) {
+        return new VectorImpl()
+                .setX(Math.cos(angle - Math.PI / 2))
+                .setY(Math.sin(angle - Math.PI / 2));
+    }
+
+    static Vector tangential(double angle) {
+        return new VectorImpl()
+                .setX(Math.cos(angle))
+                .setY(Math.sin(angle));
+    }
+
     default VectorProjections projections(double angle) {
         return new VectorProjections(angle)
-                .setNormal(- getX() * Math.sin(angle) + getY() * Math.cos(angle))
+                .setNormal(getX() * Math.sin(angle) - getY() * Math.cos(angle))
                 .setTangential(getX() * Math.cos(angle) + getY() * Math.sin(angle));
     }
 

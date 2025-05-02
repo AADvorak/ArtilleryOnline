@@ -14,30 +14,45 @@ public class CollisionResolver {
     private static final boolean LOGGING = true;
 
     public void resolve(Collision collision) {
-        BodyModel<?,?,?,?> firstModel = null;
-        BodyModel<?,?,?,?> secondModel = null;
+        BodyModel<?, ?, ?, ?> firstModel = null;
+        BodyModel<?, ?, ?, ?> secondModel = null;
         BodyCollisionData firstData = null;
         BodyCollisionData secondData = null;
         if (collision.getPair().first() != null
-                && collision.getPair().first() instanceof BodyCalculations<?,?,?,?,?> bodyCalculations) {
+                && collision.getPair().first() instanceof BodyCalculations<?, ?, ?, ?, ?> bodyCalculations) {
             firstModel = bodyCalculations.getModel();
             firstData = BodyCollisionData.of(bodyCalculations.getModel(), collision.getContact());
         }
         if (collision.getPair().second() != null
-                && collision.getPair().second() instanceof BodyCalculations<?,?,?,?,?> bodyCalculations) {
+                && collision.getPair().second() instanceof BodyCalculations<?, ?, ?, ?, ?> bodyCalculations) {
             secondModel = bodyCalculations.getModel();
             secondData = BodyCollisionData.of(bodyCalculations.getModel(), collision.getContact());
         }
         if (firstModel == null) {
             return;
         }
-        var closingVelocity = -firstData.getVelocityProjections().getNormal();
+        var closingVelocity = firstData.getVelocityProjections().getNormal();
         if (secondData != null) {
-            closingVelocity += secondData.getVelocityProjections().getNormal();
+            closingVelocity -= secondData.getVelocityProjections().getNormal();
         }
-        if (closingVelocity <= 0) {
-            return;
+        if (closingVelocity > 0) {
+            resolveClosingVelocity(collision, closingVelocity, firstModel, secondModel, firstData, secondData);
         }
+//        var frictionVelocity = -firstData.getVelocityProjections().getTangential();
+//        if (secondData != null) {
+//            frictionVelocity += secondData.getVelocityProjections().getTangential();
+//        }
+//        resolveFrictionVelocity(collision, frictionVelocity, firstModel, secondModel, firstData, secondData);
+        if (LOGGING) System.out.print("----------------End collision resolution------------------\n");
+    }
+
+    private void resolveClosingVelocity(
+            Collision collision, double closingVelocity,
+            BodyModel<?, ?, ?, ?> firstModel,
+            BodyModel<?, ?, ?, ?> secondModel,
+            BodyCollisionData firstData,
+            BodyCollisionData secondData
+    ) {
         if (secondData == null) {
             if (LOGGING) System.out.printf("Collision with unmovable of body id = %d\n%s\n%s\n",
                     collision.getPair().first().getId(), collision.getContact(), firstData);
@@ -57,7 +72,22 @@ public class CollisionResolver {
             recalculateBodyVelocity(secondModel.getState().getVelocity(), collision.getContact(),
                     secondData.getNormalData(), impulseDelta, -1);
         }
-        if (LOGGING) System.out.print("----------------End collision resolution------------------\n");
+    }
+
+    private void resolveFrictionVelocity(
+            Collision collision, double frictionVelocity,
+            BodyModel<?, ?, ?, ?> firstModel,
+            BodyModel<?, ?, ?, ?> secondModel,
+            BodyCollisionData firstData,
+            BodyCollisionData secondData
+    ) {
+        if (secondData == null) {
+            if (LOGGING) System.out.printf("Friction with unmovable of body id = %d\n%s\n%s\n",
+                    collision.getPair().first().getId(), collision.getContact(), firstData);
+            var impulseDelta = -firstData.getTangentialData().getResultMass() * frictionVelocity * 0.3;
+            recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
+                    firstData.getTangentialData(), impulseDelta, 1);
+        }
     }
 
     private void recalculateBodyVelocity(
@@ -67,7 +97,7 @@ public class CollisionResolver {
             double impulseDelta,
             int sign
     ) {
-        var velocityDelta = sign * impulseDelta / componentData.getResultMass();
+        var velocityDelta = - sign * impulseDelta / componentData.getResultMass();
         if (LOGGING) System.out.printf("velocityDelta = %.3f\n", velocityDelta);
         if (componentData.getInertiaToMassCoefficient() > 0) {
             var angleVelocityDelta = componentData.getRotationSign() * componentData.getInertiaToMassCoefficient()
