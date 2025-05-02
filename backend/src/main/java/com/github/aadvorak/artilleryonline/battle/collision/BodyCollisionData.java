@@ -59,7 +59,7 @@ public class BodyCollisionData {
         if (distanceToAxis > maxRadius) {
             distanceCoefficient = 1.0;
         } else {
-            distanceCoefficient = distanceToAxis / maxRadius;
+            distanceCoefficient = Math.sqrt(distanceToAxis / maxRadius);
         }
         return Math.abs(vectorProduct) * distanceCoefficient;
     }
@@ -97,7 +97,7 @@ public class BodyCollisionData {
         @Override
         public String toString() {
             return String.format("[inertiaToMassCoefficient = %.3f, rotationSign = %d," +
-                            "distanceToAxis = %.3f, resultMass = %.3f]",
+                            " distanceToAxis = %.3f, resultMass = %.3f]",
                     inertiaToMassCoefficient, rotationSign, distanceToAxis, resultMass);
         }
     }

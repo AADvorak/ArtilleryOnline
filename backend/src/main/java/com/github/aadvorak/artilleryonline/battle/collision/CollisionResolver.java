@@ -31,6 +31,16 @@ public class CollisionResolver {
         if (firstModel == null) {
             return;
         }
+        if (LOGGING) {
+            if (secondModel != null) {
+                System.out.printf("Collision of bodies ids = [%d, %d]\n%s\n",
+                        collision.getPair().first().getId(), collision.getPair().second().getId(),
+                        collision.getContact());
+            } else {
+                System.out.printf("Collision with unmovable of body id = %d\n%s\n%s\n",
+                        collision.getPair().first().getId(), collision.getContact(), firstData);
+            }
+        }
         var closingVelocity = firstData.getVelocityProjections().getNormal();
         if (secondData != null) {
             closingVelocity -= secondData.getVelocityProjections().getNormal();
@@ -38,11 +48,11 @@ public class CollisionResolver {
         if (closingVelocity > 0) {
             resolveClosingVelocity(collision, closingVelocity, firstModel, secondModel, firstData, secondData);
         }
-//        var frictionVelocity = -firstData.getVelocityProjections().getTangential();
-//        if (secondData != null) {
-//            frictionVelocity += secondData.getVelocityProjections().getTangential();
-//        }
-//        resolveFrictionVelocity(collision, frictionVelocity, firstModel, secondModel, firstData, secondData);
+        var frictionVelocity = -firstData.getVelocityProjections().getTangential();
+        if (secondData != null) {
+            frictionVelocity += secondData.getVelocityProjections().getTangential();
+        }
+        resolveFrictionVelocity(collision, frictionVelocity, firstModel, secondModel, firstData, secondData);
         if (LOGGING) System.out.print("----------------End collision resolution------------------\n");
     }
 
@@ -53,15 +63,12 @@ public class CollisionResolver {
             BodyCollisionData firstData,
             BodyCollisionData secondData
     ) {
+        if (LOGGING) System.out.print("Closing resolving\n");
         if (secondData == null) {
-            if (LOGGING) System.out.printf("Collision with unmovable of body id = %d\n%s\n%s\n",
-                    collision.getPair().first().getId(), collision.getContact(), firstData);
             var impulseDelta = firstData.getNormalData().getResultMass() * closingVelocity * RESTITUTION;
             recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
                     firstData.getNormalData(), impulseDelta, 1);
         } else {
-            if (LOGGING) System.out.printf("Collision of bodies ids = [%d, %d]\n%s\n",
-                    collision.getPair().first().getId(), collision.getPair().second().getId(), collision.getContact());
             var impulseDelta = firstData.getNormalData().getResultMass() * secondData.getNormalData().getResultMass()
                     * closingVelocity * (1 + RESTITUTION)
                     / (secondData.getNormalData().getResultMass() + firstData.getNormalData().getResultMass());
@@ -82,9 +89,9 @@ public class CollisionResolver {
             BodyCollisionData secondData
     ) {
         if (secondData == null) {
-            if (LOGGING) System.out.printf("Friction with unmovable of body id = %d\n%s\n%s\n",
-                    collision.getPair().first().getId(), collision.getContact(), firstData);
-            var impulseDelta = -firstData.getTangentialData().getResultMass() * frictionVelocity * 0.3;
+            if (LOGGING) System.out.print("Friction resolving\n");
+            var impulseDelta = -firstData.getTangentialData().getResultMass() * frictionVelocity
+                    * collision.getContact().depth() * 10.0;
             recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
                     firstData.getTangentialData(), impulseDelta, 1);
         }
