@@ -1,7 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.utils;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
-import com.github.aadvorak.artilleryonline.battle.collision.CollisionResolver;
+import com.github.aadvorak.artilleryonline.battle.collision.resolver.CollisionResolver;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;

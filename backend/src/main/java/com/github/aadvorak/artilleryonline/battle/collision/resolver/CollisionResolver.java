@@ -1,4 +1,4 @@
-package com.github.aadvorak.artilleryonline.battle.collision;
+package com.github.aadvorak.artilleryonline.battle.collision.resolver;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BodyCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.BodyVelocity;
