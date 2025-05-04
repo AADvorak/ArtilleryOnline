@@ -1,9 +1,8 @@
 package com.github.aadvorak.artilleryonline.battle.common;
 
-import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.CollisionPair;
-import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.*;
+import com.github.aadvorak.artilleryonline.battle.collision.BodyCollisionData;
+import com.github.aadvorak.artilleryonline.battle.collision.BodyCollisionDataPair;
 import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
 import com.github.aadvorak.artilleryonline.battle.model.MissileModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
@@ -25,6 +24,8 @@ public class Collision {
 
     private VelocitiesProjections velocitiesProjections;
 
+    private BodyCollisionDataPair bodyCollisionDataPair;
+
     private Contact contact;
 
     private Double sumNormalVelocity;
@@ -38,6 +39,16 @@ public class Collision {
         return null;
     }
 
+    public double getClosingVelocity() {
+        var closingVelocity = bodyCollisionDataPair.first().getVelocityProjections().getNormal();
+        if (bodyCollisionDataPair.second() != null) {
+            closingVelocity -= bodyCollisionDataPair.second().getVelocityProjections().getNormal();
+        }
+        return closingVelocity;
+    }
+
+    // todo replace with closingVelocity
+    @Deprecated
     public double getSumNormalVelocity() {
         if (sumNormalVelocity == null) {
             var first = 0.0;
@@ -53,6 +64,7 @@ public class Collision {
         return sumNormalVelocity;
     }
 
+    // todo based on closing velocity
     public double getImpact() {
         if (impact == null) {
             var first = 0.0;
@@ -74,6 +86,12 @@ public class Collision {
         return new Collision()
                 .setType(type)
                 .setPair(new CollisionPair(pair.second(), pair.first()))
+                .setBodyCollisionDataPair(
+                        new BodyCollisionDataPair(
+                                bodyCollisionDataPair.second(),
+                                bodyCollisionDataPair.first()
+                        )
+                )
                 .setVelocitiesProjections(
                         new VelocitiesProjections(
                                 velocitiesProjections.second(),
@@ -142,11 +160,20 @@ public class Collision {
 
     public static Collision withMovable(Calculations<?> first, Calculations<?> second,
                                         Contact contact, CollideObjectType type) {
+        BodyCollisionData firstData = null;
+        BodyCollisionData secondData = null;
+        if (first instanceof BodyCalculations<?, ?, ?, ?, ?> bodyCalculations) {
+            firstData = BodyCollisionData.of(bodyCalculations.getModel(), contact);
+        }
+        if (second instanceof BodyCalculations<?, ?, ?, ?, ?> bodyCalculations) {
+            secondData = BodyCollisionData.of(bodyCalculations.getModel(), contact);
+        }
         var firstProjections = first.getVelocity().projections(contact.angle());
         var secondProjections = second.getVelocity().projections(contact.angle());
         return new Collision()
                 .setType(type)
                 .setPair(new CollisionPair(first, second))
+                .setBodyCollisionDataPair(new BodyCollisionDataPair(firstData, secondData))
                 .setVelocitiesProjections(new VelocitiesProjections(firstProjections, secondProjections))
                 .setContact(contact);
     }
@@ -156,9 +183,14 @@ public class Collision {
             Contact contact,
             CollideObjectType type
     ) {
+        BodyCollisionData firstData = null;
+        if (first instanceof BodyCalculations<?, ?, ?, ?, ?> bodyCalculations) {
+            firstData = BodyCollisionData.of(bodyCalculations.getModel(), contact);
+        }
         return new Collision()
                 .setType(type)
                 .setPair(new CollisionPair(first, null))
+                .setBodyCollisionDataPair(new BodyCollisionDataPair(firstData, null))
                 .setVelocitiesProjections(new VelocitiesProjections(first.getVelocity()
                         .projections(contact.angle()), null))
                 .setContact(contact);

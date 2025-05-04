@@ -1,4 +1,4 @@
-package com.github.aadvorak.artilleryonline.battle.collision.resolver;
+package com.github.aadvorak.artilleryonline.battle.collision;
 
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;

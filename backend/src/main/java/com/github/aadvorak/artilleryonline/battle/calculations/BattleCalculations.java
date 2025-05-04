@@ -21,4 +21,8 @@ public class BattleCalculations {
     private Set<MissileCalculations> missiles;
 
     private Set<DroneCalculations> drones;
+
+    public Set<? extends BodyCalculations<?,?,?,?,?>> getBodies() {
+        return vehicles;
+    }
 }

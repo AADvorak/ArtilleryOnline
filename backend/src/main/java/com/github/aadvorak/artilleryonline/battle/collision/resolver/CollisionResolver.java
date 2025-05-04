@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.collision.resolver;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BodyCalculations;
+import com.github.aadvorak.artilleryonline.battle.collision.BodyCollisionData;
 import com.github.aadvorak.artilleryonline.battle.common.BodyVelocity;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
@@ -11,22 +12,22 @@ public class CollisionResolver {
 
     private static final double RESTITUTION = 0.5;
 
+    private static final double FRICTION_VELOCITY_THRESHOLD = 0.1;
+
     private static final boolean LOGGING = true;
 
-    public void resolve(Collision collision) {
+    public void resolve(Collision collision, double timeStepSecs) {
         BodyModel<?, ?, ?, ?> firstModel = null;
         BodyModel<?, ?, ?, ?> secondModel = null;
-        BodyCollisionData firstData = null;
-        BodyCollisionData secondData = null;
+        BodyCollisionData firstData = collision.getBodyCollisionDataPair().first();
+        BodyCollisionData secondData = collision.getBodyCollisionDataPair().second();
         if (collision.getPair().first() != null
                 && collision.getPair().first() instanceof BodyCalculations<?, ?, ?, ?, ?> bodyCalculations) {
             firstModel = bodyCalculations.getModel();
-            firstData = BodyCollisionData.of(bodyCalculations.getModel(), collision.getContact());
         }
         if (collision.getPair().second() != null
                 && collision.getPair().second() instanceof BodyCalculations<?, ?, ?, ?, ?> bodyCalculations) {
             secondModel = bodyCalculations.getModel();
-            secondData = BodyCollisionData.of(bodyCalculations.getModel(), collision.getContact());
         }
         if (firstModel == null) {
             return;
@@ -41,10 +42,7 @@ public class CollisionResolver {
                         collision.getPair().first().getId(), collision.getContact(), firstData);
             }
         }
-        var closingVelocity = firstData.getVelocityProjections().getNormal();
-        if (secondData != null) {
-            closingVelocity -= secondData.getVelocityProjections().getNormal();
-        }
+        var closingVelocity = collision.getClosingVelocity();
         if (closingVelocity > 0) {
             resolveClosingVelocity(collision, closingVelocity, firstModel, secondModel, firstData, secondData);
         }
@@ -52,7 +50,10 @@ public class CollisionResolver {
         if (secondData != null) {
             frictionVelocity += secondData.getVelocityProjections().getTangential();
         }
-        resolveFrictionVelocity(collision, frictionVelocity, firstModel, secondModel, firstData, secondData);
+        if (Math.abs(frictionVelocity) > FRICTION_VELOCITY_THRESHOLD) {
+            resolveFrictionVelocity(collision, frictionVelocity, firstModel, secondModel, firstData, secondData);
+        }
+        recalculatePositionsAndResolveInterpenetration(collision, timeStepSecs);
         if (LOGGING) System.out.print("----------------End collision resolution------------------\n");
     }
 
@@ -121,6 +122,27 @@ public class CollisionResolver {
             velocity
                     .setX(velocity.getX() + movingVelocityDelta.getX())
                     .setY(velocity.getY() + movingVelocityDelta.getY());
+        }
+    }
+
+    private void recalculatePositionsAndResolveInterpenetration(Collision collision, double timeStepSecs) {
+        var object = collision.getPair().first();
+        var otherObject = collision.getPair().second();
+        object.calculateNextPosition(timeStepSecs);
+        if (otherObject == null) {
+            object.applyNormalMoveToNextPosition(-collision.getContact().depth(),
+                    collision.getContact().angle());
+        } else {
+            otherObject.calculateNextPosition(timeStepSecs);
+            var mass = object.getMass();
+            var otherMass = otherObject.getMass();
+            var normalMovePerMass = collision.getContact().depth() / (mass + otherMass);
+            var normalMove = normalMovePerMass * otherMass;
+            var otherNormalMove = normalMovePerMass * mass;
+            object.applyNormalMoveToNextPosition(- normalMove, collision.getContact().angle());
+            otherObject.applyNormalMoveToNextPosition(otherNormalMove, collision.getContact().angle());
+            // todo remove from here
+            otherObject.getCollisions().add(collision.inverted());
         }
     }
 }

@@ -185,34 +185,11 @@ public class CollisionUtils {
     }
 
     public static void resolveGroundCollision(Collision collision, BattleCalculations battle) {
-//        var velocityProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().first());
-//        velocityProjections.setNormal(-0.5 * velocityProjections.getNormal());
-//        collision.getPair().first().setVelocity(velocityProjections.recoverVelocity());
-        new CollisionResolver().resolve(collision);
-        collision.getPair().first().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
-        collision.getPair().first().applyNormalMoveToNextPosition(-collision.getContact().depth(),
-                collision.getContact().angle());
+        new CollisionResolver().resolve(collision, battle.getModel().getCurrentTimeStepSecs());
     }
 
     public static void resolveRigidCollision(Collision collision, BattleCalculations battle) {
-        //recalculateVelocitiesRigid(collision);
-        new CollisionResolver().resolve(collision);
-        collision.getPair().first().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
-        collision.getPair().second().calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
-        recalculateNextPositionsRigid(collision);
-        collision.getPair().second().getCollisions().add(collision.inverted());
-    }
-
-    public static void recalculateNextPositionsRigid(Collision collision) {
-        var object = collision.getPair().first();
-        var otherObject = collision.getPair().second();
-        var mass = collision.getPair().first().getMass();
-        var otherMass = collision.getPair().second().getMass();
-        var normalMovePerMass = collision.getContact().depth() / (mass + otherMass);
-        var normalMove = normalMovePerMass * otherMass;
-        var otherNormalMove = normalMovePerMass * mass;
-        object.applyNormalMoveToNextPosition(- normalMove, collision.getContact().angle());
-        otherObject.applyNormalMoveToNextPosition(otherNormalMove, collision.getContact().angle());
+        new CollisionResolver().resolve(collision, battle.getModel().getCurrentTimeStepSecs());
     }
 
     public static void recalculateVelocitiesRigid(Collision collision) {
