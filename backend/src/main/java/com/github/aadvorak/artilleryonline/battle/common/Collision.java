@@ -40,9 +40,13 @@ public class Collision {
     }
 
     public double getClosingVelocity() {
-        var closingVelocity = bodyCollisionDataPair.first().getVelocityProjections().getNormal();
+        var closingVelocity = bodyCollisionDataPair.first() != null
+                ? bodyCollisionDataPair.first().getVelocityProjections().getNormal()
+                : velocitiesProjections.first().getNormal();
         if (bodyCollisionDataPair.second() != null) {
             closingVelocity -= bodyCollisionDataPair.second().getVelocityProjections().getNormal();
+        } else if (velocitiesProjections.second() != null) {
+            closingVelocity -= velocitiesProjections.second().getNormal();
         }
         return closingVelocity;
     }

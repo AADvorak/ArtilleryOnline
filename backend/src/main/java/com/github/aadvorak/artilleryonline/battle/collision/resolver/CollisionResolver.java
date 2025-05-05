@@ -2,10 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.collision.resolver;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BodyCalculations;
 import com.github.aadvorak.artilleryonline.battle.collision.BodyCollisionData;
-import com.github.aadvorak.artilleryonline.battle.common.BodyVelocity;
-import com.github.aadvorak.artilleryonline.battle.common.Collision;
-import com.github.aadvorak.artilleryonline.battle.common.Contact;
-import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
+import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.model.BodyModel;
 
 public class CollisionResolver {
@@ -17,69 +14,77 @@ public class CollisionResolver {
     private static final boolean LOGGING = true;
 
     public void resolve(Collision collision, double timeStepSecs) {
+        var first = collision.getPair().first();
+        var second = collision.getPair().second();
         BodyModel<?, ?, ?, ?> firstModel = null;
         BodyModel<?, ?, ?, ?> secondModel = null;
         BodyCollisionData firstData = collision.getBodyCollisionDataPair().first();
         BodyCollisionData secondData = collision.getBodyCollisionDataPair().second();
-        if (collision.getPair().first() != null
-                && collision.getPair().first() instanceof BodyCalculations<?, ?, ?, ?, ?> bodyCalculations) {
+        if (first instanceof BodyCalculations<?, ?, ?, ?, ?> bodyCalculations) {
             firstModel = bodyCalculations.getModel();
         }
-        if (collision.getPair().second() != null
-                && collision.getPair().second() instanceof BodyCalculations<?, ?, ?, ?, ?> bodyCalculations) {
+        if (second instanceof BodyCalculations<?, ?, ?, ?, ?> bodyCalculations) {
             secondModel = bodyCalculations.getModel();
         }
-        if (firstModel == null) {
-            return;
-        }
+
         if (LOGGING) {
             if (secondModel != null) {
-                System.out.printf("Collision of bodies ids = [%d, %d]\n%s\n",
+                System.out.printf("Collision of objects ids = [%d, %d]\n%s\n",
                         collision.getPair().first().getId(), collision.getPair().second().getId(),
                         collision.getContact());
             } else {
-                System.out.printf("Collision with unmovable of body id = %d\n%s\n%s\n",
+                System.out.printf("Collision with unmovable of object id = %d\n%s\n%s\n",
                         collision.getPair().first().getId(), collision.getContact(), firstData);
             }
         }
+
         var closingVelocity = collision.getClosingVelocity();
         if (closingVelocity > 0) {
-            resolveClosingVelocity(collision, closingVelocity, firstModel, secondModel, firstData, secondData);
+            if (LOGGING) System.out.print("Closing resolving\n");
+            if (second == null) {
+                var mass = firstData != null ? firstData.getNormalData().getResultMass() : first.getMass();
+                var impulseDelta = mass * closingVelocity * RESTITUTION;
+                if (firstModel != null && firstData != null) {
+                    recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
+                            firstData.getNormalData(), impulseDelta, 1);
+                } else {
+                    recalculatePointVelocity(first.getVelocity(), collision.getContact(), first.getMass(), impulseDelta);
+                }
+            } else {
+                var firstMass = firstData != null ? firstData.getNormalData().getResultMass() : first.getMass();
+                var secondMass = secondData != null ? secondData.getNormalData().getResultMass() : second.getMass();
+                var impulseDelta = firstMass * secondMass * closingVelocity * (1 + RESTITUTION)
+                        / (firstMass + secondMass);
+                if (LOGGING) System.out.printf("First object:\n%s\n", firstData);
+                if (firstModel != null && firstData != null) {
+                    recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
+                            firstData.getNormalData(), impulseDelta, 1);
+                } else {
+                    recalculatePointVelocity(first.getVelocity(), collision.getContact(), first.getMass(), impulseDelta);
+                }
+                if (LOGGING) System.out.printf("Second object:\n%s\n", secondData);
+                if (secondModel != null && secondData != null) {
+                    recalculateBodyVelocity(secondModel.getState().getVelocity(), collision.getContact(),
+                            secondData.getNormalData(), impulseDelta, -1);
+                } else {
+                    recalculatePointVelocity(second.getVelocity(), collision.getContact(), second.getMass(), impulseDelta);
+                }
+            }
         }
-        var frictionVelocity = -firstData.getVelocityProjections().getTangential();
+
+        var frictionVelocity = 0.0;
+        if (firstData != null) {
+            frictionVelocity -= firstData.getVelocityProjections().getTangential();
+        }
         if (secondData != null) {
             frictionVelocity += secondData.getVelocityProjections().getTangential();
         }
         if (Math.abs(frictionVelocity) > FRICTION_VELOCITY_THRESHOLD) {
             resolveFrictionVelocity(collision, frictionVelocity, firstModel, secondModel, firstData, secondData);
         }
+
         recalculatePositionsAndResolveInterpenetration(collision, timeStepSecs);
         if (LOGGING) System.out.print("----------------End collision resolution------------------\n");
-    }
-
-    private void resolveClosingVelocity(
-            Collision collision, double closingVelocity,
-            BodyModel<?, ?, ?, ?> firstModel,
-            BodyModel<?, ?, ?, ?> secondModel,
-            BodyCollisionData firstData,
-            BodyCollisionData secondData
-    ) {
-        if (LOGGING) System.out.print("Closing resolving\n");
-        if (secondData == null) {
-            var impulseDelta = firstData.getNormalData().getResultMass() * closingVelocity * RESTITUTION;
-            recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
-                    firstData.getNormalData(), impulseDelta, 1);
-        } else {
-            var impulseDelta = firstData.getNormalData().getResultMass() * secondData.getNormalData().getResultMass()
-                    * closingVelocity * (1 + RESTITUTION)
-                    / (secondData.getNormalData().getResultMass() + firstData.getNormalData().getResultMass());
-            if (LOGGING) System.out.printf("First body:\n%s\n", firstData);
-            recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
-                    firstData.getNormalData(), impulseDelta, 1);
-            if (LOGGING) System.out.printf("Second body:\n%s\n", secondData);
-            recalculateBodyVelocity(secondModel.getState().getVelocity(), collision.getContact(),
-                    secondData.getNormalData(), impulseDelta, -1);
-        }
     }
 
     private void resolveFrictionVelocity(
@@ -123,6 +128,23 @@ public class CollisionResolver {
                     .setX(velocity.getX() + movingVelocityDelta.getX())
                     .setY(velocity.getY() + movingVelocityDelta.getY());
         }
+    }
+
+    private void recalculatePointVelocity(
+            Velocity velocity,
+            Contact contact,
+            double mass,
+            double impulseDelta
+    ) {
+        var velocityDelta = - impulseDelta / mass;
+        if (LOGGING) System.out.printf("velocityDelta = %.3f\n", velocityDelta);
+        var movingVelocityDelta = new VectorProjections(contact.angle())
+                .setNormal(velocityDelta)
+                .recoverVelocity();
+        if (LOGGING) System.out.printf("movingVelocityDelta = %s\n", movingVelocityDelta);
+        velocity
+                .setX(velocity.getX() + movingVelocityDelta.getX())
+                .setY(velocity.getY() + movingVelocityDelta.getY());
     }
 
     private void recalculatePositionsAndResolveInterpenetration(Collision collision, double timeStepSecs) {
