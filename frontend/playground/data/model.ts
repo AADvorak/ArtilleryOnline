@@ -47,6 +47,7 @@ export interface DroneModel {
   id: number
   vehicleId?: number
   specs: DroneSpecs
+  preCalc: DronePreCalc
   config: DroneConfig
   state: DroneState
 }
@@ -60,6 +61,13 @@ export interface ExplosionModel {
 export interface VehiclePreCalc {
   wheelDistance: number
   wheelAngle: number
+  mass: number
+  momentOfInertia: number
+  centerOfMassShift: Shift
+  maxRadius: number
+}
+
+export interface DronePreCalc {
   mass: number
   momentOfInertia: number
   centerOfMassShift: Shift

@@ -1,7 +1,11 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.common.*;
+import com.github.aadvorak.artilleryonline.battle.config.DroneConfig;
 import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
+import com.github.aadvorak.artilleryonline.battle.precalc.DronePreCalc;
+import com.github.aadvorak.artilleryonline.battle.specs.DroneSpecs;
+import com.github.aadvorak.artilleryonline.battle.state.DroneState;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -13,7 +17,8 @@ import java.util.Set;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class DroneCalculations implements Calculations<DroneModel> {
+public class DroneCalculations
+        implements BodyCalculations<DroneSpecs, DronePreCalc, DroneConfig, DroneState, DroneModel> {
 
     private final DroneModel model;
 

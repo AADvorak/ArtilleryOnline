@@ -6,6 +6,7 @@ import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.config.DroneConfig;
 import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
+import com.github.aadvorak.artilleryonline.battle.precalc.DronePreCalc;
 import com.github.aadvorak.artilleryonline.battle.preset.DroneSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.state.DroneState;
 import com.github.aadvorak.artilleryonline.battle.state.GunState;
@@ -53,6 +54,7 @@ public class DroneLaunchProcessor {
         var model = new DroneModel();
         model.setId(id);
         model.setState(state);
+        model.setPreCalc(new DronePreCalc(specs));
         model.setConfig(config);
         model.setSpecs(specs);
         battle.getModel().getDrones().put(id, model);

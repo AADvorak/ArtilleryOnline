@@ -6,6 +6,7 @@ import com.github.aadvorak.artilleryonline.battle.config.DroneConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.precalc.DronePreCalc;
 import com.github.aadvorak.artilleryonline.battle.state.DroneState;
 import com.github.aadvorak.artilleryonline.battle.state.GunState;
 
@@ -48,6 +49,7 @@ public class VehicleLaunchDroneProcessor {
         model.setState(state);
         model.setConfig(config);
         model.setSpecs(specs);
+        model.setPreCalc(new DronePreCalc(specs));
         battleModel.getDrones().put(id, model);
         battleModel.getUpdates().addDrone(model);
         vehicleModel.setUpdated(true);

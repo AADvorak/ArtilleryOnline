@@ -1,6 +1,6 @@
 import type {DeserializerInput} from "~/deserialization/deserializer-input";
 import type {
-  BattleModel, DroneModel,
+  BattleModel, DroneModel, DronePreCalc,
   ExplosionModel,
   MissileModel,
   RoomModel,
@@ -55,14 +55,15 @@ export function deserializeMissileModel(input: DeserializerInput): MissileModel 
 export function deserializeDroneModel(input: DeserializerInput): DroneModel {
   const id = DeserializerBase.readInt(input)
   const vehicleId = DeserializerBase.readNullable(input, DeserializerBase.readInt)
-
   const specs = deserializeDroneSpecs(input)
+  const preCalc = deserializeDronePreCalc(input)
   const config = deserializeDroneConfig(input)
   const state = deserializeDroneState(input)
   return {
     id,
     vehicleId,
     specs,
+    preCalc,
     config,
     state
   }
@@ -100,6 +101,19 @@ export function deserializeVehiclePreCalc(input: DeserializerInput): VehiclePreC
   return {
     wheelDistance,
     wheelAngle,
+    mass,
+    momentOfInertia,
+    centerOfMassShift,
+    maxRadius
+  }
+}
+
+export function deserializeDronePreCalc(input: DeserializerInput): DronePreCalc {
+  const mass = DeserializerBase.readDouble(input)
+  const momentOfInertia = DeserializerBase.readDouble(input)
+  const centerOfMassShift = deserializeShift(input)
+  const maxRadius = DeserializerBase.readDouble(input)
+  return {
     mass,
     momentOfInertia,
     centerOfMassShift,

@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.state;
 
 import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
 import com.github.aadvorak.artilleryonline.battle.common.BodyVelocity;
+import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
 import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
@@ -13,11 +14,15 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class DroneState implements State, CompactSerializable {
+public class DroneState implements BodyState, CompactSerializable {
 
     private BodyPosition position = new BodyPosition();
 
     private BodyVelocity velocity = new BodyVelocity();
+
+    private MovingDirection pushingDirection;
+
+    private MovingDirection rotatingDirection;
 
     private Map<String, Integer> ammo;
 
