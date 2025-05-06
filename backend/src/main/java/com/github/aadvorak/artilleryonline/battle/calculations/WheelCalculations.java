@@ -29,18 +29,6 @@ public class WheelCalculations
 
     private Contact groundContact;
 
-    private Acceleration gravityAcceleration = new Acceleration();
-
-    private Acceleration groundReactionAcceleration = new Acceleration();
-
-    private Acceleration groundFrictionAcceleration = new Acceleration();
-
-    private Acceleration engineAcceleration = new Acceleration();
-
-    private Acceleration jetAcceleration = new Acceleration();
-
-    private Acceleration sumAcceleration;
-
     private final Next next = new Next();
 
     public WheelCalculations(WheelSign sign, VehicleCalculations vehicle) {
@@ -72,6 +60,16 @@ public class WheelCalculations
     @Override
     public Set<Collision> getCollisions() {
         return vehicle.getCollisions();
+    }
+
+    @Override
+    public boolean isHasCollisions() {
+        return vehicle.isHasCollisions();
+    }
+
+    @Override
+    public void setHasCollisions(boolean hasCollisions) {
+        vehicle.setHasCollisions(hasCollisions);
     }
 
     public void setVelocity(Velocity velocity) {

@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.Set;
+import java.util.stream.Stream;
 
 @Getter
 @Setter
@@ -22,7 +23,7 @@ public class BattleCalculations {
 
     private Set<DroneCalculations> drones;
 
-    public Set<? extends BodyCalculations<?,?,?,?,?>> getBodies() {
+    public Set<? extends Calculations<?>> getObjects() {
         return vehicles;
     }
 }

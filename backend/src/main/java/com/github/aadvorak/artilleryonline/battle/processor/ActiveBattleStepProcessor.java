@@ -4,6 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.BattleStage;
 import com.github.aadvorak.artilleryonline.battle.BattleType;
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
+import com.github.aadvorak.artilleryonline.battle.collision.CollisionsProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.command.CommandProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.drone.DroneFlyProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.drone.DroneGunShootProcessor;
@@ -15,8 +16,6 @@ import com.github.aadvorak.artilleryonline.battle.processor.missile.collisions.M
 import com.github.aadvorak.artilleryonline.battle.processor.shell.ShellFlyProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.shell.collisions.ShellsCollisionsProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.*;
-import com.github.aadvorak.artilleryonline.battle.processor.vehicle.collisions.VehiclesCollisionsProcessor;
-import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ActiveBattleStepProcessor extends BattleStepProcessorBase implements BattleStepProcessor {
 
-    private final ApplicationSettings applicationSettings;
+    private final CollisionsProcessor collisionsProcessor;
 
     @Override
     protected void doStepLogic(Battle battle) {
@@ -75,10 +74,9 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
             VehicleMoveProcessor.processStep1(vehicleCalculations, battleCalculations);
         });
 
+        collisionsProcessor.process(battleCalculations);
         ShellsCollisionsProcessor.process(battleCalculations);
         MissilesCollisionsProcessor.process(battleCalculations);
-        VehiclesCollisionsProcessor.process(battleCalculations,
-                applicationSettings.getAdditionalResolveCollisionsIterationsNumber());
         DronesCollisionsProcessor.process(battleCalculations);
 
         battleCalculations.getVehicles().forEach(vehicleCalculations ->

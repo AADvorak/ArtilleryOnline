@@ -5,14 +5,12 @@ import com.github.aadvorak.artilleryonline.battle.model.MissileModel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Getter
 @Setter
-@Accessors(chain = true)
 public class MissileCalculations implements Calculations<MissileModel> {
 
     private final MissileModel model;
@@ -22,6 +20,8 @@ public class MissileCalculations implements Calculations<MissileModel> {
     private final Next next;
 
     private final Positions positions;
+
+    private boolean hasCollisions;
 
     public MissileCalculations(MissileModel model) {
         this.model = model;

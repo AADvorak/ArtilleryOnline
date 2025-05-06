@@ -24,6 +24,10 @@ public interface Calculations<Model> {
 
     Set<Collision> getCollisions();
 
+    boolean isHasCollisions();
+
+    void setHasCollisions(boolean hasCollisions);
+
     void calculateNextPosition(double timeStep);
 
     void applyNextPosition();

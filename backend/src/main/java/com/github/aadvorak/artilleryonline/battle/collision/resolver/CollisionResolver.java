@@ -163,8 +163,6 @@ public class CollisionResolver {
             var otherNormalMove = normalMovePerMass * mass;
             object.applyNormalMoveToNextPosition(- normalMove, collision.getContact().angle());
             otherObject.applyNormalMoveToNextPosition(otherNormalMove, collision.getContact().angle());
-            // todo remove from here
-            otherObject.getCollisions().add(collision.inverted());
         }
     }
 }

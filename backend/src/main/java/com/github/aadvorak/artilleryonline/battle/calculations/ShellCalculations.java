@@ -14,7 +14,6 @@ import java.util.Set;
 
 @Getter
 @Setter
-@Accessors(chain = true)
 @RequiredArgsConstructor
 public class ShellCalculations implements Calculations<ShellModel> {
 
@@ -23,6 +22,8 @@ public class ShellCalculations implements Calculations<ShellModel> {
     private final Set<Collision> collisions = new HashSet<>();
 
     private final Next next = new Next();
+
+    private boolean hasCollisions;
 
     @Override
     public Integer getId() {

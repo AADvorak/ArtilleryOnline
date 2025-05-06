@@ -1,40 +1,38 @@
-package com.github.aadvorak.artilleryonline.battle.processor.vehicle.collisions;
+package com.github.aadvorak.artilleryonline.battle.collision.detector.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
+import com.github.aadvorak.artilleryonline.battle.collision.detector.CollisionsDetector;
 import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
-import com.github.aadvorak.artilleryonline.battle.utils.CollisionUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.ContactUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class VehicleVehicleCollisionsDetector {
+@Component
+public class VehicleVehicleCollisionsDetector implements CollisionsDetector {
 
-    public static Collision detectFirst(VehicleCalculations vehicle, BattleCalculations battle) {
-        var collisions = detect(vehicle, battle, true);
-        if (collisions.isEmpty()) {
-            return null;
+    @Override
+    public Set<Collision> detect(Calculations<?> calculations, BattleCalculations battle, boolean first) {
+        if (calculations instanceof VehicleCalculations vehicleCalculations) {
+            return detect(vehicleCalculations, battle, first);
         }
-        return collisions.iterator().next();
-    }
-
-    public static Collision detectStrongest(VehicleCalculations vehicle, BattleCalculations battle) {
-        var collisions = detect(vehicle, battle, false);
-        return CollisionUtils.findStrongestCollision(collisions);
+        return Set.of();
     }
 
     // todo refactor
-    public static Set<Collision> detect(VehicleCalculations vehicle, BattleCalculations battle, boolean first) {
+    private Set<Collision> detect(VehicleCalculations vehicle, BattleCalculations battle, boolean first) {
         Set<Collision> collisions = new HashSet<>();
         var otherVehicles = battle.getVehicles().stream()
                 .filter(value -> !Objects.equals(value.getId(), vehicle.getId()))
-                .filter(value -> collisionNotDetected(vehicle, value.getId()))
+                .filter(value -> collisionNotDetected(vehicle, value))
                 .collect(Collectors.toSet());
         var wheelRadius = vehicle.getModel().getSpecs().getWheelRadius();
         var vehicleRadius = vehicle.getModel().getSpecs().getRadius();
@@ -104,10 +102,9 @@ public class VehicleVehicleCollisionsDetector {
         return collisions;
     }
 
-    // todo vehicle collisions checked
-    private static boolean collisionNotDetected(VehicleCalculations vehicle, Integer otherVehicleId) {
-        return vehicle.getCollisions().stream()
+    private static boolean collisionNotDetected(VehicleCalculations vehicle, VehicleCalculations otherVehicle) {
+        return otherVehicle.getCollisions().stream()
                 .noneMatch(c -> CollideObjectType.VEHICLE.equals(c.getType())
-                        && c.getSecondId().equals(otherVehicleId));
+                        && c.getSecondId().equals(vehicle.getId()));
     }
 }

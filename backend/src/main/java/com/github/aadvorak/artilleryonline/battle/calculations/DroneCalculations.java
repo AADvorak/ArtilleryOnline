@@ -12,7 +12,6 @@ import java.util.Set;
 
 @Getter
 @Setter
-@Accessors(chain = true)
 @RequiredArgsConstructor
 public class DroneCalculations implements Calculations<DroneModel> {
 
@@ -25,6 +24,8 @@ public class DroneCalculations implements Calculations<DroneModel> {
     private Target target;
 
     private double height;
+
+    private boolean hasCollisions;
 
     @Override
     public Integer getId() {

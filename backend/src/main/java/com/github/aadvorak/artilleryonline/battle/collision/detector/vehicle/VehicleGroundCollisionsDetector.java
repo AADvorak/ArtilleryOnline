@@ -1,35 +1,33 @@
-package com.github.aadvorak.artilleryonline.battle.processor.vehicle.collisions;
+package com.github.aadvorak.artilleryonline.battle.collision.detector.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
+import com.github.aadvorak.artilleryonline.battle.collision.detector.CollisionsDetector;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
-import com.github.aadvorak.artilleryonline.battle.utils.CollisionUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.GroundContactUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class VehicleGroundCollisionsDetector {
+@Component
+public class VehicleGroundCollisionsDetector implements CollisionsDetector {
 
-    public static Collision detectFirst(VehicleCalculations vehicle, BattleCalculations battle) {
-        var collisions = detect(vehicle, battle, true);
-        if (collisions.isEmpty()) {
-            return null;
+    @Override
+    public Set<Collision> detect(Calculations<?> calculations, BattleCalculations battle, boolean first) {
+        if (calculations instanceof VehicleCalculations vehicleCalculations) {
+            return detect(vehicleCalculations, battle, first);
         }
-        return collisions.iterator().next();
+        return Set.of();
     }
 
-    public static Collision detectStrongest(VehicleCalculations vehicle, BattleCalculations battle) {
-        var collisions = detect(vehicle, battle, false);
-        return CollisionUtils.findStrongestCollision(collisions);
-    }
-
-    public static Set<Collision> detect(VehicleCalculations vehicle, BattleCalculations battle, boolean first) {
+    private Set<Collision> detect(VehicleCalculations vehicle, BattleCalculations battle, boolean first) {
         Set<Collision> collisions = new HashSet<>();
         for (var wheel : List.of(vehicle.getRightWheel(), vehicle.getLeftWheel())) {
             var groundCollision = detectWheelGroundCollision(wheel, battle);
@@ -50,7 +48,7 @@ public class VehicleGroundCollisionsDetector {
         return collisions;
     }
 
-    private static Collision detectWheelGroundCollision(WheelCalculations wheel, BattleCalculations battle) {
+    private Collision detectWheelGroundCollision(WheelCalculations wheel, BattleCalculations battle) {
         var contact = GroundContactUtils.getGroundContact(
                 new Circle(wheel.getNext().getPosition(), wheel.getModel().getSpecs().getWheelRadius()),
                 battle.getModel().getRoom(), true);
@@ -60,7 +58,7 @@ public class VehicleGroundCollisionsDetector {
         return Collision.withGround(wheel, contact);
     }
 
-    private static Collision detectHullGroundCollision(VehicleCalculations vehicle, BattleCalculations battle) {
+    private Collision detectHullGroundCollision(VehicleCalculations vehicle, BattleCalculations battle) {
         var position = vehicle.getGeometryNextPosition();
         var contact = GroundContactUtils.getGroundContact(
                 new Circle(position.getCenter(), vehicle.getModel().getSpecs().getRadius()),
@@ -76,7 +74,7 @@ public class VehicleGroundCollisionsDetector {
         return Collision.withGround(vehicle, contact);
     }
 
-    private static Collision detectWheelWallCollision(WheelCalculations wheel, BattleCalculations battle) {
+    private Collision detectWheelWallCollision(WheelCalculations wheel, BattleCalculations battle) {
         var wheelRadius = wheel.getVehicle().getModel().getSpecs().getWheelRadius();
         var xMax = battle.getModel().getRoom().getSpecs().getRightTop().getX();
         var xMin = battle.getModel().getRoom().getSpecs().getLeftBottom().getX();
