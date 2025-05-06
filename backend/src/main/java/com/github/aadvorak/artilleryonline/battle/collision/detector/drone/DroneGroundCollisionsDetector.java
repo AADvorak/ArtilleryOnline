@@ -1,28 +1,45 @@
-package com.github.aadvorak.artilleryonline.battle.processor.drone.collisions;
+package com.github.aadvorak.artilleryonline.battle.collision.detector.drone;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.DroneCalculations;
+import com.github.aadvorak.artilleryonline.battle.collision.detector.CollisionsDetector;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.utils.GroundContactUtils;
+import org.springframework.stereotype.Component;
 
-public class DroneGroundCollisionsDetector {
+import java.util.HashSet;
+import java.util.Set;
 
-    public static Collision detectFirst(DroneCalculations drone, BattleCalculations battle) {
-        var collision = detectWallCollision(drone, battle);
-        if (collision != null) {
-            return collision;
+@Component
+public class DroneGroundCollisionsDetector implements CollisionsDetector {
+
+    @Override
+    public Set<Collision> detect(Calculations<?> calculations, BattleCalculations battle, boolean first) {
+        if (calculations instanceof DroneCalculations droneCalculations) {
+            return detect(droneCalculations, battle, first);
         }
-        collision = detectGroundCollision(drone, battle);
-        if (collision != null) {
-            return collision;
-        }
-        return null;
+        return Set.of();
     }
 
-    private static Collision detectGroundCollision(DroneCalculations drone, BattleCalculations battle) {
+    private Set<Collision> detect(DroneCalculations drone, BattleCalculations battle, boolean first) {
+        var collisions = new HashSet<Collision>();
+        var wallCollision = detectWallCollision(drone, battle);
+        if (wallCollision != null) {
+            collisions.add(wallCollision);
+            if (first) return collisions;
+        }
+        var groundCollision = detectGroundCollision(drone, battle);
+        if (groundCollision != null) {
+            collisions.add(groundCollision);
+        }
+        return collisions;
+    }
+
+    private Collision detectGroundCollision(DroneCalculations drone, BattleCalculations battle) {
         var contact = GroundContactUtils.getGroundContact(
                 new Circle(drone.getNext().getPosition().getCenter(), drone.getModel().getSpecs().getHullRadius()),
                 battle.getModel().getRoom(), true);
@@ -32,7 +49,7 @@ public class DroneGroundCollisionsDetector {
         return Collision.withGround(drone, contact);
     }
 
-    private static Collision detectWallCollision(DroneCalculations drone, BattleCalculations battle) {
+    private Collision detectWallCollision(DroneCalculations drone, BattleCalculations battle) {
         var hullRadius = drone.getModel().getSpecs().getHullRadius();
         var xMax = battle.getModel().getRoom().getSpecs().getRightTop().getX();
         var xMin = battle.getModel().getRoom().getSpecs().getLeftBottom().getX();

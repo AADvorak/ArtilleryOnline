@@ -1,32 +1,38 @@
-package com.github.aadvorak.artilleryonline.battle.processor.drone.collisions;
+package com.github.aadvorak.artilleryonline.battle.collision.detector.drone;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.DroneCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
+import com.github.aadvorak.artilleryonline.battle.collision.detector.CollisionsDetector;
 import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
+import com.github.aadvorak.artilleryonline.battle.utils.CollisionUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.ContactUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class DroneDroneCollisionsDetector {
+@Component
+public class DroneDroneCollisionsDetector implements CollisionsDetector {
 
-    public static Collision detectFirst(DroneCalculations drone, BattleCalculations battle) {
-        var collisions = detect(drone, battle, true);
-        if (collisions.isEmpty()) {
-            return null;
+    @Override
+    public Set<Collision> detect(Calculations<?> calculations, BattleCalculations battle, boolean first) {
+        if (calculations instanceof DroneCalculations droneCalculations) {
+            return detect(droneCalculations, battle, first);
         }
-        return collisions.iterator().next();
+        return Set.of();
     }
 
-    private static Set<Collision> detect(DroneCalculations drone, BattleCalculations battle, boolean first) {
+    private Set<Collision> detect(DroneCalculations drone, BattleCalculations battle, boolean first) {
         Set<Collision> collisions = new HashSet<>();
         var otherDrones = battle.getDrones().stream()
                 .filter(value -> !Objects.equals(value.getId(), drone.getId()))
-                .filter(value -> collisionNotDetected(drone, value.getId()))
+                .filter(value -> CollisionUtils.collisionNotDetected(drone, value))
                 .collect(Collectors.toSet());
         if (otherDrones.isEmpty()) {
             return collisions;
@@ -45,11 +51,5 @@ public class DroneDroneCollisionsDetector {
             }
         }
         return collisions;
-    }
-
-    private static boolean collisionNotDetected(DroneCalculations drone, Integer otherDroneId) {
-        return drone.getCollisions().stream()
-                .noneMatch(c -> CollideObjectType.DRONE.equals(c.getType())
-                        && c.getSecondId().equals(otherDroneId));
     }
 }

@@ -1,26 +1,29 @@
-package com.github.aadvorak.artilleryonline.battle.processor.drone.collisions;
+package com.github.aadvorak.artilleryonline.battle.collision.detector.drone;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
+import com.github.aadvorak.artilleryonline.battle.collision.detector.CollisionsDetector;
 import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
 import com.github.aadvorak.artilleryonline.battle.utils.ContactUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class DroneVehicleCollisionsDetector {
+@Component
+public class DroneVehicleCollisionsDetector implements CollisionsDetector {
 
-    public static Collision detectFirst(DroneCalculations drone, BattleCalculations battle) {
-        var collisions = detect(drone, battle, true);
-        if (collisions.isEmpty()) {
-            return null;
+    @Override
+    public Set<Collision> detect(Calculations<?> calculations, BattleCalculations battle, boolean first) {
+        if (calculations instanceof DroneCalculations droneCalculations) {
+            return detect(droneCalculations, battle, first);
         }
-        return collisions.iterator().next();
+        return Set.of();
     }
 
-    private static Set<Collision> detect(DroneCalculations drone, BattleCalculations battle, boolean first) {
+    private Set<Collision> detect(DroneCalculations drone, BattleCalculations battle, boolean first) {
         Set<Collision> collisions = new HashSet<>();
         for (var vehicle : battle.getVehicles()) {
             for (var other : List.of(vehicle, vehicle.getLeftWheel(), vehicle.getRightWheel())) {
@@ -34,7 +37,7 @@ public class DroneVehicleCollisionsDetector {
         return collisions;
     }
 
-    private static Collision detect(DroneCalculations drone, Calculations<?> other) {
+    private Collision detect(DroneCalculations drone, Calculations<?> other) {
         var radius = drone.getModel().getSpecs().getHullRadius();
         var position = drone.getNext().getPosition();
         var shape = new Circle(position.getCenter(), radius);
