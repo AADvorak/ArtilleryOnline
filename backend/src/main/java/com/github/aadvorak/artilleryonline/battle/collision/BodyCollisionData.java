@@ -40,6 +40,13 @@ public class BodyCollisionData {
                 .setTangentialData(getComponentData(bodyModel, contact.position(), comPosition, tangential, radiusNormalized));
     }
 
+    public static ComponentData getComponentData(BodyModel<?, ?, ?, ?> bodyModel, Vector component,
+                                                 Position contactPosition) {
+        var comPosition = bodyModel.getState().getPosition().getCenter();
+        var radiusNormalized = comPosition.vectorTo(contactPosition).normalized();
+        return getComponentData(bodyModel, contactPosition, comPosition, component, radiusNormalized);
+    }
+
     private static ComponentData getComponentData(BodyModel<?, ?, ?, ?> bodyModel,
                                                   Position contactPosition, Position comPosition,
                                                   Vector component, Vector radiusNormalized) {

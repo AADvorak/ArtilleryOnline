@@ -32,6 +32,8 @@ public class Collision {
 
     private Double impact;
 
+    private boolean hit = false;
+
     public Integer getSecondId() {
         if (pair.second() != null) {
             return pair.second().getId();

@@ -9,7 +9,7 @@ public class CollisionResolver {
 
     private static final double RESTITUTION = 0.5;
 
-    private static final double FRICTION_VELOCITY_THRESHOLD = 0.1;
+    private static final double FRICTION_VELOCITY_THRESHOLD = 100.0;
 
     private static final boolean LOGGING = true;
 
@@ -25,6 +25,19 @@ public class CollisionResolver {
         }
         if (second instanceof BodyCalculations<?, ?, ?, ?, ?> bodyCalculations) {
             secondModel = bodyCalculations.getModel();
+        }
+
+        if (collision.isHit() && secondModel != null) {
+            var hitDirection = first.getVelocity().normalized();
+            var hitData = BodyCollisionData.getComponentData(secondModel, hitDirection,
+                    collision.getContact().position());
+            var impulseDelta = first.getMass() * first.getVelocity().magnitude();
+            System.out.printf("Object id %d = hits object id = %d]\n%s\nHitData: %s\n",
+                    collision.getPair().first().getId(), collision.getPair().second().getId(),
+                    collision.getContact(), hitData);
+            recalculateBodyVelocity(secondModel.getState().getVelocity(), collision.getContact(),
+                    hitData, impulseDelta, -1);
+            return;
         }
 
         if (LOGGING) {
