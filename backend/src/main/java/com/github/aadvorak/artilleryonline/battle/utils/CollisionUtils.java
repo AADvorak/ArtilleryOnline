@@ -1,7 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.utils;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
-import com.github.aadvorak.artilleryonline.battle.collision.resolver.CollisionResolver;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
@@ -43,23 +42,6 @@ public class CollisionUtils {
                     .setX(wheelVelocity.getX() + projectileMass * projectileVelocity.getX() / vehicleMass)
                     .setY(wheelVelocity.getY() + projectileMass * projectileVelocity.getY() / vehicleMass));
         }
-    }
-
-    // todo common logic
-    public static void pushDroneByDirectHit(Collision collision) {
-        var drone = (DroneCalculations) collision.getPair().second();
-        var droneMass = collision.getPair().second().getMass();
-        var projectileMass = collision.getPair().first().getMass();
-        var droneVelocitiesProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().second());
-        var projectileVelocitiesProjections = collision.getVelocitiesProjections().first();
-        droneVelocitiesProjections.setNormal(droneVelocitiesProjections.getNormal()
-                + projectileMass * projectileVelocitiesProjections.getNormal() / droneMass);
-        drone.setVelocity(droneVelocitiesProjections.recoverVelocity());
-
-        var droneVelocity = drone.getModel().getState().getVelocity();
-        var droneRadius = drone.getModel().getSpecs().getHullRadius();
-        droneVelocity.setAngle(droneVelocity.getAngle()
-                - projectileVelocitiesProjections.getTangential() * (projectileMass / droneMass) / droneRadius);
     }
 
     public static Collision detectWithMissile(Calculations<?> calculations, Position position, Position nextPosition,
@@ -146,9 +128,9 @@ public class CollisionUtils {
         );
         var rightEngineIntersectionPoint = GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, rightEngineShape);
         if (rightEngineIntersectionPoint != null) {
-            // todo fix normal
+            var projection = GeometryUtils.getPointToLineProjection(position, rightEngineShape);
             var contact = Contact.withUncheckedDepthOf(0.0,
-                    rightEngineIntersectionPoint.vectorTo(dronePosition).normalized(), rightEngineIntersectionPoint);
+                    position.vectorTo(projection).normalized(), rightEngineIntersectionPoint);
             return Collision.withDrone(calculations, drone, contact);
         }
 
@@ -160,53 +142,12 @@ public class CollisionUtils {
         );
         var leftEngineIntersectionPoint = GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, leftEngineShape);
         if (leftEngineIntersectionPoint != null) {
-            // todo fix normal
+            var projection = GeometryUtils.getPointToLineProjection(position, leftEngineShape);
             var contact = Contact.withUncheckedDepthOf(0.0,
-                    leftEngineIntersectionPoint.vectorTo(dronePosition).normalized(), leftEngineIntersectionPoint);
+                    position.vectorTo(projection).normalized(), leftEngineIntersectionPoint);
             return Collision.withDrone(calculations, drone, contact);
         }
         return null;
-    }
-
-    public static void resolveGroundCollision(Collision collision, BattleCalculations battle) {
-        new CollisionResolver().resolve(collision, battle.getModel().getCurrentTimeStepSecs());
-    }
-
-    public static void resolveRigidCollision(Collision collision, BattleCalculations battle) {
-        new CollisionResolver().resolve(collision, battle.getModel().getCurrentTimeStepSecs());
-    }
-
-    public static void recalculateVelocitiesRigid(Collision collision) {
-        recalculateVelocitiesRigid(collision, 1.0);
-    }
-
-    public static void recalculateVelocitiesRigid(Collision collision, double coefficient) {
-        var mass = collision.getPair().first().getMass();
-        var otherMass = collision.getPair().second().getMass();
-
-        var velocityProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().first());
-        var otherVelocityProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().second());
-
-        var velocityNormalProjection = velocityProjections.getNormal();
-        var otherVelocityNormalProjection = otherVelocityProjections.getNormal();
-
-        velocityProjections.setNormal(getNewVelocityNormalProjection(
-                velocityNormalProjection, otherVelocityNormalProjection,
-                mass, otherMass,coefficient));
-        collision.getPair().first().setVelocity(velocityProjections.recoverVelocity());
-
-        otherVelocityProjections.setNormal(getNewVelocityNormalProjection(
-                otherVelocityNormalProjection, velocityNormalProjection,
-                otherMass, mass, coefficient));
-        collision.getPair().second().setVelocity(otherVelocityProjections.recoverVelocity());
-    }
-
-    private static double getNewVelocityNormalProjection(
-            double velocityNormalProjection, double otherVelocityNormalProjection,
-            double mass, double otherMass, double coefficient
-    ) {
-        return coefficient * (- Math.abs(mass - otherMass) * velocityNormalProjection
-                + 2 * otherMass * otherVelocityNormalProjection) / (mass + otherMass);
     }
 
     private static Position findClosestIntersectionPoint(Position position, Set<Position> intersectionPoints) {

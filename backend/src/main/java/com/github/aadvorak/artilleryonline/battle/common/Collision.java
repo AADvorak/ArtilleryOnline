@@ -127,12 +127,8 @@ public class Collision {
         return false;
     }
 
+    @Deprecated
     public static Collision ofMissileWithGround(Calculations<MissileModel> first) {
-        return new Collision()
-                .setPair(new CollisionPair(first, null));
-    }
-
-    public static Collision ofShellWithGround(Calculations<ShellModel> first) {
         return new Collision()
                 .setPair(new CollisionPair(first, null));
     }

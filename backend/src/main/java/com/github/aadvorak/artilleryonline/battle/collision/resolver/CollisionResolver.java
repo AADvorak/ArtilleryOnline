@@ -27,16 +27,18 @@ public class CollisionResolver {
             secondModel = bodyCalculations.getModel();
         }
 
-        if (collision.isHit() && secondModel != null) {
-            var hitDirection = first.getVelocity().normalized();
-            var hitData = BodyCollisionData.getComponentData(secondModel, hitDirection,
-                    collision.getContact().position());
-            var impulseDelta = first.getMass() * first.getVelocity().magnitude();
-            System.out.printf("Object id %d = hits object id = %d]\n%s\nHitData: %s\n",
-                    collision.getPair().first().getId(), collision.getPair().second().getId(),
-                    collision.getContact(), hitData);
-            recalculateBodyVelocity(secondModel.getState().getVelocity(), collision.getContact(),
-                    hitData, impulseDelta, -1);
+        if (collision.isHit()) {
+            if (secondModel != null) {
+                var hitDirection = first.getVelocity().normalized();
+                var hitData = BodyCollisionData.getComponentData(secondModel, hitDirection,
+                        collision.getContact().position());
+                var impulseDelta = first.getMass() * first.getVelocity().magnitude();
+                System.out.printf("Object id %d = hits object id = %d]\n%s\nHitData: %s\n",
+                        collision.getPair().first().getId(), collision.getPair().second().getId(),
+                        collision.getContact(), hitData);
+                recalculateBodyVelocity(secondModel.getState().getVelocity(), collision.getContact(),
+                        hitData, impulseDelta, -1);
+            }
             return;
         }
 

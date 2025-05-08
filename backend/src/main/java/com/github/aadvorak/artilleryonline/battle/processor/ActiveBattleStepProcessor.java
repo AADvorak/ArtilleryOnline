@@ -13,7 +13,6 @@ import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionP
 import com.github.aadvorak.artilleryonline.battle.processor.missile.MissileFlyProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.missile.collisions.MissilesCollisionsProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.shell.ShellFlyProcessor;
-import com.github.aadvorak.artilleryonline.battle.processor.shell.collisions.ShellsCollisionsProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -74,7 +73,6 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         });
 
         collisionsProcessor.process(battleCalculations);
-        ShellsCollisionsProcessor.process(battleCalculations);
         MissilesCollisionsProcessor.process(battleCalculations);
 
         battleCalculations.getVehicles().forEach(vehicleCalculations ->

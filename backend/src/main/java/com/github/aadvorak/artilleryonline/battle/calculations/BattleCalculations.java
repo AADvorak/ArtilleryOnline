@@ -28,6 +28,7 @@ public class BattleCalculations {
         var objects = new HashSet<Calculations<?>>();
         objects.addAll(vehicles);
         objects.addAll(drones);
+        objects.addAll(shells);
         return objects;
     }
 }
