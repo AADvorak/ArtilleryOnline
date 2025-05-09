@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Component
-public class DroneCollisionsPreprocessor implements CollisionPreprocessor {
+public class DroneCollisionPreprocessor implements CollisionPreprocessor {
 
     @Override
     public boolean process(Collision collision, BattleCalculations battle) {
