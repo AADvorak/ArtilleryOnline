@@ -8,7 +8,7 @@ import com.github.aadvorak.artilleryonline.battle.common.Collision;
 
 import java.util.Set;
 
-public abstract class ShellCollisionDetectorBase implements CollisionsDetector {
+public abstract class ShellCollisionsDetectorBase implements CollisionsDetector {
 
     @Override
     public Set<Collision> detect(Calculations<?> calculations, BattleCalculations battle, boolean first) {
@@ -16,10 +16,13 @@ public abstract class ShellCollisionDetectorBase implements CollisionsDetector {
             if (shell.getModel().getState().isStuck()) {
                 return Set.of();
             }
-            return detectFirst(shell, battle);
+            var collision = detectFirst(shell, battle);
+            if (collision != null) {
+                return Set.of(collision);
+            }
         }
         return Set.of();
     }
 
-    protected abstract Set<Collision> detectFirst(ShellCalculations shell, BattleCalculations battle);
+    protected abstract Collision detectFirst(ShellCalculations shell, BattleCalculations battle);
 }

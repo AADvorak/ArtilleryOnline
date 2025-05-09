@@ -9,23 +9,21 @@ import com.github.aadvorak.artilleryonline.battle.state.SurfaceState;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
-
 @Component
-public class ShellSurfaceCollisionsDetector extends ShellCollisionDetectorBase {
+public class ShellSurfaceCollisionsDetector extends ShellCollisionsDetectorBase {
 
-    protected Set<Collision> detectFirst(ShellCalculations shell, BattleCalculations battle) {
+    protected Collision detectFirst(ShellCalculations shell, BattleCalculations battle) {
         var surfaces = battle.getModel().getRoom().getState().getSurfaces();
         if (surfaces == null || surfaces.isEmpty()) {
-            return Set.of();
+            return null;
         }
         for (var surface : surfaces) {
             var collision = detect(shell, surface);
             if (collision != null) {
-                return Set.of(collision);
+                return collision;
             }
         }
-        return Set.of();
+        return null;
     }
 
     private Collision detect(ShellCalculations shell, SurfaceState surface) {
