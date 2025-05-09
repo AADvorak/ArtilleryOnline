@@ -29,6 +29,7 @@ public class BattleCalculations {
         objects.addAll(vehicles);
         objects.addAll(drones);
         objects.addAll(shells);
+        objects.addAll(missiles);
         return objects;
     }
 }
