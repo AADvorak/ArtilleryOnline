@@ -16,34 +16,6 @@ public class CollisionUtils {
                 .noneMatch(c -> object.getId().equals(c.getSecondId()));
     }
 
-    public static void pushVehicleByDirectHit(Collision collision) {
-        var projectileMass = collision.getPair().first().getMass();
-        pushVehicleByDirectHit(collision, projectileMass);
-    }
-
-    public static void pushVehicleByDirectHit(Collision collision, double projectileMass) {
-        var vehicleMass = collision.getPair().second().getMass();
-        if (collision.getPair().second() instanceof VehicleCalculations vehicle) {
-            var vehicleVelocitiesProjections = VectorProjections.copyOf(collision.getVelocitiesProjections().second());
-            var projectileVelocitiesProjections = collision.getVelocitiesProjections().first();
-            vehicleVelocitiesProjections.setNormal(vehicleVelocitiesProjections.getNormal()
-                    + projectileMass * projectileVelocitiesProjections.getNormal() / vehicleMass);
-            vehicle.setVelocity(vehicleVelocitiesProjections.recoverVelocity());
-
-            var vehicleVelocity = vehicle.getModel().getState().getVelocity();
-            var vehicleRadius = vehicle.getModel().getSpecs().getRadius();
-            vehicleVelocity.setAngle(vehicleVelocity.getAngle()
-                    - projectileVelocitiesProjections.getTangential() * (projectileMass / vehicleMass) / vehicleRadius);
-        }
-        if (collision.getPair().second() instanceof WheelCalculations wheel) {
-            var wheelVelocity = wheel.getVelocity();
-            var projectileVelocity = collision.getPair().first().getVelocity();
-            wheel.setVelocity(new Velocity()
-                    .setX(wheelVelocity.getX() + projectileMass * projectileVelocity.getX() / vehicleMass)
-                    .setY(wheelVelocity.getY() + projectileMass * projectileVelocity.getY() / vehicleMass));
-        }
-    }
-
     public static Collision detectWithMissile(Calculations<?> calculations, Position position, Position nextPosition,
                                               MissileCalculations missile) {
         var missileSegment = new Segment(missile.getPositions().getHead(), missile.getPositions().getTail());
