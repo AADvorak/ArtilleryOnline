@@ -84,8 +84,8 @@ public class BodyCollisionData {
             return mass;
         }
         var momentOfInertia = bodyModel.getPreCalc().getMomentOfInertia();
-        return inertiaToMassCoefficient * momentOfInertia / Math.pow(distanceToAxis, 2)
-                + (1 - inertiaToMassCoefficient) * mass;
+        return (inertiaToMassCoefficient * momentOfInertia / Math.pow(distanceToAxis, 2)
+                + mass) / (1 + inertiaToMassCoefficient);
     }
 
     @Getter

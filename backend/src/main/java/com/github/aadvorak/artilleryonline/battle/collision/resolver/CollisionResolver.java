@@ -38,6 +38,7 @@ public class CollisionResolver {
                         collision.getContact(), hitData);
                 recalculateBodyVelocity(secondModel.getState().getVelocity(), collision.getContact(),
                         hitData, impulseDelta, -1);
+                if (LOGGING) System.out.print("----------------End hit resolution------------------\n");
             }
             return;
         }
@@ -126,15 +127,16 @@ public class CollisionResolver {
             int sign
     ) {
         var velocityDelta = - sign * impulseDelta / componentData.getResultMass();
+        var imc = componentData.getInertiaToMassCoefficient();
         if (LOGGING) System.out.printf("velocityDelta = %.3f\n", velocityDelta);
         if (componentData.getInertiaToMassCoefficient() > 0) {
-            var angleVelocityDelta = componentData.getRotationSign() * componentData.getInertiaToMassCoefficient()
-                    * velocityDelta / componentData.getDistanceToAxis();
+            var angleVelocityDelta = componentData.getRotationSign() * imc * velocityDelta
+                    / componentData.getDistanceToAxis() / (1 + imc);
             if (LOGGING) System.out.printf("angleVelocityDelta = %.3f\n", angleVelocityDelta);
             velocity.setAngle(velocity.getAngle() + angleVelocityDelta);
         }
         if (componentData.getInertiaToMassCoefficient() < 1) {
-            var movingVelocityDeltaMagnitude = (1 - componentData.getInertiaToMassCoefficient()) * velocityDelta;
+            var movingVelocityDeltaMagnitude = velocityDelta / (1 + imc);
             var movingVelocityDelta = new VectorProjections(contact.angle())
                     .setNormal(movingVelocityDeltaMagnitude)
                     .recoverVelocity();
