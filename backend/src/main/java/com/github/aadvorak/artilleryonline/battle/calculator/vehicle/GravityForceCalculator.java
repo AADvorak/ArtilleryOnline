@@ -31,8 +31,21 @@ public class GravityForceCalculator implements ForceCalculator<
         var roomGravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
         var mass = calculations.getMass();
         var forces = new ArrayList<ForceAtPoint>();
-        if (WheelGroundState.FULL_OVER_GROUND.equals(calculations.getRightWheel().getGroundState())
-                || WheelGroundState.FULL_OVER_GROUND.equals(calculations.getLeftWheel().getGroundState())) {
+        var groundContacts = new HashSet<>(calculations.getGroundContacts());
+        if (calculations.getRightWheel().getGroundContact() != null) {
+            groundContacts.add(calculations.getRightWheel().getGroundContact());
+        }
+        if (calculations.getLeftWheel().getGroundContact() != null) {
+            groundContacts.add(calculations.getLeftWheel().getGroundContact());
+        }
+        var comX = calculations.getPosition().getX();
+        var leftContacts = groundContacts.stream()
+                .filter(contact -> contact.position().getX() < comX)
+                .collect(Collectors.toSet());
+        var rightContacts = groundContacts.stream()
+                .filter(contact -> contact.position().getX() > comX)
+                .collect(Collectors.toSet());
+        if (leftContacts.isEmpty() || rightContacts.isEmpty()) {
             forces.add(ForceAtPoint.atCOM(
                     new Force().setX(0.0).setY(-roomGravityAcceleration * mass),
                     FORCE_DESCRIPTION
@@ -41,32 +54,48 @@ public class GravityForceCalculator implements ForceCalculator<
             var leftContact = getFarthest(leftContacts, comX);
             var rightContact = getFarthest(rightContacts, comX);
             var groundGravityDepth = 0.7 * battleModel.getRoom().getSpecs().getGroundMaxDepth();
-            addWheelHalfOverGroundAcceleration(forces, calculations.getRightWheel(), mass,
-                    roomGravityAcceleration, groundGravityDepth);
-            addWheelHalfOverGroundAcceleration(forces, calculations.getLeftWheel(), mass,
-                    roomGravityAcceleration, groundGravityDepth);
+            if (leftContact.depth() <= groundGravityDepth && rightContact.depth() <= groundGravityDepth) {
+                addGroundForce(forces, leftContact, mass, roomGravityAcceleration, groundGravityDepth);
+                addGroundForce(forces, rightContact, mass, roomGravityAcceleration, groundGravityDepth);
+            }
         }
         return forces;
     }
 
-    private void addWheelHalfOverGroundAcceleration(
+    private void addGroundForce(
             List<ForceAtPoint> forces,
             Contact contact,
             double mass,
             double roomGravityAcceleration,
             double groundGravityDepth
     ) {
-        if (WheelGroundState.HALF_OVER_GROUND.equals(calculations.getGroundState())
-                && calculations.getGroundContact().depth() <= groundGravityDepth) {
-            var groundAngle = calculations.getGroundContact().angle();
-            var groundAccelerationModule = Math.abs(roomGravityAcceleration * Math.sin(groundAngle))
-                    * Math.sqrt(1 - calculations.getGroundContact().depth() / groundGravityDepth) * mass / 2;
-            forces.add(ForceAtPoint.atCOM(
-                    new Force()
-                            .setX(-groundAccelerationModule * Math.sin(groundAngle))
-                            .setY(-groundAccelerationModule * Math.cos(groundAngle)),
-                    FORCE_DESCRIPTION
-            ));
+        var groundAccelerationModule = Math.abs(roomGravityAcceleration * Math.sin(contact.angle()))
+                * Math.sqrt(1 - contact.depth() / groundGravityDepth) * mass / 2;
+        forces.add(new ForceAtPoint(
+                new Force()
+                        .setX(-groundAccelerationModule * Math.sin(contact.angle()))
+                        .setY(-groundAccelerationModule * Math.cos(contact.angle())),
+                contact.position(),
+                FORCE_DESCRIPTION
+        ));
+    }
+
+    private Contact getFarthest(Set<Contact> contacts, double comX) {
+        var iterator = contacts.iterator();
+        var farthest = iterator.next();
+        var farthestDistance = xDistance(farthest, comX);
+        while (iterator.hasNext()) {
+            var contact = iterator.next();
+            var xDistance = xDistance(contact, comX);
+            if (xDistance > farthestDistance) {
+                farthest = contact;
+                farthestDistance = xDistance;
+            }
         }
+        return farthest;
+    }
+
+    private double xDistance(Contact contact, double comX) {
+        return Math.abs(contact.position().getX() - comX);
     }
 }
