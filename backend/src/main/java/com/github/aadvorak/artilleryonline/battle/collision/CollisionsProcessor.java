@@ -22,7 +22,7 @@ public class CollisionsProcessor {
 
     private final Set<CollisionPostprocessor> postprocessors;
 
-    private final CollisionResolver resolver = new CollisionResolver();
+    private final CollisionResolver resolver;
 
     public void process(BattleCalculations battle) {
         detectAllCollisions(battle);

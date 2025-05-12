@@ -4,14 +4,21 @@ import com.github.aadvorak.artilleryonline.battle.calculations.BodyCalculations;
 import com.github.aadvorak.artilleryonline.battle.collision.BodyCollisionData;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.model.BodyModel;
+import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CollisionResolver {
 
     private static final double RESTITUTION = 0.5;
 
     private static final double FRICTION_VELOCITY_THRESHOLD = 100.0;
 
-    private static final boolean LOGGING = true;
+    private final boolean logging;
+
+    public CollisionResolver(ApplicationSettings settings) {
+        logging = settings.isDebug();
+    }
 
     public void resolve(Collision collision, double timeStepSecs) {
         var first = collision.getPair().first();
@@ -38,12 +45,12 @@ public class CollisionResolver {
                         collision.getContact(), hitData);
                 recalculateBodyVelocity(secondModel.getState().getVelocity(), collision.getContact(),
                         hitData, impulseDelta, -1);
-                if (LOGGING) System.out.print("----------------End hit resolution------------------\n");
+                if (logging) System.out.print("----------------End hit resolution------------------\n");
             }
             return;
         }
 
-        if (LOGGING) {
+        if (logging) {
             if (secondModel != null) {
                 System.out.printf("Collision of objects ids = [%d, %d]\n%s\n",
                         collision.getPair().first().getId(), collision.getPair().second().getId(),
@@ -56,7 +63,7 @@ public class CollisionResolver {
 
         var closingVelocity = collision.getClosingVelocity();
         if (closingVelocity > 0) {
-            if (LOGGING) System.out.print("Closing resolving\n");
+            if (logging) System.out.print("Closing resolving\n");
             if (second == null) {
                 var mass = firstData != null ? firstData.getNormalData().getResultMass() : first.getMass();
                 var impulseDelta = mass * closingVelocity * RESTITUTION;
@@ -71,14 +78,14 @@ public class CollisionResolver {
                 var secondMass = secondData != null ? secondData.getNormalData().getResultMass() : second.getMass();
                 var impulseDelta = firstMass * secondMass * closingVelocity * (1 + RESTITUTION)
                         / (firstMass + secondMass);
-                if (LOGGING) System.out.printf("First object:\n%s\n", firstData);
+                if (logging) System.out.printf("First object:\n%s\n", firstData);
                 if (firstModel != null && firstData != null) {
                     recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
                             firstData.getNormalData(), impulseDelta, 1);
                 } else {
                     recalculatePointVelocity(first.getVelocity(), collision.getContact(), first.getMass(), impulseDelta);
                 }
-                if (LOGGING) System.out.printf("Second object:\n%s\n", secondData);
+                if (logging) System.out.printf("Second object:\n%s\n", secondData);
                 if (secondModel != null && secondData != null) {
                     recalculateBodyVelocity(secondModel.getState().getVelocity(), collision.getContact(),
                             secondData.getNormalData(), impulseDelta, -1);
@@ -100,7 +107,7 @@ public class CollisionResolver {
         }
 
         recalculatePositionsAndResolveInterpenetration(collision, timeStepSecs);
-        if (LOGGING) System.out.print("----------------End collision resolution------------------\n");
+        if (logging) System.out.print("----------------End collision resolution------------------\n");
     }
 
     private void resolveFrictionVelocity(
@@ -111,7 +118,7 @@ public class CollisionResolver {
             BodyCollisionData secondData
     ) {
         if (secondData == null) {
-            if (LOGGING) System.out.print("Friction resolving\n");
+            if (logging) System.out.print("Friction resolving\n");
             var impulseDelta = -firstData.getTangentialData().getResultMass() * frictionVelocity
                     * collision.getContact().depth() * 10.0;
             recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
@@ -128,11 +135,11 @@ public class CollisionResolver {
     ) {
         var velocityDelta = - sign * impulseDelta / componentData.getResultMass();
         var imc = componentData.getInertiaToMassCoefficient();
-        if (LOGGING) System.out.printf("velocityDelta = %.3f\n", velocityDelta);
+        if (logging) System.out.printf("velocityDelta = %.3f\n", velocityDelta);
         if (componentData.getInertiaToMassCoefficient() > 0) {
             var angleVelocityDelta = componentData.getRotationSign() * imc * velocityDelta
                     / componentData.getDistanceToAxis() / (1 + imc);
-            if (LOGGING) System.out.printf("angleVelocityDelta = %.3f\n", angleVelocityDelta);
+            if (logging) System.out.printf("angleVelocityDelta = %.3f\n", angleVelocityDelta);
             velocity.setAngle(velocity.getAngle() + angleVelocityDelta);
         }
         if (componentData.getInertiaToMassCoefficient() < 1) {
@@ -140,7 +147,7 @@ public class CollisionResolver {
             var movingVelocityDelta = new VectorProjections(contact.angle())
                     .setNormal(movingVelocityDeltaMagnitude)
                     .recoverVelocity();
-            if (LOGGING) System.out.printf("movingVelocityDelta = %s\n", movingVelocityDelta);
+            if (logging) System.out.printf("movingVelocityDelta = %s\n", movingVelocityDelta);
             velocity
                     .setX(velocity.getX() + movingVelocityDelta.getX())
                     .setY(velocity.getY() + movingVelocityDelta.getY());
@@ -154,11 +161,11 @@ public class CollisionResolver {
             double impulseDelta
     ) {
         var velocityDelta = - impulseDelta / mass;
-        if (LOGGING) System.out.printf("velocityDelta = %.3f\n", velocityDelta);
+        if (logging) System.out.printf("velocityDelta = %.3f\n", velocityDelta);
         var movingVelocityDelta = new VectorProjections(contact.angle())
                 .setNormal(velocityDelta)
                 .recoverVelocity();
-        if (LOGGING) System.out.printf("movingVelocityDelta = %s\n", movingVelocityDelta);
+        if (logging) System.out.printf("movingVelocityDelta = %s\n", movingVelocityDelta);
         velocity
                 .setX(velocity.getX() + movingVelocityDelta.getX())
                 .setY(velocity.getY() + movingVelocityDelta.getY());
