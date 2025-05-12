@@ -75,9 +75,16 @@ public class CollisionsProcessor {
     }
 
     private void checkCollisionsResolved(BattleCalculations battle) {
-        battle.getObjects().forEach(object ->
-                detectors.forEach(detector ->
-                        object.setHasCollisions(!detector.detect(object, battle, true).isEmpty())));
+        battle.getObjects().forEach(object -> {
+            object.setHasCollisions(false);
+            for (var detector : detectors) {
+                var collisions = detector.detect(object, battle, true);
+                if (!collisions.isEmpty()) {
+                    object.setHasCollisions(true);
+                    break;
+                }
+            }
+        });
     }
 
     private Collision findStrongestCollision(Collection<Collision> collisions) {
