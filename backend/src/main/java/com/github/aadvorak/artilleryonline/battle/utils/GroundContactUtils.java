@@ -3,9 +3,43 @@ package com.github.aadvorak.artilleryonline.battle.utils;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
+import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class GroundContactUtils {
+
+    public static Set<Contact> getGroundContacts(HalfCircle halfCircle, RoomModel roomModel, boolean withMaxDepth) {
+        var groundIndexes = BattleUtils.getGroundIndexesBetween(halfCircle.center().getX() - halfCircle.radius(),
+                halfCircle.center().getX() + halfCircle.radius(), roomModel);
+        var contacts = new HashSet<Contact>();
+        if (groundIndexes.isEmpty()) {
+            return contacts;
+        }
+        var i = 0;
+        var halfCircleNormal = halfCircle.center().vectorTo(halfCircle.center()
+                .shifted(1.0, halfCircle.angle() + Math.PI / 2));
+        while (i < groundIndexes.size()) {
+            var position = BattleUtils.getGroundPosition(groundIndexes.get(i), roomModel);
+            var distance = position.distanceTo(halfCircle.center());
+            if (distance < halfCircle.radius()) {
+                var depth = getGroundDepth(halfCircle.circle(), position.getY(), distance);
+                if (withMaxDepth) depth -= roomModel.getSpecs().getGroundMaxDepth();
+                var contact = Contact.of(
+                        depth,
+                        getGroundAngle(halfCircle.center(), position, groundIndexes.get(i), roomModel),
+                        position
+                );
+                if (contact != null && halfCircleNormal.dotProduct(contact.normal()) > 0) {
+                    contacts.add(contact);
+                }
+            }
+            i++;
+        }
+        return contacts;
+    }
 
     public static Contact getGroundContact(Circle circle, RoomModel roomModel, boolean withMaxDepth) {
         var groundIndexes = BattleUtils.getGroundIndexesBetween(circle.center().getX() - circle.radius(),
@@ -17,10 +51,10 @@ public class GroundContactUtils {
         Double minimalDistance = null;
         Integer index = null;
         var i = 0;
-        while (i >= 0 && i < groundIndexes.size()) {
+        while (i < groundIndexes.size()) {
             var position = BattleUtils.getGroundPosition(groundIndexes.get(i), roomModel);
             var distance = position.distanceTo(circle.center());
-            if (distance <= circle.radius()) {
+            if (distance < circle.radius()) {
                 if (minimalDistance == null || distance < minimalDistance) {
                     nearestPosition = position;
                     minimalDistance = distance;

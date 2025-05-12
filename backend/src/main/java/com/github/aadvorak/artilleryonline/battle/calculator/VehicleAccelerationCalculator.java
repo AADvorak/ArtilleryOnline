@@ -7,6 +7,7 @@ import com.github.aadvorak.artilleryonline.battle.calculator.vehicle.*;
 import com.github.aadvorak.artilleryonline.battle.calculator.wheel.*;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
+import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
@@ -40,7 +41,7 @@ public class VehicleAccelerationCalculator {
 
         calculateGroundContactAndState(vehicle.getRightWheel(), battleModel.getRoom());
         calculateGroundContactAndState(vehicle.getLeftWheel(), battleModel.getRoom());
-        calculateGroundContact(vehicle, battleModel.getRoom());
+        calculateGroundContacts(vehicle, battleModel.getRoom());
 
         var acceleration = calculator.calculate(vehicle, battleModel);
         var angleVelocity = vehicle.getModel().getState().getVelocity().getAngle();
@@ -56,19 +57,11 @@ public class VehicleAccelerationCalculator {
         GroundStateCalculator.calculate(wheel);
     }
 
-    private static void calculateGroundContact(VehicleCalculations vehicle, RoomModel roomModel) {
+    private static void calculateGroundContacts(VehicleCalculations vehicle, RoomModel roomModel) {
         var position = vehicle.getGeometryPosition();
         var angle = vehicle.getModel().getState().getPosition().getAngle();
-        var contact = GroundContactUtils.getGroundContact(
-                new Circle(position, vehicle.getModel().getSpecs().getRadius()),
-                roomModel, false);
-        if (contact == null) {
-            return;
-        }
-        var hullVector = position.vectorTo(position.shifted(1.0,angle + Math.PI / 2));
-        if (hullVector.dotProduct(contact.normal()) < 0) {
-            return;
-        }
-        vehicle.setGroundContact(contact);
+        vehicle.setGroundContacts(GroundContactUtils.getGroundContacts(
+                new HalfCircle(position, vehicle.getModel().getSpecs().getRadius(), angle),
+                roomModel, false));
     }
 }

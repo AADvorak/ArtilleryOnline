@@ -23,7 +23,7 @@ public class VehicleCalculations
 
     private final WheelCalculations leftWheel;
 
-    private Contact groundContact;
+    private Set<Contact> groundContacts;
 
     private BodyPosition nextPosition;
 

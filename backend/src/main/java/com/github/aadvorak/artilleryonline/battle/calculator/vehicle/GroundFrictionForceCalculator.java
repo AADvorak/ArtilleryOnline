@@ -47,15 +47,15 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
 
     private void addHullFriction(List<ForceAtPoint> forces, VehicleCalculations calculations,
                                  double groundFrictionCoefficient) {
-        if (calculations.getGroundContact() == null) {
+        if (calculations.getGroundContacts() == null) {
             return;
         }
-        var depth = calculations.getGroundContact().depth();
-        var position = calculations.getGroundContact().position();
-        var velocity = calculations.getModel().getState().getVelocityAt(position);
-        var force = new Force()
-                .setX( - velocity.getX() * depth * groundFrictionCoefficient * 100)
-                .setY( - velocity.getY() * depth * groundFrictionCoefficient * 100);
-        forces.add(new ForceAtPoint(force, position, FORCE_DESCRIPTION + " Hull"));
+        calculations.getGroundContacts().forEach(contact -> {
+            var velocity = calculations.getModel().getState().getVelocityAt(contact.position());
+            var force = new Force()
+                    .setX( - velocity.getX() * contact.depth() * groundFrictionCoefficient)
+                    .setY( - velocity.getY() * contact.depth() * groundFrictionCoefficient);
+            forces.add(new ForceAtPoint(force, contact.position(), FORCE_DESCRIPTION + " Hull"));
+        });
     }
 }

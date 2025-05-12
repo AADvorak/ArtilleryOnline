@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.calculator.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
+import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Force;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
@@ -10,7 +11,10 @@ import com.github.aadvorak.artilleryonline.battle.specs.VehicleSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class GravityForceCalculator implements ForceCalculator<
         VehicleSpecs,
@@ -34,6 +38,8 @@ public class GravityForceCalculator implements ForceCalculator<
                     FORCE_DESCRIPTION
             ));
         } else {
+            var leftContact = getFarthest(leftContacts, comX);
+            var rightContact = getFarthest(rightContacts, comX);
             var groundGravityDepth = 0.7 * battleModel.getRoom().getSpecs().getGroundMaxDepth();
             addWheelHalfOverGroundAcceleration(forces, calculations.getRightWheel(), mass,
                     roomGravityAcceleration, groundGravityDepth);
@@ -45,7 +51,7 @@ public class GravityForceCalculator implements ForceCalculator<
 
     private void addWheelHalfOverGroundAcceleration(
             List<ForceAtPoint> forces,
-            WheelCalculations calculations,
+            Contact contact,
             double mass,
             double roomGravityAcceleration,
             double groundGravityDepth
