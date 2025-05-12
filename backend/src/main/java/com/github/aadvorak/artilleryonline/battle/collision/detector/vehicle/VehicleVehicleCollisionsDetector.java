@@ -36,6 +36,7 @@ public class VehicleVehicleCollisionsDetector implements CollisionsDetector {
                 .collect(Collectors.toSet());
         var wheelRadius = vehicle.getModel().getSpecs().getWheelRadius();
         var vehicleRadius = vehicle.getModel().getSpecs().getRadius();
+        var maxRadius = vehicle.getModel().getPreCalc().getMaxRadius();
         var position = vehicle.getGeometryNextPosition();
         var rightWheelPosition = vehicle.getRightWheel().getNext().getPosition();
         var leftWheelPosition = vehicle.getLeftWheel().getNext().getPosition();
@@ -43,7 +44,11 @@ public class VehicleVehicleCollisionsDetector implements CollisionsDetector {
         var rightWheelShape = new Circle(rightWheelPosition, wheelRadius);
         var leftWheelShape = new Circle(leftWheelPosition, wheelRadius);
         for (var otherVehicle : otherVehicles) {
+            var otherMaxRadius = otherVehicle.getModel().getPreCalc().getMaxRadius();
             var otherPosition = otherVehicle.getGeometryNextPosition();
+            if (otherPosition.getCenter().distanceTo(position.getCenter()) > maxRadius + otherMaxRadius) {
+                continue;
+            }
             var otherVehicleRadius = otherVehicle.getModel().getSpecs().getRadius();
             var otherVehicleShape = HalfCircle.of(otherPosition, otherVehicleRadius);
             var vehicleVehicleContact = ContactUtils.getHalfCirclesContact(vehicleShape, otherVehicleShape);
