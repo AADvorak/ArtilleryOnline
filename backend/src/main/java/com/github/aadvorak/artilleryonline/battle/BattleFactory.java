@@ -47,7 +47,7 @@ public class BattleFactory {
     public Battle createBattle(Set<BattleParticipant> participants, BattleType battleType) {
         var battleModel = new BattleModel()
                 .setRoom(createRoomModel(battleType));
-        battleModel.setVehicles(createVehicles(participants, battleModel));
+        battleModel.setVehicles(createVehicles(participants, battleModel, battleType));
         battleModel.setStatistics(createUserBattleStatistics(participants));
         var userMap = createUserMap(participants);
         var battle = new Battle()
@@ -122,7 +122,8 @@ public class BattleFactory {
         return surfaces;
     }
 
-    private Map<String, VehicleModel> createVehicles(Set<BattleParticipant> participants, BattleModel battleModel) {
+    private Map<String, VehicleModel> createVehicles(Set<BattleParticipant> participants, BattleModel battleModel,
+                                                     BattleType battleType) {
         var vehicles = new HashMap<String, VehicleModel>();
         var distanceBetweenVehicles = (battleModel.getRoom().getSpecs().getRightTop().getX()
                 - battleModel.getRoom().getSpecs().getLeftBottom().getX())
@@ -191,8 +192,10 @@ public class BattleFactory {
                             .setActive(false))
                     .setDroneState(drone == null ? null : new DroneInVehicleState())
                     .setBomberState(bomberState));
-            VehicleOnGroundProcessor.estimateVehicleAngleByPosition(vehicleModel, battleModel.getRoom());
-            VehicleOnGroundProcessor.correctVehiclePositionAndAngleOnGround(vehicleModel, battleModel.getRoom());
+            if (!BattleType.COLLIDER.equals(battleType)) {
+                VehicleOnGroundProcessor.estimateVehicleAngleByPosition(vehicleModel, battleModel.getRoom());
+                VehicleOnGroundProcessor.correctVehiclePositionAndAngleOnGround(vehicleModel, battleModel.getRoom());
+            }
             vehicles.put(participant.getNickname(), vehicleModel);
             vehicleNumber++;
         }
