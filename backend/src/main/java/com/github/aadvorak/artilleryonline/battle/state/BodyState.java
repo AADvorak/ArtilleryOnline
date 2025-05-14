@@ -14,14 +14,19 @@ public interface BodyState extends State {
     MovingDirection getRotatingDirection();
 
     default Velocity getVelocityAt(Position position) {
+        var rotatingVelocity = getRotatingVelocityAt(position);
+        return new Velocity()
+                .setX(getVelocity().getX() + rotatingVelocity.getX())
+                .setY(getVelocity().getY() + rotatingVelocity.getY());
+    }
+
+    default Velocity getRotatingVelocityAt(Position position) {
         var bodyVelocity = getVelocity();
         var comPosition = getPosition().getCenter();
         var angle = comPosition.angleTo(position);
         var distance = comPosition.distanceTo(position);
-        var rvx = bodyVelocity.getAngle() * distance * Math.sin(angle);
-        var rvy = bodyVelocity.getAngle() * distance * Math.cos(angle);
         return new Velocity()
-                .setX(bodyVelocity.getX() + rvx)
-                .setY(bodyVelocity.getY() + rvy);
+                .setX(-bodyVelocity.getAngle() * distance * Math.sin(angle))
+                .setY(bodyVelocity.getAngle() * distance * Math.cos(angle));
     }
 }
