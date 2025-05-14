@@ -1,7 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.state;
 
 import com.github.aadvorak.artilleryonline.battle.common.*;
-import com.github.aadvorak.artilleryonline.battle.model.BodyModel;
 
 public interface BodyState extends State {
 
