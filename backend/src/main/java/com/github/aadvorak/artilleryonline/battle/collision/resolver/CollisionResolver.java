@@ -196,7 +196,7 @@ public class CollisionResolver {
 
     private double getFrictionCoefficient(Calculations<?> calculations) {
         if (calculations instanceof VehicleCalculations) {
-            return 5.0;
+            return 25.0;
         }
         return 0.1;
     }
