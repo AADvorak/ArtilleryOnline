@@ -51,11 +51,22 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
             return;
         }
         calculations.getGroundContacts().forEach(contact -> {
-            var velocity = calculations.getModel().getState().getVelocityAt(contact.position());
-            var force = new Force()
-                    .setX( - velocity.getX() * contact.depth() * groundFrictionCoefficient * 5.0)
-                    .setY( - velocity.getY() * contact.depth() * groundFrictionCoefficient * 5.0);
-            forces.add(new ForceAtPoint(force, contact.position(), FORCE_DESCRIPTION + " Hull"));
+            var movingVelocity = calculations.getModel().getState().getVelocity().getMovingVelocity();
+            var rotatingVelocity = calculations.getModel().getState().getRotatingVelocityAt(contact.position());
+            var movingVelocityMagnitude = movingVelocity.magnitude();
+            var rotatingVelocityMagnitude = rotatingVelocity.magnitude();
+            if (movingVelocityMagnitude > rotatingVelocityMagnitude || rotatingVelocityMagnitude < 0.05) {
+                var velocity = calculations.getModel().getState().getVelocityAt(contact.position());
+                var movingForce = new Force()
+                        .setX(-velocity.getX() * contact.depth() * groundFrictionCoefficient)
+                        .setY(-velocity.getY() * contact.depth() * groundFrictionCoefficient);
+                forces.add(new ForceAtPoint(movingForce, contact.position(), FORCE_DESCRIPTION + " Hull"));
+            } else {
+                var rotatingForce = new Force()
+                        .setX(-rotatingVelocity.getX() * contact.depth() * groundFrictionCoefficient)
+                        .setY(-rotatingVelocity.getY() * contact.depth() * groundFrictionCoefficient);
+                forces.add(ForceAtPoint.atCOM(rotatingForce, FORCE_DESCRIPTION + " Hull"));
+            }
         });
     }
 }
