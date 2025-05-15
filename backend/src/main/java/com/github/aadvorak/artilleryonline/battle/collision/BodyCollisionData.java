@@ -36,25 +36,24 @@ public class BodyCollisionData {
         return new BodyCollisionData()
                 .setVelocity(velocityAtPosition)
                 .setVelocityProjections(velocityAtPosition.projections(contact.angle()))
-                .setNormalData(getComponentData(bodyModel, contact.position(), comPosition, contact.normal(), radiusNormalized, 1.0))
-                .setTangentialData(getComponentData(bodyModel, contact.position(), comPosition, tangential, radiusNormalized, 0.5));
+                .setNormalData(getComponentData(bodyModel, contact.position(), comPosition, contact.normal(), radiusNormalized))
+                .setTangentialData(getComponentData(bodyModel, contact.position(), comPosition, tangential, radiusNormalized));
     }
 
     public static ComponentData getComponentData(BodyModel<?, ?, ?, ?> bodyModel, Vector component,
                                                  Position contactPosition) {
         var comPosition = bodyModel.getState().getPosition().getCenter();
         var radiusNormalized = comPosition.vectorTo(contactPosition).normalized();
-        return getComponentData(bodyModel, contactPosition, comPosition, component, radiusNormalized, 1.0);
+        return getComponentData(bodyModel, contactPosition, comPosition, component, radiusNormalized);
     }
 
     private static ComponentData getComponentData(BodyModel<?, ?, ?, ?> bodyModel,
                                                   Position contactPosition, Position comPosition,
-                                                  Vector component, Vector radiusNormalized,
-                                                  double inertiaToMassCoefficientMultiplier) {
+                                                  Vector component, Vector radiusNormalized) {
         var radiusAndComponentVectorProduct = radiusNormalized.vectorProduct(component);
         var distanceToAxis = getDistanceToAxis(comPosition, contactPosition, component);
         var inertiaToMassCoefficient = getInertiaToMassCoefficient(radiusAndComponentVectorProduct,
-                distanceToAxis, bodyModel.getPreCalc().getMaxRadius()) * inertiaToMassCoefficientMultiplier;
+                distanceToAxis, bodyModel.getPreCalc().getMaxRadius());
         return new ComponentData()
                 .setDistanceToAxis(distanceToAxis)
                 .setInertiaToMassCoefficient(inertiaToMassCoefficient)
