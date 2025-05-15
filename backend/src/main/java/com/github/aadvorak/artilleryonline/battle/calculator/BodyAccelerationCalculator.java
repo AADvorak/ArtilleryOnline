@@ -1,7 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.calculator;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BodyCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.ForceAtPoint;
+import com.github.aadvorak.artilleryonline.battle.calculations.BodyForce;
 import com.github.aadvorak.artilleryonline.battle.calculations.ForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.BodyAcceleration;
 import com.github.aadvorak.artilleryonline.battle.config.Config;
@@ -30,7 +30,7 @@ public class BodyAccelerationCalculator<
     private final List<ForceCalculator<S, P, Cf, St, M, C>> forceCalculators;
 
     public BodyAcceleration calculate(C calculations, BattleModel battleModel) {
-        List<ForceAtPoint> forces = new ArrayList<>();
+        List<BodyForce> forces = new ArrayList<>();
         List<BodyAcceleration> accelerations = new ArrayList<>();
         forceCalculators.forEach(forceCalculator ->
                 forces.addAll(forceCalculator.calculate(calculations, battleModel)));
@@ -39,25 +39,19 @@ public class BodyAccelerationCalculator<
         return BodyAcceleration.sumOf(accelerations);
     }
 
-    private BodyAcceleration toAcceleration(ForceAtPoint force, C calculations) {
+    private BodyAcceleration toAcceleration(BodyForce force, C calculations) {
         var mass = calculations.getMass();
         var acceleration = new BodyAcceleration();
-        if (force.point() == null) {
+        if (force.moving() != null) {
             return acceleration
-                    .setX(force.force().getX() / mass)
-                    .setY(force.force().getY() / mass);
+                    .setX(force.moving().getX() / mass)
+                    .setY(force.moving().getY() / mass);
         }
-
-        var centerOfMass = calculations.getPosition();
-        var radiusVector = centerOfMass.vectorTo(force.point());
-
-        var forceProjection = force.force().projectionOnto(radiusVector);
-        acceleration.setX(forceProjection.getX() / mass);
-        acceleration.setY(forceProjection.getY() / mass);
-
-        var momentOfInertia = calculations.getModel().getPreCalc().getMomentOfInertia();
-        var torque = radiusVector.vectorProduct(force.force());
-        acceleration.setAngle(torque / momentOfInertia);
+        if (force.rotating() != null && force.radiusVector() != null) {
+            var momentOfInertia = calculations.getModel().getPreCalc().getMomentOfInertia();
+            var torque = force.radiusVector().vectorProduct(force.rotating());
+            acceleration.setAngle(torque / momentOfInertia);
+        }
         return acceleration;
     }
 

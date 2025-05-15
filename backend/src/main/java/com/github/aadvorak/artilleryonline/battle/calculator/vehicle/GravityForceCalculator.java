@@ -27,10 +27,10 @@ public class GravityForceCalculator implements ForceCalculator<
     private static final String FORCE_DESCRIPTION = "Gravity";
 
     @Override
-    public List<ForceAtPoint> calculate(VehicleCalculations calculations, BattleModel battleModel) {
+    public List<BodyForce> calculate(VehicleCalculations calculations, BattleModel battleModel) {
         var roomGravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
         var mass = calculations.getMass();
-        var forces = new ArrayList<ForceAtPoint>();
+        var forces = new ArrayList<BodyForce>();
         var groundContacts = new HashSet<>(calculations.getGroundContacts());
         if (calculations.getRightWheel().getGroundContact() != null) {
             groundContacts.add(calculations.getRightWheel().getGroundContact());
@@ -46,7 +46,7 @@ public class GravityForceCalculator implements ForceCalculator<
                 .filter(contact -> contact.position().getX() > comX)
                 .collect(Collectors.toSet());
         if (leftContacts.isEmpty() || rightContacts.isEmpty()) {
-            forces.add(ForceAtPoint.atCOM(
+            forces.add(BodyForce.atCOM(
                     new Force().setX(0.0).setY(-roomGravityAcceleration * mass),
                     FORCE_DESCRIPTION
             ));
@@ -63,7 +63,7 @@ public class GravityForceCalculator implements ForceCalculator<
     }
 
     private void addGroundForce(
-            List<ForceAtPoint> forces,
+            List<BodyForce> forces,
             Contact contact,
             double mass,
             double roomGravityAcceleration,
@@ -71,7 +71,7 @@ public class GravityForceCalculator implements ForceCalculator<
     ) {
         var groundAccelerationModule = Math.abs(roomGravityAcceleration * Math.sin(contact.angle()))
                 * Math.sqrt(1 - contact.depth() / groundGravityDepth) * mass / 2;
-        forces.add(new ForceAtPoint(
+        forces.add(BodyForce.of(
                 new Force()
                         .setX(-groundAccelerationModule * Math.sin(contact.angle()))
                         .setY(-groundAccelerationModule * Math.cos(contact.angle())),

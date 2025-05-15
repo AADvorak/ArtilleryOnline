@@ -1,6 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.calculator.vehicle;
 
-import com.github.aadvorak.artilleryonline.battle.calculations.ForceAtPoint;
+import com.github.aadvorak.artilleryonline.battle.calculations.BodyForce;
 import com.github.aadvorak.artilleryonline.battle.calculations.ForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
@@ -28,8 +28,8 @@ public class JetForceCalculator implements ForceCalculator<
     private static final String FORCE_DESCRIPTION = "Jet";
 
     @Override
-    public List<ForceAtPoint> calculate(VehicleCalculations calculations, BattleModel battleModel) {
-        var forces = new ArrayList<ForceAtPoint>();
+    public List<BodyForce> calculate(VehicleCalculations calculations, BattleModel battleModel) {
+        var forces = new ArrayList<BodyForce>();
         var vehicleModel = calculations.getModel();
         var jetSpecs = vehicleModel.getConfig().getJet();
         if (jetSpecs == null) {
@@ -52,7 +52,7 @@ public class JetForceCalculator implements ForceCalculator<
         return forces;
     }
 
-    private static void calculateVertical(List<ForceAtPoint> forces, WheelCalculations wheelCalculations,
+    private static void calculateVertical(List<BodyForce> forces, WheelCalculations wheelCalculations,
                                           double acceleration, double angle, MovingDirection direction) {
         var angleCoefficient = 1 + wheelCalculations.getSign().getValue() * Math.sin(angle);
         var force = new Force();
@@ -71,23 +71,23 @@ public class JetForceCalculator implements ForceCalculator<
                     .setX(-acceleration / Math.sqrt(2))
                     .setY(acceleration * angleCoefficient / Math.sqrt(2));
         }
-        forces.add(new ForceAtPoint(force, wheelCalculations.getPosition(), FORCE_DESCRIPTION));
+        forces.add(BodyForce.of(force, wheelCalculations.getPosition(), FORCE_DESCRIPTION));
     }
 
-    private void addHorizontal(List<ForceAtPoint> forces, double acceleration,
+    private void addHorizontal(List<BodyForce> forces, double acceleration,
                                double angle, MovingDirection direction) {
         var additionalAngle = Math.PI / 16;
         if (MovingDirection.RIGHT.equals(direction)) {
             var force = new Force()
                     .setX(acceleration * Math.cos(angle + additionalAngle))
                     .setY(acceleration * Math.sin(angle + additionalAngle));
-            forces.add(ForceAtPoint.atCOM(force, FORCE_DESCRIPTION));
+            forces.add(BodyForce.atCOM(force, FORCE_DESCRIPTION));
         }
         if (MovingDirection.LEFT.equals(direction)) {
             var force = new Force()
                     .setX(acceleration * Math.cos(angle - additionalAngle + Math.PI))
                     .setY(acceleration * Math.sin(angle - additionalAngle + Math.PI));
-            forces.add(ForceAtPoint.atCOM(force, FORCE_DESCRIPTION));
+            forces.add(BodyForce.atCOM(force, FORCE_DESCRIPTION));
         }
     }
 }

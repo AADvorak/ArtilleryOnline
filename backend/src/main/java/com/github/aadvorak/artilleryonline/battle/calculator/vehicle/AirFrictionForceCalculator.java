@@ -1,6 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.calculator.vehicle;
 
-import com.github.aadvorak.artilleryonline.battle.calculations.ForceAtPoint;
+import com.github.aadvorak.artilleryonline.battle.calculations.BodyForce;
 import com.github.aadvorak.artilleryonline.battle.calculations.ForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Force;
@@ -24,7 +24,7 @@ public class AirFrictionForceCalculator implements ForceCalculator<
     private static final String FORCE_DESCRIPTION = "Air Friction";
 
     @Override
-    public List<ForceAtPoint> calculate(VehicleCalculations calculations, BattleModel battleModel) {
+    public List<BodyForce> calculate(VehicleCalculations calculations, BattleModel battleModel) {
         var frictionCoefficient = battleModel.getRoom().getSpecs().getAirFrictionCoefficient();
         var velocity = calculations.getVelocity();
         // todo remove mass with size coefficient
@@ -32,6 +32,6 @@ public class AirFrictionForceCalculator implements ForceCalculator<
         var frictionForce = new Force()
                 .setX( - velocity.getX() * Math.abs(velocity.getX()) * frictionCoefficient * mass)
                 .setY( - velocity.getY() * Math.abs(velocity.getY()) * frictionCoefficient * mass);
-        return List.of(ForceAtPoint.atCOM(frictionForce, FORCE_DESCRIPTION));
+        return List.of(BodyForce.atCOM(frictionForce, FORCE_DESCRIPTION));
     }
 }

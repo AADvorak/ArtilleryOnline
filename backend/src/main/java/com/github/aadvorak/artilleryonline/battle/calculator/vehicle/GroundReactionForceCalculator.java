@@ -23,16 +23,16 @@ public class GroundReactionForceCalculator implements ForceCalculator<
     private static final String FORCE_DESCRIPTION = "Ground reaction";
 
     @Override
-    public List<ForceAtPoint> calculate(VehicleCalculations calculations, BattleModel battleModel) {
+    public List<BodyForce> calculate(VehicleCalculations calculations, BattleModel battleModel) {
         var groundReactionCoefficient = battleModel.getRoom().getSpecs().getGroundReactionCoefficient();
-        var forces = new ArrayList<ForceAtPoint>();
+        var forces = new ArrayList<BodyForce>();
         addWheelFriction(forces, calculations.getRightWheel(), groundReactionCoefficient);
         addWheelFriction(forces, calculations.getLeftWheel(), groundReactionCoefficient);
         return forces;
     }
 
-    private void addWheelFriction(List<ForceAtPoint> forces, WheelCalculations calculations,
-                                 double groundReactionCoefficient) {
+    private void addWheelFriction(List<BodyForce> forces, WheelCalculations calculations,
+                                  double groundReactionCoefficient) {
         if (WheelGroundState.FULL_OVER_GROUND.equals(calculations.getGroundState())
                 || WheelGroundState.FULL_UNDER_GROUND.equals(calculations.getGroundState())) {
             return;
@@ -44,7 +44,7 @@ public class GroundReactionForceCalculator implements ForceCalculator<
                     .setNormal(- velocityNormalProjection * calculations.getGroundContact().depth()
                             * groundReactionCoefficient);
             var force = forceProjections.recoverForce();
-            forces.add(new ForceAtPoint(force, calculations.getGroundContact().position(), FORCE_DESCRIPTION));
+            forces.add(BodyForce.of(force, calculations.getGroundContact().position(), FORCE_DESCRIPTION));
         }
     }
 }

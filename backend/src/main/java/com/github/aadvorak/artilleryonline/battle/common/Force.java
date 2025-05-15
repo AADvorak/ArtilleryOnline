@@ -17,4 +17,10 @@ public class Force implements Vector {
     public String toString() {
         return String.format("(%.3f, %.3f)", x, y);
     }
+
+    public static Force of(Vector vector) {
+        return new Force()
+                .setX(vector.getX())
+                .setY(vector.getY());
+    }
 }

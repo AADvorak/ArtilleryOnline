@@ -16,5 +16,5 @@ public interface ForceCalculator<
         St extends BodyState,
         M extends BodyModel<S, P, Cf, St>,
         C extends BodyCalculations<S, P, Cf, St, M>> {
-    List<ForceAtPoint> calculate(C calculations, BattleModel battleModel);
+    List<BodyForce> calculate(C calculations, BattleModel battleModel);
 }

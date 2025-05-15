@@ -24,17 +24,17 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
     private static final String FORCE_DESCRIPTION = "Ground Friction";
 
     @Override
-    public List<ForceAtPoint> calculate(VehicleCalculations calculations, BattleModel battleModel) {
+    public List<BodyForce> calculate(VehicleCalculations calculations, BattleModel battleModel) {
         var groundFrictionCoefficient = battleModel.getRoom().getSpecs().getGroundFrictionCoefficient();
-        var forces = new ArrayList<ForceAtPoint>();
+        var forces = new ArrayList<BodyForce>();
         addWheelFriction(forces, calculations.getRightWheel(), groundFrictionCoefficient);
         addWheelFriction(forces, calculations.getLeftWheel(), groundFrictionCoefficient);
         addHullFriction(forces, calculations, groundFrictionCoefficient);
         return forces;
     }
 
-    private void addWheelFriction(List<ForceAtPoint> forces, WheelCalculations wheelCalculations,
-                                 double groundFrictionCoefficient) {
+    private void addWheelFriction(List<BodyForce> forces, WheelCalculations wheelCalculations,
+                                  double groundFrictionCoefficient) {
         if (WheelGroundState.FULL_OVER_GROUND.equals(wheelCalculations.getGroundState())) {
             return;
         }
@@ -45,10 +45,10 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
         var force = new Force()
                 .setX( - velocity.getX() * depth * groundFrictionCoefficient)
                 .setY( - velocity.getY() * depth * groundFrictionCoefficient);
-        forces.add(new ForceAtPoint(force, position, FORCE_DESCRIPTION + " Wheel"));
+        forces.add(BodyForce.of(force, position, FORCE_DESCRIPTION + " Wheel"));
     }
 
-    private void addHullFriction(List<ForceAtPoint> forces, VehicleCalculations calculations,
+    private void addHullFriction(List<BodyForce> forces, VehicleCalculations calculations,
                                  double groundFrictionCoefficient) {
         if (calculations.getGroundContacts() == null) {
             return;
@@ -66,12 +66,12 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
                 var movingForce = new Force()
                         .setX(-velocity.getX() * contact.depth() * groundFrictionCoefficient)
                         .setY(-velocity.getY() * contact.depth() * groundFrictionCoefficient);
-                forces.add(new ForceAtPoint(movingForce, contact.position(), FORCE_DESCRIPTION + " Hull"));
+                forces.add(BodyForce.of(movingForce, contact.position(), FORCE_DESCRIPTION + " Hull"));
             } else {
                 var rotatingForce = new Force()
                         .setX(-rotatingVelocity.getX() * contact.depth() * groundFrictionCoefficient)
                         .setY(-rotatingVelocity.getY() * contact.depth() * groundFrictionCoefficient);
-                forces.add(ForceAtPoint.atCOM(rotatingForce, FORCE_DESCRIPTION + " Hull"));
+                forces.add(BodyForce.atCOM(rotatingForce, FORCE_DESCRIPTION + " Hull"));
             }
         });
     }

@@ -24,14 +24,14 @@ public class EngineForceCalculator implements ForceCalculator<
     private static final String FORCE_DESCRIPTION = "Engine";
 
     @Override
-    public List<ForceAtPoint> calculate(VehicleCalculations calculations, BattleModel battleModel) {
+    public List<BodyForce> calculate(VehicleCalculations calculations, BattleModel battleModel) {
         return List.of(
                 calculateForWheel(calculations.getLeftWheel()),
                 calculateForWheel(calculations.getRightWheel())
         );
     }
 
-    private ForceAtPoint calculateForWheel(WheelCalculations calculations) {
+    private BodyForce calculateForWheel(WheelCalculations calculations) {
         var vehicleModel = calculations.getModel();
         var jetState = vehicleModel.getState().getJetState();
         var jetSpecs = vehicleModel.getConfig().getJet();
@@ -40,7 +40,7 @@ public class EngineForceCalculator implements ForceCalculator<
                 || jetSpecs != null && jetState != null && jetState.isActive() && jetSpecs.getType().equals(JetType.VERTICAL)
                 || WheelGroundState.FULL_UNDER_GROUND.equals(calculations.getGroundState())
                 || WheelGroundState.FULL_OVER_GROUND.equals(calculations.getGroundState())) {
-            return ForceAtPoint.zero(FORCE_DESCRIPTION);
+            return BodyForce.zero(FORCE_DESCRIPTION);
         }
         var depth = calculations.getGroundContact().depth();
         var groundAngle = calculations.getGroundContact().angle();
@@ -60,6 +60,6 @@ public class EngineForceCalculator implements ForceCalculator<
                     .setX( - forceMagnitude * Math.cos(groundAngle - depthAngle))
                     .setY( - forceMagnitude * Math.sin(groundAngle - depthAngle));
         }
-        return new ForceAtPoint(force, calculations.getGroundContact().position(), FORCE_DESCRIPTION);
+        return BodyForce.of(force, calculations.getGroundContact().position(), FORCE_DESCRIPTION);
     }
 }
