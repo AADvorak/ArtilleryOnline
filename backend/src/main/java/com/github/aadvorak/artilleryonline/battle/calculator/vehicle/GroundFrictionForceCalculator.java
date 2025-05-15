@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.calculator.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.common.Force;
+import com.github.aadvorak.artilleryonline.battle.common.Vector;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
@@ -39,9 +40,11 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
         }
         var depth = wheelCalculations.getGroundContact().depth();
         var position = wheelCalculations.getGroundContact().position();
+        var velocity = wheelCalculations.getVelocity().projectionOnto(
+                Vector.tangential(wheelCalculations.getGroundContact().angle()));
         var force = new Force()
-                .setX( - wheelCalculations.getVelocity().getX() * depth * groundFrictionCoefficient)
-                .setY( - wheelCalculations.getVelocity().getY() * depth * groundFrictionCoefficient);
+                .setX( - velocity.getX() * depth * groundFrictionCoefficient)
+                .setY( - velocity.getY() * depth * groundFrictionCoefficient);
         forces.add(new ForceAtPoint(force, position, FORCE_DESCRIPTION + " Wheel"));
     }
 
@@ -51,8 +54,11 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
             return;
         }
         calculations.getGroundContacts().forEach(contact -> {
-            var movingVelocity = calculations.getModel().getState().getVelocity().getMovingVelocity();
-            var rotatingVelocity = calculations.getModel().getState().getRotatingVelocityAt(contact.position());
+            var tangential = Vector.tangential(contact.angle());
+            var movingVelocity = calculations.getModel().getState().getVelocity().getMovingVelocity()
+                    .projectionOnto(tangential);
+            var rotatingVelocity = calculations.getModel().getState().getRotatingVelocityAt(contact.position())
+                    .projectionOnto(tangential);
             var movingVelocityMagnitude = movingVelocity.magnitude();
             var rotatingVelocityMagnitude = rotatingVelocity.magnitude();
             if (movingVelocityMagnitude > rotatingVelocityMagnitude || rotatingVelocityMagnitude < 0.05) {
