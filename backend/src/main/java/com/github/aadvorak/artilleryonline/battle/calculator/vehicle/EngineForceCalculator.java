@@ -11,6 +11,7 @@ import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
 import com.github.aadvorak.artilleryonline.battle.specs.VehicleSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EngineForceCalculator implements ForceCalculator<
@@ -25,10 +26,16 @@ public class EngineForceCalculator implements ForceCalculator<
 
     @Override
     public List<BodyForce> calculate(VehicleCalculations calculations, BattleModel battleModel) {
-        return List.of(
-                calculateForWheel(calculations.getLeftWheel()),
-                calculateForWheel(calculations.getRightWheel())
-        );
+        var forces = new ArrayList<BodyForce>();
+        var leftWheelForce = calculateForWheel(calculations.getLeftWheel());
+        var rightWheelForce = calculateForWheel(calculations.getRightWheel());
+        if (leftWheelForce != null) {
+            forces.add(leftWheelForce);
+        }
+        if (rightWheelForce != null) {
+            forces.add(rightWheelForce);
+        }
+        return forces;
     }
 
     private BodyForce calculateForWheel(WheelCalculations calculations) {
@@ -40,7 +47,7 @@ public class EngineForceCalculator implements ForceCalculator<
                 || jetSpecs != null && jetState != null && jetState.isActive() && jetSpecs.getType().equals(JetType.VERTICAL)
                 || WheelGroundState.FULL_UNDER_GROUND.equals(calculations.getGroundState())
                 || WheelGroundState.FULL_OVER_GROUND.equals(calculations.getGroundState())) {
-            return BodyForce.zero(FORCE_DESCRIPTION);
+            return null;
         }
         var depth = calculations.getGroundContact().depth();
         var groundAngle = calculations.getGroundContact().angle();
@@ -60,6 +67,7 @@ public class EngineForceCalculator implements ForceCalculator<
                     .setX( - forceMagnitude * Math.cos(groundAngle - depthAngle))
                     .setY( - forceMagnitude * Math.sin(groundAngle - depthAngle));
         }
-        return BodyForce.of(force, calculations.getGroundContact().position(), FORCE_DESCRIPTION);
+        return BodyForce.of(force, calculations.getGroundContact().position(),
+                calculations.getModel().getState().getPosition().getCenter(), FORCE_DESCRIPTION);
     }
 }

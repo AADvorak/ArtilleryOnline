@@ -1,11 +1,48 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.common.Force;
+import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.Vector;
+import lombok.AllArgsConstructor;
+import lombok.Setter;
 
-public record BodyForce(Force moving, Force rotating, Vector radiusVector, String description) {
+@Setter
+@AllArgsConstructor
+public class BodyForce {
 
-    public static BodyForce of(Force force, Vector radiusVector, String description) {
+    private Force moving;
+
+    private Force rotating;
+
+    private Vector radiusVector;
+
+    private String description;
+
+    public Force moving() {
+        return moving;
+    }
+
+    public Force rotating() {
+        return rotating;
+    }
+
+    public Vector radiusVector() {
+        return radiusVector;
+    }
+
+    public String description() {
+        return description;
+    }
+
+    public double torque() {
+        if (radiusVector == null || rotating == null) {
+            return 0;
+        }
+        return radiusVector.vectorProduct(rotating);
+    }
+
+    public static BodyForce of(Force force, Position position, Position comPosition, String description) {
+        var radiusVector = comPosition.vectorTo(position);
         var moving = Force.of(force.projectionOnto(radiusVector));
         var rotating = new Force()
                 .setX(force.getX() - moving.getX())
@@ -15,9 +52,5 @@ public record BodyForce(Force moving, Force rotating, Vector radiusVector, Strin
 
     public static BodyForce atCOM(Force force, String description) {
         return new BodyForce(force, null,null, description);
-    }
-
-    public static BodyForce zero(String description) {
-        return new BodyForce(null, null, null, description);
     }
 }

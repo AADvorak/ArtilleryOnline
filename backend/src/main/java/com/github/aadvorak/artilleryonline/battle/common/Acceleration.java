@@ -19,13 +19,13 @@ public class Acceleration implements Vector {
     }
 
     public static Acceleration sumOf(Acceleration... accelerations) {
-        var sumX = 0.0;
-        var sumY = 0.0;
-        for (var acceleration : accelerations) {
-            sumX += acceleration.getX();
-            sumY += acceleration.getY();
-        }
-        return new Acceleration().setX(sumX).setY(sumY);
+        return Acceleration.of(Vector.sumOf(accelerations));
+    }
+
+    public static Acceleration of(Vector vector) {
+        return new Acceleration()
+                .setX(vector.getX())
+                .setY(vector.getY());
     }
 
     @Override

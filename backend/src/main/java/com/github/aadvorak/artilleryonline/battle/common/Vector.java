@@ -21,6 +21,16 @@ public interface Vector extends CompactSerializable {
                 .setY(Math.sin(angle));
     }
 
+    static Vector sumOf(Vector... vectors) {
+        var sumX = 0.0;
+        var sumY = 0.0;
+        for (var vector : vectors) {
+            sumX += vector.getX();
+            sumY += vector.getY();
+        }
+        return new VectorImpl().setX(sumX).setY(sumY);
+    }
+
     default VectorProjections projections(double angle) {
         return new VectorProjections(angle)
                 .setNormal(getX() * Math.sin(angle) - getY() * Math.cos(angle))

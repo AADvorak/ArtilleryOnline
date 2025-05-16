@@ -71,7 +71,8 @@ public class JetForceCalculator implements ForceCalculator<
                     .setX(-acceleration / Math.sqrt(2))
                     .setY(acceleration * angleCoefficient / Math.sqrt(2));
         }
-        forces.add(BodyForce.of(force, wheelCalculations.getPosition(), FORCE_DESCRIPTION));
+        forces.add(BodyForce.of(force, wheelCalculations.getPosition(),
+                wheelCalculations.getModel().getState().getPosition().getCenter(), FORCE_DESCRIPTION));
     }
 
     private void addHorizontal(List<BodyForce> forces, double acceleration,

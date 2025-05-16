@@ -45,7 +45,8 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
         var force = new Force()
                 .setX( - velocity.getX() * depth * groundFrictionCoefficient)
                 .setY( - velocity.getY() * depth * groundFrictionCoefficient);
-        forces.add(BodyForce.of(force, position, FORCE_DESCRIPTION + " Wheel"));
+        forces.add(BodyForce.of(force, position, wheelCalculations.getModel().getState().getPosition().getCenter(),
+                FORCE_DESCRIPTION + " Wheel"));
     }
 
     private void addHullFriction(List<BodyForce> forces, VehicleCalculations calculations,
@@ -66,7 +67,8 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
                 var movingForce = new Force()
                         .setX(-velocity.getX() * contact.depth() * groundFrictionCoefficient)
                         .setY(-velocity.getY() * contact.depth() * groundFrictionCoefficient);
-                forces.add(BodyForce.of(movingForce, contact.position(), FORCE_DESCRIPTION + " Hull"));
+                forces.add(BodyForce.of(movingForce, contact.position(), calculations.getPosition(),
+                        FORCE_DESCRIPTION + " Hull"));
             } else {
                 var rotatingForce = new Force()
                         .setX(-rotatingVelocity.getX() * contact.depth() * groundFrictionCoefficient)

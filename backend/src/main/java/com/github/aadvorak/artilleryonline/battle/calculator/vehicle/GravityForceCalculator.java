@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.calculator.vehicle;
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Force;
+import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
@@ -55,8 +56,8 @@ public class GravityForceCalculator implements ForceCalculator<
             var rightContact = getFarthest(rightContacts, comX);
             var groundGravityDepth = 0.7 * battleModel.getRoom().getSpecs().getGroundMaxDepth();
             if (leftContact.depth() <= groundGravityDepth && rightContact.depth() <= groundGravityDepth) {
-                addGroundForce(forces, leftContact, mass, roomGravityAcceleration, groundGravityDepth);
-                addGroundForce(forces, rightContact, mass, roomGravityAcceleration, groundGravityDepth);
+                addGroundForce(forces, leftContact, calculations.getPosition(), mass, roomGravityAcceleration, groundGravityDepth);
+                addGroundForce(forces, rightContact, calculations.getPosition(), mass, roomGravityAcceleration, groundGravityDepth);
             }
         }
         return forces;
@@ -65,6 +66,7 @@ public class GravityForceCalculator implements ForceCalculator<
     private void addGroundForce(
             List<BodyForce> forces,
             Contact contact,
+            Position comPosition,
             double mass,
             double roomGravityAcceleration,
             double groundGravityDepth
@@ -76,6 +78,7 @@ public class GravityForceCalculator implements ForceCalculator<
                         .setX(-groundAccelerationModule * Math.sin(contact.angle()))
                         .setY(-groundAccelerationModule * Math.cos(contact.angle())),
                 contact.position(),
+                comPosition,
                 FORCE_DESCRIPTION
         ));
     }

@@ -49,8 +49,7 @@ public class BodyAccelerationCalculator<
         }
         if (force.rotating() != null && force.radiusVector() != null) {
             var momentOfInertia = calculations.getModel().getPreCalc().getMomentOfInertia();
-            var torque = force.radiusVector().vectorProduct(force.rotating());
-            acceleration.setAngle(torque / momentOfInertia);
+            acceleration.setAngle(force.torque() / momentOfInertia);
         }
         return acceleration;
     }

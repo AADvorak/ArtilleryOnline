@@ -44,7 +44,8 @@ public class GroundReactionForceCalculator implements ForceCalculator<
                     .setNormal(- velocityNormalProjection * calculations.getGroundContact().depth()
                             * groundReactionCoefficient);
             var force = forceProjections.recoverForce();
-            forces.add(BodyForce.of(force, calculations.getGroundContact().position(), FORCE_DESCRIPTION));
+            forces.add(BodyForce.of(force, calculations.getGroundContact().position(),
+                    calculations.getModel().getState().getPosition().getCenter(), FORCE_DESCRIPTION));
         }
     }
 }
