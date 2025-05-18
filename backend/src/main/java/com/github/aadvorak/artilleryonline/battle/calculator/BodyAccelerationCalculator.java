@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.calculator;
 import com.github.aadvorak.artilleryonline.battle.calculations.BodyCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.BodyForce;
 import com.github.aadvorak.artilleryonline.battle.calculations.ForceCalculator;
+import com.github.aadvorak.artilleryonline.battle.calculator.vehicle.JetForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.BodyAcceleration;
 import com.github.aadvorak.artilleryonline.battle.common.Force;
 import com.github.aadvorak.artilleryonline.battle.common.Vector;
@@ -28,6 +29,9 @@ public class BodyAccelerationCalculator<
 
     private static final double COLLIDER_PUSHING = 5.0;
     private static final double COLLIDER_ROTATING = 2.0;
+    private static final List<String> FORCES_TO_EXTRACT_MOVING_FROM_ROTATING = List.of(
+            JetForceCalculator.FORCE_DESCRIPTION
+    );
 
     private final List<ForceCalculator<S, P, Cf, St, M, C>> forceCalculators;
 
@@ -63,7 +67,7 @@ public class BodyAccelerationCalculator<
             BodyForce force1 = forces.get(i);
             for (var j = i + 1; j < forces.size(); j++) {
                 BodyForce force2 = forces.get(j);
-                if (force1.rotating() != null && force2.rotating() != null) {
+                if (canExtractMovingFromRotating(force1, force2)) {
                     var extractedForce = extractMovingFromRotating(force1, force2);
                     if (extractedForce != null) {
                         extractedForces.add(extractedForce);
@@ -75,6 +79,12 @@ public class BodyAccelerationCalculator<
         if (!extractedForces.isEmpty()) {
             System.out.println(extractedForces.size() + " forces extracted");
         }
+    }
+
+    private boolean canExtractMovingFromRotating(BodyForce force1, BodyForce force2) {
+        return force1.rotating() != null && force2.rotating() != null
+                && FORCES_TO_EXTRACT_MOVING_FROM_ROTATING.contains(force1.description())
+                && FORCES_TO_EXTRACT_MOVING_FROM_ROTATING.contains(force2.description());
     }
 
     private BodyForce extractMovingFromRotating(BodyForce force1, BodyForce force2) {

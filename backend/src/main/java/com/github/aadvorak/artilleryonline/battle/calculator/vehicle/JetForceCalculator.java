@@ -25,7 +25,7 @@ public class JetForceCalculator implements ForceCalculator<
         VehicleModel,
         VehicleCalculations> {
 
-    private static final String FORCE_DESCRIPTION = "Jet";
+    public static final String FORCE_DESCRIPTION = "Jet";
 
     @Override
     public List<BodyForce> calculate(VehicleCalculations calculations, BattleModel battleModel) {
