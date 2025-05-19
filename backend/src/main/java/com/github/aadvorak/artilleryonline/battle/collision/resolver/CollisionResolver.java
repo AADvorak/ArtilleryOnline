@@ -179,14 +179,14 @@ public class CollisionResolver {
         var object = collision.getPair().first();
         var otherObject = collision.getPair().second();
         object.calculateNextPosition(timeStepSecs);
+        var depth = Math.min(collision.getContact().depth(), 0.1);
         if (otherObject == null) {
-            object.applyNormalMoveToNextPosition(-collision.getContact().depth(),
-                    collision.getContact().angle());
+            object.applyNormalMoveToNextPosition(-depth, collision.getContact().angle());
         } else {
             otherObject.calculateNextPosition(timeStepSecs);
             var mass = object.getMass();
             var otherMass = otherObject.getMass();
-            var normalMovePerMass = collision.getContact().depth() / (mass + otherMass);
+            var normalMovePerMass = depth / (mass + otherMass);
             var normalMove = normalMovePerMass * otherMass;
             var otherNormalMove = normalMovePerMass * mass;
             object.applyNormalMoveToNextPosition(- normalMove, collision.getContact().angle());
