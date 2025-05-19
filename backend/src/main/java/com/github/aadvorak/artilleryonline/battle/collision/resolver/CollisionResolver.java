@@ -121,8 +121,8 @@ public class CollisionResolver {
     ) {
         if (secondData == null) {
             if (logging) System.out.print("Friction resolving\n");
-            var impulseDelta = frictionVelocity * collision.getContact().depth()
-                    * getFrictionCoefficient(collision.getPair().first());
+            var depth = Math.min(collision.getContact().depth(), 0.04);
+            var impulseDelta = frictionVelocity * depth * getFrictionCoefficient(collision.getPair().first());
             recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
                     firstData.getTangentialData(), impulseDelta, 1, true);
         }
