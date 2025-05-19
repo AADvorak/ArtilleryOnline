@@ -76,7 +76,10 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         battleCalculations.getVehicles().forEach(vehicleCalculations ->
                 VehicleGunShootProcessor.processStep(vehicleCalculations.getModel(), battleModel));
 
-        battleCalculations.getVehicles().forEach(VehicleMoveProcessor::processStep2);
+        battleCalculations.getVehicles().forEach(vehicle -> {
+            VehicleMoveProcessor.processStep2(vehicle);
+            VehicleReturnOnGroundProcessor.process(vehicle, battleCalculations, battle.getTime());
+        });
         battleCalculations.getShells().forEach(shellCalculations ->
                 ShellFlyProcessor.processStep2(shellCalculations, battleModel));
         battleCalculations.getMissiles().forEach(missileCalculations ->

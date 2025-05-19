@@ -24,6 +24,9 @@ public class VehicleModel
     @JsonIgnore
     private boolean updated = false;
 
+    @JsonIgnore
+    private Long turnedOverTime;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(id);
