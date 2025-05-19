@@ -9,12 +9,14 @@ import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
+import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
 import com.github.aadvorak.artilleryonline.battle.utils.GroundContactUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class VehicleGroundCollisionsDetector implements CollisionsDetector {
@@ -41,10 +43,7 @@ public class VehicleGroundCollisionsDetector implements CollisionsDetector {
                 if (first) return collisions;
             }
         }
-        var hullGroundCollision = detectHullGroundCollision(vehicle, battle);
-        if (hullGroundCollision != null) {
-            collisions.add(hullGroundCollision);
-        }
+        collisions.addAll(detectHullGroundCollisions(vehicle, battle));
         return collisions;
     }
 
@@ -58,20 +57,13 @@ public class VehicleGroundCollisionsDetector implements CollisionsDetector {
         return Collision.withGround(wheel, contact);
     }
 
-    private Collision detectHullGroundCollision(VehicleCalculations vehicle, BattleCalculations battle) {
+    private Set<Collision> detectHullGroundCollisions(VehicleCalculations vehicle, BattleCalculations battle) {
         var position = vehicle.getGeometryNextPosition();
-        var contact = GroundContactUtils.getGroundContact(
-                new Circle(position.getCenter(), vehicle.getModel().getSpecs().getRadius()),
-                battle.getModel().getRoom(), true);
-        if (contact == null) {
-            return null;
-        }
-        var hullVector = position.getCenter().vectorTo(position.getCenter()
-                .shifted(1.0, position.getAngle() + Math.PI / 2));
-        if (hullVector.dotProduct(contact.normal()) < 0) {
-            return null;
-        }
-        return Collision.withGround(vehicle, contact);
+        return GroundContactUtils.getGroundContacts(
+                new HalfCircle(position.getCenter(), vehicle.getModel().getSpecs().getRadius(), position.getAngle()),
+                battle.getModel().getRoom(), true).stream()
+                .map(contact -> Collision.withGround(vehicle, contact))
+                .collect(Collectors.toSet());
     }
 
     private Collision detectWheelWallCollision(WheelCalculations wheel, BattleCalculations battle) {

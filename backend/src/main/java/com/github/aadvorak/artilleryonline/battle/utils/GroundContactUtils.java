@@ -18,6 +18,7 @@ public class GroundContactUtils {
         if (groundIndexes.isEmpty()) {
             return contacts;
         }
+        var bottom = halfCircle.chord();
         var i = 0;
         var halfCircleNormal = halfCircle.center().vectorTo(halfCircle.center()
                 .shifted(1.0, halfCircle.angle() + Math.PI / 2));
@@ -33,6 +34,19 @@ public class GroundContactUtils {
                         position
                 );
                 if (contact != null && halfCircleNormal.dotProduct(contact.normal()) > 0) {
+                    contacts.add(contact);
+                }
+            }
+            var bottomPoint = bottom.findPointWithX(position.getX());
+            if (bottomPoint != null) {
+                var depth = position.getY() - bottomPoint.getY();
+                if (withMaxDepth) depth -= roomModel.getSpecs().getGroundMaxDepth();
+                var contact = Contact.of(
+                        depth,
+                        getGroundAngle(halfCircle.center(), position, groundIndexes.get(i), roomModel),
+                        position
+                );
+                if (contact != null && halfCircleNormal.dotProduct(contact.normal()) < 0) {
                     contacts.add(contact);
                 }
             }
