@@ -78,7 +78,9 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
 
         battleCalculations.getVehicles().forEach(vehicle -> {
             VehicleMoveProcessor.processStep2(vehicle);
-            VehicleReturnOnGroundProcessor.process(vehicle, battleCalculations, battle.getTime());
+            if (!BattleType.COLLIDER.equals(battle.getType())) {
+                VehicleReturnOnGroundProcessor.process(vehicle, battleCalculations, battle.getTime());
+            }
         });
         battleCalculations.getShells().forEach(shellCalculations ->
                 ShellFlyProcessor.processStep2(shellCalculations, battleModel));
