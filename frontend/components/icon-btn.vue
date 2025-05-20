@@ -24,7 +24,7 @@ onMounted(() => startListening())
 
 onUnmounted(() => stopListening())
 
-const emit = defineEmits(['click', TouchType.START, TouchType.END])
+const emit = defineEmits(['click', 'mousedown', 'mouseup', TouchType.START, TouchType.END])
 
 function startListening() {
   const el = btn.value?.$el as HTMLElement
@@ -54,6 +54,14 @@ function touchStart() {
 function touchEnd() {
   emit(TouchType.END)
 }
+
+function mouseDown() {
+  emit('mousedown')
+}
+
+function mouseUp() {
+  emit('mouseup')
+}
 </script>
 
 <template>
@@ -63,6 +71,8 @@ function touchEnd() {
       variant="text"
       :color="props.color"
       @click="click"
+      @mousedown="mouseDown"
+      @mouseup="mouseUp"
   >
     <v-icon
         :class="props.large ? 'icon-large' : ''"

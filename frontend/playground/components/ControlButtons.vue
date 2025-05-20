@@ -15,6 +15,10 @@ import {useI18n} from "vue-i18n";
 import {useGlobalStateStore} from "~/stores/global-state";
 import {VerticalTooltipLocation} from "~/data/model";
 
+const props = defineProps<{
+  mouseEvents: boolean
+}>()
+
 const {t} = useI18n()
 
 const commandsSender = useCommandsSender()
@@ -112,6 +116,8 @@ function jetOff() {
         :show-tooltip="showTooltip"
         @touchstart="startMoveLeft"
         @touchend="stopMoveLeft"
+        @mousedown="() => props.mouseEvents && startMoveLeft()"
+        @mouseup="() => props.mouseEvents && stopMoveLeft()"
     />
     <icon-btn
         class="mr-2" large prevent-show-tooltip
@@ -120,6 +126,8 @@ function jetOff() {
         :show-tooltip="showTooltip"
         @touchstart="startMoveRight"
         @touchend="stopMoveRight"
+        @mousedown="() => props.mouseEvents && startMoveRight()"
+        @mouseup="() => props.mouseEvents && stopMoveRight()"
     />
     <icon-btn
         class="mr-2" large prevent-show-tooltip
@@ -129,6 +137,8 @@ function jetOff() {
         color="error"
         @touchstart="pushTrigger"
         @touchend="releaseTrigger"
+        @mousedown="() => props.mouseEvents && pushTrigger()"
+        @mouseup="() => props.mouseEvents && releaseTrigger()"
     />
   </v-toolbar>
   <v-toolbar absolute class="bottom-right-toolbar" color="transparent">
@@ -140,6 +150,8 @@ function jetOff() {
         color="error"
         @touchstart="pushTrigger"
         @touchend="releaseTrigger"
+        @mousedown="() => props.mouseEvents && pushTrigger()"
+        @mouseup="() => props.mouseEvents && releaseTrigger()"
     />
     <icon-btn
         class="ml-2" large prevent-show-tooltip
@@ -149,6 +161,8 @@ function jetOff() {
         color="warning"
         @touchstart="jetOn"
         @touchend="jetOff"
+        @mousedown="() => props.mouseEvents && jetOn()"
+        @mouseup="() => props.mouseEvents && jetOff()"
     />
     <icon-btn
         class="ml-2" large prevent-show-tooltip
@@ -157,6 +171,8 @@ function jetOff() {
         :show-tooltip="showTooltip"
         @touchstart="startRotateGunLeft"
         @touchend="stopRotateGunLeft"
+        @mousedown="() => props.mouseEvents && startRotateGunLeft()"
+        @mouseup="() => props.mouseEvents && stopRotateGunLeft()"
     />
     <icon-btn
         class="ml-2" large prevent-show-tooltip
@@ -165,6 +181,8 @@ function jetOff() {
         :show-tooltip="showTooltip"
         @touchstart="startRotateGunRight"
         @touchend="stopRotateGunRight"
+        @mousedown="() => props.mouseEvents && startRotateGunRight()"
+        @mouseup="() => props.mouseEvents && stopRotateGunRight()"
     />
   </v-toolbar>
 </template>

@@ -71,7 +71,7 @@ function calculateIsMobileBrowser() {
 <template>
   <BattleHeader :show-control-buttons="showControlButtons" />
   <BattleCanvas />
-  <ControlButtons v-if="showControlButtons" />
+  <ControlButtons v-if="showControlButtons" :mouse-events="!isMobileBrowser" />
   <FinishBattleDialog />
   <connection-lost-dialog />
 </template>
