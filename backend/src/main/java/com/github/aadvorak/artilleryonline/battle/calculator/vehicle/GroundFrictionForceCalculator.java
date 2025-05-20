@@ -26,10 +26,11 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
     @Override
     public List<BodyForce> calculate(VehicleCalculations calculations, BattleModel battleModel) {
         var groundFrictionCoefficient = battleModel.getRoom().getSpecs().getGroundFrictionCoefficient();
+        var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
         var forces = new ArrayList<BodyForce>();
         addWheelFriction(forces, calculations.getRightWheel(), groundFrictionCoefficient);
         addWheelFriction(forces, calculations.getLeftWheel(), groundFrictionCoefficient);
-        addHullFriction(forces, calculations, groundFrictionCoefficient);
+        addHullFriction(forces, calculations, groundFrictionCoefficient, gravityAcceleration);
         return forces;
     }
 
@@ -50,10 +51,11 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
     }
 
     private void addHullFriction(List<BodyForce> forces, VehicleCalculations calculations,
-                                 double groundFrictionCoefficient) {
+                                 double groundFrictionCoefficient, double gravityAcceleration) {
         if (calculations.getGroundContacts() == null) {
             return;
         }
+        var forceMultiplier = 0.1 * groundFrictionCoefficient * gravityAcceleration * calculations.getMass();
         calculations.getGroundContacts().forEach(contact -> {
             var tangential = Vector.tangential(contact.angle());
             var movingVelocity = calculations.getModel().getState().getVelocity().getMovingVelocity()
@@ -62,17 +64,18 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
                     .projectionOnto(tangential);
             var movingVelocityMagnitude = movingVelocity.magnitude();
             var rotatingVelocityMagnitude = rotatingVelocity.magnitude();
+            var contactForceMultiplier = forceMultiplier * Math.cos(contact.angle());
             if (movingVelocityMagnitude > rotatingVelocityMagnitude || rotatingVelocityMagnitude < 0.05) {
                 var velocity = calculations.getModel().getState().getVelocityAt(contact.position());
                 var movingForce = new Force()
-                        .setX(-velocity.getX() * contact.depth() * groundFrictionCoefficient)
-                        .setY(-velocity.getY() * contact.depth() * groundFrictionCoefficient);
+                        .setX(-velocity.getX() * contactForceMultiplier)
+                        .setY(-velocity.getY() * contactForceMultiplier);
                 forces.add(BodyForce.of(movingForce, contact.position(), calculations.getPosition(),
                         FORCE_DESCRIPTION + " Hull"));
             } else {
                 var rotatingForce = new Force()
-                        .setX(-rotatingVelocity.getX() * contact.depth() * groundFrictionCoefficient)
-                        .setY(-rotatingVelocity.getY() * contact.depth() * groundFrictionCoefficient);
+                        .setX(-rotatingVelocity.getX() * contactForceMultiplier)
+                        .setY(-rotatingVelocity.getY() * contactForceMultiplier);
                 forces.add(BodyForce.atCOM(rotatingForce, FORCE_DESCRIPTION + " Hull"));
             }
         });
