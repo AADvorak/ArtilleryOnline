@@ -88,9 +88,13 @@ public class BattleUtils {
     }
 
     public static Position getGroundPosition(int index, RoomModel roomModel) {
+        var y = roomModel.getState().getGroundLine().get(index);
+        if (y == null) {
+            return null;
+        }
         return new Position()
                 .setX((double) index * roomModel.getSpecs().getStep())
-                .setY(roomModel.getState().getGroundLine().get(index));
+                .setY(y);
     }
 
     public static double generateRandom(double min, double max) {

@@ -6,6 +6,7 @@ import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,7 +31,7 @@ public class GroundContactUtils {
                 if (withMaxDepth) depth -= roomModel.getSpecs().getGroundMaxDepth();
                 var contact = Contact.of(
                         depth,
-                        getGroundAngle(halfCircle.center(), position, groundIndexes.get(i), roomModel),
+                        getGroundAngle(position, groundIndexes.get(i), roomModel),
                         position
                 );
                 if (contact != null && halfCircleNormal.dotProduct(contact.normal()) > 0) {
@@ -43,7 +44,7 @@ public class GroundContactUtils {
                 if (withMaxDepth) depth -= roomModel.getSpecs().getGroundMaxDepth();
                 var contact = Contact.of(
                         depth,
-                        getGroundAngle(halfCircle.center(), position, groundIndexes.get(i), roomModel),
+                        getGroundAngle(position, groundIndexes.get(i), roomModel),
                         position
                 );
                 if (contact != null && halfCircleNormal.dotProduct(contact.normal()) < 0) {
@@ -82,7 +83,7 @@ public class GroundContactUtils {
             if (withMaxDepth) depth -= roomModel.getSpecs().getGroundMaxDepth();
             return Contact.of(
                     depth,
-                    getGroundAngle(circle.center(), nearestPosition, index, roomModel),
+                    getGroundAngle(nearestPosition, index, roomModel),
                     nearestPosition
             );
         }
@@ -112,13 +113,16 @@ public class GroundContactUtils {
         return depth;
     }
 
-    private static double getGroundAngle(Position position, Position groundPosition, int groundIndex, RoomModel roomModel) {
-        if (groundIndex > 0 && groundPosition.getX() <= position.getX()) {
-            var otherGroundPosition = BattleUtils.getGroundPosition(groundIndex - 1, roomModel);
-            return otherGroundPosition.angleTo(groundPosition);
-        } else {
-            var otherGroundPosition = BattleUtils.getGroundPosition(groundIndex + 1, roomModel);
-            return groundPosition.angleTo(otherGroundPosition);
+    private static double getGroundAngle(Position groundPosition, int groundIndex, RoomModel roomModel) {
+        var angles = new ArrayList<Double>();
+        var groundPositionBefore = BattleUtils.getGroundPosition(groundIndex - 1, roomModel);
+        if  (groundPositionBefore != null) {
+            angles.add(groundPositionBefore.angleTo(groundPosition));
         }
+        var groundPositionAfter = BattleUtils.getGroundPosition(groundIndex + 1, roomModel);
+        if (groundPositionAfter != null) {
+            angles.add(groundPosition.angleTo(groundPositionAfter));
+        }
+        return angles.stream().reduce(0.0, Double::sum) / angles.size();
     }
 }
