@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -17,11 +18,7 @@ public class BodyPosition implements BodyVector {
     private double angle;
 
     public BodyPosition setAngle(double angle) {
-        if (angle < -Math.PI || angle > Math.PI) {
-            this.angle = Math.atan2(Math.sin(angle), Math.cos(angle));
-        } else {
-            this.angle = angle;
-        }
+        this.angle = GeometryUtils.normalizeAngle(angle);
         return this;
     }
 
