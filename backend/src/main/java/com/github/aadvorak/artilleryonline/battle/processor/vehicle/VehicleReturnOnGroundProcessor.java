@@ -14,6 +14,9 @@ public class VehicleReturnOnGroundProcessor {
                     >= vehicle.getModel().getSpecs().getTrackRepairTime() * 1000 && vehicle.getCollisions().isEmpty()) {
                 VehicleOnGroundProcessor.estimateVehicleAngleByPosition(vehicle.getModel(), battle.getModel().getRoom());
                 VehicleOnGroundProcessor.correctVehiclePositionAndAngleOnGround(vehicle.getModel(), battle.getModel().getRoom());
+                vehicle.getModel().getState().getGunState().setTargetAngle(
+                        vehicle.getModel().getState().getPosition().getAngle()
+                        + vehicle.getModel().getState().getGunState().getAngle());
                 vehicle.getModel().setUpdated(true);
             }
         } else {
