@@ -25,8 +25,6 @@ public class Collision {
 
     private Contact contact;
 
-    private Double sumNormalVelocity;
-
     private Double impact;
 
     private boolean hit = false;
