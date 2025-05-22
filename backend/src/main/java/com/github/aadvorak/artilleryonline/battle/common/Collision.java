@@ -15,6 +15,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class Collision {
 
+    private static final double RESTITUTION = 0.5;
+
     private CollideObjectType type;
 
     private CollisionPair pair;
@@ -37,31 +39,26 @@ public class Collision {
     }
 
     public double getClosingVelocity() {
-        var closingVelocity = bodyCollisionDataPair.first() != null
-                ? bodyCollisionDataPair.first().getVelocityProjections().getNormal()
-                : velocitiesProjections.first().getNormal();
-        if (bodyCollisionDataPair.second() != null) {
-            closingVelocity -= bodyCollisionDataPair.second().getVelocityProjections().getNormal();
-        } else if (velocitiesProjections.second() != null) {
-            closingVelocity -= velocitiesProjections.second().getNormal();
-        }
-        return closingVelocity;
+        return firstNormalVelocity() - secondNormalVelocity();
     }
 
-    // todo based on closing velocity
     public double getImpact() {
         if (impact == null) {
-            var first = 0.0;
-            if (velocitiesProjections.first() != null && pair.first() != null) {
-                first = Math.abs(velocitiesProjections.first().getNormal())
-                        * pair.first().getMass();
+            var closingVelocity = getClosingVelocity();
+            if  (closingVelocity <= 0.0) {
+                impact = 0.0;
+            } else if (pair.second() == null) {
+                var firstData = bodyCollisionDataPair.first();
+                var mass = firstData != null ? firstData.getNormalData().getResultMass() : pair.first().getMass();
+                impact = mass * closingVelocity * RESTITUTION;
+            } else {
+                var firstData = bodyCollisionDataPair.first();
+                var secondData = bodyCollisionDataPair.second();
+                var firstMass = firstData != null ? firstData.getNormalData().getResultMass() : pair.first().getMass();
+                var secondMass = secondData != null ? secondData.getNormalData().getResultMass() : pair.second().getMass();
+                impact = firstMass * secondMass * closingVelocity * (1 + RESTITUTION)
+                        / (firstMass + secondMass);
             }
-            var second = 0.0;
-            if (velocitiesProjections.second() != null && pair.second() != null) {
-                second = Math.abs(velocitiesProjections.second().getNormal())
-                        * pair.second().getMass();
-            }
-            impact = first + second;
         }
         return impact;
     }
@@ -127,6 +124,21 @@ public class Collision {
                 .setBodyCollisionDataPair(new BodyCollisionDataPair(firstData, secondData))
                 .setVelocitiesProjections(new VelocitiesProjections(firstProjections, secondProjections))
                 .setContact(contact);
+    }
+
+    private double firstNormalVelocity() {
+        return bodyCollisionDataPair.first() != null
+                ? bodyCollisionDataPair.first().getVelocityProjections().getNormal()
+                : velocitiesProjections.first().getNormal();
+    }
+
+    private double secondNormalVelocity() {
+        if (bodyCollisionDataPair.second() != null) {
+            return bodyCollisionDataPair.second().getVelocityProjections().getNormal();
+        } else if (velocitiesProjections.second() != null) {
+            return velocitiesProjections.second().getNormal();
+        }
+        return 0;
     }
 
     private static Collision withUnmovable(

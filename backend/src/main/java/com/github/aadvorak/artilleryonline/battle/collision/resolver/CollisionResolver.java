@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class CollisionResolver {
 
-    private static final double RESTITUTION = 0.5;
-
     private static final double FRICTION_VELOCITY_THRESHOLD = 0.1;
 
     private final boolean logging;
@@ -59,47 +57,33 @@ public class CollisionResolver {
                         collision.getPair().first().getId(), collision.getPair().second().getId(),
                         collision.getContact());
             } else {
-                System.out.printf("Collision with unmovable of object id = %d\n%s\n%s\n",
-                        collision.getPair().first().getId(), collision.getContact(), firstData);
+                System.out.printf("Collision with unmovable of object id = %d\n%s\n",
+                        collision.getPair().first().getId(), collision.getContact());
             }
         }
 
-        var closingVelocity = collision.getClosingVelocity();
-        if (closingVelocity > 0) {
+        if (collision.getImpact() > 0) {
             if (logging) System.out.print("Closing resolving\n");
-            if (second == null) {
-                var mass = firstData != null ? firstData.getNormalData().getResultMass() : first.getMass();
-                var impulseDelta = mass * closingVelocity * RESTITUTION;
-                if (firstModel != null && firstData != null) {
-                    recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
-                            firstData.getNormalData(), impulseDelta, 1, false);
-                    recalculateVelocityByGravitation(firstModel.getState().getVelocity(), collision.getContact(),
-                            battleModel);
-                } else {
-                    recalculatePointVelocity(first.getVelocity(), collision.getContact(), first.getMass(), impulseDelta);
-                }
+            if (logging) System.out.printf("First object:\n%s\n", firstData);
+            if (firstModel != null && firstData != null) {
+                recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
+                        firstData.getNormalData(), collision.getImpact(), 1, false);
+                recalculateVelocityByGravitation(firstModel.getState().getVelocity(),
+                        collision.getContact(), battleModel);
             } else {
-                var firstMass = firstData != null ? firstData.getNormalData().getResultMass() : first.getMass();
-                var secondMass = secondData != null ? secondData.getNormalData().getResultMass() : second.getMass();
-                var impulseDelta = firstMass * secondMass * closingVelocity * (1 + RESTITUTION)
-                        / (firstMass + secondMass);
-                if (logging) System.out.printf("First object:\n%s\n", firstData);
-                if (firstModel != null && firstData != null) {
-                    recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
-                            firstData.getNormalData(), impulseDelta, 1, false);
-                    recalculateVelocityByGravitation(firstModel.getState().getVelocity(), collision.getContact(),
-                            battleModel);
-                } else {
-                    recalculatePointVelocity(first.getVelocity(), collision.getContact(), first.getMass(), impulseDelta);
-                }
+                recalculatePointVelocity(first.getVelocity(), collision.getContact(),
+                        first.getMass(), collision.getImpact());
+            }
+            if (second != null) {
                 if (logging) System.out.printf("Second object:\n%s\n", secondData);
                 if (secondModel != null && secondData != null) {
                     recalculateBodyVelocity(secondModel.getState().getVelocity(), collision.getContact(),
-                            secondData.getNormalData(), impulseDelta, -1, false);
-                    recalculateVelocityByGravitation(secondModel.getState().getVelocity(), collision.getContact(),
-                            battleModel);
+                            secondData.getNormalData(), collision.getImpact(), -1, false);
+                    recalculateVelocityByGravitation(secondModel.getState().getVelocity(),
+                            collision.getContact(), battleModel);
                 } else {
-                    recalculatePointVelocity(second.getVelocity(), collision.getContact(), second.getMass(), impulseDelta);
+                    recalculatePointVelocity(second.getVelocity(), collision.getContact(),
+                            second.getMass(), collision.getImpact());
                 }
             }
         }
