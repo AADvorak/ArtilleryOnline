@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.utils;
 
+import com.github.aadvorak.artilleryonline.battle.common.Constants;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
@@ -25,32 +26,46 @@ public class GroundContactUtils {
                 .shifted(1.0, halfCircle.angle() + Math.PI / 2));
         while (i < groundIndexes.size()) {
             var position = BattleUtils.getGroundPosition(groundIndexes.get(i), roomModel);
-            var distance = position.distanceTo(halfCircle.center());
-            if (distance < halfCircle.radius()) {
+
+            Contact bottomContact = null;
+            var bottomPoint = bottom.findPointWithX(position.getX());
+            if (bottomPoint != null && bottomPoint.getY() < position.getY()) {
+                var projection = GeometryUtils.getPointToSegmentProjection(position, bottom);
+                if (projection != null) {
+                    var depth = position.distanceTo(projection);
+                    var normal = position.vectorTo(projection).normalized();
+                    if (withMaxDepth) depth -= roomModel.getSpecs().getGroundMaxDepth();
+                    bottomContact = Contact.withUncheckedDepthOf(depth, normal, position, "HalfCircle bottom with ground");
+                }
+            }
+
+            Contact topContact = null;
+            var distance = halfCircle.center().distanceTo(position);
+            var radiusVector = halfCircle.center().vectorTo(position);
+            if (distance < halfCircle.radius() && halfCircleNormal.dotProduct(radiusVector) > 0) {
                 var depth = getGroundDepth(halfCircle.circle(), position.getY(), distance);
                 if (withMaxDepth) depth -= roomModel.getSpecs().getGroundMaxDepth();
-                var contact = Contact.of(
+                topContact = Contact.withUncheckedDepthOf(
                         depth,
                         getGroundAngle(position, groundIndexes.get(i), roomModel),
-                        position
+                        position,
+                        "HalfCircle top with ground"
                 );
-                if (contact != null && halfCircleNormal.dotProduct(contact.normal()) > 0) {
-                    contacts.add(contact);
-                }
             }
-            var bottomPoint = bottom.findPointWithX(position.getX());
-            if (bottomPoint != null) {
-                var depth = position.getY() - bottomPoint.getY();
-                if (withMaxDepth) depth -= roomModel.getSpecs().getGroundMaxDepth();
-                var contact = Contact.of(
-                        depth,
-                        getGroundAngle(position, groundIndexes.get(i), roomModel),
-                        position
-                );
-                if (contact != null && halfCircleNormal.dotProduct(contact.normal()) < 0) {
-                    contacts.add(contact);
-                }
+
+            Contact resultContact = null;
+            if (topContact != null && bottomContact != null) {
+                resultContact = topContact.depth() < bottomContact.depth() ? topContact : bottomContact;
+            } else if (topContact != null) {
+                resultContact = topContact;
+            }  else if (bottomContact != null) {
+                resultContact = bottomContact;
             }
+
+            if (resultContact != null && resultContact.depth() >= Constants.INTERPENETRATION_THRESHOLD) {
+                contacts.add(resultContact);
+            }
+
             i++;
         }
         return contacts;
