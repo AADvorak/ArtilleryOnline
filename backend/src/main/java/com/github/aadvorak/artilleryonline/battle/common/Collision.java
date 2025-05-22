@@ -5,13 +5,10 @@ import com.github.aadvorak.artilleryonline.battle.collision.BodyCollisionData;
 import com.github.aadvorak.artilleryonline.battle.collision.BodyCollisionDataPair;
 import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
 import com.github.aadvorak.artilleryonline.battle.model.MissileModel;
-import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.util.Optional;
 
 @Getter
 @Setter
@@ -53,23 +50,6 @@ public class Collision {
         return closingVelocity;
     }
 
-    // todo replace with closingVelocity
-    @Deprecated
-    public double getSumNormalVelocity() {
-        if (sumNormalVelocity == null) {
-            var first = 0.0;
-            if (velocitiesProjections.first() != null) {
-                first = Math.abs(velocitiesProjections.first().getNormal());
-            }
-            var second = 0.0;
-            if (velocitiesProjections.second() != null) {
-                second = Math.abs(velocitiesProjections.second().getNormal());
-            }
-            sumNormalVelocity = first + second;
-        }
-        return sumNormalVelocity;
-    }
-
     // todo based on closing velocity
     public double getImpact() {
         if (impact == null) {
@@ -88,29 +68,6 @@ public class Collision {
         return impact;
     }
 
-    public Collision inverted() {
-        return new Collision()
-                .setType(type)
-                .setPair(new CollisionPair(pair.second(), pair.first()))
-                .setBodyCollisionDataPair(
-                        new BodyCollisionDataPair(
-                                bodyCollisionDataPair.second(),
-                                bodyCollisionDataPair.first()
-                        )
-                )
-                .setVelocitiesProjections(
-                        new VelocitiesProjections(
-                                velocitiesProjections.second(),
-                                velocitiesProjections.first()
-                        )
-                )
-                .setContact(
-                        Optional.ofNullable(contact)
-                                .map(Contact::inverted)
-                                .orElse(null)
-                );
-    }
-
     public boolean isRicochet() {
         if (pair.first() instanceof ShellCalculations shell) {
             var shellType = shell.getModel().getSpecs().getType();
@@ -125,12 +82,6 @@ public class Collision {
             return normalTangentialRatio < 0.4;
         }
         return false;
-    }
-
-    @Deprecated
-    public static Collision ofMissileWithGround(Calculations<MissileModel> first) {
-        return new Collision()
-                .setPair(new CollisionPair(first, null));
     }
 
     public static Collision withGround(Calculations<?> first, Contact contact) {
