@@ -1,6 +1,8 @@
 package com.github.aadvorak.artilleryonline.service;
 
 import com.github.aadvorak.artilleryonline.battle.*;
+import com.github.aadvorak.artilleryonline.battle.preset.VehicleSpecsPreset;
+import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueParams;
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
@@ -14,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
@@ -130,8 +133,13 @@ public class BattleService {
             var otherParticipant = new BattleParticipant()
                     .setNickname("Dummy player")
                     .setParams(new BattleParticipantParams()
-                            .setSelectedVehicle(params.getSelectedVehicle()));
+                            .setSelectedVehicle(getRandomVehicle()));
             battleStarter.start(Set.of(userParticipant, otherParticipant), battleType);
         }
+    }
+
+    private String getRandomVehicle() {
+        var vehicles = Arrays.stream(VehicleSpecsPreset.values()).map(VehicleSpecsPreset::getName).toList();
+        return vehicles.get(BattleUtils.generateRandom(0, vehicles.size() - 1));
     }
 }
