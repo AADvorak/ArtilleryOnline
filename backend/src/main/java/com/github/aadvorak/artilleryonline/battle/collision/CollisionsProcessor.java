@@ -48,7 +48,7 @@ public class CollisionsProcessor {
                     shouldResolve = preprocessor.process(collision, battle);
                 }
                 if (shouldResolve) {
-                    resolver.resolve(collision, battle.getModel().getCurrentTimeStepSecs());
+                    resolver.resolve(collision, battle.getModel());
                     // todo check this logic
                     object.setHasCollisions(true);
                     if (collision.getPair().second() != null) {

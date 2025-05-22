@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.collision.BodyCollisionData;
 import com.github.aadvorak.artilleryonline.battle.common.*;
+import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.BodyModel;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,7 @@ public class CollisionResolver {
         logging = settings.isDebug();
     }
 
-    public void resolve(Collision collision, double timeStepSecs) {
+    public void resolve(Collision collision, BattleModel battleModel) {
         var first = collision.getPair().first();
         var second = collision.getPair().second();
         BodyModel<?, ?, ?, ?> firstModel = null;
@@ -72,6 +73,8 @@ public class CollisionResolver {
                 if (firstModel != null && firstData != null) {
                     recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
                             firstData.getNormalData(), impulseDelta, 1, false);
+                    recalculateVelocityByGravitation(firstModel.getState().getVelocity(), collision.getContact(),
+                            battleModel);
                 } else {
                     recalculatePointVelocity(first.getVelocity(), collision.getContact(), first.getMass(), impulseDelta);
                 }
@@ -84,6 +87,8 @@ public class CollisionResolver {
                 if (firstModel != null && firstData != null) {
                     recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
                             firstData.getNormalData(), impulseDelta, 1, false);
+                    recalculateVelocityByGravitation(firstModel.getState().getVelocity(), collision.getContact(),
+                            battleModel);
                 } else {
                     recalculatePointVelocity(first.getVelocity(), collision.getContact(), first.getMass(), impulseDelta);
                 }
@@ -91,6 +96,8 @@ public class CollisionResolver {
                 if (secondModel != null && secondData != null) {
                     recalculateBodyVelocity(secondModel.getState().getVelocity(), collision.getContact(),
                             secondData.getNormalData(), impulseDelta, -1, false);
+                    recalculateVelocityByGravitation(secondModel.getState().getVelocity(), collision.getContact(),
+                            battleModel);
                 } else {
                     recalculatePointVelocity(second.getVelocity(), collision.getContact(), second.getMass(), impulseDelta);
                 }
@@ -108,7 +115,7 @@ public class CollisionResolver {
             resolveFrictionVelocity(collision, frictionVelocity, firstModel, secondModel, firstData, secondData);
         }
 
-        recalculatePositionsAndResolveInterpenetration(collision, timeStepSecs);
+        recalculatePositionsAndResolveInterpenetration(collision, battleModel.getCurrentTimeStepSecs());
         if (logging) System.out.print("----------------End collision resolution------------------\n");
     }
 
@@ -192,6 +199,24 @@ public class CollisionResolver {
             object.applyNormalMoveToNextPosition(- normalMove, collision.getContact().angle());
             otherObject.applyNormalMoveToNextPosition(otherNormalMove, collision.getContact().angle());
         }
+    }
+
+    private void recalculateVelocityByGravitation(
+            BodyVelocity velocity,
+            Contact contact,
+            BattleModel battleModel
+    ) {
+        var gravityVelocityDiff = new VectorImpl()
+                .setY(-battleModel.getCurrentTimeStepSecs()
+                        * battleModel.getRoom().getSpecs().getGravityAcceleration());
+        var tangentialVelocityDiff = gravityVelocityDiff.dotProduct(Vector.tangential(contact.angle()));
+        var gravityVelocityDelta = new VectorProjections(contact.angle())
+                .setTangential(tangentialVelocityDiff)
+                .recoverVelocity();
+        if (logging) System.out.printf("gravityVelocityDelta = %s\n", gravityVelocityDelta);
+        velocity
+                .setX(velocity.getX() + gravityVelocityDelta.getX())
+                .setY(velocity.getY() + gravityVelocityDelta.getY());
     }
 
     private double getFrictionCoefficient(Calculations<?> calculations) {
