@@ -86,10 +86,6 @@ public interface Vector extends CompactSerializable {
                 .setY(-getY());
     }
 
-    default double angleWithX() {
-        return Math.atan2(getY(), getX());
-    }
-
     @Override
     default void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(getX());

@@ -14,7 +14,7 @@ public record Contact(double depth, double angle, Vector normal, Position positi
         if (depth < Constants.INTERPENETRATION_THRESHOLD) {
             return null;
         }
-        return new Contact(depth, normal.angleWithX() + Math.PI / 2, normal, position, description);
+        return new Contact(depth, normal.angle() + Math.PI / 2, normal, position, description);
     }
 
     public static Contact withUncheckedDepthOf(double depth, double angle, Position position) {
@@ -30,7 +30,7 @@ public record Contact(double depth, double angle, Vector normal, Position positi
     }
 
     public static Contact withUncheckedDepthOf(double depth, Vector normal, Position position, String description) {
-        return new Contact(depth, normal.angleWithX() + Math.PI / 2, normal, position, description);
+        return new Contact(depth, normal.angle() + Math.PI / 2, normal, position, description);
     }
 
     public static Contact of(double depth, double angle, Position position) {
