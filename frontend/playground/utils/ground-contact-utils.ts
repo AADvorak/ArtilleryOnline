@@ -4,6 +4,7 @@ import {BattleUtils} from "~/playground/utils/battle-utils";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {type Circle, HalfCircle} from "~/playground/data/geometry";
 import {GeometryUtils} from "~/playground/utils/geometry-utils";
+import {Constants} from "~/playground/data/constants";
 
 export const GroundContactUtils = {
 
@@ -161,24 +162,31 @@ export const GroundContactUtils = {
   },
 
   createContact: {
-    withAngle(depth: number, angle: number, position: Position, description?: string): Contact {
-      return {
+    withAngle(depth: number, angle: number, position: Position, description?: string): Contact | null {
+      return this.checkDepth({
         depth,
         angle,
         normal: VectorUtils.getNormal(angle),
         position,
         description
-      }
+      })
     },
 
-    withNormal(depth: number, normal: Vector, position: Position, description?: string): Contact {
-      return {
+    withNormal(depth: number, normal: Vector, position: Position, description?: string): Contact | null {
+      return this.checkDepth({
         depth,
         angle: VectorUtils.getAngle(normal) + Math.PI / 2,
         normal,
         position,
         description
+      })
+    },
+
+    checkDepth(contact: Contact): Contact | null {
+      if (contact.depth < Constants.INTERPENETRATION_THRESHOLD) {
+        return null
       }
+      return contact
     }
   }
 }
