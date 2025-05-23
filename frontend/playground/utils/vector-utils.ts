@@ -55,12 +55,32 @@ export const VectorUtils = {
     return Math.atan2(dy, dx);
   },
 
+  vectorFromTo(from: Position, to: Position): Vector {
+    return {
+      x: to.x - from.x,
+      y: to.y - from.y
+    }
+  },
+
   getMagnitude(vector: Vector) {
     return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
   },
 
+  normalize(vector: Vector) {
+    const magnitude = this.getMagnitude(vector)
+    vector.x /= magnitude
+    vector.y /= magnitude
+  },
+
   getAngle(vector: Vector) {
     return Math.atan2(vector.y, vector.x)
+  },
+
+  getNormal(angle: number): Vector {
+    return {
+      x: Math.cos(angle - Math.PI / 2),
+      y: Math.sin(angle - Math.PI / 2)
+    }
   },
 
   getPointVelocity(bodyVelocity: BodyVelocity, pointDistance: number, pointAngle: number) {
@@ -69,5 +89,9 @@ export const VectorUtils = {
       x: bodyVelocity.x - angleVelocity * Math.sin(pointAngle),
       y: bodyVelocity.y + angleVelocity * Math.cos(pointAngle)
     }
+  },
+
+  dotProduct(v1: Vector, v2: Vector): number {
+    return v1.x * v2.x + v1.y * v2.y
   }
 }

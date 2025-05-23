@@ -90,3 +90,11 @@ export interface Shift {
   distance: number
   angle: number
 }
+
+export interface Contact {
+  depth: number
+  angle: number
+  normal: Vector
+  position: Position
+  description?: string
+}
