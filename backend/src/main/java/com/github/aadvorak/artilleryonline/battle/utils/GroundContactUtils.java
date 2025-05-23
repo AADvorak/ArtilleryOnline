@@ -43,7 +43,7 @@ public class GroundContactUtils {
             var distance = halfCircle.center().distanceTo(position);
             var radiusVector = halfCircle.center().vectorTo(position);
             if (distance < halfCircle.radius() && halfCircleNormal.dotProduct(radiusVector) > 0) {
-                var depth = getGroundDepth(halfCircle.circle(), position.getY(), distance);
+                var depth = halfCircle.radius() - distance;
                 if (withMaxDepth) depth -= roomModel.getSpecs().getGroundMaxDepth();
                 topContact = Contact.withUncheckedDepthOf(
                         depth,
