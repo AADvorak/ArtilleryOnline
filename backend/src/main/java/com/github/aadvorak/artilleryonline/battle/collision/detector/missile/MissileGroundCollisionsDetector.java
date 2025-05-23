@@ -2,7 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.collision.detector.missile;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.MissileCalculations;
-import com.github.aadvorak.artilleryonline.battle.common.Collision;
+import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import org.springframework.stereotype.Component;

@@ -1,8 +1,9 @@
-package com.github.aadvorak.artilleryonline.battle.common;
+package com.github.aadvorak.artilleryonline.battle.collision;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
-import com.github.aadvorak.artilleryonline.battle.collision.BodyCollisionData;
-import com.github.aadvorak.artilleryonline.battle.collision.BodyCollisionDataPair;
+import com.github.aadvorak.artilleryonline.battle.common.Contact;
+import com.github.aadvorak.artilleryonline.battle.common.ShellType;
+import com.github.aadvorak.artilleryonline.battle.common.VelocitiesProjections;
 import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
 import com.github.aadvorak.artilleryonline.battle.model.MissileModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;

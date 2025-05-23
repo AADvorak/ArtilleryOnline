@@ -1,4 +1,4 @@
-package com.github.aadvorak.artilleryonline.battle.common;
+package com.github.aadvorak.artilleryonline.battle.collision;
 
 import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;

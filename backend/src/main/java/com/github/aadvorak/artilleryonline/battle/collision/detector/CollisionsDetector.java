@@ -2,7 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.collision.detector;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
-import com.github.aadvorak.artilleryonline.battle.common.Collision;
+import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 
 import java.util.Set;
 

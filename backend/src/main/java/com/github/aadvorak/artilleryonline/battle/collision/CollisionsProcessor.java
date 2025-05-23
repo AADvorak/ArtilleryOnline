@@ -5,7 +5,6 @@ import com.github.aadvorak.artilleryonline.battle.collision.detector.CollisionsD
 import com.github.aadvorak.artilleryonline.battle.collision.postprocessor.CollisionPostprocessor;
 import com.github.aadvorak.artilleryonline.battle.collision.preprocessor.CollisionPreprocessor;
 import com.github.aadvorak.artilleryonline.battle.collision.resolver.CollisionResolver;
-import com.github.aadvorak.artilleryonline.battle.common.Collision;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

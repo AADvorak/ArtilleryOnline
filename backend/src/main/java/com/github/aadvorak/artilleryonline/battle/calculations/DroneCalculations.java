@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
+import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.config.DroneConfig;
 import com.github.aadvorak.artilleryonline.battle.model.DroneModel;

@@ -1,7 +1,7 @@
 package com.github.aadvorak.artilleryonline.dto.response;
 
-import com.github.aadvorak.artilleryonline.battle.common.CollideObjectType;
-import com.github.aadvorak.artilleryonline.battle.common.Collision;
+import com.github.aadvorak.artilleryonline.battle.collision.CollideObjectType;
+import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
