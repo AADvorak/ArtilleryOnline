@@ -44,11 +44,6 @@ public class VehicleCalculations
     }
 
     @Override
-    public VehicleCalculations getVehicleCalculations() {
-        return this;
-    }
-
-    @Override
     public Position getPosition() {
         return model.getState().getPosition().getCenter();
     }

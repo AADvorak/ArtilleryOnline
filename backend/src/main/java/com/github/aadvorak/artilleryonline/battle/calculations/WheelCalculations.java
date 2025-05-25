@@ -49,11 +49,6 @@ public class WheelCalculations
     }
 
     @Override
-    public VehicleCalculations getVehicleCalculations() {
-        return vehicle;
-    }
-
-    @Override
     public double getMass() {
         return vehicle.getMass();
     }

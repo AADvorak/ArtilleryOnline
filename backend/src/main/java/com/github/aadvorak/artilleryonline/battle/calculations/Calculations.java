@@ -12,8 +12,6 @@ public interface Calculations<Model> {
 
     Model getModel();
 
-    VehicleCalculations getVehicleCalculations();
-
     Position getPosition();
 
     Velocity getVelocity();

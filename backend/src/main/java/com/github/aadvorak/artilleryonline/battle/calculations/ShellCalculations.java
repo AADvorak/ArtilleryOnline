@@ -36,11 +36,6 @@ public class ShellCalculations implements Calculations<ShellModel> {
     }
 
     @Override
-    public VehicleCalculations getVehicleCalculations() {
-        return null;
-    }
-
-    @Override
     public Position getPosition() {
         return model.getState().getPosition();
     }
