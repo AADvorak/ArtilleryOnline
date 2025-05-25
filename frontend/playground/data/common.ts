@@ -68,6 +68,9 @@ export interface BodyVector extends Vector {
   angle: number
 }
 
+export interface Force extends Vector {
+}
+
 export interface Acceleration extends Vector {
 }
 

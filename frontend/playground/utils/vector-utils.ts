@@ -93,5 +93,25 @@ export const VectorUtils = {
 
   dotProduct(v1: Vector, v2: Vector): number {
     return v1.x * v2.x + v1.y * v2.y
-  }
+  },
+
+  vectorProduct(v1: Vector, v2: Vector): number {
+    return v1.x * v2.y - v1.y * v1.x
+  },
+
+  projectionOfOnto(of: Vector, vector: Vector): Vector {
+    const dotProduct = this.dotProduct(of, vector)
+    const magnitudeSquared = Math.pow(this.getMagnitude(vector), 2)
+    if (magnitudeSquared == 0) {
+      return {
+        x: of.x,
+        y: of.y
+      }
+    }
+    const scalar = dotProduct / magnitudeSquared
+    return {
+      x: scalar * vector.x,
+      y: scalar * vector.y
+    }
+  },
 }
