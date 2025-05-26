@@ -7,6 +7,7 @@ import type {
   VehicleSpecs
 } from "@/playground/data/specs";
 import type {
+  BodyState,
   DroneState,
   ExplosionState,
   MissileState,
@@ -17,6 +18,11 @@ import type {
 } from "@/playground/data/state";
 import type {DroneConfig, ParticleConfig, RoomConfig, VehicleConfig} from "@/playground/data/config";
 import type {Shift} from "~/playground/data/common";
+
+export interface BodyModel {
+  preCalc: BodyPreCalc
+  state: BodyState
+}
 
 export interface RoomModel {
   specs: RoomSpecs
@@ -58,23 +64,22 @@ export interface ExplosionModel {
   state: ExplosionState
 }
 
-export interface VehiclePreCalc {
+export interface BodyPreCalc {
+  mass: number
+  momentOfInertia: number
+  centerOfMassShift: Shift
+  maxRadius: number
+}
+
+export interface VehiclePreCalc extends BodyPreCalc {
   wheelDistance: number
   wheelAngle: number
-  mass: number
-  momentOfInertia: number
-  centerOfMassShift: Shift
-  maxRadius: number
 }
 
-export interface DronePreCalc {
-  mass: number
-  momentOfInertia: number
-  centerOfMassShift: Shift
-  maxRadius: number
+export interface DronePreCalc extends BodyPreCalc {
 }
 
-export interface VehicleModel {
+export interface VehicleModel extends BodyModel {
   id: number
   specs: VehicleSpecs
   config: VehicleConfig

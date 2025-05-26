@@ -1,6 +1,13 @@
 import type {Ammo, Position, BodyVelocity, Velocity, BodyPosition, Missiles} from "@/playground/data/common";
 import {MovingDirection} from "@/playground/data/common";
 
+export interface BodyState {
+  position: BodyPosition
+  velocity: BodyVelocity
+  pushingDirection?: MovingDirection
+  rotatingDirection?: MovingDirection
+}
+
 export interface GunState {
   angle: number
   targetAngle: number
@@ -35,14 +42,10 @@ export interface ParticleState {
   remainTime: number
 }
 
-export interface MissileState {
-  position: BodyPosition
-  velocity: BodyVelocity
+export interface MissileState extends BodyState {
 }
 
-export interface DroneState {
-  position: BodyPosition
-  velocity: BodyVelocity
+export interface DroneState extends BodyState {
   ammo: Ammo
   gunState: GunState
   gunAngle: number
@@ -67,9 +70,7 @@ export interface ExplosionState {
   position: Position
 }
 
-export interface VehicleState {
-  position: BodyPosition
-  velocity: BodyVelocity
+export interface VehicleState extends BodyState {
   movingDirection: MovingDirection
   hitPoints: number
   ammo: Ammo

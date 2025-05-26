@@ -1,5 +1,9 @@
 import type {Acceleration, BodyPosition, Position, Velocity} from "@/playground/data/common"
-import type {DroneModel} from "~/playground/data/model";
+import type {BodyModel, DroneModel} from "~/playground/data/model";
+
+export interface BodyCalculations {
+  model: BodyModel
+}
 
 export enum WheelSign {
   RIGHT = -1,

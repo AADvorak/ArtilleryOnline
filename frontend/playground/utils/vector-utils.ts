@@ -49,6 +49,18 @@ export const VectorUtils = {
     return {x: sumX, y: sumY, angle: sumAngle}
   },
 
+  sumOfBodyArr(vectors: BodyVector[]): BodyVector {
+    let sumX = 0
+    let sumY = 0
+    let sumAngle = 0
+    for (const vector of vectors) {
+      sumX += vector.x
+      sumY += vector.y
+      sumAngle += vector.angle
+    }
+    return {x: sumX, y: sumY, angle: sumAngle}
+  },
+
   angleFromTo(from: Position, to: Position) {
     const dx = to.x - from.x;
     const dy = to.y - from.y;
@@ -114,4 +126,11 @@ export const VectorUtils = {
       y: scalar * vector.y
     }
   },
+
+  multiply(vector: Vector, scalar: number): Vector {
+    return {
+      x: vector.x * scalar,
+      y: vector.y * scalar
+    }
+  }
 }

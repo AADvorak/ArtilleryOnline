@@ -101,3 +101,18 @@ export interface Contact {
   position: Position
   description?: string
 }
+
+export function zeroBodyVector(): BodyVector {
+  return {
+    x: 0,
+    y: 0,
+    angle: 0
+  }
+}
+
+export function cloneVector(vector: Vector): Vector {
+  return {
+    x: vector.x,
+    y: vector.y
+  }
+}
