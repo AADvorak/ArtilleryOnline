@@ -25,24 +25,26 @@ public class GroundReactionForceCalculator implements ForceCalculator<
     @Override
     public List<BodyForce> calculate(VehicleCalculations calculations, BattleModel battleModel) {
         var groundReactionCoefficient = battleModel.getRoom().getSpecs().getGroundReactionCoefficient();
+        var groundMaxDepth = battleModel.getRoom().getSpecs().getGroundMaxDepth();
         var forces = new ArrayList<BodyForce>();
-        addWheelFriction(forces, calculations.getRightWheel(), groundReactionCoefficient);
-        addWheelFriction(forces, calculations.getLeftWheel(), groundReactionCoefficient);
+        addWheelReaction(forces, calculations.getRightWheel(), groundReactionCoefficient, groundMaxDepth);
+        addWheelReaction(forces, calculations.getLeftWheel(), groundReactionCoefficient, groundMaxDepth);
         return forces;
     }
 
-    private void addWheelFriction(List<BodyForce> forces, WheelCalculations calculations,
-                                  double groundReactionCoefficient) {
-        if (WheelGroundState.FULL_OVER_GROUND.equals(calculations.getGroundState())
-                || WheelGroundState.FULL_UNDER_GROUND.equals(calculations.getGroundState())) {
+    private void addWheelReaction(List<BodyForce> forces, WheelCalculations calculations,
+                                  double groundReactionCoefficient, double groundMaxDepth) {
+        if (calculations.getGroundContact() == null) {
             return;
         }
         var groundAngle = calculations.getGroundContact().angle();
-        var velocityNormalProjection = calculations.getVelocity().projections(groundAngle).getNormal();
-        if (velocityNormalProjection < 0) {
+        var velocityNormalProjection = calculations.getVelocity()
+                .projectionOnto(calculations.getGroundContact().normal())
+                .magnitude();
+        if (velocityNormalProjection > 0) {
+            var depth = Math.min(calculations.getGroundContact().depth(), groundMaxDepth);
             var forceProjections = new VectorProjections(groundAngle)
-                    .setNormal(- velocityNormalProjection * calculations.getGroundContact().depth()
-                            * groundReactionCoefficient);
+                    .setNormal(- velocityNormalProjection * depth * groundReactionCoefficient);
             var force = forceProjections.recoverForce();
             forces.add(BodyForce.of(force, calculations.getGroundContact().position(),
                     calculations.getModel().getState().getPosition().getCenter(), FORCE_DESCRIPTION));
