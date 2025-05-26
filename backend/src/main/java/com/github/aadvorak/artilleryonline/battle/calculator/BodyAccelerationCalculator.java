@@ -50,7 +50,7 @@ public class BodyAccelerationCalculator<
         var mass = calculations.getMass();
         var acceleration = new BodyAcceleration();
         if (force.moving() != null) {
-            return acceleration
+            acceleration
                     .setX(force.moving().getX() / mass)
                     .setY(force.moving().getY() / mass);
         }
