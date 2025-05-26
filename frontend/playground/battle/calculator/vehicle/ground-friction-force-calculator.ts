@@ -1,5 +1,5 @@
 import type {ForceCalculator} from "~/playground/battle/calculator/force-calculator";
-import {type VehicleCalculations, type WheelCalculations, WheelGroundState} from "~/playground/data/calculations";
+import {type VehicleCalculations, type WheelCalculations} from "~/playground/data/calculations";
 import type {BattleModel} from "~/playground/data/model";
 import {BodyForce} from "~/playground/battle/calculator/body-force";
 import {VectorUtils} from "~/playground/utils/vector-utils";
@@ -28,15 +28,15 @@ export class GroundFrictionForceCalculator implements ForceCalculator {
       comPosition: Position,
       groundFrictionCoefficient: number
   ): void {
-    if (wheelCalculations.groundState === WheelGroundState.FULL_OVER_GROUND) {
+    if (!wheelCalculations.groundContact) {
       return
     }
 
-    const depth = wheelCalculations.groundContact!.depth
-    const position = wheelCalculations.groundContact!.position
+    const depth = wheelCalculations.groundContact.depth
+    const position = wheelCalculations.groundContact.position
     const velocity = VectorUtils.projectionOfOnto(
         wheelCalculations.velocity!,
-        VectorUtils.tangential(wheelCalculations.groundContact!.angle)
+        VectorUtils.tangential(wheelCalculations.groundContact.angle)
     )
 
     const force = {

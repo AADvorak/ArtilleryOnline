@@ -1,5 +1,5 @@
 import type {ForceCalculator} from "~/playground/battle/calculator/force-calculator";
-import {type VehicleCalculations, type WheelCalculations, WheelGroundState} from "~/playground/data/calculations";
+import {type VehicleCalculations, type WheelCalculations} from "~/playground/data/calculations";
 import type {BattleModel, VehicleModel} from "~/playground/data/model";
 import {BodyForce} from "~/playground/battle/calculator/body-force";
 import {JetType, MovingDirection, zeroVector} from "~/playground/data/common";
@@ -33,14 +33,13 @@ export class EngineForceCalculator implements ForceCalculator {
         direction === null ||
         vehicleModel.state.trackState.broken ||
         (jetSpecs !== null && jetState !== null && jetState.active && jetSpecs.type === JetType.VERTICAL) ||
-        calculations.groundState === WheelGroundState.FULL_UNDER_GROUND ||
-        calculations.groundState === WheelGroundState.FULL_OVER_GROUND
+        !calculations.groundContact
     ) {
       return null
     }
 
-    const depth = calculations.groundContact!.depth
-    const groundAngle = calculations.groundContact!.angle
+    const depth = calculations.groundContact.depth
+    const groundAngle = calculations.groundContact.angle
     const wheelRadius = vehicleModel.specs.wheelRadius
     const depthCoefficient = 1 - (depth * 0.5) / wheelRadius
     const forceMagnitude = (vehicleModel.preCalc.mass * depthCoefficient * vehicleModel.specs.acceleration) / 2
@@ -59,7 +58,7 @@ export class EngineForceCalculator implements ForceCalculator {
 
     return BodyForce.of(
         force,
-        calculations.groundContact!.position,
+        calculations.groundContact.position,
         vehicleModel.state.position,
         EngineForceCalculator.FORCE_DESCRIPTION
     )
