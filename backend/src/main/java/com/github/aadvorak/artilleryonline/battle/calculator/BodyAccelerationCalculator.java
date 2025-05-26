@@ -76,9 +76,6 @@ public class BodyAccelerationCalculator<
             }
         }
         forces.addAll(extractedForces);
-        if (!extractedForces.isEmpty()) {
-            System.out.println(extractedForces.size() + " forces extracted");
-        }
     }
 
     private boolean canExtractMovingFromRotating(BodyForce force1, BodyForce force2) {
