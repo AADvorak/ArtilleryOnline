@@ -26,20 +26,21 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
     @Override
     public List<BodyForce> calculate(VehicleCalculations calculations, BattleModel battleModel) {
         var groundFrictionCoefficient = battleModel.getRoom().getSpecs().getGroundFrictionCoefficient();
+        var groundMaxDepth = battleModel.getRoom().getSpecs().getGroundMaxDepth();
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
         var forces = new ArrayList<BodyForce>();
-        addWheelFriction(forces, calculations.getRightWheel(), groundFrictionCoefficient);
-        addWheelFriction(forces, calculations.getLeftWheel(), groundFrictionCoefficient);
+        addWheelFriction(forces, calculations.getRightWheel(), groundFrictionCoefficient, groundMaxDepth);
+        addWheelFriction(forces, calculations.getLeftWheel(), groundFrictionCoefficient, groundMaxDepth);
         addHullFriction(forces, calculations, groundFrictionCoefficient, gravityAcceleration);
         return forces;
     }
 
     private void addWheelFriction(List<BodyForce> forces, WheelCalculations wheelCalculations,
-                                  double groundFrictionCoefficient) {
-        if (WheelGroundState.FULL_OVER_GROUND.equals(wheelCalculations.getGroundState())) {
+                                  double groundFrictionCoefficient, double groundMaxDepth) {
+        if (wheelCalculations.getGroundContact() == null) {
             return;
         }
-        var depth = wheelCalculations.getGroundContact().depth();
+        var depth = Math.min(wheelCalculations.getGroundContact().depth(), 1.0); // todo groundMaxDepth
         var position = wheelCalculations.getGroundContact().position();
         var velocity = wheelCalculations.getVelocity().projectionOnto(
                 Vector.tangential(wheelCalculations.getGroundContact().angle()));

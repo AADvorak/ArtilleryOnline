@@ -22,8 +22,6 @@ public class WheelCalculations
 
     private final VehicleCalculations vehicle;
 
-    private WheelGroundState groundState;
-
     private Position position;
 
     private Velocity velocity;

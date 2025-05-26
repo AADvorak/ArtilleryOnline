@@ -45,8 +45,7 @@ public class EngineForceCalculator implements ForceCalculator<
         var direction = vehicleModel.getState().getMovingDirection();
         if (direction == null || vehicleModel.getState().getTrackState().isBroken()
                 || jetSpecs != null && jetState != null && jetState.isActive() && jetSpecs.getType().equals(JetType.VERTICAL)
-                || WheelGroundState.FULL_UNDER_GROUND.equals(calculations.getGroundState())
-                || WheelGroundState.FULL_OVER_GROUND.equals(calculations.getGroundState())) {
+                || calculations.getGroundContact() == null) {
             return null;
         }
         var depth = calculations.getGroundContact().depth();

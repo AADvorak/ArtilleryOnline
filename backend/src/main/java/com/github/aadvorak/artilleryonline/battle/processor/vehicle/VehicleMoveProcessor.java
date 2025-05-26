@@ -2,7 +2,6 @@ package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.WheelGroundState;
 import com.github.aadvorak.artilleryonline.battle.calculator.VehicleAccelerationCalculator;
 
 public class VehicleMoveProcessor {
@@ -40,8 +39,8 @@ public class VehicleMoveProcessor {
 
     private static void calculateOnGround(VehicleCalculations vehicle) {
         var state = vehicle.getModel().getState();
-        var onGround = !(vehicle.getLeftWheel().getGroundState().equals(WheelGroundState.FULL_OVER_GROUND)
-                && vehicle.getRightWheel().getGroundState().equals(WheelGroundState.FULL_OVER_GROUND));
+        var onGround = vehicle.getRightWheel().getGroundContact() != null
+                || vehicle.getLeftWheel().getGroundContact() != null;
         if (state.isOnGround() != onGround) {
             state.setOnGround(onGround);
             vehicle.getModel().setUpdated(true);

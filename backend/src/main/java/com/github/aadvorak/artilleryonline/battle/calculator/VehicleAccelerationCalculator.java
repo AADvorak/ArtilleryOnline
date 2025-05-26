@@ -4,7 +4,6 @@ import com.github.aadvorak.artilleryonline.battle.calculations.ForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculator.vehicle.*;
-import com.github.aadvorak.artilleryonline.battle.calculator.wheel.*;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
@@ -39,8 +38,8 @@ public class VehicleAccelerationCalculator {
     public static BodyAcceleration getVehicleAcceleration(VehicleCalculations vehicle, BattleModel battleModel) {
         vehicle.recalculateWheelsVelocities();
 
-        calculateGroundContactAndState(vehicle.getRightWheel(), battleModel.getRoom());
-        calculateGroundContactAndState(vehicle.getLeftWheel(), battleModel.getRoom());
+        calculateGroundContact(vehicle.getRightWheel(), battleModel.getRoom());
+        calculateGroundContact(vehicle.getLeftWheel(), battleModel.getRoom());
         calculateGroundContacts(vehicle, battleModel.getRoom());
 
         var acceleration = calculator.calculate(vehicle, battleModel);
@@ -50,11 +49,10 @@ public class VehicleAccelerationCalculator {
         return acceleration;
     }
 
-    private static void calculateGroundContactAndState(WheelCalculations wheel, RoomModel roomModel) {
+    private static void calculateGroundContact(WheelCalculations wheel, RoomModel roomModel) {
         wheel.setGroundContact(GroundContactUtils.getGroundContact(
                 new Circle(wheel.getPosition(), wheel.getModel().getSpecs().getWheelRadius()),
                 roomModel, false));
-        GroundStateCalculator.calculate(wheel);
     }
 
     private static void calculateGroundContacts(VehicleCalculations vehicle, RoomModel roomModel) {

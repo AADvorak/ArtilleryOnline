@@ -97,7 +97,8 @@ public class CollisionResolver {
             frictionVelocity += secondData.getVelocityProjections().getTangential();
         }
         if (Math.abs(frictionVelocity) > FRICTION_VELOCITY_THRESHOLD) {
-            resolveFrictionVelocity(collision, frictionVelocity, firstModel, secondModel, firstData, secondData);
+            resolveFrictionVelocity(collision, frictionVelocity, firstModel, secondModel, firstData, secondData,
+                    battleModel.getRoom().getSpecs().getGroundMaxDepth());
         }
 
         recalculatePositionsAndResolveInterpenetration(collision, battleModel.getCurrentTimeStepSecs());
@@ -109,11 +110,12 @@ public class CollisionResolver {
             BodyModel<?, ?, ?, ?> firstModel,
             BodyModel<?, ?, ?, ?> secondModel,
             BodyCollisionData firstData,
-            BodyCollisionData secondData
+            BodyCollisionData secondData,
+            double groundMaxDepth
     ) {
         if (secondData == null) {
             if (logging) System.out.print("Friction resolving\n");
-            var depth = Math.min(collision.getContact().depth(), 0.04);
+            var depth = Math.min(collision.getContact().depth(), groundMaxDepth);
             var impulseDelta = frictionVelocity * depth * getFrictionCoefficient(collision.getPair().first());
             recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
                     firstData.getTangentialData(), impulseDelta, 1, true);
