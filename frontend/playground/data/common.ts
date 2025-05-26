@@ -102,6 +102,13 @@ export interface Contact {
   description?: string
 }
 
+export function zeroVector(): Vector {
+  return {
+    x: 0,
+    y: 0
+  }
+}
+
 export function zeroBodyVector(): BodyVector {
   return {
     x: 0,

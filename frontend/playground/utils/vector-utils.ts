@@ -132,5 +132,12 @@ export const VectorUtils = {
       x: vector.x * scalar,
       y: vector.y * scalar
     }
+  },
+
+  tangential(angle: number): Vector {
+    return {
+      x: Math.cos(angle),
+      y: Math.sin(angle)
+    }
   }
 }

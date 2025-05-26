@@ -1,5 +1,5 @@
-import type {Acceleration, BodyPosition, Position, Velocity} from "@/playground/data/common"
-import type {BodyModel, DroneModel} from "~/playground/data/model";
+import type {Acceleration, BodyPosition, Contact, Position, Velocity} from "@/playground/data/common"
+import type {BodyModel, DroneModel, VehicleModel} from "~/playground/data/model";
 
 export interface BodyCalculations {
   model: BodyModel
@@ -26,6 +26,7 @@ export interface NearestGroundPoint {
 export interface WheelCalculations {
   sign: WheelSign
   groundState: WheelGroundState | undefined
+  groundContact: Contact | undefined
   position: Position | undefined
   velocity: Velocity | undefined
   nearestGroundPointByX: Position | undefined
@@ -40,10 +41,12 @@ export interface WheelCalculations {
   sumAcceleration: Acceleration | undefined
 }
 
-export interface VehicleCalculations {
+export interface VehicleCalculations extends BodyCalculations {
+  model: VehicleModel
   nextPosition: BodyPosition | undefined
   rightWheel: WheelCalculations
   leftWheel: WheelCalculations
+  groundContacts?: Set<Contact>
 }
 
 export interface DroneCalculations {
