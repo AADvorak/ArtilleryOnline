@@ -23,7 +23,6 @@ public class VehicleAccelerationCalculator {
     private static final List<
             ForceCalculator<VehicleSpecs, VehiclePreCalc, VehicleConfig, VehicleState, VehicleModel, VehicleCalculations>
             > forceCalculators = List.of(
-            new AirFrictionForceCalculator(),
             new EngineForceCalculator(),
             new GravityForceCalculator(),
             new GroundFrictionForceCalculator(),
@@ -42,11 +41,7 @@ public class VehicleAccelerationCalculator {
         calculateGroundContact(vehicle.getLeftWheel(), battleModel.getRoom());
         calculateGroundContacts(vehicle, battleModel.getRoom());
 
-        var acceleration = calculator.calculate(vehicle, battleModel);
-        var angleVelocity = vehicle.getModel().getState().getVelocity().getAngle();
-        acceleration.setAngle(acceleration.getAngle() - angleVelocity);
-
-        return acceleration;
+        return calculator.calculate(vehicle, battleModel);
     }
 
     private static void calculateGroundContact(WheelCalculations wheel, RoomModel roomModel) {

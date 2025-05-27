@@ -32,6 +32,8 @@ export class BodyAccelerationCalculator {
       accelerations.push(this.toAcceleration(force, calculations))
     }
 
+    this.addAirFrictionAcceleration(accelerations, calculations, battleModel.room.specs.airFrictionCoefficient)
+
     this.addColliderAcceleration(accelerations, calculations)
 
     return VectorUtils.sumOfBodyArr(accelerations)
@@ -149,5 +151,31 @@ export class BodyAccelerationCalculator {
     }
 
     accelerations.push(acceleration)
+  }
+
+  addAirFrictionAcceleration(
+      accelerations: BodyAcceleration[],
+      calculations: BodyCalculations,
+      frictionCoefficient: number
+  ): void {
+    const model = calculations.model
+    const state = model.state
+    const preCalc = model.preCalc
+    const velocity = state.velocity
+
+    const maxRadius = preCalc.maxRadius
+    const mass = preCalc.mass
+    const momentOfInertia = preCalc.momentOfInertia
+
+    const movingCoefficient = (2 * maxRadius * frictionCoefficient) / mass
+    const rotatingCoefficient = (2 * Math.PI * maxRadius * maxRadius * frictionCoefficient) / momentOfInertia
+
+    accelerations.push(
+        {
+          x: -velocity.x * Math.abs(velocity.x) * movingCoefficient,
+          y: -velocity.y * Math.abs(velocity.y) * movingCoefficient,
+          angle: -velocity.angle * Math.abs(velocity.angle) * rotatingCoefficient
+        }
+    )
   }
 }
