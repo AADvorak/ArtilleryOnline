@@ -1,7 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.calculator.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
-import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
+import com.github.aadvorak.artilleryonline.battle.common.Force;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
@@ -29,6 +29,7 @@ public class GroundReactionForceCalculator implements ForceCalculator<
         var forces = new ArrayList<BodyForce>();
         addWheelReaction(forces, calculations.getRightWheel(), groundReactionCoefficient, groundMaxDepth);
         addWheelReaction(forces, calculations.getLeftWheel(), groundReactionCoefficient, groundMaxDepth);
+        addHullReaction(forces, calculations, groundReactionCoefficient, groundMaxDepth);
         return forces;
     }
 
@@ -37,17 +38,36 @@ public class GroundReactionForceCalculator implements ForceCalculator<
         if (calculations.getGroundContact() == null) {
             return;
         }
-        var groundAngle = calculations.getGroundContact().angle();
-        var velocityNormalProjection = calculations.getVelocity()
+        var velocityNormalProjectionMagnitude = calculations.getVelocity()
                 .projectionOnto(calculations.getGroundContact().normal())
                 .magnitude();
-        if (velocityNormalProjection > 0) {
+        if (velocityNormalProjectionMagnitude > 0) {
             var depth = Math.min(calculations.getGroundContact().depth(), groundMaxDepth);
-            var forceProjections = new VectorProjections(groundAngle)
-                    .setNormal(- velocityNormalProjection * depth * groundReactionCoefficient);
-            var force = forceProjections.recoverForce();
+            var force = Force.of(calculations.getGroundContact().normal()
+                    .multiply(- velocityNormalProjectionMagnitude * depth * groundReactionCoefficient));
             forces.add(BodyForce.of(force, calculations.getGroundContact().position(),
                     calculations.getModel().getState().getPosition().getCenter(), FORCE_DESCRIPTION));
         }
+    }
+
+    private void addHullReaction(List<BodyForce> forces, VehicleCalculations calculations,
+                                  double groundReactionCoefficient, double groundMaxDepth) {
+        if (calculations.getGroundContacts() == null) {
+            return;
+        }
+        calculations.getGroundContacts().forEach(contact -> {
+            var velocityNormalProjectionMagnitude = calculations.getModel().getState()
+                    .getVelocityAt(contact.position())
+                    .projectionOnto(contact.normal())
+                    .magnitude();
+            if (velocityNormalProjectionMagnitude > 0) {
+                var depth = Math.min(contact.depth(), groundMaxDepth);
+                var force = Force.of(contact.normal()
+                        .multiply(- velocityNormalProjectionMagnitude * depth * groundReactionCoefficient));
+                forces.add(BodyForce.of(force, contact.position(),
+                        calculations.getModel().getState().getPosition().getCenter(), FORCE_DESCRIPTION));
+            }
+        });
+
     }
 }
