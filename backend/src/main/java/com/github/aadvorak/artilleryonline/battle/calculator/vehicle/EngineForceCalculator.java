@@ -51,8 +51,7 @@ public class EngineForceCalculator implements ForceCalculator<
         var depth = calculations.getGroundContact().depth();
         var groundAngle = calculations.getGroundContact().angle();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
-        var depthCoefficient = 1 - depth * 0.5 / wheelRadius;
-        var forceMagnitude = calculations.getMass() * depthCoefficient * vehicleModel.getSpecs().getAcceleration() / 2;
+        var forceMagnitude = calculations.getMass() * vehicleModel.getSpecs().getAcceleration() / 2;
         var depthAngle = depth * Math.PI / (4 * wheelRadius);
         var force = new Force();
         if (MovingDirection.RIGHT.equals(direction)) {

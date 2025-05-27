@@ -41,8 +41,7 @@ export class EngineForceCalculator implements ForceCalculator {
     const depth = calculations.groundContact.depth
     const groundAngle = calculations.groundContact.angle
     const wheelRadius = vehicleModel.specs.wheelRadius
-    const depthCoefficient = 1 - (depth * 0.5) / wheelRadius
-    const forceMagnitude = (vehicleModel.preCalc.mass * depthCoefficient * vehicleModel.specs.acceleration) / 2
+    const forceMagnitude = vehicleModel.preCalc.mass * vehicleModel.specs.acceleration / 2
     const depthAngle = (depth * Math.PI) / (4 * wheelRadius)
     const force = zeroVector()
 
