@@ -35,7 +35,7 @@ public class GroundContactUtils {
                     var depth = position.distanceTo(projection);
                     var normal = position.vectorTo(projection).normalized();
                     if (withMaxDepth) depth -= roomModel.getSpecs().getGroundMaxDepth();
-                    bottomContact = Contact.withUncheckedDepthOf(depth, normal, position, "HalfCircle bottom with ground");
+                    bottomContact = Contact.withUncheckedDepthOf(depth, normal, projection, "HalfCircle bottom with ground");
                 }
             }
 
@@ -45,10 +45,12 @@ public class GroundContactUtils {
             if (distance < halfCircle.radius() && halfCircleNormal.dotProduct(radiusVector) > 0) {
                 var depth = halfCircle.radius() - distance;
                 if (withMaxDepth) depth -= roomModel.getSpecs().getGroundMaxDepth();
+                var contactPosition = halfCircle.center().shifted(halfCircle.radius(),
+                        halfCircle.center().angleTo(position));
                 topContact = Contact.withUncheckedDepthOf(
                         depth,
                         getGroundAngle(position, groundIndexes.get(i), roomModel),
-                        position,
+                        contactPosition,
                         "HalfCircle top with ground"
                 );
             }
@@ -96,10 +98,12 @@ public class GroundContactUtils {
         if (nearestPosition != null) {
             var depth = getGroundDepth(circle, nearestPosition.getY(), minimalDistance);
             if (withMaxDepth) depth -= roomModel.getSpecs().getGroundMaxDepth();
+            var contactPosition = circle.center().shifted(circle.radius(),
+                    circle.center().angleTo(nearestPosition));
             return Contact.of(
                     depth,
                     getGroundAngle(nearestPosition, index, roomModel),
-                    nearestPosition
+                    contactPosition
             );
         }
         nearestPosition = BattleUtils.getNearestGroundPosition(circle.center().getX(), roomModel);
@@ -108,7 +112,7 @@ public class GroundContactUtils {
         return Contact.of(
                 depth,
                 0.0,
-                nearestPosition
+                circle.center().shifted(circle.radius(), -Math.PI / 2)
         );
     }
 

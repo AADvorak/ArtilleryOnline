@@ -41,7 +41,7 @@ export const GroundContactUtils = {
           bottomContact = this.createContact.withNormal(
               depth,
               normal,
-              position,
+              projection,
               "HalfCircle bottom with ground"
           )
         }
@@ -52,11 +52,13 @@ export const GroundContactUtils = {
       const radiusVector = VectorUtils.vectorFromTo(halfCircle.center, position)
 
       if (distance < halfCircle.radius && VectorUtils.dotProduct(halfCircleNormal, radiusVector) > 0) {
-        let depth = halfCircle.radius - distance
+        const depth = halfCircle.radius - distance
+        const contactPosition = BattleUtils.shiftedPosition(halfCircle.center, halfCircle.radius,
+            VectorUtils.angleFromTo(halfCircle.center, position))
         topContact = this.createContact.withAngle(
             depth,
             this.getGroundAngle(position, groundIndex, roomModel),
-            position,
+            contactPosition,
             "HalfCircle top with ground"
         )
       }
@@ -110,22 +112,24 @@ export const GroundContactUtils = {
     if (nearestPosition && minimalDistance !== null && index !== null) {
       let depth = this.getGroundDepth.halfUnderGround(circle, nearestPosition.y, minimalDistance)
       if (withMaxDepth) depth -= roomModel.specs.groundMaxDepth
-
+      const contactPosition = BattleUtils.shiftedPosition(circle.center, circle.radius,
+          VectorUtils.angleFromTo(circle.center, nearestPosition))
       return this.createContact.withAngle(
           depth,
           this.getGroundAngle(nearestPosition, index, roomModel),
-          nearestPosition
+          contactPosition
       )
     }
 
     const fallbackPosition = BattleUtils.getNearestGroundPosition(circle.center.x, roomModel)
     let depth = this.getGroundDepth.fullUnderGround(circle, fallbackPosition.y)
     if (withMaxDepth) depth -= roomModel.specs.groundMaxDepth
-
+    const contactPosition = BattleUtils.shiftedPosition(circle.center, circle.radius,
+        VectorUtils.angleFromTo(circle.center, fallbackPosition))
     return this.createContact.withAngle(
         depth,
         0,
-        fallbackPosition
+        contactPosition
     )
   },
 
