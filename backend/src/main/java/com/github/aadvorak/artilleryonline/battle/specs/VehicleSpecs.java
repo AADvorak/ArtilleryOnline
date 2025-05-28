@@ -25,6 +25,8 @@ public class VehicleSpecs implements Specs, CompactSerializable {
 
     private double acceleration;
 
+    private double wheelAngleVelocity;
+
     private double radius;
 
     private double wheelRadius;
@@ -59,6 +61,7 @@ public class VehicleSpecs implements Specs, CompactSerializable {
         stream.writeDouble(minAngle);
         stream.writeDouble(maxAngle);
         stream.writeDouble(acceleration);
+        stream.writeDouble(wheelAngleVelocity);
         stream.writeDouble(radius);
         stream.writeDouble(wheelRadius);
         stream.writeDouble(hullRadius);

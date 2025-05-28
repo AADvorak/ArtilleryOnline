@@ -108,6 +108,29 @@ public class WheelCalculations
         next.setPosition(calculatePosition(vehicle.getNextPosition()));
     }
 
+    public Velocity getVelocityAt(Position position) {
+        var angleVelocity = 0.0;
+        var movingDirection = getModel().getState().getMovingDirection();
+        var angleVelocitySpecs = getModel().getSpecs().getWheelAngleVelocity();
+        if (MovingDirection.RIGHT.equals(movingDirection)) {
+            angleVelocity = - angleVelocitySpecs;
+        }
+        if (MovingDirection.LEFT.equals(movingDirection)) {
+            angleVelocity = angleVelocitySpecs;
+        }
+        var velocityAt = new Velocity()
+                .setX(velocity.getX())
+                .setY(velocity.getY());
+        if (angleVelocity != 0.0) {
+            var angle = this.position.angleTo(position);
+            var distance = this.position.distanceTo(position);
+            return velocityAt
+                    .setX(velocityAt.getX() - angleVelocity * distance * Math.sin(angle))
+                    .setY(velocityAt.getY() + angleVelocity * distance * Math.cos(angle));
+        }
+        return velocityAt;
+    }
+
     private Position calculatePosition(BodyPosition vehiclePosition) {
         var wheelDistance = vehicle.getModel().getPreCalc().getWheelDistance();
         var wheelAngle = vehicle.getModel().getPreCalc().getWheelAngle();

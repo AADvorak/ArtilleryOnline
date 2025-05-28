@@ -57,6 +57,7 @@ export interface RoomSpecs {
 export interface VehicleSpecs {
   name: string
   acceleration: number
+  wheelAngleVelocity: number
   hitPoints: number
   missiles: number
   minAngle: number
