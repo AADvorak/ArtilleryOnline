@@ -1,7 +1,9 @@
 import type {BodyState} from "~/playground/data/state";
-import type {Position, Velocity} from "~/playground/data/common";
+import {MovingDirection, type Position, type Velocity} from "~/playground/data/common";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BattleUtils} from "~/playground/utils/battle-utils";
+import type {VehicleCalculations, WheelCalculations} from "~/playground/data/calculations";
+import type {VehicleModel} from "~/playground/data/model";
 
 export const BodyUtils = {
   getVelocityAt(bodyState: BodyState, position: Position): Velocity {
@@ -21,5 +23,42 @@ export const BodyUtils = {
       x: -bodyVelocity.angle * distance * Math.sin(angle),
       y: bodyVelocity.angle * distance * Math.cos(angle)
     }
+  },
+
+  getAllGroundContacts(calculations: VehicleCalculations) {
+    const allContacts = []
+    if (calculations.groundContacts) {
+      calculations.groundContacts.forEach(contact => allContacts.push(contact))
+    }
+    if (calculations.leftWheel.groundContact) {
+      allContacts.push(calculations.leftWheel.groundContact)
+    }
+    if (calculations.rightWheel.groundContact) {
+      allContacts.push(calculations.rightWheel.groundContact)
+    }
+    return allContacts
+  },
+
+  getWheelVelocityAt(wheelCalculations: WheelCalculations, vehicleModel: VehicleModel, position: Position): Velocity {
+    let angleVelocity = 0.0
+    const movingDirection = vehicleModel.state.movingDirection
+    var angleVelocitySpecs = vehicleModel.specs.wheelAngleVelocity
+    if (MovingDirection.RIGHT === movingDirection) {
+      angleVelocity = - angleVelocitySpecs
+    }
+    if (MovingDirection.LEFT === movingDirection) {
+      angleVelocity = angleVelocitySpecs
+    }
+    const velocityAt = {
+        x: wheelCalculations.velocity!.x,
+        y: wheelCalculations.velocity!.y
+    }
+    if (angleVelocity != 0.0) {
+      const angle = VectorUtils.angleFromTo(wheelCalculations.position!, position)
+      const distance = BattleUtils.distance(wheelCalculations.position!, position)
+      velocityAt.x -= angleVelocity * distance * Math.sin(angle)
+      velocityAt.y += angleVelocity * distance * Math.cos(angle)
+    }
+    return velocityAt
   }
 }

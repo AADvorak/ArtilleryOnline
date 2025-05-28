@@ -2,7 +2,8 @@ import type {ForceCalculator} from "~/playground/battle/calculator/force-calcula
 import type {VehicleCalculations} from "~/playground/data/calculations";
 import type {BattleModel} from "~/playground/data/model";
 import {BodyForce} from "~/playground/battle/calculator/body-force";
-import type {Contact, Position} from "~/playground/data/common";
+import type {Contact} from "~/playground/data/common";
+import {BodyUtils} from "~/playground/utils/body-utils";
 
 class GravityForceCalculator implements ForceCalculator {
   private static readonly FORCE_DESCRIPTION = 'Gravity'
@@ -11,17 +12,9 @@ class GravityForceCalculator implements ForceCalculator {
     const roomGravityAcceleration = battleModel.room.specs.gravityAcceleration
     const mass = calculations.model.preCalc.mass
     const forces: BodyForce[] = []
-    const groundContacts = new Set<Contact>(calculations.groundContacts)
-
-    if (calculations.rightWheel.groundContact) {
-      groundContacts.add(calculations.rightWheel.groundContact)
-    }
-    if (calculations.leftWheel.groundContact) {
-      groundContacts.add(calculations.leftWheel.groundContact)
-    }
 
     const comX = calculations.model.state.position.x
-    const contactsArray = Array.from(groundContacts)
+    const contactsArray = BodyUtils.getAllGroundContacts(calculations)
 
     const leftContacts = contactsArray.filter(c => c.position.x < comX)
     const rightContacts = contactsArray.filter(c => c.position.x > comX)

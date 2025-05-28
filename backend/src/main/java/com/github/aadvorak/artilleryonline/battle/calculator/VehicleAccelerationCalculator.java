@@ -23,7 +23,6 @@ public class VehicleAccelerationCalculator {
     private static final List<
             ForceCalculator<VehicleSpecs, VehiclePreCalc, VehicleConfig, VehicleState, VehicleModel, VehicleCalculations>
             > forceCalculators = List.of(
-            new EngineForceCalculator(),
             new GravityForceCalculator(),
             new GroundFrictionForceCalculator(),
             new GroundReactionForceCalculator(),

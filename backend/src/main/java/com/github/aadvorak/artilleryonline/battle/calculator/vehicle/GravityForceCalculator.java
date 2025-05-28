@@ -1,9 +1,10 @@
 package com.github.aadvorak.artilleryonline.battle.calculator.vehicle;
 
-import com.github.aadvorak.artilleryonline.battle.calculations.*;
+import com.github.aadvorak.artilleryonline.battle.calculations.BodyForce;
+import com.github.aadvorak.artilleryonline.battle.calculations.ForceCalculator;
+import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Force;
-import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
@@ -12,7 +13,6 @@ import com.github.aadvorak.artilleryonline.battle.specs.VehicleSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,13 +32,7 @@ public class GravityForceCalculator implements ForceCalculator<
         var roomGravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
         var mass = calculations.getMass();
         var forces = new ArrayList<BodyForce>();
-        var groundContacts = new HashSet<>(calculations.getGroundContacts());
-        if (calculations.getRightWheel().getGroundContact() != null) {
-            groundContacts.add(calculations.getRightWheel().getGroundContact());
-        }
-        if (calculations.getLeftWheel().getGroundContact() != null) {
-            groundContacts.add(calculations.getLeftWheel().getGroundContact());
-        }
+        var groundContacts = calculations.getAllGroundContacts();
         var comX = calculations.getPosition().getX();
         var leftContacts = groundContacts.stream()
                 .filter(contact -> contact.position().getX() < comX)

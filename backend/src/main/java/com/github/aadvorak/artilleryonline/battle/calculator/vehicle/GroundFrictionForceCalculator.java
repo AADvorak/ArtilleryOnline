@@ -26,37 +26,41 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
     @Override
     public List<BodyForce> calculate(VehicleCalculations calculations, BattleModel battleModel) {
         var groundFrictionCoefficient = battleModel.getRoom().getSpecs().getGroundFrictionCoefficient();
-        var groundMaxDepth = battleModel.getRoom().getSpecs().getGroundMaxDepth();
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
+        var contactsNumber = calculations.getAllGroundContacts().size();
         var forces = new ArrayList<BodyForce>();
-        addWheelFriction(forces, calculations.getRightWheel(), groundFrictionCoefficient, groundMaxDepth);
-        addWheelFriction(forces, calculations.getLeftWheel(), groundFrictionCoefficient, groundMaxDepth);
-        addHullFriction(forces, calculations, groundFrictionCoefficient, gravityAcceleration);
+        addWheelFriction(forces, calculations.getRightWheel(), groundFrictionCoefficient, gravityAcceleration, contactsNumber);
+        addWheelFriction(forces, calculations.getLeftWheel(), groundFrictionCoefficient, gravityAcceleration, contactsNumber);
+        addHullFriction(forces, calculations, groundFrictionCoefficient, gravityAcceleration, contactsNumber);
         return forces;
     }
 
     private void addWheelFriction(List<BodyForce> forces, WheelCalculations wheelCalculations,
-                                  double groundFrictionCoefficient, double groundMaxDepth) {
-        if (wheelCalculations.getGroundContact() == null) {
+                                  double groundFrictionCoefficient, double gravityAcceleration,
+                                  int contactsNumber) {
+        var contact = wheelCalculations.getGroundContact();
+        if (contact == null) {
             return;
         }
-        var depth = Math.min(wheelCalculations.getGroundContact().depth(), 1.0); // todo groundMaxDepth
-        var position = wheelCalculations.getGroundContact().position();
-        var velocity = wheelCalculations.getVelocity().projectionOnto(
-                Vector.tangential(wheelCalculations.getGroundContact().angle()));
+        var coefficient = groundFrictionCoefficient * gravityAcceleration
+                * wheelCalculations.getMass() * Math.cos(contact.angle()) / contactsNumber;
+        var position = contact.position();
+        var velocity = wheelCalculations.getVelocityAt(position).projectionOnto(
+                Vector.tangential(contact.angle()));
         var force = new Force()
-                .setX( - velocity.getX() * depth * groundFrictionCoefficient)
-                .setY( - velocity.getY() * depth * groundFrictionCoefficient);
-        forces.add(BodyForce.of(force, position, wheelCalculations.getModel().getState().getPosition().getCenter(),
+                .setX( - velocity.getX() * coefficient)
+                .setY( - velocity.getY() * coefficient);
+        forces.add(BodyForce.of(force, wheelCalculations.getPosition(), wheelCalculations.getModel().getState().getPosition().getCenter(),
                 FORCE_DESCRIPTION + " Wheel"));
     }
 
     private void addHullFriction(List<BodyForce> forces, VehicleCalculations calculations,
-                                 double groundFrictionCoefficient, double gravityAcceleration) {
+                                 double groundFrictionCoefficient, double gravityAcceleration,
+                                 int contactsNumber) {
         if (calculations.getGroundContacts() == null) {
             return;
         }
-        var forceMultiplier = 0.1 * groundFrictionCoefficient * gravityAcceleration * calculations.getMass();
+        var forceMultiplier = groundFrictionCoefficient * gravityAcceleration * calculations.getMass() / contactsNumber;
         calculations.getGroundContacts().forEach(contact -> {
             var tangential = Vector.tangential(contact.angle());
             var movingVelocity = calculations.getModel().getState().getVelocity().getMovingVelocity()

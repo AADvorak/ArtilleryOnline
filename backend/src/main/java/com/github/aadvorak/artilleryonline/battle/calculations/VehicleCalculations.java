@@ -112,4 +112,15 @@ public class VehicleCalculations
         rightWheel.calculateNextPosition();
         leftWheel.calculateNextPosition();
     }
+
+    public Set<Contact> getAllGroundContacts() {
+        var allGroundContacts = new HashSet<>(groundContacts);
+        if (rightWheel.getGroundContact() != null) {
+            allGroundContacts.add(rightWheel.getGroundContact());
+        }
+        if (leftWheel.getGroundContact() != null) {
+            allGroundContacts.add(leftWheel.getGroundContact());
+        }
+        return allGroundContacts;
+    }
 }
