@@ -56,8 +56,8 @@ public class GravityForceCalculator implements ForceCalculator<
             var rightContact = getFarthest(rightContacts, comX);
             var groundGravityDepth = 0.7 * battleModel.getRoom().getSpecs().getGroundMaxDepth();
             if (leftContact.depth() <= groundGravityDepth && rightContact.depth() <= groundGravityDepth) {
-                addGroundForce(forces, leftContact, calculations.getPosition(), mass, roomGravityAcceleration, groundGravityDepth);
-                addGroundForce(forces, rightContact, calculations.getPosition(), mass, roomGravityAcceleration, groundGravityDepth);
+                addGroundForce(forces, leftContact, mass, roomGravityAcceleration, groundGravityDepth);
+                addGroundForce(forces, rightContact, mass, roomGravityAcceleration, groundGravityDepth);
             }
         }
         return forces;
@@ -66,19 +66,16 @@ public class GravityForceCalculator implements ForceCalculator<
     private void addGroundForce(
             List<BodyForce> forces,
             Contact contact,
-            Position comPosition,
             double mass,
             double roomGravityAcceleration,
             double groundGravityDepth
     ) {
         var groundAccelerationModule = Math.abs(roomGravityAcceleration * Math.sin(contact.angle()))
                 * Math.sqrt(1 - contact.depth() / groundGravityDepth) * mass / 2;
-        forces.add(BodyForce.of(
+        forces.add(BodyForce.atCOM(
                 new Force()
                         .setX(-groundAccelerationModule * Math.sin(contact.angle()))
                         .setY(-groundAccelerationModule * Math.cos(contact.angle())),
-                contact.position(),
-                comPosition,
                 FORCE_DESCRIPTION
         ));
     }

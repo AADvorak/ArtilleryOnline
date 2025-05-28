@@ -37,9 +37,8 @@ class GravityForceCalculator implements ForceCalculator {
       const groundGravityDepth = 0.7 * battleModel.room.specs.groundMaxDepth
 
       if (leftContact.depth <= groundGravityDepth && rightContact.depth <= groundGravityDepth) {
-        const comPosition = calculations.model.state.position
-        this.addGroundForce(forces, leftContact, comPosition, mass, roomGravityAcceleration, groundGravityDepth)
-        this.addGroundForce(forces, rightContact, comPosition, mass, roomGravityAcceleration, groundGravityDepth)
+        this.addGroundForce(forces, leftContact, mass, roomGravityAcceleration, groundGravityDepth)
+        this.addGroundForce(forces, rightContact, mass, roomGravityAcceleration, groundGravityDepth)
       }
     }
 
@@ -49,7 +48,6 @@ class GravityForceCalculator implements ForceCalculator {
   private addGroundForce(
       forces: BodyForce[],
       contact: Contact,
-      comPosition: Position,
       mass: number,
       roomGravityAcceleration: number,
       groundGravityDepth: number
@@ -57,13 +55,11 @@ class GravityForceCalculator implements ForceCalculator {
     const groundAccelerationModule = Math.abs(roomGravityAcceleration * Math.sin(contact.angle)) *
         Math.sqrt(1 - contact.depth / groundGravityDepth) * mass / 2
 
-    forces.push(BodyForce.of(
+    forces.push(BodyForce.atCOM(
         {
           x: -groundAccelerationModule * Math.sin(contact.angle),
           y: -groundAccelerationModule * Math.cos(contact.angle)
         },
-        contact.position,
-        comPosition,
         GravityForceCalculator.FORCE_DESCRIPTION
     ))
   }
