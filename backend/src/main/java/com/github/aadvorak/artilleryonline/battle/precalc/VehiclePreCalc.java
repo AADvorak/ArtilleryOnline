@@ -15,10 +15,10 @@ public class VehiclePreCalc implements BodyPreCalc, CompactSerializable {
         wheelDistance = Math.sqrt(Math.pow(specs.getWheelRadius() + comDistance, 2) + Math.pow(specs.getHullRadius(), 2));
         wheelAngle = Math.atan((specs.getWheelRadius() + comDistance) / specs.getHullRadius());
         mass = 0.5 * Math.PI * Math.pow(specs.getRadius(), 2) + 2 * Math.PI * Math.pow(specs.getWheelRadius(), 2);
-        // todo write accurate formula
-        momentOfInertia = 2 * Math.PI * Math.pow(specs.getRadius(), 4);
-        centerOfMassShift = new Shift(comDistance, Math.PI / 2);
         maxRadius = wheelDistance + specs.getWheelRadius();
+        // todo write accurate formula
+        momentOfInertia = 2 * Math.PI * Math.pow(maxRadius, 4);
+        centerOfMassShift = new Shift(comDistance, Math.PI / 2);
     }
 
     private final double wheelDistance;
