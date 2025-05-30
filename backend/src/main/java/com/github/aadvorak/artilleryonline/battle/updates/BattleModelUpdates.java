@@ -93,6 +93,27 @@ public class BattleModelUpdates implements CompactSerializable {
         removed.addVehicleKey(vehicleKey);
     }
 
+    public void merge(BattleModelUpdates other) {
+        if (other.added != null) {
+            if (added == null) {
+                added = new BattleModelAdded();
+            }
+            added.merge(other.added);
+        }
+        if (other.removed != null) {
+            if (removed == null) {
+                removed = new BattleModelRemoved();
+            }
+            removed.merge(other.removed);
+        }
+        if (other.roomStateUpdates != null) {
+            if (roomStateUpdates == null) {
+                roomStateUpdates = new ArrayList<>();
+            }
+            roomStateUpdates.addAll(other.roomStateUpdates);
+        }
+    }
+
     @JsonIgnore
     public boolean isEmpty() {
         return added == null && removed == null && roomStateUpdates == null;

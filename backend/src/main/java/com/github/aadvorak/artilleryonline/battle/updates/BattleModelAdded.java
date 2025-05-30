@@ -52,6 +52,13 @@ public class BattleModelAdded implements CompactSerializable {
         drones.add(drone);
     }
 
+    public void merge(BattleModelAdded other) {
+        shells.addAll(other.shells);
+        explosions.addAll(other.explosions);
+        missiles.addAll(other.missiles);
+        drones.addAll(other.drones);
+    }
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeCollectionOfSerializable(shells);

@@ -50,6 +50,8 @@ public class Battle {
 
     private BattleQueues queues = new BattleQueues();
 
+    private BattleAggregated aggregated = new BattleAggregated();
+
     public void setStageAndResetTime(BattleStage battleStage) {
         this.battleStage = battleStage;
         this.stageUpdated = true;

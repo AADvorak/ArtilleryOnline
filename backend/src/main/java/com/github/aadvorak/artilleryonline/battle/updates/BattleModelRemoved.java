@@ -57,6 +57,14 @@ public class BattleModelRemoved implements CompactSerializable {
         vehicleKeys.add(vehicleKey);
     }
 
+    public void merge(BattleModelRemoved other) {
+        shellIds.addAll(other.shellIds);
+        explosionIds.addAll(other.explosionIds);
+        missileIds.addAll(other.missileIds);
+        droneIds.addAll(other.droneIds);
+        vehicleKeys.addAll(other.vehicleKeys);
+    }
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeCollection(shellIds, stream::writeInt);

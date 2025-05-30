@@ -49,6 +49,33 @@ public class BattleModelEvents implements CompactSerializable {
         bomberFlyEvents.add(bomberFly);
     }
 
+    public void merge(BattleModelEvents other) {
+        if (other.hits != null) {
+            if (hits == null) {
+                hits = new ArrayList<>();
+            }
+            hits.addAll(other.hits);
+        }
+        if (other.collides != null) {
+            if (collides == null) {
+                collides = new ArrayList<>();
+            }
+            collides.addAll(other.collides);
+        }
+        if (other.ricochets != null) {
+            if (ricochets == null) {
+                ricochets = new ArrayList<>();
+            }
+            ricochets.addAll(other.ricochets);
+        }
+        if (other.bomberFlyEvents != null) {
+            if (bomberFlyEvents == null) {
+                bomberFlyEvents = new ArrayList<>();
+            }
+            bomberFlyEvents.addAll(other.bomberFlyEvents);
+        }
+    }
+
     @JsonIgnore
     public boolean isEmpty() {
         return hits == null && collides == null && ricochets == null && bomberFlyEvents == null;
