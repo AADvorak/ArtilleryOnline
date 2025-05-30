@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.calculator.vehicle;
 import com.github.aadvorak.artilleryonline.battle.calculations.BodyForce;
 import com.github.aadvorak.artilleryonline.battle.calculations.ForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
+import com.github.aadvorak.artilleryonline.battle.common.Constants;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Force;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
@@ -48,7 +49,8 @@ public class GravityForceCalculator implements ForceCalculator<
         } else {
             var leftContact = getFarthest(leftContacts, comX);
             var rightContact = getFarthest(rightContacts, comX);
-            var groundGravityDepth = 0.7 * battleModel.getRoom().getSpecs().getGroundMaxDepth();
+            var groundGravityDepth = Constants.GRAVITY_GROUND_MAX_DEPTH_COEFFICIENT
+                    * battleModel.getRoom().getSpecs().getGroundMaxDepth();
             if (leftContact.depth() <= groundGravityDepth && rightContact.depth() <= groundGravityDepth) {
                 addGroundForce(forces, leftContact, mass, roomGravityAcceleration, groundGravityDepth);
                 addGroundForce(forces, rightContact, mass, roomGravityAcceleration, groundGravityDepth);

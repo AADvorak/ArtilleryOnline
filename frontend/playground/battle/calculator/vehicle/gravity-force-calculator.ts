@@ -4,6 +4,7 @@ import type {BattleModel} from "~/playground/data/model";
 import {BodyForce} from "~/playground/battle/calculator/body-force";
 import type {Contact} from "~/playground/data/common";
 import {BodyUtils} from "~/playground/utils/body-utils";
+import {Constants} from "~/playground/data/constants";
 
 class GravityForceCalculator implements ForceCalculator {
   private static readonly FORCE_DESCRIPTION = 'Gravity'
@@ -27,7 +28,8 @@ class GravityForceCalculator implements ForceCalculator {
     } else {
       const leftContact = this.getFarthest(leftContacts, comX)
       const rightContact = this.getFarthest(rightContacts, comX)
-      const groundGravityDepth = 0.7 * battleModel.room.specs.groundMaxDepth
+      const groundGravityDepth = Constants.GRAVITY_GROUND_MAX_DEPTH_COEFFICIENT
+          * battleModel.room.specs.groundMaxDepth
 
       if (leftContact.depth <= groundGravityDepth && rightContact.depth <= groundGravityDepth) {
         this.addGroundForce(forces, leftContact, mass, roomGravityAcceleration, groundGravityDepth)
