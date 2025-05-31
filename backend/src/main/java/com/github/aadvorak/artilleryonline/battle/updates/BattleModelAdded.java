@@ -53,10 +53,30 @@ public class BattleModelAdded implements CompactSerializable {
     }
 
     public void merge(BattleModelAdded other) {
-        shells.addAll(other.shells);
-        explosions.addAll(other.explosions);
-        missiles.addAll(other.missiles);
-        drones.addAll(other.drones);
+        if (other.shells != null) {
+            if (shells == null) {
+                shells = new ArrayList<>();
+            }
+            shells.addAll(other.shells);
+        }
+        if (other.explosions != null) {
+            if (explosions == null) {
+                explosions = new ArrayList<>();
+            }
+            explosions.addAll(other.explosions);
+        }
+        if (other.missiles != null) {
+            if (missiles == null) {
+                missiles = new ArrayList<>();
+            }
+            missiles.addAll(other.missiles);
+        }
+        if (other.drones != null) {
+            if (drones == null) {
+                drones = new ArrayList<>();
+            }
+            drones.addAll(other.drones);
+        }
     }
 
     @Override

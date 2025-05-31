@@ -58,11 +58,36 @@ public class BattleModelRemoved implements CompactSerializable {
     }
 
     public void merge(BattleModelRemoved other) {
-        shellIds.addAll(other.shellIds);
-        explosionIds.addAll(other.explosionIds);
-        missileIds.addAll(other.missileIds);
-        droneIds.addAll(other.droneIds);
-        vehicleKeys.addAll(other.vehicleKeys);
+        if (other.shellIds != null) {
+            if (shellIds == null) {
+                shellIds = new HashSet<>();
+            }
+            shellIds.addAll(other.shellIds);
+        }
+        if (other.explosionIds != null) {
+            if (explosionIds == null) {
+                explosionIds = new HashSet<>();
+            }
+            explosionIds.addAll(other.explosionIds);
+        }
+        if (other.missileIds != null) {
+            if (missileIds == null) {
+                missileIds = new HashSet<>();
+            }
+            missileIds.addAll(other.missileIds);
+        }
+        if (other.droneIds != null) {
+            if (droneIds == null) {
+                droneIds = new HashSet<>();
+            }
+            droneIds.addAll(other.droneIds);
+        }
+        if (other.vehicleKeys != null) {
+            if (vehicleKeys == null) {
+                vehicleKeys = new HashSet<>();
+            }
+            vehicleKeys.addAll(other.vehicleKeys);
+        }
     }
 
     @Override
