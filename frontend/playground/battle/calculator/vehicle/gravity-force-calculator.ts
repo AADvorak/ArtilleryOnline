@@ -6,7 +6,7 @@ import type {Contact} from "~/playground/data/common";
 import {BodyUtils} from "~/playground/utils/body-utils";
 import {Constants} from "~/playground/data/constants";
 
-class GravityForceCalculator implements ForceCalculator {
+export class GravityForceCalculator implements ForceCalculator<VehicleCalculations> {
   private static readonly FORCE_DESCRIPTION = 'Gravity'
 
   calculate(calculations: VehicleCalculations, battleModel: BattleModel): BodyForce[] {

@@ -5,7 +5,7 @@ import {BodyForce} from "~/playground/battle/calculator/body-force";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BodyUtils} from "~/playground/utils/body-utils";
 
-export class GroundFrictionForceCalculator implements ForceCalculator {
+export class GroundFrictionForceCalculator implements ForceCalculator<VehicleCalculations> {
   private static readonly FORCE_DESCRIPTION = 'Ground Friction'
 
   calculate(calculations: VehicleCalculations, battleModel: BattleModel): BodyForce[] {

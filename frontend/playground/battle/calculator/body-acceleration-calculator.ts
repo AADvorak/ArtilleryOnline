@@ -5,20 +5,20 @@ import {type BodyAcceleration, cloneVector, MovingDirection, zeroBodyVector} fro
 import {BodyForce} from "~/playground/battle/calculator/body-force";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 
-export class BodyAccelerationCalculator {
+export class BodyAccelerationCalculator<C extends BodyCalculations> {
   private static readonly COLLIDER_PUSHING = 5.0
   private static readonly COLLIDER_ROTATING = 2.0
   private static readonly FORCES_TO_EXTRACT_MOVING_FROM_ROTATING = [
     // todo Jet
   ]
 
-  private forceCalculators: ForceCalculator[]
+  private forceCalculators: ForceCalculator<C>[]
 
-  constructor(forceCalculators: ForceCalculator[]) {
+  constructor(forceCalculators: ForceCalculator<C>[]) {
     this.forceCalculators = forceCalculators
   }
 
-  calculate(calculations: BodyCalculations, battleModel: BattleModel): BodyAcceleration {
+  calculate(calculations: C, battleModel: BattleModel): BodyAcceleration {
     const forces: BodyForce[] = []
     const accelerations: BodyAcceleration[] = []
 

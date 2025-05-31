@@ -4,7 +4,7 @@ import type {BattleModel, VehicleModel} from "~/playground/data/model";
 import {BodyForce} from "~/playground/battle/calculator/body-force";
 import {JetType, MovingDirection, zeroVector} from "~/playground/data/common";
 
-export class EngineForceCalculator implements ForceCalculator {
+export class EngineForceCalculator implements ForceCalculator<VehicleCalculations> {
   private static readonly FORCE_DESCRIPTION = 'Engine'
 
   calculate(calculations: VehicleCalculations, battleModel: BattleModel): BodyForce[] {

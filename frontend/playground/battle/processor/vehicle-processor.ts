@@ -1,12 +1,12 @@
 import type { BattleModel, VehicleModel } from '@/playground/data/model'
-import { MovingDirection } from '@/playground/data/common'
+import {MovingDirection, type Position} from '@/playground/data/common'
 import { VehicleAccelerationCalculator } from '@/playground/battle/calculator/vehicle-acceleration-calculator'
 import { type VehicleCalculations, type WheelCalculations, WheelSign } from '@/playground/data/calculations'
 import {VehicleUtils} from "~/playground/utils/vehicle-utils";
 
 export const VehicleProcessor = {
   processStep(vehicleModel: VehicleModel, battleModel: BattleModel, timeStepSecs: number) {
-    const calculations = this.initVehicleCalculations()
+    const calculations = this.initVehicleCalculations(vehicleModel)
     this.recalculateVelocity(calculations, vehicleModel, battleModel, timeStepSecs)
     this.recalculatePositionAndAngle(vehicleModel, timeStepSecs)
     this.recalculateGunAngle(vehicleModel, timeStepSecs)
@@ -20,30 +20,21 @@ export const VehicleProcessor = {
     }
   },
 
-  initVehicleCalculations(): VehicleCalculations {
+  initVehicleCalculations(model: VehicleModel): VehicleCalculations {
     return {
+      model,
       nextPosition: undefined,
-      rightWheel: this.initWheelCalculations(WheelSign.RIGHT),
-      leftWheel: this.initWheelCalculations(WheelSign.LEFT)
+      rightWheel: this.initWheelCalculations(WheelSign.RIGHT, VehicleUtils.getRightWheelPosition(model)),
+      leftWheel: this.initWheelCalculations(WheelSign.LEFT, VehicleUtils.getLeftWheelPosition(model))
     }
   },
 
-  initWheelCalculations(sign: WheelSign): WheelCalculations {
+  initWheelCalculations(sign: WheelSign, position: Position): WheelCalculations {
     return {
-      groundState: undefined,
-      groundDepth: undefined,
-      groundAngle: undefined,
-      nearestGroundPoint: undefined,
-      nearestGroundPointByX: undefined,
-      position: undefined,
-      sumAcceleration: undefined,
+      position,
       velocity: undefined,
+      groundContact: null,
       sign,
-      gravityAcceleration: { x: 0, y: 0 },
-      engineAcceleration: { x: 0, y: 0 },
-      groundReactionAcceleration: { x: 0, y: 0 },
-      groundFrictionAcceleration: { x: 0, y: 0 },
-      jetAcceleration: { x: 0, y: 0 }
     }
   },
 
@@ -55,8 +46,7 @@ export const VehicleProcessor = {
   ) {
     const acceleration = VehicleAccelerationCalculator.getVehicleAcceleration(
       calculations,
-      vehicleModel,
-      battleModel.room
+      battleModel
     )
     const velocity = vehicleModel.state.velocity
     velocity.x += acceleration.x * timeStepSecs
@@ -70,12 +60,6 @@ export const VehicleProcessor = {
     position.x += velocity.x * timeStepSecs
     position.y += velocity.y * timeStepSecs
     position.angle += velocity.angle * timeStepSecs
-    if (position.angle > Math.PI / 2) {
-      position.angle = Math.PI / 2
-    }
-    if (position.angle < - Math.PI / 2) {
-      position.angle = - Math.PI / 2
-    }
   },
 
   recalculateGunAngle(vehicleModel: VehicleModel, timeStepSecs: number) {

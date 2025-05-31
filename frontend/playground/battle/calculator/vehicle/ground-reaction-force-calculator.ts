@@ -6,7 +6,7 @@ import {VectorUtils} from "~/playground/utils/vector-utils";
 import type {Position} from "~/playground/data/common";
 import {BodyUtils} from "~/playground/utils/body-utils";
 
-export class GroundReactionForceCalculator implements ForceCalculator {
+export class GroundReactionForceCalculator implements ForceCalculator<VehicleCalculations> {
   private static readonly FORCE_DESCRIPTION = 'Ground reaction'
 
   calculate(calculations: VehicleCalculations, battleModel: BattleModel): BodyForce[] {

@@ -1,123 +1,50 @@
 import type {BodyAcceleration} from '@/playground/data/common'
-import type {RoomModel, VehicleModel} from '@/playground/data/model'
+import type {BattleModel, RoomModel} from '@/playground/data/model'
 import type {VehicleCalculations, WheelCalculations} from '@/playground/data/calculations'
 import {VehicleUtils} from '@/playground/utils/vehicle-utils'
-import {VectorUtils} from '@/playground/utils/vector-utils'
-import {GroundPositionCalculator} from '@/playground/battle/calculator/wheel/ground-position-calculator'
-import {GroundStateCalculator} from '@/playground/battle/calculator/wheel/ground-state-calculator'
-import {EngineAccelerationCalculator} from '@/playground/battle/calculator/wheel/engine-acceleration-calculator'
-import {
-  GroundFrictionAccelerationCalculator
-} from '@/playground/battle/calculator/wheel/ground-friction-acceleration-calculator'
-import {
-  GroundReactionAccelerationCalculator
-} from '@/playground/battle/calculator/wheel/ground-reaction-acceleration-calculator'
-import {GravityAccelerationCalculator} from '@/playground/battle/calculator/wheel/gravity-acceleration-calculator'
-import {JetAccelerationCalculator} from "~/playground/battle/calculator/wheel/jet-acceleration-calculator";
+import {GroundContactUtils} from "~/playground/utils/ground-contact-utils";
+import {Circle, HalfCircle} from "~/playground/data/geometry";
+import {BodyAccelerationCalculator} from "~/playground/battle/calculator/body-acceleration-calculator";
+import {GroundFrictionForceCalculator} from "~/playground/battle/calculator/vehicle/ground-friction-force-calculator";
+import {GroundReactionForceCalculator} from "~/playground/battle/calculator/vehicle/ground-reaction-force-calculator";
+import {GravityForceCalculator} from "~/playground/battle/calculator/vehicle/gravity-force-calculator";
 
 export const VehicleAccelerationCalculator = {
-  getVehicleAcceleration(
-      calculations: VehicleCalculations,
-      vehicleModel: VehicleModel,
-      roomModel: RoomModel
-  ): BodyAcceleration {
-    VehicleUtils.calculateWheelVelocity(vehicleModel, calculations.rightWheel)
-    VehicleUtils.calculateWheelVelocity(vehicleModel, calculations.leftWheel)
+  calculator: new BodyAccelerationCalculator<VehicleCalculations>(
+      [
+        new GravityForceCalculator(),
+        new GroundFrictionForceCalculator(),
+        new GroundReactionForceCalculator(),
+      ]
+  ),
 
-    calculations.rightWheel.position = VehicleUtils.getRightWheelPosition(vehicleModel)
-    calculations.leftWheel.position = VehicleUtils.getLeftWheelPosition(vehicleModel)
+  getVehicleAcceleration(vehicle: VehicleCalculations, battleModel: BattleModel): BodyAcceleration {
+    VehicleUtils.calculateWheelVelocity(vehicle.model, vehicle.rightWheel)
+    VehicleUtils.calculateWheelVelocity(vehicle.model, vehicle.leftWheel)
 
-    this.calculateWheelAcceleration(calculations.rightWheel, vehicleModel, roomModel)
-    this.calculateWheelAcceleration(calculations.leftWheel, vehicleModel, roomModel)
+    const wheelRadius = vehicle.model.specs.wheelRadius
+    this.calculateGroundContact(vehicle.rightWheel, wheelRadius, battleModel.room)
+    this.calculateGroundContact(vehicle.leftWheel, wheelRadius, battleModel.room)
+    this.calculateGroundContacts(vehicle, battleModel.room)
 
-    this.calculateWheelSumAcceleration(calculations.rightWheel)
-    this.calculateWheelSumAcceleration(calculations.leftWheel)
-
-    const rotatingAcceleration = this.getVehicleRotatingAcceleration(calculations, vehicleModel.state.position.angle)
-    const wheelsMovingAcceleration = {
-      x:
-          (calculations.rightWheel.sumAcceleration!.x + calculations.leftWheel.sumAcceleration!.x) / 2,
-      y:
-          (calculations.rightWheel.sumAcceleration!.y + calculations.leftWheel.sumAcceleration!.y) / 2
-    }
-
-    const vehicleVelocity = vehicleModel.state.velocity
-    const frictionCoefficient = roomModel.specs.airFrictionCoefficient
-    const frictionAcceleration = {
-      x: -vehicleVelocity.x * Math.abs(vehicleVelocity.x) * frictionCoefficient,
-      y: -vehicleVelocity.y * Math.abs(vehicleVelocity.y) * frictionCoefficient
-    }
-
-    const movingAcceleration = VectorUtils.sumOf(wheelsMovingAcceleration, frictionAcceleration)
-
-    return {
-      x: movingAcceleration.x,
-      y: movingAcceleration.y,
-      angle: rotatingAcceleration / vehicleModel.specs.radius - vehicleVelocity.angle
-    }
+    return this.calculator.calculate(vehicle, battleModel)
   },
 
-  calculateWheelSumAcceleration(wheelCalculations: WheelCalculations): void {
-    wheelCalculations.sumAcceleration = VectorUtils.sumOf(
-        wheelCalculations.gravityAcceleration,
-        wheelCalculations.engineAcceleration,
-        wheelCalculations.groundFrictionAcceleration,
-        wheelCalculations.groundReactionAcceleration,
-        wheelCalculations.jetAcceleration
+  calculateGroundContact(wheel: WheelCalculations, wheelRadius: number, roomModel: RoomModel): void {
+    wheel.groundContact = GroundContactUtils.getCircleGroundContact(
+        new Circle(wheel.position!, wheelRadius),
+        roomModel,
+        false
     )
   },
 
-  getVehicleRotatingAcceleration(calculations: VehicleCalculations, angle: number): number {
-    const rightWheelRotatingAcceleration =
-        calculations.rightWheel.sumAcceleration!.x * Math.sin(angle) +
-        calculations.rightWheel.sumAcceleration!.y * Math.cos(angle)
-    const leftWheelRotatingAcceleration =
-        calculations.leftWheel.sumAcceleration!.x * Math.sin(angle) +
-        calculations.leftWheel.sumAcceleration!.y * Math.cos(angle)
-    return (rightWheelRotatingAcceleration - leftWheelRotatingAcceleration) / 2
-        + this.getReturnOnWheelsRotatingAcceleration(angle)
-  },
+  calculateGroundContacts(vehicle: VehicleCalculations, roomModel: RoomModel): void {
+    const position = VehicleUtils.getGeometryPosition(vehicle.model)
+    const angle = vehicle.model.state.position.angle
 
-  getReturnOnWheelsRotatingAcceleration(angle: number) {
-    if (angle >= Math.PI / 2 - 0.1) {
-      return -2.0;
-    }
-    if (angle <= -Math.PI / 2 + 0.1) {
-      return 2.0;
-    }
-    return 0.0;
-  },
-
-  calculateWheelAcceleration(
-      wheelCalculations: WheelCalculations,
-      vehicleModel: VehicleModel,
-      roomModel: RoomModel
-  ): void {
-    const roomGravityAcceleration = roomModel.specs.gravityAcceleration
-    const groundReactionCoefficient = roomModel.specs.groundReactionCoefficient
-    const groundFrictionCoefficient = roomModel.specs.groundFrictionCoefficient
-    const groundGravityDepth = 0.7 * roomModel.specs.groundMaxDepth
-    const wheelRadius = vehicleModel.specs.wheelRadius
-
-    GroundPositionCalculator.calculate(wheelCalculations, wheelRadius, roomModel)
-    GroundStateCalculator.calculate(wheelCalculations)
-
-    EngineAccelerationCalculator.calculate(wheelCalculations, vehicleModel)
-    JetAccelerationCalculator.calculate(wheelCalculations, vehicleModel)
-    GroundFrictionAccelerationCalculator.calculate(
-        wheelCalculations,
-        vehicleModel,
-        groundFrictionCoefficient
-    )
-    GroundReactionAccelerationCalculator.calculate(
-        wheelCalculations,
-        vehicleModel,
-        groundReactionCoefficient
-    )
-    GravityAccelerationCalculator.calculate(
-        wheelCalculations,
-        roomGravityAcceleration,
-        groundGravityDepth
+    vehicle.groundContacts = GroundContactUtils.getHalfCircleGroundContacts(
+        new HalfCircle(position, vehicle.model.specs.radius, angle),
+        roomModel
     )
   }
 }
