@@ -15,16 +15,18 @@ public class BattleAggregatedSender {
     public void start(BattleAggregated aggregated) {
         new Thread(() -> {
             while (true) {
+                var sent = false;
                 synchronized (aggregated) {
                     if (aggregated.isDisabled()) {
                         break;
                     }
                     if (aggregated.getUpdate() != null) {
+                        sent = true;
                         sendBattleUpdate(aggregated.getUpdate());
                         aggregated.setUpdate(null);
                     }
                 }
-                sleep();
+                sleep(sent ? 100 : 10);
             }
         }).start();
     }
@@ -34,9 +36,9 @@ public class BattleAggregatedSender {
                 + battleUpdateResponse.getId() + "/updates", battleUpdateResponse.serialize());
     }
 
-    private void sleep() {
+    private void sleep(long millis) {
         try {
-            Thread.sleep(100);
+            Thread.sleep(millis);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
