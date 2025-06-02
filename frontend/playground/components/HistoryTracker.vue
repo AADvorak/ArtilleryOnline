@@ -18,7 +18,7 @@ const active = ref<boolean>(false)
 watch(
   () => battleStore.battle,
   (value) => {
-    if (active.value) {
+    if (active.value && value) {
       appendToCsv(value)
     }
   }
@@ -31,7 +31,7 @@ function appendToCsv(battle: Battle) {
     appendNumbersToRow([
       state.position.x,
       state.position.y,
-      state.angle,
+      state.position.angle,
       state.velocity.x,
       state.velocity.y,
       state.velocity.angle
@@ -46,7 +46,7 @@ function appendNumbersToRow(numbers: number[]) {
 
 function startTracking() {
   csv.value = 'time'
-  Object.values(battleStore.battle.model.vehicles).forEach((vehicle) => {
+  Object.values(battleStore.battle!.model.vehicles).forEach((vehicle) => {
     csv.value += `,${vehicle.id}_position_x,${vehicle.id}_position_y,${vehicle.id}_angle`
     csv.value += `,${vehicle.id}_velocity_x,${vehicle.id}_velocity_y,${vehicle.id}_velocity_angle`
   })
