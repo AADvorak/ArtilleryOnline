@@ -26,7 +26,7 @@ public class BattleAggregatedSender {
                         aggregated.setUpdate(null);
                     }
                 }
-                sleep(sent ? 100 : 10);
+                sleep(sent ? 20 : 10);
             }
         }).start();
     }
