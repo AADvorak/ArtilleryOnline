@@ -23,10 +23,10 @@ public class VehicleCollisionPreprocessor implements CollisionPreprocessor {
         if (second instanceof VehicleCalculations || second instanceof WheelCalculations) {
             ((VehicleModel) second.getModel()).setUpdated(true);
         }
-        if (first instanceof VehicleCalculations firstVehicle && second instanceof VehicleCalculations secondVehicle) {
-            calculateAndApplyDamage(collision, firstVehicle.getModel(), secondVehicle.getModel(), battle.getModel());
-        }
-        return true;
+//        if (first instanceof VehicleCalculations firstVehicle && second instanceof VehicleCalculations secondVehicle) {
+//            calculateAndApplyDamage(collision, firstVehicle.getModel(), secondVehicle.getModel(), battle.getModel());
+//        }
+        return null;
     }
 
     private void calculateAndApplyDamage(Collision collision, VehicleModel firstModel,
