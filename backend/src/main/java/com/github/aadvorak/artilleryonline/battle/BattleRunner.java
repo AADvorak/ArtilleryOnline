@@ -177,7 +177,7 @@ public class BattleRunner {
 
     private boolean aggregateUpdateIfExist(Battle battle) {
         var sendStage = battle.isStageUpdated();
-        var sendState = existsUpdatedModel(battle.getModel());
+        var sendState = existsUpdatedModel(battle.getModel()) || !applicationSettings.isClientProcessing();
         var sendUpdates = !battle.getModel().getUpdates().isEmpty();
         var sendEvents = !battle.getModel().getEvents().isEmpty();
         if (sendStage || sendState || sendUpdates || sendEvents) {
