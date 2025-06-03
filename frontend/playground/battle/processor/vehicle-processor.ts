@@ -3,6 +3,7 @@ import {MovingDirection, type Position} from '@/playground/data/common'
 import { VehicleAccelerationCalculator } from '@/playground/battle/calculator/vehicle-acceleration-calculator'
 import { type VehicleCalculations, type WheelCalculations, WheelSign } from '@/playground/data/calculations'
 import {VehicleUtils} from "~/playground/utils/vehicle-utils";
+import {Constants} from "~/playground/data/constants";
 
 export const VehicleProcessor = {
   processStep(vehicleModel: VehicleModel, battleModel: BattleModel, timeStepSecs: number) {
@@ -49,9 +50,19 @@ export const VehicleProcessor = {
       battleModel
     )
     const velocity = vehicleModel.state.velocity
+    const maxRadius = vehicleModel.preCalc.maxRadius
     velocity.x += acceleration.x * timeStepSecs
     velocity.y += acceleration.y * timeStepSecs
     velocity.angle += acceleration.angle * timeStepSecs
+    if (Math.abs(velocity.x) < Constants.MIN_VELOCITY) {
+      velocity.x = 0.0
+    }
+    if (Math.abs(velocity.y) < Constants.MIN_VELOCITY) {
+      velocity.y = 0.0
+    }
+    if (Math.abs(velocity.angle * maxRadius) < Constants.MIN_VELOCITY) {
+      velocity.angle = 0.0
+    }
   },
 
   recalculatePositionAndAngle(vehicleModel: VehicleModel, timeStepSecs: number) {
