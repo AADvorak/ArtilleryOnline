@@ -11,7 +11,7 @@ public class VehicleReturnOnGroundProcessor {
             if (vehicle.getModel().getTurnedOverTime() == null) {
                 vehicle.getModel().setTurnedOverTime(currentTime);
             } else if (currentTime - vehicle.getModel().getTurnedOverTime()
-                    >= vehicle.getModel().getSpecs().getTrackRepairTime() * 1000 && vehicle.getCollisions().isEmpty()) {
+                    >= vehicle.getModel().getSpecs().getTrackRepairTime() * 1000) {
                 var position = vehicle.getModel().getState().getPosition();
                 var minX = battle.getModel().getRoom().getSpecs().getLeftBottom().getX();
                 var maxX = battle.getModel().getRoom().getSpecs().getRightTop().getX();
