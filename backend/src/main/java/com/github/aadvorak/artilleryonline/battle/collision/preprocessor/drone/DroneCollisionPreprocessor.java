@@ -16,12 +16,12 @@ import java.util.Optional;
 public class DroneCollisionPreprocessor implements CollisionPreprocessor {
 
     @Override
-    public boolean process(Collision collision, BattleCalculations battle) {
+    public Boolean process(Collision collision, BattleCalculations battle) {
         var first = collision.getPair().first();
         if (first instanceof DroneCalculations drone) {
             return process(drone, collision, battle);
         }
-        return true;
+        return null;
     }
 
     // todo refactor

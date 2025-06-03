@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.collision.preprocessor.vehicl
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.collision.preprocessor.CollisionPreprocessor;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
@@ -13,14 +14,14 @@ import org.springframework.stereotype.Component;
 public class VehicleCollisionPreprocessor implements CollisionPreprocessor {
 
     @Override
-    public boolean process(Collision collision, BattleCalculations battle) {
+    public Boolean process(Collision collision, BattleCalculations battle) {
         var first = collision.getPair().first();
         var second = collision.getPair().second();
-        if (first instanceof VehicleCalculations firstVehicle) {
-            firstVehicle.getModel().setUpdated(true);
+        if (first instanceof VehicleCalculations || first instanceof WheelCalculations) {
+            ((VehicleModel) first.getModel()).setUpdated(true);
         }
-        if (second instanceof VehicleCalculations secondVehicle) {
-            secondVehicle.getModel().setUpdated(true);
+        if (second instanceof VehicleCalculations || second instanceof WheelCalculations) {
+            ((VehicleModel) second.getModel()).setUpdated(true);
         }
         if (first instanceof VehicleCalculations firstVehicle && second instanceof VehicleCalculations secondVehicle) {
             calculateAndApplyDamage(collision, firstVehicle.getModel(), secondVehicle.getModel(), battle.getModel());

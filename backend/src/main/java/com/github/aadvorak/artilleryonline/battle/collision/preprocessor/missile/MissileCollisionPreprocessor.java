@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component;
 public class MissileCollisionPreprocessor implements CollisionPreprocessor {
 
     @Override
-    public boolean process(Collision collision, BattleCalculations battle) {
+    public Boolean process(Collision collision, BattleCalculations battle) {
         var first = collision.getPair().first();
         if (first instanceof MissileCalculations missile) {
             return process(missile, collision, battle);
         }
-        return true;
+        return null;
     }
 
     private boolean process(MissileCalculations missile, Collision collision, BattleCalculations battle) {

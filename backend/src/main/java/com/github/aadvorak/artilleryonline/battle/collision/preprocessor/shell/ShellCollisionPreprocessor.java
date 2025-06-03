@@ -15,12 +15,12 @@ import org.springframework.stereotype.Component;
 public class ShellCollisionPreprocessor implements CollisionPreprocessor {
 
     @Override
-    public boolean process(Collision collision, BattleCalculations battle) {
+    public Boolean process(Collision collision, BattleCalculations battle) {
         var first = collision.getPair().first();
         if (first instanceof ShellCalculations shell) {
             return process(shell, collision, battle);
         }
-        return true;
+        return null;
     }
 
     private boolean process(ShellCalculations shell, Collision collision, BattleCalculations battle) {

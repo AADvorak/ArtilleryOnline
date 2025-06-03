@@ -44,7 +44,10 @@ public class CollisionsProcessor {
             if (collision != null) {
                 var shouldResolve = true;
                 for (var preprocessor : preprocessors) {
-                    shouldResolve = preprocessor.process(collision, battle);
+                    var result = preprocessor.process(collision, battle);
+                    if (result != null) {
+                        shouldResolve = result;
+                    }
                 }
                 if (shouldResolve) {
                     resolver.resolve(collision, battle.getModel());

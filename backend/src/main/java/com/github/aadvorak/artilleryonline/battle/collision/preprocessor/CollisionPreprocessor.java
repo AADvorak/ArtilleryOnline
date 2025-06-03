@@ -7,5 +7,5 @@ public interface CollisionPreprocessor {
     /**
      * @return collision should be resolved or not
      */
-    boolean process(Collision collision, BattleCalculations battle);
+    Boolean process(Collision collision, BattleCalculations battle);
 }
