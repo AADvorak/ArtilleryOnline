@@ -51,11 +51,11 @@ public class CollisionsProcessor {
                 }
                 if (shouldResolve) {
                     resolver.resolve(collision, battle.getModel());
-                    // todo check this logic
-                    object.setHasCollisions(true);
-                    if (collision.getPair().second() != null) {
-                        collision.getPair().second().setHasCollisions(true);
-                    }
+                }
+                // todo check this logic
+                object.setHasCollisions(true);
+                if (collision.getPair().second() != null) {
+                    collision.getPair().second().setHasCollisions(true);
                 }
             }
         });
