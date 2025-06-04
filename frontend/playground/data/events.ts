@@ -23,9 +23,14 @@ export interface BomberFlyEvent {
   movingDirection: MovingDirection
 }
 
+export interface RepairEvent {
+  vehicleId: number
+}
+
 export interface BattleModelEvents {
   hits?: ShellHitEvent[]
   collides?: VehicleCollideEvent[]
   ricochets?: RicochetEvent[]
   bomberFlyEvents?: BomberFlyEvent[]
+  repairs?: RepairEvent[]
 }

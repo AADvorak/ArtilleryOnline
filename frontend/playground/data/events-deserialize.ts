@@ -1,5 +1,7 @@
 import type {
-  BattleModelEvents, BomberFlyEvent,
+  BattleModelEvents,
+  BomberFlyEvent,
+  RepairEvent,
   RicochetEvent,
   ShellHitEvent,
   ShellHitEventObject,
@@ -59,15 +61,24 @@ export function deserializeBomberFlyEvent(input: DeserializerInput): BomberFlyEv
   }
 }
 
+export function deserializeRepairEvent(input: DeserializerInput): RepairEvent {
+  const vehicleId = DeserializerBase.readInt(input)
+  return {
+    vehicleId
+  }
+}
+
 export function deserializeBattleModelEvents(input: DeserializerInput): BattleModelEvents {
   const hits = DeserializerBase.readArray(input, deserializeShellHitEvent)
   const collides = DeserializerBase.readArray(input, deserializeVehicleCollideEvent)
   const ricochets = DeserializerBase.readArray(input, deserializeRicochetEvent)
   const bomberFlyEvents = DeserializerBase.readArray(input, deserializeBomberFlyEvent)
+  const repairs = DeserializerBase.readArray(input, deserializeRepairEvent)
   return {
     hits,
     collides,
     ricochets,
-    bomberFlyEvents
+    bomberFlyEvents,
+    repairs
   }
 }

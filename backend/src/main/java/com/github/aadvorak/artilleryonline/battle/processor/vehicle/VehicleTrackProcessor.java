@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
+import com.github.aadvorak.artilleryonline.battle.events.RepairEvent;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 
@@ -13,6 +14,7 @@ public class VehicleTrackProcessor {
                 trackState.setBroken(false);
                 trackState.setRepairRemainTime(0.0);
                 vehicleModel.setUpdated(true);
+                battleModel.getEvents().addRepair(new RepairEvent().setVehicleId(vehicleModel.getId()));
             }
         }
     }

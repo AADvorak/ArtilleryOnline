@@ -21,6 +21,8 @@ public class BattleModelEvents implements CompactSerializable {
 
     private List<BomberFlyEvent> bomberFlyEvents;
 
+    private List<RepairEvent> repairs;
+
     public void addHit(ShellHitEvent hit) {
         if (hits == null) {
             hits = new ArrayList<>();
@@ -49,6 +51,13 @@ public class BattleModelEvents implements CompactSerializable {
         bomberFlyEvents.add(bomberFly);
     }
 
+    public void addRepair(RepairEvent repairEvent) {
+        if (repairs == null) {
+            repairs = new ArrayList<>();
+        }
+        repairs.add(repairEvent);
+    }
+
     public void merge(BattleModelEvents other) {
         if (other.hits != null) {
             if (hits == null) {
@@ -74,11 +83,18 @@ public class BattleModelEvents implements CompactSerializable {
             }
             bomberFlyEvents.addAll(other.bomberFlyEvents);
         }
+        if (other.repairs != null) {
+            if (repairs == null) {
+                repairs = new ArrayList<>();
+            }
+            repairs.addAll(other.repairs);
+        }
     }
 
     @JsonIgnore
     public boolean isEmpty() {
-        return hits == null && collides == null && ricochets == null && bomberFlyEvents == null;
+        return hits == null && collides == null && ricochets == null
+                && bomberFlyEvents == null && repairs == null;
     }
 
     @Override
@@ -87,5 +103,6 @@ public class BattleModelEvents implements CompactSerializable {
         stream.writeCollectionOfSerializable(collides);
         stream.writeCollectionOfSerializable(ricochets);
         stream.writeCollectionOfSerializable(bomberFlyEvents);
+        stream.writeCollectionOfSerializable(repairs);
     }
 }

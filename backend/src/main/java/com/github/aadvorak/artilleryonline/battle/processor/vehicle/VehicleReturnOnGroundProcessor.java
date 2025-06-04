@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
+import com.github.aadvorak.artilleryonline.battle.events.RepairEvent;
 
 public class VehicleReturnOnGroundProcessor {
 
@@ -28,6 +29,7 @@ public class VehicleReturnOnGroundProcessor {
                         vehicle.getModel().getState().getPosition().getAngle()
                         + vehicle.getModel().getState().getGunState().getAngle());
                 vehicle.getModel().setUpdated(true);
+                battle.getModel().getEvents().addRepair(new RepairEvent().setVehicleId(vehicle.getId()));
             }
         } else {
             vehicle.getModel().setTurnedOverTime(null);
