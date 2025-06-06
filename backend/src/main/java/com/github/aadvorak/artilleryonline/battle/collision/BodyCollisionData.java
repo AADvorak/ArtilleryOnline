@@ -66,7 +66,7 @@ public class BodyCollisionData {
         if (distanceToAxis > maxRadius) {
             distanceCoefficient = 1.0;
         } else {
-            distanceCoefficient = Math.sqrt(distanceToAxis / maxRadius);
+            distanceCoefficient = Math.pow(distanceToAxis / maxRadius, 2);
         }
         return Math.abs(vectorProduct) * distanceCoefficient;
     }
