@@ -15,7 +15,7 @@ public enum MissileSpecsPreset {
             .setAnglePrecision(Math.PI / 8)
             .setDamage(6.0)
             .setRadius(0.6)
-            .setMass(0.007)
+            .setMass(0.07)
             .setLength(0.5)
             .setCaliber(0.05)
     );
