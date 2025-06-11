@@ -57,7 +57,7 @@ public class Collision {
                 var secondData = bodyCollisionDataPair.second();
                 var firstMass = firstData != null ? firstData.getNormalData().getResultMass() : pair.first().getMass();
                 var secondMass = secondData != null ? secondData.getNormalData().getResultMass() : pair.second().getMass();
-                impact = firstMass * secondMass * closingVelocity * (1 + RESTITUTION)
+                impact = firstMass * secondMass * closingVelocity * (1 + restitution())
                         / (firstMass + secondMass);
             }
         }
@@ -140,6 +140,16 @@ public class Collision {
             return velocitiesProjections.second().getNormal();
         }
         return 0;
+    }
+
+    private double restitution() {
+        if (pair.first() instanceof ShellCalculations shell) {
+            if (ShellType.SGN.equals(shell.getModel().getSpecs().getType())
+                    && (pair.second() instanceof WheelCalculations || pair.second() instanceof VehicleCalculations)) {
+                return -0.7;
+            }
+        }
+        return RESTITUTION;
     }
 
     private static Collision withUnmovable(
