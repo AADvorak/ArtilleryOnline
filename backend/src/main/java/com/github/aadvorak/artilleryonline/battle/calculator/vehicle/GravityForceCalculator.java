@@ -49,12 +49,8 @@ public class GravityForceCalculator implements ForceCalculator<
         } else {
             var leftContact = getFarthest(leftContacts, comX);
             var rightContact = getFarthest(rightContacts, comX);
-            var groundGravityDepth = Constants.GRAVITY_GROUND_MAX_DEPTH_COEFFICIENT
-                    * battleModel.getRoom().getSpecs().getGroundMaxDepth();
-            if (leftContact.depth() <= groundGravityDepth && rightContact.depth() <= groundGravityDepth) {
-                addGroundForce(forces, leftContact, mass, roomGravityAcceleration, groundGravityDepth);
-                addGroundForce(forces, rightContact, mass, roomGravityAcceleration, groundGravityDepth);
-            }
+            addGroundForce(forces, leftContact, mass, roomGravityAcceleration);
+            addGroundForce(forces, rightContact, mass, roomGravityAcceleration);
         }
         return forces;
     }
@@ -63,17 +59,21 @@ public class GravityForceCalculator implements ForceCalculator<
             List<BodyForce> forces,
             Contact contact,
             double mass,
-            double roomGravityAcceleration,
-            double groundGravityDepth
+            double roomGravityAcceleration
     ) {
-        var groundAccelerationModule = Math.abs(roomGravityAcceleration * Math.sin(contact.angle()))
-                * Math.sqrt(1 - contact.depth() / groundGravityDepth) * mass / 2;
-        forces.add(BodyForce.atCOM(
-                new Force()
-                        .setX(-groundAccelerationModule * Math.sin(contact.angle()))
-                        .setY(-groundAccelerationModule * Math.cos(contact.angle())),
-                FORCE_DESCRIPTION
-        ));
+        final var maxFriction = 1.0;
+        var forceModule = Math.max(
+                Math.abs(roomGravityAcceleration * Math.sin(contact.angle())) * mass / 2 - maxFriction,
+                0.0
+        );
+        if  (forceModule > 0.0) {
+            forces.add(BodyForce.atCOM(
+                    new Force()
+                            .setX(-forceModule * Math.sin(contact.angle()))
+                            .setY(-forceModule * Math.cos(contact.angle())),
+                    FORCE_DESCRIPTION
+            ));
+        }
     }
 
     private Contact getFarthest(Set<Contact> contacts, double comX) {

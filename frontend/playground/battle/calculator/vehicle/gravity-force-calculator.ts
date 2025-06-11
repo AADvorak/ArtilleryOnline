@@ -28,13 +28,8 @@ export class GravityForceCalculator implements ForceCalculator<VehicleCalculatio
     } else {
       const leftContact = this.getFarthest(leftContacts, comX)
       const rightContact = this.getFarthest(rightContacts, comX)
-      const groundGravityDepth = Constants.GRAVITY_GROUND_MAX_DEPTH_COEFFICIENT
-          * battleModel.room.specs.groundMaxDepth
-
-      if (leftContact.depth <= groundGravityDepth && rightContact.depth <= groundGravityDepth) {
-        this.addGroundForce(forces, leftContact, mass, roomGravityAcceleration, groundGravityDepth)
-        this.addGroundForce(forces, rightContact, mass, roomGravityAcceleration, groundGravityDepth)
-      }
+      this.addGroundForce(forces, leftContact, mass, roomGravityAcceleration)
+      this.addGroundForce(forces, rightContact, mass, roomGravityAcceleration)
     }
 
     return forces
@@ -44,19 +39,23 @@ export class GravityForceCalculator implements ForceCalculator<VehicleCalculatio
       forces: BodyForce[],
       contact: Contact,
       mass: number,
-      roomGravityAcceleration: number,
-      groundGravityDepth: number
+      roomGravityAcceleration: number
   ): void {
-    const groundAccelerationModule = Math.abs(roomGravityAcceleration * Math.sin(contact.angle)) *
-        Math.sqrt(1 - contact.depth / groundGravityDepth) * mass / 2
+    const maxFriction = 1.0
+    const forceModule = Math.max(
+        Math.abs(roomGravityAcceleration * Math.sin(contact.angle)) * mass / 2 - maxFriction,
+        0.0
+    )
 
-    forces.push(BodyForce.atCOM(
-        {
-          x: -groundAccelerationModule * Math.sin(contact.angle),
-          y: -groundAccelerationModule * Math.cos(contact.angle)
-        },
-        GravityForceCalculator.FORCE_DESCRIPTION
-    ))
+    if (forceModule > 0) {
+      forces.push(BodyForce.atCOM(
+          {
+            x: -forceModule * Math.sin(contact.angle),
+            y: -forceModule * Math.cos(contact.angle)
+          },
+          GravityForceCalculator.FORCE_DESCRIPTION
+      ))
+    }
   }
 
   private getFarthest(contacts: Contact[], comX: number): Contact {
