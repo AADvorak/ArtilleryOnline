@@ -26,7 +26,8 @@ public class VehicleAccelerationCalculator {
             new GravityForceCalculator(),
             new GroundFrictionForceCalculator(),
             new GroundReactionForceCalculator(),
-            new JetForceCalculator()
+            new JetForceCalculator(),
+            new EngineForceCalculator()
     );
 
     private static final BodyAccelerationCalculator<

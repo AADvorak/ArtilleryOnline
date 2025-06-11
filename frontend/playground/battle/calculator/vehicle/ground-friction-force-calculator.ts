@@ -14,8 +14,8 @@ export class GroundFrictionForceCalculator implements ForceCalculator<VehicleCal
     const contactsNumber = BodyUtils.getAllGroundContacts(calculations).length
     const forces: BodyForce[] = []
 
-    this.addWheelFriction(forces, calculations.rightWheel, calculations.model, groundFrictionCoefficient, gravityAcceleration, contactsNumber)
-    this.addWheelFriction(forces, calculations.leftWheel, calculations.model, groundFrictionCoefficient, gravityAcceleration, contactsNumber)
+    // this.addWheelFriction(forces, calculations.rightWheel, calculations.model, groundFrictionCoefficient, gravityAcceleration, contactsNumber)
+    // this.addWheelFriction(forces, calculations.leftWheel, calculations.model, groundFrictionCoefficient, gravityAcceleration, contactsNumber)
     this.addHullFriction(forces, calculations, groundFrictionCoefficient, gravityAcceleration, contactsNumber)
 
     return forces
@@ -35,9 +35,8 @@ export class GroundFrictionForceCalculator implements ForceCalculator<VehicleCal
     }
     const coefficient = groundFrictionCoefficient * gravityAcceleration
         * vehicleModel.preCalc.mass * Math.cos(contact.angle) / contactsNumber
-    const position = contact.position
     const velocity = VectorUtils.projectionOfOnto(
-        BodyUtils.getWheelVelocityAt(wheelCalculations, vehicleModel, position),
+        BodyUtils.getWheelVelocityAt(wheelCalculations, vehicleModel, contact.position),
         VectorUtils.tangential(contact.angle)
     )
 

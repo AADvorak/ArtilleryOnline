@@ -29,8 +29,8 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
         var contactsNumber = calculations.getAllGroundContacts().size();
         var forces = new ArrayList<BodyForce>();
-        addWheelFriction(forces, calculations.getRightWheel(), groundFrictionCoefficient, gravityAcceleration, contactsNumber);
-        addWheelFriction(forces, calculations.getLeftWheel(), groundFrictionCoefficient, gravityAcceleration, contactsNumber);
+//        addWheelFriction(forces, calculations.getRightWheel(), groundFrictionCoefficient, gravityAcceleration, contactsNumber);
+//        addWheelFriction(forces, calculations.getLeftWheel(), groundFrictionCoefficient, gravityAcceleration, contactsNumber);
         addHullFriction(forces, calculations, groundFrictionCoefficient, gravityAcceleration, contactsNumber);
         return forces;
     }
@@ -42,10 +42,9 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
         if (contact == null) {
             return;
         }
-        var coefficient = groundFrictionCoefficient * gravityAcceleration
-                * wheelCalculations.getMass() * Math.cos(contact.angle()) / contactsNumber;
-        var position = contact.position();
-        var velocity = wheelCalculations.getVelocityAt(position).projectionOnto(
+        var coefficient = groundFrictionCoefficient * gravityAcceleration * wheelCalculations.getMass()
+                * Math.cos(contact.angle()) / contactsNumber;
+        var velocity = wheelCalculations.getVelocityAt(contact.position()).projectionOnto(
                 Vector.tangential(contact.angle()));
         var force = new Force()
                 .setX( - velocity.getX() * coefficient)

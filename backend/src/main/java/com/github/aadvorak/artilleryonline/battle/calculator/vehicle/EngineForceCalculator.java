@@ -27,8 +27,9 @@ public class EngineForceCalculator implements ForceCalculator<
     @Override
     public List<BodyForce> calculate(VehicleCalculations calculations, BattleModel battleModel) {
         var forces = new ArrayList<BodyForce>();
-        var leftWheelForce = calculateForWheel(calculations.getLeftWheel());
-        var rightWheelForce = calculateForWheel(calculations.getRightWheel());
+        var contactsNumber = calculations.getAllGroundContacts().size();
+        var leftWheelForce = calculateForWheel(calculations.getLeftWheel(), contactsNumber);
+        var rightWheelForce = calculateForWheel(calculations.getRightWheel(), contactsNumber);
         if (leftWheelForce != null) {
             forces.add(leftWheelForce);
         }
@@ -38,34 +39,34 @@ public class EngineForceCalculator implements ForceCalculator<
         return forces;
     }
 
-    private BodyForce calculateForWheel(WheelCalculations calculations) {
+    private BodyForce calculateForWheel(WheelCalculations calculations, int contactsNumber) {
         var vehicleModel = calculations.getModel();
         var jetState = vehicleModel.getState().getJetState();
         var jetSpecs = vehicleModel.getConfig().getJet();
         var direction = vehicleModel.getState().getMovingDirection();
+        var contact = calculations.getGroundContact();
         if (direction == null || vehicleModel.getState().getTrackState().isBroken()
                 || jetSpecs != null && jetState != null && jetState.isActive() && jetSpecs.getType().equals(JetType.VERTICAL)
-                || calculations.getGroundContact() == null) {
+                || contact == null) {
             return null;
         }
-        var depth = calculations.getGroundContact().depth();
-        var groundAngle = calculations.getGroundContact().angle();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
-        var forceMagnitude = calculations.getMass() * vehicleModel.getSpecs().getAcceleration() / 2;
-        var depthAngle = depth * Math.PI / (4 * wheelRadius);
+        var forceMagnitude = calculations.getMass() * vehicleModel.getSpecs().getAcceleration()
+                * Math.cos(contact.angle()) / contactsNumber;
+        var depthAngle = contact.depth() * Math.PI / (4 * wheelRadius);
         var force = new Force();
         if (MovingDirection.RIGHT.equals(direction)) {
             force
-                    .setX(forceMagnitude * Math.cos(groundAngle + depthAngle))
-                    .setY(forceMagnitude * Math.sin(groundAngle + depthAngle));
+                    .setX(forceMagnitude * Math.cos(contact.angle() + depthAngle))
+                    .setY(forceMagnitude * Math.sin(contact.angle() + depthAngle));
 
         }
         if (MovingDirection.LEFT.equals(direction)) {
             force
-                    .setX( - forceMagnitude * Math.cos(groundAngle - depthAngle))
-                    .setY( - forceMagnitude * Math.sin(groundAngle - depthAngle));
+                    .setX( - forceMagnitude * Math.cos(contact.angle() - depthAngle))
+                    .setY( - forceMagnitude * Math.sin(contact.angle() - depthAngle));
         }
-        return BodyForce.of(force, calculations.getGroundContact().position(),
+        return BodyForce.of(force, calculations.getPosition(),
                 calculations.getModel().getState().getPosition().getCenter(), FORCE_DESCRIPTION);
     }
 }

@@ -9,6 +9,7 @@ import {GroundFrictionForceCalculator} from "~/playground/battle/calculator/vehi
 import {GroundReactionForceCalculator} from "~/playground/battle/calculator/vehicle/ground-reaction-force-calculator";
 import {GravityForceCalculator} from "~/playground/battle/calculator/vehicle/gravity-force-calculator";
 import {JetForceCalculator} from "~/playground/battle/calculator/vehicle/jet-force-calculator";
+import {EngineForceCalculator} from "~/playground/battle/calculator/vehicle/engine-force-calculator";
 
 export const VehicleAccelerationCalculator = {
   calculator: new BodyAccelerationCalculator<VehicleCalculations>(
@@ -16,7 +17,8 @@ export const VehicleAccelerationCalculator = {
         new GravityForceCalculator(),
         new GroundFrictionForceCalculator(),
         new GroundReactionForceCalculator(),
-        new JetForceCalculator()
+        new JetForceCalculator(),
+        new EngineForceCalculator()
       ]
   ),
 

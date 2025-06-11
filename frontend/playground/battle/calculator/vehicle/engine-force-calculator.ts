@@ -3,15 +3,16 @@ import {type VehicleCalculations, type WheelCalculations} from "~/playground/dat
 import type {BattleModel, VehicleModel} from "~/playground/data/model";
 import {BodyForce} from "~/playground/battle/calculator/body-force";
 import {JetType, MovingDirection, zeroVector} from "~/playground/data/common";
+import {BodyUtils} from "~/playground/utils/body-utils";
 
 export class EngineForceCalculator implements ForceCalculator<VehicleCalculations> {
   private static readonly FORCE_DESCRIPTION = 'Engine'
 
   calculate(calculations: VehicleCalculations, battleModel: BattleModel): BodyForce[] {
     const forces: BodyForce[] = []
-
-    const leftWheelForce = this.calculateForWheel(calculations.leftWheel, calculations.model)
-    const rightWheelForce = this.calculateForWheel(calculations.rightWheel, calculations.model)
+    const contactsNumber = BodyUtils.getAllGroundContacts(calculations).length
+    const leftWheelForce = this.calculateForWheel(calculations.leftWheel, calculations.model, contactsNumber)
+    const rightWheelForce = this.calculateForWheel(calculations.rightWheel, calculations.model, contactsNumber)
 
     if (leftWheelForce !== null) {
       forces.push(leftWheelForce)
@@ -24,40 +25,40 @@ export class EngineForceCalculator implements ForceCalculator<VehicleCalculation
     return forces
   }
 
-  private calculateForWheel(calculations: WheelCalculations, vehicleModel: VehicleModel): BodyForce | null {
+  private calculateForWheel(calculations: WheelCalculations, vehicleModel: VehicleModel,
+                            contactsNumber: number): BodyForce | null {
     const jetState = vehicleModel.state.jetState
     const jetSpecs = vehicleModel.config.jet
     const direction = vehicleModel.state.movingDirection
-
+    const contact = calculations.groundContact
     if (
         direction === null ||
         vehicleModel.state.trackState.broken ||
         (jetSpecs !== null && jetState !== null && jetState.active && jetSpecs.type === JetType.VERTICAL) ||
-        !calculations.groundContact
+        !contact
     ) {
       return null
     }
 
-    const depth = calculations.groundContact.depth
-    const groundAngle = calculations.groundContact.angle
     const wheelRadius = vehicleModel.specs.wheelRadius
-    const forceMagnitude = vehicleModel.preCalc.mass * vehicleModel.specs.acceleration / 2
-    const depthAngle = (depth * Math.PI) / (4 * wheelRadius)
+    const forceMagnitude = vehicleModel.preCalc.mass * vehicleModel.specs.acceleration
+        * Math.cos(contact.angle) / contactsNumber
+    const depthAngle = (contact.depth * Math.PI) / (4 * wheelRadius)
     const force = zeroVector()
 
     if (direction === MovingDirection.RIGHT) {
-      force.x = forceMagnitude * Math.cos(groundAngle + depthAngle)
-      force.y = forceMagnitude * Math.sin(groundAngle + depthAngle)
+      force.x = forceMagnitude * Math.cos(contact.angle + depthAngle)
+      force.y = forceMagnitude * Math.sin(contact.angle + depthAngle)
     }
 
     if (direction === MovingDirection.LEFT) {
-      force.x = -forceMagnitude * Math.cos(groundAngle - depthAngle)
-      force.y = -forceMagnitude * Math.sin(groundAngle - depthAngle)
+      force.x = -forceMagnitude * Math.cos(contact.angle - depthAngle)
+      force.y = -forceMagnitude * Math.sin(contact.angle - depthAngle)
     }
 
     return BodyForce.of(
         force,
-        calculations.groundContact.position,
+        contact.position,
         vehicleModel.state.position,
         EngineForceCalculator.FORCE_DESCRIPTION
     )
