@@ -3,16 +3,14 @@ import {type VehicleCalculations, type WheelCalculations} from "~/playground/dat
 import type {BattleModel, VehicleModel} from "~/playground/data/model";
 import {BodyForce} from "~/playground/battle/calculator/body-force";
 import {JetType, MovingDirection, zeroVector} from "~/playground/data/common";
-import {BodyUtils} from "~/playground/utils/body-utils";
 
 export class EngineForceCalculator implements ForceCalculator<VehicleCalculations> {
   private static readonly FORCE_DESCRIPTION = 'Engine'
 
   calculate(calculations: VehicleCalculations, battleModel: BattleModel): BodyForce[] {
     const forces: BodyForce[] = []
-    const contactsNumber = BodyUtils.getAllGroundContacts(calculations).length
-    const leftWheelForce = this.calculateForWheel(calculations.leftWheel, calculations.model, contactsNumber)
-    const rightWheelForce = this.calculateForWheel(calculations.rightWheel, calculations.model, contactsNumber)
+    const leftWheelForce = this.calculateForWheel(calculations.leftWheel, calculations.model)
+    const rightWheelForce = this.calculateForWheel(calculations.rightWheel, calculations.model)
 
     if (leftWheelForce !== null) {
       forces.push(leftWheelForce)
@@ -25,8 +23,7 @@ export class EngineForceCalculator implements ForceCalculator<VehicleCalculation
     return forces
   }
 
-  private calculateForWheel(calculations: WheelCalculations, vehicleModel: VehicleModel,
-                            contactsNumber: number): BodyForce | null {
+  private calculateForWheel(calculations: WheelCalculations, vehicleModel: VehicleModel): BodyForce | null {
     const jetState = vehicleModel.state.jetState
     const jetSpecs = vehicleModel.config.jet
     const direction = vehicleModel.state.movingDirection
@@ -42,7 +39,7 @@ export class EngineForceCalculator implements ForceCalculator<VehicleCalculation
 
     const wheelRadius = vehicleModel.specs.wheelRadius
     const forceMagnitude = vehicleModel.preCalc.mass * vehicleModel.specs.acceleration
-        * Math.cos(contact.angle) / contactsNumber
+        * Math.cos(contact.angle) / 2
     const depthAngle = (contact.depth * Math.PI) / (4 * wheelRadius)
     const force = zeroVector()
 
