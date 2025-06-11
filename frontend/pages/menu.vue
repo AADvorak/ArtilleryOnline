@@ -33,7 +33,7 @@ function toSettings() {
         <v-btn class="mb-4" width="100%" color="primary" @click="toRooms">{{ t('menu.rooms') }}</v-btn>
         <v-btn class="mb-4" width="100%" color="secondary" @click="toUser">{{ t('menu.user') }}</v-btn>
         <v-btn class="mb-4" width="100%" color="secondary" @click="toSettings">{{ t('menu.settings') }}</v-btn>
-        <div>v0.8.0-alpha-1, 03.06.2025</div>
+        <div>v0.8.0-alpha-2, 11.06.2025</div>
       </v-card-text>
     </v-card>
   </NuxtLayout>
