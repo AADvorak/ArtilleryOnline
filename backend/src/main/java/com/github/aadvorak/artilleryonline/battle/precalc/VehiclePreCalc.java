@@ -17,7 +17,7 @@ public class VehiclePreCalc implements BodyPreCalc, CompactSerializable {
         mass = 0.5 * Math.PI * Math.pow(specs.getRadius(), 2) + 2 * Math.PI * Math.pow(specs.getWheelRadius(), 2);
         maxRadius = wheelDistance + specs.getWheelRadius();
         // todo write accurate formula
-        momentOfInertia = 1.5 * Math.PI * Math.pow(maxRadius, 4);
+        momentOfInertia = 2 * Math.PI * Math.pow(specs.getRadius(), 4);
         centerOfMassShift = new Shift(comDistance, Math.PI / 2);
     }
 
