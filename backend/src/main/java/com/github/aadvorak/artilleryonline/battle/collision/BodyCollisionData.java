@@ -52,8 +52,8 @@ public class BodyCollisionData {
                                                   Vector component, Vector radiusNormalized) {
         var radiusAndComponentVectorProduct = radiusNormalized.vectorProduct(component);
         var distanceToAxis = getDistanceToAxis(comPosition, contactPosition, component);
-        var inertiaToMassCoefficient = getInertiaToMassCoefficient(radiusAndComponentVectorProduct,
-                distanceToAxis, bodyModel.getPreCalc().getMaxRadius());
+        // todo getInertiaToMassCoefficient
+        var inertiaToMassCoefficient = Math.abs(radiusAndComponentVectorProduct);
         return new ComponentData()
                 .setDistanceToAxis(distanceToAxis)
                 .setInertiaToMassCoefficient(inertiaToMassCoefficient)
