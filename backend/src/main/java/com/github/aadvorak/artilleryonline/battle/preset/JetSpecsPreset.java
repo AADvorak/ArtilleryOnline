@@ -13,7 +13,7 @@ public enum JetSpecsPreset {
             .setCapacity(30.0)
             .setConsumption(15.0)
             .setRegeneration(1.0)
-            .setAcceleration(13.0)
+            .setAcceleration(18.0)
             .setType(JetType.VERTICAL)
     ),
 
@@ -21,7 +21,7 @@ public enum JetSpecsPreset {
             .setCapacity(30.0)
             .setConsumption(20.0)
             .setRegeneration(1.0)
-            .setAcceleration(9.0)
+            .setAcceleration(12.0)
             .setType(JetType.HORIZONTAL)
     ),
 
@@ -29,7 +29,7 @@ public enum JetSpecsPreset {
             .setCapacity(30.0)
             .setConsumption(20.0)
             .setRegeneration(1.0)
-            .setAcceleration(8.0)
+            .setAcceleration(10.0)
             .setType(JetType.HORIZONTAL)
     );
 
