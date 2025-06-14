@@ -66,6 +66,9 @@ public class UserBattleQueueConsumer implements Runnable {
 
     private Set<UserBattleQueueElement> getElementsFromQueue() {
         synchronized (userBattleQueue) {
+            if (userBattleQueue.size() == 0) {
+                waitQueue();
+            }
             removeTimedOutUser();
             if (userBattleQueue.size() < 2) {
                 return Set.of();
@@ -75,7 +78,7 @@ public class UserBattleQueueConsumer implements Runnable {
     }
 
     private void removeTimedOutUser() {
-        var element = userBattleQueue.pick();
+        var element = userBattleQueue.peek();
         if (element != null) {
             var addTime = element.getAddTime();
             if (System.currentTimeMillis() - addTime > applicationSettings.getUserBattleQueueTimeout()) {
@@ -100,6 +103,14 @@ public class UserBattleQueueConsumer implements Runnable {
     private void sleep() {
         try {
             Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void waitQueue() {
+        try {
+            userBattleQueue.wait();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

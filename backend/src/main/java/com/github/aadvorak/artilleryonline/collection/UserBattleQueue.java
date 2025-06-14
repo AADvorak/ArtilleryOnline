@@ -8,6 +8,7 @@ public class UserBattleQueue {
 
     public synchronized void add(UserBattleQueueElement element) {
         map.put(element.getUser().getId(), element);
+        notify();
     }
 
     public synchronized UserBattleQueueElement poll() {
@@ -25,7 +26,7 @@ public class UserBattleQueue {
         map.remove(userId);
     }
 
-    public UserBattleQueueElement pick() {
+    public UserBattleQueueElement peek() {
         if (map.isEmpty()) {
             return null;
         }
