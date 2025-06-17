@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.config;
 
 import com.github.aadvorak.artilleryonline.properties.ApplicationLimits;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -10,18 +11,20 @@ import java.util.concurrent.Executor;
 
 @Configuration
 @EnableAsync
+@Slf4j
 public class AsyncConfig {
 
     private final ApplicationLimits applicationLimits;
 
     private final int corePoolSize;
 
-    private final int maxPoolSize;
+    private final int maxBattlePoolSize;
 
     public AsyncConfig(ApplicationLimits applicationLimits) {
         this.applicationLimits = applicationLimits;
         corePoolSize = Runtime.getRuntime().availableProcessors();
-        maxPoolSize = Math.max(corePoolSize, applicationLimits.getMaxBattles());
+        maxBattlePoolSize = Math.max(corePoolSize, applicationLimits.getMaxBattles());
+        log.info("Async config corePoolSize = {}, maxBattlePoolSize = {}", corePoolSize, maxBattlePoolSize);
     }
 
     @Bean(name = "runBattleExecutor")
@@ -39,7 +42,7 @@ public class AsyncConfig {
     public Executor sendBattleUpdatesExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(corePoolSize);
-        executor.setMaxPoolSize(maxPoolSize * 2);
+        executor.setMaxPoolSize(maxBattlePoolSize * 2);
         executor.setQueueCapacity(10);
         executor.setThreadNamePrefix("SendBattleUpdatesAsync-");
         executor.initialize();
