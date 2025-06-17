@@ -24,6 +24,7 @@ import com.github.aadvorak.artilleryonline.ws.BattleUpdatesSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -52,37 +53,36 @@ public class BattleRunner {
 
     private final ModelMapper mapper = new ModelMapper();
 
+    @Async("runBattleExecutor")
     public void runBattle(Battle battle) {
         startUpdatesSender(battle);
-        new Thread(() -> {
-            try {
-                while (!BattleStage.FINISHED.equals(battle.getBattleStage())
-                        && !battle.getActiveUserIds().isEmpty()) {
-                    try {
-                        Thread.sleep(Battle.TIME_STEP_MS);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    battle.getModel().setUpdates(new BattleModelUpdates());
-                    battle.getModel().setEvents(new BattleModelEvents());
-                    processBattleStep(battle);
-                    setBattleUpdatedByTimeout(battle);
-                    sendBattleToUpdatesQueue(battle);
-                    resetUpdatedFlags(battle);
+        try {
+            while (!BattleStage.FINISHED.equals(battle.getBattleStage())
+                    && !battle.getActiveUserIds().isEmpty()) {
+                try {
+                    Thread.sleep(Battle.TIME_STEP_MS);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
-                writeBattleToHistory(battle);
-                createBattleFinishedMessages(battle);
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-                battle.setStageAndResetTime(BattleStage.ERROR);
+                battle.getModel().setUpdates(new BattleModelUpdates());
+                battle.getModel().setEvents(new BattleModelEvents());
+                processBattleStep(battle);
+                setBattleUpdatedByTimeout(battle);
                 sendBattleToUpdatesQueue(battle);
-            } finally {
-                stopUpdatesSender(battle);
-                removeBattleFromMap(battle);
-                removeBattleFromRoom(battle);
-                log.info("Battle finished: {}, map size {}", battle.getId(), userBattleMap.size());
+                resetUpdatedFlags(battle);
             }
-        }).start();
+            writeBattleToHistory(battle);
+            createBattleFinishedMessages(battle);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            battle.setStageAndResetTime(BattleStage.ERROR);
+            sendBattleToUpdatesQueue(battle);
+        } finally {
+            stopUpdatesSender(battle);
+            removeBattleFromMap(battle);
+            removeBattleFromRoom(battle);
+            log.info("Battle finished: {}, map size {}", battle.getId(), userBattleMap.size());
+        }
     }
 
     private void processBattleStep(Battle battle) {
@@ -112,7 +112,9 @@ public class BattleRunner {
 
     private void stopUpdatesSender(Battle battle) {
         battle.getQueues().getBattleUpdatesQueue().add(new BattleResponse());
-        battle.getAggregated().setDisabled(true);
+        synchronized (battle.getAggregated()) {
+            battle.getAggregated().setDisabled(true);
+        }
     }
 
     private void createBattleFinishedMessages(Battle battle) {

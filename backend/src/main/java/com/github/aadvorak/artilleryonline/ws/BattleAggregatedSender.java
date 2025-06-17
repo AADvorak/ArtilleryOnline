@@ -4,6 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.BattleAggregated;
 import com.github.aadvorak.artilleryonline.dto.response.BattleUpdateResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,23 +13,22 @@ public class BattleAggregatedSender {
 
     private final SimpMessagingTemplate simpMessagingTemplate;
 
+    @Async("sendBattleUpdatesExecutor")
     public void start(BattleAggregated aggregated) {
-        new Thread(() -> {
-            while (true) {
-                var sent = false;
-                synchronized (aggregated) {
-                    if (aggregated.isDisabled()) {
-                        break;
-                    }
-                    if (aggregated.getUpdate() != null) {
-                        sent = true;
-                        sendBattleUpdate(aggregated.getUpdate());
-                        aggregated.setUpdate(null);
-                    }
+        while (true) {
+            var sent = false;
+            synchronized (aggregated) {
+                if (aggregated.isDisabled()) {
+                    break;
                 }
-                sleep(sent ? 20 : 10);
+                if (aggregated.getUpdate() != null) {
+                    sent = true;
+                    sendBattleUpdate(aggregated.getUpdate());
+                    aggregated.setUpdate(null);
+                }
             }
-        }).start();
+            sleep(sent ? 20 : 10);
+        }
     }
 
     private void sendBattleUpdate(BattleUpdateResponse battleUpdateResponse) {
