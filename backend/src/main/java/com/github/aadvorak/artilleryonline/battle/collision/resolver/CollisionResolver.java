@@ -69,8 +69,6 @@ public class CollisionResolver {
             if (firstModel != null && firstData != null) {
                 recalculateBodyVelocity(firstModel.getState().getVelocity(), collision.getContact(),
                         firstData.getNormalData(), collision.getImpact(), 1, false);
-                recalculateVelocityByGravitation(firstModel.getState().getVelocity(),
-                        collision.getContact(), battleModel);
             } else {
                 recalculatePointVelocity(first.getVelocity(), collision.getContact(),
                         first.getMass(), collision.getImpact());
@@ -80,8 +78,6 @@ public class CollisionResolver {
                 if (secondModel != null && secondData != null) {
                     recalculateBodyVelocity(secondModel.getState().getVelocity(), collision.getContact(),
                             secondData.getNormalData(), collision.getImpact(), -1, false);
-                    recalculateVelocityByGravitation(secondModel.getState().getVelocity(),
-                            collision.getContact(), battleModel);
                 } else {
                     recalculatePointVelocity(second.getVelocity(), collision.getContact(),
                             second.getMass(), collision.getImpact());
@@ -186,24 +182,6 @@ public class CollisionResolver {
             object.applyNormalMoveToNextPosition(- normalMove, collision.getContact().angle());
             otherObject.applyNormalMoveToNextPosition(otherNormalMove, collision.getContact().angle());
         }
-    }
-
-    private void recalculateVelocityByGravitation(
-            BodyVelocity velocity,
-            Contact contact,
-            BattleModel battleModel
-    ) {
-        var gravityVelocityDiff = new VectorImpl()
-                .setY(-battleModel.getCurrentTimeStepSecs()
-                        * battleModel.getRoom().getSpecs().getGravityAcceleration());
-        var tangentialVelocityDiff = gravityVelocityDiff.dotProduct(Vector.tangential(contact.angle()));
-        var gravityVelocityDelta = new VectorProjections(contact.angle())
-                .setTangential(tangentialVelocityDiff)
-                .recoverVelocity();
-        if (logging) System.out.printf("gravityVelocityDelta = %s\n", gravityVelocityDelta);
-        velocity
-                .setX(velocity.getX() + gravityVelocityDelta.getX())
-                .setY(velocity.getY() + gravityVelocityDelta.getY());
     }
 
     private double getFrictionCoefficient(Calculations<?> calculations) {
