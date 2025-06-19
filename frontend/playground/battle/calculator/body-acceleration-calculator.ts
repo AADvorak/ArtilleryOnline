@@ -4,12 +4,13 @@ import type {BattleModel} from "~/playground/data/model";
 import {type BodyAcceleration, cloneVector, MovingDirection, zeroBodyVector} from "~/playground/data/common";
 import {BodyForce} from "~/playground/battle/calculator/body-force";
 import {VectorUtils} from "~/playground/utils/vector-utils";
+import {JetForceCalculator} from "~/playground/battle/calculator/vehicle/jet-force-calculator";
 
 export class BodyAccelerationCalculator<C extends BodyCalculations> {
   private static readonly COLLIDER_PUSHING = 5.0
   private static readonly COLLIDER_ROTATING = 2.0
   private static readonly FORCES_TO_EXTRACT_MOVING_FROM_ROTATING = [
-    // todo Jet
+    JetForceCalculator.FORCE_DESCRIPTION
   ]
 
   private forceCalculators: ForceCalculator<C>[]
@@ -72,8 +73,8 @@ export class BodyAccelerationCalculator<C extends BodyCalculations> {
 
   private canExtractMovingFromRotating(force1: BodyForce, force2: BodyForce): boolean {
     return (
-        force1.rotating &&
-        force2.rotating &&
+        !!force1.rotating &&
+        !!force2.rotating &&
         BodyAccelerationCalculator.FORCES_TO_EXTRACT_MOVING_FROM_ROTATING.includes(force1.description) &&
         BodyAccelerationCalculator.FORCES_TO_EXTRACT_MOVING_FROM_ROTATING.includes(force2.description)
     )
