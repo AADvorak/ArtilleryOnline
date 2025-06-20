@@ -134,11 +134,8 @@ public class WheelCalculations
     private Position calculatePosition(BodyPosition vehiclePosition) {
         var wheelDistance = vehicle.getModel().getPreCalc().getWheelDistance();
         var wheelAngle = vehicle.getModel().getPreCalc().getWheelAngle();
-        return new Position()
-                .setX(vehiclePosition.getX() - sign.getValue() * wheelDistance * Math.cos(vehiclePosition.getAngle()
-                        + sign.getValue() * wheelAngle))
-                .setY(vehiclePosition.getY() - sign.getValue() * wheelDistance * Math.sin(vehiclePosition.getAngle()
-                        + sign.getValue() * wheelAngle));
+        return vehiclePosition.getCenter().shifted(- sign.getValue() * wheelDistance,
+                vehiclePosition.getAngle() + sign.getValue() * wheelAngle);
     }
 
     @Getter
