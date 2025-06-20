@@ -36,7 +36,7 @@ export class GroundFrictionForceCalculator implements ForceCalculator<VehicleCal
     const coefficient = groundFrictionCoefficient * gravityAcceleration
         * vehicleModel.preCalc.mass * Math.cos(contact.angle) / contactsNumber / 10
     const velocity = VectorUtils.projectionOfOnto(
-        BodyUtils.getWheelVelocityAt(wheelCalculations, vehicleModel, contact.position),
+        wheelCalculations.velocity!,
         VectorUtils.tangential(contact.angle)
     )
 
