@@ -1,0 +1,189 @@
+{
+  "specs": {
+    "name": "Medium",
+    "hitPoints": 100.0,
+    "missiles": 3,
+    "minAngle": 0.0,
+    "maxAngle": 3.141592653589793,
+    "acceleration": 12.0,
+    "wheelAngleVelocity": 30.0,
+    "radius": 0.4,
+    "wheelRadius": 0.1,
+    "hullRadius": 0.4,
+    "trackRepairTime": 10.0,
+    "minTrackHitCaliber": 0.04,
+    "availableGuns": {
+      "Medium": {
+        "ammo": 80,
+        "loadTime": 3.0,
+        "rotationVelocity": 0.4,
+        "length": 0.6,
+        "caliber": 0.05,
+        "availableShells": {
+          "HE-M": {
+            "velocity": 12.0,
+            "damage": 5.0,
+            "radius": 0.5,
+            "mass": 0.02,
+            "caliber": 0.05,
+            "type": "HE"
+          },
+          "AP-M": {
+            "velocity": 13.0,
+            "damage": 10.0,
+            "radius": 0.1,
+            "mass": 0.02,
+            "caliber": 0.05,
+            "type": "AP"
+          }
+        }
+      },
+      "MediumL": {
+        "ammo": 360,
+        "loadTime": 0.3,
+        "rotationVelocity": 0.45,
+        "length": 0.5,
+        "caliber": 0.03,
+        "availableShells": {
+          "AP-ML": {
+            "velocity": 13.0,
+            "damage": 1.2,
+            "radius": 0.04,
+            "mass": 0.008,
+            "caliber": 0.03,
+            "type": "AP"
+          }
+        }
+      }
+    },
+    "availableJets": {
+      "medium": {
+        "capacity": 30.0,
+        "consumption": 20.0,
+        "regeneration": 1.0,
+        "acceleration": 12.0,
+        "type": "HORIZONTAL"
+      }
+    },
+    "availableMissiles": {
+      "MSL": {
+        "pushingAcceleration": 18.0,
+        "correctingAccelerationCoefficient": 5.0,
+        "minCorrectingVelocity": 5.0,
+        "anglePrecision": 0.39269908169872414,
+        "damage": 6.0,
+        "radius": 0.6,
+        "mass": 0.07,
+        "caliber": 0.05,
+        "length": 0.5
+      }
+    },
+    "availableDrones": {},
+    "availableBombers": {},
+    "defaultGun": "Medium",
+    "minCollisionDamageImpact": 0.15,
+    "collisionDamageCoefficient": 60.0
+  },
+  "config": {
+    "gun": {
+      "ammo": 80,
+      "loadTime": 3.0,
+      "rotationVelocity": 0.4,
+      "length": 0.6,
+      "caliber": 0.05,
+      "availableShells": {
+        "HE-M": {
+          "velocity": 12.0,
+          "damage": 5.0,
+          "radius": 0.5,
+          "mass": 0.02,
+          "caliber": 0.05,
+          "type": "HE"
+        },
+        "AP-M": {
+          "velocity": 13.0,
+          "damage": 10.0,
+          "radius": 0.1,
+          "mass": 0.02,
+          "caliber": 0.05,
+          "type": "AP"
+        }
+      }
+    },
+    "jet": {
+      "capacity": 30.0,
+      "consumption": 20.0,
+      "regeneration": 1.0,
+      "acceleration": 12.0,
+      "type": "HORIZONTAL"
+    },
+    "drone": null,
+    "bomber": null,
+    "ammo": {
+      "AP-M": 40,
+      "HE-M": 40
+    },
+    "missiles": null,
+    "color": null
+  },
+  "state": {
+    "position": {
+      "x": 0.0,
+      "y": 0.0,
+      "angle": 0.0
+    },
+    "velocity": {
+      "x": 1.0,
+      "y": 1.0,
+      "angle": 0.1
+    },
+    "movingDirection": null,
+    "pushingDirection": null,
+    "rotatingDirection": null,
+    "acceleration": {
+      "x": 0.0,
+      "y": 0.0,
+      "angle": 0.0
+    },
+    "hitPoints": 100.0,
+    "ammo": {
+      "HE-M": 40,
+      "AP-M": 40
+    },
+    "missiles": null,
+    "gunState": {
+      "angle": 0.0,
+      "targetAngle": 0.0,
+      "rotatingDirection": null,
+      "loadedShell": null,
+      "selectedShell": "AP-M",
+      "loadingShell": null,
+      "loadRemainTime": 0.0,
+      "triggerPushed": false,
+      "fixed": false
+    },
+    "trackState": {
+      "broken": false,
+      "repairRemainTime": 0.0
+    },
+    "jetState": {
+      "volume": 30.0,
+      "active": false
+    },
+    "droneState": null,
+    "bomberState": null,
+    "onGround": false
+  },
+  "preCalc": {
+    "wheelDistance": 0.4545051303158595,
+    "wheelAngle": 0.49476972454323614,
+    "mass": 0.3141592653589793,
+    "momentOfInertia": 0.16084954386379743,
+    "centerOfMassShift": {
+      "distance": 0.11581221810508405,
+      "angle": 1.5707963267948966
+    },
+    "maxRadius": 0.5545051303158595
+  },
+  "id": 0
+}

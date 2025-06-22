@@ -14,14 +14,19 @@
     "@mdi/js": "^7.4.47",
     "@pinia/nuxt": "^0.5.5",
     "@stomp/stompjs": "^7.0.0",
-    "nuxt": "^3.13.0",
+    "nuxt": "3.16.0",
     "pinia": "^2.2.4",
     "vue": "^3.4.29",
-    "vue-i18n": "^10.0.5",
+    "vue-i18n": "11.1.2",
     "vue-router": "^4.3.3",
     "vuetify": "^3.7.2"
   },
   "devDependencies": {
-    "sass-embedded": "^1.79.4"
+    "@types/jest": "^30.0.0",
+    "jest": "^29.7.0",
+    "sass-embedded": "^1.79.4",
+    "ts-jest": "^29.4.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }
