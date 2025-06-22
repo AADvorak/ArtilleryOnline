@@ -17,7 +17,7 @@ public class CommandProcessor {
         if (Command.START_MOVING.equals(userCommand.getCommand())) {
             var direction = userCommand.getParams().getDirection();
             userVehicle.getState().setMovingDirection(direction);
-            userVehicle.setUpdated(true);
+            userVehicle.getUpdate().setUpdated();
         }
 
         if (Command.STOP_MOVING.equals(userCommand.getCommand())) {
@@ -25,7 +25,7 @@ public class CommandProcessor {
             var vehicleDirection = userVehicle.getState().getMovingDirection();
             if (direction != null && direction.equals(vehicleDirection)) {
                 userVehicle.getState().setMovingDirection(null);
-                userVehicle.setUpdated(true);
+                userVehicle.getUpdate().setUpdated();
             }
         }
 
@@ -40,7 +40,7 @@ public class CommandProcessor {
         if (Command.START_GUN_ROTATING.equals(userCommand.getCommand())) {
             var direction = userCommand.getParams().getDirection();
             userVehicle.getState().getGunState().setRotatingDirection(direction);
-            userVehicle.setUpdated(true);
+            userVehicle.getUpdate().setUpdated();
         }
 
         if (Command.STOP_GUN_ROTATING.equals(userCommand.getCommand())) {
@@ -48,7 +48,7 @@ public class CommandProcessor {
             var vehicleDirection = userVehicle.getState().getGunState().getRotatingDirection();
             if (direction != null && direction.equals(vehicleDirection)) {
                 userVehicle.getState().getGunState().setRotatingDirection(null);
-                userVehicle.setUpdated(true);
+                userVehicle.getUpdate().setUpdated();
             }
         }
 
@@ -66,14 +66,14 @@ public class CommandProcessor {
         if (Command.JET_ON.equals(userCommand.getCommand())) {
             if (userVehicle.getState().getJetState() != null) {
                 userVehicle.getState().getJetState().setActive(true);
-                userVehicle.setUpdated(true);
+                userVehicle.getUpdate().setUpdated();
             }
         }
 
         if (Command.JET_OFF.equals(userCommand.getCommand())) {
             if (userVehicle.getState().getJetState() != null) {
                 userVehicle.getState().getJetState().setActive(false);
-                userVehicle.setUpdated(true);
+                userVehicle.getUpdate().setUpdated();
             }
         }
 
@@ -87,7 +87,7 @@ public class CommandProcessor {
 
         if (Command.SWITCH_GUN_MODE.equals(userCommand.getCommand())) {
             userVehicle.getState().getGunState().setFixed(!userVehicle.getState().getGunState().isFixed());
-            userVehicle.setUpdated(true);
+            userVehicle.getUpdate().setUpdated();
         }
     }
 }

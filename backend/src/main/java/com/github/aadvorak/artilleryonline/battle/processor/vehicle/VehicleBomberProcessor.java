@@ -30,7 +30,7 @@ public class VehicleBomberProcessor {
                 - battleModel.getCurrentTimeStepSecs());
         if (bomberState.getPrepareToFlightRemainTime() <= 0) {
             bomberState.setReadyToFlight(true);
-            vehicleModel.setUpdated(true);
+            vehicleModel.getUpdate().setUpdated();
         }
     }
 
@@ -51,7 +51,7 @@ public class VehicleBomberProcessor {
         bomberState.setReadyToFlight(false);
         bomberState.setFlying(true);
         bomberState.setFlightRemainTime(vehicleModel.getConfig().getBomber().getFlightTime());
-        vehicleModel.setUpdated(true);
+        vehicleModel.getUpdate().setUpdated();
     }
 
     public static void drop(VehicleModel vehicleModel, BattleModel battleModel) {
@@ -85,7 +85,7 @@ public class VehicleBomberProcessor {
         bomberState.setFlying(false);
         bomberState.setPrepareToFlightRemainTime(vehicleModel.getConfig().getBomber().getPrepareToFlightTime());
         bomberState.setRemainFlights(bomberState.getRemainFlights() - 1);
-        vehicleModel.setUpdated(true);
+        vehicleModel.getUpdate().setUpdated();
     }
 
     private static VehicleModel getVehicleModelWithBomber(int vehicleId, BattleModel battleModel) {

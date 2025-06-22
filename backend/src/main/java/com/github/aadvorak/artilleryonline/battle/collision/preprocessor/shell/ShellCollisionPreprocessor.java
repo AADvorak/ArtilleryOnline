@@ -52,7 +52,7 @@ public class ShellCollisionPreprocessor implements CollisionPreprocessor {
 
     private boolean processVehicle(ShellCalculations shell, Collision collision, BattleCalculations battle) {
         var hitObject = collision.getPair().second();
-        ((VehicleModel) hitObject.getModel()).setUpdated(true);
+        ((VehicleModel) hitObject.getModel()).getUpdate().setUpdated();
         if (collision.isRicochet()) {
             battle.getModel().getEvents().addRicochet(new RicochetEvent().setShellId(shell.getId()));
         } else if (!ShellType.SGN.equals(shell.getModel().getSpecs().getType())) {

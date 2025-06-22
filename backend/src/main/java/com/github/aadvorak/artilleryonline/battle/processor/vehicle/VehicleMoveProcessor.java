@@ -26,7 +26,7 @@ public class VehicleMoveProcessor {
         var acceleration = VehicleAccelerationCalculator.getVehicleAcceleration(vehicle, battle.getModel());;
         if (acceleration.getX() * oldAcceleration.getX() < 0
                 && Math.abs(acceleration.getX() - oldAcceleration.getX()) > threshold) {
-            vehicle.getModel().setUpdated(true);
+            vehicle.getModel().getUpdate().setUpdated();
         }
         vehicle.getModel().getState().setAcceleration(acceleration);
     }
@@ -54,7 +54,7 @@ public class VehicleMoveProcessor {
                 || vehicle.getLeftWheel().getGroundContact() != null;
         if (state.isOnGround() != onGround) {
             state.setOnGround(onGround);
-            vehicle.getModel().setUpdated(true);
+            vehicle.getModel().getUpdate().setUpdated();
         }
     }
 

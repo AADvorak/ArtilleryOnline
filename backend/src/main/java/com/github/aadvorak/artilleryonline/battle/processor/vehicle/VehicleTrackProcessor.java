@@ -13,7 +13,7 @@ public class VehicleTrackProcessor {
             if (trackState.getRepairRemainTime() <= 0) {
                 trackState.setBroken(false);
                 trackState.setRepairRemainTime(0.0);
-                vehicleModel.setUpdated(true);
+                vehicleModel.getUpdate().setUpdated();
                 battleModel.getEvents().addRepair(new RepairEvent().setVehicleId(vehicleModel.getId()));
             }
         }

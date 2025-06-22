@@ -103,7 +103,7 @@ public class DamageProcessor {
             var trackState = vehicleModel.getState().getTrackState();
             trackState.setBroken(true);
             trackState.setRepairRemainTime(vehicleModel.getSpecs().getTrackRepairTime());
-            vehicleModel.setUpdated(true);
+            vehicleModel.getUpdate().setUpdated();
         }
     }
 
@@ -151,7 +151,7 @@ public class DamageProcessor {
             StatisticsProcessor.increaseTrackBreaks(vehicle.getModel().getUserId(), hit.userId(), battle.getModel());
             trackState.setBroken(true);
             trackState.setRepairRemainTime(vehicle.getModel().getSpecs().getTrackRepairTime());
-            vehicle.getModel().setUpdated(true);
+            vehicle.getModel().getUpdate().setUpdated();
         }
     }
 

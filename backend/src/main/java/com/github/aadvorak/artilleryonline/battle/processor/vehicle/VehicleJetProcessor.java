@@ -17,14 +17,14 @@ public class VehicleJetProcessor {
             var volume = jetState.getVolume() - battleModel.getCurrentTimeStepSecs() * jetSpecs.getConsumption();
             jetState.setVolume(volume > 0 ? volume : 0);
             if (volume <= 0) {
-                vehicleModel.setUpdated(true);
+                vehicleModel.getUpdate().setUpdated();
             }
         }
         if (!active && jetState.getVolume() < jetSpecs.getCapacity()) {
             var volume = jetState.getVolume() + battleModel.getCurrentTimeStepSecs() * jetSpecs.getRegeneration();
             jetState.setVolume(Math.min(volume, jetSpecs.getCapacity()));
             if (volume >= jetSpecs.getCapacity()) {
-                vehicleModel.setUpdated(true);
+                vehicleModel.getUpdate().setUpdated();
             }
         }
     }

@@ -13,11 +13,11 @@ public class VehicleGunShootProcessor {
         var gunState = vehicleModel.getState().getGunState();
         if (gunState.isTriggerPushed() && gunState.getLoadedShell() != null) {
             doShot(vehicleModel, battleModel);
-            vehicleModel.setUpdated(true);
+            vehicleModel.getUpdate().setUpdated();
         }
         if (gunState.getLoadedShell() == null && gunState.getLoadingShell() == null) {
             if (startLoading(vehicleModel)) {
-                vehicleModel.setUpdated(true);
+                vehicleModel.getUpdate().setUpdated();
             }
         } else if (gunState.getLoadingShell() != null) {
             continueLoading(vehicleModel, battleModel);
@@ -71,7 +71,7 @@ public class VehicleGunShootProcessor {
             gunState.setLoadRemainTime(0.0);
             gunState.setLoadedShell(gunState.getLoadingShell());
             gunState.setLoadingShell(null);
-            vehicleModel.setUpdated(true);
+            vehicleModel.getUpdate().setUpdated();
         }
     }
 

@@ -59,7 +59,7 @@ public class DroneCollisionPreprocessor implements CollisionPreprocessor {
             inVehicleState.setLaunched(false);
             inVehicleState.setPrepareToLaunchRemainTime(
                     vehicle.getModel().getConfig().getDrone().getPrepareToLaunchTime());
-            vehicle.getModel().setUpdated(true);
+            vehicle.getModel().getUpdate().setUpdated();
             return true;
         }
         return false;

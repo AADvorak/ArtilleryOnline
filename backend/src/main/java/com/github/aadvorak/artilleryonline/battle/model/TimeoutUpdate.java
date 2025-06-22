@@ -10,7 +10,7 @@ public class TimeoutUpdate {
     private long lastUpdateTime = System.currentTimeMillis();
 
     public boolean setUpdatedByTimeout(long currentTime) {
-        if (currentTime - lastUpdateTime > 1000) {
+        if (currentTime - lastUpdateTime > 200) {
             setUpdated(currentTime);
         }
         return updated;

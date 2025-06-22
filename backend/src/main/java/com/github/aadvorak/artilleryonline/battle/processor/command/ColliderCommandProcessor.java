@@ -21,7 +21,7 @@ public class ColliderCommandProcessor {
         if (Command.START_PUSHING.equals(command.getCommand())) {
             var direction = command.getParams().getDirection();
             vehicle.getState().setPushingDirection(direction);
-            vehicle.setUpdated(true);
+            vehicle.getUpdate().setUpdated();
         }
 
         if (Command.STOP_PUSHING.equals(command.getCommand())) {
@@ -29,14 +29,14 @@ public class ColliderCommandProcessor {
             var vehicleDirection = vehicle.getState().getPushingDirection();
             if (direction != null && direction.equals(vehicleDirection)) {
                 vehicle.getState().setPushingDirection(null);
-                vehicle.setUpdated(true);
+                vehicle.getUpdate().setUpdated();
             }
         }
 
         if (Command.START_ROTATING.equals(command.getCommand())) {
             var direction = command.getParams().getDirection();
             vehicle.getState().setRotatingDirection(direction);
-            vehicle.setUpdated(true);
+            vehicle.getUpdate().setUpdated();
         }
 
         if (Command.STOP_ROTATING.equals(command.getCommand())) {
@@ -44,7 +44,7 @@ public class ColliderCommandProcessor {
             var vehicleDirection = vehicle.getState().getRotatingDirection();
             if (direction != null && direction.equals(vehicleDirection)) {
                 vehicle.getState().setRotatingDirection(null);
-                vehicle.setUpdated(true);
+                vehicle.getUpdate().setUpdated();
             }
         }
     }

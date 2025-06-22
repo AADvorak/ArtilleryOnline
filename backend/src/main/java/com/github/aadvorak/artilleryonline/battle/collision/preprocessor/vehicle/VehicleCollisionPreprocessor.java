@@ -18,10 +18,10 @@ public class VehicleCollisionPreprocessor implements CollisionPreprocessor {
         var first = collision.getPair().first();
         var second = collision.getPair().second();
         if (first instanceof VehicleCalculations || first instanceof WheelCalculations) {
-            ((VehicleModel) first.getModel()).setUpdated(true);
+            ((VehicleModel) first.getModel()).getUpdate().setUpdated();
         }
         if (second instanceof VehicleCalculations || second instanceof WheelCalculations) {
-            ((VehicleModel) second.getModel()).setUpdated(true);
+            ((VehicleModel) second.getModel()).getUpdate().setUpdated();
         }
 //        if (first instanceof VehicleCalculations firstVehicle && second instanceof VehicleCalculations secondVehicle) {
 //            calculateAndApplyDamage(collision, firstVehicle.getModel(), secondVehicle.getModel(), battle.getModel());

@@ -28,7 +28,7 @@ public class VehicleReturnOnGroundProcessor {
                 vehicle.getModel().getState().getGunState().setTargetAngle(
                         vehicle.getModel().getState().getPosition().getAngle()
                         + vehicle.getModel().getState().getGunState().getAngle());
-                vehicle.getModel().setUpdated(true);
+                vehicle.getModel().getUpdate().setUpdated();
                 battle.getModel().getEvents().addRepair(new RepairEvent().setVehicleId(vehicle.getId()));
             }
         } else {

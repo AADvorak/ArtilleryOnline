@@ -45,7 +45,7 @@ public class MissileCollisionPreprocessor implements CollisionPreprocessor {
         var missileNormal = missile.getPositions().getTail().vectorTo(missile.getPositions().getHead()).normalized();
         if (missileNormal.dotProduct(contactNormal) > 0.5) {
             var hitObject = collision.getPair().second();
-            ((VehicleModel) hitObject.getModel()).setUpdated(true);
+            ((VehicleModel) hitObject.getModel()).getUpdate().setUpdated();
             if (hitObject instanceof VehicleCalculations vehicle) {
                 DamageProcessor.processHitVehicle(vehicle, missile, battle);
             }

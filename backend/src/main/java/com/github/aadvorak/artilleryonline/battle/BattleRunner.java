@@ -3,7 +3,6 @@ package com.github.aadvorak.artilleryonline.battle;
 import com.github.aadvorak.artilleryonline.battle.events.BattleModelEvents;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
-import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.processor.ActiveBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.WaitingBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.updates.BattleModelUpdates;
@@ -154,6 +153,12 @@ public class BattleRunner {
                 break;
             }
         }
+        for (var vehicleModel: battleModel.getVehicles().values()) {
+            if (vehicleModel.getUpdate().setUpdatedByTimeout(battle.getAbsoluteTime())) {
+                setAllUpdatedByTimeout(battle);
+                break;
+            }
+        }
     }
 
     private void setAllUpdatedByTimeout(Battle battle) {
@@ -161,6 +166,8 @@ public class BattleRunner {
         battleModel.getMissiles().values().forEach(model ->
                 model.getUpdate().setUpdated(battle.getAbsoluteTime()));
         battleModel.getDrones().values().forEach(model ->
+                model.getUpdate().setUpdated(battle.getAbsoluteTime()));
+        battleModel.getVehicles().values().forEach(model ->
                 model.getUpdate().setUpdated(battle.getAbsoluteTime()));
     }
 
@@ -244,7 +251,7 @@ public class BattleRunner {
 
     private boolean existsUpdatedModel(BattleModel battleModel) {
         var updatedVehicles = battleModel.getVehicles().values().stream()
-                .anyMatch(VehicleModel::isUpdated);
+                .anyMatch(vehicleModel -> vehicleModel.getUpdate().isUpdated());
         var updatedMissiles = battleModel.getMissiles().values().stream()
                 .anyMatch(missileModel -> missileModel.getUpdate().isUpdated());
         var updatedDrones = battleModel.getDrones().values().stream()
@@ -273,7 +280,7 @@ public class BattleRunner {
     private void resetUpdatedFlags(Battle battle) {
         battle.setStageUpdated(false);
         battle.getModel().setUpdated(false);
-        battle.getModel().getVehicles().values().forEach(vehicle -> vehicle.setUpdated(false));
+        battle.getModel().getVehicles().values().forEach(vehicle -> vehicle.getUpdate().resetUpdated());
         battle.getModel().getShells().values().forEach(shell -> shell.setUpdated(false));
         battle.getModel().getMissiles().values().forEach(missile -> missile.getUpdate().resetUpdated());
         battle.getModel().getDrones().values().forEach(drone -> drone.getUpdate().resetUpdated());

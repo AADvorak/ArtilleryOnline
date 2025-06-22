@@ -22,7 +22,7 @@ public class VehicleModel
     private Long userId;
 
     @JsonIgnore
-    private boolean updated = false;
+    private final TimeoutUpdate update = new TimeoutUpdate();
 
     @JsonIgnore
     private Long turnedOverTime;

@@ -13,7 +13,7 @@ public class VehicleDroneProcessor {
         var prepareToLaunchRemainTime = inVehicleState.getPrepareToLaunchRemainTime() - battleModel.getCurrentTimeStepSecs();
         if (prepareToLaunchRemainTime <= 0) {
             inVehicleState.setReadyToLaunch(true);
-            vehicleModel.setUpdated(true);
+            vehicleModel.getUpdate().setUpdated();
         }
         inVehicleState.setPrepareToLaunchRemainTime(prepareToLaunchRemainTime);
     }

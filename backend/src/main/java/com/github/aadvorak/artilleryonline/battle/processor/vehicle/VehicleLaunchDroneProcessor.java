@@ -52,7 +52,7 @@ public class VehicleLaunchDroneProcessor {
         model.setPreCalc(new DronePreCalc(specs));
         battleModel.getDrones().put(id, model);
         battleModel.getUpdates().addDrone(model);
-        vehicleModel.setUpdated(true);
+        vehicleModel.getUpdate().setUpdated();
         inVehicleState.setReadyToLaunch(false);
         inVehicleState.setLaunched(true);
     }
