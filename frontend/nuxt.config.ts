@@ -14,6 +14,9 @@ export default defineNuxtConfig({
     define: {
       'process.env.DEBUG': 'false',
       'global': {},
+    },
+    server: {
+      allowedHosts: ['host.docker.internal'],
     }
   },
   modules: [
