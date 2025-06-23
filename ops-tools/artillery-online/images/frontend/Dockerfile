@@ -1,3 +1,3 @@
-FROM node:22.9-alpine3.19
+FROM node:24.2-alpine3.22
 WORKDIR /frontend
-CMD ["npm", "run", "start"]
+CMD ["node", ".output/server/index.mjs"]
