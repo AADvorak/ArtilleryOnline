@@ -36,24 +36,26 @@ public class BodyCollisionData {
         return new BodyCollisionData()
                 .setVelocity(velocityAtPosition)
                 .setVelocityProjections(velocityAtPosition.projections(contact.angle()))
-                .setNormalData(getComponentData(bodyModel, contact.position(), comPosition, contact.normal(), radiusNormalized))
-                .setTangentialData(getComponentData(bodyModel, contact.position(), comPosition, tangential, radiusNormalized));
+                .setNormalData(getComponentData(bodyModel, contact.position(), comPosition, contact.normal(), radiusNormalized, false))
+                .setTangentialData(getComponentData(bodyModel, contact.position(), comPosition, tangential, radiusNormalized, false));
     }
 
     public static ComponentData getComponentData(BodyModel<?, ?, ?, ?> bodyModel, Vector component,
                                                  Position contactPosition) {
         var comPosition = bodyModel.getState().getPosition().getCenter();
         var radiusNormalized = comPosition.vectorTo(contactPosition).normalized();
-        return getComponentData(bodyModel, contactPosition, comPosition, component, radiusNormalized);
+        return getComponentData(bodyModel, contactPosition, comPosition, component, radiusNormalized, true);
     }
 
     private static ComponentData getComponentData(BodyModel<?, ?, ?, ?> bodyModel,
                                                   Position contactPosition, Position comPosition,
-                                                  Vector component, Vector radiusNormalized) {
+                                                  Vector component, Vector radiusNormalized,
+                                                  boolean restrictRotation) {
         var radiusAndComponentVectorProduct = radiusNormalized.vectorProduct(component);
         var distanceToAxis = getDistanceToAxis(comPosition, contactPosition, component);
-        // todo getInertiaToMassCoefficient
-        var inertiaToMassCoefficient = Math.abs(radiusAndComponentVectorProduct);
+        var inertiaToMassCoefficient = restrictRotation
+                ? getInertiaToMassCoefficient(radiusAndComponentVectorProduct, distanceToAxis, bodyModel.getPreCalc().getMaxRadius())
+                : Math.abs(radiusAndComponentVectorProduct);
         return new ComponentData()
                 .setDistanceToAxis(distanceToAxis)
                 .setInertiaToMassCoefficient(inertiaToMassCoefficient)
