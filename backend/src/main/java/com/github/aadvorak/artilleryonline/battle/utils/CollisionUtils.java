@@ -46,7 +46,7 @@ public class CollisionUtils {
         if (!intersectionPoints.isEmpty()) {
             var intersectionPoint = findClosestIntersectionPoint(position, intersectionPoints);
             var contact = Contact.withUncheckedDepthOf(0.0,
-                    intersectionPoint.vectorTo(vehiclePosition).normalized(), vehiclePosition);
+                    intersectionPoint.vectorTo(vehiclePosition).normalized(), intersectionPoint);
             return Collision.withVehicle(calculations, vehicle, contact);
         }
         var vehicleBottom = vehicleShape.chord();
