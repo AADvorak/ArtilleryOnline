@@ -41,10 +41,12 @@ public class CollisionResolver {
                 var hitDirection = first.getVelocity().normalized();
                 var hitData = BodyCollisionData.getComponentData(secondModel, hitDirection,
                         collision.getContact().position());
-                var impulseDelta = first.getMass() * first.getVelocity().magnitude();
-                System.out.printf("Object id %d = hits object id = %d]\n%s\nHitData: %s\n",
+                var recalcMass = first.getMass() * hitData.getResultMass() / second.getMass();
+                var impulseDelta = recalcMass * first.getVelocity().magnitude();
+                if (logging) System.out.printf("Object id %d = hits object id = %d]\n%s\nHitData: %s\n",
                         collision.getPair().first().getId(), collision.getPair().second().getId(),
                         collision.getContact(), hitData);
+                if (logging) System.out.printf("Mass = %.3f, recalcMass = %.3f\n", first.getMass(), recalcMass);
                 recalculateBodyVelocity(secondModel.getState().getVelocity(), collision.getContact(),
                         hitData, impulseDelta, -1, false);
                 if (logging) System.out.print("----------------End hit resolution------------------\n");
