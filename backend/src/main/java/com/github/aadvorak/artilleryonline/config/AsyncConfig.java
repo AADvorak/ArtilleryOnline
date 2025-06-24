@@ -32,7 +32,7 @@ public class AsyncConfig {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(corePoolSize);
         executor.setMaxPoolSize(applicationLimits.getMaxBattles());
-        executor.setQueueCapacity(10);
+        executor.setQueueCapacity(0);
         executor.setThreadNamePrefix("RunBattleAsync-");
         executor.initialize();
         return executor;
@@ -43,7 +43,7 @@ public class AsyncConfig {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(corePoolSize);
         executor.setMaxPoolSize(maxBattlePoolSize * 2);
-        executor.setQueueCapacity(10);
+        executor.setQueueCapacity(0);
         executor.setThreadNamePrefix("SendBattleUpdatesAsync-");
         executor.initialize();
         return executor;
