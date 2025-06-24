@@ -17,15 +17,19 @@ public class VehicleCollisionPreprocessor implements CollisionPreprocessor {
     public Boolean process(Collision collision, BattleCalculations battle) {
         var first = collision.getPair().first();
         var second = collision.getPair().second();
-        if (first instanceof VehicleCalculations || first instanceof WheelCalculations) {
-            ((VehicleModel) first.getModel()).getUpdate().setUpdated();
+        var firstModel = first instanceof VehicleCalculations || first instanceof WheelCalculations
+                ? (VehicleModel) first.getModel() : null;
+        var secondModel = second instanceof VehicleCalculations || second instanceof WheelCalculations
+                ? (VehicleModel) second.getModel() : null;
+        if (firstModel != null) {
+            firstModel.getUpdate().setUpdated();
         }
-        if (second instanceof VehicleCalculations || second instanceof WheelCalculations) {
-            ((VehicleModel) second.getModel()).getUpdate().setUpdated();
+        if (secondModel != null) {
+            secondModel.getUpdate().setUpdated();
         }
-//        if (first instanceof VehicleCalculations firstVehicle && second instanceof VehicleCalculations secondVehicle) {
-//            calculateAndApplyDamage(collision, firstVehicle.getModel(), secondVehicle.getModel(), battle.getModel());
-//        }
+        if (firstModel != null && secondModel != null) {
+            calculateAndApplyDamage(collision, firstModel, secondModel, battle.getModel());
+        }
         return null;
     }
 
