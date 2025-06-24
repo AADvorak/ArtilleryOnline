@@ -32,8 +32,8 @@ public enum VehicleSpecsPreset {
             .setAvailableDrones(Map.of(DroneSpecsPreset.LIGHT.getName(), DroneSpecsPreset.LIGHT.getSpecs()))
             .setAvailableBombers(Map.of())
             .setDefaultGun(GunSpecsPreset.HEAVY.getName())
-            .setMinCollisionDamageImpact(0.2)
-            .setCollisionDamageCoefficient(50.0)
+            .setMinCollisionDamageImpact(3.0)
+            .setCollisionDamageCoefficient(2.5)
     ),
 
     MEDIUM("Medium", new VehicleSpecs()
@@ -58,8 +58,8 @@ public enum VehicleSpecsPreset {
             .setAvailableDrones(Map.of())
             .setAvailableBombers(Map.of())
             .setDefaultGun(GunSpecsPreset.MEDIUM.getName())
-            .setMinCollisionDamageImpact(0.15)
-            .setCollisionDamageCoefficient(60.0)
+            .setMinCollisionDamageImpact(2.25)
+            .setCollisionDamageCoefficient(3.0)
     ),
 
     LIGHT("Light", new VehicleSpecs()
@@ -83,8 +83,8 @@ public enum VehicleSpecsPreset {
             .setAvailableDrones(Map.of())
             .setAvailableBombers(Map.of(BomberSpecsPreset.DEFAULT.getName(), BomberSpecsPreset.DEFAULT.getSpecs()))
             .setDefaultGun(GunSpecsPreset.LIGHT.getName())
-            .setMinCollisionDamageImpact(0.12)
-            .setCollisionDamageCoefficient(70.0)
+            .setMinCollisionDamageImpact(1.8)
+            .setCollisionDamageCoefficient(3.5)
     );
 
     private final String name;
