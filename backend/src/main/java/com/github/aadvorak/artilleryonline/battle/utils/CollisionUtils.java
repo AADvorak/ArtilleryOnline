@@ -37,7 +37,7 @@ public class CollisionUtils {
         var vehicleRadius = vehicle.getModel().getSpecs().getRadius();
         var vehicleAngle = vehicle.getModel().getState().getPosition().getAngle();
         var projectileTrace = new Segment(position, nextPosition);
-        var vehicleShape = new HalfCircle(vehiclePosition, vehicleRadius, vehicleAngle);
+        var vehicleShape = HalfCircle.of(vehiclePosition, vehicleAngle, vehicleRadius);
         var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(projectileTrace, vehicleShape.circle())
                 .stream().filter(intersectionPoint -> {
                     var pointAngle = vehiclePosition.angleTo(intersectionPoint);

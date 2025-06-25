@@ -54,7 +54,7 @@ public class VehicleAccelerationCalculator {
         var position = vehicle.getGeometryPosition();
         var angle = vehicle.getModel().getState().getPosition().getAngle();
         vehicle.setGroundContacts(GroundContactUtils.getGroundContacts(
-                new HalfCircle(position, vehicle.getModel().getSpecs().getRadius(), angle),
+                HalfCircle.of(position, angle, vehicle.getModel().getSpecs().getRadius()),
                 roomModel, false));
     }
 }

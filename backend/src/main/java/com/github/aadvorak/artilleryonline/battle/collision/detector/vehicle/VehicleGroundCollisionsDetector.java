@@ -60,7 +60,7 @@ public class VehicleGroundCollisionsDetector implements CollisionsDetector {
     private Set<Collision> detectHullGroundCollisions(VehicleCalculations vehicle, BattleCalculations battle) {
         var position = vehicle.getGeometryNextPosition();
         return GroundContactUtils.getGroundContacts(
-                new HalfCircle(position.getCenter(), vehicle.getModel().getSpecs().getRadius(), position.getAngle()),
+                HalfCircle.of(position, vehicle.getModel().getSpecs().getRadius()),
                 battle.getModel().getRoom(), true).stream()
                 .map(contact -> Collision.withGround(vehicle, contact))
                 .collect(Collectors.toSet());
