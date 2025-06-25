@@ -6,6 +6,8 @@ import type {VehicleModel} from "~/playground/data/model";
 import type {Position} from "~/playground/data/common";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
+import {type HalfCircleShape, ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
+import {BattleUtils} from "~/playground/utils/battle-utils";
 
 export function useVehicleDrawer(
     drawerBase: DrawerBase,
@@ -29,10 +31,9 @@ export function useVehicleDrawer(
       ctx.value.fillStyle = color
       ctx.value.strokeStyle = color
 
-      const radius = drawerBase.scale(vehicleModel.specs.radius)
       const wheelRadius = drawerBase.scale(vehicleModel.specs.wheelRadius)
 
-      drawHull(vehicleModel, radius)
+      drawTurret(vehicleModel)
       drawWheels(vehicleModel, wheelRadius)
       drawSmallWheels(vehicleModel, wheelRadius)
       drawTrack(vehicleModel)
@@ -52,6 +53,52 @@ export function useVehicleDrawer(
     const endAngle = 2 * Math.PI - vehicleModel.state.position.angle
     ctx.value!.beginPath()
     ctx.value!.arc(position.x, position.y, radius, startAngle, endAngle)
+    ctx.value!.fill()
+    ctx.value!.closePath()
+  }
+
+  function drawTurret(vehicleModel: VehicleModel) {
+    const turretShape = vehicleModel.specs.turretShape
+    switch (turretShape.name) {
+      case ShapeNames.HALF_CIRCLE:
+        drawHalfCircleTurret(vehicleModel, turretShape as HalfCircleShape)
+        break
+      case ShapeNames.TRAPEZE:
+        drawTrapezeTurret(vehicleModel, turretShape as TrapezeShape)
+        break
+    }
+  }
+
+  function drawHalfCircleTurret(vehicleModel: VehicleModel, turretShape: HalfCircleShape) {
+    const position = drawerBase.transformPosition(VehicleUtils.getGeometryPosition(vehicleModel))
+    const startAngle = Math.PI - vehicleModel.state.position.angle
+    const endAngle = 2 * Math.PI - vehicleModel.state.position.angle
+    const radius = drawerBase.scale(turretShape.radius)
+    ctx.value!.beginPath()
+    ctx.value!.arc(position.x, position.y, radius, startAngle, endAngle)
+    ctx.value!.fill()
+    ctx.value!.closePath()
+  }
+
+  function drawTrapezeTurret(vehicleModel: VehicleModel, turretShape: TrapezeShape) {
+    const angle = vehicleModel.state.position.angle
+    const bottomCenter = VehicleUtils.getGeometryPosition(vehicleModel)
+    const topCenter = BattleUtils.shiftedPosition(bottomCenter, turretShape.height, angle + Math.PI / 2)
+
+    const bottomRight = drawerBase.transformPosition(
+        BattleUtils.shiftedPosition(bottomCenter, turretShape.bottomRadius, angle))
+    const bottomLeft = drawerBase.transformPosition(
+        BattleUtils.shiftedPosition(bottomCenter, -turretShape.bottomRadius, angle))
+    const topRight = drawerBase.transformPosition(
+        BattleUtils.shiftedPosition(topCenter, turretShape.topRadius, angle))
+    const topLeft = drawerBase.transformPosition(
+        BattleUtils.shiftedPosition(topCenter, -turretShape.topRadius, angle))
+
+    ctx.value!.beginPath()
+    ctx.value!.moveTo(bottomLeft.x, bottomLeft.y)
+    ctx.value!.lineTo(bottomRight.x, bottomRight.y)
+    ctx.value!.lineTo(topRight.x, topRight.y)
+    ctx.value!.lineTo(topLeft.x, topLeft.y)
     ctx.value!.fill()
     ctx.value!.closePath()
   }

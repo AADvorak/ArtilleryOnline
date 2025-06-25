@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.specs;
 
+import com.github.aadvorak.artilleryonline.battle.common.shapes.Shape;
 import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
@@ -28,6 +29,8 @@ public class VehicleSpecs implements Specs, CompactSerializable {
     private double wheelAngleVelocity;
 
     private double radius;
+
+    private Shape turretShape;
 
     private double wheelRadius;
 
@@ -63,6 +66,7 @@ public class VehicleSpecs implements Specs, CompactSerializable {
         stream.writeDouble(acceleration);
         stream.writeDouble(wheelAngleVelocity);
         stream.writeDouble(radius);
+        stream.writeSerializableValue(turretShape);
         stream.writeDouble(wheelRadius);
         stream.writeDouble(hullRadius);
         stream.writeDouble(trackRepairTime);

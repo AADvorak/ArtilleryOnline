@@ -12,6 +12,7 @@ import type {
 } from "~/playground/data/specs";
 import {JetType, type ShellType} from "~/playground/data/common";
 import {deserializePosition} from "~/playground/data/common-deserialize";
+import {deserializeShape} from "~/playground/data/shapes-deserialize";
 
 export function deserializeExplosionSpecs(input: DeserializerInput): ExplosionSpecs {
   const duration = DeserializerBase.readDouble(input)
@@ -121,6 +122,7 @@ export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs 
   const acceleration = DeserializerBase.readDouble(input)
   const wheelAngleVelocity = DeserializerBase.readDouble(input)
   const radius = DeserializerBase.readDouble(input)
+  const turretShape = deserializeShape(input)
   const wheelRadius = DeserializerBase.readDouble(input)
   const hullRadius = DeserializerBase.readDouble(input)
   const trackRepairTime = DeserializerBase.readDouble(input)
@@ -139,6 +141,7 @@ export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs 
     acceleration,
     wheelAngleVelocity,
     radius,
+    turretShape,
     wheelRadius,
     hullRadius,
     trackRepairTime,

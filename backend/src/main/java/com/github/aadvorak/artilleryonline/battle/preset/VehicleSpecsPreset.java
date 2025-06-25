@@ -1,5 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.preset;
 
+import com.github.aadvorak.artilleryonline.battle.common.shapes.HalfCircleShape;
+import com.github.aadvorak.artilleryonline.battle.common.shapes.TrapezeShape;
 import com.github.aadvorak.artilleryonline.battle.specs.VehicleSpecs;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,12 @@ public enum VehicleSpecsPreset {
     HEAVY("Heavy", new VehicleSpecs()
             .setName("Heavy")
             .setRadius(0.45)
+            .setTurretShape(
+                    new TrapezeShape()
+                            .setBottomRadius(0.45)
+                            .setTopRadius(0.3)
+                            .setHeight(0.35)
+            )
             .setHullRadius(0.5)
             .setWheelRadius(0.12)
             .setTrackRepairTime(15.0)
@@ -40,6 +48,10 @@ public enum VehicleSpecsPreset {
             .setName("Medium")
             .setMissiles(3)
             .setRadius(0.4)
+            .setTurretShape(
+                    new HalfCircleShape()
+                            .setRadius(0.4)
+            )
             .setHullRadius(0.4)
             .setWheelRadius(0.1)
             .setTrackRepairTime(10.0)
@@ -65,6 +77,10 @@ public enum VehicleSpecsPreset {
     LIGHT("Light", new VehicleSpecs()
             .setName("Light")
             .setRadius(0.3)
+            .setTurretShape(
+                    new HalfCircleShape()
+                            .setRadius(0.3)
+            )
             .setHullRadius(0.35)
             .setWheelRadius(0.08)
             .setTrackRepairTime(7.0)

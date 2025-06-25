@@ -1,4 +1,5 @@
 import {JetType, type Position, ShellType} from "@/playground/data/common";
+import type {HalfCircleShape, Shape, TrapezeShape} from "~/playground/data/shapes";
 
 export interface ShellSpecs {
   velocity: number
@@ -63,6 +64,7 @@ export interface VehicleSpecs {
   minAngle: number
   maxAngle: number
   radius: number
+  turretShape: Shape | HalfCircleShape | TrapezeShape
   wheelRadius: number
   hullRadius: number
   trackRepairTime: number
