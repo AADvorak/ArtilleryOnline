@@ -5,6 +5,8 @@ import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
+import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
+import com.github.aadvorak.artilleryonline.battle.common.lines.Trapeze;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 
 import java.util.ArrayList;
@@ -24,27 +26,17 @@ public class GroundContactUtils {
         var i = 0;
         var halfCircleNormal = halfCircle.center().vectorTo(halfCircle.center()
                 .shifted(1.0, halfCircle.angle() + Math.PI / 2));
+        var maxDepth = withMaxDepth ? roomModel.getSpecs().getGroundMaxDepth() : 0.0;
         while (i < groundIndexes.size()) {
             var position = BattleUtils.getGroundPosition(groundIndexes.get(i), roomModel);
 
-            Contact bottomContact = null;
-            var bottomPoint = bottom.findPointWithX(position.getX());
-            if (bottomPoint != null && bottomPoint.getY() < position.getY()) {
-                var projection = GeometryUtils.getPointToSegmentProjection(position, bottom);
-                if (projection != null) {
-                    var depth = position.distanceTo(projection);
-                    var normal = position.vectorTo(projection).normalized();
-                    if (withMaxDepth) depth -= roomModel.getSpecs().getGroundMaxDepth();
-                    bottomContact = Contact.withUncheckedDepthOf(depth, normal, projection, "HalfCircle bottom with ground");
-                }
-            }
+            Contact bottomContact = getGroundContact(bottom, position, maxDepth, "HalfCircle bottom with ground");
 
             Contact topContact = null;
             var distance = halfCircle.center().distanceTo(position);
             var radiusVector = halfCircle.center().vectorTo(position);
             if (distance < halfCircle.radius() && halfCircleNormal.dotProduct(radiusVector) > 0) {
-                var depth = halfCircle.radius() - distance;
-                if (withMaxDepth) depth -= roomModel.getSpecs().getGroundMaxDepth();
+                var depth = halfCircle.radius() - distance - maxDepth;
                 var contactPosition = halfCircle.center().shifted(halfCircle.radius(),
                         halfCircle.center().angleTo(position));
                 topContact = Contact.withUncheckedDepthOf(
@@ -68,6 +60,51 @@ public class GroundContactUtils {
                 contacts.add(resultContact);
             }
 
+            i++;
+        }
+        return contacts;
+    }
+
+    public static Set<Contact> getGroundContacts(Trapeze trapeze, RoomModel roomModel, boolean withMaxDepth) {
+        var maxDistance = Math.max(trapeze.shape().getBottomRadius(),  trapeze.shape().getTopRadius());
+        maxDistance = Math.max(maxDistance, trapeze.shape().getHeight());
+        var groundIndexes = BattleUtils.getGroundIndexesBetween(trapeze.position().getX() - maxDistance,
+                trapeze.position().getX() + maxDistance, roomModel);
+        var contacts = new HashSet<Contact>();
+        if (groundIndexes.isEmpty()) {
+            return contacts;
+        }
+        var i = 0;
+        var maxDepth = withMaxDepth ? roomModel.getSpecs().getGroundMaxDepth() : 0.0;
+        var bottom = trapeze.bottom();
+        var top = trapeze.top();
+        var right = trapeze.right();
+        var left = trapeze.left();
+        while (i < groundIndexes.size()) {
+            var position = BattleUtils.getGroundPosition(groundIndexes.get(i), roomModel);
+
+            var bottomContact = getGroundContact(bottom, position, maxDepth, "Trapeze bottom with ground");
+            var topContact = getGroundContact(top, position, maxDepth, "Trapeze top with ground");
+            var rightContact = getGroundContact(right, position, maxDepth,  "Trapeze right with ground");
+            var leftContact = getGroundContact(left, position, maxDepth, "Trapeze left with ground");
+
+            Contact resultContact = null;
+            if (topContact != null) {
+                resultContact = topContact;
+            }
+            if (bottomContact != null && (resultContact == null || bottomContact.depth() < resultContact.depth())) {
+                resultContact = bottomContact;
+            }
+            if (rightContact != null && (resultContact == null || rightContact.depth() < resultContact.depth())) {
+                resultContact = rightContact;
+            }
+            if (leftContact != null && (resultContact == null || leftContact.depth() < resultContact.depth())) {
+                resultContact = leftContact;
+            }
+
+            if (resultContact != null && resultContact.depth() >= Constants.INTERPENETRATION_THRESHOLD) {
+                contacts.add(resultContact);
+            }
             i++;
         }
         return contacts;
@@ -114,6 +151,19 @@ public class GroundContactUtils {
                 0.0,
                 circle.center().shifted(circle.radius(), -Math.PI / 2)
         );
+    }
+
+    private static Contact getGroundContact(Segment segment, Position groundPosition, double maxDepth, String description) {
+        var segmentPoint = segment.findPointWithX(groundPosition.getX());
+        if (segmentPoint != null && segmentPoint.getY() < groundPosition.getY()) {
+            var projection = GeometryUtils.getPointToSegmentProjection(groundPosition, segment);
+            if (projection != null) {
+                var depth = groundPosition.distanceTo(projection) - maxDepth;
+                var normal = groundPosition.vectorTo(projection).normalized();
+                return Contact.withUncheckedDepthOf(depth, normal, projection, description);
+            }
+        }
+        return null;
     }
 
     private static double getGroundDepth(Circle circle, double y, double distance) {
