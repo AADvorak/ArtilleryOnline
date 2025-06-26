@@ -4,7 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.shapes.TrapezeShape;
 
-public record Trapeze(BodyPosition position, TrapezeShape shape) {
+public record Trapeze(BodyPosition position, TrapezeShape shape) implements BodyPart {
 
     public Position bottomRight() {
         return position.getCenter().shifted(shape.getBottomRadius(), position.getAngle());
@@ -36,6 +36,12 @@ public record Trapeze(BodyPosition position, TrapezeShape shape) {
 
     public Segment left() {
         return new Segment(topLeft(), bottomLeft());
+    }
+
+    public double maxDistanceFromCenter() {
+        var topCornerDistance = Math.sqrt(shape.getTopRadius() * shape.getTopRadius()
+                + shape.getHeight() * shape.getHeight());
+        return Math.max(topCornerDistance, shape.getBottomRadius());
     }
 
     private Position topCenter() {

@@ -4,7 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.shapes.HalfCircleShape;
 
-public record HalfCircle(BodyPosition position, HalfCircleShape shape) {
+public record HalfCircle(BodyPosition position, HalfCircleShape shape) implements BodyPart {
 
     public Position bottomRight() {
         return position.getCenter().shifted(shape.getRadius(), position.getAngle());

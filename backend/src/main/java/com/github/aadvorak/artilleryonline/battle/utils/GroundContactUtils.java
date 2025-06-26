@@ -66,8 +66,7 @@ public class GroundContactUtils {
     }
 
     public static Set<Contact> getGroundContacts(Trapeze trapeze, RoomModel roomModel, boolean withMaxDepth) {
-        var maxDistance = Math.max(trapeze.shape().getBottomRadius(),  trapeze.shape().getTopRadius());
-        maxDistance = Math.max(maxDistance, trapeze.shape().getHeight());
+        var maxDistance = trapeze.maxDistanceFromCenter();
         var groundIndexes = BattleUtils.getGroundIndexesBetween(trapeze.position().getX() - maxDistance,
                 trapeze.position().getX() + maxDistance, roomModel);
         var contacts = new HashSet<Contact>();
