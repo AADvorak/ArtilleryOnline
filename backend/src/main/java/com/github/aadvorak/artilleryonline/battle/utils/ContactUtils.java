@@ -1,11 +1,10 @@
 package com.github.aadvorak.artilleryonline.battle.utils;
 
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
-import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
-import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
-import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
+import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.lines.*;
 
-import java.util.Optional;
+import java.util.*;
 
 public class ContactUtils {
 
@@ -65,6 +64,73 @@ public class ContactUtils {
                     .orElse(null);
         }
         return null;
+    }
+
+    public static Contact getTrapezesContact(Trapeze trapeze, Trapeze otherTrapeze) {
+        var maxDistance = trapeze.maxDistanceFromCenter();
+        var otherMaxDistance = otherTrapeze.maxDistanceFromCenter();
+        if (trapeze.position().getCenter().distanceTo(otherTrapeze.position().getCenter())
+                > maxDistance + otherMaxDistance) {
+            return null;
+        }
+        var polygon = new Polygon(trapeze);
+
+        Map<Segment, Set<Segment>> otherSidesIntersections = new HashMap<>();
+        otherSidesIntersections.put(otherTrapeze.bottom(), new HashSet<>());
+        otherSidesIntersections.put(otherTrapeze.right(), new HashSet<>());
+        otherSidesIntersections.put(otherTrapeze.top(), new HashSet<>());
+        otherSidesIntersections.put(otherTrapeze.left(), new HashSet<>());
+
+        otherSidesIntersections.forEach((otherSide, intersections) ->
+                polygon.sides().forEach(side -> {
+                    if (GeometryUtils.getSegmentsIntersectionPoint(otherSide, side) != null) {
+                        intersections.add(side);
+                    }
+                })
+        );
+
+        for (var otherSide : otherSidesIntersections.keySet()) {
+            var intersections = otherSidesIntersections.get(otherSide);
+            if (intersections.size() == 2) {
+                var iterator = intersections.iterator();
+                var firstIntersection = iterator.next();
+                var secondIntersection = iterator.next();
+                if (polygon.next(firstIntersection).equals(secondIntersection)) {
+                    return getContact(firstIntersection.end(), otherSide, false);
+                } else if (polygon.next(secondIntersection).equals(firstIntersection)) {
+                    return getContact(secondIntersection.end(), otherSide, false);
+                } else {
+                    var contacts = new ArrayList<Contact>();
+                    contacts.add(getContact(firstIntersection.end(), otherSide, true));
+                    contacts.add(getContact(secondIntersection.end(), otherSide, true));
+                    contacts.add(getContact(firstIntersection.begin(), otherSide, true));
+                    contacts.add(getContact(secondIntersection.begin(), otherSide, true));
+                    var contactsIterator = contacts.iterator();
+                    var contact = contactsIterator.next();
+                    while (contactsIterator.hasNext()) {
+                        var otherContact = contactsIterator.next();
+                        if (otherContact != null && (contact == null || otherContact.depth() > contact.depth())) {
+                            contact = otherContact;
+                        }
+                    }
+                    return contact;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static Contact getContact(Position position, Segment segment, boolean checkSide) {
+        var projection = GeometryUtils.getPointToLineProjection(position, segment);
+        var normal = segment.normal();
+        if (checkSide) {
+            var direction = projection.vectorTo(position).normalized();
+            if (direction.dotProduct(normal) < 0) {
+                return null;
+            }
+        }
+        return Contact.of(position.distanceTo(projection), normal, new Segment(position, projection).center());
     }
 
     private static boolean isHalfCircleBottomAndOtherHalfCircleTopContact(Segment bottom, HalfCircle otherHalfCircle) {

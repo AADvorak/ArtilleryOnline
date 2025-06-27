@@ -20,4 +20,10 @@ public record Segment(Position begin, Position end) {
     public Vector normal() {
         return Vector.normal(end.angleTo(begin));
     }
+
+    public Position center() {
+        return new Position()
+                .setX((begin.getX() + end.getX()) / 2)
+                .setY((begin.getY() + end.getY()) / 2);
+    }
 }
