@@ -74,12 +74,10 @@ public class ContactUtils {
             return null;
         }
         var polygon = new Polygon(trapeze);
+        var otherPolygon = new Polygon(otherTrapeze);
 
         Map<Segment, Set<Segment>> otherSidesIntersections = new HashMap<>();
-        otherSidesIntersections.put(otherTrapeze.bottom(), new HashSet<>());
-        otherSidesIntersections.put(otherTrapeze.right(), new HashSet<>());
-        otherSidesIntersections.put(otherTrapeze.top(), new HashSet<>());
-        otherSidesIntersections.put(otherTrapeze.left(), new HashSet<>());
+        otherPolygon.sides().forEach(otherSide -> otherSidesIntersections.put(otherSide, new HashSet<>()));
 
         otherSidesIntersections.forEach((otherSide, intersections) ->
                 polygon.sides().forEach(side -> {
@@ -89,22 +87,22 @@ public class ContactUtils {
                 })
         );
 
-        for (var otherSide : otherSidesIntersections.keySet()) {
+        for (var otherSide : otherPolygon.sides()) {
             var intersections = otherSidesIntersections.get(otherSide);
             if (intersections.size() == 2) {
                 var iterator = intersections.iterator();
-                var firstIntersection = iterator.next();
-                var secondIntersection = iterator.next();
-                if (polygon.next(firstIntersection).equals(secondIntersection)) {
-                    return getContact(firstIntersection.end(), otherSide, false);
-                } else if (polygon.next(secondIntersection).equals(firstIntersection)) {
-                    return getContact(secondIntersection.end(), otherSide, false);
+                var firstSide = iterator.next();
+                var secondSide = iterator.next();
+                if (polygon.next(firstSide).equals(secondSide)) {
+                    return getContact(firstSide.end(), otherSide, false);
+                } else if (polygon.next(secondSide).equals(firstSide)) {
+                    return getContact(secondSide.end(), otherSide, false);
                 } else {
                     var contacts = new ArrayList<Contact>();
-                    contacts.add(getContact(firstIntersection.end(), otherSide, true));
-                    contacts.add(getContact(secondIntersection.end(), otherSide, true));
-                    contacts.add(getContact(firstIntersection.begin(), otherSide, true));
-                    contacts.add(getContact(secondIntersection.begin(), otherSide, true));
+                    contacts.add(getContact(firstSide.end(), otherSide, true));
+                    contacts.add(getContact(secondSide.end(), otherSide, true));
+                    contacts.add(getContact(firstSide.begin(), otherSide, true));
+                    contacts.add(getContact(secondSide.begin(), otherSide, true));
                     var contactsIterator = contacts.iterator();
                     var contact = contactsIterator.next();
                     while (contactsIterator.hasNext()) {
@@ -114,6 +112,20 @@ public class ContactUtils {
                         }
                     }
                     return contact;
+                }
+            } else if (intersections.size() == 1) {
+                var firstSide = intersections.iterator().next();
+                var secondOtherSide = otherPolygon.next(otherSide);
+                if (otherSidesIntersections.get(secondOtherSide).size() == 1) {
+                    var secondSide = otherSidesIntersections.get(secondOtherSide).iterator().next();
+                    var edge = polygon.next(firstSide).equals(secondSide) ? firstSide.end() : secondSide.end();
+                    var otherEdge = otherSide.end();
+                    // todo may be plane-plane
+                    return Contact.of(
+                            edge.distanceTo(otherEdge),
+                            otherEdge.vectorTo(edge).normalized(),
+                            new Segment(edge, otherEdge).center()
+                    );
                 }
             }
         }
