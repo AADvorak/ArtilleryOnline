@@ -66,6 +66,28 @@ public class ContactUtils {
         return null;
     }
 
+    public static Contact getTrapezeCircleContact(Trapeze trapeze, Circle circle) {
+        if (trapeze.position().getCenter().distanceTo(circle.center())
+                > trapeze.maxDistanceFromCenter() + circle.radius()) {
+            return null;
+        }
+        var edges = Set.of(trapeze.bottomLeft(), trapeze.bottomRight(),  trapeze.topLeft(), trapeze.topRight());
+        for (var edge : edges) {
+            var contact = getPointAndCircleContact(edge, circle);
+            if (contact != null) {
+                return contact;
+            }
+        }
+        var polygon = new Polygon(trapeze);
+        for (var side : polygon.sides()) {
+            var contact = getSurfaceAndCircleContact(side, circle);
+            if (contact != null) {
+                return contact;
+            }
+        }
+        return null;
+    }
+
     public static Contact getTrapezesContact(Trapeze trapeze, Trapeze otherTrapeze) {
         var maxDistance = trapeze.maxDistanceFromCenter();
         var otherMaxDistance = otherTrapeze.maxDistanceFromCenter();
@@ -161,9 +183,13 @@ public class ContactUtils {
         if (projection == null) {
             return null;
         }
-        var distance = circle.center().distanceTo(projection);
+        return getPointAndCircleContact(projection, circle);
+    }
+
+    private static Contact getPointAndCircleContact(Position point, Circle circle) {
+        var distance = circle.center().distanceTo(point);
         var depth = distance < circle.radius() ? circle.radius() - distance : 0.0;
-        var normal = circle.center().vectorTo(projection).normalized();
-        return Contact.of(depth, normal, projection);
+        var normal = point.vectorTo(circle.center()).normalized();
+        return Contact.of(depth, normal, point);
     }
 }
