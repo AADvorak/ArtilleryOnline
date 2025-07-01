@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline;
 import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
+import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Trapeze;
 import com.github.aadvorak.artilleryonline.battle.common.shapes.TrapezeShape;
 import com.github.aadvorak.artilleryonline.battle.utils.ContactUtils;
@@ -256,6 +257,140 @@ public class ContactUtilsTest {
         assertAll(
                 () -> assertEquals(0.0, contact.normal().getX(), SMALL_DELTA),
                 () -> assertEquals(-1.0, contact.normal().getY(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void trapezeWithHalfCircleNoContact() {
+        var trapeze = new Trapeze(
+                new BodyPosition(),
+                RECT_TRAPEZE_SHAPE
+        );
+        var halfCircle = HalfCircle.of(new BodyPosition().setY(RECT_TRAPEZE_SHAPE.getHeight()), 1.0);
+        var contact = ContactUtils.getTrapezeHalfCircleContact(trapeze, halfCircle);
+        assertNull(contact);
+    }
+
+    @Test
+    public void trapezeTopWithHalfCircleBottom() {
+        var depth = 0.1;
+        var trapeze = new Trapeze(
+                new BodyPosition().setY(depth),
+                SMALLER_TOP_TRAPEZE_SHAPE
+        );
+        var halfCircle = HalfCircle.of(new BodyPosition().setY(RECT_TRAPEZE_SHAPE.getHeight()), 1.0);
+        var contact = ContactUtils.getTrapezeHalfCircleContact(trapeze, halfCircle);
+        assertNotNull(contact);
+        assertAll(
+                () -> assertEquals(0.0, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(1.0, contact.normal().getY(), SMALL_DELTA),
+                () -> assertEquals(depth, contact.depth(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void trapezeTopWithHalfCircleTop() {
+        var depth = 0.1;
+        var trapeze = new Trapeze(
+                new BodyPosition().setY(depth),
+                SMALLER_TOP_TRAPEZE_SHAPE
+        );
+        var halfCircle = HalfCircle.of(new BodyPosition()
+                .setY(RECT_TRAPEZE_SHAPE.getHeight() + 1.0)
+                .setAngle(Math.PI), 1.0);
+        var contact = ContactUtils.getTrapezeHalfCircleContact(trapeze, halfCircle);
+        assertNotNull(contact);
+        assertAll(
+                () -> assertEquals(0.0, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(1.0, contact.normal().getY(), SMALL_DELTA),
+                () -> assertEquals(depth, contact.depth(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void trapezeBottomWithHalfCircleTop() {
+        var depth = 0.1;
+        var trapeze = new Trapeze(
+                new BodyPosition().setY(-depth),
+                SMALLER_TOP_TRAPEZE_SHAPE
+        );
+        var halfCircle = HalfCircle.of(new BodyPosition().setY(-1.0), 1.0);
+        var contact = ContactUtils.getTrapezeHalfCircleContact(trapeze, halfCircle);
+        assertNotNull(contact);
+        assertAll(
+                () -> assertEquals(0.0, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(-1.0, contact.normal().getY(), SMALL_DELTA),
+                () -> assertEquals(depth, contact.depth(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void trapezeBottomRightWithHalfCircleTop() {
+        var trapeze = new Trapeze(
+                new BodyPosition(),
+                RECT_TRAPEZE_SHAPE
+        );
+        var halfCircle = HalfCircle.of(new BodyPosition()
+                .setX(1.5)
+                .setY(-0.5)
+                .setAngle(Math.PI / 4), 1.0);
+        var contact = ContactUtils.getTrapezeHalfCircleContact(trapeze, halfCircle);
+        assertNotNull(contact);
+        assertAll(
+                () -> assertEquals(SQRT_05, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(-SQRT_05, contact.normal().getY(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void trapezeTopRightWithHalfCircleBottom() {
+        var trapeze = new Trapeze(
+                new BodyPosition(),
+                RECT_TRAPEZE_SHAPE
+        );
+        var halfCircle = HalfCircle.of(new BodyPosition()
+                .setX(0.9)
+                .setY(0.9)
+                .setAngle(-Math.PI / 4), 1.0);
+        var contact = ContactUtils.getTrapezeHalfCircleContact(trapeze, halfCircle);
+        assertNotNull(contact);
+        assertAll(
+                () -> assertEquals(SQRT_05, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(SQRT_05, contact.normal().getY(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void trapezeRightWithHalfCircleLeftBottom() {
+        var trapeze = new Trapeze(
+                new BodyPosition(),
+                RECT_TRAPEZE_SHAPE
+        );
+        var halfCircle = HalfCircle.of(new BodyPosition()
+                .setX(1.9)
+                .setY(0.5), 1.0);
+        var contact = ContactUtils.getTrapezeHalfCircleContact(trapeze, halfCircle);
+        assertNotNull(contact);
+        assertAll(
+                () -> assertEquals(1.0, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(0.0, contact.normal().getY(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void trapezeTopRightWithHalfCircleLeftBottom() {
+        var trapeze = new Trapeze(
+                new BodyPosition(),
+                RECT_TRAPEZE_SHAPE
+        );
+        var halfCircle = HalfCircle.of(new BodyPosition()
+                .setX(1.9)
+                .setY(0.9), 1.0);
+        var contact = ContactUtils.getTrapezeHalfCircleContact(trapeze, halfCircle);
+        assertNotNull(contact);
+        assertAll(
+                () -> assertEquals(SQRT_05, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(SQRT_05, contact.normal().getY(), SMALL_DELTA)
         );
     }
 }

@@ -31,7 +31,7 @@ public class ContactUtils {
             }
         }
         var otherBottom = otherHalfCircle.chord();
-        return Optional.ofNullable(getSurfaceAndCircleContact(otherBottom, circle))
+        return Optional.ofNullable(getSegmentAndCircleContact(otherBottom, circle))
                 .map(Contact::inverted)
                 .orElse(null);
     }
@@ -55,11 +55,11 @@ public class ContactUtils {
         }
         var bottom = halfCircle.chord();
         if (isHalfCircleBottomAndOtherHalfCircleTopContact(bottom, otherHalfCircle)) {
-            return getSurfaceAndCircleContact(bottom, otherCircle);
+            return getSegmentAndCircleContact(bottom, otherCircle);
         }
         var otherBottom = otherHalfCircle.chord();
         if (isHalfCircleBottomAndOtherHalfCircleTopContact(otherBottom, halfCircle)) {
-            return Optional.ofNullable(getSurfaceAndCircleContact(otherBottom, circle))
+            return Optional.ofNullable(getSegmentAndCircleContact(otherBottom, circle))
                     .map(Contact::inverted)
                     .orElse(null);
         }
@@ -80,10 +80,110 @@ public class ContactUtils {
         }
         var polygon = new Polygon(trapeze);
         for (var side : polygon.sides()) {
-            var contact = getSurfaceAndCircleContact(side, circle);
+            var contact = getSegmentAndCircleContact(side, circle);
             if (contact != null) {
                 return contact;
             }
+        }
+        return null;
+    }
+
+    public static Contact getTrapezeHalfCircleContact(Trapeze trapeze, HalfCircle halfCircle) {
+        if (trapeze.position().getCenter().distanceTo(halfCircle.center())
+                > trapeze.maxDistanceFromCenter() + halfCircle.radius()) {
+            return null;
+        }
+        var polygon = new Polygon(trapeze);
+        var halfCircleTopIntersections = new HashSet<Segment>();
+        var halfCircleBottomIntersections = new HashSet<Segment>();
+        var halfCircleBottom = halfCircle.chord();
+        var halfCircleBottomLeft = halfCircle.bottomLeft();
+        var halfCircleBottomRight = halfCircle.bottomRight();
+        var circle = halfCircle.circle();
+        for (var side : polygon.sides()) {
+            if (GeometryUtils.getSegmentsIntersectionPoint(side, halfCircleBottom) != null) {
+                halfCircleBottomIntersections.add(side);
+            }
+            GeometryUtils.getSegmentAndHalfCircleIntersectionPoints(side, halfCircle)
+                    .forEach(point -> halfCircleTopIntersections.add(side));
+        }
+        if (halfCircleTopIntersections.size() == 2) {
+            var iterator = halfCircleTopIntersections.iterator();
+            var firstSide = iterator.next();
+            var secondSide = iterator.next();
+            if (polygon.next(firstSide).equals(secondSide)) {
+                return getPointAndCircleContact(firstSide.end(), circle);
+            } else if (polygon.next(secondSide).equals(firstSide)) {
+                return getPointAndCircleContact(secondSide.end(), circle);
+            } else {
+                var contacts = new HashSet<Contact>();
+                contacts.add(getPointAndCircleContact(firstSide.end(), circle));
+                contacts.add(getPointAndCircleContact(secondSide.end(), circle));
+                contacts.add(getPointAndCircleContact(firstSide.begin(), circle));
+                contacts.add(getPointAndCircleContact(secondSide.begin(), circle));
+                contacts.add(getPointAndCircleContact(polygon.next(firstSide).center(), circle));
+                contacts.add(getPointAndCircleContact(polygon.next(secondSide).center(), circle));
+                return getDeepestContact(contacts);
+            }
+        }
+        if (halfCircleBottomIntersections.size() == 2) {
+            var iterator = halfCircleBottomIntersections.iterator();
+            var firstSide = iterator.next();
+            var secondSide = iterator.next();
+            if (polygon.next(firstSide).equals(secondSide)) {
+                return getPointAndSegmentContact(firstSide.end(), halfCircleBottom, false);
+            } else if (polygon.next(secondSide).equals(firstSide)) {
+                return getPointAndSegmentContact(secondSide.end(), halfCircleBottom, false);
+            } else {
+                var contacts = new HashSet<Contact>();
+                contacts.add(getPointAndSegmentContact(firstSide.end(), halfCircleBottom, true));
+                contacts.add(getPointAndSegmentContact(secondSide.end(), halfCircleBottom, true));
+                contacts.add(getPointAndSegmentContact(firstSide.begin(), halfCircleBottom, true));
+                contacts.add(getPointAndSegmentContact(secondSide.begin(), halfCircleBottom, true));
+                return getDeepestContact(contacts);
+            }
+        }
+        if (halfCircleTopIntersections.size() == 1 && halfCircleBottomIntersections.size() == 1) {
+            var firstSide = halfCircleTopIntersections.iterator().next();
+            var secondSide = halfCircleBottomIntersections.iterator().next();
+            if (firstSide.equals(secondSide)) {
+                var contact = getPointAndSegmentContact(halfCircleBottomLeft, firstSide, true);
+                if (contact != null) {
+                    return contact.inverted();
+                }
+                contact = getPointAndSegmentContact(halfCircleBottomRight, firstSide, false);
+                if (contact != null) {
+                    return contact.inverted();
+                }
+            } else {
+                Position otherEdge = null;
+                if (isPointOnInnerSideOfSegment(halfCircleBottomLeft, firstSide)
+                        && isPointOnInnerSideOfSegment(halfCircleBottomLeft, secondSide)) {
+                    otherEdge = halfCircleBottomLeft;
+                }  else if (isPointOnInnerSideOfSegment(halfCircleBottomRight, firstSide)
+                        && isPointOnInnerSideOfSegment(halfCircleBottomRight, secondSide)) {
+                    otherEdge = halfCircleBottomRight;
+                }
+                if (otherEdge != null) {
+                    Position edge = null;
+                    if (polygon.next(firstSide).equals(secondSide)) {
+                        edge = firstSide.end();
+                    } else if (polygon.next(secondSide).equals(firstSide)) {
+                        edge = secondSide.end();
+                    }
+                    if (edge != null) {
+                        return Contact.of(
+                                edge.distanceTo(otherEdge),
+                                otherEdge.vectorTo(edge).normalized(),
+                                new Segment(edge, otherEdge).center()
+                        );
+                    }
+                }
+            }
+        }
+        if (halfCircleTopIntersections.size() == 1) {
+            var side = halfCircleTopIntersections.iterator().next();
+            return getSegmentAndCircleContact(side, circle);
         }
         return null;
     }
@@ -116,24 +216,16 @@ public class ContactUtils {
                 var firstSide = iterator.next();
                 var secondSide = iterator.next();
                 if (polygon.next(firstSide).equals(secondSide)) {
-                    return getContact(firstSide.end(), otherSide, false);
+                    return getPointAndSegmentContact(firstSide.end(), otherSide, false);
                 } else if (polygon.next(secondSide).equals(firstSide)) {
-                    return getContact(secondSide.end(), otherSide, false);
+                    return getPointAndSegmentContact(secondSide.end(), otherSide, false);
                 } else {
-                    var contacts = new ArrayList<Contact>();
-                    contacts.add(getContact(firstSide.end(), otherSide, true));
-                    contacts.add(getContact(secondSide.end(), otherSide, true));
-                    contacts.add(getContact(firstSide.begin(), otherSide, true));
-                    contacts.add(getContact(secondSide.begin(), otherSide, true));
-                    var contactsIterator = contacts.iterator();
-                    var contact = contactsIterator.next();
-                    while (contactsIterator.hasNext()) {
-                        var otherContact = contactsIterator.next();
-                        if (otherContact != null && (contact == null || otherContact.depth() > contact.depth())) {
-                            contact = otherContact;
-                        }
-                    }
-                    return contact;
+                    var contacts = new HashSet<Contact>();
+                    contacts.add(getPointAndSegmentContact(firstSide.end(), otherSide, true));
+                    contacts.add(getPointAndSegmentContact(secondSide.end(), otherSide, true));
+                    contacts.add(getPointAndSegmentContact(firstSide.begin(), otherSide, true));
+                    contacts.add(getPointAndSegmentContact(secondSide.begin(), otherSide, true));
+                    return getDeepestContact(contacts);
                 }
             } else if (intersections.size() == 1) {
                 var firstSide = intersections.iterator().next();
@@ -155,7 +247,7 @@ public class ContactUtils {
         return null;
     }
 
-    private static Contact getContact(Position position, Segment segment, boolean checkSide) {
+    private static Contact getPointAndSegmentContact(Position position, Segment segment, boolean checkSide) {
         var projection = GeometryUtils.getPointToLineProjection(position, segment);
         var normal = segment.normal();
         if (checkSide) {
@@ -165,6 +257,13 @@ public class ContactUtils {
             }
         }
         return Contact.of(position.distanceTo(projection), normal, new Segment(position, projection).center());
+    }
+
+    private static boolean isPointOnInnerSideOfSegment(Position position, Segment segment) {
+        var projection = GeometryUtils.getPointToLineProjection(position, segment);
+        var normal = segment.normal();
+        var direction = projection.vectorTo(position).normalized();
+        return direction.dotProduct(normal) > 0;
     }
 
     private static boolean isHalfCircleBottomAndOtherHalfCircleTopContact(Segment bottom, HalfCircle otherHalfCircle) {
@@ -178,7 +277,7 @@ public class ContactUtils {
         return false;
     }
 
-    private static Contact getSurfaceAndCircleContact(Segment surface, Circle circle) {
+    private static Contact getSegmentAndCircleContact(Segment surface, Circle circle) {
         var projection = GeometryUtils.getPointToSegmentProjection(circle.center(), surface);
         if (projection == null) {
             return null;
@@ -191,5 +290,17 @@ public class ContactUtils {
         var depth = distance < circle.radius() ? circle.radius() - distance : 0.0;
         var normal = point.vectorTo(circle.center()).normalized();
         return Contact.of(depth, normal, point);
+    }
+
+    private static Contact getDeepestContact(Set<Contact> contacts) {
+        var contactsIterator = contacts.iterator();
+        var contact = contactsIterator.next();
+        while (contactsIterator.hasNext()) {
+            var otherContact = contactsIterator.next();
+            if (otherContact != null && (contact == null || otherContact.depth() > contact.depth())) {
+                contact = otherContact;
+            }
+        }
+        return contact;
     }
 }
