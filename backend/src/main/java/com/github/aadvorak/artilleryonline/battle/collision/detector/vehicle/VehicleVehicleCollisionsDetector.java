@@ -3,10 +3,10 @@ package com.github.aadvorak.artilleryonline.battle.collision.detector.vehicle;
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
-import com.github.aadvorak.artilleryonline.battle.collision.detector.CollisionsDetector;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
+import com.github.aadvorak.artilleryonline.battle.collision.detector.CollisionsDetector;
+import com.github.aadvorak.artilleryonline.battle.common.lines.BodyPart;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
-import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
 import com.github.aadvorak.artilleryonline.battle.utils.CollisionUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.ContactUtils;
 import org.springframework.stereotype.Component;
@@ -35,23 +35,21 @@ public class VehicleVehicleCollisionsDetector implements CollisionsDetector {
                 .filter(value -> CollisionUtils.collisionNotDetected(vehicle, value))
                 .collect(Collectors.toSet());
         var wheelRadius = vehicle.getModel().getSpecs().getWheelRadius();
-        var vehicleRadius = vehicle.getModel().getSpecs().getRadius();
         var maxRadius = vehicle.getModel().getPreCalc().getMaxRadius();
         var position = vehicle.getGeometryNextPosition();
         var rightWheelPosition = vehicle.getRightWheel().getNext().getPosition();
         var leftWheelPosition = vehicle.getLeftWheel().getNext().getPosition();
-        var vehicleShape = HalfCircle.of(position, vehicleRadius);
-        var rightWheelShape = new Circle(rightWheelPosition, wheelRadius);
-        var leftWheelShape = new Circle(leftWheelPosition, wheelRadius);
+        var vehiclePart = BodyPart.of(position, vehicle.getModel().getSpecs().getTurretShape());
+        var rightWheelPart = new Circle(rightWheelPosition, wheelRadius);
+        var leftWheelPart = new Circle(leftWheelPosition, wheelRadius);
         for (var otherVehicle : otherVehicles) {
             var otherMaxRadius = otherVehicle.getModel().getPreCalc().getMaxRadius();
             var otherPosition = otherVehicle.getGeometryNextPosition();
             if (otherPosition.getCenter().distanceTo(position.getCenter()) > maxRadius + otherMaxRadius) {
                 continue;
             }
-            var otherVehicleRadius = otherVehicle.getModel().getSpecs().getRadius();
-            var otherVehicleShape = HalfCircle.of(otherPosition, otherVehicleRadius);
-            var vehicleVehicleContact = ContactUtils.getHalfCirclesContact(vehicleShape, otherVehicleShape);
+            var otherVehiclePart = BodyPart.of(otherPosition, otherVehicle.getModel().getSpecs().getTurretShape());
+            var vehicleVehicleContact = ContactUtils.getBodyPartsContact(vehiclePart, otherVehiclePart);
             if (vehicleVehicleContact != null) {
                 collisions.add(Collision.withVehicle(vehicle, otherVehicle, vehicleVehicleContact));
                 if (first) return collisions;
@@ -61,44 +59,44 @@ public class VehicleVehicleCollisionsDetector implements CollisionsDetector {
             var otherRightWheelPosition = otherVehicle.getRightWheel().getNext().getPosition();
             var otherLeftWheel = otherVehicle.getLeftWheel();
             var otherRightWheel = otherVehicle.getRightWheel();
-            var otherLeftWheelShape = new Circle(otherLeftWheelPosition, otherWheelRadius);
-            var otherRightWheelShape = new Circle(otherRightWheelPosition, otherWheelRadius);
-            var rightWheelLeftWheelContact = ContactUtils.getCirclesContact(rightWheelShape, otherLeftWheelShape);
+            var otherLeftWheelPart = new Circle(otherLeftWheelPosition, otherWheelRadius);
+            var otherRightWheelPart = new Circle(otherRightWheelPosition, otherWheelRadius);
+            var rightWheelLeftWheelContact = ContactUtils.getCirclesContact(rightWheelPart, otherLeftWheelPart);
             if (rightWheelLeftWheelContact != null) {
                 collisions.add(Collision.withVehicle(vehicle.getRightWheel(), otherLeftWheel, rightWheelLeftWheelContact));
                 if (first) return collisions;
             }
-            var leftWheelRightWheelContact = ContactUtils.getCirclesContact(leftWheelShape, otherRightWheelShape);
+            var leftWheelRightWheelContact = ContactUtils.getCirclesContact(leftWheelPart, otherRightWheelPart);
             if (leftWheelRightWheelContact != null) {
                 collisions.add(Collision.withVehicle(vehicle.getLeftWheel(), otherRightWheel, leftWheelRightWheelContact));
                 if (first) return collisions;
             }
-            var rightWheelVehicleContact = ContactUtils.getCircleHalfCircleContact(rightWheelShape, otherVehicleShape);
+            var rightWheelVehicleContact = ContactUtils.getBodyPartsContact(rightWheelPart, otherVehiclePart);
             if (rightWheelVehicleContact != null) {
                 collisions.add(Collision.withVehicle(vehicle.getRightWheel(), otherVehicle, rightWheelVehicleContact));
                 if (first) return collisions;
             }
-            var vehicleRightWheelContact = ContactUtils.getCircleHalfCircleContact(otherRightWheelShape, vehicleShape);
+            var vehicleRightWheelContact = ContactUtils.getBodyPartsContact(vehiclePart, otherRightWheelPart);
             if (vehicleRightWheelContact != null) {
-                collisions.add(Collision.withVehicle(vehicle, otherRightWheel, vehicleRightWheelContact.inverted()));
+                collisions.add(Collision.withVehicle(vehicle, otherRightWheel, vehicleRightWheelContact));
                 if (first) return collisions;
             }
-            var vehicleLeftWheelContact = ContactUtils.getCircleHalfCircleContact(otherLeftWheelShape, vehicleShape);
+            var vehicleLeftWheelContact = ContactUtils.getBodyPartsContact(vehiclePart, otherLeftWheelPart);
             if (vehicleLeftWheelContact != null) {
-                collisions.add(Collision.withVehicle(vehicle, otherLeftWheel, vehicleLeftWheelContact.inverted()));
+                collisions.add(Collision.withVehicle(vehicle, otherLeftWheel, vehicleLeftWheelContact));
                 if (first) return collisions;
             }
-            var leftWheelVehicleContact = ContactUtils.getCircleHalfCircleContact(leftWheelShape, otherVehicleShape);
+            var leftWheelVehicleContact = ContactUtils.getBodyPartsContact(leftWheelPart, otherVehiclePart);
             if (leftWheelVehicleContact != null) {
                 collisions.add(Collision.withVehicle(vehicle.getLeftWheel(), otherVehicle, leftWheelVehicleContact));
                 if (first) return collisions;
             }
-            var leftWheelLeftWheelContact = ContactUtils.getCirclesContact(leftWheelShape, otherLeftWheelShape);
+            var leftWheelLeftWheelContact = ContactUtils.getCirclesContact(leftWheelPart, otherLeftWheelPart);
             if (leftWheelLeftWheelContact != null) {
                 collisions.add(Collision.withVehicle(vehicle.getLeftWheel(), otherLeftWheel, leftWheelLeftWheelContact));
                 if (first) return collisions;
             }
-            var rightWheelRightWheelContact = ContactUtils.getCirclesContact(rightWheelShape, otherRightWheelShape);
+            var rightWheelRightWheelContact = ContactUtils.getCirclesContact(rightWheelPart, otherRightWheelPart);
             if (rightWheelRightWheelContact != null) {
                 collisions.add(Collision.withVehicle(vehicle.getRightWheel(), otherRightWheel, rightWheelRightWheelContact));
                 if (first) return collisions;

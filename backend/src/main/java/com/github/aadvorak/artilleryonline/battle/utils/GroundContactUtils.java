@@ -3,10 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.utils;
 import com.github.aadvorak.artilleryonline.battle.common.Constants;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
-import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
-import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
-import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
-import com.github.aadvorak.artilleryonline.battle.common.lines.Trapeze;
+import com.github.aadvorak.artilleryonline.battle.common.lines.*;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 
 import java.util.ArrayList;
@@ -14,6 +11,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class GroundContactUtils {
+
+    public static Set<Contact> getGroundContacts(BodyPart bodyPart, RoomModel roomModel, boolean withMaxDepth) {
+        if (bodyPart instanceof HalfCircle halfCircle) {
+            return getGroundContacts(halfCircle, roomModel, withMaxDepth);
+        }
+        if (bodyPart instanceof Trapeze trapeze) {
+            return getGroundContacts(trapeze, roomModel, withMaxDepth);
+        }
+        return Set.of();
+    }
 
     public static Set<Contact> getGroundContacts(HalfCircle halfCircle, RoomModel roomModel, boolean withMaxDepth) {
         var groundIndexes = BattleUtils.getGroundIndexesBetween(halfCircle.center().getX() - halfCircle.radius(),

@@ -1,10 +1,10 @@
 package com.github.aadvorak.artilleryonline.battle.collision.detector.drone;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
-import com.github.aadvorak.artilleryonline.battle.collision.detector.CollisionsDetector;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
+import com.github.aadvorak.artilleryonline.battle.collision.detector.CollisionsDetector;
+import com.github.aadvorak.artilleryonline.battle.common.lines.BodyPart;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
-import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
 import com.github.aadvorak.artilleryonline.battle.utils.ContactUtils;
 import org.springframework.stereotype.Component;
 
@@ -40,12 +40,11 @@ public class DroneVehicleCollisionsDetector implements CollisionsDetector {
     private Collision detect(DroneCalculations drone, Calculations<?> other) {
         var radius = drone.getModel().getSpecs().getHullRadius();
         var position = drone.getNext().getPosition();
-        var shape = new Circle(position.getCenter(), radius);
+        var dronePart = new Circle(position.getCenter(), radius);
         if (other instanceof VehicleCalculations vehicle) {
-            var otherRadius = vehicle.getModel().getSpecs().getRadius();
             var otherPosition = vehicle.getGeometryNextPosition();
-            var otherShape = HalfCircle.of(otherPosition, otherRadius);
-            var contact = ContactUtils.getCircleHalfCircleContact(shape, otherShape);
+            var otherPart = BodyPart.of(otherPosition, vehicle.getModel().getSpecs().getTurretShape());
+            var contact = ContactUtils.getBodyPartsContact(dronePart, otherPart);
             if (contact != null) {
                 return Collision.withVehicle(drone, vehicle, contact);
             }
@@ -53,8 +52,8 @@ public class DroneVehicleCollisionsDetector implements CollisionsDetector {
         if (other instanceof WheelCalculations wheel) {
             var otherRadius = wheel.getModel().getSpecs().getWheelRadius();
             var otherPosition = wheel.getNext().getPosition();
-            var otherShape = new Circle(otherPosition, otherRadius);
-            var contact = ContactUtils.getCirclesContact(shape, otherShape);
+            var otherPart = new Circle(otherPosition, otherRadius);
+            var contact = ContactUtils.getCirclesContact(dronePart, otherPart);
             if (contact != null) {
                 return Collision.withVehicle(drone, wheel, contact);
             }

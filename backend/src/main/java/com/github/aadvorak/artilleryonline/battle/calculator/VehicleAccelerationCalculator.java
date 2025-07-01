@@ -4,9 +4,10 @@ import com.github.aadvorak.artilleryonline.battle.calculations.ForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculator.vehicle.*;
-import com.github.aadvorak.artilleryonline.battle.common.*;
+import com.github.aadvorak.artilleryonline.battle.common.BodyAcceleration;
+import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
+import com.github.aadvorak.artilleryonline.battle.common.lines.BodyPart;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
-import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
@@ -51,10 +52,9 @@ public class VehicleAccelerationCalculator {
     }
 
     private static void calculateGroundContacts(VehicleCalculations vehicle, RoomModel roomModel) {
-        var position = vehicle.getGeometryPosition();
-        var angle = vehicle.getModel().getState().getPosition().getAngle();
-        vehicle.setGroundContacts(GroundContactUtils.getGroundContacts(
-                HalfCircle.of(position, angle, vehicle.getModel().getSpecs().getRadius()),
-                roomModel, false));
+        var bodyPosition = BodyPosition.of(vehicle.getGeometryPosition(),
+                vehicle.getModel().getState().getPosition().getAngle());
+        var bodyPart = BodyPart.of(bodyPosition, vehicle.getModel().getSpecs().getTurretShape());
+        vehicle.setGroundContacts(GroundContactUtils.getGroundContacts(bodyPart, roomModel, false));
     }
 }

@@ -4,12 +4,13 @@ import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculation
 import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
-import com.github.aadvorak.artilleryonline.battle.collision.detector.CollisionsDetector;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
+import com.github.aadvorak.artilleryonline.battle.collision.detector.CollisionsDetector;
+import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.lines.BodyPart;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
-import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
 import com.github.aadvorak.artilleryonline.battle.utils.GroundContactUtils;
 import org.springframework.stereotype.Component;
 
@@ -58,10 +59,11 @@ public class VehicleGroundCollisionsDetector implements CollisionsDetector {
     }
 
     private Set<Collision> detectHullGroundCollisions(VehicleCalculations vehicle, BattleCalculations battle) {
-        var position = vehicle.getGeometryNextPosition();
-        return GroundContactUtils.getGroundContacts(
-                HalfCircle.of(position, vehicle.getModel().getSpecs().getRadius()),
-                battle.getModel().getRoom(), true).stream()
+        var bodyPosition = BodyPosition.of(vehicle.getGeometryPosition(),
+                vehicle.getModel().getState().getPosition().getAngle());
+        var bodyPart = BodyPart.of(bodyPosition, vehicle.getModel().getSpecs().getTurretShape());
+        return GroundContactUtils.getGroundContacts(bodyPart,
+                        battle.getModel().getRoom(), true).stream()
                 .map(contact -> Collision.withGround(vehicle, contact))
                 .collect(Collectors.toSet());
     }

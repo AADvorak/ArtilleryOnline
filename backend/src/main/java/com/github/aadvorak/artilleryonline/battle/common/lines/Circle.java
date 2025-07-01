@@ -16,4 +16,8 @@ public record Circle(Position center, double radius) implements BodyPart {
     public Shape shape() {
         return new CircleShape().setRadius(radius);
     }
+
+    public static Circle of(BodyPosition position, CircleShape shape) {
+        return new Circle(position.getCenter(), shape.getRadius());
+    }
 }

@@ -8,6 +8,46 @@ import java.util.*;
 
 public class ContactUtils {
 
+    public static Contact getBodyPartsContact(BodyPart bodyPart, BodyPart otherBodyPart) {
+        if (bodyPart instanceof Circle circle) {
+            if (otherBodyPart instanceof Circle otherCircle) {
+                return getCirclesContact(circle, otherCircle);
+            }
+            if (otherBodyPart instanceof HalfCircle otherHalfCircle) {
+                return getCircleHalfCircleContact(circle, otherHalfCircle);
+            }
+            if (otherBodyPart instanceof Trapeze otherTrapeze) {
+                return Optional.ofNullable(getTrapezeCircleContact(otherTrapeze, circle))
+                        .map(Contact::inverted).orElse(null);
+            }
+        }
+        if (bodyPart instanceof HalfCircle halfCircle) {
+            if (otherBodyPart instanceof Circle otherCircle) {
+                return Optional.ofNullable(getCircleHalfCircleContact(otherCircle, halfCircle))
+                        .map(Contact::inverted).orElse(null);
+            }
+            if (otherBodyPart instanceof HalfCircle otherHalfCircle) {
+                return getHalfCirclesContact(halfCircle, otherHalfCircle);
+            }
+            if (otherBodyPart instanceof Trapeze otherTrapeze) {
+                return Optional.ofNullable(getTrapezeHalfCircleContact(otherTrapeze, halfCircle))
+                        .map(Contact::inverted).orElse(null);
+            }
+        }
+        if (bodyPart instanceof Trapeze trapeze) {
+            if (otherBodyPart instanceof Circle otherCircle) {
+                return getTrapezeCircleContact(trapeze, otherCircle);
+            }
+            if (otherBodyPart instanceof HalfCircle otherHalfCircle) {
+                return getTrapezeHalfCircleContact(trapeze, otherHalfCircle);
+            }
+            if (otherBodyPart instanceof Trapeze otherTrapeze) {
+                return getTrapezesContact(trapeze, otherTrapeze);
+            }
+        }
+        return null;
+    }
+
     public static Contact getCirclesContact(Circle circle, Circle otherCircle) {
         var distance = circle.center().distanceTo(otherCircle.center());
         var minDistance = circle.radius() + otherCircle.radius();
