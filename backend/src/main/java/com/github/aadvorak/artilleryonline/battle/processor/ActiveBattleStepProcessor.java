@@ -130,7 +130,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
                 removedVehicleKeys.forEach(key -> {
                     var vehicleModel = battleModel.getVehicles().get(key);
                     ExplosionProcessor.initExplosion(vehicleModel.getState().getPosition().getCenter(),
-                            vehicleModel.getSpecs().getRadius(), battleModel);
+                            vehicleModel.getPreCalc().getMaxRadius(), battleModel);
                     battleModel.removeVehicleByKey(key);
                 });
             }

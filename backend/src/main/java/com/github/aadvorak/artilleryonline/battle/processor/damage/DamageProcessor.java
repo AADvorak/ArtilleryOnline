@@ -124,7 +124,7 @@ public class DamageProcessor {
         });
         battle.getVehicles().forEach(vehicle -> {
             var distanceToTarget = hit.position().distanceTo(vehicle.getPosition())
-                    - vehicle.getModel().getSpecs().getRadius();
+                    - vehicle.getModel().getPreCalc().getMaxRadius();
             if (distanceToTarget <= 0) {
                 applyDamageToVehicle(hit.damage(), vehicle.getModel(), battle.getModel(), hit.userId());
             } else if (distanceToTarget < hit.radius()) {

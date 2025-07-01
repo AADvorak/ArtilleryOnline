@@ -9,14 +9,14 @@ public class VehicleOnGroundProcessor {
 
     public static void estimateVehicleAngleByPosition(VehicleModel vehicleModel, RoomModel roomModel) {
         var x = vehicleModel.getState().getPosition().getX();
-        var radius = vehicleModel.getSpecs().getRadius();
-        var leftGroundPosition = BattleUtils.getNearestGroundPosition(x - radius, roomModel);
-        var rightGroundPosition = BattleUtils.getNearestGroundPosition(x + radius, roomModel);
-        vehicleModel.getState().getPosition().setAngle(Math.atan((rightGroundPosition.getY() - leftGroundPosition.getY()) / 2 * radius));
+        var wheelDistance = vehicleModel.getPreCalc().getWheelDistance();
+        var leftGroundPosition = BattleUtils.getNearestGroundPosition(x - wheelDistance, roomModel);
+        var rightGroundPosition = BattleUtils.getNearestGroundPosition(x + wheelDistance, roomModel);
+        vehicleModel.getState().getPosition().setAngle(Math.atan((rightGroundPosition.getY() - leftGroundPosition.getY())
+                / 2 * wheelDistance));
     }
 
     public static void correctVehiclePositionAndAngleOnGround(VehicleModel vehicleModel, RoomModel roomModel) {
-        var vehicleRadius = vehicleModel.getSpecs().getRadius();
         var wheelRadius = vehicleModel.getSpecs().getWheelRadius();
         var angle = vehicleModel.getState().getPosition().getAngle();
         var wheelDistance = vehicleModel.getPreCalc().getWheelDistance();
@@ -25,7 +25,7 @@ public class VehicleOnGroundProcessor {
         var firstWheelX = vehicleModel.getState().getPosition().getX()
                 - sign * wheelDistance * Math.cos(wheelAngle + sign * angle);
         var firstWheelPosition = getWheelPositionOnGround(firstWheelX, wheelRadius, roomModel);
-        angle = getVehicleAngleOnGround(firstWheelPosition, sign, vehicleRadius, wheelRadius, roomModel);
+        angle = getVehicleAngleOnGround(firstWheelPosition, sign, wheelDistance, wheelRadius, roomModel);
         var position = new Position()
                 .setX(firstWheelPosition.getX() + sign * wheelDistance * Math.cos(sign * wheelAngle + angle))
                 .setY(firstWheelPosition.getY() + sign * wheelDistance * Math.sin(sign * wheelAngle + angle));

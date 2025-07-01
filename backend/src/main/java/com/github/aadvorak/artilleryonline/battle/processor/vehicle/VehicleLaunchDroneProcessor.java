@@ -25,7 +25,7 @@ public class VehicleLaunchDroneProcessor {
         }
         var specs = vehicleModel.getConfig().getDrone();
         var vehiclePosition = vehicleModel.getState().getPosition();
-        var vehicleRadius = vehicleModel.getSpecs().getRadius();
+        var vehicleRadius = vehicleModel.getPreCalc().getMaxRadius();
         var angle = vehiclePosition.getAngle();
         var gunSpecs = specs.getAvailableGuns().values().iterator().next();
         var shellName = gunSpecs.getAvailableShells().keySet().iterator().next();
