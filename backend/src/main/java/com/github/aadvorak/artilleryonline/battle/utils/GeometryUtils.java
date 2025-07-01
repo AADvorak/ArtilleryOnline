@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.utils;
 
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
+import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
 
 import java.util.Set;
@@ -73,11 +74,16 @@ public class GeometryUtils {
         }
     }
 
+    public static Set<Position> getSegmentAndHalfCircleIntersectionPoints(Segment segment, HalfCircle halfCircle) {
+        return getSegmentAndCircleIntersectionPoints(segment, halfCircle.circle()).stream()
+                .filter(point -> {
+                    var pointAngle = halfCircle.center().angleTo(point);
+                    return isPointLyingOnArc(pointAngle, halfCircle.angle(), halfCircle.angle() + Math.PI);
+                })
+                .collect(Collectors.toSet());
+    }
+
     public static Set<Position> getSegmentAndCircleIntersectionPoints(Segment segment, Circle circle) {
-        if (segment.begin().distanceTo(circle.center()) > circle.radius()
-                && segment.end().distanceTo(circle.center()) > circle.radius()) {
-            return Set.of();
-        }
         if (Math.abs(segment.begin().getX() - segment.end().getX())
                 > Math.abs(segment.begin().getY() - segment.end().getY())) {
             return getSegmentAndCircleIntersectionPointsByX(segment, circle);
