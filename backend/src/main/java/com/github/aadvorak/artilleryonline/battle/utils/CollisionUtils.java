@@ -3,12 +3,9 @@ package com.github.aadvorak.artilleryonline.battle.utils;
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.*;
-import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
-import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
-import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
+import com.github.aadvorak.artilleryonline.battle.common.lines.*;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class CollisionUtils {
 
@@ -33,29 +30,36 @@ public class CollisionUtils {
 
     public static Collision detectWithVehicle(Calculations<?> calculations, Position position, Position nextPosition,
                                               VehicleCalculations vehicle) {
-        var vehiclePosition = vehicle.getGeometryPosition();
-        var vehicleRadius = vehicle.getModel().getSpecs().getRadius();
-        var vehicleAngle = vehicle.getModel().getState().getPosition().getAngle();
         var projectileTrace = new Segment(position, nextPosition);
-        var vehicleShape = HalfCircle.of(vehiclePosition, vehicleAngle, vehicleRadius);
-        var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(projectileTrace, vehicleShape.circle())
-                .stream().filter(intersectionPoint -> {
-                    var pointAngle = vehiclePosition.angleTo(intersectionPoint);
-                    return pointAngle > vehicleAngle && pointAngle < vehicleAngle + Math.PI;
-                }).collect(Collectors.toSet());
-        if (!intersectionPoints.isEmpty()) {
-            var intersectionPoint = findClosestIntersectionPoint(position, intersectionPoints);
-            var contact = Contact.withUncheckedDepthOf(0.0,
-                    intersectionPoint.vectorTo(vehiclePosition).normalized(), intersectionPoint);
-            return Collision.withVehicle(calculations, vehicle, contact);
+        var vehiclePart = BodyPart.of(BodyPosition.of(vehicle.getGeometryPosition(),
+                vehicle.getModel().getState().getPosition().getAngle()),
+                vehicle.getModel().getSpecs().getTurretShape());
+        if (vehiclePart instanceof HalfCircle halfCircle) {
+            var intersectionPoints = GeometryUtils.getSegmentAndHalfCircleIntersectionPoints(projectileTrace, halfCircle);
+            if (!intersectionPoints.isEmpty()) {
+                var intersectionPoint = findClosestIntersectionPoint(position, intersectionPoints);
+                var contact = Contact.withUncheckedDepthOf(0.0,
+                        intersectionPoint.vectorTo(halfCircle.center()).normalized(), intersectionPoint);
+                return Collision.withVehicle(calculations, vehicle, contact);
+            }
+            var vehicleBottom = halfCircle.chord();
+            var intersectionPoint = GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, vehicleBottom);
+            if (intersectionPoint != null) {
+                var contact = Contact.withUncheckedDepthOf(0.0,
+                        vehicleBottom.normal(), intersectionPoint);
+                return Collision.withVehicle(calculations, vehicle, contact);
+            }
         }
-        var vehicleBottom = vehicleShape.chord();
-        var intersectionPoint = GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, vehicleBottom);
-        if (intersectionPoint != null) {
-            var projection = GeometryUtils.getPointToLineProjection(position, vehicleBottom);
-            var contact = Contact.withUncheckedDepthOf(0.0,
-                    position.vectorTo(projection).normalized(), intersectionPoint);
-            return Collision.withVehicle(calculations, vehicle, contact);
+        if (vehiclePart instanceof Trapeze trapeze) {
+            var polygon = new Polygon(trapeze);
+            for (var side : polygon.sides()) {
+                var intersectionPoint = GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, side);
+                if (intersectionPoint != null) {
+                    var contact = Contact.withUncheckedDepthOf(0.0,
+                            side.normal(), intersectionPoint);
+                    return Collision.withVehicle(calculations, vehicle, contact);
+                }
+            }
         }
         return null;
     }
