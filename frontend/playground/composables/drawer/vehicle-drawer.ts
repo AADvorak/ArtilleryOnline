@@ -3,7 +3,6 @@ import type {Ref} from 'vue'
 import {useBattleStore} from '~/stores/battle'
 import {VehicleUtils} from '@/playground/utils/vehicle-utils'
 import type {VehicleModel} from "~/playground/data/model";
-import type {Position} from "~/playground/data/common";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
 import {type HalfCircleShape, ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
@@ -45,16 +44,6 @@ export function useVehicleDrawer(
         drawNickname(userKey, vehicleModel)
       }
     }
-  }
-
-  function drawHull(vehicleModel: VehicleModel, radius: number) {
-    const position = drawerBase.transformPosition(VehicleUtils.getGeometryPosition(vehicleModel))
-    const startAngle = Math.PI - vehicleModel.state.position.angle
-    const endAngle = 2 * Math.PI - vehicleModel.state.position.angle
-    ctx.value!.beginPath()
-    ctx.value!.arc(position.x, position.y, radius, startAngle, endAngle)
-    ctx.value!.fill()
-    ctx.value!.closePath()
   }
 
   function drawTurret(vehicleModel: VehicleModel) {
@@ -174,15 +163,16 @@ export function useVehicleDrawer(
     ctx.value!.beginPath()
     ctx.value!.lineWidth = 1
     const hpBarHeight = 0.07
+    const hpBarWidth = 1.5 * vehicleModel.preCalc.maxRadius
     const hpBarTopLeft = drawerBase.transformPosition({
-      x: vehicleModel.state.position.x - vehicleModel.specs.radius,
-      y: vehicleModel.state.position.y + 2 * vehicleModel.specs.radius + hpBarHeight
+      x: vehicleModel.state.position.x - hpBarWidth / 2,
+      y: vehicleModel.state.position.y + hpBarWidth + hpBarHeight
     })
     const hpRatio = vehicleModel.state.hitPoints / vehicleModel.specs.hitPoints
     ctx.value!.strokeRect(hpBarTopLeft.x, hpBarTopLeft.y,
-        drawerBase.scale(2 * vehicleModel.specs.radius), drawerBase.scale(hpBarHeight))
+        drawerBase.scale(hpBarWidth), drawerBase.scale(hpBarHeight))
     ctx.value!.fillRect(hpBarTopLeft.x, hpBarTopLeft.y,
-        drawerBase.scale(2 * vehicleModel.specs.radius * hpRatio), drawerBase.scale(hpBarHeight))
+        drawerBase.scale(hpBarWidth * hpRatio), drawerBase.scale(hpBarHeight))
     ctx.value!.closePath()
   }
 
@@ -191,12 +181,13 @@ export function useVehicleDrawer(
     ctx.value!.fillStyle = 'rgb(256,256,256)'
     ctx.value!.font = '16px arial'
     ctx.value!.lineWidth = 1
+    const nicknameWidth = 1.5 * vehicleModel.preCalc.maxRadius
     const nicknamePosition = drawerBase.transformPosition({
-      x: vehicleModel.state.position.x - vehicleModel.specs.radius,
-      y: vehicleModel.state.position.y + 2 * vehicleModel.specs.radius + 0.1
+      x: vehicleModel.state.position.x - nicknameWidth / 2,
+      y: vehicleModel.state.position.y + nicknameWidth + 0.1
     })
     ctx.value!.fillText(restrictNicknameLength(userKey), nicknamePosition.x, nicknamePosition.y,
-        drawerBase.scale(2 * vehicleModel.specs.radius))
+        drawerBase.scale(nicknameWidth))
     ctx.value!.closePath()
   }
 
