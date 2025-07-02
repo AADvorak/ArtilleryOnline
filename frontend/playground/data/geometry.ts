@@ -1,4 +1,6 @@
 import type {BodyPosition, Position} from "~/playground/data/common";
+import type {TrapezeShape} from "~/playground/data/shapes";
+import {BattleUtils} from "~/playground/utils/battle-utils";
 
 export class Segment {
   begin: Position
@@ -65,5 +67,58 @@ export class HalfCircle {
 
   static of(bodyPosition: BodyPosition, radius: number): HalfCircle {
     return new HalfCircle({x: bodyPosition.x, y: bodyPosition.y}, radius, bodyPosition.angle)
+  }
+}
+
+export class Trapeze {
+  position: BodyPosition
+  shape: TrapezeShape
+
+  constructor(position: BodyPosition, shape: TrapezeShape) {
+    this.position = position
+    this.shape = shape
+  }
+
+  bottomRight(): Position {
+    return BattleUtils.shiftedPosition(this.position, this.shape.bottomRadius, this.position.angle)
+  }
+
+  bottomLeft(): Position {
+    return BattleUtils.shiftedPosition(this.position, -this.shape.bottomRadius, this.position.angle)
+  }
+
+  topRight(): Position {
+    return BattleUtils.shiftedPosition(this.topCenter(), this.shape.topRadius, this.position.angle)
+  }
+
+  topLeft(): Position {
+    return BattleUtils.shiftedPosition(this.topCenter(), -this.shape.topRadius, this.position.angle)
+  }
+
+  bottom(): Segment {
+    return new Segment(this.bottomLeft(), this.bottomRight())
+  }
+
+  top(): Segment {
+    return new Segment(this.topRight(), this.topLeft())
+  }
+
+  right(): Segment {
+    return new Segment(this.bottomRight(), this.topRight())
+  }
+
+  left(): Segment {
+    return new Segment(this.topLeft(), this.bottomLeft())
+  }
+
+  maxDistanceFromCenter(): number {
+    const topCornerDistance = Math.sqrt(
+        this.shape.topRadius ** 2 + this.shape.height ** 2
+    )
+    return Math.max(topCornerDistance, this.shape.bottomRadius)
+  }
+
+  private topCenter(): Position {
+    return BattleUtils.shiftedPosition(this.position, this.shape.height, this.position.angle + Math.PI / 2)
   }
 }
