@@ -3,13 +3,14 @@ import type {BattleModel, RoomModel} from '@/playground/data/model'
 import type {VehicleCalculations, WheelCalculations} from '@/playground/data/calculations'
 import {VehicleUtils} from '@/playground/utils/vehicle-utils'
 import {GroundContactUtils} from "~/playground/utils/ground-contact-utils";
-import {Circle, HalfCircle} from "~/playground/data/geometry";
+import {Circle, HalfCircle, Trapeze} from "~/playground/data/geometry";
 import {BodyAccelerationCalculator} from "~/playground/battle/calculator/body-acceleration-calculator";
 import {GroundFrictionForceCalculator} from "~/playground/battle/calculator/vehicle/ground-friction-force-calculator";
 import {GroundReactionForceCalculator} from "~/playground/battle/calculator/vehicle/ground-reaction-force-calculator";
 import {GravityForceCalculator} from "~/playground/battle/calculator/vehicle/gravity-force-calculator";
 import {JetForceCalculator} from "~/playground/battle/calculator/vehicle/jet-force-calculator";
 import {EngineForceCalculator} from "~/playground/battle/calculator/vehicle/engine-force-calculator";
+import {ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
 
 export const VehicleAccelerationCalculator = {
   calculator: new BodyAccelerationCalculator<VehicleCalculations>(
@@ -45,10 +46,25 @@ export const VehicleAccelerationCalculator = {
   calculateGroundContacts(vehicle: VehicleCalculations, roomModel: RoomModel): void {
     const position = VehicleUtils.getGeometryPosition(vehicle.model)
     const angle = vehicle.model.state.position.angle
+    const turretShape = vehicle.model.specs.turretShape
 
-    vehicle.groundContacts = GroundContactUtils.getHalfCircleGroundContacts(
-        new HalfCircle(position, vehicle.model.specs.radius, angle),
-        roomModel
-    )
+    if (turretShape.name === ShapeNames.HALF_CIRCLE) {
+      vehicle.groundContacts = GroundContactUtils.getHalfCircleGroundContacts(
+          new HalfCircle(position, vehicle.model.specs.radius, angle),
+          roomModel
+      )
+    }
+
+    if (turretShape.name === ShapeNames.TRAPEZE) {
+      const bodyPosition = {
+        x: position.x,
+        y: position.y,
+        angle
+      }
+      vehicle.groundContacts = GroundContactUtils.getTrapezeGroundContacts(
+          new Trapeze(bodyPosition, turretShape as TrapezeShape),
+          roomModel
+      )
+    }
   }
 }
