@@ -2,7 +2,7 @@ import type {Contact, Position, Vector} from "~/playground/data/common";
 import type {RoomModel} from "~/playground/data/model";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {VectorUtils} from "~/playground/utils/vector-utils";
-import {type Circle, HalfCircle} from "~/playground/data/geometry";
+import {type Circle, HalfCircle, Segment, Trapeze} from "~/playground/data/geometry";
 import {GeometryUtils} from "~/playground/utils/geometry-utils";
 import {Constants} from "~/playground/data/constants";
 
@@ -30,22 +30,8 @@ export const GroundContactUtils = {
     for (const groundIndex of groundIndexes) {
       const position = BattleUtils.getGroundPosition(groundIndex, roomModel)
 
-      let bottomContact: Contact | null = null
-      const bottomPoint = bottom.findPointWithX(position.x)
-      if (bottomPoint && bottomPoint.y < position.y) {
-        const projection = GeometryUtils.getPointToSegmentProjection(position, bottom)
-        if (projection) {
-          let depth = BattleUtils.distance(position, projection)
-          const normal = VectorUtils.vectorFromTo(position, projection)
-          VectorUtils.normalize(normal)
-          bottomContact = this.createContact.withNormal(
-              depth,
-              normal,
-              projection,
-              "HalfCircle bottom with ground"
-          )
-        }
-      }
+      const bottomContact: Contact | null = this.getSegmentGroundContact(bottom,
+          position, 'HalfCircle bottom with ground')
 
       let topContact: Contact | null = null
       const distance = BattleUtils.distance(halfCircle.center, position)
@@ -79,6 +65,59 @@ export const GroundContactUtils = {
 
     return contacts
   },
+
+  getTrapezeGroundContacts(
+      trapeze: Trapeze,
+      roomModel: RoomModel
+  ): Set<Contact> {
+    const maxDistance = trapeze.maxDistanceFromCenter()
+    const groundIndexes = BattleUtils.getGroundIndexesBetween(
+        trapeze.position.x - maxDistance,
+        trapeze.position.x + maxDistance,
+        roomModel
+    )
+    const contacts = new Set<Contact>()
+
+    if (groundIndexes.length === 0) {
+      return contacts
+    }
+
+    const bottom = trapeze.bottom()
+    const top = trapeze.top()
+    const right = trapeze.right()
+    const left = trapeze.left()
+
+    for (const index of groundIndexes) {
+      const position = BattleUtils.getGroundPosition(index, roomModel)
+
+      const bottomContact = this.getSegmentGroundContact(bottom, position, 'Trapeze bottom with ground')
+      const topContact = this.getSegmentGroundContact(top, position, 'Trapeze top with ground')
+      const rightContact = this.getSegmentGroundContact(right, position, 'Trapeze right with ground')
+      const leftContact = this.getSegmentGroundContact(left, position, 'Trapeze left with ground')
+
+      let resultContact: Contact | null = null
+
+      if (topContact !== null) {
+        resultContact = topContact
+      }
+      if (bottomContact !== null && (resultContact === null || bottomContact.depth < resultContact.depth)) {
+        resultContact = bottomContact
+      }
+      if (rightContact !== null && (resultContact === null || rightContact.depth < resultContact.depth)) {
+        resultContact = rightContact
+      }
+      if (leftContact !== null && (resultContact === null || leftContact.depth < resultContact.depth)) {
+        resultContact = leftContact
+      }
+
+      if (resultContact !== null && resultContact.depth >= Constants.INTERPENETRATION_THRESHOLD) {
+        contacts.add(resultContact)
+      }
+    }
+
+    return contacts
+  },
+
 
   getCircleGroundContact(
       circle: Circle,
@@ -131,6 +170,24 @@ export const GroundContactUtils = {
         0,
         contactPosition
     )
+  },
+
+  getSegmentGroundContact(
+      segment: Segment,
+      groundPosition: Position,
+      description: string
+  ): Contact | null {
+    const segmentPoint = segment.findPointWithX(groundPosition.x)
+    if (segmentPoint !== null && segmentPoint.y < groundPosition.y) {
+      const projection = GeometryUtils.getPointToSegmentProjection(groundPosition, segment)
+      if (projection !== null) {
+        const depth = BattleUtils.distance(groundPosition, projection)
+        const normal = VectorUtils.vectorFromTo(groundPosition, projection)
+        VectorUtils.normalize(normal)
+        return this.createContact.withNormal(depth, normal, projection, description)
+      }
+    }
+    return null
   },
 
   getGroundDepth: {
