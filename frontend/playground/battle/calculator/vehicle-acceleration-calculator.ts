@@ -10,7 +10,7 @@ import {GroundReactionForceCalculator} from "~/playground/battle/calculator/vehi
 import {GravityForceCalculator} from "~/playground/battle/calculator/vehicle/gravity-force-calculator";
 import {JetForceCalculator} from "~/playground/battle/calculator/vehicle/jet-force-calculator";
 import {EngineForceCalculator} from "~/playground/battle/calculator/vehicle/engine-force-calculator";
-import {ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
+import {type HalfCircleShape, ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
 
 export const VehicleAccelerationCalculator = {
   calculator: new BodyAccelerationCalculator<VehicleCalculations>(
@@ -50,7 +50,7 @@ export const VehicleAccelerationCalculator = {
 
     if (turretShape.name === ShapeNames.HALF_CIRCLE) {
       vehicle.groundContacts = GroundContactUtils.getHalfCircleGroundContacts(
-          new HalfCircle(position, vehicle.model.specs.radius, angle),
+          new HalfCircle(position, (turretShape as HalfCircleShape).radius, angle),
           roomModel
       )
     }
