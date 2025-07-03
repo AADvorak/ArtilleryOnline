@@ -65,7 +65,6 @@ public class VehicleSpecs implements Specs, CompactSerializable {
         stream.writeDouble(maxAngle);
         stream.writeDouble(acceleration);
         stream.writeDouble(wheelAngleVelocity);
-        stream.writeDouble(radius);
         stream.writeSerializableValue(turretShape);
         stream.writeDouble(wheelRadius);
         stream.writeDouble(hullRadius);

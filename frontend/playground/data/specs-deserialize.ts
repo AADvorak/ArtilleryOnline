@@ -121,7 +121,6 @@ export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs 
   const maxAngle = DeserializerBase.readDouble(input)
   const acceleration = DeserializerBase.readDouble(input)
   const wheelAngleVelocity = DeserializerBase.readDouble(input)
-  const radius = DeserializerBase.readDouble(input)
   const turretShape = deserializeShape(input)
   const wheelRadius = DeserializerBase.readDouble(input)
   const hullRadius = DeserializerBase.readDouble(input)
@@ -140,7 +139,6 @@ export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs 
     maxAngle,
     acceleration,
     wheelAngleVelocity,
-    radius,
     turretShape,
     wheelRadius,
     hullRadius,
