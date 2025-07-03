@@ -112,10 +112,10 @@ public class Collision {
         BodyCollisionData firstData = null;
         BodyCollisionData secondData = null;
         if (first instanceof BodyCalculations<?, ?, ?, ?, ?> bodyCalculations) {
-            firstData = BodyCollisionData.of(bodyCalculations.getModel(), contact);
+            firstData = BodyCollisionData.of(bodyCalculations.getModel(), contact, true);
         }
         if (second instanceof BodyCalculations<?, ?, ?, ?, ?> bodyCalculations) {
-            secondData = BodyCollisionData.of(bodyCalculations.getModel(), contact);
+            secondData = BodyCollisionData.of(bodyCalculations.getModel(), contact, true);
         }
         var firstProjections = first.getVelocity().projections(contact.angle());
         var secondProjections = second.getVelocity().projections(contact.angle());
@@ -159,7 +159,7 @@ public class Collision {
     ) {
         BodyCollisionData firstData = null;
         if (first instanceof BodyCalculations<?, ?, ?, ?, ?> bodyCalculations) {
-            firstData = BodyCollisionData.of(bodyCalculations.getModel(), contact);
+            firstData = BodyCollisionData.of(bodyCalculations.getModel(), contact, false);
         }
         return new Collision()
                 .setType(type)

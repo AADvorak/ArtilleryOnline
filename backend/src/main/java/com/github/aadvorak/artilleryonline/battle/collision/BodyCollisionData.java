@@ -28,7 +28,7 @@ public class BodyCollisionData {
                 velocity, velocityProjections, normalData, tangentialData);
     }
 
-    public static BodyCollisionData of(BodyModel<?, ?, ?, ?> bodyModel, Contact contact) {
+    public static BodyCollisionData of(BodyModel<?, ?, ?, ?> bodyModel, Contact contact, boolean restrictRotation) {
         var comPosition = bodyModel.getState().getPosition().getCenter();
         var radiusNormalized = comPosition.vectorTo(contact.position()).normalized();
         var velocityAtPosition = bodyModel.getState().getVelocityAt(contact.position());
@@ -36,8 +36,8 @@ public class BodyCollisionData {
         return new BodyCollisionData()
                 .setVelocity(velocityAtPosition)
                 .setVelocityProjections(velocityAtPosition.projections(contact.angle()))
-                .setNormalData(getComponentData(bodyModel, contact.position(), comPosition, contact.normal(), radiusNormalized, false))
-                .setTangentialData(getComponentData(bodyModel, contact.position(), comPosition, tangential, radiusNormalized, false));
+                .setNormalData(getComponentData(bodyModel, contact.position(), comPosition, contact.normal(), radiusNormalized, restrictRotation))
+                .setTangentialData(getComponentData(bodyModel, contact.position(), comPosition, tangential, radiusNormalized, restrictRotation));
     }
 
     public static ComponentData getComponentData(BodyModel<?, ?, ?, ?> bodyModel, Vector component,
