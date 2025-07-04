@@ -111,7 +111,7 @@ public class ContactUtils {
                 > trapeze.maxDistanceFromCenter() + circle.radius()) {
             return null;
         }
-        var edges = Set.of(trapeze.bottomLeft(), trapeze.bottomRight(),  trapeze.topLeft(), trapeze.topRight());
+        var edges = Set.of(trapeze.bottomLeft(), trapeze.bottomRight(), trapeze.topLeft(), trapeze.topRight());
         for (var edge : edges) {
             var contact = getPointAndCircleContact(edge, circle);
             if (contact != null) {
@@ -125,7 +125,20 @@ public class ContactUtils {
                 return contact;
             }
         }
-        return null;
+        Double minInnerDistance = null;
+        Segment closestSide = null;
+        for (var side : polygon.sides()) {
+            var distance = innerDistanceFromPointToSegment(circle.center(), side);
+            if (distance == 0.0) {
+                return null;
+            }
+            if (minInnerDistance == null || distance < minInnerDistance) {
+                minInnerDistance = distance;
+                closestSide = side;
+            }
+        }
+        return Contact.of(minInnerDistance + circle.radius(),
+                closestSide.normal().inverted(), circle.center());
     }
 
     public static Contact getTrapezeHalfCircleContact(Trapeze trapeze, HalfCircle halfCircle) {
@@ -306,6 +319,19 @@ public class ContactUtils {
         return direction.dotProduct(normal) > 0;
     }
 
+    private static double innerDistanceFromPointToSegment(Position position, Segment segment) {
+        var projection = GeometryUtils.getPointToSegmentProjection(position, segment);
+        if  (projection == null) {
+            return 0.0;
+        }
+        var normal = segment.normal();
+        var direction = projection.vectorTo(position).normalized();
+        if  (direction.dotProduct(normal) < 0) {
+            return 0.0;
+        }
+        return position.distanceTo(projection);
+    }
+
     private static boolean isHalfCircleBottomAndOtherHalfCircleTopContact(Segment bottom, HalfCircle otherHalfCircle) {
         var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(bottom, otherHalfCircle.circle());
         for (var intersectionPoint : intersectionPoints) {
@@ -322,7 +348,16 @@ public class ContactUtils {
         if (projection == null) {
             return null;
         }
-        return getPointAndCircleContact(projection, circle);
+        var distance = projection.distanceTo(circle.center());
+        if (distance > circle.radius()) {
+            return null;
+        }
+        var direction = circle.center().vectorTo(projection);
+        var surfaceNormal = surface.normal();
+        var depth = direction.dotProduct(surfaceNormal) > 0
+                ? circle.radius() - distance
+                : circle.radius() + distance;
+        return Contact.of(depth, surfaceNormal.inverted(), projection);
     }
 
     private static Contact getPointAndCircleContact(Position point, Circle circle) {

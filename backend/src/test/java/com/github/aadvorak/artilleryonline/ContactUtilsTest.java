@@ -261,6 +261,49 @@ public class ContactUtilsTest {
     }
 
     @Test
+    public void trapezeBottomWithCircleCenterInTrapeze() {
+        var trapeze = new Trapeze(
+                new BodyPosition(),
+                RECT_TRAPEZE_SHAPE
+        );
+        var circle = new Circle(new Position().setY(0.1), 0.2);
+        var contact = ContactUtils.getTrapezeCircleContact(trapeze, circle);
+        assertNotNull(contact);
+        assertAll(
+                () -> assertEquals(0.0, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(-1.0, contact.normal().getY(), SMALL_DELTA),
+                () -> assertEquals(0.3, contact.depth(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void trapezeBottomWithCircleFullInTrapeze() {
+        var trapeze = new Trapeze(
+                new BodyPosition(),
+                RECT_TRAPEZE_SHAPE
+        );
+        var circle = new Circle(new Position().setY(0.11), 0.1);
+        var contact = ContactUtils.getTrapezeCircleContact(trapeze, circle);
+        assertNotNull(contact);
+        assertAll(
+                () -> assertEquals(0.0, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(-1.0, contact.normal().getY(), SMALL_DELTA),
+                () -> assertEquals(0.21, contact.depth(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void trapezeWithCircleNoContact() {
+        var trapeze = new Trapeze(
+                new BodyPosition(),
+                RECT_TRAPEZE_SHAPE
+        );
+        var circle = new Circle(new Position().setY(-0.11), 0.1);
+        var contact = ContactUtils.getTrapezeCircleContact(trapeze, circle);
+        assertNull(contact);
+    }
+
+    @Test
     public void trapezeWithHalfCircleNoContact() {
         var trapeze = new Trapeze(
                 new BodyPosition(),
