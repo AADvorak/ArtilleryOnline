@@ -1,6 +1,8 @@
 package com.github.aadvorak.artilleryonline.battle.precalc;
 
 import com.github.aadvorak.artilleryonline.battle.common.Shift;
+import com.github.aadvorak.artilleryonline.battle.common.shapes.HalfCircleShape;
+import com.github.aadvorak.artilleryonline.battle.common.shapes.TrapezeShape;
 import com.github.aadvorak.artilleryonline.battle.specs.VehicleSpecs;
 import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
@@ -10,14 +12,13 @@ import lombok.Getter;
 public class VehiclePreCalc implements BodyPreCalc, CompactSerializable {
 
     public VehiclePreCalc(VehicleSpecs specs) {
-        var comDistance = (- 2 * Math.PI * Math.pow(specs.getWheelRadius(), 3) + 2 * Math.pow(specs.getRadius(), 3) / 3)
-                / (2 * Math.PI * Math.pow(specs.getWheelRadius(), 2) + Math.PI * Math.pow(specs.getRadius(), 2) / 2);
-        wheelDistance = Math.sqrt(Math.pow(specs.getWheelRadius() + comDistance, 2) + Math.pow(specs.getHullRadius(), 2));
+        var comDistance = getComDistance(specs);
+        wheelDistance = Math.sqrt(Math.pow(specs.getWheelRadius() + Math.abs(comDistance), 2)
+                + Math.pow(specs.getHullRadius(), 2));
         wheelAngle = Math.atan((specs.getWheelRadius() + comDistance) / specs.getHullRadius());
-        mass = 0.5 * Math.PI * Math.pow(specs.getRadius(), 2) + 2 * Math.PI * Math.pow(specs.getWheelRadius(), 2);
+        mass = getTurretMass(specs) + getWheelsMass(specs);
         maxRadius = wheelDistance + specs.getWheelRadius();
-        // todo write accurate formula
-        momentOfInertia = 2 * Math.PI * Math.pow(specs.getRadius(), 4);
+        momentOfInertia = getMomentOfInertia(specs);
         centerOfMassShift = new Shift(comDistance, Math.PI / 2);
     }
 
@@ -41,5 +42,55 @@ public class VehiclePreCalc implements BodyPreCalc, CompactSerializable {
         stream.writeDouble(momentOfInertia);
         stream.writeSerializableValue(centerOfMassShift);
         stream.writeDouble(maxRadius);
+    }
+
+    private double getComDistance(VehicleSpecs specs) {
+        return (getWheelsMomentOfMass(specs) + getTurretMomentOfMass(specs))
+                / (getWheelsMass(specs) + getTurretMass(specs));
+    }
+
+    private double getWheelsMass(VehicleSpecs specs) {
+        return 2 * Math.PI * Math.pow(specs.getWheelRadius(), 2);
+    }
+
+    private double getWheelsMomentOfMass(VehicleSpecs specs) {
+        return - 2 * Math.PI * Math.pow(specs.getWheelRadius(), 3);
+    }
+
+    private double getTurretMass(VehicleSpecs specs) {
+        if (specs.getTurretShape() instanceof HalfCircleShape halfCircleShape) {
+            return Math.PI * Math.pow(halfCircleShape.getRadius(), 2) / 2;
+        }
+        if (specs.getTurretShape() instanceof TrapezeShape trapezeShape) {
+            var bottomRadius = trapezeShape.getBottomRadius();
+            var topRadius = trapezeShape.getTopRadius();
+            var height = trapezeShape.getHeight();
+            return height * (bottomRadius + topRadius);
+        }
+        return 0.0;
+    }
+
+    private double getTurretMomentOfMass(VehicleSpecs specs) {
+        if (specs.getTurretShape() instanceof HalfCircleShape halfCircleShape) {
+            return 2 * Math.pow(halfCircleShape.getRadius(), 3) / 3;
+        }
+        if (specs.getTurretShape() instanceof TrapezeShape trapezeShape) {
+            var bottomRadius = trapezeShape.getBottomRadius();
+            var topRadius = trapezeShape.getTopRadius();
+            var height = trapezeShape.getHeight();
+            return Math.pow(height, 2) * (bottomRadius + 2 * topRadius) / 3;
+        }
+        return 0.0;
+    }
+
+    private double getMomentOfInertia(VehicleSpecs specs) {
+        // todo write accurate formulas
+        if (specs.getTurretShape() instanceof HalfCircleShape halfCircleShape) {
+            return 2 * Math.PI * Math.pow(halfCircleShape.getRadius(), 4);
+        }
+        if (specs.getTurretShape() instanceof TrapezeShape trapezeShape) {
+            return 2 * Math.PI * Math.pow((trapezeShape.getBottomRadius() + trapezeShape.getHeight()) / 2, 4);
+        }
+        return 0.0;
     }
 }
