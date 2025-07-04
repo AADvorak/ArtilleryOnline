@@ -140,6 +140,6 @@ public class BattleService {
 
     private String getRandomVehicle() {
         var vehicles = Arrays.stream(VehicleSpecsPreset.values()).map(VehicleSpecsPreset::getName).toList();
-        return vehicles.get(BattleUtils.generateRandom(0, vehicles.size() - 1));
+        return vehicles.get(BattleUtils.generateRandom(0, vehicles.size()));
     }
 }
