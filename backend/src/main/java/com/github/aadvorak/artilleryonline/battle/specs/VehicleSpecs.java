@@ -28,8 +28,6 @@ public class VehicleSpecs implements Specs, CompactSerializable {
 
     private double wheelAngleVelocity;
 
-    private double radius;
-
     private Shape turretShape;
 
     private double wheelRadius;

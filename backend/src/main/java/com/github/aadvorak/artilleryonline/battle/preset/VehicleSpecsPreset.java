@@ -14,7 +14,6 @@ public enum VehicleSpecsPreset {
 
     HEAVY("Heavy", new VehicleSpecs()
             .setName("Heavy")
-            .setRadius(0.45)
             .setTurretShape(
                     new TrapezeShape()
                             .setBottomRadius(0.45)
@@ -47,7 +46,6 @@ public enum VehicleSpecsPreset {
     MEDIUM("Medium", new VehicleSpecs()
             .setName("Medium")
             .setMissiles(3)
-            .setRadius(0.4)
             .setTurretShape(
                     new HalfCircleShape()
                             .setRadius(0.4)
@@ -76,7 +74,6 @@ public enum VehicleSpecsPreset {
 
     LIGHT("Light", new VehicleSpecs()
             .setName("Light")
-            .setRadius(0.3)
             .setTurretShape(
                     new HalfCircleShape()
                             .setRadius(0.3)
