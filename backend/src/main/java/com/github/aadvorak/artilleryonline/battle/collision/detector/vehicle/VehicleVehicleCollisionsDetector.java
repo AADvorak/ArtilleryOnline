@@ -12,6 +12,7 @@ import com.github.aadvorak.artilleryonline.battle.utils.ContactUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,7 +28,6 @@ public class VehicleVehicleCollisionsDetector implements CollisionsDetector {
         return Set.of();
     }
 
-    // todo refactor
     private Set<Collision> detect(VehicleCalculations vehicle, BattleCalculations battle, boolean first) {
         Set<Collision> collisions = new HashSet<>();
         var otherVehicles = battle.getVehicles().stream()
@@ -39,67 +39,33 @@ public class VehicleVehicleCollisionsDetector implements CollisionsDetector {
         var position = vehicle.getGeometryNextPosition();
         var rightWheelPosition = vehicle.getRightWheel().getNext().getPosition();
         var leftWheelPosition = vehicle.getLeftWheel().getNext().getPosition();
-        var vehiclePart = BodyPart.of(position, vehicle.getModel().getSpecs().getTurretShape());
-        var rightWheelPart = new Circle(rightWheelPosition, wheelRadius);
-        var leftWheelPart = new Circle(leftWheelPosition, wheelRadius);
+        var parts = Map.of(
+                BodyPart.of(position, vehicle.getModel().getSpecs().getTurretShape()), vehicle,
+                new Circle(rightWheelPosition, wheelRadius), vehicle.getRightWheel(),
+                new Circle(leftWheelPosition, wheelRadius), vehicle.getLeftWheel()
+        );
         for (var otherVehicle : otherVehicles) {
             var otherMaxRadius = otherVehicle.getModel().getPreCalc().getMaxRadius();
             var otherPosition = otherVehicle.getGeometryNextPosition();
             if (otherPosition.getCenter().distanceTo(position.getCenter()) > maxRadius + otherMaxRadius) {
                 continue;
             }
-            var otherVehiclePart = BodyPart.of(otherPosition, otherVehicle.getModel().getSpecs().getTurretShape());
-            var vehicleVehicleContact = ContactUtils.getBodyPartsContact(vehiclePart, otherVehiclePart);
-            if (vehicleVehicleContact != null) {
-                collisions.add(Collision.withVehicle(vehicle, otherVehicle, vehicleVehicleContact));
-                if (first) return collisions;
-            }
             var otherWheelRadius = otherVehicle.getModel().getSpecs().getWheelRadius();
             var otherLeftWheelPosition = otherVehicle.getLeftWheel().getNext().getPosition();
             var otherRightWheelPosition = otherVehicle.getRightWheel().getNext().getPosition();
-            var otherLeftWheel = otherVehicle.getLeftWheel();
-            var otherRightWheel = otherVehicle.getRightWheel();
-            var otherLeftWheelPart = new Circle(otherLeftWheelPosition, otherWheelRadius);
-            var otherRightWheelPart = new Circle(otherRightWheelPosition, otherWheelRadius);
-            var rightWheelLeftWheelContact = ContactUtils.getCirclesContact(rightWheelPart, otherLeftWheelPart);
-            if (rightWheelLeftWheelContact != null) {
-                collisions.add(Collision.withVehicle(vehicle.getRightWheel(), otherLeftWheel, rightWheelLeftWheelContact));
-                if (first) return collisions;
-            }
-            var leftWheelRightWheelContact = ContactUtils.getCirclesContact(leftWheelPart, otherRightWheelPart);
-            if (leftWheelRightWheelContact != null) {
-                collisions.add(Collision.withVehicle(vehicle.getLeftWheel(), otherRightWheel, leftWheelRightWheelContact));
-                if (first) return collisions;
-            }
-            var rightWheelVehicleContact = ContactUtils.getBodyPartsContact(rightWheelPart, otherVehiclePart);
-            if (rightWheelVehicleContact != null) {
-                collisions.add(Collision.withVehicle(vehicle.getRightWheel(), otherVehicle, rightWheelVehicleContact));
-                if (first) return collisions;
-            }
-            var vehicleRightWheelContact = ContactUtils.getBodyPartsContact(vehiclePart, otherRightWheelPart);
-            if (vehicleRightWheelContact != null) {
-                collisions.add(Collision.withVehicle(vehicle, otherRightWheel, vehicleRightWheelContact));
-                if (first) return collisions;
-            }
-            var vehicleLeftWheelContact = ContactUtils.getBodyPartsContact(vehiclePart, otherLeftWheelPart);
-            if (vehicleLeftWheelContact != null) {
-                collisions.add(Collision.withVehicle(vehicle, otherLeftWheel, vehicleLeftWheelContact));
-                if (first) return collisions;
-            }
-            var leftWheelVehicleContact = ContactUtils.getBodyPartsContact(leftWheelPart, otherVehiclePart);
-            if (leftWheelVehicleContact != null) {
-                collisions.add(Collision.withVehicle(vehicle.getLeftWheel(), otherVehicle, leftWheelVehicleContact));
-                if (first) return collisions;
-            }
-            var leftWheelLeftWheelContact = ContactUtils.getCirclesContact(leftWheelPart, otherLeftWheelPart);
-            if (leftWheelLeftWheelContact != null) {
-                collisions.add(Collision.withVehicle(vehicle.getLeftWheel(), otherLeftWheel, leftWheelLeftWheelContact));
-                if (first) return collisions;
-            }
-            var rightWheelRightWheelContact = ContactUtils.getCirclesContact(rightWheelPart, otherRightWheelPart);
-            if (rightWheelRightWheelContact != null) {
-                collisions.add(Collision.withVehicle(vehicle.getRightWheel(), otherRightWheel, rightWheelRightWheelContact));
-                if (first) return collisions;
+            var otherParts = Map.of(
+                    BodyPart.of(otherPosition, otherVehicle.getModel().getSpecs().getTurretShape()), otherVehicle,
+                    new Circle(otherLeftWheelPosition, otherWheelRadius), otherVehicle.getLeftWheel(),
+                    new Circle(otherRightWheelPosition, otherWheelRadius), otherVehicle.getRightWheel()
+            );
+            for (var part : parts.entrySet()) {
+                for (var otherPart : otherParts.entrySet()) {
+                    var contact = ContactUtils.getBodyPartsContact(part.getKey(), otherPart.getKey());
+                    if (contact != null) {
+                        collisions.add(Collision.withVehicle(part.getValue(), otherPart.getValue(), contact));
+                        if (first) return collisions;
+                    }
+                }
             }
         }
         return collisions;
