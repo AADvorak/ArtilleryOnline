@@ -134,6 +134,8 @@ export function deserializeVehicleState(input: DeserializerInput): VehicleState 
   const position = deserializeBodyPosition(input)
   const velocity = deserializeBodyVelocity(input)
   const movingDirection = DeserializerBase.readNullable(input, DeserializerBase.readString) as MovingDirection
+  const pushingDirection = DeserializerBase.readNullable(input, DeserializerBase.readString) as MovingDirection
+  const rotatingDirection = DeserializerBase.readNullable(input, DeserializerBase.readString) as MovingDirection
   const hitPoints = DeserializerBase.readDouble(input)
   const ammo = DeserializerBase.readMap(input, DeserializerBase.readString, DeserializerBase.readInt)!
   const missiles = DeserializerBase.readMap(input, DeserializerBase.readString, DeserializerBase.readInt)!
@@ -147,6 +149,8 @@ export function deserializeVehicleState(input: DeserializerInput): VehicleState 
     position,
     velocity,
     movingDirection,
+    pushingDirection,
+    rotatingDirection,
     hitPoints,
     ammo,
     missiles,

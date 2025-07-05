@@ -58,6 +58,8 @@ public class VehicleState implements BodyState, CompactSerializable {
         stream.writeSerializableValue(position);
         stream.writeSerializableValue(velocity);
         stream.writeSerializable(movingDirection);
+        stream.writeSerializable(pushingDirection);
+        stream.writeSerializable(rotatingDirection);
         stream.writeDouble(hitPoints);
         stream.writeMap(ammo, stream::writeString, stream::writeInt);
         stream.writeMap(missiles, stream::writeString, stream::writeInt);
