@@ -2,11 +2,15 @@ package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.*;
+import com.github.aadvorak.artilleryonline.battle.common.lines.BodyPart;
+import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
+import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
 import com.github.aadvorak.artilleryonline.battle.specs.VehicleSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
+import com.github.aadvorak.artilleryonline.battle.utils.GroundContactUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -122,5 +126,18 @@ public class VehicleCalculations
             allGroundContacts.add(leftWheel.getGroundContact());
         }
         return allGroundContacts;
+    }
+
+    public void calculateAllGroundContacts(RoomModel roomModel) {
+        var bodyPosition = BodyPosition.of(getGeometryPosition(), model.getState().getPosition().getAngle());
+        var bodyPart = BodyPart.of(bodyPosition, model.getSpecs().getTurretShape());
+        setGroundContacts(GroundContactUtils.getGroundContacts(bodyPart, roomModel, false));
+        var wheelRadius = model.getSpecs().getWheelRadius();
+        rightWheel.setGroundContact(GroundContactUtils.getGroundContact(
+                new Circle(rightWheel.getPosition(), wheelRadius),
+                roomModel, false));
+        leftWheel.setGroundContact(GroundContactUtils.getGroundContact(
+                new Circle(leftWheel.getPosition(), wheelRadius),
+                roomModel, false));
     }
 }
