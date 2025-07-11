@@ -1,6 +1,6 @@
 import type { RoomSpecs } from '@/playground/data/specs'
 import type { RoomModel } from '@/playground/data/model'
-import type {Position} from "@/playground/data/common";
+import type {Position, Shift} from "@/playground/data/common";
 
 export const BattleUtils = {
   getRoomWidth(roomSpecs: RoomSpecs) {
@@ -64,6 +64,11 @@ export const BattleUtils = {
       x: position.x + distance * Math.cos(angle),
       y: position.y + distance * Math.sin(angle)
     }
+  },
+
+  shiftPosition(position: Position, shift: Shift) {
+    position.x += shift.distance * Math.cos(shift.angle)
+    position.y += shift.distance * Math.sin(shift.angle)
   },
 
   calculateAngleDiff(missileAngle: number, targetAngle: number): number {
