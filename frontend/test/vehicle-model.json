@@ -7,7 +7,12 @@
     "maxAngle": 3.141592653589793,
     "acceleration": 12.0,
     "wheelAngleVelocity": 30.0,
-    "radius": 0.4,
+    "turretShape": {
+      "bottomRadius": 0.4,
+      "topRadius": 0.25,
+      "height": 0.3,
+      "name": "Trapeze"
+    },
     "wheelRadius": 0.1,
     "hullRadius": 0.4,
     "trackRepairTime": 10.0,
@@ -17,7 +22,7 @@
         "ammo": 80,
         "loadTime": 3.0,
         "rotationVelocity": 0.4,
-        "length": 0.6,
+        "length": 0.55,
         "caliber": 0.05,
         "availableShells": {
           "HE-M": {
@@ -42,7 +47,7 @@
         "ammo": 360,
         "loadTime": 0.3,
         "rotationVelocity": 0.45,
-        "length": 0.5,
+        "length": 0.45,
         "caliber": 0.03,
         "availableShells": {
           "AP-ML": {
@@ -81,15 +86,15 @@
     "availableDrones": {},
     "availableBombers": {},
     "defaultGun": "Medium",
-    "minCollisionDamageImpact": 0.15,
-    "collisionDamageCoefficient": 60.0
+    "minCollisionDamageImpact": 2.25,
+    "collisionDamageCoefficient": 3.0
   },
   "config": {
     "gun": {
       "ammo": 80,
       "loadTime": 3.0,
       "rotationVelocity": 0.4,
-      "length": 0.6,
+      "length": 0.55,
       "caliber": 0.05,
       "availableShells": {
         "HE-M": {
@@ -133,9 +138,9 @@
       "angle": 0.0
     },
     "velocity": {
-      "x": 1.0,
-      "y": 1.0,
-      "angle": 0.1
+      "x": 0.0,
+      "y": 0.0,
+      "angle": 0.0
     },
     "movingDirection": null,
     "pushingDirection": null,
@@ -175,15 +180,15 @@
     "onGround": false
   },
   "preCalc": {
-    "wheelDistance": 0.4545051303158595,
-    "wheelAngle": 0.49476972454323614,
-    "mass": 0.3141592653589793,
-    "momentOfInertia": 0.16084954386379743,
+    "wheelDistance": 0.43877802804145727,
+    "wheelAngle": 0.4235815424046293,
+    "mass": 0.2578318530717959,
+    "momentOfInertia": 0.09428704951586364,
     "centerOfMassShift": {
-      "distance": 0.11581221810508405,
+      "distance": 0.08035009812015587,
       "angle": 1.5707963267948966
     },
-    "maxRadius": 0.5545051303158595
+    "maxRadius": 0.5387780280414572
   },
   "id": 0
 }
