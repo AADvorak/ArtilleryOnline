@@ -1,12 +1,27 @@
-import type {VehicleModel} from '@/playground/data/model'
+import type {RoomModel, VehicleModel} from '@/playground/data/model'
 import {JetType, type Position} from '@/playground/data/common'
-import type {WheelCalculations} from '@/playground/data/calculations'
+import type {VehicleCalculations, WheelCalculations} from '@/playground/data/calculations'
 import {DefaultColors} from '~/dictionary/default-colors'
 import {useUserStore} from '~/stores/user'
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {VectorUtils} from "~/playground/utils/vector-utils";
+import {GroundContactUtils} from "~/playground/utils/ground-contact-utils";
+import {Circle, HalfCircle, Trapeze} from "~/playground/data/geometry";
+import {type HalfCircleShape, ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
 
 export const VehicleUtils = {
+  calculateAllGroundContacts(vehicle: VehicleCalculations, roomModel: RoomModel) {
+    const wheelRadius = vehicle.model.specs.wheelRadius
+    this.calculateGroundContact(vehicle.rightWheel, wheelRadius, roomModel)
+    this.calculateGroundContact(vehicle.leftWheel, wheelRadius, roomModel)
+    this.calculateGroundContacts(vehicle, roomModel)
+  },
+
+  calculateWheelsVelocities(vehicle: VehicleCalculations) {
+    this.calculateWheelVelocity(vehicle.model, vehicle.rightWheel)
+    this.calculateWheelVelocity(vehicle.model, vehicle.leftWheel)
+  },
+
   getGeometryPosition(vehicleModel: VehicleModel) {
     const position = vehicleModel.state.position
     const comShift = vehicleModel.preCalc.centerOfMassShift
@@ -101,5 +116,38 @@ export const VehicleUtils = {
       return jetState.active && jetState.volume > 0
     }
     return jetState.active && jetState.volume > 0 && !!vehicleModel.state.movingDirection
+  },
+
+  calculateGroundContact(wheel: WheelCalculations, wheelRadius: number, roomModel: RoomModel): void {
+    wheel.groundContact = GroundContactUtils.getCircleGroundContact(
+        new Circle(wheel.position!, wheelRadius),
+        roomModel,
+        false
+    )
+  },
+
+  calculateGroundContacts(vehicle: VehicleCalculations, roomModel: RoomModel): void {
+    const position = VehicleUtils.getGeometryPosition(vehicle.model)
+    const angle = vehicle.model.state.position.angle
+    const turretShape = vehicle.model.specs.turretShape
+
+    if (turretShape.name === ShapeNames.HALF_CIRCLE) {
+      vehicle.groundContacts = GroundContactUtils.getHalfCircleGroundContacts(
+          new HalfCircle(position, (turretShape as HalfCircleShape).radius, angle),
+          roomModel
+      )
+    }
+
+    if (turretShape.name === ShapeNames.TRAPEZE) {
+      const bodyPosition = {
+        x: position.x,
+        y: position.y,
+        angle
+      }
+      vehicle.groundContacts = GroundContactUtils.getTrapezeGroundContacts(
+          new Trapeze(bodyPosition, turretShape as TrapezeShape),
+          roomModel
+      )
+    }
   }
 }
