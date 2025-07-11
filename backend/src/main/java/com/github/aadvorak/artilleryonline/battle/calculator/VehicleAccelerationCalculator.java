@@ -30,7 +30,6 @@ public class VehicleAccelerationCalculator {
             > calculator = new BodyAccelerationCalculator<>(forceCalculators);
 
     public static BodyAcceleration getVehicleAcceleration(VehicleCalculations vehicle, BattleModel battleModel) {
-        vehicle.recalculateWheelsVelocities();
         vehicle.calculateAllGroundContacts(battleModel.getRoom());
         return calculator.calculate(vehicle, battleModel);
     }

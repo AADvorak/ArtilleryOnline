@@ -40,6 +40,7 @@ public class VehicleCalculations
         this.model = model;
         rightWheel = new WheelCalculations(WheelSign.RIGHT, this);
         leftWheel = new WheelCalculations(WheelSign.LEFT, this);
+        recalculateWheelsVelocities();
     }
 
     @Override
