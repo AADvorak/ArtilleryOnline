@@ -1,13 +1,13 @@
-import type { BattleModel, VehicleModel } from '@/playground/data/model'
-import {MovingDirection, type Position} from '@/playground/data/common'
-import { VehicleAccelerationCalculator } from '@/playground/battle/calculator/vehicle-acceleration-calculator'
-import { type VehicleCalculations, type WheelCalculations, WheelSign } from '@/playground/data/calculations'
+import type {BattleModel, VehicleModel} from '@/playground/data/model'
+import {MovingDirection} from '@/playground/data/common'
+import {VehicleAccelerationCalculator} from '@/playground/battle/calculator/vehicle-acceleration-calculator'
+import {type VehicleCalculations} from '@/playground/data/calculations'
 import {VehicleUtils} from "~/playground/utils/vehicle-utils";
 import {Constants} from "~/playground/data/constants";
 
 export const VehicleProcessor = {
   processStep(vehicleModel: VehicleModel, battleModel: BattleModel, timeStepSecs: number) {
-    const calculations = this.initVehicleCalculations(vehicleModel)
+    const calculations = VehicleUtils.initVehicleCalculations(vehicleModel)
     this.recalculateVelocity(calculations, vehicleModel, battleModel, timeStepSecs)
     this.recalculatePositionAndAngle(vehicleModel, timeStepSecs)
     this.recalculateGunAngle(vehicleModel, timeStepSecs)
@@ -18,24 +18,6 @@ export const VehicleProcessor = {
       vehicleModel.state.jetState.volume += (VehicleUtils.isJetActive(vehicleModel)
           ? - vehicleModel.config.jet.consumption
           : vehicleModel.config.jet.regeneration) * timeStepSecs
-    }
-  },
-
-  initVehicleCalculations(model: VehicleModel): VehicleCalculations {
-    return {
-      model,
-      nextPosition: undefined,
-      rightWheel: this.initWheelCalculations(WheelSign.RIGHT, VehicleUtils.getRightWheelPosition(model)),
-      leftWheel: this.initWheelCalculations(WheelSign.LEFT, VehicleUtils.getLeftWheelPosition(model))
-    }
-  },
-
-  initWheelCalculations(sign: WheelSign, position: Position): WheelCalculations {
-    return {
-      position,
-      velocity: undefined,
-      groundContact: null,
-      sign,
     }
   },
 

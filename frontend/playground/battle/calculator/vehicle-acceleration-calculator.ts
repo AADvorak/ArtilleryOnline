@@ -21,7 +21,6 @@ export const VehicleAccelerationCalculator = {
   ),
 
   getVehicleAcceleration(vehicle: VehicleCalculations, battleModel: BattleModel): BodyAcceleration {
-    VehicleUtils.calculateWheelsVelocities(vehicle)
     VehicleUtils.calculateAllGroundContacts(vehicle, battleModel.room)
     return this.calculator.calculate(vehicle, battleModel)
   },

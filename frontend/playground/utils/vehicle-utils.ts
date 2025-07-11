@@ -1,6 +1,6 @@
 import type {RoomModel, VehicleModel} from '@/playground/data/model'
 import {JetType, type Position} from '@/playground/data/common'
-import type {VehicleCalculations, WheelCalculations} from '@/playground/data/calculations'
+import {type VehicleCalculations, type WheelCalculations, WheelSign} from '@/playground/data/calculations'
 import {DefaultColors} from '~/dictionary/default-colors'
 import {useUserStore} from '~/stores/user'
 import {BattleUtils} from "~/playground/utils/battle-utils";
@@ -10,6 +10,26 @@ import {Circle, HalfCircle, Trapeze} from "~/playground/data/geometry";
 import {type HalfCircleShape, ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
 
 export const VehicleUtils = {
+  initVehicleCalculations(model: VehicleModel): VehicleCalculations {
+    const calculations = {
+      model,
+      nextPosition: undefined,
+      rightWheel: this.initWheelCalculations(WheelSign.RIGHT, VehicleUtils.getRightWheelPosition(model)),
+      leftWheel: this.initWheelCalculations(WheelSign.LEFT, VehicleUtils.getLeftWheelPosition(model))
+    }
+    this.calculateWheelsVelocities(calculations)
+    return calculations
+  },
+
+  initWheelCalculations(sign: WheelSign, position: Position): WheelCalculations {
+    return {
+      position,
+      velocity: undefined,
+      groundContact: null,
+      sign,
+    }
+  },
+
   calculateAllGroundContacts(vehicle: VehicleCalculations, roomModel: RoomModel) {
     const wheelRadius = vehicle.model.specs.wheelRadius
     this.calculateGroundContact(vehicle.rightWheel, wheelRadius, roomModel)
