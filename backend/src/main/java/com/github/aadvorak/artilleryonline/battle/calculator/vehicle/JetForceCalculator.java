@@ -26,6 +26,7 @@ public class JetForceCalculator implements ForceCalculator<
         VehicleCalculations> {
 
     public static final String FORCE_DESCRIPTION = "Jet";
+    public static final double HORIZONTAL_JET_ANGLE = Math.PI / 16;
 
     @Override
     public List<BodyForce> calculate(VehicleCalculations calculations, BattleModel battleModel) {
@@ -43,8 +44,8 @@ public class JetForceCalculator implements ForceCalculator<
         var direction = vehicleModel.getState().getMovingDirection();
         var angle = vehicleModel.getState().getPosition().getAngle();
         if (JetType.VERTICAL.equals(jetSpecs.getType())) {
-            calculateVertical(forces, calculations.getLeftWheel(), acceleration / 2, angle, direction);
-            calculateVertical(forces, calculations.getRightWheel(), acceleration / 2, angle, direction);
+            addVertical(forces, calculations.getLeftWheel(), acceleration / 2, angle, direction);
+            addVertical(forces, calculations.getRightWheel(), acceleration / 2, angle, direction);
         }
         if (JetType.HORIZONTAL.equals(jetSpecs.getType())) {
             addHorizontal(forces, acceleration, angle, direction);
@@ -52,8 +53,8 @@ public class JetForceCalculator implements ForceCalculator<
         return forces;
     }
 
-    private static void calculateVertical(List<BodyForce> forces, WheelCalculations wheelCalculations,
-                                          double acceleration, double angle, MovingDirection direction) {
+    private static void addVertical(List<BodyForce> forces, WheelCalculations wheelCalculations,
+                                    double acceleration, double angle, MovingDirection direction) {
         var angleCoefficient = 1 + wheelCalculations.getSign().getValue() * Math.sin(angle);
         var force = new Force();
         if (direction == null) {
@@ -77,17 +78,16 @@ public class JetForceCalculator implements ForceCalculator<
 
     private void addHorizontal(List<BodyForce> forces, double acceleration,
                                double angle, MovingDirection direction) {
-        var additionalAngle = Math.PI / 16;
         if (MovingDirection.RIGHT.equals(direction)) {
             var force = new Force()
-                    .setX(acceleration * Math.cos(angle + additionalAngle))
-                    .setY(acceleration * Math.sin(angle + additionalAngle));
+                    .setX(acceleration * Math.cos(angle + HORIZONTAL_JET_ANGLE))
+                    .setY(acceleration * Math.sin(angle + HORIZONTAL_JET_ANGLE));
             forces.add(BodyForce.atCOM(force, FORCE_DESCRIPTION));
         }
         if (MovingDirection.LEFT.equals(direction)) {
             var force = new Force()
-                    .setX(acceleration * Math.cos(angle - additionalAngle + Math.PI))
-                    .setY(acceleration * Math.sin(angle - additionalAngle + Math.PI));
+                    .setX(acceleration * Math.cos(angle - HORIZONTAL_JET_ANGLE + Math.PI))
+                    .setY(acceleration * Math.sin(angle - HORIZONTAL_JET_ANGLE + Math.PI));
             forces.add(BodyForce.atCOM(force, FORCE_DESCRIPTION));
         }
     }
