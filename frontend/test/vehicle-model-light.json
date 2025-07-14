@@ -1,0 +1,202 @@
+{
+  "specs": {
+    "name": "Light",
+    "hitPoints": 80.0,
+    "missiles": 0,
+    "minAngle": 0.0,
+    "maxAngle": 3.141592653589793,
+    "acceleration": 17.0,
+    "wheelAngleVelocity": 40.0,
+    "turretShape": {
+      "radius": 0.3,
+      "name": "HalfCircle"
+    },
+    "wheelRadius": 0.08,
+    "hullRadius": 0.35,
+    "trackRepairTime": 7.0,
+    "minTrackHitCaliber": 0.02,
+    "availableGuns": {
+      "LightH": {
+        "ammo": 100,
+        "loadTime": 2.2,
+        "rotationVelocity": 0.42,
+        "length": 0.4,
+        "caliber": 0.04,
+        "availableShells": {
+          "SGN-L": {
+            "velocity": 10.0,
+            "damage": 0.0,
+            "radius": 0.0,
+            "mass": 0.005,
+            "caliber": 0.07,
+            "type": "SGN"
+          },
+          "HE-L": {
+            "velocity": 11.0,
+            "damage": 4.0,
+            "radius": 0.4,
+            "mass": 0.01,
+            "caliber": 0.04,
+            "type": "HE"
+          }
+        }
+      },
+      "Light": {
+        "ammo": 320,
+        "loadTime": 0.5,
+        "rotationVelocity": 0.45,
+        "length": 0.35,
+        "caliber": 0.03,
+        "availableShells": {
+          "SGN-L": {
+            "velocity": 10.0,
+            "damage": 0.0,
+            "radius": 0.0,
+            "mass": 0.005,
+            "caliber": 0.07,
+            "type": "SGN"
+          },
+          "AP-L": {
+            "velocity": 12.0,
+            "damage": 2.0,
+            "radius": 0.06,
+            "mass": 0.008,
+            "caliber": 0.03,
+            "type": "AP"
+          }
+        }
+      }
+    },
+    "availableJets": {
+      "light": {
+        "capacity": 30.0,
+        "consumption": 15.0,
+        "regeneration": 1.0,
+        "acceleration": 18.0,
+        "type": "VERTICAL"
+      }
+    },
+    "availableMissiles": {},
+    "availableDrones": {},
+    "availableBombers": {
+      "Bomber": {
+        "flights": 3,
+        "prepareToFlightTime": 30.0,
+        "flightTime": 3.0,
+        "bombs": {
+          "velocity": 5.0,
+          "damage": 12.0,
+          "radius": 0.7,
+          "mass": 0.08,
+          "caliber": 0.15,
+          "type": "BMB"
+        }
+      }
+    },
+    "defaultGun": "Light",
+    "minCollisionDamageImpact": 1.8,
+    "collisionDamageCoefficient": 3.5
+  },
+  "config": {
+    "gun": {
+      "ammo": 100,
+      "loadTime": 2.2,
+      "rotationVelocity": 0.42,
+      "length": 0.4,
+      "caliber": 0.04,
+      "availableShells": {
+        "SGN-L": {
+          "velocity": 10.0,
+          "damage": 0.0,
+          "radius": 0.0,
+          "mass": 0.005,
+          "caliber": 0.07,
+          "type": "SGN"
+        },
+        "HE-L": {
+          "velocity": 11.0,
+          "damage": 4.0,
+          "radius": 0.4,
+          "mass": 0.01,
+          "caliber": 0.04,
+          "type": "HE"
+        }
+      }
+    },
+    "jet": {
+      "capacity": 30.0,
+      "consumption": 15.0,
+      "regeneration": 1.0,
+      "acceleration": 18.0,
+      "type": "VERTICAL"
+    },
+    "drone": null,
+    "bomber": null,
+    "ammo": {
+      "SGN-L": 50,
+      "HE-L": 50
+    },
+    "missiles": null,
+    "color": null
+  },
+  "state": {
+    "position": {
+      "x": 0.0,
+      "y": 0.0,
+      "angle": 0.0
+    },
+    "velocity": {
+      "x": 0.0,
+      "y": 0.0,
+      "angle": 0.0
+    },
+    "movingDirection": null,
+    "pushingDirection": null,
+    "rotatingDirection": null,
+    "acceleration": {
+      "x": 0.0,
+      "y": 0.0,
+      "angle": 0.0
+    },
+    "hitPoints": 80.0,
+    "ammo": {
+      "HE-L": 50,
+      "SGN-L": 50
+    },
+    "missiles": null,
+    "gunState": {
+      "angle": 0.0,
+      "targetAngle": 0.0,
+      "rotatingDirection": null,
+      "loadedShell": null,
+      "selectedShell": "SGN-L",
+      "loadingShell": null,
+      "loadRemainTime": 0.0,
+      "triggerPushed": false,
+      "fixed": false
+    },
+    "trackState": {
+      "broken": false,
+      "repairRemainTime": 0.0
+    },
+    "jetState": {
+      "volume": 30.0,
+      "active": false
+    },
+    "droneState": null,
+    "bomberState": null,
+    "onGround": false
+  },
+  "preCalc": {
+    "wheelDistance": 0.3854265619280183,
+    "wheelAngle": 0.4321084139120378,
+    "mass": 0.18158405537749006,
+    "momentOfInertia": 0.050893800988154644,
+    "centerOfMassShift": {
+      "distance": 0.08141138324062683,
+      "angle": 1.5707963267948966
+    },
+    "maxRadius": 0.4654265619280183
+  },
+  "id": 0
+}
