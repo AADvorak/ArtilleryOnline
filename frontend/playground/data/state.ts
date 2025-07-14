@@ -71,7 +71,7 @@ export interface ExplosionState {
 }
 
 export interface VehicleState extends BodyState {
-  movingDirection: MovingDirection
+  movingDirection?: MovingDirection
   hitPoints: number
   ammo: Ammo
   missiles: Missiles
