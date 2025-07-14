@@ -2,7 +2,7 @@ import {VehicleUtils} from "~/playground/utils/vehicle-utils";
 import type {VehicleModel} from "~/playground/data/model.ts";
 import {test} from "@jest/globals";
 import {expect} from "@jest/globals";
-import vehicleModel from "./vehicle-model.json";
+import vehicleModel from "./vehicle-model-medium.json";
 
 test('wheel position', () => {
   // @ts-ignore

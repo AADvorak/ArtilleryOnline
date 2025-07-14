@@ -2,7 +2,7 @@ import {VehicleUtils} from "~/playground/utils/vehicle-utils";
 import type {BattleModel, RoomModel, VehicleModel} from "~/playground/data/model.ts";
 import {test} from "@jest/globals";
 import {expect} from "@jest/globals";
-import vehicle from "./vehicle-model.json";
+import vehicle from "./vehicle-model-medium.json";
 import room from "./room-model.json"
 import {GravityForceCalculator} from "~/playground/battle/calculator/vehicle/gravity-force-calculator";
 import {BodyUtils} from "~/playground/utils/body-utils";
