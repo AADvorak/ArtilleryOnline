@@ -6,6 +6,7 @@ import {JetType, MovingDirection, zeroVector} from "~/playground/data/common";
 
 export class JetForceCalculator implements ForceCalculator<VehicleCalculations> {
   static readonly FORCE_DESCRIPTION = 'Jet'
+  static readonly HORIZONTAL_JET_ANGLE = Math.PI / 16
 
   calculate(calculations: VehicleCalculations, battleModel: BattleModel): BodyForce[] {
     const forces: BodyForce[] = []
@@ -22,12 +23,12 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
     }
 
     const acceleration = jetSpecs.acceleration * calculations.model.preCalc.mass
-    const direction = vehicleModel.state.movingDirection
+    const direction = vehicleModel.state.movingDirection!
     const angle = vehicleModel.state.position.angle
 
     if (jetSpecs.type === JetType.VERTICAL) {
-      JetForceCalculator.calculateVertical(forces, calculations.leftWheel, vehicleModel, acceleration / 2, angle, direction)
-      JetForceCalculator.calculateVertical(forces, calculations.rightWheel, vehicleModel, acceleration / 2, angle, direction)
+      JetForceCalculator.addVertical(forces, calculations.leftWheel, vehicleModel, acceleration / 2, angle, direction)
+      JetForceCalculator.addVertical(forces, calculations.rightWheel, vehicleModel, acceleration / 2, angle, direction)
     }
 
     if (jetSpecs.type === JetType.HORIZONTAL) {
@@ -37,7 +38,7 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
     return forces
   }
 
-  private static calculateVertical(
+  private static addVertical(
       forces: BodyForce[],
       wheelCalculations: WheelCalculations,
       vehicleModel: VehicleModel,
@@ -48,7 +49,7 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
     const angleCoefficient = 1 + wheelCalculations.sign * Math.sin(angle)
     const force = zeroVector()
 
-    if (direction === null) {
+    if (!direction) {
       force.x = 0.0
       force.y = acceleration * angleCoefficient
     } else if (direction === MovingDirection.RIGHT) {
@@ -75,18 +76,16 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
       angle: number,
       direction: MovingDirection | null
   ): void {
-    const additionalAngle = Math.PI / 16
-
     if (direction === MovingDirection.RIGHT) {
       const force = {
-        x: acceleration * Math.cos(angle + additionalAngle),
-        y: acceleration * Math.sin(angle + additionalAngle)
+        x: acceleration * Math.cos(angle + JetForceCalculator.HORIZONTAL_JET_ANGLE),
+        y: acceleration * Math.sin(angle + JetForceCalculator.HORIZONTAL_JET_ANGLE)
       }
       forces.push(BodyForce.atCOM(force, JetForceCalculator.FORCE_DESCRIPTION))
     } else if (direction === MovingDirection.LEFT) {
       const force = {
-        x: acceleration * Math.cos(angle - additionalAngle + Math.PI),
-        y: acceleration * Math.sin(angle - additionalAngle + Math.PI)
+        x: acceleration * Math.cos(angle - JetForceCalculator.HORIZONTAL_JET_ANGLE + Math.PI),
+        y: acceleration * Math.sin(angle - JetForceCalculator.HORIZONTAL_JET_ANGLE + Math.PI)
       }
       forces.push(BodyForce.atCOM(force, JetForceCalculator.FORCE_DESCRIPTION))
     }
