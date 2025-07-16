@@ -10,14 +10,6 @@ import java.util.stream.Collectors;
 
 public class GeometryUtils {
 
-    public static double normalizeAngle(double angle) {
-        if (angle < -Math.PI || angle > Math.PI) {
-            return Math.atan2(Math.sin(angle), Math.cos(angle));
-        } else {
-            return angle;
-        }
-    }
-
     public static boolean isPointLyingOnArc(double pointAngle, double beginAngle, double endAngle) {
         var shiftedPointAngle = pointAngle + 2 * Math.PI;
         return pointAngle > beginAngle && pointAngle < endAngle

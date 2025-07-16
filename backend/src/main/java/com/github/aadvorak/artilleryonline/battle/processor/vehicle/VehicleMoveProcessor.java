@@ -59,9 +59,9 @@ public class VehicleMoveProcessor {
     }
 
     private static void correctTargetAngle(VehicleCalculations vehicle) {
-        var angleDiff = vehicle.getNextPosition().getAngle() - vehicle.getModel().getState().getPosition().getAngle();
-        if (angleDiff * vehicle.getModel().getState().getVelocity().getAngle() < 0) {
+        if (vehicle.getNextPosition().isAngleNormalized()) {
             var gunState = vehicle.getModel().getState().getGunState();
+            var angleDiff = vehicle.getNextPosition().getAngle() - vehicle.getModel().getState().getPosition().getAngle();
             var targetAngle = gunState.getTargetAngle();
             if (angleDiff > 0) {
                 gunState.setTargetAngle(targetAngle + Math.PI * 2);
