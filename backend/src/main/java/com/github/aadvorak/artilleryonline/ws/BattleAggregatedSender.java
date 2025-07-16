@@ -18,13 +18,13 @@ public class BattleAggregatedSender {
         while (true) {
             var sent = false;
             synchronized (aggregated) {
-                if (aggregated.isDisabled()) {
-                    break;
-                }
                 if (aggregated.getUpdate() != null) {
                     sent = true;
                     sendBattleUpdate(aggregated.getUpdate());
                     aggregated.setUpdate(null);
+                }
+                if (aggregated.isDisabled()) {
+                    break;
                 }
             }
             sleep(sent ? 20 : 10);
