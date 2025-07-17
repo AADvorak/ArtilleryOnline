@@ -16,8 +16,6 @@ import com.github.aadvorak.artilleryonline.battle.processor.vehicle.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
-
 @Component
 @RequiredArgsConstructor
 public class ActiveBattleStepProcessor extends BattleStepProcessorBase implements BattleStepProcessor {
@@ -32,20 +30,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
 
         DroneLaunchProcessor.launch(battle);
 
-        var battleCalculations = new BattleCalculations()
-                .setModel(battleModel)
-                .setVehicles(battleModel.getVehicles().values().stream()
-                        .map(VehicleCalculations::new)
-                        .collect(Collectors.toSet()))
-                .setShells(battleModel.getShells().values().stream()
-                        .map(ShellCalculations::new)
-                        .collect(Collectors.toSet()))
-                .setMissiles(battleModel.getMissiles().values().stream()
-                        .map(MissileCalculations::new)
-                        .collect(Collectors.toSet()))
-                .setDrones(battleModel.getDrones().values().stream()
-                        .map(DroneCalculations::new)
-                        .collect(Collectors.toSet()));
+        var battleCalculations = new BattleCalculations(battleModel);
 
         battleModel.getExplosions().values().forEach(explosionModel ->
                 ExplosionProcessor.processStep(explosionModel, battleModel));
