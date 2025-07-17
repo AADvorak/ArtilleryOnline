@@ -1,19 +1,29 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.Battle;
+import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
-import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 
 public class VehicleGunRotateProcessor {
 
-    public static void processStep(VehicleModel vehicleModel, BattleModel battleModel) {
-        var gunState = vehicleModel.getState().getGunState();
+    public static void processStep(VehicleCalculations vehicle, BattleModel battleModel) {
+        var gunState = vehicle.getModel().getState().getGunState();
+        if (vehicle.getNextPosition().isAngleNormalized()) {
+            var angleDiff = vehicle.getNextPosition().getAngle() - vehicle.getModel().getState().getPosition().getAngle();
+            var targetAngle = gunState.getTargetAngle();
+            if (angleDiff > 0) {
+                gunState.setTargetAngle(targetAngle + Math.PI * 2);
+            }
+            if (angleDiff < 0) {
+                gunState.setTargetAngle(targetAngle - Math.PI * 2);
+            }
+        }
         var rotatingDirection = gunState.getRotatingDirection();
-        var rotatingVelocity = vehicleModel.getConfig().getGun().getRotationVelocity();
-        var maxGunAngle = vehicleModel.getSpecs().getMaxAngle();
-        var minGunAngle = vehicleModel.getSpecs().getMinAngle();
-        var vehicleAngle = vehicleModel.getState().getPosition().getAngle();
+        var rotatingVelocity = vehicle.getModel().getConfig().getGun().getRotationVelocity();
+        var maxGunAngle = vehicle.getModel().getSpecs().getMaxAngle();
+        var minGunAngle = vehicle.getModel().getSpecs().getMinAngle();
+        var vehicleAngle = vehicle.getNextPosition().getAngle();
         var targetAngle = gunState.isFixed()
                 ? vehicleAngle + gunState.getAngle()
                 : gunState.getTargetAngle();

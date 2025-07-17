@@ -68,6 +68,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
             VehicleDroneProcessor.processStep(vehicleModel, battleModel);
             VehicleBomberProcessor.processStep(vehicleModel, battleModel);
             VehicleMoveProcessor.processStep1(vehicleCalculations, battleCalculations);
+            VehicleGunRotateProcessor.processStep(vehicleCalculations, battleModel);
         });
 
         collisionsProcessor.process(battleCalculations);
@@ -80,7 +81,6 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
             if (!BattleType.COLLIDER.equals(battle.getType())) {
                 VehicleReturnOnGroundProcessor.process(vehicle, battleCalculations, battle.getTime());
             }
-            VehicleGunRotateProcessor.processStep(vehicle.getModel(), battleModel);
         });
         battleCalculations.getShells().forEach(shellCalculations ->
                 ShellFlyProcessor.processStep2(shellCalculations, battleModel));

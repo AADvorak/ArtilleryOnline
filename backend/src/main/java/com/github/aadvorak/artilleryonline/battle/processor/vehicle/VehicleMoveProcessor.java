@@ -37,7 +37,6 @@ public class VehicleMoveProcessor {
     }
 
     public static void processStep2(VehicleCalculations vehicle) {
-        correctTargetAngle(vehicle);
         vehicle.applyNextPosition();
         calculateOnGround(vehicle);
     }
@@ -67,20 +66,6 @@ public class VehicleMoveProcessor {
         if (state.isOnGround() != onGround) {
             state.setOnGround(onGround);
             vehicle.getModel().getUpdate().setUpdated();
-        }
-    }
-
-    private static void correctTargetAngle(VehicleCalculations vehicle) {
-        if (vehicle.getNextPosition().isAngleNormalized()) {
-            var gunState = vehicle.getModel().getState().getGunState();
-            var angleDiff = vehicle.getNextPosition().getAngle() - vehicle.getModel().getState().getPosition().getAngle();
-            var targetAngle = gunState.getTargetAngle();
-            if (angleDiff > 0) {
-                gunState.setTargetAngle(targetAngle + Math.PI * 2);
-            }
-            if (angleDiff < 0) {
-                gunState.setTargetAngle(targetAngle - Math.PI * 2);
-            }
         }
     }
 }
