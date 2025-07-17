@@ -33,13 +33,13 @@ public class CollisionsProcessor {
     }
 
     private void detectAllCollisions(BattleCalculations battle) {
-        battle.getObjects().forEach(object ->
+        battle.getMovingObjects().forEach(object ->
                 detectors.forEach(detector ->
                         object.getCollisions().addAll(detector.detect(object, battle, false))));
     }
 
     private void resolveStrongestCollisions(BattleCalculations battle) {
-        battle.getObjects().forEach(object -> {
+        battle.getMovingObjects().forEach(object -> {
             var collision = findStrongestCollision(object.getCollisions());
             if (collision != null) {
                 var shouldResolve = true;
@@ -62,13 +62,13 @@ public class CollisionsProcessor {
     }
 
     private void postprocessCollisions(BattleCalculations battle) {
-        battle.getObjects().forEach(object ->
+        battle.getMovingObjects().forEach(object ->
                 postprocessors.forEach(postprocessor ->
                         postprocessor.process(object, battle)));
     }
 
     private boolean collisionsExist(BattleCalculations battle) {
-        for (var object : battle.getObjects()) {
+        for (var object : battle.getMovingObjects()) {
             if (object.isHasCollisions()) {
                 return true;
             }
@@ -77,7 +77,7 @@ public class CollisionsProcessor {
     }
 
     private void checkCollisionsResolved(BattleCalculations battle) {
-        battle.getObjects().forEach(object -> {
+        battle.getMovingObjects().forEach(object -> {
             object.setHasCollisions(false);
             for (var detector : detectors) {
                 var collisions = detector.detect(object, battle, true);

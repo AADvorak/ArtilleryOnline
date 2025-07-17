@@ -7,7 +7,6 @@ import lombok.experimental.Accessors;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Stream;
 
 @Getter
 @Setter
@@ -24,12 +23,16 @@ public class BattleCalculations {
 
     private Set<DroneCalculations> drones;
 
-    public Set<? extends Calculations<?>> getObjects() {
-        var objects = new HashSet<Calculations<?>>();
-        objects.addAll(vehicles);
-        objects.addAll(drones);
-        objects.addAll(shells);
-        objects.addAll(missiles);
-        return objects;
+    private Set<Calculations<?>> movingObjects;
+
+    public Set<? extends Calculations<?>> getMovingObjects() {
+        if (movingObjects == null) {
+            movingObjects = new HashSet<>();
+            movingObjects.addAll(vehicles);
+            movingObjects.addAll(drones);
+            movingObjects.addAll(shells);
+            movingObjects.addAll(missiles);
+        }
+        return movingObjects;
     }
 }
