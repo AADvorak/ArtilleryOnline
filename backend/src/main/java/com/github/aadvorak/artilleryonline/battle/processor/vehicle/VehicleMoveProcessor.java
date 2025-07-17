@@ -31,7 +31,6 @@ public class VehicleMoveProcessor {
             > calculator = new BodyAccelerationCalculator<>(forceCalculators);
 
     public static void processStep1(VehicleCalculations vehicle, BattleCalculations battle) {
-        recalculateAcceleration(vehicle, battle);
         recalculateVelocity(vehicle, battle);
         vehicle.calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
         vehicle.recalculateWheelsVelocities();
@@ -43,20 +42,9 @@ public class VehicleMoveProcessor {
         calculateOnGround(vehicle);
     }
 
-    private static void recalculateAcceleration(VehicleCalculations vehicle, BattleCalculations battle) {
-        var threshold = 0.3;
-        var oldAcceleration = vehicle.getModel().getState().getAcceleration();
+    private static void recalculateVelocity(VehicleCalculations vehicle, BattleCalculations battle) {
         vehicle.calculateAllGroundContacts(battle.getModel().getRoom());
         var acceleration = calculator.calculate(vehicle, battle.getModel());
-        if (acceleration.getX() * oldAcceleration.getX() < 0
-                && Math.abs(acceleration.getX() - oldAcceleration.getX()) > threshold) {
-            vehicle.getModel().getUpdate().setUpdated();
-        }
-        vehicle.getModel().getState().setAcceleration(acceleration);
-    }
-
-    private static void recalculateVelocity(VehicleCalculations vehicle, BattleCalculations battle) {
-        var acceleration = vehicle.getModel().getState().getAcceleration();
         var vehicleVelocity = vehicle.getModel().getState().getVelocity();
         var timeStep = battle.getModel().getCurrentTimeStepSecs();
         var maxRadius = vehicle.getModel().getPreCalc().getMaxRadius();
