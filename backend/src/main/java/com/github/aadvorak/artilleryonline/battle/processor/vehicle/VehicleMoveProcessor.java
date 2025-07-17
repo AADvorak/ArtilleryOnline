@@ -1,11 +1,34 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.ForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculator.VehicleAccelerationCalculator;
+import com.github.aadvorak.artilleryonline.battle.calculator.BodyAccelerationCalculator;
+import com.github.aadvorak.artilleryonline.battle.calculator.vehicle.*;
 import com.github.aadvorak.artilleryonline.battle.common.Constants;
+import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
+import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
+import com.github.aadvorak.artilleryonline.battle.specs.VehicleSpecs;
+import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
+
+import java.util.List;
 
 public class VehicleMoveProcessor {
+
+    private static final List<
+            ForceCalculator<VehicleSpecs, VehiclePreCalc, VehicleConfig, VehicleState, VehicleModel, VehicleCalculations>
+            > forceCalculators = List.of(
+            new GravityForceCalculator(),
+            new GroundFrictionForceCalculator(),
+            new GroundReactionForceCalculator(),
+            new JetForceCalculator(),
+            new EngineForceCalculator()
+    );
+
+    private static final BodyAccelerationCalculator<
+            VehicleSpecs, VehiclePreCalc, VehicleConfig, VehicleState, VehicleModel, VehicleCalculations
+            > calculator = new BodyAccelerationCalculator<>(forceCalculators);
 
     public static void processStep1(VehicleCalculations vehicle, BattleCalculations battle) {
         recalculateAcceleration(vehicle, battle);
@@ -23,7 +46,8 @@ public class VehicleMoveProcessor {
     private static void recalculateAcceleration(VehicleCalculations vehicle, BattleCalculations battle) {
         var threshold = 0.3;
         var oldAcceleration = vehicle.getModel().getState().getAcceleration();
-        var acceleration = VehicleAccelerationCalculator.getVehicleAcceleration(vehicle, battle.getModel());;
+        vehicle.calculateAllGroundContacts(battle.getModel().getRoom());
+        var acceleration = calculator.calculate(vehicle, battle.getModel());
         if (acceleration.getX() * oldAcceleration.getX() < 0
                 && Math.abs(acceleration.getX() - oldAcceleration.getX()) > threshold) {
             vehicle.getModel().getUpdate().setUpdated();
