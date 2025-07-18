@@ -9,7 +9,6 @@ import com.github.aadvorak.artilleryonline.battle.collision.CollisionsProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.command.CommandProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.drone.DroneLaunchProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionInitializer;
-import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleReturnOnGroundProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +36,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
 
         DroneLaunchProcessor.launch(battle);
 
-        var battleCalculations = new BattleCalculations(battleModel);
+        var battleCalculations = new BattleCalculations(battle);
 
         beforeStep1Processors.forEach(processor -> processor.process(battleCalculations));
         battleCalculations.getMovingObjects().forEach(movingObject -> {
@@ -49,12 +48,6 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         beforeStep2Processors.forEach(processor -> processor.process(battleCalculations));
         battleCalculations.getMovingObjects().forEach(Calculations::applyNextPosition);
         afterStep2Processors.forEach(processor -> processor.process(battleCalculations));
-
-        // todo AfterStep2Processor
-        if (!BattleType.COLLIDER.equals(battle.getType())) {
-            battleCalculations.getVehicles().forEach(vehicle ->
-                    VehicleReturnOnGroundProcessor.process(vehicle, battleCalculations, battle.getTime()));
-        }
 
         if (battleModel.getUpdates().getRemoved() != null) {
             var removedExplosionIds = battleModel.getUpdates().getRemoved().getExplosionIds();

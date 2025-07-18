@@ -1,5 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
+import com.github.aadvorak.artilleryonline.battle.Battle;
+import com.github.aadvorak.artilleryonline.battle.BattleType;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +18,10 @@ public class BattleCalculations {
 
     private BattleModel model;
 
+    private long time;
+
+    private BattleType type;
+
     private Set<VehicleCalculations> vehicles;
 
     private Set<ShellCalculations> shells;
@@ -26,8 +32,11 @@ public class BattleCalculations {
 
     private Set<Calculations<?>> movingObjects;
 
-    public BattleCalculations(BattleModel model) {
+    public BattleCalculations(Battle battle) {
+        var model = battle.getModel();
         this.model = model;
+        this.time = battle.getTime();
+        this.type = battle.getType();
         vehicles = model.getVehicles().values().stream()
                 .map(VehicleCalculations::new)
                 .collect(Collectors.toSet());
