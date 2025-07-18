@@ -3,12 +3,13 @@ package com.github.aadvorak.artilleryonline.battle.processor;
 import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.BattleStage;
 import com.github.aadvorak.artilleryonline.battle.BattleType;
-import com.github.aadvorak.artilleryonline.battle.calculations.*;
+import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.collision.CollisionsProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.command.CommandProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.drone.DroneLaunchProcessor;
-import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionProcessor;
-import com.github.aadvorak.artilleryonline.battle.processor.vehicle.*;
+import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionInitializer;
+import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleReturnOnGroundProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -64,7 +65,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
             if (removedShellIds != null) {
                 removedShellIds.forEach(id -> {
                     var shellModel = battleModel.getShells().get(id);
-                    ExplosionProcessor.initExplosion(shellModel.getState().getPosition(),
+                    ExplosionInitializer.init(shellModel.getState().getPosition(),
                             shellModel.getSpecs().getRadius(), battleModel);
                     battleModel.removeShellById(id);
                 });
@@ -74,7 +75,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
                 removedMissileIds.forEach(id -> {
                     var missileModel = battleModel.getMissiles().get(id);
                     if (missileModel != null) {
-                        ExplosionProcessor.initExplosion(missileModel.getState().getPosition().getCenter(),
+                        ExplosionInitializer.init(missileModel.getState().getPosition().getCenter(),
                                 missileModel.getSpecs().getRadius(), battleModel);
                     }
                     battleModel.removeMissileById(id);
@@ -85,7 +86,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
                 removedDroneIds.forEach(id -> {
                     var droneModel = battleModel.getDrones().get(id);
                     if (droneModel != null && droneModel.getState().isDestroyed()) {
-                        ExplosionProcessor.initExplosion(droneModel.getState().getPosition().getCenter(),
+                        ExplosionInitializer.init(droneModel.getState().getPosition().getCenter(),
                                 droneModel.getSpecs().getEnginesRadius(), battleModel);
                     }
                     battleModel.removeDroneById(id);
@@ -95,7 +96,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
             if (removedVehicleKeys != null) {
                 removedVehicleKeys.forEach(key -> {
                     var vehicleModel = battleModel.getVehicles().get(key);
-                    ExplosionProcessor.initExplosion(vehicleModel.getState().getPosition().getCenter(),
+                    ExplosionInitializer.init(vehicleModel.getState().getPosition().getCenter(),
                             vehicleModel.getPreCalc().getMaxRadius(), battleModel);
                     battleModel.removeVehicleByKey(key);
                 });
