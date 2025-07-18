@@ -1,24 +1,21 @@
 package com.github.aadvorak.artilleryonline.battle.processor.shell;
 
+import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.battle.processor.Step2Processor;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
+import org.springframework.stereotype.Component;
 
-public class ShellFlyProcessor {
+@Component
+public class ShellFlyStep2Processor implements Step2Processor {
 
-    public static void processStep1(ShellCalculations shell, BattleModel battleModel) {
-        if (shell.getModel().getState().isStuck()) {
-            shell.getModel().getState().setStuckTime(shell.getModel().getState().getStuckTime()
-                    + battleModel.getCurrentTimeStepSecs());
-            if (shell.getModel().getState().getStuckTime() > 3.0) {
-                battleModel.getUpdates().removeShell(shell.getId());
-            }
-            return;
-        }
-        shell.calculateNextPosition(battleModel.getCurrentTimeStepSecs());
+    @Override
+    public void process(BattleCalculations battle) {
+        battle.getShells().forEach(shell -> processShell(shell, battle.getModel()));
     }
 
-    public static void processStep2(ShellCalculations shell, BattleModel battleModel) {
+    private void processShell(ShellCalculations shell, BattleModel battleModel) {
         if (shell.getModel().getState().isStuck()) {
             return;
         }

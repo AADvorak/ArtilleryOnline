@@ -1,12 +1,18 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
+import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.JetType;
-import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.processor.BeforeStep1Processor;
+import org.springframework.stereotype.Component;
 
-public class VehicleJetProcessor {
+@Component
+public class VehicleJetProcessor extends VehicleProcessor implements BeforeStep1Processor {
 
-    public static void processStep(VehicleModel vehicleModel, BattleModel battleModel) {
+    protected void processVehicle(VehicleCalculations vehicle, BattleCalculations battle) {
+        var vehicleModel = vehicle.getModel();
+        var battleModel = battle.getModel();
         var jetSpecs = vehicleModel.getConfig().getJet();
         if (jetSpecs == null) {
             return;
@@ -29,7 +35,7 @@ public class VehicleJetProcessor {
         }
     }
 
-    private static boolean isJetActive(VehicleModel vehicleModel) {
+    private boolean isJetActive(VehicleModel vehicleModel) {
         var jetState = vehicleModel.getState().getJetState();
         var jetType = vehicleModel.getConfig().getJet().getType();
         if (JetType.VERTICAL.equals(jetType)) {

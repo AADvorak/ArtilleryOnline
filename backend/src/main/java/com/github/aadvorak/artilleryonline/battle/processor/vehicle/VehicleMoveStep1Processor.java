@@ -9,12 +9,15 @@ import com.github.aadvorak.artilleryonline.battle.common.Constants;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
+import com.github.aadvorak.artilleryonline.battle.processor.Step1Processor;
 import com.github.aadvorak.artilleryonline.battle.specs.VehicleSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-public class VehicleMoveProcessor {
+@Component
+public class VehicleMoveStep1Processor extends VehicleProcessor implements Step1Processor {
 
     private static final List<
             ForceCalculator<VehicleSpecs, VehiclePreCalc, VehicleConfig, VehicleState, VehicleModel, VehicleCalculations>
@@ -30,18 +33,14 @@ public class VehicleMoveProcessor {
             VehicleSpecs, VehiclePreCalc, VehicleConfig, VehicleState, VehicleModel, VehicleCalculations
             > calculator = new BodyAccelerationCalculator<>(forceCalculators);
 
-    public static void processStep1(VehicleCalculations vehicle, BattleCalculations battle) {
+    @Override
+    public void processVehicle(VehicleCalculations vehicle, BattleCalculations battle) {
         recalculateVelocity(vehicle, battle);
         vehicle.calculateNextPosition(battle.getModel().getCurrentTimeStepSecs());
         vehicle.recalculateWheelsVelocities();
     }
 
-    public static void processStep2(VehicleCalculations vehicle) {
-        vehicle.applyNextPosition();
-        calculateOnGround(vehicle);
-    }
-
-    private static void recalculateVelocity(VehicleCalculations vehicle, BattleCalculations battle) {
+    private void recalculateVelocity(VehicleCalculations vehicle, BattleCalculations battle) {
         vehicle.calculateAllGroundContacts(battle.getModel().getRoom());
         var acceleration = calculator.calculate(vehicle, battle.getModel());
         var vehicleVelocity = vehicle.getModel().getState().getVelocity();
@@ -56,16 +55,6 @@ public class VehicleMoveProcessor {
         }
         if (Math.abs(vehicleVelocity.getAngle() * maxRadius) < Constants.MIN_VELOCITY) {
             vehicleVelocity.setAngle(0.0);
-        }
-    }
-
-    private static void calculateOnGround(VehicleCalculations vehicle) {
-        var state = vehicle.getModel().getState();
-        var onGround = vehicle.getRightWheel().getGroundContact() != null
-                || vehicle.getLeftWheel().getGroundContact() != null;
-        if (state.isOnGround() != onGround) {
-            state.setOnGround(onGround);
-            vehicle.getModel().getUpdate().setUpdated();
         }
     }
 }

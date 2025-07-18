@@ -1,13 +1,18 @@
 package com.github.aadvorak.artilleryonline.battle.processor.explosion;
 
+import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.ExplosionModel;
+import com.github.aadvorak.artilleryonline.battle.processor.BeforeStep1Processor;
 import com.github.aadvorak.artilleryonline.battle.specs.ExplosionSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.ExplosionState;
+import org.springframework.stereotype.Component;
 
-public class ExplosionProcessor {
+@Component
+public class ExplosionProcessor implements BeforeStep1Processor {
 
+    // todo move to separate class
     public static void initExplosion(Position position, double radius, BattleModel battleModel) {
         if (radius <= 0) {
             return;
@@ -27,7 +32,13 @@ public class ExplosionProcessor {
         battleModel.getUpdates().addExplosion(explosionModel);
     }
 
-    public static void processStep(ExplosionModel explosionModel, BattleModel battleModel) {
+    @Override
+    public void process(BattleCalculations battle) {
+        battle.getModel().getExplosions().values().forEach(explosionModel ->
+                processExplosion(explosionModel, battle.getModel()));
+    }
+
+    private void processExplosion(ExplosionModel explosionModel, BattleModel battleModel) {
         var explosionState = explosionModel.getState();
         explosionState.setTime(explosionState.getTime() + battleModel.getCurrentTimeStepSecs());
         if (explosionState.getTime() > explosionModel.getSpecs().getDuration()) {

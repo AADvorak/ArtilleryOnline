@@ -1,13 +1,17 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.Battle;
+import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
-import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.battle.processor.AfterStep1Processor;
+import org.springframework.stereotype.Component;
 
-public class VehicleGunRotateProcessor {
+@Component
+public class VehicleGunRotateProcessor extends VehicleProcessor implements AfterStep1Processor {
 
-    public static void processStep(VehicleCalculations vehicle, BattleModel battleModel) {
+    @Override
+    protected void processVehicle(VehicleCalculations vehicle, BattleCalculations battle) {
         var gunState = vehicle.getModel().getState().getGunState();
         if (vehicle.getNextPosition().isAngleNormalized()) {
             var angleDiff = vehicle.getNextPosition().getAngle() - vehicle.getModel().getState().getPosition().getAngle();
@@ -29,7 +33,7 @@ public class VehicleGunRotateProcessor {
                 : gunState.getTargetAngle();
         if (rotatingDirection != null) {
             targetAngle += (MovingDirection.RIGHT.equals(rotatingDirection) ? -1 : 1)
-                    * battleModel.getCurrentTimeStepSecs() * rotatingVelocity;
+                    * battle.getModel().getCurrentTimeStepSecs() * rotatingVelocity;
         }
         targetAngle = restrictValue(targetAngle, minGunAngle + vehicleAngle, maxGunAngle + vehicleAngle);
         gunState.setTargetAngle(targetAngle);
@@ -39,7 +43,7 @@ public class VehicleGunRotateProcessor {
             var gunAngle = gunState.getAngle();
             var angleDiff = targetAngle - vehicleAngle - gunAngle;
             if (Math.abs(angleDiff) > rotatingVelocity * Battle.TIME_STEP_MS / 1000) {
-                var angleStep = Math.signum(angleDiff) * rotatingVelocity * battleModel.getCurrentTimeStepSecs();
+                var angleStep = Math.signum(angleDiff) * rotatingVelocity * battle.getModel().getCurrentTimeStepSecs();
                 gunAngle += Math.min(angleStep, angleDiff);
                 gunAngle = restrictValue(gunAngle, minGunAngle, maxGunAngle);
                 gunState.setAngle(gunAngle);
@@ -47,7 +51,7 @@ public class VehicleGunRotateProcessor {
         }
     }
 
-    private static double restrictValue(double value, double min, double max) {
+    private double restrictValue(double value, double min, double max) {
         if (value < min) {
             return min;
         }

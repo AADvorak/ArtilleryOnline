@@ -1,19 +1,24 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
-import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
-import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
+import com.github.aadvorak.artilleryonline.battle.processor.BeforeStep1Processor;
+import org.springframework.stereotype.Component;
 
-public class VehicleDroneProcessor {
+@Component
+public class VehicleDroneProcessor extends VehicleProcessor implements BeforeStep1Processor {
 
-    public static void processStep(VehicleModel vehicleModel, BattleModel battleModel) {
-        var inVehicleState = vehicleModel.getState().getDroneState();
+    @Override
+    protected void processVehicle(VehicleCalculations vehicle, BattleCalculations battle) {
+        var inVehicleState = vehicle.getModel().getState().getDroneState();
         if (inVehicleState == null || inVehicleState.isLaunched() || inVehicleState.isReadyToLaunch()) {
             return;
         }
-        var prepareToLaunchRemainTime = inVehicleState.getPrepareToLaunchRemainTime() - battleModel.getCurrentTimeStepSecs();
+        var prepareToLaunchRemainTime = inVehicleState.getPrepareToLaunchRemainTime()
+                - battle.getModel().getCurrentTimeStepSecs();
         if (prepareToLaunchRemainTime <= 0) {
             inVehicleState.setReadyToLaunch(true);
-            vehicleModel.getUpdate().setUpdated();
+            vehicle.getModel().getUpdate().setUpdated();
         }
         inVehicleState.setPrepareToLaunchRemainTime(prepareToLaunchRemainTime);
     }

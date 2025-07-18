@@ -6,21 +6,31 @@ import com.github.aadvorak.artilleryonline.battle.BattleType;
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.collision.CollisionsProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.command.CommandProcessor;
-import com.github.aadvorak.artilleryonline.battle.processor.drone.DroneFlyProcessor;
-import com.github.aadvorak.artilleryonline.battle.processor.drone.DroneGunShootProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.drone.DroneLaunchProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionProcessor;
-import com.github.aadvorak.artilleryonline.battle.processor.missile.MissileFlyProcessor;
-import com.github.aadvorak.artilleryonline.battle.processor.shell.ShellFlyProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class ActiveBattleStepProcessor extends BattleStepProcessorBase implements BattleStepProcessor {
 
     private final CollisionsProcessor collisionsProcessor;
+
+    private final List<BeforeStep1Processor> beforeStep1Processors;
+
+    private final List<Step1Processor> step1Processors;
+
+    private final List<AfterStep1Processor> afterStep1Processors;
+
+    private final List<BeforeStep2Processor> beforeStep2Processors;
+
+    private final List<Step2Processor> step2Processors;
+
+    private final List<AfterStep2Processor> afterStep2Processors;
 
     @Override
     protected void doStepLogic(Battle battle) {
@@ -32,47 +42,19 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
 
         var battleCalculations = new BattleCalculations(battleModel);
 
-        battleModel.getExplosions().values().forEach(explosionModel ->
-                ExplosionProcessor.processStep(explosionModel, battleModel));
-
-        battleCalculations.getShells().forEach(shellCalculations ->
-                ShellFlyProcessor.processStep1(shellCalculations, battleModel));
-
-        battleCalculations.getMissiles().forEach(missileCalculations ->
-                MissileFlyProcessor.processStep1(missileCalculations, battleModel));
-
-        battleCalculations.getDrones().forEach(droneCalculations -> {
-            DroneFlyProcessor.processStep1(droneCalculations, battleModel);
-            DroneGunShootProcessor.processStep(droneCalculations, battleModel);
-        });
-
-        battleCalculations.getVehicles().forEach(vehicleCalculations -> {
-            var vehicleModel = vehicleCalculations.getModel();
-            VehicleTrackProcessor.processStep(vehicleModel, battleModel);
-            VehicleJetProcessor.processStep(vehicleModel, battleModel);
-            VehicleDroneProcessor.processStep(vehicleModel, battleModel);
-            VehicleBomberProcessor.processStep(vehicleModel, battleModel);
-            VehicleMoveProcessor.processStep1(vehicleCalculations, battleCalculations);
-            VehicleGunRotateProcessor.processStep(vehicleCalculations, battleModel);
-        });
-
+        beforeStep1Processors.forEach(processor -> processor.process(battleCalculations));
+        step1Processors.forEach(processor -> processor.process(battleCalculations));
+        afterStep1Processors.forEach(processor -> processor.process(battleCalculations));
         collisionsProcessor.process(battleCalculations);
+        beforeStep2Processors.forEach(processor -> processor.process(battleCalculations));
+        step2Processors.forEach(processor -> processor.process(battleCalculations));
+        afterStep2Processors.forEach(processor -> processor.process(battleCalculations));
 
-        battleCalculations.getVehicles().forEach(vehicleCalculations ->
-                VehicleGunShootProcessor.processStep(vehicleCalculations.getModel(), battleModel));
-
-        battleCalculations.getVehicles().forEach(vehicle -> {
-            VehicleMoveProcessor.processStep2(vehicle);
-            if (!BattleType.COLLIDER.equals(battle.getType())) {
-                VehicleReturnOnGroundProcessor.process(vehicle, battleCalculations, battle.getTime());
-            }
-        });
-        battleCalculations.getShells().forEach(shellCalculations ->
-                ShellFlyProcessor.processStep2(shellCalculations, battleModel));
-        battleCalculations.getMissiles().forEach(missileCalculations ->
-                MissileFlyProcessor.processStep2(missileCalculations, battleModel));
-        battleCalculations.getDrones().forEach(droneCalculations ->
-                DroneFlyProcessor.processStep2(droneCalculations, battleModel));
+        // todo AfterStep2Processor
+        if (!BattleType.COLLIDER.equals(battle.getType())) {
+            battleCalculations.getVehicles().forEach(vehicle ->
+                    VehicleReturnOnGroundProcessor.process(vehicle, battleCalculations, battle.getTime()));
+        }
 
         if (battleModel.getUpdates().getRemoved() != null) {
             var removedExplosionIds = battleModel.getUpdates().getRemoved().getExplosionIds();

@@ -1,5 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
+import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.Velocity;
@@ -7,14 +9,20 @@ import com.github.aadvorak.artilleryonline.battle.events.BomberFlyEvent;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.processor.BeforeStep1Processor;
 import com.github.aadvorak.artilleryonline.battle.state.ShellState;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-public class VehicleBomberProcessor {
+@Component
+public class VehicleBomberProcessor extends VehicleProcessor implements BeforeStep1Processor {
 
-    public static void processStep(VehicleModel vehicleModel, BattleModel battleModel) {
+    @Override
+    protected void processVehicle(VehicleCalculations vehicle, BattleCalculations battle) {
+        var vehicleModel = vehicle.getModel();
+        var battleModel = battle.getModel();
         var bomberState = vehicleModel.getState().getBomberState();
         if (bomberState == null || bomberState.isReadyToFlight()) {
             return;
@@ -34,6 +42,7 @@ public class VehicleBomberProcessor {
         }
     }
 
+    // todo move to separate class
     public static void fly(Position target, int vehicleId, BattleModel battleModel) {
         var vehicleModel = getVehicleModelWithBomber(vehicleId, battleModel);
         if (vehicleModel == null) {
@@ -54,7 +63,7 @@ public class VehicleBomberProcessor {
         vehicleModel.getUpdate().setUpdated();
     }
 
-    public static void drop(VehicleModel vehicleModel, BattleModel battleModel) {
+    private void drop(VehicleModel vehicleModel, BattleModel battleModel) {
         var bomberState = vehicleModel.getState().getBomberState();
         var target = bomberState.getTarget();
         var roomSpecs = battleModel.getRoom().getSpecs();
