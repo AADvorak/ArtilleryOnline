@@ -22,13 +22,9 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
 
     private final List<BeforeStep1Processor> beforeStep1Processors;
 
-    private final List<Step1Processor> step1Processors;
-
     private final List<AfterStep1Processor> afterStep1Processors;
 
     private final List<BeforeStep2Processor> beforeStep2Processors;
-
-    private final List<Step2Processor> step2Processors;
 
     private final List<AfterStep2Processor> afterStep2Processors;
 
@@ -43,11 +39,14 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         var battleCalculations = new BattleCalculations(battleModel);
 
         beforeStep1Processors.forEach(processor -> processor.process(battleCalculations));
-        step1Processors.forEach(processor -> processor.process(battleCalculations));
+        battleCalculations.getMovingObjects().forEach(movingObject -> {
+            movingObject.recalculateVelocity(battleModel);
+            movingObject.calculateNextPosition(battleModel.getCurrentTimeStepSecs());
+        });
         afterStep1Processors.forEach(processor -> processor.process(battleCalculations));
         collisionsProcessor.process(battleCalculations);
         beforeStep2Processors.forEach(processor -> processor.process(battleCalculations));
-        step2Processors.forEach(processor -> processor.process(battleCalculations));
+        battleCalculations.getMovingObjects().forEach(Calculations::applyNextPosition);
         afterStep2Processors.forEach(processor -> processor.process(battleCalculations));
 
         // todo AfterStep2Processor

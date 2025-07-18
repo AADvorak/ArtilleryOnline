@@ -1,10 +1,13 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
+import com.github.aadvorak.artilleryonline.battle.calculator.BodyAccelerationCalculator;
+import com.github.aadvorak.artilleryonline.battle.calculator.vehicle.*;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.common.lines.BodyPart;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
+import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
@@ -15,12 +18,27 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
 @Setter
 public class VehicleCalculations
         implements BodyCalculations<VehicleSpecs, VehiclePreCalc, VehicleConfig, VehicleState, VehicleModel> {
+
+    private static final List<
+            ForceCalculator<VehicleSpecs, VehiclePreCalc, VehicleConfig, VehicleState, VehicleModel, VehicleCalculations>
+            > forceCalculators = List.of(
+            new GravityForceCalculator(),
+            new GroundFrictionForceCalculator(),
+            new GroundReactionForceCalculator(),
+            new JetForceCalculator(),
+            new EngineForceCalculator()
+    );
+
+    private static final BodyAccelerationCalculator<
+            VehicleSpecs, VehiclePreCalc, VehicleConfig, VehicleState, VehicleModel, VehicleCalculations
+            > calculator = new BodyAccelerationCalculator<>(forceCalculators);
 
     private final VehicleModel model;
 
@@ -73,13 +91,34 @@ public class VehicleCalculations
         return model.getPreCalc().getMass();
     }
 
+    @Override
+    public void recalculateVelocity(BattleModel battleModel) {
+        calculateAllGroundContacts(battleModel.getRoom());
+        var acceleration = calculator.calculate(this, battleModel);
+        var vehicleVelocity = model.getState().getVelocity();
+        var timeStep = battleModel.getCurrentTimeStepSecs();
+        var maxRadius = model.getPreCalc().getMaxRadius();
+        vehicleVelocity.recalculate(acceleration, timeStep);
+        if (Math.abs(vehicleVelocity.getX()) < Constants.MIN_VELOCITY) {
+            vehicleVelocity.setX(0.0);
+        }
+        if (Math.abs(vehicleVelocity.getY()) < Constants.MIN_VELOCITY) {
+            vehicleVelocity.setY(0.0);
+        }
+        if (Math.abs(vehicleVelocity.getAngle() * maxRadius) < Constants.MIN_VELOCITY) {
+            vehicleVelocity.setAngle(0.0);
+        }
+        recalculateWheelsVelocities();
+    }
+
     public void recalculateWheelsVelocities() {
-        rightWheel.calculateVelocity();
-        leftWheel.calculateVelocity();
+        rightWheel.recalculateVelocity();
+        leftWheel.recalculateVelocity();
     }
 
     public void applyNextPosition() {
         model.getState().setPosition(nextPosition);
+        calculateOnGround();
     }
 
     public void applyNormalMoveToNextPosition(double normalMove, double angle) {
@@ -118,5 +157,15 @@ public class VehicleCalculations
         leftWheel.setGroundContact(GroundContactUtils.getGroundContact(
                 new Circle(leftWheel.getPosition(), wheelRadius),
                 roomModel, false));
+    }
+
+    private void calculateOnGround() {
+        var state = model.getState();
+        var onGround = rightWheel.getGroundContact() != null
+                || leftWheel.getGroundContact() != null;
+        if (state.isOnGround() != onGround) {
+            state.setOnGround(onGround);
+            model.getUpdate().setUpdated();
+        }
     }
 }

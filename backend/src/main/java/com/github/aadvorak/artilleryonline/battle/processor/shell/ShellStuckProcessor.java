@@ -3,11 +3,11 @@ package com.github.aadvorak.artilleryonline.battle.processor.shell;
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
-import com.github.aadvorak.artilleryonline.battle.processor.Step1Processor;
+import com.github.aadvorak.artilleryonline.battle.processor.BeforeStep1Processor;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ShellFlyStep1Processor implements Step1Processor {
+public class ShellStuckProcessor implements BeforeStep1Processor {
 
     @Override
     public void process(BattleCalculations battle) {
@@ -21,8 +21,6 @@ public class ShellFlyStep1Processor implements Step1Processor {
             if (shell.getModel().getState().getStuckTime() > 3.0) {
                 battleModel.getUpdates().removeShell(shell.getId());
             }
-            return;
         }
-        shell.calculateNextPosition(battleModel.getCurrentTimeStepSecs());
     }
 }

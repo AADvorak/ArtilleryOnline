@@ -4,6 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.collision.preprocessor.CollisionPreprocessor;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
+import com.github.aadvorak.artilleryonline.battle.common.Velocity;
 import com.github.aadvorak.artilleryonline.battle.events.RicochetEvent;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
@@ -79,6 +80,7 @@ public class ShellCollisionPreprocessor implements CollisionPreprocessor {
     private boolean processGround(ShellCalculations shell, Collision collision, BattleCalculations battle) {
         if (ShellType.SGN.equals(shell.getModel().getSpecs().getType())) {
             shell.getModel().getState().setStuck(true);
+            shell.getModel().getState().setVelocity(new Velocity());
             shell.applyNextPosition();
             shell.getModel().setUpdated(true);
             VehicleBomberProcessor.fly(shell.getPosition(), shell.getModel().getVehicleId(), battle.getModel());

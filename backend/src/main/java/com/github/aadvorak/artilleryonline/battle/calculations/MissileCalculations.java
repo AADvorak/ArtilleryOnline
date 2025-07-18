@@ -1,7 +1,9 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
+import com.github.aadvorak.artilleryonline.battle.calculator.MissileAccelerationCalculator;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.*;
+import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.MissileModel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +56,14 @@ public class MissileCalculations implements Calculations<MissileModel> {
     @Override
     public double getMass() {
         return model.getSpecs().getMass();
+    }
+
+    @Override
+    public void recalculateVelocity(BattleModel battleModel) {
+        var acceleration = MissileAccelerationCalculator.calculate(this, battleModel);
+        var velocity = model.getState().getVelocity();
+        var timeStep = battleModel.getCurrentTimeStepSecs();
+        velocity.recalculate(acceleration, timeStep);
     }
 
     public void calculateNextPosition(double timeStep) {

@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.calculations;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
+import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
 import com.github.aadvorak.artilleryonline.battle.specs.VehicleSpecs;
@@ -67,6 +68,11 @@ public class WheelCalculations
     }
 
     @Override
+    public void recalculateVelocity(BattleModel battleModel) {
+        recalculateVelocity();
+    }
+
+    @Override
     public void calculateNextPosition(double timeStep) {
         vehicle.calculateNextPosition(timeStep);
     }
@@ -81,7 +87,7 @@ public class WheelCalculations
         vehicle.applyNormalMoveToNextPosition(normalMove, angle);
     }
 
-    public void calculateVelocity() {
+    public void recalculateVelocity() {
         var vehicleVelocity = vehicle.getModel().getState().getVelocity();
         var angle = vehicle.getModel().getState().getPosition().getAngle();
         var wheelAngle = angle + Math.PI / 2 + sign.getValue() * vehicle.getModel().getPreCalc().getWheelAngle();

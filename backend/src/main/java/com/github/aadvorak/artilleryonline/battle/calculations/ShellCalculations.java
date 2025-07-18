@@ -3,7 +3,9 @@ package com.github.aadvorak.artilleryonline.battle.calculations;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.Velocity;
+import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
+import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -48,6 +50,20 @@ public class ShellCalculations implements Calculations<ShellModel> {
     @Override
     public double getMass() {
         return model.getSpecs().getMass();
+    }
+
+    @Override
+    public void recalculateVelocity(BattleModel battleModel) {
+        if (model.getState().isStuck()) {
+            return;
+        }
+        var velocity = getVelocity();
+        // todo collision
+        if (BattleUtils.positionIsOutOfRoom(getPosition(), battleModel.getRoom().getSpecs())) {
+            velocity.setX(-velocity.getX());
+        }
+        var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
+        velocity.setY(velocity.getY() - gravityAcceleration * battleModel.getCurrentTimeStepSecs());
     }
 
     public void calculateNextPosition(double timeStep) {
