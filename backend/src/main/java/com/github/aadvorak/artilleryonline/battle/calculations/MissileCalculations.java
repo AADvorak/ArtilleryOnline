@@ -56,13 +56,6 @@ public class MissileCalculations implements Calculations<MissileModel> {
         return model.getSpecs().getMass();
     }
 
-    @Override
-    public void setVelocity(Velocity velocity) {
-        model.getState().getVelocity()
-                .setX(velocity.getX())
-                .setY(velocity.getY());
-    }
-
     public void calculateNextPosition(double timeStep) {
         var position = model.getState().getPosition();
         var velocity = model.getState().getVelocity();

@@ -73,31 +73,9 @@ public class VehicleCalculations
         return model.getPreCalc().getMass();
     }
 
-    @Override
-    public void setVelocity(Velocity velocity) {
-        model.getState().getVelocity()
-                .setX(velocity.getX())
-                .setY(velocity.getY());
-    }
-
     public void recalculateWheelsVelocities() {
         rightWheel.calculateVelocity();
         leftWheel.calculateVelocity();
-    }
-
-    public void recalculateVelocityByWheel(WheelCalculations wheel) {
-        var rightWheelVelocity = rightWheel.getVelocity();
-        var leftWheelVelocity = leftWheel.getVelocity();
-        var angle = model.getState().getPosition().getAngle();
-        var angleVelocity = Math.abs(angle) < Math.PI / 4
-                ? (rightWheelVelocity.getY() - leftWheelVelocity.getY()) / (2.0 * Math.cos(angle))
-                : (leftWheelVelocity.getX() - rightWheelVelocity.getX()) / (2.0 * Math.sin(angle));
-        var wheelSign = wheel.getSign().getValue();
-        model.getState().getVelocity()
-                .setAngle(angleVelocity / model.getPreCalc().getWheelDistance())
-                .setX(wheel.getVelocity().getX() - wheelSign * angleVelocity * Math.sin(angle))
-                .setY(wheel.getVelocity().getY() + wheelSign * angleVelocity * Math.cos(angle));
-        recalculateWheelsVelocities();
     }
 
     public void applyNextPosition() {

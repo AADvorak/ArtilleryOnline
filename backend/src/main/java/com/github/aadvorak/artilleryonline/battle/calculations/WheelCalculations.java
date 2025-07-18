@@ -66,11 +66,6 @@ public class WheelCalculations
         vehicle.setHasCollisions(hasCollisions);
     }
 
-    public void setVelocity(Velocity velocity) {
-        this.velocity = velocity;
-        vehicle.recalculateVelocityByWheel(this);
-    }
-
     @Override
     public void calculateNextPosition(double timeStep) {
         vehicle.calculateNextPosition(timeStep);

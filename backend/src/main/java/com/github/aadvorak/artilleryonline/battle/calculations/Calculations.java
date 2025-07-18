@@ -18,8 +18,6 @@ public interface Calculations<Model> {
 
     double getMass();
 
-    void setVelocity(Velocity velocity);
-
     Set<Collision> getCollisions();
 
     boolean isHasCollisions();
