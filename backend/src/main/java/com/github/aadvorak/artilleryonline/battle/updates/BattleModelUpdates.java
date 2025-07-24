@@ -9,6 +9,7 @@ import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ public class BattleModelUpdates implements CompactSerializable {
 
     private BattleModelRemoved removed;
 
+    @Setter
     private List<RoomStateUpdate> roomStateUpdates;
 
     public void addRoomStateUpdate(RoomStateUpdate roomStateUpdate) {

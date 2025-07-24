@@ -6,6 +6,7 @@ import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.processor.ActiveBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.WaitingBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.updates.BattleModelUpdates;
+import com.github.aadvorak.artilleryonline.battle.updates.RoomStateUpdate;
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.dto.response.BattleModelStateResponse;
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
@@ -26,7 +27,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -246,6 +247,34 @@ public class BattleRunner {
                     }
                 }
             }
+            if (battle.getAggregated().getUpdate().getUpdates() != null) {
+                mergeIntersectedRoomStateUpdates(battle);
+            }
+        }
+    }
+
+    private void mergeIntersectedRoomStateUpdates(Battle battle) {
+        var roomStateUpdates = battle.getAggregated().getUpdate().getUpdates().getRoomStateUpdates();
+        if (roomStateUpdates != null && roomStateUpdates.size() > 1) {
+            var groundLine = battle.getModel().getRoom().getState().getGroundLine();
+            roomStateUpdates.sort(Comparator.comparingInt(RoomStateUpdate::getBegin));
+            var merged = new ArrayList<RoomStateUpdate>();
+            var current = roomStateUpdates.get(0);
+            for (int i = 1; i < roomStateUpdates.size(); i++) {
+                var next = roomStateUpdates.get(i);
+                if (current.intersects(next)) {
+                    current = RoomStateUpdate.of(
+                            groundLine,
+                            Math.min(current.getBegin(), next.getBegin()),
+                            Math.max(current.getEnd(), next.getEnd())
+                    );
+                } else {
+                    merged.add(current);
+                    current = next;
+                }
+            }
+            merged.add(current);
+            battle.getAggregated().getUpdate().getUpdates().setRoomStateUpdates(merged);
         }
     }
 
