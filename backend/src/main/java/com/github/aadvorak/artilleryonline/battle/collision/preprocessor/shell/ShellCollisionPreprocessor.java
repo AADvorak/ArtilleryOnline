@@ -1,15 +1,15 @@
 package com.github.aadvorak.artilleryonline.battle.collision.preprocessor.shell;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
-import com.github.aadvorak.artilleryonline.battle.collision.preprocessor.CollisionPreprocessor;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
+import com.github.aadvorak.artilleryonline.battle.collision.preprocessor.CollisionPreprocessor;
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.common.Velocity;
 import com.github.aadvorak.artilleryonline.battle.events.RicochetEvent;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.processor.bomber.BomberFlyProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.statistics.StatisticsProcessor;
-import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleBomberProcessor;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -83,7 +83,7 @@ public class ShellCollisionPreprocessor implements CollisionPreprocessor {
             shell.getModel().getState().setVelocity(new Velocity());
             shell.applyNextPosition();
             shell.getModel().setUpdated(true);
-            VehicleBomberProcessor.fly(shell.getPosition(), shell.getModel().getVehicleId(), battle.getModel());
+            BomberFlyProcessor.fly(shell.getPosition(), shell.getModel().getVehicleId(), battle.getModel());
         } else {
             collision.setHit(true);
             DamageProcessor.processHit(shell, battle);

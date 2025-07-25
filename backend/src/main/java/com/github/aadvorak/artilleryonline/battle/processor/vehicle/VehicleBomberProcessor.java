@@ -2,10 +2,8 @@ package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
-import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.Velocity;
-import com.github.aadvorak.artilleryonline.battle.events.BomberFlyEvent;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
@@ -42,27 +40,6 @@ public class VehicleBomberProcessor extends VehicleProcessor implements BeforeSt
         }
     }
 
-    // todo move to separate class
-    public static void fly(Position target, int vehicleId, BattleModel battleModel) {
-        var vehicleModel = getVehicleModelWithBomber(vehicleId, battleModel);
-        if (vehicleModel == null) {
-            return;
-        }
-        var bomberState = vehicleModel.getState().getBomberState();
-        if (bomberState == null || !bomberState.isReadyToFlight()) {
-            return;
-        }
-        bomberState.setTarget(target);
-        var roomSpecs = battleModel.getRoom().getSpecs();
-        var direction = target.getX() > BattleUtils.getRoomWidth(roomSpecs) / 2
-                ? MovingDirection.RIGHT : MovingDirection.LEFT;
-        battleModel.getEvents().addBomberFly(new BomberFlyEvent().setMovingDirection(direction));
-        bomberState.setReadyToFlight(false);
-        bomberState.setFlying(true);
-        bomberState.setFlightRemainTime(vehicleModel.getConfig().getBomber().getFlightTime());
-        vehicleModel.getUpdate().setUpdated();
-    }
-
     private void drop(VehicleModel vehicleModel, BattleModel battleModel) {
         var bomberState = vehicleModel.getState().getBomberState();
         var target = bomberState.getTarget();
@@ -95,15 +72,5 @@ public class VehicleBomberProcessor extends VehicleProcessor implements BeforeSt
         bomberState.setPrepareToFlightRemainTime(vehicleModel.getConfig().getBomber().getPrepareToFlightTime());
         bomberState.setRemainFlights(bomberState.getRemainFlights() - 1);
         vehicleModel.getUpdate().setUpdated();
-    }
-
-    private static VehicleModel getVehicleModelWithBomber(int vehicleId, BattleModel battleModel) {
-        var vehicleModel = battleModel.getVehicles().values().stream()
-                .filter(model -> model.getId() == vehicleId)
-                .findAny().orElse(null);
-        if (vehicleModel == null || vehicleModel.getConfig().getBomber() == null) {
-            return null;
-        }
-        return vehicleModel;
     }
 }
