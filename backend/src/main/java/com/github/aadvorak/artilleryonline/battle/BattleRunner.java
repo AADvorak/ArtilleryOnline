@@ -208,11 +208,7 @@ public class BattleRunner {
                     battleUpdateResponse.setEvents(battle.getModel().getEvents());
                 }
             }
-            if (false) {
-                battle.getQueues().getBattleUpdatesQueue().add(battleUpdateResponse);
-            } else {
-                aggregateUpdates(battle, battleUpdateResponse);
-            }
+            aggregateUpdates(battle, battleUpdateResponse);
             return true;
         }
         return false;
