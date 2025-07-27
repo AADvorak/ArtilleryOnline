@@ -10,9 +10,10 @@ public class BattleTracker {
 
     public BattleTracker(Battle battle) {
         csvBuilder.append("time");
-        battle.getModel().getVehicles().values().forEach(vehicle -> csvBuilder.append(
-                String.format(",%d_position_x,%d_position_y,%d_angle,%d_velocity_x,%d_velocity_y,%d_velocity_angle",
-                vehicle.getId(), vehicle.getId(), vehicle.getId(), vehicle.getId(), vehicle.getId(), vehicle.getId())));
+        battle.getModel().getVehicles().values().forEach(vehicle ->
+                csvBuilder.append(
+                ",{id}_position_x,{id}_position_y,{id}_angle,{id}_velocity_x,{id}_velocity_y,{id}_velocity_angle,{id}_gun_angle,{id}_target_angle"
+                        .replace("{id}", String.valueOf(vehicle.getId()))));
         csvBuilder.append("\r\n");
     }
 
@@ -22,13 +23,16 @@ public class BattleTracker {
             var state = vehicle.getState();
             var position = state.getPosition();
             var velocity = state.getVelocity();
+            var gunState = state.getGunState();
             appendNumbersToRow(
                     position.getX(),
                     position.getY(),
                     position.getAngle(),
                     velocity.getX(),
                     velocity.getY(),
-                    velocity.getAngle()
+                    velocity.getAngle(),
+                    gunState.getAngle(),
+                    gunState.getTargetAngle()
             );
         });
         csvBuilder.append("\r\n");
