@@ -8,8 +8,6 @@ import com.github.aadvorak.artilleryonline.battle.tracking.BattleTracker;
 
 public class BattleStepProcessorBase implements BattleStepProcessor {
 
-    private BattleTracker battleTracker;
-
     public final void processStep(Battle battle) {
         processDebugCommand(battle);
         if (!battle.getDebug().isPaused() || battle.getDebug().isDoStep()) {
@@ -66,19 +64,21 @@ public class BattleStepProcessorBase implements BattleStepProcessor {
     }
 
     private void startTrackingBattle(Battle battle) {
-        battleTracker = new BattleTracker(battle);
+        battle.getDebug().setTracker(new BattleTracker(battle));
     }
 
     private void trackBattle(Battle battle) {
-        if (battleTracker != null) {
-            battleTracker.appendToCsv(battle);
+        var tracker = battle.getDebug().getTracker();
+        if (tracker != null) {
+            tracker.appendToCsv(battle);
         }
     }
 
     private void stopTrackingBattle(Battle battle) {
-        if (battleTracker != null) {
-            battle.getDebug().setTracking(battleTracker.getCsv());
-            battleTracker = null;
+        var tracker = battle.getDebug().getTracker();
+        if (tracker != null) {
+            battle.getDebug().setTracking(tracker.getCsv());
+            battle.getDebug().setTracker(null);
         }
     }
 }

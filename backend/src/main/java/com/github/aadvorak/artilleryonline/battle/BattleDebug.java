@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle;
 
+import com.github.aadvorak.artilleryonline.battle.tracking.BattleTracker;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -16,4 +17,6 @@ public class BattleDebug {
     private boolean forceSend = false;
 
     private String tracking;
+
+    private BattleTracker tracker;
 }
