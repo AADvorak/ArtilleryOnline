@@ -76,9 +76,9 @@ export const VehicleProcessor = {
     } else {
       let gunAngle = gunState.angle
       const angleDiff = targetAngle - vehicleAngle - gunAngle
-      if (Math.abs(angleDiff) > rotatingVelocity * 0.01) {
-        const angleStep = Math.sign(angleDiff) * rotatingVelocity * timeStepSecs
-        gunAngle += Math.min(angleStep, angleDiff)
+      const angleStep = Math.sign(angleDiff) * rotatingVelocity * timeStepSecs
+      if (Math.abs(angleDiff) > Math.abs(angleStep)) {
+        gunAngle += angleStep
         gunAngle = this.restrictValue(gunAngle, minGunAngle, maxGunAngle)
         gunState.angle = gunAngle
       }

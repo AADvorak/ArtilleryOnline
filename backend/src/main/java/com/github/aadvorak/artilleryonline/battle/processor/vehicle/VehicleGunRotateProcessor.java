@@ -1,6 +1,5 @@
 package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
-import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
@@ -42,9 +41,10 @@ public class VehicleGunRotateProcessor extends VehicleProcessor implements After
         } else {
             var gunAngle = gunState.getAngle();
             var angleDiff = targetAngle - vehicleAngle - gunAngle;
-            if (Math.abs(angleDiff) > rotatingVelocity * Battle.TIME_STEP_MS / 1000) {
-                var angleStep = Math.signum(angleDiff) * rotatingVelocity * battle.getModel().getCurrentTimeStepSecs();
-                gunAngle += Math.min(angleStep, angleDiff);
+            var timeStep = battle.getModel().getCurrentTimeStepSecs();
+            var angleStep = Math.signum(angleDiff) * rotatingVelocity * timeStep;
+            if (Math.abs(angleDiff) > Math.abs(angleStep)) {
+                gunAngle += angleStep;
                 gunAngle = restrictValue(gunAngle, minGunAngle, maxGunAngle);
                 gunState.setAngle(gunAngle);
             }
