@@ -1,6 +1,5 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
-import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.Velocity;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
@@ -11,21 +10,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class ShellCalculations implements Calculations<ShellModel> {
+public class ShellCalculations extends CalculationsBase implements Calculations<ShellModel> {
 
     private final ShellModel model;
 
-    private final Set<Collision> collisions = new HashSet<>();
-
     private final Next next = new Next();
-
-    private boolean hasCollisions;
 
     @Override
     public Integer getId() {

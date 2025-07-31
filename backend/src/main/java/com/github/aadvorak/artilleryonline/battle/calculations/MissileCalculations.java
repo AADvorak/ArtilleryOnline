@@ -1,30 +1,25 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.calculator.MissileAccelerationCalculator;
-import com.github.aadvorak.artilleryonline.battle.collision.Collision;
-import com.github.aadvorak.artilleryonline.battle.common.*;
+import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
+import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
+import com.github.aadvorak.artilleryonline.battle.common.Velocity;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.MissileModel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Getter
 @Setter
-public class MissileCalculations implements Calculations<MissileModel> {
+public class MissileCalculations extends CalculationsBase implements Calculations<MissileModel> {
 
     private final MissileModel model;
-
-    private final Set<Collision> collisions = new HashSet<>();
 
     private final Next next;
 
     private final Positions positions;
-
-    private boolean hasCollisions;
 
     public MissileCalculations(MissileModel model) {
         this.model = model;

@@ -1,8 +1,10 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.calculator.DroneAccelerationCalculator;
-import com.github.aadvorak.artilleryonline.battle.collision.Collision;
-import com.github.aadvorak.artilleryonline.battle.common.*;
+import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
+import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
+import com.github.aadvorak.artilleryonline.battle.common.Velocity;
 import com.github.aadvorak.artilleryonline.battle.config.DroneConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
@@ -14,26 +16,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class DroneCalculations
+public class DroneCalculations extends CalculationsBase
         implements BodyCalculations<DroneSpecs, DronePreCalc, DroneConfig, DroneState, DroneModel> {
 
     private final DroneModel model;
-
-    private final Set<Collision> collisions = new HashSet<>();
 
     private final Next next = new Next();
 
     private Target target;
 
     private double height;
-
-    private boolean hasCollisions;
 
     @Override
     public Integer getId() {

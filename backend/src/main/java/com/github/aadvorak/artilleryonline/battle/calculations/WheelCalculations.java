@@ -58,6 +58,11 @@ public class WheelCalculations
     }
 
     @Override
+    public Set<Collision> getCollisions(int iterationNumber) {
+        return vehicle.getCollisions(iterationNumber);
+    }
+
+    @Override
     public boolean isHasCollisions() {
         return vehicle.isHasCollisions();
     }

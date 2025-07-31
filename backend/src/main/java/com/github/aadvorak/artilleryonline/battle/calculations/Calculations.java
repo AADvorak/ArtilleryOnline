@@ -21,6 +21,8 @@ public interface Calculations<Model> {
 
     Set<Collision> getCollisions();
 
+    Set<Collision> getCollisions(int iterationNumber);
+
     boolean isHasCollisions();
 
     void setHasCollisions(boolean hasCollisions);

@@ -2,7 +2,6 @@ package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.calculator.BodyAccelerationCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculator.vehicle.*;
-import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.common.lines.BodyPart;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
@@ -23,7 +22,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class VehicleCalculations
+public class VehicleCalculations extends CalculationsBase
         implements BodyCalculations<VehicleSpecs, VehiclePreCalc, VehicleConfig, VehicleState, VehicleModel> {
 
     private static final List<
@@ -49,10 +48,6 @@ public class VehicleCalculations
     private Set<Contact> groundContacts;
 
     private BodyPosition nextPosition;
-
-    private Set<Collision> collisions = new HashSet<>();
-
-    private boolean hasCollisions = false;
 
     public VehicleCalculations(VehicleModel model) {
         this.model = model;
