@@ -10,7 +10,7 @@ import java.util.Set;
 public class CollisionUtils {
 
     public static boolean collisionNotDetected(Calculations<?> object, Calculations<?> otherObject) {
-        return otherObject.getCollisions().stream()
+        return otherObject.getLastCollisions().stream()
                 .noneMatch(c -> object.getId().equals(c.getSecondId()));
     }
 

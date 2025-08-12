@@ -19,7 +19,9 @@ public interface Calculations<Model> {
 
     double getMass();
 
-    Set<Collision> getCollisions();
+    Set<Collision> getLastCollisions();
+
+    Set<Collision> getAllCollisions();
 
     Set<Collision> getCollisions(int iterationNumber);
 

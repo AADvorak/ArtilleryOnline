@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class CalculationsBase {
 
@@ -16,7 +17,7 @@ public abstract class CalculationsBase {
     @Getter @Setter
     private boolean hasCollisions;
 
-    public Set<Collision> getCollisions() {
+    public Set<Collision> getLastCollisions() {
         var maxKey = collisionMap.keySet().stream().max(Integer::compareTo).orElse(1);
         return getCollisions(maxKey);
     }
@@ -26,5 +27,9 @@ public abstract class CalculationsBase {
             collisionMap.put(iterationNumber, new HashSet<>());
         }
         return collisionMap.get(iterationNumber);
+    }
+
+    public Set<Collision> getAllCollisions() {
+        return collisionMap.values().stream().flatMap(Set::stream).collect(Collectors.toSet());
     }
 }

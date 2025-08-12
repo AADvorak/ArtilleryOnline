@@ -16,7 +16,7 @@ public class ShellCollisionPostprocessor implements CollisionPostprocessor {
     @Override
     public void process(Calculations<?> calculations, BattleCalculations battle) {
         if (calculations instanceof ShellCalculations shell) {
-            for (var collision : shell.getCollisions()) {
+            for (var collision : shell.getAllCollisions()) {
                 if (collision.isHit()) {
                     battle.getModel().getUpdates().removeShell(shell.getId());
                     var hitType = ShellHitType.of(collision.getPair().second());

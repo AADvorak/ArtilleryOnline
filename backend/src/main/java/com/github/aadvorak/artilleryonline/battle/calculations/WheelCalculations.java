@@ -53,8 +53,13 @@ public class WheelCalculations
     }
 
     @Override
-    public Set<Collision> getCollisions() {
-        return vehicle.getCollisions();
+    public Set<Collision> getLastCollisions() {
+        return vehicle.getLastCollisions();
+    }
+
+    @Override
+    public Set<Collision> getAllCollisions() {
+        return vehicle.getAllCollisions();
     }
 
     @Override

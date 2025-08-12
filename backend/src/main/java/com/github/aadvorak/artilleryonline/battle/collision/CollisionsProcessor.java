@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.collision.detector.CollisionsD
 import com.github.aadvorak.artilleryonline.battle.collision.postprocessor.CollisionPostprocessor;
 import com.github.aadvorak.artilleryonline.battle.collision.preprocessor.CollisionPreprocessor;
 import com.github.aadvorak.artilleryonline.battle.collision.resolver.CollisionResolver;
+import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CollisionsProcessor {
 
+    private final ApplicationSettings settings;
+
     private final Set<CollisionsDetector> detectors;
 
     private final Set<CollisionPreprocessor> preprocessors;
@@ -24,23 +27,32 @@ public class CollisionsProcessor {
     private final CollisionResolver resolver;
 
     public void process(BattleCalculations battle) {
-        detectAllCollisions(battle);
+        process(battle, 1);
+    }
+
+    public void process(BattleCalculations battle, int iterationNumber) {
+        detectAllCollisions(battle, iterationNumber);
         resolveStrongestCollisions(battle);
         if (collisionsExist(battle)) {
-            checkCollisionsResolved(battle);
-            postprocessCollisions(battle);
+            var additionalIterationsNumber = settings.getAdditionalResolveCollisionsIterationsNumber();
+            if (iterationNumber - 1 >= additionalIterationsNumber) {
+                checkCollisionsResolved(battle);
+                postprocessCollisions(battle);
+            } else {
+                process(battle, iterationNumber + 1);
+            }
         }
     }
 
-    private void detectAllCollisions(BattleCalculations battle) {
+    private void detectAllCollisions(BattleCalculations battle, int iterationNumber) {
         battle.getMovingObjects().forEach(object ->
                 detectors.forEach(detector ->
-                        object.getCollisions().addAll(detector.detect(object, battle, false))));
+                        object.getCollisions(iterationNumber).addAll(detector.detect(object, battle, false))));
     }
 
     private void resolveStrongestCollisions(BattleCalculations battle) {
         battle.getMovingObjects().forEach(object -> {
-            var collision = findStrongestCollision(object.getCollisions());
+            var collision = findStrongestCollision(object.getLastCollisions());
             if (collision != null) {
                 var shouldResolve = true;
                 for (var preprocessor : preprocessors) {

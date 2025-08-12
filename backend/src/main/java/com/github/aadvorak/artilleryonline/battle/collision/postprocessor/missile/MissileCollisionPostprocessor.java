@@ -12,7 +12,7 @@ public class MissileCollisionPostprocessor implements CollisionPostprocessor {
     @Override
     public void process(Calculations<?> calculations, BattleCalculations battle) {
         if (calculations instanceof MissileCalculations missile) {
-            if (!missile.getCollisions().isEmpty()) {
+            if (!missile.getAllCollisions().isEmpty()) {
                 battle.getModel().getUpdates().removeMissile(missile.getId());
             }
         }

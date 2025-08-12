@@ -14,8 +14,8 @@ public class VehicleCollisionPostprocessor implements CollisionPostprocessor {
     @Override
     public void process(Calculations<?> calculations, BattleCalculations battle) {
         if (calculations instanceof VehicleCalculations vehicle) {
-            if (!vehicle.getCollisions().isEmpty() && !vehicle.isHasCollisions()) {
-                vehicle.getCollisions().stream()
+            if (!vehicle.getAllCollisions().isEmpty() && !vehicle.isHasCollisions()) {
+                vehicle.getAllCollisions().stream()
                         .filter(collision -> collision.getClosingVelocity() > 1.0)
                         .forEach(collision -> battle.getModel().getEvents().addCollide(
                                 new VehicleCollideEvent()
