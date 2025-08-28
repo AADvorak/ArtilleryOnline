@@ -13,6 +13,9 @@ public abstract class MissileCollisionsDetectorBase implements CollisionsDetecto
     @Override
     public Set<Collision> detect(Calculations<?> calculations, BattleCalculations battle, boolean first) {
         if (calculations instanceof MissileCalculations missile) {
+            if (!missile.getAllCollisions().isEmpty()) {
+                return Set.of();
+            }
             var collision = detectFirst(missile, battle);
             if (collision != null) {
                 return Set.of(collision);

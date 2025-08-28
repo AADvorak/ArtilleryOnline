@@ -13,7 +13,7 @@ public abstract class ShellCollisionsDetectorBase implements CollisionsDetector 
     @Override
     public Set<Collision> detect(Calculations<?> calculations, BattleCalculations battle, boolean first) {
         if (calculations instanceof ShellCalculations shell) {
-            if (shell.getModel().getState().isStuck()) {
+            if (shell.getModel().getState().isStuck() || !shell.getAllCollisions().isEmpty()) {
                 return Set.of();
             }
             var collision = detectFirst(shell, battle);

@@ -1,6 +1,8 @@
 package com.github.aadvorak.artilleryonline.battle.collision;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.MissileCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
 import com.github.aadvorak.artilleryonline.battle.collision.detector.CollisionsDetector;
 import com.github.aadvorak.artilleryonline.battle.collision.postprocessor.CollisionPostprocessor;
 import com.github.aadvorak.artilleryonline.battle.collision.preprocessor.CollisionPreprocessor;
@@ -28,6 +30,7 @@ public class CollisionsProcessor {
 
     public void process(BattleCalculations battle) {
         process(battle, 1);
+        postprocessCollisions(battle);
     }
 
     public void process(BattleCalculations battle, int iterationNumber) {
@@ -37,7 +40,6 @@ public class CollisionsProcessor {
             var additionalIterationsNumber = settings.getAdditionalResolveCollisionsIterationsNumber();
             if (iterationNumber - 1 >= additionalIterationsNumber) {
                 checkCollisionsResolved(battle);
-                postprocessCollisions(battle);
             } else {
                 process(battle, iterationNumber + 1);
             }
@@ -53,7 +55,8 @@ public class CollisionsProcessor {
     private void resolveStrongestCollisions(BattleCalculations battle) {
         battle.getMovingObjects().forEach(object -> {
             var collision = findStrongestCollision(object.getLastCollisions());
-            if (collision != null) {
+            if (collision != null && (firstObjectIsProjectile(collision)
+                    || secondObjectDoesNotHaveGroundCollisions(collision))) {
                 var shouldResolve = true;
                 for (var preprocessor : preprocessors) {
                     var result = preprocessor.process(collision, battle);
@@ -81,7 +84,7 @@ public class CollisionsProcessor {
 
     private boolean collisionsExist(BattleCalculations battle) {
         for (var object : battle.getMovingObjects()) {
-            if (object.isHasCollisions()) {
+            if (!object.getLastCollisions().isEmpty()) {
                 return true;
             }
         }
@@ -111,7 +114,10 @@ public class CollisionsProcessor {
             var collision = iterator.next();
             var collisionVelocity = collision.getClosingVelocity();
             var strongestVelocity = strongest.getClosingVelocity();
-            if (collisionVelocity < 1.0 && strongestVelocity < 1.0
+            if (CollideObjectType.GROUND.equals(collision.getType())
+                    && !CollideObjectType.GROUND.equals(strongest.getType())) {
+                strongest = collision;
+            } else if (collisionVelocity < 1.0 && strongestVelocity < 1.0
                     && collision.getContact().depth() > strongest.getContact().depth()) {
                 strongest = collision;
             } else if (collisionVelocity > strongestVelocity) {
@@ -119,5 +125,24 @@ public class CollisionsProcessor {
             }
         }
         return strongest;
+    }
+
+    private boolean firstObjectIsProjectile(Collision collision) {
+        var first = collision.getPair().first();
+        return first instanceof ShellCalculations || first instanceof MissileCalculations;
+    }
+
+    private boolean secondObjectDoesNotHaveGroundCollisions(Collision collision) {
+        var second = collision.getPair().second();
+        if (second == null) {
+            return true;
+        }
+        var secondCollisions = second.getLastCollisions();
+        for (var secondCollision : secondCollisions) {
+            if (CollideObjectType.GROUND.equals(secondCollision.getType())) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -28,4 +28,10 @@ public interface BodyState extends State {
                 .setX(-bodyVelocity.getAngle() * distance * Math.sin(angle))
                 .setY(bodyVelocity.getAngle() * distance * Math.cos(angle));
     }
+
+    default void applyNormalMoveToPosition(double normalMove, double angle) {
+        var move = new VectorProjections(angle).setNormal(normalMove).recoverPosition();
+        getPosition().setX(getPosition().getX() + move.getX());
+        getPosition().setY(getPosition().getY() + move.getY());
+    }
 }

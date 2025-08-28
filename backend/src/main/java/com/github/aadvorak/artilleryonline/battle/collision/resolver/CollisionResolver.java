@@ -171,9 +171,13 @@ public class CollisionResolver {
         var object = collision.getPair().first();
         var otherObject = collision.getPair().second();
         object.calculateNextPosition(timeStepSecs);
-        var depth = Math.min(collision.getContact().depth(), 0.1);
+        var depth = collision.getContact().depth();
         if (otherObject == null) {
             object.applyNormalMoveToNextPosition(-depth, collision.getContact().angle());
+            if (object.getModel() instanceof BodyModel<?,?,?,?> bodyModel) {
+                bodyModel.getState().applyNormalMoveToPosition(-depth, collision.getContact().angle());
+            }
+            if (logging) System.out.printf("First object normal move = %s\n", -depth);
         } else {
             otherObject.calculateNextPosition(timeStepSecs);
             var mass = object.getMass();
@@ -183,6 +187,16 @@ public class CollisionResolver {
             var otherNormalMove = normalMovePerMass * mass;
             object.applyNormalMoveToNextPosition(- normalMove, collision.getContact().angle());
             otherObject.applyNormalMoveToNextPosition(otherNormalMove, collision.getContact().angle());
+            if (object.getModel() instanceof BodyModel<?,?,?,?> bodyModel) {
+                bodyModel.getState().applyNormalMoveToPosition(- normalMove, collision.getContact().angle());
+            }
+            if (otherObject.getModel() instanceof BodyModel<?,?,?,?> otherBodyModel) {
+                otherBodyModel.getState().applyNormalMoveToPosition(otherNormalMove, collision.getContact().angle());
+            }
+            if (logging) {
+                System.out.printf("First object normal move = %s\n", -normalMove);
+                System.out.printf("Second object normal move = %s\n", otherNormalMove);
+            }
         }
     }
 

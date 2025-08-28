@@ -11,7 +11,7 @@ application:
     user-battle-queue-timeout: 30000
     message-timeout: 600000
     room-invitation-timeout: 60000
-    additional-resolve-collisions-iterations-number: 0
+    additional-resolve-collisions-iterations-number: 5
 spring:
   application:
     name: artilleryonline
