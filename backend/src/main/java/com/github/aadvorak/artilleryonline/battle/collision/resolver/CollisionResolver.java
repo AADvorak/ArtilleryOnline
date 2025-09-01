@@ -171,18 +171,18 @@ public class CollisionResolver {
         var object = collision.getPair().first();
         var otherObject = collision.getPair().second();
         object.calculateNextPosition(timeStepSecs);
-        var depth = collision.getContact().depth();
+        var moveMagnitude = Math.min(collision.getContact().depth(), 0.1);
         if (otherObject == null) {
-            object.applyNormalMoveToNextPosition(-depth, collision.getContact().angle());
+            object.applyNormalMoveToNextPosition(-moveMagnitude, collision.getContact().angle());
             if (object.getModel() instanceof BodyModel<?,?,?,?> bodyModel) {
-                bodyModel.getState().applyNormalMoveToPosition(-depth, collision.getContact().angle());
+                bodyModel.getState().applyNormalMoveToPosition(-moveMagnitude, collision.getContact().angle());
             }
-            if (logging) System.out.printf("First object normal move = %s\n", -depth);
+            if (logging) System.out.printf("First object normal move = %s\n", -moveMagnitude);
         } else {
             otherObject.calculateNextPosition(timeStepSecs);
             var mass = object.getMass();
             var otherMass = otherObject.getMass();
-            var normalMovePerMass = depth / (mass + otherMass);
+            var normalMovePerMass = moveMagnitude / (mass + otherMass);
             var normalMove = normalMovePerMass * otherMass;
             var otherNormalMove = normalMovePerMass * mass;
             object.applyNormalMoveToNextPosition(- normalMove, collision.getContact().angle());
