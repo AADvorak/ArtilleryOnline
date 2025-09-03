@@ -88,7 +88,11 @@ public class BattleUtils {
     }
 
     public static Position getGroundPosition(int index, RoomModel roomModel) {
-        var y = roomModel.getState().getGroundLine().get(index);
+        var groundLine = roomModel.getState().getGroundLine();
+        if (index < 0 || index >= groundLine.size()) {
+            return null;
+        }
+        var y = groundLine.get(index);
         if (y == null) {
             return null;
         }
