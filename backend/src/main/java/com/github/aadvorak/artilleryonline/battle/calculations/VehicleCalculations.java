@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.calculator.BodyAccelerationCalculator;
+import com.github.aadvorak.artilleryonline.battle.calculator.BodyVelocityCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculator.vehicle.*;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.common.lines.BodyPart;
@@ -37,7 +38,11 @@ public class VehicleCalculations extends CalculationsBase
 
     private static final BodyAccelerationCalculator<
             VehicleSpecs, VehiclePreCalc, VehicleConfig, VehicleState, VehicleModel, VehicleCalculations
-            > calculator = new BodyAccelerationCalculator<>(forceCalculators);
+            > accelerationCalculator = new BodyAccelerationCalculator<>(forceCalculators);
+
+    private static final BodyVelocityCalculator<
+                VehicleSpecs, VehiclePreCalc, VehicleConfig, VehicleState, VehicleModel, VehicleCalculations
+                > velocityCalculator = new BodyVelocityCalculator<>(accelerationCalculator);
 
     private final VehicleModel model;
 
@@ -88,21 +93,7 @@ public class VehicleCalculations extends CalculationsBase
 
     @Override
     public void recalculateVelocity(BattleModel battleModel) {
-        calculateAllGroundContacts(battleModel.getRoom());
-        var acceleration = calculator.calculate(this, battleModel);
-        var vehicleVelocity = model.getState().getVelocity();
-        var timeStep = battleModel.getCurrentTimeStepSecs();
-        var maxRadius = model.getPreCalc().getMaxRadius();
-        vehicleVelocity.recalculate(acceleration, timeStep);
-        if (Math.abs(vehicleVelocity.getX()) < Constants.MIN_VELOCITY) {
-            vehicleVelocity.setX(0.0);
-        }
-        if (Math.abs(vehicleVelocity.getY()) < Constants.MIN_VELOCITY) {
-            vehicleVelocity.setY(0.0);
-        }
-        if (Math.abs(vehicleVelocity.getAngle() * maxRadius) < Constants.MIN_VELOCITY) {
-            vehicleVelocity.setAngle(0.0);
-        }
+        velocityCalculator.recalculateVelocity(this, battleModel);
         recalculateWheelsVelocities();
     }
 

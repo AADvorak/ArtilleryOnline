@@ -8,6 +8,7 @@ import com.github.aadvorak.artilleryonline.battle.common.Velocity;
 import com.github.aadvorak.artilleryonline.battle.config.DroneConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
+import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.precalc.DronePreCalc;
 import com.github.aadvorak.artilleryonline.battle.specs.DroneSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.DroneState;
@@ -78,6 +79,11 @@ public class DroneCalculations extends CalculationsBase
         var nextPosition = next.getPosition();
         nextPosition.setX(nextPosition.getX() + move.getX());
         nextPosition.setY(nextPosition.getY() + move.getY());
+    }
+
+    @Override
+    public void calculateAllGroundContacts(RoomModel roomModel) {
+
     }
 
     @Getter

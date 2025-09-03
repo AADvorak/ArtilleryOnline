@@ -4,6 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
 import com.github.aadvorak.artilleryonline.battle.specs.VehicleSpecs;
@@ -147,6 +148,11 @@ public class WheelCalculations
         var wheelAngle = vehicle.getModel().getPreCalc().getWheelAngle();
         return vehiclePosition.getCenter().shifted(- sign.getValue() * wheelDistance,
                 vehiclePosition.getAngle() + sign.getValue() * wheelAngle);
+    }
+
+    @Override
+    public void calculateAllGroundContacts(RoomModel roomModel) {
+
     }
 
     @Getter
