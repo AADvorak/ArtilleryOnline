@@ -155,6 +155,11 @@ public class WheelCalculations
 
     }
 
+    @Override
+    public BodyPosition getNextPosition() {
+        return null;
+    }
+
     @Getter
     @Setter
     @Accessors(chain = true)

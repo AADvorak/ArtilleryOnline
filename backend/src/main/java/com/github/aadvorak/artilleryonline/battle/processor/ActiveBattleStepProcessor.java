@@ -6,6 +6,7 @@ import com.github.aadvorak.artilleryonline.battle.BattleType;
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.collision.CollisionsProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.box.BoxDropProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.command.CommandProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.drone.DroneLaunchProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionInitializer;
@@ -35,6 +36,7 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         readCommandsFromQueue(battle);
 
         DroneLaunchProcessor.launch(battle);
+        BoxDropProcessor.drop(battle);
 
         var battleCalculations = new BattleCalculations(battle);
 

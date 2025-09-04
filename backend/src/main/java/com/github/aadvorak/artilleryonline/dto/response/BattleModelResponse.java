@@ -20,6 +20,8 @@ public class BattleModelResponse implements CompactSerializable {
 
     private Map<Integer, ExplosionModel> explosions;
 
+    private Map<Integer, BoxModel> boxes;
+
     private RoomModel room;
 
     private Map<String, VehicleModel> vehicles;
@@ -32,6 +34,7 @@ public class BattleModelResponse implements CompactSerializable {
         stream.writeIntegerMapOfSerializable(missiles);
         stream.writeIntegerMapOfSerializable(drones);
         stream.writeIntegerMapOfSerializable(explosions);
+        stream.writeIntegerMapOfSerializable(boxes);
         stream.writeSerializableValue(room);
         stream.writeStringMapOfSerializable(vehicles);
         stream.writeBoolean(updated);

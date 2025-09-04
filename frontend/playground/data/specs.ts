@@ -1,4 +1,4 @@
-import {JetType, type Position, ShellType} from "@/playground/data/common";
+import {BoxType, JetType, type Position, ShellType} from "@/playground/data/common";
 import type {HalfCircleShape, Shape, TrapezeShape} from "~/playground/data/shapes";
 
 export interface ShellSpecs {
@@ -104,4 +104,10 @@ export interface DroneSpecs {
   criticalAngle: number
   prepareToLaunchTime: number
   availableGuns: AvailableGuns
+}
+
+export interface BoxSpecs {
+  shape: Shape | TrapezeShape
+  mass: number
+  type: BoxType
 }

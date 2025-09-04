@@ -71,16 +71,6 @@ public class VehicleCalculations extends CalculationsBase
         return model.getState().getPosition().getCenter();
     }
 
-    public Position getGeometryPosition() {
-        return getPosition().shifted(model.getPreCalc().getCenterOfMassShift()
-                .plusAngle(model.getState().getPosition().getAngle()).inverted());
-    }
-
-    public BodyPosition getGeometryNextPosition() {
-        return nextPosition.shifted(model.getPreCalc().getCenterOfMassShift()
-                .plusAngle(nextPosition.getAngle()).inverted());
-    }
-
     @Override
     public Velocity getVelocity() {
         return model.getState().getVelocity().getMovingVelocity();

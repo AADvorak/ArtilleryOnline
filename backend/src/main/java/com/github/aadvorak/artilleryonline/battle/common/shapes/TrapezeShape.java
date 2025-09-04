@@ -30,4 +30,11 @@ public class TrapezeShape implements Shape {
         stream.writeDouble(topRadius);
         stream.writeDouble(height);
     }
+
+    public static TrapezeShape square(double side) {
+        return new TrapezeShape()
+                .setBottomRadius(side / 2)
+                .setTopRadius(side / 2)
+                .setHeight(side);
+    }
 }

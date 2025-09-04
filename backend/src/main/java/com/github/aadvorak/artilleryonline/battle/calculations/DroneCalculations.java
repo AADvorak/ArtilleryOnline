@@ -86,6 +86,11 @@ public class DroneCalculations extends CalculationsBase
 
     }
 
+    @Override
+    public BodyPosition getNextPosition() {
+        return next.getPosition();
+    }
+
     @Getter
     @Setter
     @Accessors(chain = true)

@@ -16,7 +16,7 @@ public class BoxPreCalc implements BodyPreCalc, CompactSerializable {
         var radius = getRadius(specs);
         var density = mass / (Math.pow(radius, 2) * Math.PI);
         momentOfInertia = density * Math.PI * Math.pow(radius, 4);
-        centerOfMassShift = new Shift(0.0, 0.0);
+        centerOfMassShift = new Shift(((TrapezeShape) specs.getShape()).getHeight() / 2, Math.PI / 2);
         maxRadius = radius * Math.sqrt(2);
     }
 

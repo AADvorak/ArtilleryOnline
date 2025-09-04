@@ -52,6 +52,9 @@ export interface DroneState extends BodyState {
   destroyed: boolean
 }
 
+export interface BoxState extends BodyState {
+}
+
 export interface DroneInVehicleState {
   launched: boolean
   readyToLaunch: boolean
@@ -109,9 +112,14 @@ export interface DroneStates {
   [id: number]: DroneState
 }
 
+export interface BoxStates {
+  [id: number]: BoxState
+}
+
 export interface BattleModelState {
   vehicles?: VehicleStates
   shells?: ShellStates
   missiles?: MissileStates
   drones?: DroneStates
+  boxes?: BoxStates
 }

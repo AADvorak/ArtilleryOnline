@@ -13,6 +13,7 @@ import {useDroneDrawer} from "~/playground/composables/drawer/drone-drawer";
 import {useSurfaceDrawer} from "~/playground/composables/drawer/surface-drawer";
 import {useParticleDrawer} from "~/playground/composables/drawer/particle-drawer";
 import {useShellTrajectoryDrawer} from "~/playground/composables/drawer/shell-trajectory-drawer";
+import {useBoxDrawer} from "~/playground/composables/drawer/box-drawer";
 
 const HEADER_HEIGHT = 72
 
@@ -47,6 +48,7 @@ const vehicleDrawer = useVehicleDrawer(drawerBase, ctx)
 const shellDrawer = useShellDrawer(drawerBase, ctx)
 const missileDrawer = useMissileDrawer(drawerBase, ctx)
 const droneDrawer = useDroneDrawer(drawerBase, ctx)
+const boxDrawer = useBoxDrawer(drawerBase, ctx)
 const explosionDrawer = useExplosionDrawer(drawerBase, ctx)
 const groundDrawer = useGroundDrawer(drawerBase, ctx)
 const surfaceDrawer = useSurfaceDrawer(drawerBase, ctx)
@@ -107,6 +109,7 @@ function redrawBattle() {
     shellDrawer.draw()
     missileDrawer.draw()
     droneDrawer.draw()
+    boxDrawer.draw()
     groundDrawer.draw()
     surfaceDrawer.draw()
     vehicleDrawer.draw()

@@ -1,6 +1,7 @@
 import type {DeserializerInput} from "~/deserialization/deserializer-input";
 import {DeserializerBase} from "~/deserialization/deserializer-base";
 import type {
+  BoxSpecs,
   DroneSpecs,
   ExplosionSpecs,
   GunSpecs,
@@ -10,7 +11,7 @@ import type {
   ShellSpecs,
   VehicleSpecs
 } from "~/playground/data/specs";
-import {JetType, type ShellType} from "~/playground/data/common";
+import {BoxType, JetType, type ShellType} from "~/playground/data/common";
 import {deserializePosition} from "~/playground/data/common-deserialize";
 import {deserializeShape} from "~/playground/data/shapes-deserialize";
 
@@ -170,5 +171,16 @@ export function deserializeDroneSpecs(input: DeserializerInput): DroneSpecs {
     criticalAngle,
     prepareToLaunchTime,
     availableGuns
+  }
+}
+
+export function deserializeBoxSpecs(input: DeserializerInput): BoxSpecs {
+  const shape = deserializeShape(input)
+  const mass = DeserializerBase.readDouble(input)
+  const type = DeserializerBase.readString(input) as BoxType
+  return {
+    shape,
+    mass,
+    type
   }
 }

@@ -7,6 +7,7 @@ import type {
 import {DeserializerBase} from "~/deserialization/deserializer-base";
 import type {DeserializerInput} from "~/deserialization/deserializer-input";
 import {
+  deserializeBoxModel,
   deserializeDroneModel,
   deserializeExplosionModel,
   deserializeMissileModel,
@@ -18,11 +19,13 @@ export function deserializeBattleModelAdded(input: DeserializerInput): BattleMod
   const explosions = DeserializerBase.readArray(input, deserializeExplosionModel)
   const missiles = DeserializerBase.readArray(input, deserializeMissileModel)
   const drones = DeserializerBase.readArray(input, deserializeDroneModel)
+  const boxes = DeserializerBase.readArray(input, deserializeBoxModel)
   return {
     shells,
     explosions,
     missiles,
-    drones
+    drones,
+    boxes
   }
 }
 
@@ -31,12 +34,14 @@ export function deserializeBattleModelRemoved(input: DeserializerInput): BattleM
   const explosionIds = DeserializerBase.readArray(input, DeserializerBase.readInt)
   const missileIds = DeserializerBase.readArray(input, DeserializerBase.readInt)
   const droneIds = DeserializerBase.readArray(input, DeserializerBase.readInt)
+  const boxIds = DeserializerBase.readArray(input, DeserializerBase.readInt)
   const vehicleKeys = DeserializerBase.readArray(input, DeserializerBase.readString)
   return {
     shellIds,
     explosionIds,
     missileIds,
     droneIds,
+    boxIds,
     vehicleKeys
   }
 }

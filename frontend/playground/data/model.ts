@@ -1,4 +1,5 @@
 import type {
+  BoxSpecs,
   DroneSpecs,
   ExplosionSpecs,
   MissileSpecs,
@@ -8,6 +9,7 @@ import type {
 } from "@/playground/data/specs";
 import type {
   BodyState,
+  BoxState,
   DroneState,
   ExplosionState,
   MissileState,
@@ -58,6 +60,13 @@ export interface DroneModel {
   state: DroneState
 }
 
+export interface BoxModel {
+  id: number
+  specs: BoxSpecs
+  preCalc: BoxPreCalc
+  state: BoxState
+}
+
 export interface ExplosionModel {
   id: number
   specs: ExplosionSpecs
@@ -77,6 +86,9 @@ export interface VehiclePreCalc extends BodyPreCalc {
 }
 
 export interface DronePreCalc extends BodyPreCalc {
+}
+
+export interface BoxPreCalc extends BodyPreCalc {
 }
 
 export interface VehicleModel extends BodyModel {
@@ -111,6 +123,10 @@ export interface ParticleModels {
   [id: number]: ParticleModel
 }
 
+export interface BoxModels {
+  [id: number]: BoxModel
+}
+
 export interface BattleModel {
   room: RoomModel
   shells: ShellModels
@@ -118,5 +134,6 @@ export interface BattleModel {
   vehicles: VehicleModels
   missiles: MissileModels
   drones: DroneModels
+  boxes: BoxModels
   updated: boolean
 }

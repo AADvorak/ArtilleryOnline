@@ -43,6 +43,10 @@ export enum CollideObjectType {
   VEHICLE = 'VEHICLE'
 }
 
+export enum BoxType {
+  HP = 'HP'
+}
+
 export interface CollideObject {
   type: CollideObjectType
   vehicleId?: number

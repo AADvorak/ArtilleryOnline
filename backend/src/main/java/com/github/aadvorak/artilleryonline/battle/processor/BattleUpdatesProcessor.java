@@ -69,6 +69,12 @@ public class BattleUpdatesProcessor {
                 break;
             }
         }
+        for (var boxModel: battleModel.getBoxes().values()) {
+            if (boxModel.getUpdate().setUpdatedByTimeout(battle.getAbsoluteTime())) {
+                setAllUpdatedByTimeout(battle);
+                break;
+            }
+        }
     }
 
     private void setAllUpdatedByTimeout(Battle battle) {
@@ -78,6 +84,8 @@ public class BattleUpdatesProcessor {
         battleModel.getDrones().values().forEach(model ->
                 model.getUpdate().setUpdated(battle.getAbsoluteTime()));
         battleModel.getVehicles().values().forEach(model ->
+                model.getUpdate().setUpdated(battle.getAbsoluteTime()));
+        battleModel.getBoxes().values().forEach(model ->
                 model.getUpdate().setUpdated(battle.getAbsoluteTime()));
     }
 
@@ -179,7 +187,9 @@ public class BattleUpdatesProcessor {
                 .anyMatch(droneModel -> droneModel.getUpdate().isUpdated());
         var updatedShells = battleModel.getShells().values().stream()
                 .anyMatch(ShellModel::isUpdated);
-        return updatedVehicles || updatedMissiles || updatedDrones || updatedShells;
+        var updatedBoxes = battleModel.getBoxes().values().stream()
+                .anyMatch(boxModel -> boxModel.getUpdate().isUpdated());
+        return updatedVehicles || updatedMissiles || updatedDrones || updatedShells || updatedBoxes;
     }
 
     private BattleModelStateResponse createBattleModelStateResponse(BattleModel battleModel) {
@@ -191,11 +201,14 @@ public class BattleUpdatesProcessor {
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
         var droneStates = battleModel.getDrones().entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
+        var boxStates = battleModel.getBoxes().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
         return new BattleModelStateResponse()
                 .setShells(shellStates)
                 .setVehicles(vehicleStates)
                 .setMissiles(missileStates)
-                .setDrones(droneStates);
+                .setDrones(droneStates)
+                .setBoxes(boxStates);
     }
 
     private void resetUpdatedFlags(Battle battle) {

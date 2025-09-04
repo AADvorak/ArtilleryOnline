@@ -1,10 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.updates;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
-import com.github.aadvorak.artilleryonline.battle.model.ExplosionModel;
-import com.github.aadvorak.artilleryonline.battle.model.MissileModel;
-import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
+import com.github.aadvorak.artilleryonline.battle.model.*;
 import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
@@ -23,6 +20,8 @@ public class BattleModelAdded implements CompactSerializable {
     private List<MissileModel> missiles;
 
     private List<DroneModel> drones;
+
+    private List<BoxModel> boxes;
 
     public void addShell(ShellModel shell) {
         if (shells == null) {
@@ -52,6 +51,13 @@ public class BattleModelAdded implements CompactSerializable {
         drones.add(drone);
     }
 
+    public void addBox(BoxModel box) {
+        if (boxes == null) {
+            boxes = new ArrayList<>();
+        }
+        boxes.add(box);
+    }
+
     public void merge(BattleModelAdded other) {
         if (other.shells != null) {
             if (shells == null) {
@@ -77,6 +83,12 @@ public class BattleModelAdded implements CompactSerializable {
             }
             drones.addAll(other.drones);
         }
+        if (other.boxes != null) {
+            if (boxes == null) {
+                boxes = new ArrayList<>();
+            }
+            boxes.addAll(other.boxes);
+        }
     }
 
     @Override
@@ -85,5 +97,6 @@ public class BattleModelAdded implements CompactSerializable {
         stream.writeCollectionOfSerializable(explosions);
         stream.writeCollectionOfSerializable(missiles);
         stream.writeCollectionOfSerializable(drones);
+        stream.writeCollectionOfSerializable(boxes);
     }
 }

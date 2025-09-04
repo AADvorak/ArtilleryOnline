@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.calculator.BodyAccelerationCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculator.BodyVelocityCalculator;
+import com.github.aadvorak.artilleryonline.battle.calculator.box.GravityForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.common.lines.BodyPart;
 import com.github.aadvorak.artilleryonline.battle.config.BoxConfig;
@@ -29,7 +30,7 @@ public class BoxCalculations extends CalculationsBase
     private static final List<
             ForceCalculator<BoxSpecs, BoxPreCalc, BoxConfig, BoxState, BoxModel, BoxCalculations>
             > forceCalculators = List.of(
-            // todo
+            new GravityForceCalculator()
     );
 
     private static final BodyAccelerationCalculator<
@@ -94,9 +95,14 @@ public class BoxCalculations extends CalculationsBase
     }
 
     public void calculateAllGroundContacts(RoomModel roomModel) {
-        var bodyPosition = model.getState().getPosition();
+        var bodyPosition = BodyPosition.of(getGeometryPosition(), model.getState().getPosition().getAngle());
         var bodyPart = BodyPart.of(bodyPosition, model.getSpecs().getShape());
         setGroundContacts(GroundContactUtils.getGroundContacts(bodyPart, roomModel, false));
+    }
+
+    @Override
+    public BodyPosition getNextPosition() {
+        return next.getPosition();
     }
 
     @Getter

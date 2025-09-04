@@ -75,6 +75,10 @@ export function useBattleUpdater(player: Player) {
         if (addedDrones) {
           addedDrones.forEach(drone => battle.model.drones[drone.id] = drone)
         }
+        const addedBoxes = battleUpdate.updates.added.boxes
+        if (addedBoxes) {
+          addedBoxes.forEach(box => battle.model.boxes[box.id] = box)
+        }
       }
       if (battleUpdate.updates.removed) {
         const removedShellIds = battleUpdate.updates.removed.shellIds
@@ -92,6 +96,10 @@ export function useBattleUpdater(player: Player) {
         const removedExplosionIds = battleUpdate.updates.removed.explosionIds
         if (removedExplosionIds) {
           removedExplosionIds.forEach(explosionId => delete battle.model.explosions[explosionId])
+        }
+        const removedBoxIds = battleUpdate.updates.removed.boxIds
+        if (removedBoxIds) {
+          removedBoxIds.forEach(boxId => delete battle.model.boxes[boxId])
         }
         const removedVehicleKeys = battleUpdate.updates.removed.vehicleKeys
         if (removedVehicleKeys) {
@@ -132,6 +140,13 @@ export function useBattleUpdater(player: Player) {
         Object.keys(drones).forEach(key => {
           // @ts-ignore
           battle.model.drones[key].state = drones[key]
+        })
+      }
+      const boxes = battleUpdate.state.boxes
+      if (boxes) {
+        Object.keys(boxes).forEach(key => {
+          // @ts-ignore
+          battle.model.boxes[key].state = boxes[key]
         })
       }
     }

@@ -28,6 +28,8 @@ public class BattleModel {
 
     private Map<Integer, ExplosionModel> explosions = new HashMap<>();
 
+    private Map<Integer, BoxModel> boxes = new HashMap<>();
+
     private RoomModel room;
 
     private Map<String, VehicleModel> vehicles;

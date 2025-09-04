@@ -1,10 +1,11 @@
-import type {DroneModel, ExplosionModel, MissileModel, ShellModel} from "~/playground/data/model";
+import type {BoxModel, DroneModel, ExplosionModel, MissileModel, ShellModel} from "~/playground/data/model";
 
 export interface BattleModelAdded {
   shells?: ShellModel[]
   missiles?: MissileModel[]
   explosions?: ExplosionModel[]
   drones?: DroneModel[]
+  boxes?: BoxModel[]
 }
 
 export interface BattleModelRemoved {
@@ -12,6 +13,7 @@ export interface BattleModelRemoved {
   missileIds?: number[]
   explosionIds?: number[]
   droneIds?: number[]
+  boxIds?: number[]
   vehicleKeys?: string[]
 }
 

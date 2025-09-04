@@ -2,10 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.updates;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
-import com.github.aadvorak.artilleryonline.battle.model.ExplosionModel;
-import com.github.aadvorak.artilleryonline.battle.model.MissileModel;
-import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
+import com.github.aadvorak.artilleryonline.battle.model.*;
 import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
@@ -53,6 +50,13 @@ public class BattleModelUpdates implements CompactSerializable {
         added.addDrone(drone);
     }
 
+    public void addBox(BoxModel box) {
+        if (added == null) {
+            added = new BattleModelAdded();
+        }
+        added.addBox(box);
+    }
+
     public void addExplosion(ExplosionModel explosion) {
         if (added == null) {
             added = new BattleModelAdded();
@@ -93,6 +97,13 @@ public class BattleModelUpdates implements CompactSerializable {
             removed = new BattleModelRemoved();
         }
         removed.addVehicleKey(vehicleKey);
+    }
+
+    public void removeBox(Integer boxId) {
+        if (removed == null) {
+            removed = new BattleModelRemoved();
+        }
+        removed.addBoxId(boxId);
     }
 
     public void merge(BattleModelUpdates other) {

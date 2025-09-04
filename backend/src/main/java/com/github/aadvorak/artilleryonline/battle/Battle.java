@@ -30,6 +30,8 @@ public class Battle {
 
     private long droneLaunchTime;
 
+    private long boxDropTime;
+
     private final FpsCalculator fpsCalculator = new FpsCalculator(20);
 
     private BattleStage battleStage;

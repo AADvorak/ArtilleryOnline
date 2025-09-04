@@ -7,7 +7,7 @@ import {
   deserializeVelocity
 } from "~/playground/data/common-deserialize";
 import type {
-  BattleModelState, BomberState, DroneInVehicleState, DroneState,
+  BattleModelState, BomberState, BoxState, DroneInVehicleState, DroneState,
   ExplosionState,
   GunState,
   JetState,
@@ -62,6 +62,15 @@ export function deserializeJetState(input: DeserializerInput): JetState {
 }
 
 export function deserializeMissileState(input: DeserializerInput): MissileState {
+  const position = deserializeBodyPosition(input)
+  const velocity = deserializeBodyVelocity(input)
+  return {
+    position,
+    velocity
+  }
+}
+
+export function deserializeBoxState(input: DeserializerInput): BoxState {
   const position = deserializeBodyPosition(input)
   const velocity = deserializeBodyVelocity(input)
   return {
@@ -168,11 +177,13 @@ export function deserializeBattleModelState(input: DeserializerInput): BattleMod
   const shells = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeShellState)
   const missiles = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeMissileState)
   const drones = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeDroneState)
+  const boxes = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeBoxState)
   return {
     vehicles,
     shells,
     missiles,
-    drones
+    drones,
+    boxes
   }
 }
 

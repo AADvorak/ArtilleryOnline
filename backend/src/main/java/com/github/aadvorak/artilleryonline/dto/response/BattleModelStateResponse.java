@@ -1,10 +1,7 @@
 package com.github.aadvorak.artilleryonline.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.github.aadvorak.artilleryonline.battle.state.DroneState;
-import com.github.aadvorak.artilleryonline.battle.state.MissileState;
-import com.github.aadvorak.artilleryonline.battle.state.ShellState;
-import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
+import com.github.aadvorak.artilleryonline.battle.state.*;
 import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
@@ -27,11 +24,14 @@ public class BattleModelStateResponse implements CompactSerializable {
 
     private Map<Integer, DroneState> drones;
 
+    private Map<Integer, BoxState> boxes;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeStringMapOfSerializable(vehicles);
         stream.writeIntegerMapOfSerializable(shells);
         stream.writeIntegerMapOfSerializable(missiles);
         stream.writeIntegerMapOfSerializable(drones);
+        stream.writeIntegerMapOfSerializable(boxes);
     }
 }

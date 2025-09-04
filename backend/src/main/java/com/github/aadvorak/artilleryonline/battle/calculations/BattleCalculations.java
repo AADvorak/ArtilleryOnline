@@ -30,6 +30,8 @@ public class BattleCalculations {
 
     private Set<DroneCalculations> drones;
 
+    private Set<BoxCalculations> boxes;
+
     private Set<Calculations<?>> movingObjects;
 
     public BattleCalculations(Battle battle) {
@@ -49,6 +51,9 @@ public class BattleCalculations {
         drones = model.getDrones().values().stream()
                 .map(DroneCalculations::new)
                 .collect(Collectors.toSet());
+        boxes = model.getBoxes().values().stream()
+                .map(BoxCalculations::new)
+                .collect(Collectors.toSet());
     }
 
     public Set<? extends Calculations<?>> getMovingObjects() {
@@ -58,6 +63,7 @@ public class BattleCalculations {
             movingObjects.addAll(drones);
             movingObjects.addAll(shells);
             movingObjects.addAll(missiles);
+            movingObjects.addAll(boxes);
         }
         return movingObjects;
     }
