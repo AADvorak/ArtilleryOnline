@@ -4,7 +4,7 @@ import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWr
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 
 public enum CollideObjectType implements CompactSerializable {
-    WALL, GROUND, VEHICLE, MISSILE, DRONE, SURFACE;
+    WALL, GROUND, VEHICLE, MISSILE, DRONE, SURFACE, BOX;
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
