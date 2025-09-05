@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 public enum BoxSpecsPreset {
 
     LIGHT("Light", new BoxSpecs()
-            .setMass(0.02)
+            .setMass(0.2)
             .setType(BoxType.HP)
             .setShape(TrapezeShape.square(0.5))
     );
