@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.utils;
 import com.github.aadvorak.artilleryonline.battle.common.Constants;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.Vector;
 import com.github.aadvorak.artilleryonline.battle.common.lines.*;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 
@@ -37,7 +38,8 @@ public class GroundContactUtils {
         while (i < groundIndexes.size()) {
             var position = BattleUtils.getGroundPosition(groundIndexes.get(i), roomModel);
 
-            Contact bottomContact = getGroundContact(bottom, position, maxDepth, "HalfCircle bottom with ground");
+            Contact bottomContact = getGroundContact(bottom, position, groundIndexes.get(i),
+                    roomModel, maxDepth, "HalfCircle bottom with ground");
 
             Contact topContact = null;
             var distance = halfCircle.center().distanceTo(position);
@@ -89,10 +91,14 @@ public class GroundContactUtils {
         while (i < groundIndexes.size()) {
             var position = BattleUtils.getGroundPosition(groundIndexes.get(i), roomModel);
 
-            var bottomContact = getGroundContact(bottom, position, maxDepth, "Trapeze bottom with ground");
-            var topContact = getGroundContact(top, position, maxDepth, "Trapeze top with ground");
-            var rightContact = getGroundContact(right, position, maxDepth,  "Trapeze right with ground");
-            var leftContact = getGroundContact(left, position, maxDepth, "Trapeze left with ground");
+            var bottomContact = getGroundContact(bottom, position, groundIndexes.get(i),
+                    roomModel, maxDepth, "Trapeze bottom with ground");
+            var topContact = getGroundContact(top, position, groundIndexes.get(i),
+                    roomModel, maxDepth, "Trapeze top with ground");
+            var rightContact = getGroundContact(right, position, groundIndexes.get(i),
+                    roomModel, maxDepth,  "Trapeze right with ground");
+            var leftContact = getGroundContact(left, position, groundIndexes.get(i),
+                    roomModel, maxDepth, "Trapeze left with ground");
 
             Contact resultContact = null;
             if (topContact != null) {
@@ -176,7 +182,10 @@ public class GroundContactUtils {
     }
 
     /**
-     * It is a variant of method when the contact normal direction is inside the ground surface
+     * It is a variant of method
+     * when the contact normal direction is median of two vectors
+     * 1) normal from ground point to segment
+     * 2) vector with direction inside the ground surface
      */
     private static Contact getGroundContact(
             Segment segment, Position groundPosition,
@@ -185,9 +194,15 @@ public class GroundContactUtils {
     ) {
         var segmentPoint = segment.findPointWithX(groundPosition.getX());
         if (segmentPoint != null && segmentPoint.getY() < groundPosition.getY()) {
-            var depth = groundPosition.distanceTo(segmentPoint) - maxDepth;
-            return Contact.withUncheckedDepthOf(depth,
-                    getGroundAngle(groundPosition, groundIndex, roomModel), segmentPoint, description);
+            var projection = GeometryUtils.getPointToSegmentProjection(groundPosition, segment);
+            if (projection != null) {
+                var depth = groundPosition.distanceTo(segmentPoint) - maxDepth;
+                var normal = Vector.sumOf(
+                        groundPosition.vectorTo(projection).normalized(),
+                        Vector.normal(getGroundAngle(groundPosition, groundIndex, roomModel))
+                ).normalized();
+                return Contact.withUncheckedDepthOf(depth, normal, projection, description);
+            }
         }
         return null;
     }
