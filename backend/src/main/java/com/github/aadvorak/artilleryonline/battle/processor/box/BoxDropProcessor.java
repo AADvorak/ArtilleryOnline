@@ -12,9 +12,11 @@ import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 public class BoxDropProcessor {
 
     private static final long DROP_DELAY = 1000;
+    private static final int MAX_BOXES = 20;
 
     public static void drop(Battle battle) {
-        if (battle.getAbsoluteTime() < battle.getBoxDropTime() + DROP_DELAY) {
+        if (battle.getModel().getBoxes().size() > MAX_BOXES
+                || battle.getAbsoluteTime() < battle.getBoxDropTime() + DROP_DELAY) {
             return;
         }
         var roomSpecs = battle.getModel().getRoom().getSpecs();
