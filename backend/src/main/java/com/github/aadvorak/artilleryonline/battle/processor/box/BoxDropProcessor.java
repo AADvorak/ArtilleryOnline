@@ -15,7 +15,7 @@ public class BoxDropProcessor {
     private static final int MAX_BOXES = 20;
 
     public static void drop(Battle battle) {
-        if (battle.getModel().getBoxes().size() > MAX_BOXES
+        if (battle.getModel().getBoxes().size() >= MAX_BOXES
                 || battle.getAbsoluteTime() < battle.getBoxDropTime() + DROP_DELAY) {
             return;
         }
