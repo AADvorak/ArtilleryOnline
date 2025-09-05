@@ -64,12 +64,12 @@ public class BodyCollisionData {
     }
 
     private static double getInertiaToMassCoefficient(double vectorProduct, double distanceToAxis, double maxRadius) {
-        var distanceCoefficient = 0.0;
-        if (distanceToAxis > maxRadius) {
-            distanceCoefficient = 1.0;
-        } else {
-            distanceCoefficient = Math.pow(distanceToAxis / maxRadius, 2);
-        }
+        var distanceCoefficient = 1.0;
+//        if (distanceToAxis > maxRadius) {
+//            distanceCoefficient = 1.0;
+//        } else {
+//            distanceCoefficient = Math.pow(distanceToAxis / maxRadius, 2);
+//        }
         return Math.abs(vectorProduct) * distanceCoefficient;
     }
 

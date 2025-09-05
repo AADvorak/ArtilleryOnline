@@ -19,6 +19,10 @@ public interface Calculations<Model> {
 
     double getMass();
 
+    default double getKineticEnergy() {
+        return getMass() * (Math.pow(getVelocity().getX(), 2) + Math.pow(getVelocity().getY(), 2)) / 2;
+    }
+
     Set<Collision> getLastCollisions();
 
     Set<Collision> getAllCollisions();

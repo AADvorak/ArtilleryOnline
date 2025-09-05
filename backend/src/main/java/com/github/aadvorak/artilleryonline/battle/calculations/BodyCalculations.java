@@ -30,4 +30,18 @@ public interface BodyCalculations<
         return getNextPosition().shifted(getModel().getPreCalc().getCenterOfMassShift()
                 .plusAngle(getNextPosition().getAngle()).inverted());
     }
+
+    default double getKineticEnergy() {
+        return getMovingKineticEnergy() + getRotatingKineticEnergy();
+    }
+
+    default double getMovingKineticEnergy() {
+        var velocity = getModel().getState().getVelocity();
+        return getMass() * (Math.pow(velocity.getX(), 2) + Math.pow(velocity.getY(), 2)) / 2;
+    }
+
+    default double getRotatingKineticEnergy() {
+        return getModel().getPreCalc().getMomentOfInertia()
+                * Math.pow(getModel().getState().getVelocity().getAngle(), 2) / 2;
+    }
 }

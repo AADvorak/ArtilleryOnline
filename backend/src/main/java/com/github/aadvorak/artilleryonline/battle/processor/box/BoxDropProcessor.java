@@ -11,7 +11,7 @@ import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 
 public class BoxDropProcessor {
 
-    private static final long DROP_DELAY = 10000;
+    private static final long DROP_DELAY = 1000;
 
     public static void drop(Battle battle) {
         if (battle.getAbsoluteTime() < battle.getBoxDropTime() + DROP_DELAY) {

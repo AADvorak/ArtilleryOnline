@@ -4,6 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.common.VelocitiesProjections;
+import com.github.aadvorak.artilleryonline.battle.model.BoxModel;
 import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
 import com.github.aadvorak.artilleryonline.battle.model.MissileModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
@@ -66,6 +67,14 @@ public class Collision {
         return impact;
     }
 
+    public double getSumKineticEnergy() {
+        var sumEnergy = pair.first().getKineticEnergy();
+        if (pair.second() != null) {
+            sumEnergy += pair.second().getKineticEnergy();
+        }
+        return sumEnergy;
+    }
+
     public boolean isRicochet() {
         if (pair.first() instanceof ShellCalculations shell) {
             var shellType = shell.getModel().getSpecs().getType();
@@ -107,6 +116,11 @@ public class Collision {
     public static Collision withDrone(Calculations<?> first, Calculations<DroneModel> second,
                                         Contact contact) {
         return withMovable(first, second, contact, CollideObjectType.DRONE);
+    }
+
+    public static Collision withBox(Calculations<?> first, Calculations<BoxModel> second,
+                                        Contact contact) {
+        return withMovable(first, second, contact, CollideObjectType.BOX);
     }
 
     public static Collision withMovable(Calculations<?> first, Calculations<?> second,

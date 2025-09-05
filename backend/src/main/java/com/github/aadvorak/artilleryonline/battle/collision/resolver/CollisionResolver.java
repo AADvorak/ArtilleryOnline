@@ -23,6 +23,9 @@ public class CollisionResolver {
     }
 
     public void resolve(Collision collision, BattleModel battleModel) {
+        var kineticEnergyBefore = collision.getSumKineticEnergy();
+        if (logging) System.out.print("----------------Begin collision resolution------------------\n");
+        if (logging) System.out.printf("before collision resolution energy = %.3f\n", kineticEnergyBefore);
         var first = collision.getPair().first();
         var second = collision.getPair().second();
         BodyModel<?, ?, ?, ?> firstModel = null;
@@ -100,6 +103,25 @@ public class CollisionResolver {
         }
 
         recalculatePositionsAndResolveInterpenetration(collision, battleModel.getCurrentTimeStepSecs());
+
+        var kineticEnergyAfter = collision.getSumKineticEnergy();
+        if (kineticEnergyAfter > kineticEnergyBefore) {
+            var velocityMultiplier = Math.sqrt(kineticEnergyBefore / kineticEnergyAfter);
+            if (firstModel != null) {
+                multiplyBodyVelocity(firstModel.getState().getVelocity(), velocityMultiplier);
+            } else {
+                multiplyVelocity(first.getVelocity(), velocityMultiplier);
+            }
+            if (second != null) {
+                if (secondModel != null) {
+                    multiplyBodyVelocity(secondModel.getState().getVelocity(), velocityMultiplier);
+                } else {
+                    multiplyVelocity(second.getVelocity(), velocityMultiplier);
+                }
+            }
+        }
+
+        if (logging) System.out.printf("after collision resolution energy = %.3f\n", collision.getSumKineticEnergy());
         if (logging) System.out.print("----------------End collision resolution------------------\n");
     }
 
@@ -198,6 +220,17 @@ public class CollisionResolver {
                 System.out.printf("Second object normal move = %s\n", otherNormalMove);
             }
         }
+    }
+
+    private void multiplyBodyVelocity(BodyVelocity velocity, double multiplier) {
+        velocity.setX(velocity.getX() * multiplier);
+        velocity.setY(velocity.getY() * multiplier);
+        velocity.setAngle(velocity.getAngle() * multiplier);
+    }
+
+    private void multiplyVelocity(Velocity velocity, double multiplier) {
+        velocity.setX(velocity.getX() * multiplier);
+        velocity.setY(velocity.getY() * multiplier);
     }
 
     private double getFrictionCoefficient(Calculations<?> calculations) {
