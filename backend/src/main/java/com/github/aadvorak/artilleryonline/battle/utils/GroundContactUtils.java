@@ -159,6 +159,9 @@ public class GroundContactUtils {
         );
     }
 
+    /**
+     * It is a variant of method when the contact normal direction depends on the segment orientation
+     */
     private static Contact getGroundContact(Segment segment, Position groundPosition, double maxDepth, String description) {
         var segmentPoint = segment.findPointWithX(groundPosition.getX());
         if (segmentPoint != null && segmentPoint.getY() < groundPosition.getY()) {
@@ -168,6 +171,23 @@ public class GroundContactUtils {
                 var normal = groundPosition.vectorTo(projection).normalized();
                 return Contact.withUncheckedDepthOf(depth, normal, projection, description);
             }
+        }
+        return null;
+    }
+
+    /**
+     * It is a variant of method when the contact normal direction is inside the ground surface
+     */
+    private static Contact getGroundContact(
+            Segment segment, Position groundPosition,
+            int groundIndex, RoomModel roomModel,
+            double maxDepth, String description
+    ) {
+        var segmentPoint = segment.findPointWithX(groundPosition.getX());
+        if (segmentPoint != null && segmentPoint.getY() < groundPosition.getY()) {
+            var depth = groundPosition.distanceTo(segmentPoint) - maxDepth;
+            return Contact.withUncheckedDepthOf(depth,
+                    getGroundAngle(groundPosition, groundIndex, roomModel), segmentPoint, description);
         }
         return null;
     }
