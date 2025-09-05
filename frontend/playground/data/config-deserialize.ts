@@ -1,5 +1,5 @@
 import type {DeserializerInput} from "~/deserialization/deserializer-input";
-import type {DroneConfig, RoomConfig, VehicleConfig} from "~/playground/data/config";
+import type {BoxConfig, DroneConfig, RoomConfig, VehicleConfig} from "~/playground/data/config";
 import {DeserializerBase} from "~/deserialization/deserializer-base";
 import {deserializeDroneSpecs, deserializeGunSpecs, deserializeJetSpecs} from "~/playground/data/specs-deserialize";
 
@@ -33,6 +33,13 @@ export function deserializeDroneConfig(input: DeserializerInput): DroneConfig {
   return {
     gun,
     ammo,
+    color
+  }
+}
+
+export function deserializeBoxConfig(input: DeserializerInput): BoxConfig {
+  const color = DeserializerBase.readNullable(input, DeserializerBase.readString)
+  return {
     color
   }
 }

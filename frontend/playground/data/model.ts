@@ -18,7 +18,7 @@ import type {
   ShellState,
   VehicleState
 } from "@/playground/data/state";
-import type {DroneConfig, ParticleConfig, RoomConfig, VehicleConfig} from "@/playground/data/config";
+import type {BoxConfig, DroneConfig, ParticleConfig, RoomConfig, VehicleConfig} from "@/playground/data/config";
 import type {Shift} from "~/playground/data/common";
 
 export interface BodyModel {
@@ -64,6 +64,7 @@ export interface BoxModel {
   id: number
   specs: BoxSpecs
   preCalc: BoxPreCalc
+  config: BoxConfig
   state: BoxState
 }
 

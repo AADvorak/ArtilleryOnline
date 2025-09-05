@@ -21,7 +21,7 @@ export function useBoxDrawer(
 
   function drawBox(box: BoxModel) {
     if (ctx.value) {
-      ctx.value.fillStyle = 'rgb(256 256 256)'
+      ctx.value.fillStyle = box.config.color || 'rgb(256 256 256)'
       ctx.value.lineWidth = 1
       if (box.specs.shape.name === ShapeNames.TRAPEZE) {
         drawTrapezeBox(box.state.position, box.specs.shape as TrapezeShape)

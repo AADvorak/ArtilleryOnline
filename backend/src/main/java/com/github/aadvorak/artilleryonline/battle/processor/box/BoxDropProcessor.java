@@ -3,16 +3,28 @@ package com.github.aadvorak.artilleryonline.battle.processor.box;
 import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.config.BoxConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BoxModel;
 import com.github.aadvorak.artilleryonline.battle.precalc.BoxPreCalc;
 import com.github.aadvorak.artilleryonline.battle.preset.BoxSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.state.BoxState;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 
+import java.util.List;
+
 public class BoxDropProcessor {
 
     private static final long DROP_DELAY = 1000;
     private static final int MAX_BOXES = 20;
+    private static final List<String> COLORS = List.of(
+            "#FF0000",  // Red
+            "#FF7F00",  // Orange
+            "#FFFF00",  // Yellow
+            "#00FF00",  // Green
+            "#0000FF",  // Blue
+            "#4B0082",  // Indigo
+            "#8B00FF"   // Violet
+    );
 
     public static void drop(Battle battle) {
         if (battle.getModel().getBoxes().size() >= MAX_BOXES
@@ -22,6 +34,8 @@ public class BoxDropProcessor {
         var roomSpecs = battle.getModel().getRoom().getSpecs();
         var specs = BoxSpecsPreset.values()[BattleUtils.generateRandom(0, BoxSpecsPreset.values().length)].getSpecs();
         var preCalc = new BoxPreCalc(specs);
+        var config = new BoxConfig()
+                .setColor(COLORS.get(BattleUtils.generateRandom(0, COLORS.size())));;
         var radius = preCalc.getMaxRadius();
         var x = BattleUtils.generateRandom(radius, BattleUtils.getRoomWidth(roomSpecs) - radius);
         var y = 1.1 * BattleUtils.getRoomHeight(roomSpecs);
@@ -32,6 +46,7 @@ public class BoxDropProcessor {
         model.setId(id);
         model.setState(state);
         model.setPreCalc(preCalc);
+        model.setConfig(config);
         model.setSpecs(specs);
         battle.getModel().getBoxes().put(id, model);
         battle.getModel().getUpdates().addBox(model);

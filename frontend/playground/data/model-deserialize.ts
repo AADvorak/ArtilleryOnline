@@ -24,6 +24,7 @@ import {
   deserializeRoomState, deserializeShellState, deserializeVehicleState
 } from "~/playground/data/state-deserialize";
 import {
+  deserializeBoxConfig,
   deserializeDroneConfig,
   deserializeRoomConfig,
   deserializeVehicleConfig
@@ -75,11 +76,13 @@ export function deserializeBoxModel(input: DeserializerInput): BoxModel {
   const id = DeserializerBase.readInt(input)
   const specs = deserializeBoxSpecs(input)
   const preCalc = deserializeBoxPreCalc(input)
+  const config = deserializeBoxConfig(input)
   const state = deserializeBoxState(input)
   return {
     id,
     specs,
     preCalc,
+    config,
     state
   }
 }

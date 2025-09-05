@@ -26,6 +26,7 @@ public class BoxModel
         stream.writeInt(id);
         stream.writeSerializableValue(getSpecs());
         stream.writeSerializableValue(getPreCalc());
+        stream.writeSerializableValue(getConfig());
         stream.writeSerializableValue(getState());
     }
 }
