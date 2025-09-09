@@ -287,12 +287,30 @@ public class ContactUtils {
                     var secondSide = otherSidesIntersections.get(secondOtherSide).iterator().next();
                     var edge = polygon.next(firstSide).equals(secondSide) ? firstSide.end() : secondSide.end();
                     var otherEdge = otherSide.end();
-                    // todo may be plane-plane
-                    return Contact.of(
-                            edge.distanceTo(otherEdge),
-                            otherEdge.vectorTo(edge).normalized(),
-                            new Segment(edge, otherEdge).center()
-                    );
+                    var edgeOtherSideProjection = GeometryUtils.getPointToLineProjection(edge, otherSide);
+                    var edgeOtherSideDistance = edge.distanceTo(edgeOtherSideProjection);
+                    var edgeSecondOtherSideProjection = GeometryUtils.getPointToLineProjection(edge, secondOtherSide);
+                    var edgeSecondOtherSideDistance = edge.distanceTo(edgeSecondOtherSideProjection);
+                    var edgeOtherEdgeDistance = edge.distanceTo(otherEdge);
+                    if (edgeOtherEdgeDistance < 2 * edgeOtherSideDistance && edgeOtherEdgeDistance < 2 * edgeSecondOtherSideDistance) {
+                        return Contact.of(
+                                edgeOtherEdgeDistance,
+                                otherEdge.vectorTo(edge).normalized(),
+                                new Segment(edge, otherEdge).center()
+                        );
+                    } else if (edgeOtherSideDistance < edgeSecondOtherSideDistance) {
+                        return Contact.of(
+                                edgeOtherSideDistance,
+                                edgeOtherSideProjection.vectorTo(edge).normalized(),
+                                new Segment(edge, edgeOtherSideProjection).center()
+                        );
+                    } else {
+                        return Contact.of(
+                                edgeSecondOtherSideDistance,
+                                edgeSecondOtherSideProjection.vectorTo(edge).normalized(),
+                                new Segment(edge, edgeSecondOtherSideProjection).center()
+                        );
+                    }
                 }
             }
         }

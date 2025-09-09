@@ -211,6 +211,48 @@ public class ContactUtilsTest {
     }
 
     @Test
+    public void trapezesBottomWithTop1() {
+        var trapeze = new Trapeze(
+                new BodyPosition()
+                        .setX(1.7)
+                        .setY(0.9),
+                RECT_TRAPEZE_SHAPE
+        );
+        var otherTrapeze = new Trapeze(
+                new BodyPosition(),
+                RECT_TRAPEZE_SHAPE
+        );
+        var contact = ContactUtils.getTrapezesContact(trapeze, otherTrapeze);
+        assertNotNull(contact);
+        assertAll(
+                () -> assertEquals(0.0, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(-1.0, contact.normal().getY(), SMALL_DELTA),
+                () -> assertEquals(0.1, contact.depth(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void trapezesLeftWithRight() {
+        var trapeze = new Trapeze(
+                new BodyPosition()
+                        .setX(1.9)
+                        .setY(0.7),
+                RECT_TRAPEZE_SHAPE
+        );
+        var otherTrapeze = new Trapeze(
+                new BodyPosition(),
+                RECT_TRAPEZE_SHAPE
+        );
+        var contact = ContactUtils.getTrapezesContact(trapeze, otherTrapeze);
+        assertNotNull(contact);
+        assertAll(
+                () -> assertEquals(-1.0, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(0.0, contact.normal().getY(), SMALL_DELTA),
+                () -> assertEquals(0.1, contact.depth(), SMALL_DELTA)
+        );
+    }
+
+    @Test
     public void trapezesBottomRightWithTopLeft() {
         var trapeze = new Trapeze(
                 new BodyPosition()
