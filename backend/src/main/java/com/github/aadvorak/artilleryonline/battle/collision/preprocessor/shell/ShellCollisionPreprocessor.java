@@ -33,6 +33,7 @@ public class ShellCollisionPreprocessor implements CollisionPreprocessor {
             case DRONE -> processDrone(shell, collision, battle);
             case VEHICLE -> processVehicle(shell, collision, battle);
             case MISSILE -> processMissile(shell, collision, battle);
+            case BOX -> processBox(shell, collision, battle);
             case GROUND -> processGround(shell, collision, battle);
             case SURFACE -> processSurface(shell);
             default -> false;
@@ -74,6 +75,16 @@ public class ShellCollisionPreprocessor implements CollisionPreprocessor {
         DamageProcessor.processHit(shell, battle);
         battle.getModel().getUpdates().removeMissile(missile.getId());
         StatisticsProcessor.increaseDestroyedMissiles(shell.getModel().getUserId(), battle.getModel());
+        return false;
+    }
+
+    private boolean processBox(ShellCalculations shell, Collision collision, BattleCalculations battle) {
+        if (!ShellType.SGN.equals(shell.getModel().getSpecs().getType())) {
+            collision.setHit(true);
+            var box = (BoxCalculations) collision.getPair().second();
+            DamageProcessor.processHit(shell, battle);
+            battle.getModel().getUpdates().removeBox(box.getId());
+        }
         return false;
     }
 

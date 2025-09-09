@@ -76,6 +76,17 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
                     battleModel.removeMissileById(id);
                 });
             }
+            var removedBoxIds = battleModel.getUpdates().getRemoved().getBoxIds();
+            if (removedBoxIds != null) {
+                removedBoxIds.forEach(id -> {
+                    var boxModel = battleModel.getBoxes().get(id);
+                    if (boxModel != null) {
+                        ExplosionInitializer.init(boxModel.getState().getPosition().getCenter(),
+                                boxModel.getPreCalc().getMaxRadius(), battleModel);
+                    }
+                    battleModel.removeBoxById(id);
+                });
+            }
             var removedDroneIds = battleModel.getUpdates().getRemoved().getDroneIds();
             if (removedDroneIds != null) {
                 removedDroneIds.forEach(id -> {

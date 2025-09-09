@@ -51,14 +51,22 @@ public class CollisionUtils {
             }
         }
         if (vehiclePart instanceof Trapeze trapeze) {
-            var polygon = new Polygon(trapeze);
-            for (var side : polygon.sides()) {
-                var intersectionPoint = GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, side);
-                if (intersectionPoint != null) {
-                    var contact = Contact.withUncheckedDepthOf(0.0,
-                            side.normal(), intersectionPoint);
-                    return Collision.withVehicle(calculations, vehicle, contact);
-                }
+            var contact = findContact(trapeze, projectileTrace);
+            if (contact != null) {
+                return Collision.withVehicle(calculations, vehicle, contact);
+            }
+        }
+        return null;
+    }
+
+    public static Collision detectWithBox(Calculations<?> calculations, Position position, Position nextPosition,
+                                          BoxCalculations box) {
+        var projectileTrace = new Segment(position, nextPosition);
+        var bodyPart = BodyPart.of(box.getGeometryNextPosition(), box.getModel().getSpecs().getShape());
+        if (bodyPart instanceof Trapeze trapeze) {
+            var contact = findContact(trapeze, projectileTrace);
+            if (contact != null) {
+                return Collision.withBox(calculations, box, contact);
             }
         }
         return null;
@@ -123,6 +131,18 @@ public class CollisionUtils {
             var contact = Contact.withUncheckedDepthOf(0.0,
                     position.vectorTo(projection).normalized(), leftEngineIntersectionPoint);
             return Collision.withDrone(calculations, drone, contact);
+        }
+        return null;
+    }
+
+    private static Contact findContact(Trapeze trapeze, Segment projectileTrace) {
+        var polygon = new Polygon(trapeze);
+        for (var side : polygon.sides()) {
+            var intersectionPoint = GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, side);
+            if (intersectionPoint != null) {
+                return Contact.withUncheckedDepthOf(0.0,
+                        side.normal(), intersectionPoint);
+            }
         }
         return null;
     }
