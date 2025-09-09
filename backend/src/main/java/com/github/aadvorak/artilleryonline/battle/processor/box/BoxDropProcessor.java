@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.processor.box;
 
 import com.github.aadvorak.artilleryonline.battle.Battle;
+import com.github.aadvorak.artilleryonline.battle.BattleType;
 import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.config.BoxConfig;
@@ -27,7 +28,8 @@ public class BoxDropProcessor {
     );
 
     public static void drop(Battle battle) {
-        if (battle.getModel().getBoxes().size() >= MAX_BOXES
+        if (BattleType.COLLIDER.equals(battle.getType())
+                || battle.getModel().getBoxes().size() >= MAX_BOXES
                 || battle.getAbsoluteTime() < battle.getBoxDropTime() + DROP_DELAY) {
             return;
         }
