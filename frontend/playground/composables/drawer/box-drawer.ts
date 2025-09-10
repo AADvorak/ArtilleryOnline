@@ -4,7 +4,7 @@ import {useBattleStore} from '~/stores/battle'
 import type {BoxModel} from "~/playground/data/model";
 import {ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
 import {BattleUtils} from "~/playground/utils/battle-utils";
-import type {BodyPosition} from "~/playground/data/common";
+import {type BodyPosition, BoxType, type Position} from "~/playground/data/common";
 
 export function useBoxDrawer(
   drawerBase: DrawerBase,
@@ -21,35 +21,46 @@ export function useBoxDrawer(
 
   function drawBox(box: BoxModel) {
     if (ctx.value) {
-      ctx.value.fillStyle = box.config.color || 'rgb(256 256 256)'
-      ctx.value.lineWidth = 1
+      const color = box.config.color || 'rgb(256 256 256)'
       if (box.specs.shape.name === ShapeNames.TRAPEZE) {
-        drawTrapezeBox(box.state.position, box.specs.shape as TrapezeShape)
+        const trapeze = box.specs.shape as TrapezeShape
+        drawerBase.drawTrapeze(ctx.value, getBottomCenter(box), trapeze, 'rgb(256 256 256)')
+        if (box.specs.type === BoxType.HP) {
+          drawCross(box.state.position, trapeze, color)
+        }
       }
     }
   }
 
-  function drawTrapezeBox(position: BodyPosition, shape: TrapezeShape) {
+  function getBottomCenter(box: BoxModel) {
+    const position = box.state.position
+    const comShift = box.preCalc.centerOfMassShift
+    const bcPosition = BattleUtils.shiftedPosition(position, - comShift.distance, position.angle + comShift.angle)
+    return {
+      x: bcPosition.x,
+      y: bcPosition.y,
+      angle: position.angle
+    }
+  }
+
+  function drawCross(position: BodyPosition, shape: TrapezeShape, color: string) {
     const angle = position.angle
-    const bottomCenter = BattleUtils.shiftedPosition(position, shape.height / 2, angle - Math.PI / 2)
-    const topCenter = BattleUtils.shiftedPosition(position, shape.height / 2, angle + Math.PI / 2)
-
-    const bottomRight = drawerBase.transformPosition(
-        BattleUtils.shiftedPosition(bottomCenter, shape.bottomRadius, angle))
-    const bottomLeft = drawerBase.transformPosition(
-        BattleUtils.shiftedPosition(bottomCenter, -shape.bottomRadius, angle))
-    const topRight = drawerBase.transformPosition(
-        BattleUtils.shiftedPosition(topCenter, shape.topRadius, angle))
-    const topLeft = drawerBase.transformPosition(
-        BattleUtils.shiftedPosition(topCenter, -shape.topRadius, angle))
-
-    ctx.value!.beginPath()
-    ctx.value!.moveTo(bottomLeft.x, bottomLeft.y)
-    ctx.value!.lineTo(bottomRight.x, bottomRight.y)
-    ctx.value!.lineTo(topRight.x, topRight.y)
-    ctx.value!.lineTo(topLeft.x, topLeft.y)
-    ctx.value!.fill()
-    ctx.value!.closePath()
+    const length = shape.height / 4
+    const polygon: Position[] = []
+    const previous = () => polygon[polygon.length - 1]
+    polygon.push(BattleUtils.shiftedPosition(position, Math.sqrt(2) * length / 2, angle - 3 * Math.PI / 4))
+    polygon.push(BattleUtils.shiftedPosition(previous(), length, angle - Math.PI / 2))
+    polygon.push(BattleUtils.shiftedPosition(previous(), length, angle))
+    polygon.push(BattleUtils.shiftedPosition(previous(), length, angle + Math.PI / 2))
+    polygon.push(BattleUtils.shiftedPosition(previous(), length, angle))
+    polygon.push(BattleUtils.shiftedPosition(previous(), length, angle + Math.PI / 2))
+    polygon.push(BattleUtils.shiftedPosition(previous(), length, angle - Math.PI))
+    polygon.push(BattleUtils.shiftedPosition(previous(), length, angle + Math.PI / 2))
+    polygon.push(BattleUtils.shiftedPosition(previous(), length, angle - Math.PI))
+    polygon.push(BattleUtils.shiftedPosition(previous(), length, angle - Math.PI / 2))
+    polygon.push(BattleUtils.shiftedPosition(previous(), length, angle - Math.PI))
+    polygon.push(BattleUtils.shiftedPosition(previous(), length, angle - Math.PI / 2))
+    drawerBase.drawPolygon(ctx.value, polygon, color)
   }
 
   return { draw }

@@ -6,7 +6,6 @@ import type {VehicleModel} from "~/playground/data/model";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
 import {type HalfCircleShape, ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
-import {BattleUtils} from "~/playground/utils/battle-utils";
 
 export function useVehicleDrawer(
     drawerBase: DrawerBase,
@@ -71,25 +70,13 @@ export function useVehicleDrawer(
 
   function drawTrapezeTurret(vehicleModel: VehicleModel, turretShape: TrapezeShape) {
     const angle = vehicleModel.state.position.angle
-    const bottomCenter = VehicleUtils.getGeometryPosition(vehicleModel)
-    const topCenter = BattleUtils.shiftedPosition(bottomCenter, turretShape.height, angle + Math.PI / 2)
-
-    const bottomRight = drawerBase.transformPosition(
-        BattleUtils.shiftedPosition(bottomCenter, turretShape.bottomRadius, angle))
-    const bottomLeft = drawerBase.transformPosition(
-        BattleUtils.shiftedPosition(bottomCenter, -turretShape.bottomRadius, angle))
-    const topRight = drawerBase.transformPosition(
-        BattleUtils.shiftedPosition(topCenter, turretShape.topRadius, angle))
-    const topLeft = drawerBase.transformPosition(
-        BattleUtils.shiftedPosition(topCenter, -turretShape.topRadius, angle))
-
-    ctx.value!.beginPath()
-    ctx.value!.moveTo(bottomLeft.x, bottomLeft.y)
-    ctx.value!.lineTo(bottomRight.x, bottomRight.y)
-    ctx.value!.lineTo(topRight.x, topRight.y)
-    ctx.value!.lineTo(topLeft.x, topLeft.y)
-    ctx.value!.fill()
-    ctx.value!.closePath()
+    const bcPosition = VehicleUtils.getGeometryPosition(vehicleModel)
+    const bottomCenter = {
+      x: bcPosition.x,
+      y: bcPosition.y,
+      angle
+    }
+    drawerBase.drawTrapeze(ctx.value, bottomCenter, turretShape)
   }
 
   function drawWheels(vehicleModel: VehicleModel, wheelRadius: number) {
