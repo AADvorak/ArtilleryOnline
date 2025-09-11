@@ -28,6 +28,7 @@ public class BattleStepProcessorBase implements BattleStepProcessor {
         if (battle.getTime() >= battleStage.getMaxTime()) {
             if (BattleStage.WAITING.equals(battleStage)) {
                 battle.setStageAndResetTime(BattleStage.ACTIVE);
+                battle.setBoxDropTime(battle.getAbsoluteTime());
             } else if (BattleStage.ACTIVE.equals(battleStage)) {
                 battle.setStageAndResetTime(BattleStage.FINISHED);
             }

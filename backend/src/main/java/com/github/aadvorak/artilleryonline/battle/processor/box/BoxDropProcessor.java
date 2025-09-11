@@ -15,8 +15,8 @@ import java.util.List;
 
 public class BoxDropProcessor {
 
-    private static final long DROP_DELAY = 1000;
-    private static final int MAX_BOXES = 20;
+    private static final long DROP_DELAY = 10000;
+    private static final int MAX_BOXES = 2;
     private static final List<String> COLORS = List.of(
             "#FF0000",  // Red
             "#FF7F00",  // Orange
@@ -37,7 +37,8 @@ public class BoxDropProcessor {
         var specs = BoxSpecsPreset.values()[BattleUtils.generateRandom(0, BoxSpecsPreset.values().length)].getSpecs();
         var preCalc = new BoxPreCalc(specs);
         var config = new BoxConfig()
-                .setColor(COLORS.get(BattleUtils.generateRandom(0, COLORS.size())));;
+                .setColor(COLORS.get(BattleUtils.generateRandom(0, COLORS.size())))
+                .setAmount(BattleUtils.generateRandom(10.0, 30.0));
         var radius = preCalc.getMaxRadius();
         var x = BattleUtils.generateRandom(radius, BattleUtils.getRoomWidth(roomSpecs) - radius);
         var y = 1.1 * BattleUtils.getRoomHeight(roomSpecs);

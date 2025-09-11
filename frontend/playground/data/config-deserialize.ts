@@ -39,7 +39,9 @@ export function deserializeDroneConfig(input: DeserializerInput): DroneConfig {
 
 export function deserializeBoxConfig(input: DeserializerInput): BoxConfig {
   const color = DeserializerBase.readNullable(input, DeserializerBase.readString)
+  const amount = DeserializerBase.readDouble(input)
   return {
-    color
+    color,
+    amount
   }
 }

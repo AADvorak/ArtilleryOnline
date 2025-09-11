@@ -13,8 +13,11 @@ public class BoxConfig implements Config, CompactSerializable {
 
     private String color;
 
+    private double amount;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeNullable(color, stream::writeString);
+        stream.writeDouble(amount);
     }
 }

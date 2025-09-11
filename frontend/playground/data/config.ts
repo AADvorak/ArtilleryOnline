@@ -27,4 +27,5 @@ export interface ParticleConfig {
 
 export interface BoxConfig {
   color?: string
+  amount: number
 }
