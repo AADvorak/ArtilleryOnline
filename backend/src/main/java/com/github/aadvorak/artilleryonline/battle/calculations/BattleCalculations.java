@@ -56,14 +56,50 @@ public class BattleCalculations {
                 .collect(Collectors.toSet());
     }
 
+    public Set<BoxCalculations> getBoxes() {
+        if (model.getUpdates().getRemoved() == null || model.getUpdates().getRemoved().getBoxIds() == null) {
+            return boxes;
+        }
+        return boxes.stream()
+                .filter(box -> !model.getUpdates().getRemoved().getBoxIds().contains(box.getId()))
+                .collect(Collectors.toSet());
+    }
+
+    public Set<DroneCalculations> getDrones() {
+        if (model.getUpdates().getRemoved() == null || model.getUpdates().getRemoved().getDroneIds() == null) {
+            return drones;
+        }
+        return drones.stream()
+                .filter(drone -> !model.getUpdates().getRemoved().getDroneIds().contains(drone.getId()))
+                .collect(Collectors.toSet());
+    }
+
+    public Set<ShellCalculations> getShells() {
+        if (model.getUpdates().getRemoved() == null || model.getUpdates().getRemoved().getShellIds() == null) {
+            return shells;
+        }
+        return shells.stream()
+                .filter(shell -> !model.getUpdates().getRemoved().getShellIds().contains(shell.getId()))
+                .collect(Collectors.toSet());
+    }
+
+    public Set<MissileCalculations> getMissiles() {
+        if (model.getUpdates().getRemoved() == null || model.getUpdates().getRemoved().getMissileIds() == null) {
+            return missiles;
+        }
+        return missiles.stream()
+                .filter(missile -> !model.getUpdates().getRemoved().getMissileIds().contains(missile.getId()))
+                .collect(Collectors.toSet());
+    }
+
     public Set<? extends Calculations<?>> getMovingObjects() {
         if (movingObjects == null) {
             movingObjects = new HashSet<>();
             movingObjects.addAll(vehicles);
-            movingObjects.addAll(drones);
-            movingObjects.addAll(shells);
-            movingObjects.addAll(missiles);
-            movingObjects.addAll(boxes);
+            movingObjects.addAll(getDrones());
+            movingObjects.addAll(getShells());
+            movingObjects.addAll(getMissiles());
+            movingObjects.addAll(getBoxes());
         }
         return movingObjects;
     }

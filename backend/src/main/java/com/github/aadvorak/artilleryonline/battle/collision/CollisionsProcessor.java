@@ -41,6 +41,9 @@ public class CollisionsProcessor {
             if (iterationNumber - 1 >= additionalIterationsNumber) {
                 checkCollisionsResolved(battle);
             } else {
+                if (battle.getModel().getUpdates().getRemoved() != null) {
+                    battle.setMovingObjects(null);
+                }
                 process(battle, iterationNumber + 1);
             }
         }
