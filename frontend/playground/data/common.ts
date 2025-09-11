@@ -34,13 +34,15 @@ export enum ShellHitType {
   GROUND = 'GROUND',
   VEHICLE_HULL = 'VEHICLE_HULL',
   VEHICLE_TRACK = 'VEHICLE_TRACK',
-  DRONE = 'DRONE'
+  DRONE = 'DRONE',
+  BOX = 'BOX',
 }
 
 export enum CollideObjectType {
   WALL = 'WALL',
   GROUND = 'GROUND',
-  VEHICLE = 'VEHICLE'
+  VEHICLE = 'VEHICLE',
+  BOX = 'BOX'
 }
 
 export enum BoxType {
@@ -49,7 +51,7 @@ export enum BoxType {
 
 export interface CollideObject {
   type: CollideObjectType
-  vehicleId?: number
+  id?: number
 }
 
 export interface ApplicationSettings {

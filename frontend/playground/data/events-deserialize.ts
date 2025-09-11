@@ -5,7 +5,7 @@ import type {
   RicochetEvent,
   ShellHitEvent,
   ShellHitEventObject,
-  VehicleCollideEvent
+  CollideEvent
 } from "~/playground/data/events";
 import type {DeserializerInput} from "~/deserialization/deserializer-input";
 import {DeserializerBase} from "~/deserialization/deserializer-base";
@@ -30,20 +30,22 @@ export function deserializeShellHitEvent(input: DeserializerInput): ShellHitEven
 }
 
 export function deserializeCollideObject(input: DeserializerInput): CollideObject {
-  const vehicleId = DeserializerBase.readNullable(input, DeserializerBase.readInt)
+  const id = DeserializerBase.readNullable(input, DeserializerBase.readInt)
   const type = DeserializerBase.readString(input) as CollideObjectType
   return {
-    vehicleId,
+    id,
     type
   }
 }
 
-export function deserializeVehicleCollideEvent(input: DeserializerInput): VehicleCollideEvent {
+export function deserializeVehicleCollideEvent(input: DeserializerInput): CollideEvent {
   const object = deserializeCollideObject(input)
-  const vehicleId = DeserializerBase.readInt(input)
+  const id = DeserializerBase.readInt(input)
+  const type = DeserializerBase.readString(input) as CollideObjectType
   return {
     object,
-    vehicleId
+    id,
+    type
   }
 }
 

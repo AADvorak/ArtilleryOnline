@@ -1,9 +1,10 @@
 import type {Battle, BattleUpdate} from "~/playground/data/battle";
 import type {Player} from "~/playground/audio/player";
-import {CollideObjectType, MovingDirection, ShellHitType, ShellType} from "~/playground/data/common";
+import {type BodyPosition, CollideObjectType, MovingDirection, ShellHitType, ShellType} from "~/playground/data/common";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
 import type {
+  BattleModel,
   DroneModel,
   MissileModel,
   ShellModel,
@@ -14,13 +15,7 @@ import type {
 import {useSoundsPlayerBase} from "~/playground/composables/sound/sounds-player-base";
 import {useUserStore} from "~/stores/user";
 import type {VehicleStates} from "~/playground/data/state";
-import type {
-  BomberFlyEvent,
-  RepairEvent,
-  RicochetEvent,
-  ShellHitEvent,
-  VehicleCollideEvent
-} from "~/playground/data/events";
+import type {BomberFlyEvent, CollideEvent, RepairEvent, RicochetEvent, ShellHitEvent} from "~/playground/data/events";
 
 export function useEventSoundsPlayer(player: Player) {
   const soundsPlayerBase = useSoundsPlayerBase()
@@ -35,7 +30,7 @@ export function useEventSoundsPlayer(player: Player) {
         battleUpdate.events.hits.forEach(hit => playHit(hit, battle.model.shells))
       }
       if (battleUpdate.events.collides) {
-        battleUpdate.events.collides.forEach(collide => playCollide(collide, battle.model.vehicles))
+        battleUpdate.events.collides.forEach(collide => playCollide(collide, battle.model))
       }
       if (battleUpdate.events.ricochets) {
         battleUpdate.events.ricochets.forEach(ricochet => playRicochet(ricochet, battle.model.shells))
@@ -121,13 +116,25 @@ export function useEventSoundsPlayer(player: Player) {
     play('vehicle-repair', pan, gain)
   }
 
-  function playCollide(collide: VehicleCollideEvent, vehicleModels: VehicleModels) {
-    const vehicle = Object.values(vehicleModels)
-        .filter(vehicle => vehicle.id === collide.vehicleId)[0]
-    const pan = soundsPlayerBase.calculatePan(vehicle.state.position.x)
-    const gain = soundsPlayerBase.calculateGain(vehicle.state.position)
-    const fileName = getCollideSoundName(collide.object.type)
-    fileName && play(fileName, pan, gain)
+  function playCollide(collide: CollideEvent, battleModel: BattleModel) {
+    const position = getCollidePosition(collide, battleModel)
+    if (position) {
+      const pan = soundsPlayerBase.calculatePan(position.x)
+      const gain = soundsPlayerBase.calculateGain(position)
+      const fileName = getCollideSoundName(collide.type === CollideObjectType.BOX
+          ? collide.type : collide.object.type)
+      fileName && play(fileName, pan, gain)
+    }
+  }
+
+  function getCollidePosition(collide: CollideEvent, battleModel: BattleModel): BodyPosition | undefined {
+    if (collide.type === CollideObjectType.VEHICLE) {
+      return (Object.values(battleModel.vehicles)
+          .filter(vehicle => vehicle.id === collide.id)[0]).state.position
+    } else if (collide.type === CollideObjectType.BOX) {
+      return (Object.values(battleModel.boxes)
+          .filter(box => box.id === collide.id)[0]).state.position
+    }
   }
 
   function playTracksBroken(vehicleStates: VehicleStates, vehicleModels: VehicleModels) {
@@ -215,6 +222,8 @@ export function useEventSoundsPlayer(player: Player) {
         }
       } else if (hitType === ShellHitType.DRONE) {
         return 'ap-hit-drone-' + (Math.ceil(Math.random() * 4))
+      } else if (hitType === ShellHitType.BOX) {
+        return 'ap-hit-box-1'
       }
     }
   }
@@ -230,6 +239,8 @@ export function useEventSoundsPlayer(player: Player) {
       return 'collide-wall'
     } else if (type === CollideObjectType.VEHICLE) {
       return 'collide-vehicle-' + (Math.ceil(Math.random() * 6))
+    } else if (type === CollideObjectType.BOX) {
+      return 'collide-box-' + (Math.ceil(Math.random() * 2))
     }
   }
 

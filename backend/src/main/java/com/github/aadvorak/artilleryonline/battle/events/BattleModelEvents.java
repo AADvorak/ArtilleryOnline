@@ -15,7 +15,7 @@ public class BattleModelEvents implements CompactSerializable {
 
     private List<ShellHitEvent> hits;
 
-    private List<VehicleCollideEvent> collides;
+    private List<CollideEvent> collides;
 
     private List<RicochetEvent> ricochets;
 
@@ -30,11 +30,13 @@ public class BattleModelEvents implements CompactSerializable {
         hits.add(hit);
     }
 
-    public void addCollide(VehicleCollideEvent collide) {
+    public void addCollide(CollideEvent collide) {
         if (collides == null) {
             collides = new ArrayList<>();
         }
-        collides.add(collide);
+        if (collides.stream().noneMatch(collideEvent -> collide.getId() == collideEvent.getId())) {
+            collides.add(collide);
+        }
     }
 
     public void addRicochet(RicochetEvent ricochet) {
