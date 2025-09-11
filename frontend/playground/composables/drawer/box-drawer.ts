@@ -27,6 +27,7 @@ export function useBoxDrawer(
         drawerBase.drawTrapeze(ctx.value, getBottomCenter(box), trapeze, 'rgb(256 256 256)')
         if (box.specs.type === BoxType.HP) {
           drawCross(box.state.position, trapeze, color)
+          drawAmount(box)
         }
       }
     }
@@ -61,6 +62,21 @@ export function useBoxDrawer(
     polygon.push(BattleUtils.shiftedPosition(previous(), length, angle - Math.PI))
     polygon.push(BattleUtils.shiftedPosition(previous(), length, angle - Math.PI / 2))
     drawerBase.drawPolygon(ctx.value, polygon, color)
+  }
+
+  function drawAmount(box: BoxModel) {
+    ctx.value!.beginPath()
+    ctx.value!.fillStyle = 'rgb(256,256,256)'
+    ctx.value!.font = '12px arial'
+    ctx.value!.lineWidth = 1
+    const amountWidth = 1.5 * box.preCalc.maxRadius
+    const amountPosition = drawerBase.transformPosition({
+      x: box.state.position.x - amountWidth / 2,
+      y: box.state.position.y + amountWidth / 2 + 0.1
+    })
+    ctx.value!.fillText(box.config.amount.toFixed(0) + 'HP', amountPosition.x, amountPosition.y,
+        drawerBase.scale(amountWidth))
+    ctx.value!.closePath()
   }
 
   return { draw }
