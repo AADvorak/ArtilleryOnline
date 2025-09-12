@@ -21,6 +21,9 @@ public class BoxModel
     @JsonIgnore
     private final TimeoutUpdate update = new TimeoutUpdate();
 
+    @JsonIgnore
+    private long lastSoundTime;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(id);

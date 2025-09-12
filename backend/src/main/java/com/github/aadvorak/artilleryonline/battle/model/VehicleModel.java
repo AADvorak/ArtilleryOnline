@@ -27,6 +27,9 @@ public class VehicleModel
     @JsonIgnore
     private Long turnedOverTime;
 
+    @JsonIgnore
+    private long lastSoundTime;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(id);
