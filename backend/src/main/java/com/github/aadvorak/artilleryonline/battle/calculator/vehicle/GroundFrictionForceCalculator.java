@@ -27,11 +27,11 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
     public List<BodyForce> calculate(VehicleCalculations calculations, BattleModel battleModel) {
         var groundFrictionCoefficient = battleModel.getRoom().getSpecs().getGroundFrictionCoefficient();
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
-        var contactsNumber = calculations.getAllGroundContacts().size();
+        var contactsNumber = calculations.getGroundContacts().size();
         var forces = new ArrayList<BodyForce>();
         addWheelFriction(forces, calculations.getRightWheel(), groundFrictionCoefficient, gravityAcceleration, contactsNumber);
         addWheelFriction(forces, calculations.getLeftWheel(), groundFrictionCoefficient, gravityAcceleration, contactsNumber);
-        addHullFriction(forces, calculations, groundFrictionCoefficient, gravityAcceleration, contactsNumber);
+        addTurretFriction(forces, calculations, groundFrictionCoefficient, gravityAcceleration, contactsNumber);
         return forces;
     }
 
@@ -53,14 +53,14 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
                 FORCE_DESCRIPTION + " Wheel"));
     }
 
-    private void addHullFriction(List<BodyForce> forces, VehicleCalculations calculations,
-                                 double groundFrictionCoefficient, double gravityAcceleration,
-                                 int contactsNumber) {
-        if (calculations.getGroundContacts() == null) {
+    private void addTurretFriction(List<BodyForce> forces, VehicleCalculations calculations,
+                                   double groundFrictionCoefficient, double gravityAcceleration,
+                                   int contactsNumber) {
+        if (calculations.getTurretGroundContacts() == null) {
             return;
         }
         var forceMultiplier = groundFrictionCoefficient * gravityAcceleration * calculations.getMass() / contactsNumber;
-        calculations.getGroundContacts().forEach(contact -> {
+        calculations.getTurretGroundContacts().forEach(contact -> {
             var tangential = Vector.tangential(contact.angle());
             var movingVelocity = calculations.getModel().getState().getVelocity().getMovingVelocity()
                     .projectionOnto(tangential);

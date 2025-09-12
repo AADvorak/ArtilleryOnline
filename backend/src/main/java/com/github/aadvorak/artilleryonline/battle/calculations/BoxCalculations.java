@@ -2,7 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.calculator.BodyAccelerationCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculator.BodyVelocityCalculator;
-import com.github.aadvorak.artilleryonline.battle.calculator.box.GravityForceCalculator;
+import com.github.aadvorak.artilleryonline.battle.calculator.common.GravityForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.common.lines.BodyPart;
 import com.github.aadvorak.artilleryonline.battle.config.BoxConfig;
@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -27,15 +28,13 @@ import java.util.Set;
 public class BoxCalculations extends CalculationsBase
         implements BodyCalculations<BoxSpecs, BoxPreCalc, BoxConfig, BoxState, BoxModel> {
 
-    private static final List<
-            ForceCalculator<BoxSpecs, BoxPreCalc, BoxConfig, BoxState, BoxModel, BoxCalculations>
-            > forceCalculators = List.of(
+    private static final List<CommonForceCalculator> commonForceCalculators = List.of(
             new GravityForceCalculator()
     );
 
     private static final BodyAccelerationCalculator<
             BoxSpecs, BoxPreCalc, BoxConfig, BoxState, BoxModel, BoxCalculations
-            > accelerationCalculator = new BodyAccelerationCalculator<>(forceCalculators);
+            > accelerationCalculator = new BodyAccelerationCalculator<>(commonForceCalculators, new ArrayList<>());
 
     private static final BodyVelocityCalculator<
             BoxSpecs, BoxPreCalc, BoxConfig, BoxState, BoxModel, BoxCalculations

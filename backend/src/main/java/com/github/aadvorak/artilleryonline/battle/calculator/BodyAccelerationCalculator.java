@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.calculator;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BodyCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.BodyForce;
+import com.github.aadvorak.artilleryonline.battle.calculations.CommonForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculations.ForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculator.vehicle.JetForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.BodyAcceleration;
@@ -33,11 +34,15 @@ public class BodyAccelerationCalculator<
             JetForceCalculator.FORCE_DESCRIPTION
     );
 
+    private final List<CommonForceCalculator> commonForceCalculators;
+
     private final List<ForceCalculator<S, P, Cf, St, M, C>> forceCalculators;
 
     public BodyAcceleration calculate(C calculations, BattleModel battleModel) {
         List<BodyForce> forces = new ArrayList<>();
         List<BodyAcceleration> accelerations = new ArrayList<>();
+        commonForceCalculators.forEach(forceCalculator ->
+                forces.addAll(forceCalculator.calculate(calculations, battleModel)));
         forceCalculators.forEach(forceCalculator ->
                 forces.addAll(forceCalculator.calculate(calculations, battleModel)));
         extractMovingFromRotating(forces);

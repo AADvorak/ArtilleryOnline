@@ -1,10 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.calculator.DroneAccelerationCalculator;
-import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
-import com.github.aadvorak.artilleryonline.battle.common.Position;
-import com.github.aadvorak.artilleryonline.battle.common.VectorProjections;
-import com.github.aadvorak.artilleryonline.battle.common.Velocity;
+import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.config.DroneConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
@@ -16,6 +13,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -79,6 +78,11 @@ public class DroneCalculations extends CalculationsBase
         var nextPosition = next.getPosition();
         nextPosition.setX(nextPosition.getX() + move.getX());
         nextPosition.setY(nextPosition.getY() + move.getY());
+    }
+
+    @Override
+    public Set<Contact> getGroundContacts() {
+        return Set.of();
     }
 
     @Override

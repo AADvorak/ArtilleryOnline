@@ -1,7 +1,7 @@
 package com.github.aadvorak.artilleryonline;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculator.vehicle.GravityForceCalculator;
+import com.github.aadvorak.artilleryonline.battle.calculator.common.GravityForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.Constants;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ public class GravityForceCalculatorTest {
         var gravityForces = gravityForceCalculator.calculate(vehicleCalculations, battleModel);
         assertAll(
                 () -> assertEquals(0, gravityForces.size()),
-                () -> assertTrue(vehicleCalculations.getAllGroundContacts().size() > 2)
+                () -> assertTrue(vehicleCalculations.getGroundContacts().size() > 2)
         );
     }
 
@@ -44,7 +44,7 @@ public class GravityForceCalculatorTest {
         var gravityForces = gravityForceCalculator.calculate(vehicleCalculations, battleModel);
         assertAll(
                 () -> assertEquals(0, gravityForces.size()),
-                () -> assertEquals(2, vehicleCalculations.getAllGroundContacts().size())
+                () -> assertEquals(2, vehicleCalculations.getGroundContacts().size())
         );
     }
 
@@ -70,7 +70,7 @@ public class GravityForceCalculatorTest {
                 () -> assertEquals(expectedY, gravityForce.moving().getY(), SMALL_DELTA),
                 () -> assertNull(gravityForce.rotating()),
                 () -> assertNull(gravityForce.radiusVector()),
-                () -> assertEquals(0, vehicleCalculations.getAllGroundContacts().size())
+                () -> assertEquals(0, vehicleCalculations.getGroundContacts().size())
         );
     }
 
@@ -97,7 +97,7 @@ public class GravityForceCalculatorTest {
                 () -> assertEquals(expectedY, gravityForce.moving().getY(), SMALL_DELTA),
                 () -> assertNull(gravityForce.rotating()),
                 () -> assertNull(gravityForce.radiusVector()),
-                () -> assertEquals(1, vehicleCalculations.getAllGroundContacts().size())
+                () -> assertEquals(1, vehicleCalculations.getGroundContacts().size())
         );
     }
 }

@@ -151,6 +151,11 @@ public class WheelCalculations
     }
 
     @Override
+    public Set<Contact> getGroundContacts() {
+        return Set.of(groundContact);
+    }
+
+    @Override
     public void calculateAllGroundContacts(RoomModel roomModel) {
 
     }

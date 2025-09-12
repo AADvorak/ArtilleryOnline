@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
+import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.config.Config;
 import com.github.aadvorak.artilleryonline.battle.model.BodyModel;
@@ -9,6 +10,8 @@ import com.github.aadvorak.artilleryonline.battle.precalc.BodyPreCalc;
 import com.github.aadvorak.artilleryonline.battle.specs.Specs;
 import com.github.aadvorak.artilleryonline.battle.state.BodyState;
 
+import java.util.Set;
+
 public interface BodyCalculations<
         S extends Specs,
         P extends BodyPreCalc,
@@ -16,6 +19,8 @@ public interface BodyCalculations<
         St extends BodyState,
         M extends BodyModel<S, P, C, St>
         > extends Calculations<M> {
+
+    Set<Contact> getGroundContacts();
 
     void calculateAllGroundContacts(RoomModel roomModel);
 

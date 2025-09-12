@@ -2,7 +2,11 @@ package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.calculator.BodyAccelerationCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculator.BodyVelocityCalculator;
-import com.github.aadvorak.artilleryonline.battle.calculator.vehicle.*;
+import com.github.aadvorak.artilleryonline.battle.calculator.common.GravityForceCalculator;
+import com.github.aadvorak.artilleryonline.battle.calculator.vehicle.GroundFrictionForceCalculator;
+import com.github.aadvorak.artilleryonline.battle.calculator.vehicle.GroundReactionForceCalculator;
+import com.github.aadvorak.artilleryonline.battle.calculator.vehicle.JetForceCalculator;
+import com.github.aadvorak.artilleryonline.battle.calculator.vehicle.EngineForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.common.lines.BodyPart;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
@@ -26,10 +30,13 @@ import java.util.Set;
 public class VehicleCalculations extends CalculationsBase
         implements BodyCalculations<VehicleSpecs, VehiclePreCalc, VehicleConfig, VehicleState, VehicleModel> {
 
+    private static final List<CommonForceCalculator> commonForceCalculators = List.of(
+            new GravityForceCalculator()
+    );
+
     private static final List<
             ForceCalculator<VehicleSpecs, VehiclePreCalc, VehicleConfig, VehicleState, VehicleModel, VehicleCalculations>
             > forceCalculators = List.of(
-            new GravityForceCalculator(),
             new GroundFrictionForceCalculator(),
             new GroundReactionForceCalculator(),
             new JetForceCalculator(),
@@ -38,7 +45,7 @@ public class VehicleCalculations extends CalculationsBase
 
     private static final BodyAccelerationCalculator<
             VehicleSpecs, VehiclePreCalc, VehicleConfig, VehicleState, VehicleModel, VehicleCalculations
-            > accelerationCalculator = new BodyAccelerationCalculator<>(forceCalculators);
+            > accelerationCalculator = new BodyAccelerationCalculator<>(commonForceCalculators, forceCalculators);
 
     private static final BodyVelocityCalculator<
                 VehicleSpecs, VehiclePreCalc, VehicleConfig, VehicleState, VehicleModel, VehicleCalculations
@@ -111,7 +118,7 @@ public class VehicleCalculations extends CalculationsBase
         leftWheel.calculateNextPosition();
     }
 
-    public Set<Contact> getAllGroundContacts() {
+    public Set<Contact> getGroundContacts() {
         var allGroundContacts = new HashSet<>(groundContacts);
         if (rightWheel.getGroundContact() != null) {
             allGroundContacts.add(rightWheel.getGroundContact());
@@ -120,6 +127,10 @@ public class VehicleCalculations extends CalculationsBase
             allGroundContacts.add(leftWheel.getGroundContact());
         }
         return allGroundContacts;
+    }
+
+    public Set<Contact> getTurretGroundContacts() {
+        return groundContacts;
     }
 
     public void calculateAllGroundContacts(RoomModel roomModel) {

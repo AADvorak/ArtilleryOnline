@@ -1,38 +1,27 @@
-package com.github.aadvorak.artilleryonline.battle.calculator.vehicle;
+package com.github.aadvorak.artilleryonline.battle.calculator.common;
 
+import com.github.aadvorak.artilleryonline.battle.calculations.BodyCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.BodyForce;
-import com.github.aadvorak.artilleryonline.battle.calculations.ForceCalculator;
-import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.CommonForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Force;
-import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
-import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
-import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
-import com.github.aadvorak.artilleryonline.battle.specs.VehicleSpecs;
-import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class GravityForceCalculator implements ForceCalculator<
-        VehicleSpecs,
-        VehiclePreCalc,
-        VehicleConfig,
-        VehicleState,
-        VehicleModel,
-        VehicleCalculations> {
+public class GravityForceCalculator implements CommonForceCalculator {
 
     private static final String FORCE_DESCRIPTION = "Gravity";
 
     @Override
-    public List<BodyForce> calculate(VehicleCalculations calculations, BattleModel battleModel) {
+    public List<BodyForce> calculate(BodyCalculations<?,?,?,?,?> calculations, BattleModel battleModel) {
         var roomGravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
         var mass = calculations.getMass();
         var forces = new ArrayList<BodyForce>();
-        var groundContacts = calculations.getAllGroundContacts();
+        var groundContacts = calculations.getGroundContacts();
         var comX = calculations.getPosition().getX();
         var leftContacts = groundContacts.stream()
                 .filter(contact -> contact.position().getX() < comX)

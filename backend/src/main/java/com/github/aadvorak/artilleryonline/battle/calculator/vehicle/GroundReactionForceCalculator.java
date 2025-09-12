@@ -29,7 +29,7 @@ public class GroundReactionForceCalculator implements ForceCalculator<
         var forces = new ArrayList<BodyForce>();
         addWheelReaction(forces, calculations.getRightWheel(), groundReactionCoefficient, groundMaxDepth);
         addWheelReaction(forces, calculations.getLeftWheel(), groundReactionCoefficient, groundMaxDepth);
-        addHullReaction(forces, calculations, groundReactionCoefficient, groundMaxDepth);
+        addTurretReaction(forces, calculations, groundReactionCoefficient, groundMaxDepth);
         return forces;
     }
 
@@ -50,12 +50,12 @@ public class GroundReactionForceCalculator implements ForceCalculator<
         }
     }
 
-    private void addHullReaction(List<BodyForce> forces, VehicleCalculations calculations,
-                                  double groundReactionCoefficient, double groundMaxDepth) {
-        if (calculations.getGroundContacts() == null) {
+    private void addTurretReaction(List<BodyForce> forces, VehicleCalculations calculations,
+                                   double groundReactionCoefficient, double groundMaxDepth) {
+        if (calculations.getTurretGroundContacts() == null) {
             return;
         }
-        calculations.getGroundContacts().forEach(contact -> {
+        calculations.getTurretGroundContacts().forEach(contact -> {
             var velocityNormalProjectionMagnitude = calculations.getModel().getState()
                     .getVelocityAt(contact.position())
                     .projectionOnto(contact.normal())
