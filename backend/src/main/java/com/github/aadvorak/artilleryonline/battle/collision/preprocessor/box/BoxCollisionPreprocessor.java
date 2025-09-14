@@ -7,6 +7,8 @@ import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.collision.preprocessor.CollisionPreprocessor;
 import com.github.aadvorak.artilleryonline.battle.common.BoxType;
+import com.github.aadvorak.artilleryonline.battle.events.RepairEvent;
+import com.github.aadvorak.artilleryonline.battle.events.RepairEventType;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -40,6 +42,11 @@ public class BoxCollisionPreprocessor implements CollisionPreprocessor {
             hp = Math.min(hp + box.getModel().getConfig().getAmount(), maxHp);
             vehicle.getModel().getState().setHitPoints(hp);
             vehicle.getModel().getUpdate().setUpdated();
+            battle.getModel().getEvents().addRepair(
+                    new RepairEvent()
+                            .setVehicleId(vehicle.getModel().getId())
+                            .setType(RepairEventType.HEAL)
+            );
             return true;
         }
         return false;

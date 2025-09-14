@@ -13,8 +13,11 @@ public class RepairEvent implements CompactSerializable {
 
     private int vehicleId;
 
+    private RepairEventType type;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(vehicleId);
+        stream.writeSerializableValue(type);
     }
 }

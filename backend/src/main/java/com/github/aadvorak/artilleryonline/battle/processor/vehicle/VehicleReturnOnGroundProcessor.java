@@ -4,6 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.BattleType;
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.events.RepairEvent;
+import com.github.aadvorak.artilleryonline.battle.events.RepairEventType;
 import com.github.aadvorak.artilleryonline.battle.processor.AfterStep2Processor;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +37,11 @@ public class VehicleReturnOnGroundProcessor extends VehicleProcessor implements 
                         vehicle.getModel().getState().getPosition().getAngle()
                         + vehicle.getModel().getState().getGunState().getAngle());
                 vehicle.getModel().getUpdate().setUpdated();
-                battle.getModel().getEvents().addRepair(new RepairEvent().setVehicleId(vehicle.getId()));
+                battle.getModel().getEvents().addRepair(
+                        new RepairEvent()
+                                .setVehicleId(vehicle.getId())
+                                .setType(RepairEventType.TURN_ON_WHEELS)
+                );
             }
         } else {
             vehicle.getModel().setTurnedOverTime(null);

@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.events.RepairEvent;
+import com.github.aadvorak.artilleryonline.battle.events.RepairEventType;
 import com.github.aadvorak.artilleryonline.battle.processor.BeforeStep1Processor;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +18,11 @@ public class VehicleTrackProcessor extends VehicleProcessor implements BeforeSte
                 trackState.setBroken(false);
                 trackState.setRepairRemainTime(0.0);
                 vehicle.getModel().getUpdate().setUpdated();
-                battle.getModel().getEvents().addRepair(new RepairEvent().setVehicleId(vehicle.getModel().getId()));
+                battle.getModel().getEvents().addRepair(
+                        new RepairEvent()
+                                .setVehicleId(vehicle.getModel().getId())
+                                .setType(RepairEventType.TRACK)
+                );
             }
         }
     }

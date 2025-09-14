@@ -24,8 +24,15 @@ export interface BomberFlyEvent {
   movingDirection: MovingDirection
 }
 
+export enum RepairEventType {
+  TRACK = 'TRACK',
+  TURN_ON_WHEELS = 'TURN_ON_WHEELS',
+  HEAL = 'HEAL'
+}
+
 export interface RepairEvent {
   vehicleId: number
+  type: RepairEventType
 }
 
 export interface BattleModelEvents {

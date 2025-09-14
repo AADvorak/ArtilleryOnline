@@ -15,7 +15,14 @@ import type {
 import {useSoundsPlayerBase} from "~/playground/composables/sound/sounds-player-base";
 import {useUserStore} from "~/stores/user";
 import type {VehicleStates} from "~/playground/data/state";
-import type {BomberFlyEvent, CollideEvent, RepairEvent, RicochetEvent, ShellHitEvent} from "~/playground/data/events";
+import {
+  type BomberFlyEvent,
+  type CollideEvent,
+  type RepairEvent,
+  RepairEventType,
+  type RicochetEvent,
+  type ShellHitEvent
+} from "~/playground/data/events";
 
 export function useEventSoundsPlayer(player: Player) {
   const soundsPlayerBase = useSoundsPlayerBase()
@@ -113,7 +120,8 @@ export function useEventSoundsPlayer(player: Player) {
         .filter(vehicle => vehicle.id === repair.vehicleId)[0]
     const pan = soundsPlayerBase.calculatePan(vehicle.state.position.x)
     const gain = soundsPlayerBase.calculateGain(vehicle.state.position)
-    play('vehicle-repair', pan, gain)
+    const fileName = repair.type === RepairEventType.HEAL ? 'use-box' : 'vehicle-repair'
+    play(fileName, pan, gain)
   }
 
   function playCollide(collide: CollideEvent, battleModel: BattleModel) {

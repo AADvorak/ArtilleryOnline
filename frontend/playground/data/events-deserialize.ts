@@ -1,11 +1,11 @@
-import type {
-  BattleModelEvents,
-  BomberFlyEvent,
-  RepairEvent,
-  RicochetEvent,
-  ShellHitEvent,
-  ShellHitEventObject,
-  CollideEvent
+import {
+  type BattleModelEvents,
+  type BomberFlyEvent,
+  type RepairEvent,
+  type RicochetEvent,
+  type ShellHitEvent,
+  type ShellHitEventObject,
+  type CollideEvent, RepairEventType
 } from "~/playground/data/events";
 import type {DeserializerInput} from "~/deserialization/deserializer-input";
 import {DeserializerBase} from "~/deserialization/deserializer-base";
@@ -65,8 +65,10 @@ export function deserializeBomberFlyEvent(input: DeserializerInput): BomberFlyEv
 
 export function deserializeRepairEvent(input: DeserializerInput): RepairEvent {
   const vehicleId = DeserializerBase.readInt(input)
+  const type = DeserializerBase.readString(input) as RepairEventType
   return {
-    vehicleId
+    vehicleId,
+    type
   }
 }
 
