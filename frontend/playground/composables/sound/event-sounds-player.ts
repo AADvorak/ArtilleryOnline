@@ -116,12 +116,13 @@ export function useEventSoundsPlayer(player: Player) {
   }
 
   function playRepair(repair: RepairEvent, vehicleModels: VehicleModels) {
-    const vehicle = Object.values(vehicleModels)
-        .filter(vehicle => vehicle.id === repair.vehicleId)[0]
-    const pan = soundsPlayerBase.calculatePan(vehicle.state.position.x)
-    const gain = soundsPlayerBase.calculateGain(vehicle.state.position)
-    const fileName = repair.type === RepairEventType.HEAL ? 'use-box' : 'vehicle-repair'
-    play(fileName, pan, gain)
+    const vehicle = vehicleModels[userStore.user!.nickname]
+    if (vehicle?.id === repair.vehicleId) {
+      const pan = soundsPlayerBase.calculatePan(vehicle.state.position.x)
+      const gain = soundsPlayerBase.calculateGain(vehicle.state.position)
+      const fileName = repair.type === RepairEventType.HEAL ? 'use-box' : 'vehicle-repair'
+      play(fileName, pan, gain)
+    }
   }
 
   function playCollide(collide: CollideEvent, battleModel: BattleModel) {
