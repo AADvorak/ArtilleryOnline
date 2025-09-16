@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.calculator.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
+import com.github.aadvorak.artilleryonline.battle.calculator.utils.ForceCalculatorUtils;
 import com.github.aadvorak.artilleryonline.battle.common.Force;
 import com.github.aadvorak.artilleryonline.battle.common.Vector;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
@@ -60,28 +61,7 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
             return;
         }
         var forceMultiplier = groundFrictionCoefficient * gravityAcceleration * calculations.getMass() / contactsNumber;
-        calculations.getTurretGroundContacts().forEach(contact -> {
-            var tangential = Vector.tangential(contact.angle());
-            var movingVelocity = calculations.getModel().getState().getVelocity().getMovingVelocity()
-                    .projectionOnto(tangential);
-            var rotatingVelocity = calculations.getModel().getState().getRotatingVelocityAt(contact.position())
-                    .projectionOnto(tangential);
-            var movingVelocityMagnitude = movingVelocity.magnitude();
-            var rotatingVelocityMagnitude = rotatingVelocity.magnitude();
-            var contactForceMultiplier = forceMultiplier * Math.cos(contact.angle());
-            if (movingVelocityMagnitude > rotatingVelocityMagnitude || rotatingVelocityMagnitude < 0.05) {
-                var velocity = calculations.getModel().getState().getVelocityAt(contact.position());
-                var movingForce = new Force()
-                        .setX(-velocity.getX() * contactForceMultiplier)
-                        .setY(-velocity.getY() * contactForceMultiplier);
-                forces.add(BodyForce.of(movingForce, contact.position(), calculations.getPosition(),
-                        FORCE_DESCRIPTION + " Hull"));
-            } else {
-                var rotatingForce = new Force()
-                        .setX(-rotatingVelocity.getX() * contactForceMultiplier)
-                        .setY(-rotatingVelocity.getY() * contactForceMultiplier);
-                forces.add(BodyForce.atCOM(rotatingForce, FORCE_DESCRIPTION + " Hull"));
-            }
-        });
+        calculations.getTurretGroundContacts().forEach(contact -> ForceCalculatorUtils.addFriction(forces,
+                calculations, contact, forceMultiplier, FORCE_DESCRIPTION + " Hull"));
     }
 }
