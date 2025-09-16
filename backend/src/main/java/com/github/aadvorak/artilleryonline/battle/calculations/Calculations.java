@@ -29,10 +29,6 @@ public interface Calculations<Model> {
 
     Set<Collision> getCollisions(int iterationNumber);
 
-    boolean isHasCollisions();
-
-    void setHasCollisions(boolean hasCollisions);
-
     void recalculateVelocity(BattleModel battleModel);
 
     void calculateNextPosition(double timeStep);

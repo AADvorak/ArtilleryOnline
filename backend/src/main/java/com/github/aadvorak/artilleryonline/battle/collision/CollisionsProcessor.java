@@ -38,9 +38,7 @@ public class CollisionsProcessor {
         resolveStrongestCollisions(battle);
         if (collisionsExist(battle)) {
             var additionalIterationsNumber = settings.getAdditionalResolveCollisionsIterationsNumber();
-            if (iterationNumber - 1 >= additionalIterationsNumber) {
-                checkCollisionsResolved(battle);
-            } else {
+            if (iterationNumber - 1 < additionalIterationsNumber) {
                 if (battle.getModel().getUpdates().getRemoved() != null) {
                     battle.setMovingObjects(null);
                 }
@@ -70,11 +68,6 @@ public class CollisionsProcessor {
                 if (shouldResolve) {
                     resolver.resolve(collision, battle.getModel());
                 }
-                // todo check this logic
-                object.setHasCollisions(true);
-                if (collision.getPair().second() != null) {
-                    collision.getPair().second().setHasCollisions(true);
-                }
             }
         });
     }
@@ -92,19 +85,6 @@ public class CollisionsProcessor {
             }
         }
         return false;
-    }
-
-    private void checkCollisionsResolved(BattleCalculations battle) {
-        battle.getMovingObjects().forEach(object -> {
-            object.setHasCollisions(false);
-            for (var detector : detectors) {
-                var collisions = detector.detect(object, battle, true);
-                if (!collisions.isEmpty()) {
-                    object.setHasCollisions(true);
-                    break;
-                }
-            }
-        });
     }
 
     private Collision findStrongestCollision(Collection<Collision> collisions) {

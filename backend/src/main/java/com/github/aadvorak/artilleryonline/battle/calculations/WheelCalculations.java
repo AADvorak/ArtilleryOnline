@@ -69,16 +69,6 @@ public class WheelCalculations
     }
 
     @Override
-    public boolean isHasCollisions() {
-        return vehicle.isHasCollisions();
-    }
-
-    @Override
-    public void setHasCollisions(boolean hasCollisions) {
-        vehicle.setHasCollisions(hasCollisions);
-    }
-
-    @Override
     public void recalculateVelocity(BattleModel battleModel) {
         recalculateVelocity();
     }

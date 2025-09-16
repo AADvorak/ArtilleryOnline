@@ -1,8 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,9 +11,6 @@ import java.util.stream.Collectors;
 public abstract class CalculationsBase {
 
     private final Map<Integer, Set<Collision>> collisionMap = new HashMap<>();
-
-    @Getter @Setter
-    private boolean hasCollisions;
 
     public Set<Collision> getLastCollisions() {
         var maxKey = collisionMap.keySet().stream().max(Integer::compareTo).orElse(1);
