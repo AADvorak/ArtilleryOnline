@@ -30,18 +30,12 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
         var contactsNumber = calculations.getGroundContacts().size();
         var forces = new ArrayList<BodyForce>();
-        addTurretFriction(forces, calculations, groundFrictionCoefficient, gravityAcceleration, contactsNumber);
-        return forces;
-    }
-
-    private void addTurretFriction(List<BodyForce> forces, BoxCalculations calculations,
-                                   double groundFrictionCoefficient, double gravityAcceleration,
-                                   int contactsNumber) {
-        if (calculations.getGroundContacts() == null) {
-            return;
+        if (calculations.getGroundContacts() != null) {
+            var forceMultiplier = groundFrictionCoefficient * gravityAcceleration
+                    * calculations.getMass() / contactsNumber;
+            calculations.getGroundContacts().forEach(contact -> ForceCalculatorUtils.addFriction(forces,
+                    calculations, contact, forceMultiplier, FORCE_DESCRIPTION));
         }
-        var forceMultiplier = groundFrictionCoefficient * gravityAcceleration * calculations.getMass() / contactsNumber;
-        calculations.getGroundContacts().forEach(contact -> ForceCalculatorUtils.addFriction(forces,
-                calculations, contact, forceMultiplier, FORCE_DESCRIPTION));
+        return forces;
     }
 }
