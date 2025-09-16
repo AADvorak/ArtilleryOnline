@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.calculations;
 import com.github.aadvorak.artilleryonline.battle.calculator.BodyAccelerationCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculator.BodyVelocityCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculator.box.GroundFrictionForceCalculator;
+import com.github.aadvorak.artilleryonline.battle.calculator.box.GroundReactionForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculator.common.GravityForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.common.lines.BodyPart;
@@ -35,7 +36,8 @@ public class BoxCalculations extends CalculationsBase
     private static final List<
             ForceCalculator<BoxSpecs, BoxPreCalc, BoxConfig, BoxState, BoxModel, BoxCalculations>
             > forceCalculators = List.of(
-            new GroundFrictionForceCalculator()
+            new GroundFrictionForceCalculator(),
+            new GroundReactionForceCalculator()
     );
 
     private static final BodyAccelerationCalculator<

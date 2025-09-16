@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.calculator.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
+import com.github.aadvorak.artilleryonline.battle.calculator.utils.ForceCalculatorUtils;
 import com.github.aadvorak.artilleryonline.battle.common.Force;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
@@ -55,19 +56,7 @@ public class GroundReactionForceCalculator implements ForceCalculator<
         if (calculations.getTurretGroundContacts() == null) {
             return;
         }
-        calculations.getTurretGroundContacts().forEach(contact -> {
-            var velocityNormalProjectionMagnitude = calculations.getModel().getState()
-                    .getVelocityAt(contact.position())
-                    .projectionOnto(contact.normal())
-                    .magnitude();
-            if (velocityNormalProjectionMagnitude > 0) {
-                var depth = Math.min(contact.depth(), groundMaxDepth);
-                var force = Force.of(contact.normal()
-                        .multiply(- velocityNormalProjectionMagnitude * depth * groundReactionCoefficient));
-                forces.add(BodyForce.of(force, contact.position(),
-                        calculations.getModel().getState().getPosition().getCenter(), FORCE_DESCRIPTION));
-            }
-        });
-
+        calculations.getTurretGroundContacts().forEach(contact -> ForceCalculatorUtils.addReaction(forces,
+                calculations, contact, groundMaxDepth, groundReactionCoefficient, FORCE_DESCRIPTION));
     }
 }

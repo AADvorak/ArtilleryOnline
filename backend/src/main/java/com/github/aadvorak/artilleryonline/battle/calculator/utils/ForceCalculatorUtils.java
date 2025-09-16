@@ -35,4 +35,22 @@ public class ForceCalculatorUtils {
             forces.add(BodyForce.atCOM(rotatingForce, forceDescription));
         }
     }
+
+    public static void addReaction(
+            List<BodyForce> forces, BodyCalculations<?,?,?,?,?> calculations,
+            Contact contact, double groundMaxDepth,
+            double groundReactionCoefficient, String forceDescription
+    ) {
+        var velocityNormalProjectionMagnitude = calculations.getModel().getState()
+                .getVelocityAt(contact.position())
+                .projectionOnto(contact.normal())
+                .magnitude();
+        if (velocityNormalProjectionMagnitude > 0) {
+            var depth = Math.min(contact.depth(), groundMaxDepth);
+            var force = Force.of(contact.normal()
+                    .multiply(- velocityNormalProjectionMagnitude * depth * groundReactionCoefficient));
+            forces.add(BodyForce.of(force, contact.position(),
+                    calculations.getModel().getState().getPosition().getCenter(), forceDescription));
+        }
+    }
 }
