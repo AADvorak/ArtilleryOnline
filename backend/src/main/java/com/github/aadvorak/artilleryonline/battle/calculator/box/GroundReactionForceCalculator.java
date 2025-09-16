@@ -4,7 +4,6 @@ import com.github.aadvorak.artilleryonline.battle.calculations.BodyForce;
 import com.github.aadvorak.artilleryonline.battle.calculations.BoxCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.ForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculator.utils.ForceCalculatorUtils;
-import com.github.aadvorak.artilleryonline.battle.common.Force;
 import com.github.aadvorak.artilleryonline.battle.config.BoxConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.BoxModel;
