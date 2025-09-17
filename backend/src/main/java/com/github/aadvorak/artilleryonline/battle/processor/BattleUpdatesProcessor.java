@@ -54,25 +54,25 @@ public class BattleUpdatesProcessor {
         for (var missileModel: battleModel.getMissiles().values()) {
             if (missileModel.getUpdate().setUpdatedByTimeout(battle.getAbsoluteTime())) {
                 setAllUpdatedByTimeout(battle);
-                break;
+                return;
             }
         }
         for (var droneModel: battleModel.getDrones().values()) {
             if (droneModel.getUpdate().setUpdatedByTimeout(battle.getAbsoluteTime())) {
                 setAllUpdatedByTimeout(battle);
-                break;
+                return;
             }
         }
         for (var vehicleModel: battleModel.getVehicles().values()) {
             if (vehicleModel.getUpdate().setUpdatedByTimeout(battle.getAbsoluteTime())) {
                 setAllUpdatedByTimeout(battle);
-                break;
+                return;
             }
         }
         for (var boxModel: battleModel.getBoxes().values()) {
             if (boxModel.getUpdate().setUpdatedByTimeout(battle.getAbsoluteTime())) {
                 setAllUpdatedByTimeout(battle);
-                break;
+                return;
             }
         }
     }
@@ -218,5 +218,6 @@ public class BattleUpdatesProcessor {
         battle.getModel().getShells().values().forEach(shell -> shell.setUpdated(false));
         battle.getModel().getMissiles().values().forEach(missile -> missile.getUpdate().resetUpdated());
         battle.getModel().getDrones().values().forEach(drone -> drone.getUpdate().resetUpdated());
+        battle.getModel().getBoxes().values().forEach(box -> box.getUpdate().resetUpdated());
     }
 }
