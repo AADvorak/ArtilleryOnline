@@ -22,7 +22,7 @@ public class ForceCalculatorUtils {
         var movingVelocityMagnitude = movingVelocity.magnitude();
         var rotatingVelocityMagnitude = rotatingVelocity.magnitude();
         var contactForceMultiplier = forceMultiplier * Math.cos(contact.angle());
-        if (movingVelocityMagnitude > rotatingVelocityMagnitude || rotatingVelocityMagnitude < 0.05) {
+        if (movingVelocityMagnitude > rotatingVelocityMagnitude) {
             var velocity = calculations.getModel().getState().getVelocityAt(contact.position());
             var movingForce = new Force()
                     .setX(-velocity.getX() * contactForceMultiplier)
