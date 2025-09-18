@@ -52,6 +52,12 @@ public class CollisionResolver {
                 if (logging) System.out.printf("Mass = %.3f, recalcMass = %.3f\n", first.getMass(), recalcMass);
                 recalculateBodyVelocity(secondModel.getState().getVelocity(), collision.getContact(),
                         hitData, impulseDelta, -1, false);
+                var kineticEnergyAfter = second.getKineticEnergy();
+                if (kineticEnergyAfter > kineticEnergyBefore) {
+                    var velocityMultiplier = Math.sqrt(kineticEnergyBefore / kineticEnergyAfter);
+                    multiplyBodyVelocity(secondModel.getState().getVelocity(), velocityMultiplier);
+                }
+                if (logging) System.out.printf("after collision resolution energy = %.3f\n", second.getKineticEnergy());
                 if (logging) System.out.print("----------------End hit resolution------------------\n");
             }
             return;
