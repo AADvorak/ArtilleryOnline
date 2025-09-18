@@ -1,5 +1,5 @@
 import type {RoomModel, VehicleModel} from '@/playground/data/model'
-import {JetType, type Position} from '@/playground/data/common'
+import {JetType, MovingDirection, type Position, type Velocity} from '@/playground/data/common'
 import {type VehicleCalculations, type WheelCalculations, WheelSign} from '@/playground/data/calculations'
 import {DefaultColors} from '~/dictionary/default-colors'
 import {useUserStore} from '~/stores/user'
@@ -158,5 +158,28 @@ export const VehicleUtils = {
           roomModel
       )
     }
-  }
+  },
+
+  getWheelVelocityAt(wheelCalculations: WheelCalculations, vehicleModel: VehicleModel, position: Position): Velocity {
+    let angleVelocity = 0.0
+    const movingDirection = vehicleModel.state.movingDirection
+    var angleVelocitySpecs = vehicleModel.specs.wheelAngleVelocity
+    if (MovingDirection.RIGHT === movingDirection) {
+      angleVelocity = - angleVelocitySpecs
+    }
+    if (MovingDirection.LEFT === movingDirection) {
+      angleVelocity = angleVelocitySpecs
+    }
+    const velocityAt = {
+      x: wheelCalculations.velocity!.x,
+      y: wheelCalculations.velocity!.y
+    }
+    if (angleVelocity != 0.0) {
+      const angle = VectorUtils.angleFromTo(wheelCalculations.position!, position)
+      const distance = BattleUtils.distance(wheelCalculations.position!, position)
+      velocityAt.x -= angleVelocity * distance * Math.sin(angle)
+      velocityAt.y += angleVelocity * distance * Math.cos(angle)
+    }
+    return velocityAt
+  },
 }

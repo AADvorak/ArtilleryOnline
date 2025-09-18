@@ -1,9 +1,9 @@
 import type {BodyState} from "~/playground/data/state";
-import {type BodyPosition, MovingDirection, type Position, type Velocity} from "~/playground/data/common";
+import {type BodyPosition, type Position, type Velocity} from "~/playground/data/common";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BattleUtils} from "~/playground/utils/battle-utils";
-import type {BodyCalculations, VehicleCalculations, WheelCalculations} from "~/playground/data/calculations";
-import type {BodyModel, VehicleModel} from "~/playground/data/model";
+import type {BodyCalculations, VehicleCalculations} from "~/playground/data/calculations";
+import type {BodyModel} from "~/playground/data/model";
 
 export const BodyUtils = {
   getVelocityAt(bodyState: BodyState, position: Position): Velocity {
@@ -38,29 +38,6 @@ export const BodyUtils = {
       allContacts.push(vehicleCalculations.rightWheel.groundContact)
     }
     return allContacts
-  },
-
-  getWheelVelocityAt(wheelCalculations: WheelCalculations, vehicleModel: VehicleModel, position: Position): Velocity {
-    let angleVelocity = 0.0
-    const movingDirection = vehicleModel.state.movingDirection
-    var angleVelocitySpecs = vehicleModel.specs.wheelAngleVelocity
-    if (MovingDirection.RIGHT === movingDirection) {
-      angleVelocity = - angleVelocitySpecs
-    }
-    if (MovingDirection.LEFT === movingDirection) {
-      angleVelocity = angleVelocitySpecs
-    }
-    const velocityAt = {
-        x: wheelCalculations.velocity!.x,
-        y: wheelCalculations.velocity!.y
-    }
-    if (angleVelocity != 0.0) {
-      const angle = VectorUtils.angleFromTo(wheelCalculations.position!, position)
-      const distance = BattleUtils.distance(wheelCalculations.position!, position)
-      velocityAt.x -= angleVelocity * distance * Math.sin(angle)
-      velocityAt.y += angleVelocity * distance * Math.cos(angle)
-    }
-    return velocityAt
   },
 
   getGeometryPosition(bodyModel: BodyModel) {
