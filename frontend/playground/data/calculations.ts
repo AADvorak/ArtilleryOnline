@@ -3,6 +3,7 @@ import type {BodyModel, DroneModel, VehicleModel} from "~/playground/data/model"
 
 export interface BodyCalculations {
   model: BodyModel
+  groundContacts?: Set<Contact>
 }
 
 export enum WheelSign {
@@ -22,7 +23,6 @@ export interface VehicleCalculations extends BodyCalculations {
   nextPosition: BodyPosition | undefined
   rightWheel: WheelCalculations
   leftWheel: WheelCalculations
-  groundContacts?: Set<Contact>
 }
 
 export interface DroneCalculations {
