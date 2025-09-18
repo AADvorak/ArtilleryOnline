@@ -4,7 +4,7 @@ import {test} from "@jest/globals";
 import {expect} from "@jest/globals";
 import vehicle from "./vehicle-model-medium.json";
 import room from "./room-model.json"
-import {GravityForceCalculator} from "~/playground/battle/calculator/vehicle/gravity-force-calculator";
+import {GravityForceCalculator} from "~/playground/battle/calculator/common/gravity-force-calculator";
 import {BodyUtils} from "~/playground/utils/body-utils";
 import {Constants} from "~/playground/data/constants";
 import {BattleUtils} from "~/playground/utils/battle-utils";

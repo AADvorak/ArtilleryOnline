@@ -1,15 +1,14 @@
 import type {ForceCalculator} from "~/playground/battle/calculator/force-calculator";
-import type {VehicleCalculations} from "~/playground/data/calculations";
+import type {BodyCalculations} from "~/playground/data/calculations";
 import type {BattleModel} from "~/playground/data/model";
 import {BodyForce} from "~/playground/battle/calculator/body-force";
 import type {Contact} from "~/playground/data/common";
 import {BodyUtils} from "~/playground/utils/body-utils";
-import {Constants} from "~/playground/data/constants";
 
-export class GravityForceCalculator implements ForceCalculator<VehicleCalculations> {
+export class GravityForceCalculator implements ForceCalculator<BodyCalculations> {
   private static readonly FORCE_DESCRIPTION = 'Gravity'
 
-  calculate(calculations: VehicleCalculations, battleModel: BattleModel): BodyForce[] {
+  calculate(calculations: BodyCalculations, battleModel: BattleModel): BodyForce[] {
     const roomGravityAcceleration = battleModel.room.specs.gravityAcceleration
     const mass = calculations.model.preCalc.mass
     const forces: BodyForce[] = []
