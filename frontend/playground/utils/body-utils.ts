@@ -78,4 +78,12 @@ export const BodyUtils = {
       angle: position.angle
     }
   },
+
+  recalculateBodyPosition(bodyModel: BodyModel, timeStepSecs: number) {
+    const velocity = bodyModel.state.velocity
+    const position = bodyModel.state.position
+    position.x += velocity.x * timeStepSecs
+    position.y += velocity.y * timeStepSecs
+    position.angle += velocity.angle * timeStepSecs
+  },
 }

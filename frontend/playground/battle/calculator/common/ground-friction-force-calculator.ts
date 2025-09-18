@@ -1,61 +1,25 @@
 import type {ForceCalculator} from "~/playground/battle/calculator/force-calculator";
-import {type VehicleCalculations, type WheelCalculations} from "~/playground/data/calculations";
-import type {BattleModel, VehicleModel} from "~/playground/data/model";
+import {type BodyCalculations} from "~/playground/data/calculations";
+import type {BattleModel} from "~/playground/data/model";
 import {BodyForce} from "~/playground/battle/calculator/body-force";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BodyUtils} from "~/playground/utils/body-utils";
 
-export class GroundFrictionForceCalculator implements ForceCalculator<VehicleCalculations> {
+export class GroundFrictionForceCalculator implements ForceCalculator<BodyCalculations> {
   private static readonly FORCE_DESCRIPTION = 'Ground Friction'
 
-  calculate(calculations: VehicleCalculations, battleModel: BattleModel): BodyForce[] {
+  calculate(calculations: BodyCalculations, battleModel: BattleModel): BodyForce[] {
     const groundFrictionCoefficient = battleModel.room.specs.groundFrictionCoefficient
     const gravityAcceleration = battleModel.room.specs.gravityAcceleration
     const contactsNumber = BodyUtils.getAllGroundContacts(calculations).length
     const forces: BodyForce[] = []
-
-    this.addWheelFriction(forces, calculations.rightWheel, calculations.model, groundFrictionCoefficient, gravityAcceleration, contactsNumber)
-    this.addWheelFriction(forces, calculations.leftWheel, calculations.model, groundFrictionCoefficient, gravityAcceleration, contactsNumber)
-    this.addHullFriction(forces, calculations, groundFrictionCoefficient, gravityAcceleration, contactsNumber)
-
+    this.addFriction(forces, calculations, groundFrictionCoefficient, gravityAcceleration, contactsNumber)
     return forces
   }
 
-  private addWheelFriction(
+  private addFriction(
       forces: BodyForce[],
-      wheelCalculations: WheelCalculations,
-      vehicleModel: VehicleModel,
-      groundFrictionCoefficient: number,
-      gravityAcceleration: number,
-      contactsNumber: number
-  ): void {
-    const contact = wheelCalculations.groundContact
-    if (!contact) {
-      return
-    }
-    const coefficient = groundFrictionCoefficient * gravityAcceleration
-        * vehicleModel.preCalc.mass * Math.cos(contact.angle) / contactsNumber / 10
-    const velocity = VectorUtils.projectionOfOnto(
-        wheelCalculations.velocity!,
-        VectorUtils.tangential(contact.angle)
-    )
-
-    const force = {
-      x: -velocity.x * coefficient,
-      y: -velocity.y * coefficient
-    }
-
-    forces.push(BodyForce.of(
-        force,
-        wheelCalculations.position!,
-        vehicleModel.state.position,
-        GroundFrictionForceCalculator.FORCE_DESCRIPTION + ' Wheel'
-    ))
-  }
-
-  private addHullFriction(
-      forces: BodyForce[],
-      calculations: VehicleCalculations,
+      calculations: BodyCalculations,
       groundFrictionCoefficient: number,
       gravityAcceleration: number,
       contactsNumber: number
@@ -88,14 +52,14 @@ export class GroundFrictionForceCalculator implements ForceCalculator<VehicleCal
             movingForce,
             contact.position,
             calculations.model.state.position,
-            GroundFrictionForceCalculator.FORCE_DESCRIPTION + ' Hull'
+            GroundFrictionForceCalculator.FORCE_DESCRIPTION
         ))
       } else {
         const rotatingForce = {
           x: -rotatingVelocity.x * contactForceMultiplier,
           y: -rotatingVelocity.y * contactForceMultiplier
         }
-        forces.push(BodyForce.atCOM(rotatingForce, GroundFrictionForceCalculator.FORCE_DESCRIPTION + ' Hull'))
+        forces.push(BodyForce.atCOM(rotatingForce, GroundFrictionForceCalculator.FORCE_DESCRIPTION))
       }
     })
   }

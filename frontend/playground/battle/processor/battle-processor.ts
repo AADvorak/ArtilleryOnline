@@ -11,6 +11,7 @@ import type {ParticleModel, ShellModel} from "~/playground/data/model";
 import type {Position} from "~/playground/data/common";
 import type {ParticleState} from "~/playground/data/state";
 import {DefaultColors} from "~/dictionary/default-colors";
+import {BoxProcessor} from "~/playground/battle/processor/box-processor";
 
 export function useBattleProcessor() {
 
@@ -73,6 +74,9 @@ export function useBattleProcessor() {
     })
     Object.values(battle.model.drones).forEach(drone => {
       DroneProcessor.processStep(drone, battle.model, timeStepSecs)
+    })
+    Object.values(battle.model.boxes).forEach(box => {
+      BoxProcessor.processStep(box, battle.model, timeStepSecs)
     })
   }
 

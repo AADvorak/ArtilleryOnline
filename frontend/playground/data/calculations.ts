@@ -1,5 +1,5 @@
 import type {BodyPosition, Contact, Position, Velocity} from "@/playground/data/common"
-import type {BodyModel, DroneModel, VehicleModel} from "~/playground/data/model";
+import type {BodyModel, BoxModel, DroneModel, VehicleModel} from "~/playground/data/model";
 
 export interface BodyCalculations {
   model: BodyModel
@@ -23,6 +23,10 @@ export interface VehicleCalculations extends BodyCalculations {
   nextPosition: BodyPosition | undefined
   rightWheel: WheelCalculations
   leftWheel: WheelCalculations
+}
+
+export interface BoxCalculations extends BodyCalculations {
+  model: BoxModel
 }
 
 export interface DroneCalculations {
