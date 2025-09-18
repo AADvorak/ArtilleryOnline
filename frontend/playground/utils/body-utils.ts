@@ -1,9 +1,9 @@
 import type {BodyState} from "~/playground/data/state";
-import {MovingDirection, type Position, type Velocity} from "~/playground/data/common";
+import {type BodyPosition, MovingDirection, type Position, type Velocity} from "~/playground/data/common";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import type {BodyCalculations, VehicleCalculations, WheelCalculations} from "~/playground/data/calculations";
-import type {VehicleModel} from "~/playground/data/model";
+import type {BodyModel, VehicleModel} from "~/playground/data/model";
 
 export const BodyUtils = {
   getVelocityAt(bodyState: BodyState, position: Position): Velocity {
@@ -61,5 +61,21 @@ export const BodyUtils = {
       velocityAt.y += angleVelocity * distance * Math.cos(angle)
     }
     return velocityAt
-  }
+  },
+
+  getGeometryPosition(bodyModel: BodyModel) {
+    const position = bodyModel.state.position
+    const comShift = bodyModel.preCalc.centerOfMassShift
+    return BattleUtils.shiftedPosition(position, - comShift.distance, position.angle + comShift.angle)
+  },
+
+  getGeometryBodyPosition(bodyModel: BodyModel): BodyPosition {
+    const position = bodyModel.state.position
+    const gPosition = this.getGeometryPosition(bodyModel)
+    return {
+      x: gPosition.x,
+      y: gPosition.y,
+      angle: position.angle
+    }
+  },
 }

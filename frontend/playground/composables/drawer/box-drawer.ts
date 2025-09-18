@@ -5,6 +5,7 @@ import type {BoxModel} from "~/playground/data/model";
 import {ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {type BodyPosition, BoxType, type Position} from "~/playground/data/common";
+import {BodyUtils} from "~/playground/utils/body-utils";
 
 export function useBoxDrawer(
   drawerBase: DrawerBase,
@@ -24,23 +25,12 @@ export function useBoxDrawer(
       const color = box.config.color || 'rgb(256 256 256)'
       if (box.specs.shape.name === ShapeNames.TRAPEZE) {
         const trapeze = box.specs.shape as TrapezeShape
-        drawerBase.drawTrapeze(ctx.value, getBottomCenter(box), trapeze, 'rgb(256 256 256)')
+        drawerBase.drawTrapeze(ctx.value, BodyUtils.getGeometryBodyPosition(box), trapeze, 'rgb(256 256 256)')
         if (box.specs.type === BoxType.HP) {
           drawCross(box.state.position, trapeze, color)
           drawAmount(box)
         }
       }
-    }
-  }
-
-  function getBottomCenter(box: BoxModel) {
-    const position = box.state.position
-    const comShift = box.preCalc.centerOfMassShift
-    const bcPosition = BattleUtils.shiftedPosition(position, - comShift.distance, position.angle + comShift.angle)
-    return {
-      x: bcPosition.x,
-      y: bcPosition.y,
-      angle: position.angle
     }
   }
 

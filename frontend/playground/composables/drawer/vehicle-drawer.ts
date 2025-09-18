@@ -6,6 +6,7 @@ import type {VehicleModel} from "~/playground/data/model";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
 import {type HalfCircleShape, ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
+import {BodyUtils} from "~/playground/utils/body-utils";
 
 export function useVehicleDrawer(
     drawerBase: DrawerBase,
@@ -58,7 +59,7 @@ export function useVehicleDrawer(
   }
 
   function drawHalfCircleTurret(vehicleModel: VehicleModel, turretShape: HalfCircleShape) {
-    const position = drawerBase.transformPosition(VehicleUtils.getGeometryPosition(vehicleModel))
+    const position = drawerBase.transformPosition(BodyUtils.getGeometryPosition(vehicleModel))
     const startAngle = Math.PI - vehicleModel.state.position.angle
     const endAngle = 2 * Math.PI - vehicleModel.state.position.angle
     const radius = drawerBase.scale(turretShape.radius)
@@ -69,14 +70,7 @@ export function useVehicleDrawer(
   }
 
   function drawTrapezeTurret(vehicleModel: VehicleModel, turretShape: TrapezeShape) {
-    const angle = vehicleModel.state.position.angle
-    const bcPosition = VehicleUtils.getGeometryPosition(vehicleModel)
-    const bottomCenter = {
-      x: bcPosition.x,
-      y: bcPosition.y,
-      angle
-    }
-    drawerBase.drawTrapeze(ctx.value, bottomCenter, turretShape)
+    drawerBase.drawTrapeze(ctx.value, BodyUtils.getGeometryBodyPosition(vehicleModel), turretShape)
   }
 
   function drawWheels(vehicleModel: VehicleModel, wheelRadius: number) {

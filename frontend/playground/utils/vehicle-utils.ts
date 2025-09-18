@@ -8,6 +8,7 @@ import {VectorUtils} from "~/playground/utils/vector-utils";
 import {GroundContactUtils} from "~/playground/utils/ground-contact-utils";
 import {Circle, HalfCircle, Trapeze} from "~/playground/data/geometry";
 import {type HalfCircleShape, ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
+import {BodyUtils} from "~/playground/utils/body-utils";
 
 export const VehicleUtils = {
   initVehicleCalculations(model: VehicleModel): VehicleCalculations {
@@ -40,12 +41,6 @@ export const VehicleUtils = {
   calculateWheelsVelocities(vehicle: VehicleCalculations) {
     this.calculateWheelVelocity(vehicle.model, vehicle.rightWheel)
     this.calculateWheelVelocity(vehicle.model, vehicle.leftWheel)
-  },
-
-  getGeometryPosition(vehicleModel: VehicleModel) {
-    const position = vehicleModel.state.position
-    const comShift = vehicleModel.preCalc.centerOfMassShift
-    return BattleUtils.shiftedPosition(position, - comShift.distance, position.angle + comShift.angle)
   },
 
   getLeftWheelPosition(vehicleModel: VehicleModel) {
@@ -147,25 +142,19 @@ export const VehicleUtils = {
   },
 
   calculateGroundContacts(vehicle: VehicleCalculations, roomModel: RoomModel): void {
-    const position = VehicleUtils.getGeometryPosition(vehicle.model)
-    const angle = vehicle.model.state.position.angle
+    const position = BodyUtils.getGeometryBodyPosition(vehicle.model)
     const turretShape = vehicle.model.specs.turretShape
 
     if (turretShape.name === ShapeNames.HALF_CIRCLE) {
       vehicle.groundContacts = GroundContactUtils.getHalfCircleGroundContacts(
-          new HalfCircle(position, (turretShape as HalfCircleShape).radius, angle),
+          HalfCircle.of(position, (turretShape as HalfCircleShape).radius),
           roomModel
       )
     }
 
     if (turretShape.name === ShapeNames.TRAPEZE) {
-      const bodyPosition = {
-        x: position.x,
-        y: position.y,
-        angle
-      }
       vehicle.groundContacts = GroundContactUtils.getTrapezeGroundContacts(
-          new Trapeze(bodyPosition, turretShape as TrapezeShape),
+          new Trapeze(position, turretShape as TrapezeShape),
           roomModel
       )
     }
