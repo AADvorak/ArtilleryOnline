@@ -15,21 +15,20 @@ import java.util.List;
 
 public class BoxDropProcessor {
 
-    private static final long DROP_DELAY = 10000;
+    private static final long DROP_DELAY = 45000;
     private static final int MAX_BOXES = 2;
     private static final List<String> COLORS = List.of(
             "#FF0000",  // Red
             "#FF7F00",  // Orange
-            "#FFFF00",  // Yellow
             "#00FF00",  // Green
             "#0000FF",  // Blue
-            "#4B0082",  // Indigo
             "#8B00FF"   // Violet
     );
 
     public static void drop(Battle battle) {
+        var maxBoxes = Math.min(MAX_BOXES, battle.getModel().getVehicles().size());
         if (BattleType.COLLIDER.equals(battle.getType())
-                || battle.getModel().getBoxes().size() >= MAX_BOXES
+                || battle.getModel().getBoxes().size() >= maxBoxes
                 || battle.getAbsoluteTime() < battle.getBoxDropTime() + DROP_DELAY) {
             return;
         }
