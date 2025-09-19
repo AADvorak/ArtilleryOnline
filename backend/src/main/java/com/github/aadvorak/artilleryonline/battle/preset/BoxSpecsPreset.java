@@ -13,7 +13,7 @@ public enum BoxSpecsPreset {
     HP("HP", new BoxSpecs()
             .setMass(0.2)
             .setType(BoxType.HP)
-            .setShape(TrapezeShape.square(0.5))
+            .setShape(TrapezeShape.square(0.4))
     );
 
     private final String name;
