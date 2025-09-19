@@ -42,7 +42,7 @@ export class GroundFrictionForceCalculator implements ForceCalculator<BodyCalcul
       const rotatingVelocityMagnitude = VectorUtils.getMagnitude(rotatingVelocity)
       const contactForceMultiplier = forceMultiplier * Math.cos(contact.angle)
 
-      if (movingVelocityMagnitude > rotatingVelocityMagnitude || rotatingVelocityMagnitude < 0.05) {
+      if (movingVelocityMagnitude > rotatingVelocityMagnitude) {
         const velocity = BodyUtils.getVelocityAt(calculations.model.state, contact.position)
         const movingForce = {
           x: -velocity.x * contactForceMultiplier,
