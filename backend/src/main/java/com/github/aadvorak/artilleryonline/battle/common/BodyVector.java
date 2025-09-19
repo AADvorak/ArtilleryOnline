@@ -11,6 +11,10 @@ public interface BodyVector extends CompactSerializable {
 
     double getAngle();
 
+    default double magnitude() {
+        return Math.sqrt(Math.pow(getX(), 2) + Math.pow(getY(), 2) + Math.pow(getAngle(), 2));
+    }
+
     @Override
     default void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(getX());

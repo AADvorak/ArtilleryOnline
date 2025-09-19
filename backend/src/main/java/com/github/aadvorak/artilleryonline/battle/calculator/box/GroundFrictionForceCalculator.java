@@ -4,6 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.BodyForce;
 import com.github.aadvorak.artilleryonline.battle.calculations.BoxCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.ForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculator.utils.ForceCalculatorUtils;
+import com.github.aadvorak.artilleryonline.battle.common.Constants;
 import com.github.aadvorak.artilleryonline.battle.config.BoxConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.BoxModel;
@@ -26,10 +27,13 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
 
     @Override
     public List<BodyForce> calculate(BoxCalculations calculations, BattleModel battleModel) {
+        var forces = new ArrayList<BodyForce>();
+        if (calculations.getModel().getState().getVelocity().magnitude() < Constants.ZERO_THRESHOLD) {
+            return forces;
+        }
         var groundFrictionCoefficient = battleModel.getRoom().getSpecs().getGroundFrictionCoefficient();
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
         var contactsNumber = calculations.getGroundContacts().size();
-        var forces = new ArrayList<BodyForce>();
         if (calculations.getGroundContacts() != null) {
             var forceMultiplier = groundFrictionCoefficient * gravityAcceleration
                     * calculations.getMass() / contactsNumber;

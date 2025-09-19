@@ -4,14 +4,18 @@ import type {BattleModel} from "~/playground/data/model";
 import {BodyForce} from "~/playground/battle/calculator/body-force";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BodyUtils} from "~/playground/utils/body-utils";
+import {Constants} from "~/playground/data/constants";
 
 export class GroundReactionForceCalculator implements ForceCalculator<BodyCalculations> {
   private static readonly FORCE_DESCRIPTION = 'Ground reaction'
 
   calculate(calculations: BodyCalculations, battleModel: BattleModel): BodyForce[] {
+    const forces: BodyForce[] = []
+    if (VectorUtils.getBodyMagnitude(calculations.model.state.velocity) < Constants.ZERO_THRESHOLD) {
+      return forces
+    }
     const groundReactionCoefficient = battleModel.room.specs.groundReactionCoefficient
     const groundMaxDepth = battleModel.room.specs.groundMaxDepth
-    const forces: BodyForce[] = []
     this.addReaction(forces, calculations, groundReactionCoefficient, groundMaxDepth)
     return forces
   }

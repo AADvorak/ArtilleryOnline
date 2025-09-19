@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.calculator.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.calculator.utils.ForceCalculatorUtils;
+import com.github.aadvorak.artilleryonline.battle.common.Constants;
 import com.github.aadvorak.artilleryonline.battle.common.Force;
 import com.github.aadvorak.artilleryonline.battle.common.Vector;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
@@ -26,10 +27,13 @@ public class GroundFrictionForceCalculator implements ForceCalculator<
 
     @Override
     public List<BodyForce> calculate(VehicleCalculations calculations, BattleModel battleModel) {
+        var forces = new ArrayList<BodyForce>();
+        if (calculations.getModel().getState().getVelocity().magnitude() < Constants.ZERO_THRESHOLD) {
+            return forces;
+        }
         var groundFrictionCoefficient = battleModel.getRoom().getSpecs().getGroundFrictionCoefficient();
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
         var contactsNumber = calculations.getGroundContacts().size();
-        var forces = new ArrayList<BodyForce>();
         addWheelFriction(forces, calculations.getRightWheel(), groundFrictionCoefficient, gravityAcceleration, contactsNumber);
         addWheelFriction(forces, calculations.getLeftWheel(), groundFrictionCoefficient, gravityAcceleration, contactsNumber);
         addTurretFriction(forces, calculations, groundFrictionCoefficient, gravityAcceleration, contactsNumber);

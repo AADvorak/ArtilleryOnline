@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.calculator.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.calculator.utils.ForceCalculatorUtils;
+import com.github.aadvorak.artilleryonline.battle.common.Constants;
 import com.github.aadvorak.artilleryonline.battle.common.Force;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
@@ -25,9 +26,12 @@ public class GroundReactionForceCalculator implements ForceCalculator<
 
     @Override
     public List<BodyForce> calculate(VehicleCalculations calculations, BattleModel battleModel) {
+        var forces = new ArrayList<BodyForce>();
+        if (calculations.getModel().getState().getVelocity().magnitude() < Constants.ZERO_THRESHOLD) {
+            return forces;
+        }
         var groundReactionCoefficient = battleModel.getRoom().getSpecs().getGroundReactionCoefficient();
         var groundMaxDepth = battleModel.getRoom().getSpecs().getGroundMaxDepth();
-        var forces = new ArrayList<BodyForce>();
         addWheelReaction(forces, calculations.getRightWheel(), groundReactionCoefficient, groundMaxDepth);
         addWheelReaction(forces, calculations.getLeftWheel(), groundReactionCoefficient, groundMaxDepth);
         addTurretReaction(forces, calculations, groundReactionCoefficient, groundMaxDepth);

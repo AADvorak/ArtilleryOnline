@@ -4,6 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.BodyForce;
 import com.github.aadvorak.artilleryonline.battle.calculations.BoxCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.ForceCalculator;
 import com.github.aadvorak.artilleryonline.battle.calculator.utils.ForceCalculatorUtils;
+import com.github.aadvorak.artilleryonline.battle.common.Constants;
 import com.github.aadvorak.artilleryonline.battle.config.BoxConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.BoxModel;
@@ -26,9 +27,12 @@ public class GroundReactionForceCalculator implements ForceCalculator<
 
     @Override
     public List<BodyForce> calculate(BoxCalculations calculations, BattleModel battleModel) {
+        var forces = new ArrayList<BodyForce>();
+        if (calculations.getModel().getState().getVelocity().magnitude() < Constants.ZERO_THRESHOLD) {
+            return forces;
+        }
         var groundReactionCoefficient = battleModel.getRoom().getSpecs().getGroundReactionCoefficient();
         var groundMaxDepth = battleModel.getRoom().getSpecs().getGroundMaxDepth();
-        var forces = new ArrayList<BodyForce>();
         if (calculations.getGroundContacts() != null) {
             calculations.getGroundContacts().forEach(contact -> ForceCalculatorUtils.addReaction(forces,
                     calculations, contact, groundMaxDepth, groundReactionCoefficient, FORCE_DESCRIPTION));

@@ -4,15 +4,20 @@ import type {BattleModel, VehicleModel} from "~/playground/data/model";
 import {BodyForce} from "~/playground/battle/calculator/body-force";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BodyUtils} from "~/playground/utils/body-utils";
+import {Constants} from "~/playground/data/constants";
 
 export class WheelsGroundFrictionForceCalculator implements ForceCalculator<VehicleCalculations> {
   private static readonly FORCE_DESCRIPTION = 'Wheel Ground Friction'
 
   calculate(calculations: VehicleCalculations, battleModel: BattleModel): BodyForce[] {
+    const forces: BodyForce[] = []
+    if (VectorUtils.getBodyMagnitude(calculations.model.state.velocity) < Constants.ZERO_THRESHOLD) {
+      return forces
+    }
+
     const groundFrictionCoefficient = battleModel.room.specs.groundFrictionCoefficient
     const gravityAcceleration = battleModel.room.specs.gravityAcceleration
     const contactsNumber = BodyUtils.getAllGroundContacts(calculations).length
-    const forces: BodyForce[] = []
 
     this.addWheelFriction(forces, calculations.rightWheel, calculations.model, groundFrictionCoefficient, gravityAcceleration, contactsNumber)
     this.addWheelFriction(forces, calculations.leftWheel, calculations.model, groundFrictionCoefficient, gravityAcceleration, contactsNumber)

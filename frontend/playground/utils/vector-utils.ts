@@ -78,6 +78,10 @@ export const VectorUtils = {
     return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
   },
 
+  getBodyMagnitude(vector: BodyVector) {
+    return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2) + Math.pow(vector.angle, 2));
+  },
+
   normalize(vector: Vector) {
     const magnitude = this.getMagnitude(vector)
     vector.x /= magnitude
