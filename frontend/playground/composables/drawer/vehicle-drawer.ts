@@ -160,7 +160,7 @@ export function useVehicleDrawer(
   function drawNickname(userKey: string, vehicleModel: VehicleModel) {
     ctx.value!.beginPath()
     ctx.value!.fillStyle = 'rgb(256,256,256)'
-    ctx.value!.font = '16px arial'
+    ctx.value!.font = drawerBase.getFont(16)
     ctx.value!.lineWidth = 1
     const nicknameWidth = 1.5 * vehicleModel.preCalc.maxRadius
     const nicknamePosition = drawerBase.transformPosition({

@@ -1,6 +1,6 @@
 import {useBattleStore} from "~/stores/battle";
-import {BattleStage} from "@/playground/data/battle";
 import type {Battle} from "@/playground/data/battle";
+import {BattleStage} from "@/playground/data/battle";
 import {VehicleProcessor} from "@/playground/battle/processor/vehicle-processor";
 import {ShellProcessor} from "@/playground/battle/processor/shell-processor";
 import {ExplosionProcessor} from "@/playground/battle/processor/explosion-processor";
@@ -8,10 +8,9 @@ import {MissileProcessor} from "~/playground/battle/processor/missile-processor"
 import {DroneProcessor} from "~/playground/battle/processor/drone-processor";
 import {ParticleProcessor} from "~/playground/battle/processor/particle-processor";
 import type {ParticleModel, ShellModel} from "~/playground/data/model";
-import type {Position} from "~/playground/data/common";
-import type {ParticleState} from "~/playground/data/state";
 import {DefaultColors} from "~/dictionary/default-colors";
 import {BoxProcessor} from "~/playground/battle/processor/box-processor";
+import {BattleUtils} from "~/playground/utils/battle-utils";
 
 export function useBattleProcessor() {
 
@@ -83,7 +82,7 @@ export function useBattleProcessor() {
   function processStepActiveParticles(battle: Battle, timeStepSecs: number) {
     Object.values(battle.model.shells).forEach((shell: ShellModel) => {
       if (shell.state.stuck) {
-        battleStore.addParticle(generateParticle(shell.state.position), {color: DefaultColors.SIGNAL_SHELL})
+        battleStore.addParticle(BattleUtils.generateParticle(shell.state.position), {color: DefaultColors.SIGNAL_SHELL})
       }
     })
     Object.values(battleStore.particles).forEach((particle: ParticleModel) => {
@@ -92,21 +91,6 @@ export function useBattleProcessor() {
       }
       ParticleProcessor.processStep(particle, timeStepSecs, battle.model.room.specs)
     })
-  }
-
-  function generateParticle(position: Position): ParticleState {
-    const velocityMagnitude = 2 + 0.5 * Math.random()
-    const velocityAngle = Math.PI / 4 + Math.PI * Math.random() / 2
-    const remainTime = 0.3 * Math.random()
-    const {x, y} = position
-    return {
-      position: {x, y},
-      velocity: {
-        x: velocityMagnitude * Math.cos(velocityAngle),
-        y: velocityMagnitude * Math.sin(velocityAngle),
-      },
-      remainTime
-    }
   }
 
   return { startProcessing, stopProcessing }

@@ -1,6 +1,7 @@
 import type { RoomSpecs } from '@/playground/data/specs'
 import type { RoomModel } from '@/playground/data/model'
 import type {Position, Shift} from "@/playground/data/common";
+import type {ParticleState} from "~/playground/data/state";
 
 export const BattleUtils = {
   getRoomWidth(roomSpecs: RoomSpecs) {
@@ -82,6 +83,21 @@ export const BattleUtils = {
       }
     } else {
       return diff
+    }
+  },
+
+  generateParticle(position: Position, lifeTime?: number): ParticleState {
+    const velocityMagnitude = 2 + 0.5 * Math.random()
+    const velocityAngle = Math.PI / 4 + Math.PI * Math.random() / 2
+    const remainTime = lifeTime || 0.3 * Math.random()
+    const {x, y} = position
+    return {
+      position: {x, y},
+      velocity: {
+        x: velocityMagnitude * Math.cos(velocityAngle),
+        y: velocityMagnitude * Math.sin(velocityAngle),
+      },
+      remainTime
     }
   }
 }

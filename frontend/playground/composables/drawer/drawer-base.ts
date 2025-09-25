@@ -48,5 +48,9 @@ export function useDrawerBase(scaleCoefficient: Ref<number>, canvasSize: Ref<Siz
     return value * scaleCoefficient.value
   }
 
-  return { drawTrapeze, drawPolygon, transformPosition, scale }
+  function getFont(size: number) {
+    return `bold ${size}px Roboto, sans-serif`
+  }
+
+  return { drawTrapeze, drawPolygon, transformPosition, scale, getFont }
 }

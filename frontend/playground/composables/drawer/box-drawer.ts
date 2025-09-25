@@ -57,7 +57,7 @@ export function useBoxDrawer(
   function drawAmount(box: BoxModel) {
     ctx.value!.beginPath()
     ctx.value!.fillStyle = 'rgb(256,256,256)'
-    ctx.value!.font = '12px arial'
+    ctx.value!.font = drawerBase.getFont(12)
     ctx.value!.lineWidth = 1
     const amountWidth = 1.5 * box.preCalc.maxRadius
     const amountPosition = drawerBase.transformPosition({

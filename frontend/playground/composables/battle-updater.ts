@@ -7,6 +7,10 @@ import {useEventSoundsPlayer} from "~/playground/composables/sound/event-sounds-
 import type {Player} from "~/playground/audio/player";
 import {deserializeBattle, deserializeBattleUpdate} from "~/playground/data/battle-deserialize";
 import {DeserializerInput} from "~/deserialization/deserializer-input";
+import type {VehicleModel} from "~/playground/data/model";
+import type {VehicleState} from "~/playground/data/state";
+import {BattleUtils} from "~/playground/utils/battle-utils";
+import {DefaultColors} from "~/dictionary/default-colors";
 
 export function useBattleUpdater(player: Player) {
   const battleStore = useBattleStore()
@@ -118,7 +122,9 @@ export function useBattleUpdater(player: Player) {
       const vehicles = battleUpdate.state.vehicles
       if (vehicles) {
         Object.keys(vehicles).forEach(key => {
-          battle.model.vehicles[key].state = vehicles[key]
+          const model = battle.model.vehicles[key]
+          showChangeHp(model, model.state, vehicles[key])
+          model.state = vehicles[key]
         })
       }
       const shells = battleUpdate.state.shells
@@ -151,6 +157,17 @@ export function useBattleUpdater(player: Player) {
       }
     }
     battleStore.updateBattle(battle)
+  }
+
+  function showChangeHp(model: VehicleModel, oldState: VehicleState, newState: VehicleState) {
+    const hpDiff = newState.hitPoints - oldState.hitPoints
+    if (Math.abs(hpDiff) > 1) {
+      const position = BattleUtils.shiftedPosition(model.state.position, model.preCalc.maxRadius, Math.PI / 2)
+      const color = hpDiff > 0 ? DefaultColors.BRIGHT_GREEN : DefaultColors.BRIGHT_RED
+      const hpDiffToFixed = hpDiff.toFixed(0)
+      const text = hpDiff > 0 ? '+' + hpDiffToFixed : hpDiffToFixed
+      battleStore.addParticle(BattleUtils.generateParticle(position, 1.0), {color, text})
+    }
   }
 
   return { subscribe, unsubscribe }

@@ -23,6 +23,7 @@ export interface DroneConfig {
 
 export interface ParticleConfig {
   color?: string
+  text?: string
 }
 
 export interface BoxConfig {
