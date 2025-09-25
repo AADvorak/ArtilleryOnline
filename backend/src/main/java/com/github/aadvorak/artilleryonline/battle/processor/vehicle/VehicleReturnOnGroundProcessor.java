@@ -15,8 +15,7 @@ public class VehicleReturnOnGroundProcessor extends VehicleProcessor implements 
         if (BattleType.COLLIDER.equals(battle.getType())) {
             return;
         }
-        var angle = vehicle.getModel().getState().getPosition().getAngle();
-        if (angle > Math.PI / 2 || angle < -Math.PI / 2) {
+        if (vehicle.getModel().getState().isTurnedOver()) {
             if (vehicle.getModel().getTurnedOverTime() == null) {
                 vehicle.getModel().setTurnedOverTime(battle.getTime());
             } else if (battle.getTime() - vehicle.getModel().getTurnedOverTime()

@@ -43,7 +43,9 @@ public class JetForceCalculator implements ForceCalculator<
         var acceleration = jetSpecs.getAcceleration() * calculations.getMass();
         var direction = vehicleModel.getState().getMovingDirection();
         var angle = vehicleModel.getState().getPosition().getAngle();
-        if (JetType.VERTICAL.equals(jetSpecs.getType())) {
+        if (vehicleModel.getState().isTurnedOver()) {
+            addTurning(forces, calculations, acceleration, angle);
+        } else if (JetType.VERTICAL.equals(jetSpecs.getType())) {
             addVertical(forces, calculations.getLeftWheel(), acceleration / 2, angle, direction);
             addVertical(forces, calculations.getRightWheel(), acceleration / 2, angle, direction);
         }
@@ -90,5 +92,14 @@ public class JetForceCalculator implements ForceCalculator<
                     .setY(acceleration * Math.sin(angle - HORIZONTAL_JET_ANGLE + Math.PI));
             forces.add(BodyForce.atCOM(force, FORCE_DESCRIPTION));
         }
+    }
+
+    private void addTurning(List<BodyForce> forces, VehicleCalculations calculations,
+                            double acceleration, double angle) {
+        var maxRadius = calculations.getModel().getPreCalc().getMaxRadius();
+        var comPosition = calculations.getPosition();
+        var position = comPosition.shifted(- maxRadius * Math.signum(angle), 0.0);
+        forces.add(BodyForce.of(new Force().setY(acceleration * 1.5), position, comPosition, FORCE_DESCRIPTION));
+        forces.add(BodyForce.atCOM(new Force().setY(acceleration * 0.5), FORCE_DESCRIPTION));
     }
 }

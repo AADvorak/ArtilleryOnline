@@ -127,10 +127,15 @@ export const VehicleUtils = {
       return false
     }
     const jetType = vehicleModel.config.jet.type
-    if (JetType.VERTICAL === jetType) {
+    if (JetType.VERTICAL === jetType || this.isTurnedOver(vehicleModel)) {
       return jetState.active && jetState.volume > 0
     }
     return jetState.active && jetState.volume > 0 && !!vehicleModel.state.movingDirection
+  },
+
+  isTurnedOver(vehicleModel: VehicleModel) {
+    const angle = vehicleModel.state.position.angle
+    return angle > Math.PI / 2 || angle < -Math.PI / 2
   },
 
   calculateGroundContact(wheel: WheelCalculations, wheelRadius: number, roomModel: RoomModel): void {

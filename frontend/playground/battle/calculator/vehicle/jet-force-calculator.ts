@@ -3,6 +3,8 @@ import type {VehicleCalculations, WheelCalculations} from "~/playground/data/cal
 import type {BattleModel, VehicleModel} from "~/playground/data/model";
 import {BodyForce} from "~/playground/battle/calculator/body-force";
 import {JetType, MovingDirection, zeroVector} from "~/playground/data/common";
+import {BattleUtils} from "~/playground/utils/battle-utils";
+import {VehicleUtils} from "~/playground/utils/vehicle-utils";
 
 export class JetForceCalculator implements ForceCalculator<VehicleCalculations> {
   static readonly FORCE_DESCRIPTION = 'Jet'
@@ -26,19 +28,19 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
     const direction = vehicleModel.state.movingDirection!
     const angle = vehicleModel.state.position.angle
 
-    if (jetSpecs.type === JetType.VERTICAL) {
-      JetForceCalculator.addVertical(forces, calculations.leftWheel, vehicleModel, acceleration / 2, angle, direction)
-      JetForceCalculator.addVertical(forces, calculations.rightWheel, vehicleModel, acceleration / 2, angle, direction)
-    }
-
-    if (jetSpecs.type === JetType.HORIZONTAL) {
+    if (VehicleUtils.isTurnedOver(vehicleModel)) {
+      this.addTurning(forces, calculations, acceleration, angle)
+    } else if (jetSpecs.type === JetType.VERTICAL) {
+      this.addVertical(forces, calculations.leftWheel, vehicleModel, acceleration / 2, angle, direction)
+      this.addVertical(forces, calculations.rightWheel, vehicleModel, acceleration / 2, angle, direction)
+    } else if (jetSpecs.type === JetType.HORIZONTAL) {
       this.addHorizontal(forces, acceleration, angle, direction)
     }
 
     return forces
   }
 
-  private static addVertical(
+  private addVertical(
       forces: BodyForce[],
       wheelCalculations: WheelCalculations,
       vehicleModel: VehicleModel,
@@ -89,5 +91,17 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
       }
       forces.push(BodyForce.atCOM(force, JetForceCalculator.FORCE_DESCRIPTION))
     }
+  }
+
+  private addTurning(forces: BodyForce[], calculations: VehicleCalculations,
+                     acceleration: number, angle: number) {
+    const maxRadius = calculations.model.preCalc.maxRadius
+    const comPosition = calculations.model.state.position
+    const position = BattleUtils.shiftedPosition(comPosition, -maxRadius * Math.sign(angle), 0.0)
+    forces.push(BodyForce.of({
+      x: 0,
+      y: acceleration * 1.5
+    }, position, comPosition, JetForceCalculator.FORCE_DESCRIPTION))
+    forces.push(BodyForce.atCOM({x: 0, y: acceleration * 0.5}, JetForceCalculator.FORCE_DESCRIPTION))
   }
 }
