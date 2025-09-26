@@ -28,7 +28,7 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
     const direction = vehicleModel.state.movingDirection!
     const angle = vehicleModel.state.position.angle
 
-    if (VehicleUtils.isTurnedOver(vehicleModel)) {
+    if (VehicleUtils.isAboutToTurnOver(vehicleModel)) {
       this.addTurning(forces, calculations, acceleration, angle)
     } else if (jetSpecs.type === JetType.VERTICAL) {
       this.addVertical(forces, calculations.leftWheel, vehicleModel, acceleration / 2, angle, direction)

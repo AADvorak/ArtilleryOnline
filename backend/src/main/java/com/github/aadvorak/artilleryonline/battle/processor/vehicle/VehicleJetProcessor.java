@@ -38,7 +38,7 @@ public class VehicleJetProcessor extends VehicleProcessor implements BeforeStep1
     private boolean isJetActive(VehicleModel vehicleModel) {
         var jetState = vehicleModel.getState().getJetState();
         var jetType = vehicleModel.getConfig().getJet().getType();
-        if (JetType.VERTICAL.equals(jetType) || vehicleModel.getState().isTurnedOver()) {
+        if (JetType.VERTICAL.equals(jetType) || vehicleModel.getState().isAboutToTurnOver()) {
             return jetState.isActive();
         }
         var movingDirection = vehicleModel.getState().getMovingDirection();

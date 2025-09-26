@@ -127,7 +127,7 @@ export const VehicleUtils = {
       return false
     }
     const jetType = vehicleModel.config.jet.type
-    if (JetType.VERTICAL === jetType || this.isTurnedOver(vehicleModel)) {
+    if (JetType.VERTICAL === jetType || this.isAboutToTurnOver(vehicleModel)) {
       return jetState.active && jetState.volume > 0
     }
     return jetState.active && jetState.volume > 0 && !!vehicleModel.state.movingDirection
@@ -136,6 +136,12 @@ export const VehicleUtils = {
   isTurnedOver(vehicleModel: VehicleModel) {
     const angle = vehicleModel.state.position.angle
     return angle > Math.PI / 2 || angle < -Math.PI / 2
+  },
+
+  isAboutToTurnOver(vehicleModel: VehicleModel) {
+    const angle = vehicleModel.state.position.angle
+    const criticalAngle = 0.8 * Math.PI / 2
+    return angle > criticalAngle || angle < -criticalAngle
   },
 
   calculateGroundContact(wheel: WheelCalculations, wheelRadius: number, roomModel: RoomModel): void {

@@ -43,7 +43,7 @@ public class JetForceCalculator implements ForceCalculator<
         var acceleration = jetSpecs.getAcceleration() * calculations.getMass();
         var direction = vehicleModel.getState().getMovingDirection();
         var angle = vehicleModel.getState().getPosition().getAngle();
-        if (vehicleModel.getState().isTurnedOver()) {
+        if (vehicleModel.getState().isAboutToTurnOver()) {
             addTurning(forces, calculations, acceleration, angle);
         } else if (JetType.VERTICAL.equals(jetSpecs.getType())) {
             addVertical(forces, calculations.getLeftWheel(), acceleration / 2, angle, direction);

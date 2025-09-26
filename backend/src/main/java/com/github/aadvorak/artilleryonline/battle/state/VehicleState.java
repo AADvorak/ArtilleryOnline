@@ -56,6 +56,12 @@ public class VehicleState implements BodyState, CompactSerializable {
         return position.getAngle() > Math.PI / 2 || position.getAngle() < -Math.PI / 2;
     }
 
+    @JsonIgnore
+    public boolean isAboutToTurnOver() {
+        final var criticalAngle = 0.8 * Math.PI / 2;
+        return position.getAngle() > criticalAngle || position.getAngle() < -criticalAngle;
+    }
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeSerializableValue(position);
