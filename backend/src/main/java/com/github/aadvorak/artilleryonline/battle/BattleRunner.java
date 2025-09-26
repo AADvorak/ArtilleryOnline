@@ -96,7 +96,7 @@ public class BattleRunner {
 
     private void startUpdatesSender(Battle battle) {
         battleUpdatesSender.start(battle.getQueues().getBattleUpdatesQueue());
-        battleAggregatedSender.start(battle.getAggregated());
+        //battleAggregatedSender.start(battle.getAggregated());
     }
 
     private void stopUpdatesSender(Battle battle) {

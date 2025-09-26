@@ -112,7 +112,8 @@ public class BattleUpdatesProcessor {
                     battleUpdateResponse.setEvents(battle.getModel().getEvents());
                 }
             }
-            aggregateUpdates(battle, battleUpdateResponse);
+            battle.getQueues().getBattleUpdatesQueue().add(battleUpdateResponse);
+            //aggregateUpdates(battle, battleUpdateResponse);
             return true;
         }
         return false;
