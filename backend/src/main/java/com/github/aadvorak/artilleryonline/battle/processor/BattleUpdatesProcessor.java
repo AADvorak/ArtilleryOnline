@@ -1,7 +1,5 @@
 package com.github.aadvorak.artilleryonline.battle.processor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
@@ -43,13 +41,6 @@ public class BattleUpdatesProcessor {
             battleResponse.setPaused(battle.getDebug().isPaused());
             battleResponse.setFps(battle.getFpsCalculator().getFps());
             battle.getQueues().getBattleUpdatesQueue().add(battleResponse);
-            if (battle.getDebug().isDoStep()) {
-                try {
-                    System.out.println(new ObjectMapper().writeValueAsString(battleResponse));
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }
-            }
         }
     }
 
