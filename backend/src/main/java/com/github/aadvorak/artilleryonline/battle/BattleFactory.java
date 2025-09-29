@@ -3,12 +3,16 @@ package com.github.aadvorak.artilleryonline.battle;
 import com.github.aadvorak.artilleryonline.battle.command.UserCommand;
 import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.config.BoxConfig;
 import com.github.aadvorak.artilleryonline.battle.config.RoomConfig;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.battle.model.BoxModel;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.precalc.BoxPreCalc;
 import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
+import com.github.aadvorak.artilleryonline.battle.preset.BoxSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.preset.RoomSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.preset.VehicleSpecsPreset;
@@ -48,6 +52,9 @@ public class BattleFactory {
         var battleModel = new BattleModel()
                 .setRoom(createRoomModel(battleType));
         battleModel.setVehicles(createVehicles(participants, battleModel, battleType));
+        if (BattleType.COLLIDER.equals(battleType)) {
+            battleModel.setBoxes(createBoxes(battleModel));
+        }
         battleModel.setStatistics(createUserBattleStatistics(participants));
         var userMap = createUserMap(participants);
         var battle = new Battle()
@@ -262,5 +269,33 @@ public class BattleFactory {
         var colorSetting = userSettingRepository.findByUserIdAndGroupNameAndName(participant.getUser().getId(),
                 "appearances", "vehicleColor");
         return colorSetting.map(UserSetting::getValue).orElse(null);
+    }
+
+    private Map<Integer, BoxModel> createBoxes(BattleModel battleModel) {
+        var rightTop = battleModel.getRoom().getSpecs().getRightTop();
+        var leftBottom = battleModel.getRoom().getSpecs().getLeftBottom();
+        var y = (rightTop.getY() + leftBottom.getY()) / 2;
+        var map = new HashMap<Integer, BoxModel>();
+        putBox(map, battleModel, new BodyPosition().setX(rightTop.getX() - 1.0).setY(y));
+        putBox(map, battleModel, new BodyPosition().setX(leftBottom.getX() + 1.0).setY(y));
+        return map;
+    }
+
+    private void putBox(Map<Integer, BoxModel> map, BattleModel battleModel, BodyPosition position) {
+        var specs = BoxSpecsPreset.values()[BattleUtils.generateRandom(0, BoxSpecsPreset.values().length)].getSpecs();
+        var preCalc = new BoxPreCalc(specs);
+        var config = new BoxConfig()
+                .setColor("#FF0000")
+                .setAmount(BattleUtils.generateRandom(10.0, 30.0));
+        var state = new BoxState()
+                .setPosition(position);
+        var id = battleModel.getIdGenerator().generate();
+        var model = new BoxModel();
+        model.setId(id);
+        model.setState(state);
+        model.setPreCalc(preCalc);
+        model.setConfig(config);
+        model.setSpecs(specs);
+        map.put(id, model);
     }
 }
