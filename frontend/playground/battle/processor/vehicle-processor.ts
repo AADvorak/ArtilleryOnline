@@ -13,6 +13,8 @@ import {GroundFrictionForceCalculator} from "~/playground/battle/calculator/comm
 import {GroundReactionForceCalculator} from "~/playground/battle/calculator/common/ground-reaction-force-calculator";
 import {BodyUtils} from "~/playground/utils/body-utils";
 
+const UNDER_GROUND_DEPTH_COEFFICIENT = 1.5
+
 export const VehicleProcessor = {
 
   velocityCalculator: new BodyVelocityCalculator(
@@ -32,7 +34,11 @@ export const VehicleProcessor = {
   processStep(vehicleModel: VehicleModel, battleModel: BattleModel, timeStepSecs: number) {
     const calculations = VehicleUtils.initVehicleCalculations(vehicleModel)
     this.recalculateVelocity(calculations, battleModel, timeStepSecs)
+    const backupPosition = BodyUtils.getBackupPosition(vehicleModel)
     BodyUtils.recalculateBodyPosition(vehicleModel, timeStepSecs)
+    if (this.checkUnderGround(calculations, battleModel)) {
+      vehicleModel.state.position = backupPosition
+    }
     this.recalculateGunAngle(vehicleModel, timeStepSecs)
     if (vehicleModel.state.gunState.loadingShell) {
       vehicleModel.state.gunState.loadRemainTime -= timeStepSecs
@@ -88,5 +94,17 @@ export const VehicleProcessor = {
       return min
     }
     return Math.min(value, max)
+  },
+
+  checkUnderGround(calculations: VehicleCalculations, battleModel: BattleModel) {
+    calculations.rightWheel.position = VehicleUtils.getRightWheelPosition(calculations.model)
+    calculations.leftWheel.position = VehicleUtils.getLeftWheelPosition(calculations.model)
+    VehicleUtils.calculateAllGroundContacts(calculations, battleModel.room)
+    for (const contact of BodyUtils.getAllGroundContacts(calculations)) {
+      if (contact.depth > battleModel.room.specs.groundMaxDepth * UNDER_GROUND_DEPTH_COEFFICIENT) {
+        return true
+      }
+    }
+    return false
   }
 }

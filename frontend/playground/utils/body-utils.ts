@@ -63,4 +63,13 @@ export const BodyUtils = {
     position.y += velocity.y * timeStepSecs
     position.angle += velocity.angle * timeStepSecs
   },
+
+  getBackupPosition(bodyModel: BodyModel): BodyPosition {
+    const position = bodyModel.state.position
+    return {
+      x: position.x,
+      y: position.y,
+      angle: position.angle
+    }
+  },
 }
