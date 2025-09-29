@@ -19,4 +19,6 @@ public class BattleDebug {
     private String tracking;
 
     private BattleTracker tracker;
+
+    private int colliderObjectId = 1;
 }

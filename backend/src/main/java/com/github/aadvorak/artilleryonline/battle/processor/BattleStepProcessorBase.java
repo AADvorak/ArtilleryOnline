@@ -60,7 +60,7 @@ public class BattleStepProcessorBase implements BattleStepProcessor {
             if (Command.STOP_TRACKING.equals(debugCommand.getCommand())) {
                 stopTrackingBattle(battle);
             }
-            ColliderCommandProcessor.process(debugCommand, battle.getModel());
+            ColliderCommandProcessor.process(debugCommand, battle);
         }
     }
 

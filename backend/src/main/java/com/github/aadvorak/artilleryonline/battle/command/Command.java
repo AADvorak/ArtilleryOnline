@@ -28,4 +28,5 @@ public enum Command {
     START_ROTATING,
     STOP_ROTATING,
     STOP_ALL,
+    SWITCH_BODY,
 }

@@ -43,6 +43,14 @@ public class VehicleState implements BodyState, CompactSerializable {
 
     private boolean onGround;
 
+    public void setPushingDirection(MovingDirection pushingDirection) {
+        this.pushingDirection = pushingDirection;
+    }
+
+    public void setRotatingDirection(MovingDirection rotatingDirection) {
+        this.rotatingDirection = rotatingDirection;
+    }
+
     @JsonIgnore
     public String getExistingAmmoShellName() {
         return ammo.entrySet().stream()

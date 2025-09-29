@@ -19,9 +19,6 @@ public class BoxModel
     private int id;
 
     @JsonIgnore
-    private final TimeoutUpdate update = new TimeoutUpdate();
-
-    @JsonIgnore
     private long lastSoundTime;
 
     @Override

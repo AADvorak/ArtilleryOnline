@@ -26,9 +26,6 @@ public class DroneModel
     @JsonIgnore
     private Long userId;
 
-    @JsonIgnore
-    private final TimeoutUpdate update = new TimeoutUpdate();
-
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeInt(id);

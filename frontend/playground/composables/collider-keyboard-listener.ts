@@ -32,6 +32,9 @@ export function useColliderKeyboardListener(commandsSender: CommandsSender) {
   keyDownCommands.set('Space', {
     command: Command.STOP_ALL
   })
+  keyDownCommands.set('KeyC', {
+    command: Command.SWITCH_BODY
+  })
 
   const keyUpCommands: Map<string, UserCommand> = new Map()
   keyUpCommands.set('KeyD', {

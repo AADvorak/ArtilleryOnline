@@ -22,6 +22,14 @@ public class BoxState implements BodyState, CompactSerializable {
 
     private MovingDirection rotatingDirection;
 
+    public void setPushingDirection(MovingDirection pushingDirection) {
+        this.pushingDirection = pushingDirection;
+    }
+
+    public void setRotatingDirection(MovingDirection rotatingDirection) {
+        this.rotatingDirection = rotatingDirection;
+    }
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeSerializableValue(position);

@@ -22,9 +22,6 @@ public class VehicleModel
     private Long userId;
 
     @JsonIgnore
-    private final TimeoutUpdate update = new TimeoutUpdate();
-
-    @JsonIgnore
     private Long turnedOverTime;
 
     @JsonIgnore

@@ -84,4 +84,12 @@ public class BattleModel {
             this.updated = false;
         }
     }
+
+    public Map<Integer, BodyModel<?,?,?,?>> getBodies() {
+        Map<Integer, BodyModel<?,?,?,?>> bodies = new HashMap<>();
+        bodies.putAll(drones);
+        bodies.putAll(boxes);
+        vehicles.values().forEach(vehicle -> bodies.put(vehicle.getId(), vehicle));
+        return bodies;
+    }
 }

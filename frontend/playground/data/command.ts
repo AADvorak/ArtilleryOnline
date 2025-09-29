@@ -24,7 +24,8 @@ export enum Command {
   STOP_ROTATING = 'STOP_ROTATING',
   START_PUSHING = 'START_PUSHING',
   STOP_PUSHING = 'STOP_PUSHING',
-  STOP_ALL = 'STOP_ALL'
+  STOP_ALL = 'STOP_ALL',
+  SWITCH_BODY = 'SWITCH_BODY'
 }
 
 export interface CommandParams {

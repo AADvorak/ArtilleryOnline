@@ -10,7 +10,11 @@ public interface BodyState extends State {
 
     MovingDirection getPushingDirection();
 
+    void setPushingDirection(MovingDirection pushingDirection);
+
     MovingDirection getRotatingDirection();
+
+    void setRotatingDirection(MovingDirection rotatingDirection);
 
     default Velocity getVelocityAt(Position position) {
         var rotatingVelocity = getRotatingVelocityAt(position);

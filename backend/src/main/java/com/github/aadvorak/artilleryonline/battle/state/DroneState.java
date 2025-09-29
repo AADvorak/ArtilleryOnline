@@ -32,6 +32,14 @@ public class DroneState implements BodyState, CompactSerializable {
 
     private boolean destroyed = false;
 
+    public void setPushingDirection(MovingDirection pushingDirection) {
+        this.pushingDirection = pushingDirection;
+    }
+
+    public void setRotatingDirection(MovingDirection rotatingDirection) {
+        this.rotatingDirection = rotatingDirection;
+    }
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeSerializableValue(position);
