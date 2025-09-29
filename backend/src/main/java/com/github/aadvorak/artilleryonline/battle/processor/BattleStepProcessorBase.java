@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.processor;
 
 import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.BattleStage;
+import com.github.aadvorak.artilleryonline.battle.BattleType;
 import com.github.aadvorak.artilleryonline.battle.command.Command;
 import com.github.aadvorak.artilleryonline.battle.processor.command.ColliderCommandProcessor;
 import com.github.aadvorak.artilleryonline.battle.tracking.BattleTracker;
@@ -60,7 +61,9 @@ public class BattleStepProcessorBase implements BattleStepProcessor {
             if (Command.STOP_TRACKING.equals(debugCommand.getCommand())) {
                 stopTrackingBattle(battle);
             }
-            ColliderCommandProcessor.process(debugCommand, battle);
+            if (BattleType.COLLIDER.equals(battle.getType())) {
+                ColliderCommandProcessor.process(debugCommand, battle);
+            }
         }
     }
 
