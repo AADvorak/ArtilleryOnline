@@ -33,12 +33,12 @@ public class BoxBoxCollisionsDetector implements CollisionsDetector {
                 .filter(value -> CollisionUtils.collisionNotDetected(box, value))
                 .collect(Collectors.toSet());
         var maxRadius = box.getModel().getPreCalc().getMaxRadius();
-        var position = box.getPosition();
+        var position = box.getNext().getPosition().getCenter();
         var geometryPosition = box.getGeometryNextPosition();
         var bodyPart = BodyPart.of(geometryPosition, box.getModel().getSpecs().getShape());
         for (var otherBox : otherBoxes) {
             var otherMaxRadius = otherBox.getModel().getPreCalc().getMaxRadius();
-            var otherPosition = otherBox.getPosition();
+            var otherPosition = otherBox.getNext().getPosition().getCenter();
             var otherGeometryPosition = otherBox.getGeometryNextPosition();
             if (otherPosition.distanceTo(position) > maxRadius + otherMaxRadius) {
                 continue;

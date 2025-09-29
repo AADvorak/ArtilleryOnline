@@ -28,12 +28,12 @@ public class BoxVehicleCollisionsDetector implements CollisionsDetector {
     private Set<Collision> detect(BoxCalculations box, BattleCalculations battle, boolean first) {
         Set<Collision> collisions = new HashSet<>();
         var maxRadius = box.getModel().getPreCalc().getMaxRadius();
-        var position = box.getGeometryNextPosition();
-        var bodyPart = BodyPart.of(position, box.getModel().getSpecs().getShape());
+        var bodyPart = BodyPart.of(box.getGeometryNextPosition(), box.getModel().getSpecs().getShape());
         for (var vehicle : battle.getVehicles()) {
             var otherMaxRadius = vehicle.getModel().getPreCalc().getMaxRadius();
             var otherPosition = vehicle.getGeometryNextPosition();
-            if (otherPosition.getCenter().distanceTo(position.getCenter()) > maxRadius + otherMaxRadius) {
+            if (otherPosition.getCenter().distanceTo(box.getNext().getPosition().getCenter())
+                    > maxRadius + otherMaxRadius) {
                 continue;
             }
             var otherWheelRadius = vehicle.getModel().getSpecs().getWheelRadius();
