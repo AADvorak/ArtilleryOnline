@@ -6,7 +6,6 @@ import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.collision.detector.CollisionsDetector;
 import com.github.aadvorak.artilleryonline.battle.common.lines.BodyPart;
-import com.github.aadvorak.artilleryonline.battle.utils.CollisionUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.ContactUtils;
 import org.springframework.stereotype.Component;
 
@@ -29,14 +28,16 @@ public class BoxBoxCollisionsDetector implements CollisionsDetector {
     private Set<Collision> detect(BoxCalculations box, BattleCalculations battle, boolean first) {
         Set<Collision> collisions = new HashSet<>();
         var otherBoxes = battle.getBoxes().stream()
-                .filter(value -> !Objects.equals(value.getId(), box.getId()))
-                .filter(value -> CollisionUtils.collisionNotDetected(box, value))
+                .filter(value -> !Objects.equals(value.getId(), box.getId())
+                        && value.collisionsNotCheckedWith(box.getId()))
                 .collect(Collectors.toSet());
         var maxRadius = box.getModel().getPreCalc().getMaxRadius();
         var position = box.getNext().getPosition().getCenter();
         var geometryPosition = box.getGeometryNextPosition();
         var bodyPart = BodyPart.of(geometryPosition, box.getModel().getSpecs().getShape());
         for (var otherBox : otherBoxes) {
+            box.addCollisionsCheckedWith(otherBox.getId());
+            otherBox.addCollisionsCheckedWith(box.getId());
             var otherMaxRadius = otherBox.getModel().getPreCalc().getMaxRadius();
             var otherPosition = otherBox.getNext().getPosition().getCenter();
             var otherGeometryPosition = otherBox.getGeometryNextPosition();

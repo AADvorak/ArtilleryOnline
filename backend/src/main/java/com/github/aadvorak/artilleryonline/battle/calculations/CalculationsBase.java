@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 public abstract class CalculationsBase {
 
+    private final Set<Integer> collisionsCheckedWith = new HashSet<>();
+
     private final Map<Integer, Set<Collision>> collisionMap = new HashMap<>();
 
     public Set<Collision> getLastCollisions() {
@@ -26,5 +28,17 @@ public abstract class CalculationsBase {
 
     public Set<Collision> getAllCollisions() {
         return collisionMap.values().stream().flatMap(Set::stream).collect(Collectors.toSet());
+    }
+
+    public void addCollisionsCheckedWith(int id) {
+        collisionsCheckedWith.add(id);
+    }
+
+    public void clearCollisionsCheckedWith() {
+        collisionsCheckedWith.clear();
+    }
+
+    public boolean collisionsNotCheckedWith(int id) {
+        return !collisionsCheckedWith.contains(id);
     }
 }

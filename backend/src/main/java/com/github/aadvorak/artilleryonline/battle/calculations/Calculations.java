@@ -23,6 +23,8 @@ public interface Calculations<Model> {
         return getMass() * (Math.pow(getVelocity().getX(), 2) + Math.pow(getVelocity().getY(), 2)) / 2;
     }
 
+    void clearCollisionsCheckedWith();
+
     Set<Collision> getLastCollisions();
 
     Set<Collision> getAllCollisions();

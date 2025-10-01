@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.collision;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.MissileCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
 import com.github.aadvorak.artilleryonline.battle.collision.detector.CollisionsDetector;
@@ -48,6 +49,7 @@ public class CollisionsProcessor {
     }
 
     private void detectAllCollisions(BattleCalculations battle, int iterationNumber) {
+        battle.getMovingObjects().forEach(Calculations::clearCollisionsCheckedWith);
         battle.getMovingObjects().forEach(object ->
                 detectors.forEach(detector ->
                         object.getCollisions(iterationNumber).addAll(detector.detect(object, battle, false))));

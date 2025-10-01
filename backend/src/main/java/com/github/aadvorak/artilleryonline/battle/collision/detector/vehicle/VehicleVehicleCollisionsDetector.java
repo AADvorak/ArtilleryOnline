@@ -7,7 +7,6 @@ import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.collision.detector.CollisionsDetector;
 import com.github.aadvorak.artilleryonline.battle.common.lines.BodyPart;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
-import com.github.aadvorak.artilleryonline.battle.utils.CollisionUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.ContactUtils;
 import org.springframework.stereotype.Component;
 
@@ -31,8 +30,8 @@ public class VehicleVehicleCollisionsDetector implements CollisionsDetector {
     private Set<Collision> detect(VehicleCalculations vehicle, BattleCalculations battle, boolean first) {
         Set<Collision> collisions = new HashSet<>();
         var otherVehicles = battle.getVehicles().stream()
-                .filter(value -> !Objects.equals(value.getId(), vehicle.getId()))
-                .filter(value -> CollisionUtils.collisionNotDetected(vehicle, value))
+                .filter(value -> !Objects.equals(value.getId(), vehicle.getId())
+                        && value.collisionsNotCheckedWith(vehicle.getId()))
                 .collect(Collectors.toSet());
         var wheelRadius = vehicle.getModel().getSpecs().getWheelRadius();
         var maxRadius = vehicle.getModel().getPreCalc().getMaxRadius();
@@ -45,6 +44,8 @@ public class VehicleVehicleCollisionsDetector implements CollisionsDetector {
                 new Circle(leftWheelPosition, wheelRadius), vehicle.getLeftWheel()
         );
         for (var otherVehicle : otherVehicles) {
+            vehicle.addCollisionsCheckedWith(otherVehicle.getId());
+            otherVehicle.addCollisionsCheckedWith(vehicle.getId());
             var otherMaxRadius = otherVehicle.getModel().getPreCalc().getMaxRadius();
             var otherPosition = otherVehicle.getGeometryNextPosition();
             if (otherPosition.getCenter().distanceTo(position.getCenter()) > maxRadius + otherMaxRadius) {

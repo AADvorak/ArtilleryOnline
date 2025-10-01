@@ -54,6 +54,11 @@ public class WheelCalculations
     }
 
     @Override
+    public void clearCollisionsCheckedWith() {
+
+    }
+
+    @Override
     public Set<Collision> getLastCollisions() {
         return vehicle.getLastCollisions();
     }
