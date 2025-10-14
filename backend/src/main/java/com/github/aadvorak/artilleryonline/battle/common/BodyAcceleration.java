@@ -1,26 +1,23 @@
 package com.github.aadvorak.artilleryonline.battle.common;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-
 import java.util.Arrays;
 import java.util.List;
 
-@Getter
-@Setter
-@Accessors(chain = true)
-public class BodyAcceleration implements BodyVector {
+public class BodyAcceleration extends BodyVectorBase implements BodyVector {
 
-    private double x;
+    public BodyAcceleration setX(double x) {
+        validateAndSetX(x);
+        return this;
+    }
 
-    private double y;
+    public BodyAcceleration setY(double y) {
+        validateAndSetY(y);
+        return this;
+    }
 
-    private double angle;
-
-    @Override
-    public String toString() {
-        return String.format("(%.3f, %.3f, %.3f)", x, y, angle);
+    public BodyAcceleration setAngle(double angle) {
+        validateAndSetAngle(angle);
+        return this;
     }
 
     public static BodyAcceleration sumOf(BodyAcceleration... accelerations) {

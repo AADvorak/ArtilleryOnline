@@ -2,29 +2,29 @@ package com.github.aadvorak.artilleryonline.battle.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 
 @Getter
-@Setter
-@Accessors(chain = true)
-public class BodyPosition implements BodyVector {
-
-    private double x;
-
-    private double y;
-
-    private double angle;
+public class BodyPosition extends BodyVectorBase implements BodyVector {
 
     @JsonIgnore
     private boolean angleNormalized;
 
+    public BodyPosition setX(double x) {
+        validateAndSetX(x);
+        return this;
+    }
+
+    public BodyPosition setY(double y) {
+        validateAndSetY(y);
+        return this;
+    }
+
     public BodyPosition setAngle(double angle) {
         if (angle < -Math.PI || angle > Math.PI) {
-            this.angle = Math.atan2(Math.sin(angle), Math.cos(angle));
+            validateAndSetAngle(Math.atan2(Math.sin(angle), Math.cos(angle)));
             this.angleNormalized = true;
         } else {
-            this.angle = angle;
+            validateAndSetAngle(angle);
             this.angleNormalized = false;
         }
         return this;
@@ -33,28 +33,23 @@ public class BodyPosition implements BodyVector {
     @JsonIgnore
     public Position getCenter() {
         return new Position()
-                .setX(x)
-                .setY(y);
+                .setX(getX())
+                .setY(getY());
     }
 
     @JsonIgnore
     public BodyPosition next(BodyVelocity velocity, double timeStep) {
         return new BodyPosition()
-                .setX(x + velocity.getX() * timeStep)
-                .setY(y + velocity.getY() * timeStep)
-                .setAngle(angle + velocity.getAngle() * timeStep);
+                .setX(getX() + velocity.getX() * timeStep)
+                .setY(getY() + velocity.getY() * timeStep)
+                .setAngle(getAngle() + velocity.getAngle() * timeStep);
     }
 
     public BodyPosition shifted(Shift shift) {
         return new BodyPosition()
-                .setX(x + shift.distance() * Math.cos(shift.angle()))
-                .setY(y + shift.distance() * Math.sin(shift.angle()))
-                .setAngle(angle);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("(%.3f, %.3f, %.3f)", x, y, angle);
+                .setX(getX() + shift.distance() * Math.cos(shift.angle()))
+                .setY(getY() + shift.distance() * Math.sin(shift.angle()))
+                .setAngle(getAngle());
     }
 
     public static BodyPosition of(Position center, double angle) {

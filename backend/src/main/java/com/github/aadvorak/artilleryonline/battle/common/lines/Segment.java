@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.common.lines;
 
+import com.github.aadvorak.artilleryonline.battle.common.Constants;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.Vector;
 
@@ -10,11 +11,16 @@ public record Segment(Position begin, Position end) {
         var y1 = begin().getY();
         var x2 = end().getX();
         var y2 = end().getY();
+        var position = new Position().setX(targetX);
+        if  (x1 == x2) {
+            return Math.abs(targetX - x1) < Constants.ZERO_THRESHOLD
+                    ? position.setY(y1 + y2 / 2) : null;
+        }
         if ((targetX < x1 && targetX < x2) || (targetX > x1 && targetX > x2)) {
             return null;
         }
         var y = y1 + (targetX - x1) * (y2 - y1) / (x2 - x1);
-        return new Position().setX(targetX).setY(y);
+        return position.setY(y);
     }
 
     public Vector normal() {

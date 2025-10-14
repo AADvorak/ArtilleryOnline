@@ -1,20 +1,14 @@
 package com.github.aadvorak.artilleryonline.battle.common;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+public class VectorImpl extends VectorBase implements Vector {
 
-@Getter
-@Setter
-@Accessors(chain = true)
-public class VectorImpl implements Vector {
+    public VectorImpl setX(double x) {
+        validateAndSetX(x);
+        return this;
+    }
 
-    private double x;
-
-    private double y;
-
-    @Override
-    public String toString() {
-        return String.format("(%.3f, %.3f)", x, y);
+    public VectorImpl setY(double y) {
+        validateAndSetY(y);
+        return this;
     }
 }

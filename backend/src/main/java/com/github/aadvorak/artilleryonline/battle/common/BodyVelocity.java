@@ -1,44 +1,42 @@
 package com.github.aadvorak.artilleryonline.battle.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 
-@Getter
-@Setter
-@Accessors(chain = true)
-public class BodyVelocity implements BodyVector {
+public class BodyVelocity extends BodyVectorBase implements BodyVector {
 
-    private double x;
+    public BodyVelocity setX(double x) {
+        validateAndSetX(x);
+        return this;
+    }
 
-    private double y;
+    public BodyVelocity setY(double y) {
+        validateAndSetY(y);
+        return this;
+    }
 
-    private double angle;
+    public BodyVelocity setAngle(double angle) {
+        validateAndSetAngle(angle);
+        return this;
+    }
 
     @JsonIgnore
     public Velocity getMovingVelocity() {
         return new Velocity()
-                .setX(x)
-                .setY(y);
+                .setX(getX())
+                .setY(getY());
     }
 
     public void recalculate(BodyAcceleration acceleration, double timeStep) {
-        setX(x + acceleration.getX() * timeStep);
-        setY(y + acceleration.getY() * timeStep);
-        setAngle(angle + acceleration.getAngle() * timeStep);
+        validateAndSetX(getX() + acceleration.getX() * timeStep);
+        validateAndSetY(getY() + acceleration.getY() * timeStep);
+        validateAndSetAngle(getAngle() + acceleration.getAngle() * timeStep);
     }
 
     public Velocity getPointVelocity(double pointDistance, double pointAngle) {
-        var angleVelocity = angle * pointDistance;
+        var angleVelocity = getAngle() * pointDistance;
         return new Velocity()
-                .setX(x - angleVelocity * Math.sin(pointAngle))
-                .setY(y + angleVelocity * Math.cos(pointAngle));
-    }
-
-    @Override
-    public String toString() {
-        return String.format("(%.3f, %.3f, %.3f)", x, y, angle);
+                .setX(getX() - angleVelocity * Math.sin(pointAngle))
+                .setY(getY() + angleVelocity * Math.cos(pointAngle));
     }
 
     public static BodyVelocity of(BodyVelocity velocity) {

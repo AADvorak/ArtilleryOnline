@@ -1,26 +1,24 @@
 package com.github.aadvorak.artilleryonline.battle.common;
 
-import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+public class Position extends VectorBase implements Vector {
 
-@Getter
-@Setter
-@Accessors(chain = true)
-public class Position implements Vector {
+    public Position setX(double x) {
+        validateAndSetX(x);
+        return this;
+    }
 
-    private double x;
-
-    private double y;
+    public Position setY(double y) {
+        validateAndSetY(y);
+        return this;
+    }
 
     public double distanceTo(Position other) {
-        return Math.sqrt(Math.pow(x - other.getX(), 2.0) + Math.pow(y - other.getY(), 2.0));
+        return Math.sqrt(Math.pow(getX() - other.getX(), 2.0) + Math.pow(getY() - other.getY(), 2.0));
     }
 
     public double angleTo(Position other) {
-        var dx = other.getX() - x;
-        var dy = other.getY() - y;
+        var dx = other.getX() - getX();
+        var dy = other.getY() - getY();
         return Math.atan2(dy, dx);
     }
 
@@ -36,18 +34,13 @@ public class Position implements Vector {
 
     public Position shifted(Shift shift) {
         return new Position()
-                .setX(x + shift.distance() * Math.cos(shift.angle()))
-                .setY(y + shift.distance() * Math.sin(shift.angle()));
+                .setX(getX() + shift.distance() * Math.cos(shift.angle()))
+                .setY(getY() + shift.distance() * Math.sin(shift.angle()));
     }
 
     public Position shifted(Vector vector) {
         return new Position()
-                .setX(x + vector.getX())
-                .setY(y + vector.getY());
-    }
-
-    @Override
-    public String toString() {
-        return String.format("(%.3f, %.3f)", x, y);
+                .setX(getX() + vector.getX())
+                .setY(getY() + vector.getY());
     }
 }

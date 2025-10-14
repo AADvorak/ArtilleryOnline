@@ -1,21 +1,20 @@
 package com.github.aadvorak.artilleryonline.battle.common;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+public class Acceleration extends VectorBase implements Vector {
 
-@Getter
-@Setter
-@Accessors(chain = true)
-public class Acceleration implements Vector {
+    public Acceleration setX(double x) {
+        validateAndSetX(x);
+        return this;
+    }
 
-    private double x;
-
-    private double y;
+    public Acceleration setY(double y) {
+        validateAndSetY(y);
+        return this;
+    }
 
     public void add(Acceleration acceleration) {
-        x += acceleration.x;
-        y += acceleration.y;
+        setX(getX() + acceleration.getX());
+        setY(getY() + acceleration.getY());
     }
 
     public static Acceleration sumOf(Acceleration... accelerations) {
@@ -26,10 +25,5 @@ public class Acceleration implements Vector {
         return new Acceleration()
                 .setX(vector.getX())
                 .setY(vector.getY());
-    }
-
-    @Override
-    public String toString() {
-        return String.format("(%.3f, %.3f)", x, y);
     }
 }
