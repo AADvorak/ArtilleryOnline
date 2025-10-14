@@ -285,6 +285,10 @@ public class ContactUtils {
                 var secondOtherSide = otherPolygon.next(otherSide);
                 if (otherSidesIntersections.get(secondOtherSide).size() == 1) {
                     var secondSide = otherSidesIntersections.get(secondOtherSide).iterator().next();
+                    // todo why equals is possible?
+                    if (firstSide.equals(secondSide)) {
+                        return null;
+                    }
                     var edge = polygon.next(firstSide).equals(secondSide) ? firstSide.end() : secondSide.end();
                     var otherEdge = otherSide.end();
                     var edgeOtherSideProjection = GeometryUtils.getPointToLineProjection(edge, otherSide);
