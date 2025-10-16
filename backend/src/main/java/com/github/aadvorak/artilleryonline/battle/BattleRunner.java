@@ -67,6 +67,7 @@ public class BattleRunner {
             battle.setStageAndResetTime(BattleStage.ERROR);
             battleUpdatesProcessor.sendBattleToUpdatesQueue(battle);
         } finally {
+            activeBattleStepProcessor.processError(battle);
             stopUpdatesSender(battle);
             removeBattleFromMap(battle);
             removeBattleFromRoom(battle);

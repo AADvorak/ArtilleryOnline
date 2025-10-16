@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.service;
 import com.github.aadvorak.artilleryonline.battle.*;
 import com.github.aadvorak.artilleryonline.battle.preset.VehicleSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
+import com.github.aadvorak.artilleryonline.collection.BattleTrackingMap;
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueParams;
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
@@ -27,6 +28,8 @@ public class BattleService {
 
     private final UserBattleMap userBattleMap;
 
+    private final BattleTrackingMap battleTrackingMap;
+
     private final UserService userService;
 
     private final BattleStarter battleStarter;
@@ -49,13 +52,13 @@ public class BattleService {
         return mapper.map(battle, BattleResponse.class);
     }
 
-    public String getBattleTracking() {
-        var user = userService.getUserFromContext();
-        var battle = userBattleMap.get(user.getId());
-        if (battle == null || battle.getDebug().getTracking() == null) {
+    public String getBattleTracking(String battleId) {
+        var tracking = battleTrackingMap.get(battleId);
+        if (tracking == null) {
             throw new NotFoundAppException();
         }
-        return battle.getDebug().getTracking();
+        battleTrackingMap.remove(battleId);
+        return tracking;
     }
 
     public void createTestDrive(UserBattleQueueParams params) {

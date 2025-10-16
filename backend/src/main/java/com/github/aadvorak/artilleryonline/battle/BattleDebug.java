@@ -16,8 +16,6 @@ public class BattleDebug {
 
     private boolean forceSend = false;
 
-    private String tracking;
-
     private BattleTracker tracker;
 
     private int colliderObjectId = 1;

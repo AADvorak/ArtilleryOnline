@@ -10,13 +10,12 @@ import com.github.aadvorak.artilleryonline.battle.processor.box.BoxDropProcessor
 import com.github.aadvorak.artilleryonline.battle.processor.command.CommandProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.drone.DroneLaunchProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionInitializer;
-import lombok.RequiredArgsConstructor;
+import com.github.aadvorak.artilleryonline.collection.BattleTrackingMap;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 public class ActiveBattleStepProcessor extends BattleStepProcessorBase implements BattleStepProcessor {
 
     private final CollisionsProcessor collisionsProcessor;
@@ -28,6 +27,22 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
     private final List<BeforeStep2Processor> beforeStep2Processors;
 
     private final List<AfterStep2Processor> afterStep2Processors;
+
+    public ActiveBattleStepProcessor(
+            BattleTrackingMap battleTrackingMap,
+            CollisionsProcessor collisionsProcessor,
+            List<BeforeStep1Processor> beforeStep1Processors,
+            List<AfterStep1Processor> afterStep1Processors,
+            List<BeforeStep2Processor> beforeStep2Processors,
+            List<AfterStep2Processor> afterStep2Processors
+    ) {
+        super(battleTrackingMap);
+        this.collisionsProcessor = collisionsProcessor;
+        this.beforeStep1Processors = beforeStep1Processors;
+        this.afterStep1Processors = afterStep1Processors;
+        this.beforeStep2Processors = beforeStep2Processors;
+        this.afterStep2Processors = afterStep2Processors;
+    }
 
     @Override
     protected void doStepLogic(Battle battle) {

@@ -6,18 +6,28 @@ import com.github.aadvorak.artilleryonline.battle.BattleType;
 import com.github.aadvorak.artilleryonline.battle.command.Command;
 import com.github.aadvorak.artilleryonline.battle.processor.command.ColliderCommandProcessor;
 import com.github.aadvorak.artilleryonline.battle.tracking.BattleTracker;
+import com.github.aadvorak.artilleryonline.collection.BattleTrackingMap;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class BattleStepProcessorBase implements BattleStepProcessor {
+
+    protected final BattleTrackingMap battleTrackingMap;
 
     public final void processStep(Battle battle) {
         processDebugCommand(battle);
         if (!battle.getDebug().isPaused() || battle.getDebug().isDoStep()) {
-            trackBattle(battle);
             battle.increaseTime();
             if (!changeStageIfNeeded(battle)) {
                 doStepLogic(battle);
             }
+            trackBattle(battle);
         }
+    }
+
+    @Override
+    public void processError(Battle battle) {
+        stopTrackingBattle(battle);
     }
 
     protected void doStepLogic(Battle battle) {
@@ -81,7 +91,7 @@ public class BattleStepProcessorBase implements BattleStepProcessor {
     private void stopTrackingBattle(Battle battle) {
         var tracker = battle.getDebug().getTracker();
         if (tracker != null) {
-            battle.getDebug().setTracking(tracker.getCsv());
+            battleTrackingMap.put(battle.getId(), tracker.getCsv());
             battle.getDebug().setTracker(null);
         }
     }

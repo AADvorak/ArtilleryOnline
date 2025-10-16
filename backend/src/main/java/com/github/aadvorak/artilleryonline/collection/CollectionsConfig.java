@@ -30,4 +30,9 @@ public class CollectionsConfig {
     public UserMessageMap userMessageMap() {
         return new UserMessageMap();
     }
+
+    @Bean
+    public BattleTrackingMap battleTrackingMap() {
+        return new BattleTrackingMap();
+    }
 }

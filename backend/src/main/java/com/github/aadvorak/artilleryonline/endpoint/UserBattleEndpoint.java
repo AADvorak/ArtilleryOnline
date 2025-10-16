@@ -18,9 +18,9 @@ public class UserBattleEndpoint {
         return battleService.getBattle().serialize();
     }
 
-    @GetMapping("/tracking")
-    public String getBattleTracking() {
-        return battleService.getBattleTracking();
+    @GetMapping("/tracking/{battleId}")
+    public String getBattleTracking(@PathVariable String battleId) {
+        return battleService.getBattleTracking(battleId);
     }
 
     @PostMapping("/test-drive")

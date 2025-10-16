@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useBattleStore } from '~/stores/battle'
-import { ref, watch } from 'vue'
-import type { Battle } from '@/playground/data/battle'
-import type { CommandsSender } from '@/playground/composables/commands-sender'
-import { Command } from '@/playground/data/command'
+import {useBattleStore} from '~/stores/battle'
+import {ref, watch} from 'vue'
+import {type Battle, BattleStage} from '@/playground/data/battle'
+import type {CommandsSender} from '@/playground/composables/commands-sender'
+import {Command} from '@/playground/data/command'
 import {mdiRecord, mdiStop} from '@mdi/js'
 
 const props = defineProps<{
@@ -20,6 +20,9 @@ watch(
   (value) => {
     if (active.value && value) {
       appendToCsv(value)
+      if (value.battleStage === BattleStage.ERROR) {
+        stopTrackingAndSaveCsv()
+      }
     }
   }
 )
@@ -70,9 +73,12 @@ function saveClientCsv() {
 }
 
 function getAndSaveServerCsv() {
-  const href = `/api/battles/tracking`
-  const fileName = 'tracking-server.csv'
-  saveToFile(href, fileName)
+  const battleId = battleStore.battle?.id
+  if (battleId) {
+    const href = `/api/battles/tracking/${battleId}`
+    const fileName = 'tracking-server.csv'
+    saveToFile(href, fileName)
+  }
 }
 
 function saveToFile(href: string, fileName: string) {
