@@ -47,7 +47,7 @@ function appendNumbersToRow(numbers: number[]) {
 function startTracking() {
   csv.value = 'time'
   Object.values(battleStore.battle!.model.vehicles).forEach((vehicle) => {
-    csv.value += `,${vehicle.id}_position_x,${vehicle.id}_position_y,${vehicle.id}_angle`
+    csv.value += `,${vehicle.id}_x,${vehicle.id}_y,${vehicle.id}_angle`
     csv.value += `,${vehicle.id}_velocity_x,${vehicle.id}_velocity_y,${vehicle.id}_velocity_angle`
   })
   csv.value += '\r\n'

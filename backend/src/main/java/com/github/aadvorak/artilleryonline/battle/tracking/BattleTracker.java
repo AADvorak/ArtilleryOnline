@@ -12,7 +12,7 @@ public class BattleTracker {
         csvBuilder.append("time");
         battle.getModel().getVehicles().values().forEach(vehicle ->
                 csvBuilder.append(
-                ",{id}_position_x,{id}_position_y,{id}_angle,{id}_velocity_x,{id}_velocity_y,{id}_velocity_angle,{id}_gun_angle,{id}_target_angle"
+                ",{id}_x,{id}_y,{id}_angle,{id}_velocity_x,{id}_velocity_y,{id}_velocity_angle,{id}_gun_angle,{id}_target_angle"
                         .replace("{id}", String.valueOf(vehicle.getId()))));
         csvBuilder.append("\r\n");
     }
