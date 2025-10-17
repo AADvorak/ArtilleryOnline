@@ -69,6 +69,9 @@ public interface Vector extends CompactSerializable {
 
     default Vector normalized() {
         var magnitude = magnitude();
+        if  (magnitude == 0) {
+            return new VectorImpl();
+        }
         return new VectorImpl()
                 .setX(getX() / magnitude)
                 .setY(getY() / magnitude);
