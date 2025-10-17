@@ -23,12 +23,18 @@ export class BodyVelocityCalculator<C extends BodyCalculations> {
     velocity.angle += acceleration.angle * timeStepSecs
     if (Math.abs(velocity.x) < Constants.MIN_VELOCITY) {
       velocity.x = 0.0
+    } else if (Math.abs(velocity.x) > Constants.MAX_VELOCITY) {
+      velocity.x = Constants.MAX_VELOCITY * Math.sign(velocity.x)
     }
     if (Math.abs(velocity.y) < Constants.MIN_VELOCITY) {
       velocity.y = 0.0
+    } else if (Math.abs(velocity.y) > Constants.MAX_VELOCITY) {
+      velocity.y = Constants.MAX_VELOCITY * Math.sign(velocity.y)
     }
     if (Math.abs(velocity.angle * maxRadius) < Constants.MIN_VELOCITY) {
       velocity.angle = 0.0
+    } else if (Math.abs(velocity.angle) > Constants.MAX_VELOCITY) {
+      velocity.angle = Constants.MAX_VELOCITY * Math.sign(velocity.angle)
     }
   }
 }

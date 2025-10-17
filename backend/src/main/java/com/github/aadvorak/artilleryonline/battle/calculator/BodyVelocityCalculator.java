@@ -30,12 +30,18 @@ public class BodyVelocityCalculator<
         velocity.recalculate(acceleration, timeStep);
         if (Math.abs(velocity.getX()) < Constants.MIN_VELOCITY) {
             velocity.setX(0.0);
+        } else if (Math.abs(velocity.getX()) > Constants.MAX_VELOCITY) {
+            velocity.setX(Constants.MAX_VELOCITY * Math.signum(velocity.getX()));
         }
         if (Math.abs(velocity.getY()) < Constants.MIN_VELOCITY) {
             velocity.setY(0.0);
+        } else if (Math.abs(velocity.getY()) > Constants.MAX_VELOCITY) {
+            velocity.setY(Constants.MAX_VELOCITY * Math.signum(velocity.getY()));
         }
         if (Math.abs(velocity.getAngle() * maxRadius) < Constants.MIN_VELOCITY) {
             velocity.setAngle(0.0);
+        } else if (Math.abs(velocity.getAngle()) > Constants.MAX_VELOCITY) {
+            velocity.setAngle(Constants.MAX_VELOCITY * Math.signum(velocity.getAngle()));
         }
     }
 }
