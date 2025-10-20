@@ -47,8 +47,6 @@ public class BodyAccelerationCalculator<
                 forces.addAll(forceCalculator.calculate(calculations, battleModel)));
         extractMovingFromRotating(forces);
         forces.forEach(force -> accelerations.add(toAcceleration(force, calculations)));
-        addAirFrictionAcceleration(accelerations, calculations,
-                battleModel.getRoom().getSpecs().getAirFrictionCoefficient());
         addColliderAcceleration(accelerations, calculations);
         return BodyAcceleration.sumOf(accelerations);
     }
@@ -137,20 +135,5 @@ public class BodyAccelerationCalculator<
                 case LEFT -> accelerations.add(new BodyAcceleration().setAngle(COLLIDER_ROTATING));
             }
         }
-    }
-
-    private void addAirFrictionAcceleration(List<BodyAcceleration> accelerations, C calculations,
-                                            double frictionCoefficient) {
-        var velocity = calculations.getModel().getState().getVelocity();
-        var movingCoefficient = 2 * calculations.getModel().getPreCalc().getMaxRadius()
-                * frictionCoefficient / calculations.getModel().getPreCalc().getMass();
-        var rotatingCoefficient = 2 * Math.PI * Math.pow(calculations.getModel().getPreCalc().getMaxRadius(), 2)
-                * frictionCoefficient / calculations.getModel().getPreCalc().getMomentOfInertia();
-        accelerations.add(
-                new BodyAcceleration()
-                        .setX(-velocity.getX() * Math.abs(velocity.getX()) * movingCoefficient)
-                        .setY(-velocity.getY() * Math.abs(velocity.getY()) * movingCoefficient)
-                        .setAngle(-velocity.getAngle() * Math.abs(velocity.getAngle()) * rotatingCoefficient)
-        );
     }
 }
