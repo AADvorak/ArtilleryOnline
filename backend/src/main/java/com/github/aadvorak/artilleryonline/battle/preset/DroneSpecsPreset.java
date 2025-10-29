@@ -19,7 +19,7 @@ public enum DroneSpecsPreset {
             .setCriticalAngle(Math.PI / 20)
             .setMaxEngineAcceleration(12.0)
             .setPrepareToLaunchTime(20.0)
-            .setMinCollisionDestroyImpact(0.04)
+            .setMinCollisionDestroyImpact(0.1)
     ),
 
     HEAVY("Heavy", new DroneSpecs()
@@ -31,7 +31,7 @@ public enum DroneSpecsPreset {
             .setCriticalAngle(Math.PI / 25)
             .setMaxEngineAcceleration(11.0)
             .setPrepareToLaunchTime(20.0)
-            .setMinCollisionDestroyImpact(0.05)
+            .setMinCollisionDestroyImpact(0.12)
     );
 
     private final String name;
