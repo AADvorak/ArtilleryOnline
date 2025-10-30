@@ -16,6 +16,8 @@ import java.util.Optional;
 @Component
 public class DroneCollisionPreprocessor implements CollisionPreprocessor {
 
+    private static final double REMOVE_DESTROYED_MIN_HEIGHT = 1.0;
+
     @Override
     public Boolean process(Collision collision, BattleCalculations battle) {
         var first = collision.getPair().first();
@@ -27,7 +29,7 @@ public class DroneCollisionPreprocessor implements CollisionPreprocessor {
 
     // todo refactor
     private boolean process(DroneCalculations drone, Collision collision, BattleCalculations battle) {
-        if (drone.getModel().getState().isDestroyed()) {
+        if (drone.getModel().getState().isDestroyed() && drone.getHeight() < REMOVE_DESTROYED_MIN_HEIGHT) {
             battle.getModel().getUpdates().removeDrone(drone.getId());
             return false;
         }

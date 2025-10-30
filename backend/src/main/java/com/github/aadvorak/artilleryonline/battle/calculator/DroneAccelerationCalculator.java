@@ -10,6 +10,7 @@ import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 public class DroneAccelerationCalculator {
 
     public static BodyAcceleration calculate(DroneCalculations drone, BattleModel battleModel) {
+        drone.setHeight(getHeight(drone, battleModel));
         var gravity = new BodyAcceleration()
                 .setY(-battleModel.getRoom().getSpecs().getGravityAcceleration());
         var friction = calculateFriction(drone, battleModel.getRoom().getSpecs().getAirFrictionCoefficient());
@@ -57,7 +58,6 @@ public class DroneAccelerationCalculator {
 
     private static double getEnginesAccelerationMagnitude(DroneCalculations drone, BattleModel battleModel) {
         var flyHeight = drone.getModel().getSpecs().getFlyHeight();
-        var currentHeight = getHeight(drone, battleModel);
         var maxAcceleration = drone.getModel().getSpecs().getMaxEngineAcceleration();
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
         if (drone.getModel().getState().getAmmo().values().iterator().next() == 0
@@ -67,16 +67,16 @@ public class DroneAccelerationCalculator {
         } else if (drone.getModel().getState().getAmmo().values().iterator().next() == 0
                 && drone.getTarget() == null) {
             return maxAcceleration;
-        } else if (currentHeight > 1.5 * flyHeight) {
+        } else if (drone.getHeight() > 1.5 * flyHeight) {
             return 0.0;
-        } else if (currentHeight < 0.5 * flyHeight) {
+        } else if (drone.getHeight() < 0.5 * flyHeight) {
             return maxAcceleration;
         } else {
             var velocityY = drone.getModel().getState().getVelocity().getY();
             if (velocityY < -3.0) {
                 return maxAcceleration;
             }
-            var distance = flyHeight - currentHeight;
+            var distance = flyHeight - drone.getHeight();
             var timeStep = battleModel.getCurrentTimeStepSecs();
             var absVelocityY = Math.abs(velocityY);
             var absDistance = Math.abs(distance);
@@ -109,8 +109,7 @@ public class DroneAccelerationCalculator {
 
     private static double getTargetAngle(DroneCalculations drone, BattleModel battleModel) {
         var flyHeight = drone.getModel().getSpecs().getFlyHeight();
-        var currentHeight = getHeight(drone, battleModel);
-        if (currentHeight < 0.5 * flyHeight) {
+        if (drone.getHeight() < 0.5 * flyHeight) {
             return 0.0;
         }
         if (drone.getTarget() == null) {
