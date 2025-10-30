@@ -119,7 +119,6 @@ public class DamageProcessor {
                     - drone.getModel().getSpecs().getHullRadius();
             if (distanceToTarget < hit.radius()) {
                 drone.getModel().getState().setDestroyed(true);
-                battle.getModel().getUpdates().removeDrone(drone.getId());
             }
         });
         battle.getVehicles().forEach(vehicle -> {
