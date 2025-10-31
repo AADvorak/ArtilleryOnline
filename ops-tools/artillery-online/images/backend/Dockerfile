@@ -1,3 +1,3 @@
-FROM openjdk:17.0.2-oraclelinux8
+FROM openjdk:26-ea-21-jdk-oraclelinux9
 WORKDIR /backend
 CMD ["java", "-jar", "artilleryonline.jar"]
