@@ -16,7 +16,8 @@ const BATTLE_PATH = '/battle'
 const ROOM_PATH = '/rooms/room'
 const ROOMS_PATH = '/rooms'
 const PLAYGROUND_PATH = '/playground'
-const UNSIGNED_PATHS = ['/', '/login', '/signup']
+const UNAVAILABLE_PATH = '/unavailable'
+const UNSIGNED_PATHS = [ROOT_PATH, '/login', '/signup', UNAVAILABLE_PATH]
 
 export default defineNuxtRouteMiddleware(async (to) => {
   const userStore = useUserStore()
@@ -31,8 +32,22 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const messageStore = useMessageStore()
   const configsStore = useConfigsStore()
 
-  await settingsStore.loadIfNull()
-  await userStore.loadUserIfNull()
+  try {
+    await settingsStore.loadIfNull()
+    await userStore.loadUserIfNull()
+  } catch (e) {
+    console.log(e)
+    // @ts-ignore
+    if (e.status >= 500) {
+      if (UNAVAILABLE_PATH !== to.path) {
+        return navigateTo(UNAVAILABLE_PATH)
+      } else {
+        return
+      }
+    } else if (UNAVAILABLE_PATH === to.path) {
+      return navigateTo(ROOT_PATH)
+    }
+  }
 
   if (!!userStore.user) {
     await stompClientStore.connect()

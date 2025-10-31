@@ -86,6 +86,10 @@ export const ru = {
   },
   serverMessages,
   sounds,
+  unavailable: {
+    title: 'игра недоступна',
+    message: 'Сервер не отвечает. Повторите попытку позже. Просим прощения за неудобства.'
+  },
   user,
   validationMessages,
   vehicleSpecsDialog,

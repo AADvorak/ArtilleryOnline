@@ -11,12 +11,8 @@ export const useSettingsStore = defineStore('settings', () => {
 
   async function loadIfNull() {
     if (!settings.value) {
-      try {
-        settings.value = await api.getJson<ApplicationSettings>('/application/settings')
-        timeZoneOffset.value = (await api.getJson<TimeZone>('/application/timezone')).offset
-      } catch (e) {
-        console.log(e)
-      }
+      settings.value = await api.getJson<ApplicationSettings>('/application/settings')
+      timeZoneOffset.value = (await api.getJson<TimeZone>('/application/timezone')).offset
     }
   }
 

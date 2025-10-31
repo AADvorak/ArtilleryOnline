@@ -86,6 +86,10 @@ export const en = {
   },
   serverMessages,
   sounds,
+  unavailable: {
+    title: 'game unavailable',
+    message: 'The server is not responding. Please try again later. We apologize for the inconvenience.'
+  },
   user,
   validationMessages,
   vehicleSpecsDialog,

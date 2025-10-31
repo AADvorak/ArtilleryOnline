@@ -8,11 +8,7 @@ export const useUserStore = defineStore('user', () => {
 
   async function loadUserIfNull() {
     if (!user.value) {
-      try {
-        user.value = await new ApiRequestSender().getJson<User>('/users/me')
-      } catch (e) {
-        console.log(e)
-      }
+      user.value = await new ApiRequestSender().getJson<User>('/users/me')
     }
   }
 
