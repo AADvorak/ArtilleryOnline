@@ -17,7 +17,7 @@ public enum RoomSpecsPreset {
             .setAirFrictionCoefficient(0.1)
             .setStep(0.01)
             .setLeftBottom(new Position().setX(0.0).setY(0.0))
-            .setRightTop(new Position().setX(20.0).setY(9.0))),
+            .setRightTop(new Position().setX(30.0).setY(13.5))),
 
     NO_GRAVITY("noGravity", new RoomSpecs()
             .setGravityAcceleration(0.0)
