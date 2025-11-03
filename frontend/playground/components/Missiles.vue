@@ -38,7 +38,7 @@ function launch() {
 
 <template>
   <template v-for="missileKey in missileKeys">
-    <v-btn
+    <no-focus-btn
         class="missile-btn"
         color="primary"
         :disabled="!missiles[missileKey]"
@@ -50,7 +50,7 @@ function launch() {
           :tooltip="t('controls.launchMissile')"
           :show="globalStateStore.showHelp === VerticalTooltipLocation.BOTTOM"
       />
-    </v-btn>
+    </no-focus-btn>
   </template>
 </template>
 

@@ -78,7 +78,7 @@ function selectShell(key) {
 
 <template>
   <template v-for="(ammoKey, index) in ammoKeys">
-    <v-btn
+    <no-focus-btn
         class="ammo-btn"
         :color="ammoKey === selectedShell ? 'primary' : ''"
         :disabled="!ammo[ammoKey]"
@@ -90,7 +90,7 @@ function selectShell(key) {
           :tooltip="ammoKey === selectedShell ? t('controls.selectedShell') : t('controls.selectShell')"
           :show="globalStateStore.showHelp === VerticalTooltipLocation.BOTTOM"
       />
-    </v-btn>
+    </no-focus-btn>
   </template>
   <v-progress-circular v-if="showProgress" color="lime" :model-value="reloadingProgress" />
 </template>

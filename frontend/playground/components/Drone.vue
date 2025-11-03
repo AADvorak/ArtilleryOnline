@@ -34,7 +34,7 @@ function launch() {
 </script>
 
 <template>
-  <v-btn
+  <no-focus-btn
       v-if="droneState && !droneState.launched"
       class="drone-btn"
       :color="droneState.readyToLaunch ? 'success' : 'warning'"
@@ -48,7 +48,7 @@ function launch() {
         :tooltip="t('controls.launchDrone')"
         :show="globalStateStore.showHelp === VerticalTooltipLocation.BOTTOM"
     />
-  </v-btn>
+  </no-focus-btn>
 </template>
 
 <style scoped>
