@@ -1,4 +1,6 @@
 import {useSoundsStore} from "~/stores/sounds";
+import {useUserSettingsStore} from "~/stores/user-settings";
+import {SoundSettingsNames} from "~/dictionary/sound-settings-names";
 
 export interface PlayParams {
   path: string
@@ -34,6 +36,7 @@ const LOOPS = {
 export function usePlayer(): Player {
   const audioCtx = new AudioContext()
   const soundsStore = useSoundsStore()
+  const volume = parseInt(useUserSettingsStore().soundSettingsOrDefaultsNameValueMapping[SoundSettingsNames.VOLUME] || '100')
 
   async function play(params: PlayParams): Promise<AudioControl | undefined> {
     let buffer = soundsStore.audioBufferMap[params.path]
@@ -44,7 +47,7 @@ export function usePlayer(): Player {
     if (buffer) {
       const panner = new StereoPannerNode(audioCtx, {pan: params.pan})
       const gainNode = audioCtx.createGain()
-      gainNode.gain.value = params.gain
+      gainNode.gain.value = params.gain * (volume / 100)
       const source = audioCtx.createBufferSource()
       source.buffer = buffer
       if (params.loop) {

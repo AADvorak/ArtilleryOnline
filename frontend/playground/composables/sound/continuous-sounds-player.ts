@@ -37,6 +37,8 @@ export function useContinuousSoundsPlayer(player: Player) {
   const drones = computed(() => battleStore.drones)
   const battleIsFinished = computed(() => battleStore.battle?.battleStage === BattleStage.FINISHED)
 
+  const volume = parseInt(useUserSettingsStore().soundSettingsOrDefaultsNameValueMapping[SoundSettingsNames.VOLUME] || '100')
+
   function start() {
     setTimeout(playSounds, 100)
   }
@@ -138,7 +140,7 @@ export function useContinuousSoundsPlayer(player: Player) {
     }
     if (condition && audioControl) {
       audioControl.panner.pan.value = pan
-      audioControl.gainNode.gain.value = gain
+      audioControl.gainNode.gain.value = gain * (volume / 100)
       audioControl.source.playbackRate.value = rate
     }
     if (!condition && audioControl) {
