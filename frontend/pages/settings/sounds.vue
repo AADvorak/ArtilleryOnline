@@ -9,7 +9,8 @@ const router = useRouter()
 const userSettingsStore = useUserSettingsStore()
 
 const settings = reactive({
-  enable: '0'
+  enable: '0',
+  volume: '100'
 })
 
 const soundSettings = computed(() => userSettingsStore.soundSettingsOrDefaultsNameValueMapping)
@@ -24,8 +25,24 @@ watch(() => settings.enable, value => {
   }
 })
 
+watch(() => settings.volume, value => {
+  const strValue = value.toString()
+  const existingValue = soundSettings.value[SoundSettingsNames.VOLUME]
+  if (strValue && strValue !== existingValue) {
+    setTimeout(() => {
+      if (strValue === settings.volume.toString()) {
+        userSettingsStore.setSoundSetting({
+          name: SoundSettingsNames.VOLUME,
+          value: strValue
+        })
+      }
+    }, 600)
+  }
+})
+
 onMounted(() => {
   settings.enable = soundSettings.value[SoundSettingsNames.ENABLE]
+  settings.volume = soundSettings.value[SoundSettingsNames.VOLUME]
 })
 
 function back() {
@@ -50,6 +67,30 @@ function back() {
                   true-value="1"
                   false-value="0"
               />
+            </td>
+          </tr>
+          <tr>
+            <td>{{ t('sounds.volume') }}</td>
+            <td>
+              <v-slider
+                  v-model="settings.volume"
+                  :max="100"
+                  :min="0"
+                  :step="1"
+                  class="align-center"
+                  hide-details
+              >
+                <template v-slot:append>
+                  <v-text-field
+                      v-model="settings.volume"
+                      density="compact"
+                      style="width: 90px"
+                      type="number"
+                      hide-details
+                      single-line
+                  ></v-text-field>
+                </template>
+              </v-slider>
             </td>
           </tr>
           </tbody>

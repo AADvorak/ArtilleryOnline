@@ -1,3 +1,4 @@
 export const SoundSettingsNames = {
-  ENABLE: 'enable'
+  ENABLE: 'enable',
+  VOLUME: 'volume',
 }
