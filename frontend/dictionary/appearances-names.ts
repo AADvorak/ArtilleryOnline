@@ -5,5 +5,6 @@ export const AppearancesNames = {
   HP_ABOVE: 'showHpBarsAboveVehicles',
   ALL_HP_TOP: 'showAllPlayersHpBarsInTopBar',
   GROUND_TEXTURE_BACKGROUND: 'showGroundTextureAndBackground',
-  SHOW_CONTROL_BUTTONS: 'showControlButtons'
+  SHOW_CONTROL_BUTTONS: 'showControlButtons',
+  BATTLEFIELD_ALIGNMENT: 'battlefieldAlignment',
 }

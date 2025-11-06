@@ -3,6 +3,7 @@ import {useRouter} from "#app";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
 import {useI18n} from "vue-i18n";
+import {BattlefieldAlignments} from "~/dictionary/battlefield-alignments";
 
 const router = useRouter()
 const userSettingsStore = useUserSettingsStore()
@@ -16,10 +17,13 @@ const settings = reactive({
   showHpBarsAboveVehicles: '1',
   showAllPlayersHpBarsInTopBar: '0',
   showGroundTextureAndBackground: '0',
-  showControlButtons: '0'
+  showControlButtons: '0',
+  battlefieldAlignment: BattlefieldAlignments.BY_SCREEN_SIZE
 })
 
 const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
+const battlefieldAlignments = computed(() => Object.values(BattlefieldAlignments).map(key =>
+    ({key, title: t(`appearance.${key}`) })))
 
 watch(() => settings.language, value => {
   const existingValue = appearances.value[AppearancesNames.LANGUAGE]
@@ -91,6 +95,16 @@ watch(() => settings.showControlButtons, value => {
   }
 })
 
+watch(() => settings.battlefieldAlignment, value => {
+  const existingValue = appearances.value[AppearancesNames.BATTLEFIELD_ALIGNMENT]
+  if (value && value !== existingValue) {
+    userSettingsStore.setAppearance({
+      name: AppearancesNames.BATTLEFIELD_ALIGNMENT,
+      value
+    })
+  }
+})
+
 onMounted(() => {
   settings.language = appearances.value[AppearancesNames.LANGUAGE]
   settings.vehicleColor = appearances.value[AppearancesNames.VEHICLE_COLOR]
@@ -99,6 +113,7 @@ onMounted(() => {
   settings.showAllPlayersHpBarsInTopBar = appearances.value[AppearancesNames.ALL_HP_TOP]
   settings.showGroundTextureAndBackground = appearances.value[AppearancesNames.GROUND_TEXTURE_BACKGROUND]
   settings.showControlButtons = appearances.value[AppearancesNames.SHOW_CONTROL_BUTTONS]
+  settings.battlefieldAlignment = appearances.value[AppearancesNames.BATTLEFIELD_ALIGNMENT]
 })
 
 function back() {
@@ -185,6 +200,18 @@ function back() {
                   v-model="settings.showControlButtons"
                   true-value="1"
                   false-value="0"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>{{ t('appearance.battlefieldAlignment') }}</td>
+            <td>
+              <v-select
+                  v-model="settings.battlefieldAlignment"
+                  :items="battlefieldAlignments"
+                  item-value="key"
+                  item-title="title"
+                  density="compact"
               />
             </td>
           </tr>

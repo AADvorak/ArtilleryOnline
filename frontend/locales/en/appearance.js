@@ -7,4 +7,7 @@ export const appearance = {
   showAllPlayersHpBarsInTopBar: 'Show all players HP bars in top bar',
   showGroundTextureAndBackground: 'Show ground texture and background',
   showControlButtons: 'Show control buttons',
+  battlefieldAlignment: 'Battlefield alignment',
+  byScreenSize: 'By screen size',
+  byScreenHeight: 'By screen height',
 }
