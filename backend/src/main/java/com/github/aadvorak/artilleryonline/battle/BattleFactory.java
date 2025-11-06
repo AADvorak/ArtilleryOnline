@@ -90,7 +90,7 @@ public class BattleFactory {
         var groundLine = new ArrayList<Double>();
         var xMin = roomSpecs.getLeftBottom().getX();
         var xMax = roomSpecs.getRightTop().getX();
-        var height = roomSpecs.getRightTop().getY() - roomSpecs.getLeftBottom().getY();
+        var height = 8.0;
         var sigma = BattleUtils.generateRandom(0.9, 1.5);
         var sigma1 = BattleUtils.generateRandom(1.0, 1.5);
         var sigma2 = BattleUtils.generateRandom(1.0, 1.5);
