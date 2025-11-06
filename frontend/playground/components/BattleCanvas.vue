@@ -14,6 +14,7 @@ import {useSurfaceDrawer} from "~/playground/composables/drawer/surface-drawer";
 import {useParticleDrawer} from "~/playground/composables/drawer/particle-drawer";
 import {useShellTrajectoryDrawer} from "~/playground/composables/drawer/shell-trajectory-drawer";
 import {useBoxDrawer} from "~/playground/composables/drawer/box-drawer";
+import {BattlefieldAlignments} from "~/dictionary/battlefield-alignments";
 
 const HEADER_HEIGHT = 72
 
@@ -39,6 +40,8 @@ const canvasStyle = computed(() => {
     return ''
   }
 })
+const alignByScreenHeight = computed(() =>
+    appearances.value[AppearancesNames.BATTLEFIELD_ALIGNMENT] === BattlefieldAlignments.BY_SCREEN_HEIGHT)
 
 const canvas = ref<HTMLCanvasElement>()
 const ctx = ref<CanvasRenderingContext2D>()
@@ -87,11 +90,14 @@ function onWindowResize() {
 }
 
 function calculateCanvasClass() {
+  const classes = []
   if (canvasHeight.value > window.innerHeight - HEADER_HEIGHT) {
-    canvasClass.value = 'canvas-absolute-bottom'
-  } else {
-    canvasClass.value = ''
+    classes.push('canvas-absolute-bottom')
   }
+  if (alignByScreenHeight.value) {
+    classes.push('canvas-scroll')
+  }
+  canvasClass.value = classes.join(' ')
 }
 
 function initCanvasAndCtx() {
@@ -147,13 +153,13 @@ function calculateCanvasSize() {
     const screenWidth = window.innerWidth
     const screenHeight = window.innerHeight
     const screenWidthToHeight = screenWidth / screenHeight
-    if (battleWidthToHeight > screenWidthToHeight) {
-      const width = screenWidth
-      const height = Math.floor(width / battleWidthToHeight)
-      canvasSize.value = { width, height }
-    } else {
+    if (alignByScreenHeight.value || battleWidthToHeight < screenWidthToHeight) {
       const height = screenHeight
       const width = Math.floor(battleWidthToHeight * height)
+      canvasSize.value = { width, height }
+    } else {
+      const width = screenWidth
+      const height = Math.floor(width / battleWidthToHeight)
       canvasSize.value = { width, height }
     }
   }
@@ -171,13 +177,14 @@ function calculateScaleCoefficient() {
 
 <template>
   <v-main>
-    <canvas
-        id="battle-canvas"
-        :width="canvasWidth"
-        :height="canvasHeight"
-        :style="canvasStyle"
-        :class="canvasClass"
-    ></canvas>
+    <div :class="canvasClass">
+      <canvas
+          id="battle-canvas"
+          :width="canvasWidth"
+          :height="canvasHeight"
+          :style="canvasStyle"
+      ></canvas>
+    </div>
   </v-main>
 </template>
 
@@ -192,5 +199,13 @@ canvas {
   left: auto;
   transform: translateX(-50%);
   position: absolute;
+}
+
+.canvas-scroll {
+  overflow-x: auto;       /* Enables horizontal scrolling */
+  overflow-y: hidden;     /* Prevent vertical scrolling */
+  width: 100%;            /* Or a fixed width, e.g., 600px */
+  max-width: 100%;        /* Prevent container overflow */
+  /* optionally add a border or padding as needed */
 }
 </style>
