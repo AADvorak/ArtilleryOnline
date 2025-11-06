@@ -161,7 +161,7 @@ export function useContinuousSoundsPlayer(player: Player) {
   }
 
   function stopAll() {
-    Object.keys(audioControls).forEach(stopByKey)
+    player.close().then()
   }
 
   function stopByKey(key: string) {

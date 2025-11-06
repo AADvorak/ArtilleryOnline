@@ -12,7 +12,8 @@ export interface PlayParams {
 }
 
 export interface Player {
-  play: (params: PlayParams) => Promise<AudioControl | undefined>
+  play: (params: PlayParams) => Promise<AudioControl | undefined>,
+  close: () => Promise<void>
 }
 
 export interface AudioControl {
@@ -66,6 +67,12 @@ export function usePlayer(): Player {
     return undefined
   }
 
+  async function close() {
+    if (audioCtx?.state === 'running') {
+      await audioCtx.close()
+    }
+  }
+
   async function load(path: string) {
     const response = await fetch(path)
     const arrayBuffer = await response.arrayBuffer()
@@ -86,5 +93,5 @@ export function usePlayer(): Player {
     }
   }
 
-  return {play}
+  return {play, close}
 }
