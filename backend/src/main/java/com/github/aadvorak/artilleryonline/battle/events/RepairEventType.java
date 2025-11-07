@@ -4,7 +4,7 @@ import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWr
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 
 public enum RepairEventType implements CompactSerializable {
-    TRACK, TURN_ON_WHEELS, HEAL;
+    TRACK, TURN_ON_WHEELS, HEAL, REFILL_AMMO;
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {

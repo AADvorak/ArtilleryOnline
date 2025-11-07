@@ -46,7 +46,8 @@ export enum CollideObjectType {
 }
 
 export enum BoxType {
-  HP = 'HP'
+  HP = 'HP',
+  AMMO = 'AMMO'
 }
 
 export interface CollideObject {

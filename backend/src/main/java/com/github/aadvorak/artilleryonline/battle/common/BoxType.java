@@ -4,7 +4,7 @@ import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWr
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 
 public enum BoxType implements CompactSerializable {
-    HP;
+    HP, AMMO;
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {

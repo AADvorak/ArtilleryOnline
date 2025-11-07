@@ -14,6 +14,12 @@ public enum BoxSpecsPreset {
             .setMass(0.2)
             .setType(BoxType.HP)
             .setShape(TrapezeShape.square(0.4))
+    ),
+
+    AMMO("AMMO", new BoxSpecs()
+            .setMass(0.2)
+            .setType(BoxType.AMMO)
+            .setShape(TrapezeShape.square(0.4))
     );
 
     private final String name;

@@ -11,6 +11,8 @@ import com.github.aadvorak.artilleryonline.battle.events.RepairEvent;
 import com.github.aadvorak.artilleryonline.battle.events.RepairEventType;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+
 @Component
 public class BoxCollisionPreprocessor implements CollisionPreprocessor {
 
@@ -35,17 +37,28 @@ public class BoxCollisionPreprocessor implements CollisionPreprocessor {
     }
 
     private boolean pickBox(BoxCalculations box, VehicleCalculations vehicle, BattleCalculations battle) {
+        RepairEventType eventType = null;
         var hp = vehicle.getModel().getState().getHitPoints();
         var maxHp = vehicle.getModel().getSpecs().getHitPoints();
+
         if (BoxType.HP.equals(box.getModel().getSpecs().getType()) && hp < maxHp) {
-            battle.getModel().getUpdates().removeBox(box.getId());
             hp = Math.min(hp + box.getModel().getConfig().getAmount(), maxHp);
             vehicle.getModel().getState().setHitPoints(hp);
+            eventType = RepairEventType.HEAL;
+        } else if (BoxType.AMMO.equals(box.getModel().getSpecs().getType())
+                && vehicle.getModel().getState().getAmmo().values().stream().reduce(0, Integer::sum)
+                < vehicle.getModel().getConfig().getAmmo().values().stream().reduce(0, Integer::sum)) {
+            vehicle.getModel().getState().setAmmo(new HashMap<>(vehicle.getModel().getConfig().getAmmo()));
+            eventType = RepairEventType.REFILL_AMMO;
+        }
+
+        if (eventType != null) {
+            battle.getModel().getUpdates().removeBox(box.getId());
             vehicle.getModel().getUpdate().setUpdated();
             battle.getModel().getEvents().addRepair(
                     new RepairEvent()
                             .setVehicleId(vehicle.getModel().getId())
-                            .setType(RepairEventType.HEAL)
+                            .setType(eventType)
             );
             return true;
         }

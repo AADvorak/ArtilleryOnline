@@ -4,8 +4,11 @@ import type {TrapezeShape} from "~/playground/data/shapes";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 
 export interface DrawerBase {
+  drawTrapeze: (ctx: CanvasRenderingContext2D, bottomCenter: BodyPosition, shape: TrapezeShape, color?: string) => void
+  drawPolygon: (ctx: CanvasRenderingContext2D, polygon: Position[], color?: string) => void
   transformPosition: (position: Position) => (Position)
   scale: (value: number) => number
+  getFont: (size: number) => string
 }
 
 export function useDrawerBase(scaleCoefficient: Ref<number>, canvasSize: Ref<Size>) {
@@ -27,10 +30,10 @@ export function useDrawerBase(scaleCoefficient: Ref<number>, canvasSize: Ref<Siz
     if (color) ctx.fillStyle = color
     ctx.lineWidth = 1
     ctx.beginPath()
-    const firstPosition = transformPosition(polygon[0])
+    const firstPosition = transformPosition(polygon[0]!)
     ctx.moveTo(firstPosition.x, firstPosition.y)
     for (let i = 1; i < polygon.length; i++) {
-      const position = transformPosition(polygon[i])
+      const position = transformPosition(polygon[i]!)
       ctx.lineTo(position.x, position.y)
     }
     ctx.fill()

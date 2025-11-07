@@ -120,7 +120,8 @@ export function useEventSoundsPlayer(player: Player) {
     if (vehicle?.id === repair.vehicleId) {
       const pan = soundsPlayerBase.calculatePan(vehicle.state.position.x)
       const gain = soundsPlayerBase.calculateGain(vehicle.state.position)
-      const fileName = repair.type === RepairEventType.HEAL ? 'use-box' : 'vehicle-repair'
+      const fileName = [RepairEventType.HEAL, RepairEventType.REFILL_AMMO].includes(repair.type)
+          ? 'use-box' : 'vehicle-repair'
       play(fileName, pan, gain)
     }
   }

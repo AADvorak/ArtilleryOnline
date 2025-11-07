@@ -11,6 +11,7 @@ import type {VehicleModel} from "~/playground/data/model";
 import type {VehicleState} from "~/playground/data/state";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {DefaultColors} from "~/dictionary/default-colors";
+import type {Ammo} from "~/playground/data/common";
 
 export function useBattleUpdater(player: Player) {
   const battleStore = useBattleStore()
@@ -124,6 +125,7 @@ export function useBattleUpdater(player: Player) {
         Object.keys(vehicles).forEach(key => {
           const model = battle.model.vehicles[key]
           showChangeHp(model, model.state, vehicles[key])
+          showChangeAmmo(model, model.state, vehicles[key])
           model.state = vehicles[key]
         })
       }
@@ -167,6 +169,17 @@ export function useBattleUpdater(player: Player) {
       const hpDiffToFixed = hpDiff.toFixed(0)
       const text = hpDiff > 0 ? '+' + hpDiffToFixed : hpDiffToFixed
       battleStore.addParticle(BattleUtils.generateParticle(position, 1.0), {color, text})
+    }
+  }
+
+  function showChangeAmmo(model: VehicleModel, oldState: VehicleState, newState: VehicleState) {
+    const sum = (ammo: Ammo) =>
+        Object.values(ammo).reduce((a, c) => a + c)
+    const diff = sum(newState.ammo) - sum(oldState.ammo)
+    if (diff > 0) {
+      const position = BattleUtils.shiftedPosition(model.state.position, model.preCalc.maxRadius, Math.PI / 2)
+      battleStore.addParticle(BattleUtils.generateParticle(position, 1.0),
+          {color: DefaultColors.BRIGHT_GREEN, text: '+ammo'})
     }
   }
 

@@ -27,7 +27,8 @@ export interface BomberFlyEvent {
 export enum RepairEventType {
   TRACK = 'TRACK',
   TURN_ON_WHEELS = 'TURN_ON_WHEELS',
-  HEAL = 'HEAL'
+  HEAL = 'HEAL',
+  REFILL_AMMO = 'REFILL_AMMO'
 }
 
 export interface RepairEvent {
