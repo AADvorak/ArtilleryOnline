@@ -46,11 +46,6 @@ public class BattleUpdatesProcessor {
 
     private void setBattleUpdatedByTimeout(Battle battle) {
         var battleModel = battle.getModel();
-        if (!battleModel.isUpdated()
-                && battle.getAbsoluteTime() - battleModel.getLastUpdateTime()
-                > applicationSettings.getBattleUpdateTimeout()) {
-            battleModel.setUpdated(true);
-        }
         for (var missileModel: battleModel.getMissiles().values()) {
             if (missileModel.getUpdate().setUpdatedByTimeout(battle.getAbsoluteTime())) {
                 setAllUpdatedByTimeout(battle);

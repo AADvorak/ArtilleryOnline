@@ -21,8 +21,6 @@ public class ApplicationSettings {
 
     private long additionalResolveCollisionsIterationsNumber;
 
-    private long battleUpdateTimeout;
-
     private long userBattleQueueTimeout;
 
     private long messageTimeout;
