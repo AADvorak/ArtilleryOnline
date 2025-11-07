@@ -15,10 +15,12 @@ import {useParticleDrawer} from "~/playground/composables/drawer/particle-drawer
 import {useShellTrajectoryDrawer} from "~/playground/composables/drawer/shell-trajectory-drawer";
 import {useBoxDrawer} from "~/playground/composables/drawer/box-drawer";
 import {BattlefieldAlignments} from "~/dictionary/battlefield-alignments";
+import {useUserStore} from "~/stores/user";
 
 const HEADER_HEIGHT = 72
 
 const battleStore = useBattleStore()
+const userStore = useUserStore()
 const userSettingsStore = useUserSettingsStore()
 
 const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
@@ -42,8 +44,18 @@ const canvasStyle = computed(() => {
 })
 const alignByScreenHeight = computed(() =>
     appearances.value[AppearancesNames.BATTLEFIELD_ALIGNMENT] === BattlefieldAlignments.BY_SCREEN_HEIGHT)
+const userVehicleRelativePosition = computed(() => {
+  const userVehicle = battleStore.battle?.model.vehicles[userStore.user!.nickname]
+  if (userVehicle) {
+    const xMin = battleStore.battle?.model.room.specs.leftBottom.x
+    const xMax = battleStore.battle?.model.room.specs.rightTop.x
+    const xVehicle = userVehicle.state.position.x
+    return (xVehicle - xMin) / (xMax - xMin)
+  }
+})
 
 const canvas = ref<HTMLCanvasElement>()
+const scroll = ref<HTMLElement>()
 const ctx = ref<CanvasRenderingContext2D>()
 
 const drawerBase = useDrawerBase(scaleCoefficient, canvasSize)
@@ -71,6 +83,9 @@ onMounted(() => {
   calculateScaleCoefficient()
   calculateCanvasClass()
   addEventListener('resize', onWindowResize)
+  if (alignByScreenHeight.value) {
+    setTimeout(scrollToVehicle)
+  }
 })
 
 onBeforeUnmount(() => {
@@ -102,9 +117,35 @@ function calculateCanvasClass() {
 
 function initCanvasAndCtx() {
   canvas.value = document.getElementById('battle-canvas') as HTMLCanvasElement
+  scroll.value = document.getElementById('canvas-scroll') as HTMLElement
   if (canvas.value && canvas.value.getContext) {
     ctx.value = canvas.value.getContext('2d') as CanvasRenderingContext2D
   }
+}
+
+function scrollToVehicle() {
+  if (!userVehicleRelativePosition.value) {
+    return
+  }
+  const cnvWidth = canvasWidth.value
+  const wndWidth = window.innerWidth
+  const maxLeft = cnvWidth - wndWidth
+  if (maxLeft > 0 && scroll.value) {
+    const vehiclePosition = userVehicleRelativePosition.value * cnvWidth
+    const reserveWidth = wndWidth / 6
+    const left = scroll.value.scrollLeft
+    if (vehiclePosition < left + reserveWidth || vehiclePosition > left + wndWidth - reserveWidth) {
+      let newLeft = vehiclePosition - wndWidth / 2
+      if (newLeft > maxLeft) newLeft = maxLeft
+      if (newLeft < 0) newLeft = 0
+      scroll.value.scrollTo({
+        top: 0,
+        left: newLeft,
+        behavior: 'smooth'
+      })
+    }
+  }
+  setTimeout(scrollToVehicle, 2000)
 }
 
 function redrawBattle() {
@@ -177,7 +218,10 @@ function calculateScaleCoefficient() {
 
 <template>
   <v-main>
-    <div :class="canvasClass">
+    <div
+        id="canvas-scroll"
+        :class="canvasClass"
+    >
       <canvas
           id="battle-canvas"
           :width="canvasWidth"
