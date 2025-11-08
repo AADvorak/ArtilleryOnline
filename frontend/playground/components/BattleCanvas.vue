@@ -214,6 +214,13 @@ function calculateScaleCoefficient() {
     scaleCoefficient.value = canvasSize.value.width / battleSize.value.width
   }
 }
+
+function preventArrowKeysEvents(event) {
+  if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
+    event.preventDefault()
+    event.stopPropagation()
+  }
+}
 </script>
 
 <template>
@@ -221,6 +228,7 @@ function calculateScaleCoefficient() {
     <div
         id="canvas-scroll"
         :class="canvasClass"
+        @keydown="preventArrowKeysEvents"
     >
       <canvas
           id="battle-canvas"
