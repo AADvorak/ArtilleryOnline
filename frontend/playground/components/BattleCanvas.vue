@@ -18,6 +18,7 @@ import {BattlefieldAlignments} from "~/dictionary/battlefield-alignments";
 import {useUserStore} from "~/stores/user";
 
 const HEADER_HEIGHT = 72
+const SCROLL_RESERVE_WIDTH = 40
 
 const battleStore = useBattleStore()
 const userStore = useUserStore()
@@ -132,9 +133,8 @@ function scrollToVehicle() {
   const maxLeft = cnvWidth - wndWidth
   if (maxLeft > 0 && scroll.value) {
     const vehiclePosition = userVehicleRelativePosition.value * cnvWidth
-    const reserveWidth = wndWidth / 6
     const left = scroll.value.scrollLeft
-    if (vehiclePosition < left + reserveWidth || vehiclePosition > left + wndWidth - reserveWidth) {
+    if (vehiclePosition < left + SCROLL_RESERVE_WIDTH || vehiclePosition > left + wndWidth - SCROLL_RESERVE_WIDTH) {
       let newLeft = vehiclePosition - wndWidth / 2
       if (newLeft > maxLeft) newLeft = maxLeft
       if (newLeft < 0) newLeft = 0
