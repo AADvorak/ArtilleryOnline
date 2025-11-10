@@ -145,7 +145,7 @@ function scrollToVehicle() {
       })
     }
   }
-  setTimeout(scrollToVehicle, 2000)
+  setTimeout(scrollToVehicle, 500)
 }
 
 function redrawBattle() {
