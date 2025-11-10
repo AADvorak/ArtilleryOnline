@@ -112,7 +112,7 @@ export const VectorUtils = {
   },
 
   vectorProduct(v1: Vector, v2: Vector): number {
-    return v1.x * v2.y - v1.y * v1.x
+    return v1.x * v2.y - v1.y * v2.x
   },
 
   projectionOfOnto(of: Vector, vector: Vector): Vector {
