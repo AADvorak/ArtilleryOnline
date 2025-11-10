@@ -2,7 +2,6 @@ import type {RoomModel, VehicleModel} from '@/playground/data/model'
 import {JetType, MovingDirection, type Position, type Velocity} from '@/playground/data/common'
 import {type VehicleCalculations, type WheelCalculations, WheelSign} from '@/playground/data/calculations'
 import {DefaultColors} from '~/dictionary/default-colors'
-import {useUserStore} from '~/stores/user'
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {GroundContactUtils} from "~/playground/utils/ground-contact-utils";
@@ -114,11 +113,11 @@ export const VehicleUtils = {
     wheelCalculations.velocity = VectorUtils.getPointVelocity(vehicleVelocity, wheelDistance, wheelAngle)
   },
 
-  getColor(userKey: string, vehicleModel: VehicleModel) {
+  getColor(userKey: string, currentUsername: string, vehicleModel: VehicleModel) {
     if (vehicleModel.config.color) {
       return vehicleModel.config.color
     }
-    return userKey === useUserStore().user!.nickname ? DefaultColors.ALLY_VEHICLE : DefaultColors.ENEMY_VEHICLE
+    return userKey === currentUsername ? DefaultColors.ALLY_VEHICLE : DefaultColors.ENEMY_VEHICLE
   },
 
   isJetActive(vehicleModel: VehicleModel) {
