@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {useRouter} from "#app";
 import {useI18n} from "vue-i18n";
+import VersionInfo from "~/components/version-info.vue";
 
 const {t} = useI18n()
 const router = useRouter()
@@ -33,7 +34,7 @@ function toSettings() {
         <v-btn class="mb-4" width="100%" color="primary" @click="toRooms">{{ t('menu.rooms') }}</v-btn>
         <v-btn class="mb-4" width="100%" color="secondary" @click="toUser">{{ t('menu.user') }}</v-btn>
         <v-btn class="mb-4" width="100%" color="secondary" @click="toSettings">{{ t('menu.settings') }}</v-btn>
-        <div>v0.8.1, 21.10.2025</div>
+        <version-info/>
       </v-card-text>
     </v-card>
   </NuxtLayout>
