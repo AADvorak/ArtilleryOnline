@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 public enum JetSpecsPreset {
 
     LIGHT("light", new JetSpecs()
-            .setCapacity(30.0)
+            .setCapacity(45.0)
             .setConsumption(15.0)
             .setRegeneration(1.0)
             .setAcceleration(18.0)
@@ -18,7 +18,7 @@ public enum JetSpecsPreset {
     ),
 
     MEDIUM("medium", new JetSpecs()
-            .setCapacity(30.0)
+            .setCapacity(45.0)
             .setConsumption(20.0)
             .setRegeneration(1.0)
             .setAcceleration(12.0)
@@ -26,7 +26,7 @@ public enum JetSpecsPreset {
     ),
 
     HEAVY("heavy", new JetSpecs()
-            .setCapacity(30.0)
+            .setCapacity(45.0)
             .setConsumption(20.0)
             .setRegeneration(1.0)
             .setAcceleration(10.0)
