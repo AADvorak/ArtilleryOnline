@@ -69,7 +69,7 @@ public class BoxDropProcessor {
         var hasLowHp = vehicles.stream()
                 .map(VehicleModel::getRelativeHp)
                 .min(Double::compare)
-                .orElse(1.0) < 0.6;
+                .orElse(1.0) < 0.75;
         if (hasLowHp) {
             return BoxSpecsPreset.HP.getSpecs();
         }
