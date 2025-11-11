@@ -6,11 +6,14 @@ import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.config.BoxConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BoxModel;
+import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.precalc.BoxPreCalc;
 import com.github.aadvorak.artilleryonline.battle.preset.BoxSpecsPreset;
+import com.github.aadvorak.artilleryonline.battle.specs.BoxSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.BoxState;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 
+import java.util.Collection;
 import java.util.List;
 
 public class BoxDropProcessor {
@@ -33,7 +36,7 @@ public class BoxDropProcessor {
             return;
         }
         var roomSpecs = battle.getModel().getRoom().getSpecs();
-        var specs = BoxSpecsPreset.values()[BattleUtils.generateRandom(0, BoxSpecsPreset.values().length)].getSpecs();
+        var specs = getSpecs(battle.getModel().getVehicles().values());
         var preCalc = new BoxPreCalc(specs);
         var config = new BoxConfig()
                 .setColor(COLORS.get(BattleUtils.generateRandom(0, COLORS.size())))
@@ -53,5 +56,27 @@ public class BoxDropProcessor {
         battle.getModel().getBoxes().put(id, model);
         battle.getModel().getUpdates().addBox(model);
         battle.setBoxDropTime(battle.getAbsoluteTime());
+    }
+
+    private static BoxSpecs getSpecs(Collection<VehicleModel> vehicles) {
+        var hasEmptyAmmo = vehicles.stream()
+                .map(VehicleModel::getRelativeAmmo)
+                .min(Double::compare)
+                .orElse(1.0) < 0.01;
+        if (hasEmptyAmmo) {
+            return BoxSpecsPreset.AMMO.getSpecs();
+        }
+        var hasLowHp = vehicles.stream()
+                .map(VehicleModel::getRelativeHp)
+                .min(Double::compare)
+                .orElse(1.0) < 0.6;
+        if (hasLowHp) {
+            return BoxSpecsPreset.HP.getSpecs();
+        }
+        return randomSpecs();
+    }
+
+    private static BoxSpecs randomSpecs() {
+        return BoxSpecsPreset.values()[BattleUtils.generateRandom(0, BoxSpecsPreset.values().length)].getSpecs();
     }
 }

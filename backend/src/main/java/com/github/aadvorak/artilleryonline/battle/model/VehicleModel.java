@@ -35,4 +35,15 @@ public class VehicleModel
         stream.writeSerializableValue(getConfig());
         stream.writeSerializableValue(getState());
     }
+
+    @JsonIgnore
+    public double getRelativeHp() {
+        return getState().getHitPoints() / getSpecs().getHitPoints();
+    }
+
+    @JsonIgnore
+    public double getRelativeAmmo() {
+        return (float) getState().getAmmo().values().stream().reduce(0, Integer::sum)
+                / (float) getConfig().getAmmo().values().stream().reduce(0, Integer::sum);
+    }
 }

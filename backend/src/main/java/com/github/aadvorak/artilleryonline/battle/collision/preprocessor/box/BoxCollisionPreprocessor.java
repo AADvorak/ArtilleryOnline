@@ -46,8 +46,7 @@ public class BoxCollisionPreprocessor implements CollisionPreprocessor {
             vehicle.getModel().getState().setHitPoints(hp);
             eventType = RepairEventType.HEAL;
         } else if (BoxType.AMMO.equals(box.getModel().getSpecs().getType())
-                && vehicle.getModel().getState().getAmmo().values().stream().reduce(0, Integer::sum)
-                < vehicle.getModel().getConfig().getAmmo().values().stream().reduce(0, Integer::sum)) {
+                && vehicle.getModel().getRelativeAmmo() < 1.0) {
             vehicle.getModel().getState().setAmmo(new HashMap<>(vehicle.getModel().getConfig().getAmmo()));
             eventType = RepairEventType.REFILL_AMMO;
         }
