@@ -7,6 +7,7 @@ import com.github.aadvorak.artilleryonline.battle.common.Velocity;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.processor.BeforeStep2Processor;
 import com.github.aadvorak.artilleryonline.battle.state.ShellState;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ public class VehicleGunShootProcessor extends VehicleProcessor implements Before
         var gunState = vehicleModel.getState().getGunState();
         if (gunState.isTriggerPushed() && gunState.getLoadedShell() != null) {
             doShot(vehicleModel, battleModel);
+            switchFromSignalShell(vehicleModel);
             vehicleModel.getUpdate().setUpdated();
         }
         if (gunState.getLoadedShell() == null && gunState.getLoadingShell() == null) {
@@ -110,5 +112,18 @@ public class VehicleGunShootProcessor extends VehicleProcessor implements Before
         vehicleVelocity
                 .setX(vehicleVelocity.getX() - pushCoefficient * shellVelocity.getX())
                 .setY(vehicleVelocity.getY() - pushCoefficient * shellVelocity.getY());
+    }
+
+    private void switchFromSignalShell(VehicleModel vehicleModel) {
+        var gunState = vehicleModel.getState().getGunState();
+        if (ShellSpecsPreset.LIGHT_SGN.getName().equals(gunState.getSelectedShell())) {
+            var ammo =  vehicleModel.getState().getAmmo();
+            ammo.keySet().stream().sorted().findFirst().ifPresent(value -> {
+                var amount = ammo.get(value);
+                if (amount > 0) {
+                    gunState.setSelectedShell(value);
+                }
+            });
+        }
     }
 }
