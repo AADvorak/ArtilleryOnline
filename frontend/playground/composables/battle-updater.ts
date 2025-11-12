@@ -11,7 +11,7 @@ import type {VehicleModel} from "~/playground/data/model";
 import type {VehicleState} from "~/playground/data/state";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {DefaultColors} from "~/dictionary/default-colors";
-import type {Ammo} from "~/playground/data/common";
+import {RepairEventType} from "~/playground/data/events";
 
 export function useBattleUpdater(player: Player) {
   const battleStore = useBattleStore()
@@ -125,7 +125,6 @@ export function useBattleUpdater(player: Player) {
         Object.keys(vehicles).forEach(key => {
           const model = battle.model.vehicles[key]
           showChangeHp(model, model.state, vehicles[key])
-          showChangeAmmo(model, model.state, vehicles[key])
           model.state = vehicles[key]
         })
       }
@@ -158,6 +157,16 @@ export function useBattleUpdater(player: Player) {
         })
       }
     }
+    const repairs = battleUpdate.events?.repairs
+    if (repairs) {
+      repairs
+          .filter(repair => repair.type === RepairEventType.REFILL_AMMO)
+          .forEach(repair => {
+            const vehicleModel = Object.values(battle.model.vehicles)
+                .filter(vehicle => vehicle.id = repair.vehicleId)[0]
+            vehicleModel && showChangeAmmo(vehicleModel)
+          })
+    }
     battleStore.updateBattle(battle)
   }
 
@@ -172,15 +181,10 @@ export function useBattleUpdater(player: Player) {
     }
   }
 
-  function showChangeAmmo(model: VehicleModel, oldState: VehicleState, newState: VehicleState) {
-    const sum = (ammo: Ammo) =>
-        Object.values(ammo).reduce((a, c) => a + c)
-    const diff = sum(newState.ammo) - sum(oldState.ammo)
-    if (diff > 0) {
-      const position = BattleUtils.shiftedPosition(model.state.position, model.preCalc.maxRadius, Math.PI / 2)
-      battleStore.addParticle(BattleUtils.generateParticle(position, 1.0),
-          {color: DefaultColors.BRIGHT_GREEN, text: '+ammo'})
-    }
+  function showChangeAmmo(model: VehicleModel) {
+    const position = BattleUtils.shiftedPosition(model.state.position, model.preCalc.maxRadius, Math.PI / 2)
+    battleStore.addParticle(BattleUtils.generateParticle(position, 1.0),
+        {color: DefaultColors.BRIGHT_GREEN, text: '+ammo'})
   }
 
   return { subscribe, unsubscribe }
