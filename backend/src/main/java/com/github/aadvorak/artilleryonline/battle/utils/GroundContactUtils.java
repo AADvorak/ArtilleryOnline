@@ -123,35 +123,35 @@ public class GroundContactUtils {
     }
 
     public static Contact getGroundContact(Circle circle, RoomModel roomModel, boolean withMaxDepth) {
-        var groundIndexes = BattleUtils.getGroundIndexesBetween(circle.center().getX() - circle.radius(),
-                circle.center().getX() + circle.radius(), roomModel);
-        if (groundIndexes.isEmpty()) {
+        var groundSegments = BattleUtils.getGroundSegmentsBetween(circle.center().getX() - 1.1 * circle.radius(),
+                circle.center().getX() + 1.1 * circle.radius(), roomModel);
+        if (groundSegments.isEmpty()) {
             return null;
         }
         Position nearestPosition = null;
         Double minimalDistance = null;
-        Integer index = null;
-        var i = 0;
-        while (i < groundIndexes.size()) {
-            var position = BattleUtils.getGroundPosition(groundIndexes.get(i), roomModel);
-            var distance = position.distanceTo(circle.center());
-            if (distance < circle.radius()) {
-                if (minimalDistance == null || distance < minimalDistance) {
+        Segment nearestSegment = null;
+
+        for (var segment : groundSegments) {
+            var position = GeometryUtils.getPointToSegmentProjection(circle.center(), segment);
+            if (position != null) {
+                var distance = position.distanceTo(circle.center());
+                if (distance < circle.radius() && (minimalDistance == null || distance < minimalDistance)) {
                     nearestPosition = position;
                     minimalDistance = distance;
-                    index = groundIndexes.get(i);
+                    nearestSegment = segment;
                 }
             }
-            i++;
         }
         if (nearestPosition != null) {
-            var depth = getGroundDepth(circle, nearestPosition.getY(), minimalDistance);
-            if (withMaxDepth) depth -= roomModel.getSpecs().getGroundMaxDepth();
             var contactPosition = circle.center().shifted(circle.radius(),
                     circle.center().angleTo(nearestPosition));
+            var depth = nearestPosition.distanceTo(contactPosition);
+            if (withMaxDepth) depth -= roomModel.getSpecs().getGroundMaxDepth();
+            var groundAngle = nearestSegment.begin().angleTo(nearestSegment.end());
             return Contact.of(
                     depth,
-                    getGroundAngle(nearestPosition, index, roomModel),
+                    groundAngle,
                     contactPosition
             );
         }
@@ -205,14 +205,6 @@ public class GroundContactUtils {
             }
         }
         return null;
-    }
-
-    private static double getGroundDepth(Circle circle, double y, double distance) {
-        if (y <= circle.center().getY()) {
-            return circle.radius() - distance;
-        } else {
-            return circle.radius() + distance;
-        }
     }
 
     private static double getGroundDepth(Circle circle, double y) {

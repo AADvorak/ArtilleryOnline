@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -50,6 +51,20 @@ public class BattleUtils {
             }
         }
         return null;
+    }
+
+    public static List<Segment> getGroundSegmentsBetween(double xMin, double xMax,  RoomModel roomModel) {
+        var positions = getGroundIndexesBetween(xMin, xMax, roomModel).stream()
+                .map(index -> BattleUtils.getGroundPosition(index, roomModel))
+                .toList();
+        if (positions.size() < 2) {
+            return List.of();
+        }
+        var segments = new ArrayList<Segment>();
+        for (int j = 1; j < positions.size() - 1; j++) {
+            segments.add(new Segment(positions.get(j), positions.get(j + 1)));
+        }
+        return segments;
     }
 
     public static List<Integer> getGroundIndexesBetween(double xMin, double xMax,  RoomModel roomModel) {
