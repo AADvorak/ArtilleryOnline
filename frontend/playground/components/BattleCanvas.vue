@@ -218,7 +218,6 @@ function calculateScaleCoefficient() {
 function preventArrowKeysEvents(event) {
   if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
     event.preventDefault()
-    event.stopPropagation()
   }
 }
 </script>
@@ -227,6 +226,7 @@ function preventArrowKeysEvents(event) {
   <v-main>
     <div
         id="canvas-scroll"
+        tabindex="0"
         :class="canvasClass"
         @keydown="preventArrowKeysEvents"
     >
@@ -254,10 +254,10 @@ canvas {
 }
 
 .canvas-scroll {
-  overflow-x: auto;       /* Enables horizontal scrolling */
-  overflow-y: hidden;     /* Prevent vertical scrolling */
-  width: 100%;            /* Or a fixed width, e.g., 600px */
-  max-width: 100%;        /* Prevent container overflow */
-  /* optionally add a border or padding as needed */
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  max-width: 100%;
+  outline: none;
 }
 </style>
