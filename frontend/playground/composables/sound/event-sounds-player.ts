@@ -63,17 +63,24 @@ export function useEventSoundsPlayer(player: Player) {
       if (battleUpdate.updates.removed) {
         const removedVehicleKeys = battleUpdate.updates.removed.vehicleKeys
         if (removedVehicleKeys) {
-          removedVehicleKeys.forEach(vehicleKey => playVehicleDestroy(battle.model.vehicles[vehicleKey]))
+          removedVehicleKeys.forEach(vehicleKey => {
+            const vehicle = battle.model.vehicles[vehicleKey]
+            vehicle && playVehicleDestroy(vehicle)
+          })
         }
         const removedMissileIds = battleUpdate.updates.removed.missileIds
         if (removedMissileIds) {
-          removedMissileIds.forEach(missileId => playMissileExplosion(battle.model.missiles[missileId]))
+          removedMissileIds.forEach(missileId => {
+            const missile = battle.model.missiles[missileId]
+            missile && playMissileExplosion(missile)
+          })
         }
         const removedDroneIds = battleUpdate.updates.removed.droneIds
         if (removedDroneIds) {
           removedDroneIds.forEach(droneId => {
-            if (isDroneDestroyed(droneId, battleUpdate)) {
-              playDroneDestroy(battle.model.drones[droneId])
+            const drone = battle.model.drones[droneId]
+            if (drone && isDroneDestroyed(droneId, battleUpdate)) {
+              playDroneDestroy(drone)
             }
           })
         }
@@ -91,6 +98,9 @@ export function useEventSoundsPlayer(player: Player) {
 
   function playHit(hit: ShellHitEvent, shellsModels: ShellModels) {
     const shell = shellsModels[hit.shellId]
+    if (!shell) {
+      return
+    }
     const shellSpecs = shell.specs
     const shellType = shellSpecs.type
     const caliber = shellSpecs.caliber
@@ -103,6 +113,9 @@ export function useEventSoundsPlayer(player: Player) {
 
   function playRicochet(ricochet: RicochetEvent, shellsModels: ShellModels) {
     const shell = shellsModels[ricochet.shellId]
+    if (!shell) {
+      return
+    }
     const pan = soundsPlayerBase.calculatePan(shell.state.position.x)
     const gain = soundsPlayerBase.calculateGain(shell.state.position)
     const fileName = getRicochetSoundName()
@@ -140,18 +153,18 @@ export function useEventSoundsPlayer(player: Player) {
   function getCollidePosition(collide: CollideEvent, battleModel: BattleModel): BodyPosition | undefined {
     if (collide.type === CollideObjectType.VEHICLE) {
       return (Object.values(battleModel.vehicles)
-          .filter(vehicle => vehicle.id === collide.id)[0]).state.position
+          .filter(vehicle => vehicle.id === collide.id)[0])?.state.position
     } else if (collide.type === CollideObjectType.BOX) {
       return (Object.values(battleModel.boxes)
-          .filter(box => box.id === collide.id)[0]).state.position
+          .filter(box => box.id === collide.id)[0])?.state.position
     }
   }
 
   function playTracksBroken(vehicleStates: VehicleStates, vehicleModels: VehicleModels) {
     Object.keys(vehicleStates).forEach(key => {
-      const vehicleState = vehicleStates[key]
+      const vehicleState = vehicleStates[key]!
       const nowBroken = vehicleState.trackState.broken
-      const wasBroken = vehicleModels[key].state.trackState.broken
+      const wasBroken = vehicleModels[key]?.state.trackState.broken
       if (nowBroken && !wasBroken) {
         const pan = soundsPlayerBase.calculatePan(vehicleState.position.x)
         const gain = soundsPlayerBase.calculateGain(vehicleState.position)
