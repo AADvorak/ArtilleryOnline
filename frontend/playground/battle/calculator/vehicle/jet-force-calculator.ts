@@ -34,8 +34,8 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
       this.addVertical(forces, calculations.leftWheel, vehicleModel, acceleration / 2, angle, direction)
       this.addVertical(forces, calculations.rightWheel, vehicleModel, acceleration / 2, angle, direction)
     } else if (jetSpecs.type === JetType.HORIZONTAL) {
-      this.addHorizontalForWheel(forces, calculations.rightWheel, vehicleModel, acceleration, direction)
-      this.addHorizontalForWheel(forces, calculations.leftWheel, vehicleModel, acceleration, direction)
+      this.addHorizontalForWheel(forces, calculations.rightWheel, vehicleModel, acceleration / 2, direction)
+      this.addHorizontalForWheel(forces, calculations.leftWheel, vehicleModel, acceleration / 2, direction)
 
       if (forces.length === 0) {
         this.addHorizontal(forces, acceleration, angle, direction)

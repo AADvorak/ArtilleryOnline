@@ -50,14 +50,13 @@ public class JetForceCalculator implements ForceCalculator<
             addVertical(forces, calculations.getRightWheel(), acceleration / 2, angle, direction);
         }
         if (JetType.HORIZONTAL.equals(jetSpecs.getType())) {
-            addHorizontalForWheel(forces, calculations.getRightWheel(), acceleration, direction);
-            addHorizontalForWheel(forces, calculations.getLeftWheel(), acceleration, direction);
+            addHorizontalForWheel(forces, calculations.getRightWheel(), acceleration / 2, direction);
+            addHorizontalForWheel(forces, calculations.getLeftWheel(), acceleration / 2, direction);
             if (forces.isEmpty()) {
                 addHorizontal(forces, acceleration, angle, direction);
             } else if (forces.size() == 1) {
                 addHorizontal(forces, acceleration / 2, angle, direction);
             }
-
         }
         return forces;
     }
