@@ -118,44 +118,46 @@ export const GroundContactUtils = {
     return contacts
   },
 
-
   getCircleGroundContact(
       circle: Circle,
       roomModel: RoomModel,
       withMaxDepth: boolean
   ): Contact | null {
-    const groundIndexes = BattleUtils.getGroundIndexesBetween(
-        circle.center.x - circle.radius,
-        circle.center.x + circle.radius,
+    const groundSegments = BattleUtils.getGroundSegmentsBetween(
+        circle.center.x - circle.radius * 1.1,
+        circle.center.x + circle.radius * 1.1,
         roomModel
     )
 
-    if (groundIndexes.length === 0) return null
+    if (groundSegments.length === 0) return null
 
     let nearestPosition: Position | null = null
     let minimalDistance: number | null = null
-    let index: number | null = null
+    let nearestSegment: Segment | null = null
 
-    for (const groundIndex of groundIndexes) {
-      const position = BattleUtils.getGroundPosition(groundIndex, roomModel)
-      const distance = BattleUtils.distance(position, circle.center)
+    for (const segment of groundSegments) {
+      const position = GeometryUtils.getPointToSegmentProjection(circle.center, segment)
+      if (position) {
+        const distance = BattleUtils.distance(position, circle.center)
 
-      if (distance < circle.radius &&
-          (minimalDistance === null || distance < minimalDistance)) {
-        nearestPosition = position
-        minimalDistance = distance
-        index = groundIndex
+        if (distance < circle.radius &&
+            (minimalDistance === null || distance < minimalDistance)) {
+          nearestPosition = position
+          minimalDistance = distance
+          nearestSegment = segment
+        }
       }
     }
 
-    if (nearestPosition && minimalDistance !== null && index !== null) {
-      let depth = this.getGroundDepth.halfUnderGround(circle, nearestPosition.y, minimalDistance)
-      if (withMaxDepth) depth -= roomModel.specs.groundMaxDepth
+    if (nearestPosition && minimalDistance !== null && nearestSegment !== null) {
       const contactPosition = BattleUtils.shiftedPosition(circle.center, circle.radius,
           VectorUtils.angleFromTo(circle.center, nearestPosition))
+      let depth = BattleUtils.distance(nearestPosition, contactPosition)
+      if (withMaxDepth) depth -= roomModel.specs.groundMaxDepth
+      const groundAngle = VectorUtils.angleFromTo(nearestSegment.begin, nearestSegment.end)
       return this.createContact.withAngle(
           depth,
-          this.getGroundAngle(nearestPosition, index, roomModel),
+          groundAngle,
           contactPosition
       )
     }
@@ -197,12 +199,6 @@ export const GroundContactUtils = {
   },
 
   getGroundDepth: {
-    halfUnderGround(circle: Circle, y: number, distance: number): number {
-      return y <= circle.center.y
-          ? circle.radius - distance
-          : circle.radius + distance
-    },
-
     fullUnderGround(circle: Circle, y: number): number {
       const depth = y - circle.center.y + circle.radius
       return depth < 0 ? 0 : depth

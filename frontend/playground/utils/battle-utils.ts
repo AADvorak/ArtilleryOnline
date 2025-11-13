@@ -2,6 +2,7 @@ import type { RoomSpecs } from '@/playground/data/specs'
 import type { RoomModel } from '@/playground/data/model'
 import type {Position, Shift} from "@/playground/data/common";
 import type {ParticleState} from "~/playground/data/state";
+import {Segment} from "~/playground/data/geometry";
 
 export const BattleUtils = {
   getRoomWidth(roomSpecs: RoomSpecs) {
@@ -12,7 +13,20 @@ export const BattleUtils = {
     return roomSpecs.rightTop.y - roomSpecs.leftBottom.y
   },
 
-  getGroundIndexesBetween(xMin: number, xMax: number, roomModel: RoomModel) {
+  getGroundSegmentsBetween(xMin: number, xMax: number, roomModel: RoomModel): Segment[] {
+    const positions: Position[] = this.getGroundIndexesBetween(xMin, xMax, roomModel)
+        .map(index => this.getGroundPosition(index, roomModel))
+    if (positions.length < 2) {
+      return []
+    }
+    const segments: Segment[] = []
+    for (let j = 0; j < positions.length - 1; j++) {
+      segments.push(new Segment(positions[j]!, positions[j + 1]!))
+    }
+    return segments
+  },
+
+  getGroundIndexesBetween(xMin: number, xMax: number, roomModel: RoomModel): number[] {
     const roomWidth = this.getRoomWidth(roomModel.specs)
     const groundPointsNumber = roomModel.state.groundLine.length
     let minGroundIndex = Math.ceil((groundPointsNumber * xMin) / roomWidth)
@@ -49,10 +63,10 @@ export const BattleUtils = {
     return this.getGroundPosition(nearestGroundIndex, roomModel)
   },
 
-  getGroundPosition(index: number, roomModel: RoomModel) {
+  getGroundPosition(index: number, roomModel: RoomModel): Position {
     return {
       x: index * roomModel.specs.step,
-      y: roomModel.state.groundLine[index]
+      y: roomModel.state.groundLine[index]!
     }
   },
 
