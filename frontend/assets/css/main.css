@@ -6,3 +6,27 @@ html {
 body {
     touch-action: manipulation;
 }
+
+.v-progress-linear {
+    transition: none !important;
+}
+
+.v-progress-linear__determinate {
+    transition: none !important;
+}
+
+.v-progress-linear__indeterminate {
+    transition: none !important;
+}
+
+.v-progress-circular {
+    transition: none !important;
+}
+
+.v-progress-circular__info {
+    transition: none !important;
+}
+
+.v-progress-circular__overlay {
+    transition: none !important;
+}
