@@ -165,8 +165,7 @@ export const GroundContactUtils = {
     const fallbackPosition = BattleUtils.getNearestGroundPosition(circle.center.x, roomModel)
     let depth = this.getGroundDepth.fullUnderGround(circle, fallbackPosition.y)
     if (withMaxDepth) depth -= roomModel.specs.groundMaxDepth
-    const contactPosition = BattleUtils.shiftedPosition(circle.center, circle.radius,
-        VectorUtils.angleFromTo(circle.center, fallbackPosition))
+    const contactPosition = BattleUtils.shiftedPosition(circle.center, circle.radius, -Math.PI / 2)
     return this.createContact.withAngle(
         depth,
         0,
