@@ -25,6 +25,7 @@ export function useBattleUpdater(player: Player) {
     const battle = battleStore.battle as Battle
     subscriptions.push(stompClientStore.client!.subscribe('/topic/battle/' + battle.id, function (msgOut) {
       const battleBinary = msgOut.binaryBody.buffer
+      // @ts-ignore
       const battle = deserializeBattle(new DeserializerInput(battleBinary))
       if (battle) {
         updateBattle(battle)
@@ -32,6 +33,7 @@ export function useBattleUpdater(player: Player) {
     }))
     subscriptions.push(stompClientStore.client!.subscribe('/topic/battle/' + battle.id + '/updates', function (msgOut) {
       const battleUpdateBinary = msgOut.binaryBody.buffer
+      // @ts-ignore
       const battleUpdate = deserializeBattleUpdate(new DeserializerInput(battleUpdateBinary))
       if (battleUpdate) {
         updateBattleState(battleUpdate)
@@ -114,7 +116,7 @@ export function useBattleUpdater(player: Player) {
       if (battleUpdate.updates.roomStateUpdates) {
         for (const roomStateUpdate of battleUpdate.updates.roomStateUpdates) {
           for (let index = 0; index < roomStateUpdate.groundLinePart.length; index++) {
-            battle.model.room.state.groundLine[roomStateUpdate.begin + index] = roomStateUpdate.groundLinePart[index]
+            battle.model.room.state.groundLine[roomStateUpdate.begin + index] = roomStateUpdate.groundLinePart[index]!
           }
         }
       }
@@ -124,8 +126,11 @@ export function useBattleUpdater(player: Player) {
       if (vehicles) {
         Object.keys(vehicles).forEach(key => {
           const model = battle.model.vehicles[key]
-          showChangeHp(model, model.state, vehicles[key])
-          model.state = vehicles[key]
+          if (model) {
+            const newState = vehicles[key]!
+            showChangeHp(model, model.state, newState)
+            model.state = newState
+          }
         })
       }
       const shells = battleUpdate.state.shells
