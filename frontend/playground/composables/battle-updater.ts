@@ -163,7 +163,7 @@ export function useBattleUpdater(player: Player) {
           .filter(repair => repair.type === RepairEventType.REFILL_AMMO)
           .forEach(repair => {
             const vehicleModel = Object.values(battle.model.vehicles)
-                .filter(vehicle => vehicle.id = repair.vehicleId)[0]
+                .filter(vehicle => vehicle.id === repair.vehicleId)[0]
             vehicleModel && showChangeAmmo(vehicleModel)
           })
     }
