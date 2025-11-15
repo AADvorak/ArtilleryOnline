@@ -3,11 +3,26 @@ package com.github.aadvorak.artilleryonline.battle.calculator.missile;
 import com.github.aadvorak.artilleryonline.battle.calculations.MissileCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculator.TargetCalculator;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.battle.specs.MissileSpecs;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 
 import java.util.stream.Collectors;
 
 public class CorrectingAccelerationCalculator {
+
+    private static final double PRECISION_THRESHOLD = 6.0;
+
+    private static final double CLOSE_EDGE_DISTANCE = 5.0;
+
+    private static final double CLOSE_EDGE_ANGLE = - Math.PI / 4;
+
+    private static final double FAR_EDGE_DISTANCE = 10.0;
+
+    private static final double FAR_EDGE_ANGLE = Math.PI / 5;
+
+    private static final double K = (FAR_EDGE_ANGLE - CLOSE_EDGE_ANGLE) / (FAR_EDGE_DISTANCE - CLOSE_EDGE_DISTANCE);
+
+    private static final double B = CLOSE_EDGE_ANGLE - CLOSE_EDGE_DISTANCE * K;
 
     public static double calculate(MissileCalculations calculations, BattleModel battleModel) {
         var missileState = calculations.getModel().getState();
@@ -16,32 +31,58 @@ public class CorrectingAccelerationCalculator {
         var correctingVelocity = velocityMagnitude - missileSpecs.getMinCorrectingVelocity();
         var missilePosition = missileState.getPosition();
         if (correctingVelocity <= 0) {
-            var verticalAngleDiff = GeometryUtils.calculateAngleDiff(missilePosition.getAngle(), Math.PI / 2);
-            if (Math.abs(verticalAngleDiff) < missileSpecs.getAnglePrecision()) {
-                return 0.0;
-            }
-            return Math.signum(verticalAngleDiff) * velocityMagnitude
-                    * missileSpecs.getCorrectingAccelerationCoefficient() / missileSpecs.getMinCorrectingVelocity();
+            return getAcceleration(missilePosition.getAngle(), Math.PI / 2, missileSpecs, velocityMagnitude);
         }
         var targets = TargetCalculator.calculatePositions(calculations.getModel().getVehicleId(), battleModel);
         if (targets.isEmpty()) {
             return 0.0;
         }
-        var angleDiffs = targets.stream()
-                .map(position -> GeometryUtils.calculateAngleDiff(missilePosition.getAngle(),
-                        missilePosition.getCenter().angleTo(position)))
+        var targetDataSet = targets.stream()
+                .map(position -> new TargetData(missilePosition.getCenter().angleTo(position),
+                        missilePosition.getCenter().distanceTo(position),
+                        position.getX() - missilePosition.getX()))
                 .collect(Collectors.toSet());
-        var iterator = angleDiffs.iterator();
-        var minAngleDiff = iterator.next();
+        var iterator = targetDataSet.iterator();
+        var closestTarget = iterator.next();
         while (iterator.hasNext()) {
-            var angleDiff = iterator.next();
-            if (Math.abs(angleDiff) < Math.abs(minAngleDiff)) {
-                minAngleDiff = angleDiff;
+            var targetData = iterator.next();
+            if (Math.abs(targetData.xDistance) < Math.abs(closestTarget.xDistance)) {
+                closestTarget = targetData;
             }
         }
-        if (Math.abs(minAngleDiff) < missileSpecs.getAnglePrecision()) {
+        var absXDistance = Math.abs(closestTarget.xDistance);
+        if (absXDistance > FAR_EDGE_DISTANCE) {
+            var tagetAngle = closestTarget.xDistance > 0 ? FAR_EDGE_ANGLE : Math.PI - FAR_EDGE_ANGLE;
+            return getAcceleration(missilePosition.getAngle(), tagetAngle, missileSpecs, velocityMagnitude);
+        }
+        if (absXDistance > CLOSE_EDGE_DISTANCE) {
+            var angle = K * absXDistance + B;
+            var tagetAngle = closestTarget.xDistance > 0 ? angle : Math.PI - angle;
+            return getAcceleration(missilePosition.getAngle(), tagetAngle, missileSpecs, velocityMagnitude);
+        }
+        var angleDiff = GeometryUtils.calculateAngleDiff(missilePosition.getAngle(), closestTarget.angle);
+        if (Math.abs(angleDiff) < missileSpecs.getAnglePrecision()
+                * getAnglePrecisionCoefficient(closestTarget.distance)) {
             return 0.0;
         }
-        return Math.signum(minAngleDiff) * correctingVelocity * missileSpecs.getCorrectingAccelerationCoefficient();
+        return Math.signum(angleDiff) * correctingVelocity
+                * missileSpecs.getCorrectingAccelerationCoefficient();
+    }
+
+    private static double getAcceleration(double missileAngle, double targetAngle,
+                                          MissileSpecs missileSpecs, double velocityMagnitude) {
+        var verticalAngleDiff = GeometryUtils.calculateAngleDiff(missileAngle, targetAngle);
+        return Math.signum(verticalAngleDiff) * velocityMagnitude
+                * missileSpecs.getCorrectingAccelerationCoefficient() / missileSpecs.getMinCorrectingVelocity();
+    }
+
+    private static double getAnglePrecisionCoefficient(double distance) {
+        if (distance < PRECISION_THRESHOLD) {
+            return distance /  PRECISION_THRESHOLD;
+        }
+        return 1.0;
+    }
+
+    private record TargetData(double angle, double distance, double xDistance) {
     }
 }
