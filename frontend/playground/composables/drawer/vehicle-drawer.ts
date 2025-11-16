@@ -8,6 +8,10 @@ import {AppearancesNames} from "~/dictionary/appearances-names";
 import {type HalfCircleShape, ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
 import {BodyUtils} from "~/playground/utils/body-utils";
 import {useUserStore} from "~/stores/user";
+import type {Contact} from "~/playground/data/common";
+import {GroundContactUtils} from "~/playground/utils/ground-contact-utils";
+import {Circle} from "~/playground/data/geometry";
+import {useSettingsStore} from "~/stores/settings";
 
 export function useVehicleDrawer(
     drawerBase: DrawerBase,
@@ -16,6 +20,7 @@ export function useVehicleDrawer(
   const battleStore = useBattleStore()
   const userStore = useUserStore()
   const userSettingsStore = useUserSettingsStore()
+  const settingsStore = useSettingsStore()
 
   const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
 
@@ -44,6 +49,9 @@ export function useVehicleDrawer(
       }
       if (appearances.value[AppearancesNames.NICKNAMES_ABOVE] === '1') {
         drawNickname(userKey, vehicleModel)
+      }
+      if (settingsStore.settings?.debug) {
+        drawGroundContacts(vehicleModel)
       }
     }
   }
@@ -176,6 +184,38 @@ export function useVehicleDrawer(
 
   function restrictNicknameLength(nickname: string) {
     return nickname.substring(0, 8)
+  }
+
+  function drawGroundContacts(vehicleModel: VehicleModel) {
+    const wheelRadius = vehicleModel.specs.wheelRadius
+    const roomModel = battleStore.battle!.model.room
+    const calculations = VehicleUtils.initVehicleCalculations(vehicleModel)
+    const leftWheelContact = GroundContactUtils.getCircleGroundContact(
+        new Circle(calculations.leftWheel.position!, wheelRadius),
+        roomModel,
+        false
+    )
+    leftWheelContact && drawGroundContact(leftWheelContact)
+    const rightWheelContact = GroundContactUtils.getCircleGroundContact(
+        new Circle(calculations.rightWheel.position!, wheelRadius),
+        roomModel,
+        false
+    )
+    rightWheelContact && drawGroundContact(rightWheelContact)
+  }
+
+  function drawGroundContact(contact: Contact) {
+    const begin = drawerBase.transformPosition(contact.position)
+    const end = drawerBase.transformPosition({
+      x: contact.position.x + contact.normal.x / 4,
+      y: contact.position.y + contact.normal.y / 4,
+    })
+    ctx.value!.beginPath()
+    ctx.value!.lineWidth = 2
+    ctx.value!.moveTo(begin.x, begin.y)
+    ctx.value!.lineTo(end.x, end.y)
+    ctx.value!.stroke()
+    ctx.value!.closePath()
   }
 
   return {draw}
