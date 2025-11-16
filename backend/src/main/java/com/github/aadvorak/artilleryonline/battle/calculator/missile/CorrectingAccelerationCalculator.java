@@ -71,8 +71,7 @@ public class CorrectingAccelerationCalculator {
 
     private static double getAcceleration(double missileAngle, double targetAngle,
                                           MissileSpecs missileSpecs, double velocityMagnitude) {
-        var verticalAngleDiff = GeometryUtils.calculateAngleDiff(missileAngle, targetAngle);
-        return Math.signum(verticalAngleDiff) * velocityMagnitude
+        return Math.signum(GeometryUtils.calculateAngleDiff(missileAngle, targetAngle)) * velocityMagnitude
                 * missileSpecs.getCorrectingAccelerationCoefficient() / missileSpecs.getMinCorrectingVelocity();
     }
 
