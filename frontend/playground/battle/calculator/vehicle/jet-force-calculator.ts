@@ -31,8 +31,9 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
     if (VehicleUtils.isAboutToTurnOver(vehicleModel)) {
       this.addTurning(forces, calculations, acceleration, angle)
     } else if (jetSpecs.type === JetType.VERTICAL) {
-      this.addVertical(forces, calculations.leftWheel, vehicleModel, acceleration / 2, angle, direction)
-      this.addVertical(forces, calculations.rightWheel, vehicleModel, acceleration / 2, angle, direction)
+      this.addVerticalUp(forces, calculations.leftWheel, vehicleModel, acceleration / 2, angle, direction)
+      this.addVerticalUp(forces, calculations.rightWheel, vehicleModel, acceleration / 2, angle, direction)
+      this.addVerticalSide(forces, acceleration / 2, direction)
     } else if (jetSpecs.type === JetType.HORIZONTAL) {
       this.addHorizontalForWheel(forces, calculations.rightWheel, vehicleModel, acceleration / 2, direction)
       this.addHorizontalForWheel(forces, calculations.leftWheel, vehicleModel, acceleration / 2, direction)
@@ -47,7 +48,7 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
     return forces
   }
 
-  private addVertical(
+  private addVerticalUp(
       forces: BodyForce[],
       wheelCalculations: WheelCalculations,
       vehicleModel: VehicleModel,
@@ -56,18 +57,9 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
       direction: MovingDirection | null
   ): void {
     const angleCoefficient = 1 + wheelCalculations.sign * Math.sin(angle)
+    const movingCoefficient = direction ? 0.5 : 1.0
     const force = zeroVector()
-
-    if (!direction) {
-      force.x = 0.0
-      force.y = acceleration * angleCoefficient
-    } else if (direction === MovingDirection.RIGHT) {
-      force.x = acceleration / Math.sqrt(2)
-      force.y = (acceleration * angleCoefficient) / Math.sqrt(2)
-    } else if (direction === MovingDirection.LEFT) {
-      force.x = -acceleration / Math.sqrt(2)
-      force.y = (acceleration * angleCoefficient) / Math.sqrt(2)
-    }
+    force.y = acceleration * angleCoefficient * movingCoefficient
 
     forces.push(
         BodyForce.of(
@@ -77,6 +69,33 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
             JetForceCalculator.FORCE_DESCRIPTION
         )
     )
+  }
+
+  private addVerticalSide(
+      forces: BodyForce[],
+      acceleration: number,
+      direction: MovingDirection | null
+  ): void {
+    if (direction === MovingDirection.RIGHT) {
+      const force = zeroVector()
+      force.x = acceleration
+      forces.push(
+          BodyForce.atCOM(
+              force,
+              JetForceCalculator.FORCE_DESCRIPTION
+          )
+      )
+    }
+    if (direction === MovingDirection.LEFT) {
+      const force = zeroVector()
+      force.x = -acceleration
+      forces.push(
+          BodyForce.atCOM(
+              force,
+              JetForceCalculator.FORCE_DESCRIPTION
+          )
+      )
+    }
   }
 
   private addHorizontal(
