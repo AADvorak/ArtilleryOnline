@@ -108,17 +108,16 @@ public class JetForceCalculator implements ForceCalculator<
             return;
         }
         var force = new Force();
-        var additionalAngle = getHorizontalJetAdditionalAngle(contact.angle());
         if (MovingDirection.RIGHT.equals(direction)) {
             force
-                    .setX(magnitude * Math.cos(contact.angle() + additionalAngle))
-                    .setY(magnitude * Math.sin(contact.angle() + additionalAngle));
+                    .setX(magnitude * Math.cos(contact.angle() + HORIZONTAL_JET_ANGLE))
+                    .setY(magnitude * Math.sin(contact.angle() + HORIZONTAL_JET_ANGLE));
 
         }
         if (MovingDirection.LEFT.equals(direction)) {
             force
-                    .setX( - magnitude * Math.cos(contact.angle() - additionalAngle))
-                    .setY( - magnitude * Math.sin(contact.angle() - additionalAngle));
+                    .setX( - magnitude * Math.cos(contact.angle() - HORIZONTAL_JET_ANGLE))
+                    .setY( - magnitude * Math.sin(contact.angle() - HORIZONTAL_JET_ANGLE));
         }
         forces.add(BodyForce.of(force, calculations.getPosition(),
                 calculations.getModel().getState().getPosition().getCenter(), FORCE_DESCRIPTION));

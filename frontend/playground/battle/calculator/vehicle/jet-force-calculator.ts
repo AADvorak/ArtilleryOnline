@@ -112,15 +112,14 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
     if (!contact) {
       return
     }
-    const additionalAngle = this.getHorizontalJetAdditionalAngle(contact.angle)
     const force = zeroVector()
 
     if (direction === MovingDirection.RIGHT) {
-      force.x = magnitude * Math.cos(contact.angle + additionalAngle)
-      force.y = magnitude * Math.sin(contact.angle + additionalAngle)
+      force.x = magnitude * Math.cos(contact.angle + JetForceCalculator.HORIZONTAL_JET_ANGLE)
+      force.y = magnitude * Math.sin(contact.angle + JetForceCalculator.HORIZONTAL_JET_ANGLE)
     } else if (direction === MovingDirection.LEFT) {
-      force.x = -magnitude * Math.cos(contact.angle - additionalAngle)
-      force.y = -magnitude * Math.sin(contact.angle - additionalAngle)
+      force.x = -magnitude * Math.cos(contact.angle - JetForceCalculator.HORIZONTAL_JET_ANGLE)
+      force.y = -magnitude * Math.sin(contact.angle - JetForceCalculator.HORIZONTAL_JET_ANGLE)
     }
     forces.push(
         BodyForce.of(force, calculations.position!, vehicleModel.state.position, JetForceCalculator.FORCE_DESCRIPTION)
