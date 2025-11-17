@@ -32,10 +32,20 @@ export function useVehicleDebugDrawer(
       const wheelRadius = vehicleModel.specs.wheelRadius
       VehicleUtils.calculateGroundContact(calculations.rightWheel, wheelRadius, roomModel)
       VehicleUtils.calculateGroundContact(calculations.leftWheel, wheelRadius, roomModel)
+      drawCOM(vehicleModel)
       drawGroundContacts(calculations)
       drawJetForces(calculations)
       drawEngineForces(calculations)
     }
+  }
+
+  function drawCOM(vehicleModel: VehicleModel) {
+    const position = drawerBase.transformPosition(vehicleModel.state.position)
+    ctx.value!.fillStyle = 'white'
+    ctx.value!.beginPath()
+    ctx.value!.arc(position.x, position.y, 2, 0, 2 * Math.PI)
+    ctx.value!.fill()
+    ctx.value!.closePath()
   }
 
   function drawGroundContacts(calculations: VehicleCalculations) {
