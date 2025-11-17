@@ -2,8 +2,10 @@ import type {BodyPosition, Position, Size} from '@/playground/data/common'
 import type { Ref } from 'vue'
 import type {TrapezeShape} from "~/playground/data/shapes";
 import {BattleUtils} from "~/playground/utils/battle-utils";
+import {Segment} from "~/playground/data/geometry";
 
 export interface DrawerBase {
+  drawSegment: (ctx: CanvasRenderingContext2D, segment: Segment, lineWidth: number, color?: string) => void
   drawTrapeze: (ctx: CanvasRenderingContext2D, bottomCenter: BodyPosition, shape: TrapezeShape, color?: string) => void
   drawPolygon: (ctx: CanvasRenderingContext2D, polygon: Position[], color?: string) => void
   transformPosition: (position: Position) => (Position)
@@ -12,6 +14,18 @@ export interface DrawerBase {
 }
 
 export function useDrawerBase(scaleCoefficient: Ref<number>, canvasSize: Ref<Size>) {
+
+  function drawSegment(ctx: CanvasRenderingContext2D, segment: Segment, lineWidth: number, color?: string) {
+    const begin = transformPosition(segment.begin)
+    const end = transformPosition(segment.end)
+    ctx.beginPath()
+    ctx.lineWidth = lineWidth
+    if (color) ctx.strokeStyle = color
+    ctx.moveTo(begin.x, begin.y)
+    ctx.lineTo(end.x, end.y)
+    ctx.stroke()
+    ctx.closePath()
+  }
 
   function drawTrapeze(ctx: CanvasRenderingContext2D, bottomCenter: BodyPosition,
                        shape: TrapezeShape, color?: string) {
@@ -55,5 +69,5 @@ export function useDrawerBase(scaleCoefficient: Ref<number>, canvasSize: Ref<Siz
     return `bold ${size}px Roboto, sans-serif`
   }
 
-  return { drawTrapeze, drawPolygon, transformPosition, scale, getFont }
+  return { drawSegment, drawTrapeze, drawPolygon, transformPosition, scale, getFont }
 }
