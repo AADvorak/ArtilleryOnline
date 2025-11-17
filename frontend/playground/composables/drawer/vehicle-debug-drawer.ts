@@ -3,7 +3,7 @@ import type {Ref} from 'vue'
 import {useBattleStore} from '~/stores/battle'
 import {VehicleUtils} from '@/playground/utils/vehicle-utils'
 import type {VehicleModel} from "~/playground/data/model";
-import {type Contact, type Position, zeroVector} from "~/playground/data/common";
+import {type Contact, type Position} from "~/playground/data/common";
 import {useSettingsStore} from "~/stores/settings";
 import type {VehicleCalculations} from "~/playground/data/calculations";
 import {JetForceCalculator} from "~/playground/battle/calculator/vehicle/jet-force-calculator";
@@ -63,13 +63,27 @@ export function useVehicleDebugDrawer(
   }
 
   function drawEngineForces(calculations: VehicleCalculations) {
-    new EngineForceCalculator().calculate(calculations, battleStore.battle!.model)
-        .forEach(force => drawBodyForce(calculations.model.state.position, force, 'blue', 0.5))
+    drawBodyForces(
+        calculations.model.state.position,
+        new EngineForceCalculator().calculate(calculations, battleStore.battle!.model),
+        'blue', 0.5
+    )
   }
 
   function drawJetForces(calculations: VehicleCalculations) {
-    new JetForceCalculator().calculate(calculations, battleStore.battle!.model)
-        .forEach(force => drawBodyForce(calculations.model.state.position, force, 'red'))
+    drawBodyForces(
+        calculations.model.state.position,
+        new JetForceCalculator().calculate(calculations, battleStore.battle!.model),
+        'red', 1.0
+    )
+  }
+
+  function drawBodyForces(comPosition: Position, bodyForces: BodyForce[], color: string, coefficient: number) {
+    const maxMagnitude = bodyForces
+        .map(force => force.sumForceMagnitude())
+        .reduce((a, b) => Math.max(a, b), 0)
+    bodyForces.forEach(force => drawBodyForce(comPosition, force, color,
+        coefficient * force.sumForceMagnitude() / maxMagnitude))
   }
 
   function drawBodyForce(comPosition: Position, bodyForce: BodyForce, color: string, coefficient?: number) {
@@ -77,7 +91,7 @@ export function useVehicleDebugDrawer(
       x: comPosition.x + (bodyForce.radiusVector?.x || 0),
       y: comPosition.y + (bodyForce.radiusVector?.y || 0)
     }
-    let forceNormalized = VectorUtils.sumOf(bodyForce.moving || zeroVector(), bodyForce.rotating || zeroVector())
+    let forceNormalized = bodyForce.sumForce()
     VectorUtils.normalize(forceNormalized)
     if (coefficient) {
       forceNormalized = VectorUtils.multiply(forceNormalized, coefficient)

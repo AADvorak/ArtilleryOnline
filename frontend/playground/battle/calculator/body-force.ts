@@ -1,4 +1,4 @@
-import type {Force, Position, Vector} from "~/playground/data/common";
+import {type Force, type Position, type Vector, zeroVector} from "~/playground/data/common";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 
 export class BodyForce {
@@ -24,6 +24,21 @@ export class BodyForce {
       return 0
     }
     return VectorUtils.vectorProduct(this.radiusVector, this.rotating)
+  }
+
+  sumForce(): Force {
+    return VectorUtils.sumOf(this.moving || zeroVector(), this.rotating || zeroVector())
+  }
+
+  sumForceMagnitude(): number {
+    let magnitude = 0
+    if (this.rotating) {
+      magnitude += VectorUtils.getMagnitude(this.rotating)
+    }
+    if (this.moving) {
+      magnitude += VectorUtils.getMagnitude(this.moving)
+    }
+    return magnitude
   }
 
   static of(
