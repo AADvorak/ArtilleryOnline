@@ -16,6 +16,7 @@ import {useShellTrajectoryDrawer} from "~/playground/composables/drawer/shell-tr
 import {useBoxDrawer} from "~/playground/composables/drawer/box-drawer";
 import {BattlefieldAlignments} from "~/dictionary/battlefield-alignments";
 import {useUserStore} from "~/stores/user";
+import {useVehicleDebugDrawer} from "~/playground/composables/drawer/vehicle-debug-drawer";
 
 const HEADER_HEIGHT = 72
 const SCROLL_RESERVE_WIDTH = 40
@@ -61,6 +62,7 @@ const ctx = ref<CanvasRenderingContext2D>()
 
 const drawerBase = useDrawerBase(scaleCoefficient, canvasSize)
 const vehicleDrawer = useVehicleDrawer(drawerBase, ctx)
+const vehicleDebugDrawer = useVehicleDebugDrawer(drawerBase, ctx)
 const shellDrawer = useShellDrawer(drawerBase, ctx)
 const missileDrawer = useMissileDrawer(drawerBase, ctx)
 const droneDrawer = useDroneDrawer(drawerBase, ctx)
@@ -160,6 +162,7 @@ function redrawBattle() {
     groundDrawer.draw()
     surfaceDrawer.draw()
     vehicleDrawer.draw()
+    vehicleDebugDrawer.draw()
     explosionDrawer.draw()
   })
 }
