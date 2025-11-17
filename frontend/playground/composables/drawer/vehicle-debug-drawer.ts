@@ -3,9 +3,14 @@ import type {Ref} from 'vue'
 import {useBattleStore} from '~/stores/battle'
 import {VehicleUtils} from '@/playground/utils/vehicle-utils'
 import type {VehicleModel} from "~/playground/data/model";
-import type {Contact} from "~/playground/data/common";
+import {type Contact, type Position, zeroVector} from "~/playground/data/common";
 import {useSettingsStore} from "~/stores/settings";
 import type {VehicleCalculations} from "~/playground/data/calculations";
+import {JetForceCalculator} from "~/playground/battle/calculator/vehicle/jet-force-calculator";
+import type {BodyForce} from "~/playground/battle/calculator/body-force";
+import {Segment} from "~/playground/data/geometry";
+import {VectorUtils} from "~/playground/utils/vector-utils";
+import {EngineForceCalculator} from "~/playground/battle/calculator/vehicle/engine-force-calculator";
 
 export function useVehicleDebugDrawer(
     drawerBase: DrawerBase,
@@ -28,6 +33,8 @@ export function useVehicleDebugDrawer(
       VehicleUtils.calculateGroundContact(calculations.rightWheel, wheelRadius, roomModel)
       VehicleUtils.calculateGroundContact(calculations.leftWheel, wheelRadius, roomModel)
       drawGroundContacts(calculations)
+      drawJetForces(calculations)
+      drawEngineForces(calculations)
     }
   }
 
@@ -39,18 +46,36 @@ export function useVehicleDebugDrawer(
   }
 
   function drawGroundContact(contact: Contact) {
-    const begin = drawerBase.transformPosition(contact.position)
-    const end = drawerBase.transformPosition({
+    drawerBase.drawSegment(ctx.value!, new Segment(contact.position, {
       x: contact.position.x + contact.normal.x / 4,
       y: contact.position.y + contact.normal.y / 4,
-    })
-    ctx.value!.beginPath()
-    ctx.value!.lineWidth = 2
-    ctx.value!.strokeStyle = 'white'
-    ctx.value!.moveTo(begin.x, begin.y)
-    ctx.value!.lineTo(end.x, end.y)
-    ctx.value!.stroke()
-    ctx.value!.closePath()
+    }), 2, 'white')
+  }
+
+  function drawEngineForces(calculations: VehicleCalculations) {
+    new EngineForceCalculator().calculate(calculations, battleStore.battle!.model)
+        .forEach(force => drawBodyForce(calculations.model.state.position, force, 'blue', 0.5))
+  }
+
+  function drawJetForces(calculations: VehicleCalculations) {
+    new JetForceCalculator().calculate(calculations, battleStore.battle!.model)
+        .forEach(force => drawBodyForce(calculations.model.state.position, force, 'red'))
+  }
+
+  function drawBodyForce(comPosition: Position, bodyForce: BodyForce, color: string, coefficient?: number) {
+    const forcePosition: Position = {
+      x: comPosition.x + (bodyForce.radiusVector?.x || 0),
+      y: comPosition.y + (bodyForce.radiusVector?.y || 0)
+    }
+    let forceNormalized = VectorUtils.sumOf(bodyForce.moving || zeroVector(), bodyForce.rotating || zeroVector())
+    VectorUtils.normalize(forceNormalized)
+    if (coefficient) {
+      forceNormalized = VectorUtils.multiply(forceNormalized, coefficient)
+    }
+    drawerBase.drawSegment(ctx.value!, new Segment(forcePosition, {
+      x: forcePosition.x + forceNormalized.x,
+      y: forcePosition.y + forceNormalized.y,
+    }), 2, color)
   }
 
   return {draw}
