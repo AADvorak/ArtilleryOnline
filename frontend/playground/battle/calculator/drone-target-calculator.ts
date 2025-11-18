@@ -12,7 +12,7 @@ export const DroneTargetCalculator = {
     const ammo = Object.values(drone.model.state.ammo)[0]
     let targets: Position[] = []
 
-    if (ammo > 0) {
+    if (ammo && ammo > 0) {
       targets = TargetCalculator.calculatePositions(drone.model.vehicleId, battleModel)
     } else {
       targets = Object.values(battleModel.vehicles)
@@ -35,7 +35,7 @@ export const DroneTargetCalculator = {
 
     let minXDiff = Math.min(...Object.keys(xDiffMap).map(Number))
 
-    const targetPosition = xDiffMap[minXDiff]
+    const targetPosition = xDiffMap[minXDiff]!
     const gunAngle = drone.model.state.gunAngle + drone.model.state.position.angle
     const angleDiff = BattleUtils.calculateAngleDiff(gunAngle, VectorUtils.angleFromTo(dronePosition, targetPosition))
 
