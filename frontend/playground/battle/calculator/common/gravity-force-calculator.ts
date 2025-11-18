@@ -58,7 +58,7 @@ export class GravityForceCalculator implements ForceCalculator<BodyCalculations>
   }
 
   private getFarthest(contacts: Contact[], comX: number): Contact {
-    let farthest = contacts[0]
+    let farthest = contacts[0]!
     let farthestDistance = this.xDistance(farthest, comX)
 
     for (const contact of contacts) {
