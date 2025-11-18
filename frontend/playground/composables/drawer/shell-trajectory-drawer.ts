@@ -21,7 +21,7 @@ export function useShellTrajectoryDrawer(
       const roomSpecs = battleStore.battle!.model.room.specs
       Object.keys(battleStore.vehicles)
           .filter(key => key === userStore.user!.nickname)
-          .forEach(key => drawTrajectory(battleStore.vehicles![key], roomSpecs))
+          .forEach(key => drawTrajectory(battleStore.vehicles![key]!, roomSpecs))
     }
   }
 
@@ -30,7 +30,7 @@ export function useShellTrajectoryDrawer(
     if (!selectedShell) {
       return
     }
-    const velocityMagnitude = vehicleModel.config.gun.availableShells[selectedShell].velocity
+    const velocityMagnitude = vehicleModel.config.gun.availableShells[selectedShell]!.velocity
     const startPosition = VehicleUtils.getGunEndPosition(vehicleModel)
     const angle = vehicleModel.state.position.angle + vehicleModel.state.gunState.angle
     const directionSign = Math.sign(Math.cos(angle))
