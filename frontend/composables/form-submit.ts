@@ -1,5 +1,5 @@
 import type {ErrorResponse, FormValidation, FormValues} from "~/data/response";
-import type {AsyncFunction} from "type-fest/source/async-return-type";
+import type {AsyncReturnType} from "type-fest";
 import {VALIDATION_MSG} from "~/dictionary/validation-msg";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
 
@@ -12,7 +12,7 @@ export interface FormSubmitParams {
 
 export function useFormSubmit(params: FormSubmitParams) {
 
-  async function submit(requestSender: AsyncFunction) {
+  async function submit(requestSender: AsyncReturnType<any>) {
     clearValidation()
     if (preValidateForm()) {
       params.submitting.value = true
@@ -33,8 +33,8 @@ export function useFormSubmit(params: FormSubmitParams) {
   function preValidateForm() {
     let valid = true
     Object.keys(params.form).forEach(key => {
-      if (!params.form[key].length) {
-        params.validation[key].push({
+      if (!params.form[key]!.length) {
+        params.validation[key]?.push({
           locale: {
             code: VALIDATION_MSG.REQUIRED,
             params: {}
