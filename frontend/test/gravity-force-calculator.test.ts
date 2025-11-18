@@ -60,7 +60,7 @@ test('full over ground', () => {
   const gravityForces = gravityForceCalculator.calculate(calculations, battleModel)
   expect(gravityForces.length).toBe(1)
   expect(BodyUtils.getAllGroundContacts(calculations).length).toBe(0)
-  const gravityForce = gravityForces[0]
+  const gravityForce = gravityForces[0]!
   expect(gravityForce.moving?.x).toBeCloseTo(0, 3)
   expect(gravityForce.moving?.y).toBeCloseTo(- vehicleModel.preCalc.mass * roomModel.specs.gravityAcceleration, 3)
   expect(gravityForce.radiusVector).toBeNull()
@@ -82,7 +82,7 @@ test('one wheel over ground', () => {
   const gravityForces = gravityForceCalculator.calculate(calculations, battleModel)
   expect(gravityForces.length).toBe(1)
   expect(BodyUtils.getAllGroundContacts(calculations).length).toBe(1)
-  const gravityForce = gravityForces[0]
+  const gravityForce = gravityForces[0]!
   expect(gravityForce.moving?.x).toBeCloseTo(0, 3)
   expect(gravityForce.moving?.y).toBeCloseTo(- vehicleModel.preCalc.mass * roomModel.specs.gravityAcceleration, 3)
   expect(gravityForce.radiusVector).toBeNull()
