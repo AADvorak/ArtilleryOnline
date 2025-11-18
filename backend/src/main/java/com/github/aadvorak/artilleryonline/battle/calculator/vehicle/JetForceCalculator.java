@@ -40,67 +40,69 @@ public class JetForceCalculator implements ForceCalculator<
         if (!jetState.isActive() || jetState.getVolume() <= 0) {
             return forces;
         }
-        var acceleration = jetSpecs.getAcceleration() * calculations.getMass();
+        var magnitude = jetSpecs.getAcceleration() * calculations.getMass();
         var direction = vehicleModel.getState().getMovingDirection();
         var angle = vehicleModel.getState().getPosition().getAngle();
         if (vehicleModel.getState().isAboutToTurnOver()) {
-            addTurning(forces, calculations, acceleration, angle);
+            addTurning(forces, calculations, magnitude, angle);
         } else if (JetType.VERTICAL.equals(jetSpecs.getType())) {
-            addVerticalUp(forces, calculations.getLeftWheel(), acceleration / 2, angle, direction);
-            addVerticalUp(forces, calculations.getRightWheel(), acceleration / 2, angle, direction);
-            addVerticalSide(forces, acceleration / 2, direction);
+            addVerticalUp(forces, calculations.getLeftWheel(), magnitude / 2, angle, direction);
+            addVerticalUp(forces, calculations.getRightWheel(), magnitude / 2, angle, direction);
+            addVerticalSide(forces, magnitude / 2, direction);
         }
         if (JetType.HORIZONTAL.equals(jetSpecs.getType())) {
-            addHorizontalForWheel(forces, calculations.getRightWheel(), acceleration / 2, direction);
-            addHorizontalForWheel(forces, calculations.getLeftWheel(), acceleration / 2, direction);
+            if (MovingDirection.RIGHT.equals(direction)) {
+                addHorizontalForWheel(forces, calculations.getRightWheel(), magnitude, direction);
+            }
+            if (MovingDirection.LEFT.equals(direction)) {
+                addHorizontalForWheel(forces, calculations.getLeftWheel(), magnitude, direction);
+            }
             if (forces.isEmpty()) {
-                addHorizontal(forces, acceleration, angle, direction);
-            } else if (forces.size() == 1) {
-                addHorizontal(forces, acceleration / 2, angle, direction);
+                addHorizontal(forces, magnitude, angle, direction);
             }
         }
         return forces;
     }
 
     private static void addVerticalUp(List<BodyForce> forces, WheelCalculations wheelCalculations,
-                                      double acceleration, double angle, MovingDirection direction) {
+                                      double magnitude, double angle, MovingDirection direction) {
         var angleCoefficient = 1 + wheelCalculations.getSign().getValue() * Math.sin(angle);
         var movingCoefficient = direction == null ? 1.0 : 0.5;
         var force = new Force()
                 .setX(0.0)
-                .setY(acceleration * angleCoefficient * movingCoefficient);
+                .setY(magnitude * angleCoefficient * movingCoefficient);
         forces.add(BodyForce.of(force, wheelCalculations.getPosition(),
                 wheelCalculations.getModel().getState().getPosition().getCenter(), FORCE_DESCRIPTION));
     }
 
-    private static void addVerticalSide(List<BodyForce> forces, double acceleration, MovingDirection direction) {
+    private static void addVerticalSide(List<BodyForce> forces, double magnitude, MovingDirection direction) {
         if (MovingDirection.RIGHT.equals(direction)) {
-            forces.add(BodyForce.atCOM(new Force().setX(acceleration), FORCE_DESCRIPTION));
+            forces.add(BodyForce.atCOM(new Force().setX(magnitude), FORCE_DESCRIPTION));
         }
         if (MovingDirection.LEFT.equals(direction)) {
-            forces.add(BodyForce.atCOM(new Force().setX(-acceleration), FORCE_DESCRIPTION));
+            forces.add(BodyForce.atCOM(new Force().setX(-magnitude), FORCE_DESCRIPTION));
         }
     }
 
-    private void addHorizontal(List<BodyForce> forces, double acceleration,
+    private void addHorizontal(List<BodyForce> forces, double magnitude,
                                double angle, MovingDirection direction) {
         var additionalAngle = getHorizontalJetAdditionalAngle(angle);
         if (MovingDirection.RIGHT.equals(direction)) {
             var force = new Force()
-                    .setX(acceleration * Math.cos(angle + additionalAngle))
-                    .setY(acceleration * Math.sin(angle + additionalAngle));
+                    .setX(magnitude * Math.cos(angle + additionalAngle))
+                    .setY(magnitude * Math.sin(angle + additionalAngle));
             forces.add(BodyForce.atCOM(force, FORCE_DESCRIPTION));
         }
         if (MovingDirection.LEFT.equals(direction)) {
             var force = new Force()
-                    .setX(acceleration * Math.cos(angle - additionalAngle + Math.PI))
-                    .setY(acceleration * Math.sin(angle - additionalAngle + Math.PI));
+                    .setX(magnitude * Math.cos(angle - additionalAngle + Math.PI))
+                    .setY(magnitude * Math.sin(angle - additionalAngle + Math.PI));
             forces.add(BodyForce.atCOM(force, FORCE_DESCRIPTION));
         }
     }
 
-    private void addHorizontalForWheel(List<BodyForce> forces, WheelCalculations calculations, double magnitude,
-                                            MovingDirection direction) {
+    private void addHorizontalForWheel(List<BodyForce> forces, WheelCalculations calculations,
+                                       double magnitude, MovingDirection direction) {
         var contact = calculations.getGroundContact();
         if (contact == null) {
             return;
@@ -131,11 +133,11 @@ public class JetForceCalculator implements ForceCalculator<
     }
 
     private void addTurning(List<BodyForce> forces, VehicleCalculations calculations,
-                            double acceleration, double angle) {
+                            double magnitude, double angle) {
         var maxRadius = calculations.getModel().getPreCalc().getMaxRadius();
         var comPosition = calculations.getPosition();
         var position = comPosition.shifted(- maxRadius * Math.signum(angle), 0.0);
-        forces.add(BodyForce.of(new Force().setY(acceleration * 1.5), position, comPosition, FORCE_DESCRIPTION));
-        forces.add(BodyForce.atCOM(new Force().setY(acceleration * 0.5), FORCE_DESCRIPTION));
+        forces.add(BodyForce.of(new Force().setY(magnitude * 1.5), position, comPosition, FORCE_DESCRIPTION));
+        forces.add(BodyForce.atCOM(new Force().setY(magnitude * 0.5), FORCE_DESCRIPTION));
     }
 }

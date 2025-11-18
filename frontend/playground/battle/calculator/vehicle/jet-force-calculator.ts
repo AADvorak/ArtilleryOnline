@@ -24,24 +24,23 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
       return forces
     }
 
-    const acceleration = jetSpecs.acceleration * calculations.model.preCalc.mass
+    const magnitude = jetSpecs.acceleration * calculations.model.preCalc.mass
     const direction = vehicleModel.state.movingDirection!
     const angle = vehicleModel.state.position.angle
 
     if (VehicleUtils.isAboutToTurnOver(vehicleModel)) {
-      this.addTurning(forces, calculations, acceleration, angle)
+      this.addTurning(forces, calculations, magnitude, angle)
     } else if (jetSpecs.type === JetType.VERTICAL) {
-      this.addVerticalUp(forces, calculations.leftWheel, vehicleModel, acceleration / 2, angle, direction)
-      this.addVerticalUp(forces, calculations.rightWheel, vehicleModel, acceleration / 2, angle, direction)
-      this.addVerticalSide(forces, acceleration / 2, direction)
+      this.addVerticalUp(forces, calculations.leftWheel, vehicleModel, magnitude / 2, angle, direction)
+      this.addVerticalUp(forces, calculations.rightWheel, vehicleModel, magnitude / 2, angle, direction)
+      this.addVerticalSide(forces, magnitude / 2, direction)
     } else if (jetSpecs.type === JetType.HORIZONTAL) {
-      this.addHorizontalForWheel(forces, calculations.rightWheel, vehicleModel, acceleration / 2, direction)
-      this.addHorizontalForWheel(forces, calculations.leftWheel, vehicleModel, acceleration / 2, direction)
-
+      direction === MovingDirection.RIGHT && this.addHorizontalForWheel(forces, calculations.rightWheel,
+          vehicleModel, magnitude, direction)
+      direction === MovingDirection.LEFT && this.addHorizontalForWheel(forces, calculations.leftWheel,
+          vehicleModel, magnitude, direction)
       if (forces.length === 0) {
-        this.addHorizontal(forces, acceleration, angle, direction)
-      } else if (forces.length === 1) {
-        this.addHorizontal(forces, acceleration / 2, angle, direction)
+        this.addHorizontal(forces, magnitude, angle, direction)
       }
     }
 
@@ -52,14 +51,14 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
       forces: BodyForce[],
       wheelCalculations: WheelCalculations,
       vehicleModel: VehicleModel,
-      acceleration: number,
+      magnitude: number,
       angle: number,
       direction: MovingDirection | null
   ): void {
     const angleCoefficient = 1 + wheelCalculations.sign * Math.sin(angle)
     const movingCoefficient = direction ? 0.5 : 1.0
     const force = zeroVector()
-    force.y = acceleration * angleCoefficient * movingCoefficient
+    force.y = magnitude * angleCoefficient * movingCoefficient
 
     forces.push(
         BodyForce.of(
@@ -73,12 +72,12 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
 
   private addVerticalSide(
       forces: BodyForce[],
-      acceleration: number,
+      magnitude: number,
       direction: MovingDirection | null
   ): void {
     if (direction === MovingDirection.RIGHT) {
       const force = zeroVector()
-      force.x = acceleration
+      force.x = magnitude
       forces.push(
           BodyForce.atCOM(
               force,
@@ -88,7 +87,7 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
     }
     if (direction === MovingDirection.LEFT) {
       const force = zeroVector()
-      force.x = -acceleration
+      force.x = -magnitude
       forces.push(
           BodyForce.atCOM(
               force,
@@ -100,21 +99,21 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
 
   private addHorizontal(
       forces: BodyForce[],
-      acceleration: number,
+      magnitude: number,
       angle: number,
       direction: MovingDirection | null
   ): void {
     const additionalAngle = this.getHorizontalJetAdditionalAngle(angle)
     if (direction === MovingDirection.RIGHT) {
       const force = {
-        x: acceleration * Math.cos(angle + additionalAngle),
-        y: acceleration * Math.sin(angle + additionalAngle)
+        x: magnitude * Math.cos(angle + additionalAngle),
+        y: magnitude * Math.sin(angle + additionalAngle)
       }
       forces.push(BodyForce.atCOM(force, JetForceCalculator.FORCE_DESCRIPTION))
     } else if (direction === MovingDirection.LEFT) {
       const force = {
-        x: acceleration * Math.cos(angle - additionalAngle + Math.PI),
-        y: acceleration * Math.sin(angle - additionalAngle + Math.PI)
+        x: magnitude * Math.cos(angle - additionalAngle + Math.PI),
+        y: magnitude * Math.sin(angle - additionalAngle + Math.PI)
       }
       forces.push(BodyForce.atCOM(force, JetForceCalculator.FORCE_DESCRIPTION))
     }
@@ -156,14 +155,14 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
   }
 
   private addTurning(forces: BodyForce[], calculations: VehicleCalculations,
-                     acceleration: number, angle: number) {
+                     magnitude: number, angle: number) {
     const maxRadius = calculations.model.preCalc.maxRadius
     const comPosition = calculations.model.state.position
     const position = BattleUtils.shiftedPosition(comPosition, -maxRadius * Math.sign(angle), 0.0)
     forces.push(BodyForce.of({
       x: 0,
-      y: acceleration * 1.5
+      y: magnitude * 1.5
     }, position, comPosition, JetForceCalculator.FORCE_DESCRIPTION))
-    forces.push(BodyForce.atCOM({x: 0, y: acceleration * 0.5}, JetForceCalculator.FORCE_DESCRIPTION))
+    forces.push(BodyForce.atCOM({x: 0, y: magnitude * 0.5}, JetForceCalculator.FORCE_DESCRIPTION))
   }
 }
