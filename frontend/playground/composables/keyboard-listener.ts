@@ -87,19 +87,25 @@ export function useKeyboardListener(commandsSender: CommandsSender) {
 
   function keyupListener(e: KeyboardEvent) {
     keysDown.delete(e.code)
-    const userCommand = keyUpCommands.get(mapping[e.code])
-        || clickCommands.get(mapping[e.code])
-    if (userCommand) {
-      commandsSender.sendCommand(userCommand)
+    const userCommandKey = mapping[e.code]
+    if (userCommandKey) {
+      const userCommand = keyUpCommands.get(userCommandKey)
+          || clickCommands.get(userCommandKey)
+      if (userCommand) {
+        commandsSender.sendCommand(userCommand)
+      }
     }
   }
 
   function keydownListener(e: KeyboardEvent) {
     if (!keysDown.has(e.code)) {
       keysDown.set(e.code, e.key)
-      const userCommand = keyDownCommands.get(mapping[e.code])
-      if (userCommand) {
-        commandsSender.sendCommand(userCommand)
+      const userCommandKey = mapping[e.code]
+      if (userCommandKey) {
+        const userCommand = keyDownCommands.get(userCommandKey)
+        if (userCommand) {
+          commandsSender.sendCommand(userCommand)
+        }
       }
     }
   }
