@@ -77,8 +77,9 @@ export function useContinuousSoundsPlayer(player: Player) {
   async function playVehicleSounds(vehicles: VehicleModels) {
     const keys = Object.keys(vehicles)
     for (const key of keys) {
-      const vehicleState = vehicles[key].state
-      const acceleration = vehicles[key].specs.acceleration
+      const vehicleModel = vehicles[key]!
+      const vehicleState = vehicleModel.state
+      const acceleration = vehicleModel.specs.acceleration
       const pan = soundsPlayerBase.calculatePan(vehicleState.position.x)
       const gain = soundsPlayerBase.calculateGain(vehicleState.position)
       const movingOnGroundVelocity = getMovingOnGroundVelocity(vehicleState)
@@ -86,7 +87,7 @@ export function useContinuousSoundsPlayer(player: Player) {
           !!movingOnGroundVelocity, getVehicleMoveSoundName(acceleration), fadeOutAndStop)
       await playContinuousSound(VEHICLE_PREFIX, key, ENGINE_KEY, pan, gain / 3, 1.0, isEngineActive(vehicleState),
           'vehicle-engine.mp3', fadeOutAndStop)
-      await playContinuousSound(VEHICLE_PREFIX, key, JET_KEY, pan, gain, 1.0, VehicleUtils.isJetActive(vehicles[key]),
+      await playContinuousSound(VEHICLE_PREFIX, key, JET_KEY, pan, gain, 1.0, VehicleUtils.isJetActive(vehicleModel),
           'jet.mp3', fadeOutAndStop)
       if (key === userStore.user!.nickname) {
         await playContinuousSound(VEHICLE_PREFIX, key, GUN_KEY, 0, 0.4, 1.0, !!vehicleState.gunState.rotatingDirection,
@@ -190,7 +191,7 @@ export function useContinuousSoundsPlayer(player: Player) {
   }
 
   function isEngineActive(vehicleState: VehicleState) {
-    return vehicleState.movingDirection && !vehicleState.jetState?.active
+    return !!vehicleState.movingDirection && !vehicleState.jetState?.active
   }
 
   async function playLooped(fileName: string, pan: number, gain: number, rate: number): Promise<AudioControl | undefined> {
