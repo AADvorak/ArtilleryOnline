@@ -55,9 +55,9 @@ export class BodyAccelerationCalculator<C extends BodyCalculations> {
   private extractMovingFromRotating(forces: BodyForce[]): void {
     const extractedForces: BodyForce[] = []
     for (let i = 0; i < forces.length; i++) {
-      const force1 = forces[i]
+      const force1 = forces[i]!
       for (let j = i + 1; j < forces.length; j++) {
-        const force2 = forces[j]
+        const force2 = forces[j]!
         if (this.canExtractMovingFromRotating(force1, force2)) {
           const extractedForce = this.extractMovingFromRotatingPair(force1, force2)
           if (extractedForce !== null) {
