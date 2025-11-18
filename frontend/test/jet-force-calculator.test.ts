@@ -7,8 +7,6 @@ import {MovingDirection} from "~/playground/data/common";
 import {JetForceCalculator} from "~/playground/battle/calculator/vehicle/jet-force-calculator";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 
-const SQRT_05 = Math.sqrt(0.5)
-
 const jetForceCalculator = new JetForceCalculator()
 
 test('horizontal off moving right', () => {
@@ -57,7 +55,7 @@ test('horizontal on moving right', () => {
   const calculations = VehicleUtils.initVehicleCalculations(vehicleModel)
   const jetForces = jetForceCalculator.calculate(calculations, battleModel)
   expect(jetForces.length).toBe(1)
-  const jetForce = jetForces[0]
+  const jetForce = jetForces[0]!
   const angle = JetForceCalculator.HORIZONTAL_JET_ANGLE
   const magnitude = vehicleModel.config.jet.acceleration * vehicleModel.preCalc.mass
   expect(jetForce.moving?.x).toBeCloseTo(magnitude * Math.cos(angle), 3)
@@ -76,7 +74,7 @@ test('horizontal on moving left', () => {
   const calculations = VehicleUtils.initVehicleCalculations(vehicleModel)
   const jetForces = jetForceCalculator.calculate(calculations, battleModel)
   expect(jetForces.length).toBe(1)
-  const jetForce = jetForces[0]
+  const jetForce = jetForces[0]!
   const angle = JetForceCalculator.HORIZONTAL_JET_ANGLE
   const magnitude = vehicleModel.config.jet.acceleration * vehicleModel.preCalc.mass
   expect(jetForce.moving?.x).toBeCloseTo(-magnitude * Math.cos(angle), 3)
@@ -95,8 +93,8 @@ test('vertical on no moving direction', () => {
   const calculations = VehicleUtils.initVehicleCalculations(vehicleModel)
   const jetForces = jetForceCalculator.calculate(calculations, battleModel)
   expect(jetForces.length).toBe(2)
-  const jetForce1 = jetForces[0]
-  const jetForce2 = jetForces[1]
+  const jetForce1 = jetForces[0]!
+  const jetForce2 = jetForces[1]!
   const magnitude = vehicleModel.config.jet.acceleration * vehicleModel.preCalc.mass
   const sumForce = VectorUtils.sumOf(jetForce1.moving!, jetForce1.rotating!, jetForce2.moving!, jetForce2.rotating!)
   expect(sumForce.x).toBeCloseTo(0, 3)
@@ -114,15 +112,22 @@ test('vertical on moving right', () => {
   vehicleModel.state.jetState.volume = vehicleModel.config.jet.capacity
   const calculations = VehicleUtils.initVehicleCalculations(vehicleModel)
   const jetForces = jetForceCalculator.calculate(calculations, battleModel)
-  expect(jetForces.length).toBe(2)
-  const jetForce1 = jetForces[0]
-  const jetForce2 = jetForces[1]
+  expect(jetForces.length).toBe(3)
+  const jetForce1 = jetForces[0]!
+  const jetForce2 = jetForces[1]!
+  const jetForce3 = jetForces[2]!
   const magnitude = vehicleModel.config.jet.acceleration * vehicleModel.preCalc.mass
-  const sumForce = VectorUtils.sumOf(jetForce1.moving!, jetForce1.rotating!, jetForce2.moving!, jetForce2.rotating!)
-  expect(sumForce.x).toBeCloseTo(magnitude * SQRT_05, 3)
-  expect(sumForce.y).toBeCloseTo(magnitude * SQRT_05, 3)
+  const sumForce = VectorUtils.sumOf(
+      jetForce1.moving!, jetForce1.rotating!,
+      jetForce2.moving!, jetForce2.rotating!,
+      jetForce3.moving!
+  )
+  expect(sumForce.x).toBeCloseTo(magnitude * 0.5, 3)
+  expect(sumForce.y).toBeCloseTo(magnitude * 0.5, 3)
   expect(VectorUtils.getMagnitude(jetForce1.radiusVector!)).toBeCloseTo(vehicleModel.preCalc.wheelDistance)
   expect(VectorUtils.getMagnitude(jetForce2.radiusVector!)).toBeCloseTo(vehicleModel.preCalc.wheelDistance)
+  expect(jetForce3.radiusVector).toBeNull()
+  expect(jetForce3.rotating).toBeNull()
 })
 
 test('vertical on moving left', () => {
@@ -134,13 +139,20 @@ test('vertical on moving left', () => {
   vehicleModel.state.jetState.volume = vehicleModel.config.jet.capacity
   const calculations = VehicleUtils.initVehicleCalculations(vehicleModel)
   const jetForces = jetForceCalculator.calculate(calculations, battleModel)
-  expect(jetForces.length).toBe(2)
-  const jetForce1 = jetForces[0]
-  const jetForce2 = jetForces[1]
+  expect(jetForces.length).toBe(3)
+  const jetForce1 = jetForces[0]!
+  const jetForce2 = jetForces[1]!
+  const jetForce3 = jetForces[2]!
   const magnitude = vehicleModel.config.jet.acceleration * vehicleModel.preCalc.mass
-  const sumForce = VectorUtils.sumOf(jetForce1.moving!, jetForce1.rotating!, jetForce2.moving!, jetForce2.rotating!)
-  expect(sumForce.x).toBeCloseTo(- magnitude * SQRT_05, 3)
-  expect(sumForce.y).toBeCloseTo(magnitude * SQRT_05, 3)
+  const sumForce = VectorUtils.sumOf(
+      jetForce1.moving!, jetForce1.rotating!,
+      jetForce2.moving!, jetForce2.rotating!,
+      jetForce3.moving!
+  )
+  expect(sumForce.x).toBeCloseTo(- magnitude * 0.5, 3)
+  expect(sumForce.y).toBeCloseTo(magnitude * 0.5, 3)
   expect(VectorUtils.getMagnitude(jetForce1.radiusVector!)).toBeCloseTo(vehicleModel.preCalc.wheelDistance)
   expect(VectorUtils.getMagnitude(jetForce2.radiusVector!)).toBeCloseTo(vehicleModel.preCalc.wheelDistance)
+  expect(jetForce3.radiusVector).toBeNull()
+  expect(jetForce3.rotating).toBeNull()
 })

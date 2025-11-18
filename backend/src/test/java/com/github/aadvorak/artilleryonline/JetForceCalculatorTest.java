@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JetForceCalculatorTest {
 
     private static final double SMALL_DELTA = 0.00001;
-    private static final double SQRT_05 = Math.sqrt(0.5);
 
     private final JetForceCalculator jetForceCalculator = new JetForceCalculator();
 
@@ -116,16 +115,23 @@ public class JetForceCalculatorTest {
         var battleModel = new BattleModel();
         var vehicleCalculations = new VehicleCalculations(vehicleModel);
         var jetForces = jetForceCalculator.calculate(vehicleCalculations, battleModel);
-        assertEquals(2, jetForces.size());
+        assertEquals(3, jetForces.size());
         var jetForce1 = jetForces.get(0);
         var jetForce2 = jetForces.get(1);
+        var jetForce3 = jetForces.get(2);
         var expectedMagnitude = vehicleModel.getConfig().getJet().getAcceleration() * vehicleModel.getPreCalc().getMass();
-        var sumForce = Vector.sumOf(jetForce1.moving(), jetForce1.rotating(), jetForce2.moving(), jetForce2.rotating());
+        var sumForce = Vector.sumOf(
+                jetForce1.moving(), jetForce1.rotating(),
+                jetForce2.moving(), jetForce2.rotating(),
+                jetForce3.moving()
+        );
         assertAll(
-                () -> assertEquals(SQRT_05 * expectedMagnitude, sumForce.getY(), SMALL_DELTA),
-                () -> assertEquals(SQRT_05 * expectedMagnitude, sumForce.getX(), SMALL_DELTA),
+                () -> assertEquals(0.5 * expectedMagnitude, sumForce.getY(), SMALL_DELTA),
+                () -> assertEquals(0.5 * expectedMagnitude, sumForce.getX(), SMALL_DELTA),
                 () -> assertEquals(vehicleModel.getPreCalc().getWheelDistance(), jetForce1.radiusVector().magnitude()),
-                () -> assertEquals(vehicleModel.getPreCalc().getWheelDistance(), jetForce2.radiusVector().magnitude())
+                () -> assertEquals(vehicleModel.getPreCalc().getWheelDistance(), jetForce2.radiusVector().magnitude()),
+                () -> assertNull(jetForce3.rotating()),
+                () -> assertNull(jetForce3.radiusVector())
         );
     }
 
@@ -137,16 +143,23 @@ public class JetForceCalculatorTest {
         var battleModel = new BattleModel();
         var vehicleCalculations = new VehicleCalculations(vehicleModel);
         var jetForces = jetForceCalculator.calculate(vehicleCalculations, battleModel);
-        assertEquals(2, jetForces.size());
+        assertEquals(3, jetForces.size());
         var jetForce1 = jetForces.get(0);
         var jetForce2 = jetForces.get(1);
+        var jetForce3 = jetForces.get(2);
         var expectedMagnitude = vehicleModel.getConfig().getJet().getAcceleration() * vehicleModel.getPreCalc().getMass();
-        var sumForce = Vector.sumOf(jetForce1.moving(), jetForce1.rotating(), jetForce2.moving(), jetForce2.rotating());
+        var sumForce = Vector.sumOf(
+                jetForce1.moving(), jetForce1.rotating(),
+                jetForce2.moving(), jetForce2.rotating(),
+                jetForce3.moving()
+        );
         assertAll(
-                () -> assertEquals(SQRT_05 * expectedMagnitude, sumForce.getY(), SMALL_DELTA),
-                () -> assertEquals(- SQRT_05 * expectedMagnitude, sumForce.getX(), SMALL_DELTA),
+                () -> assertEquals(0.5 * expectedMagnitude, sumForce.getY(), SMALL_DELTA),
+                () -> assertEquals(- 0.5 * expectedMagnitude, sumForce.getX(), SMALL_DELTA),
                 () -> assertEquals(vehicleModel.getPreCalc().getWheelDistance(), jetForce1.radiusVector().magnitude()),
-                () -> assertEquals(vehicleModel.getPreCalc().getWheelDistance(), jetForce2.radiusVector().magnitude())
+                () -> assertEquals(vehicleModel.getPreCalc().getWheelDistance(), jetForce2.radiusVector().magnitude()),
+                () -> assertNull(jetForce3.rotating()),
+                () -> assertNull(jetForce3.radiusVector())
         );
     }
 }
