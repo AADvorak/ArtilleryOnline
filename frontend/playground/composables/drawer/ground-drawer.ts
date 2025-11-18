@@ -47,7 +47,7 @@ export function useGroundDrawer(
   function getGroundPosition(i: number, roomModel: RoomModel) {
     return drawerBase.transformPosition({
       x: roomModel.specs.step * i,
-      y: roomModel.state.groundLine[i]
+      y: roomModel.state.groundLine[i]!
     })
   }
 
