@@ -22,6 +22,7 @@ import type {BoxConfig, DroneConfig, ParticleConfig, RoomConfig, VehicleConfig} 
 import type {Shift} from "~/playground/data/common";
 
 export interface BodyModel {
+  id: number
   preCalc: BodyPreCalc
   state: BodyState
 }

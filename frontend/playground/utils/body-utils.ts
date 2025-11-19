@@ -4,6 +4,7 @@ import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import type {BodyCalculations, VehicleCalculations} from "~/playground/data/calculations";
 import type {BodyModel} from "~/playground/data/model";
+import {VectorProjections} from "~/playground/data/geometry";
 
 export const BodyUtils = {
   getVelocityAt(bodyState: BodyState, position: Position): Velocity {
@@ -62,6 +63,12 @@ export const BodyUtils = {
     position.x += velocity.x * timeStepSecs
     position.y += velocity.y * timeStepSecs
     position.angle += velocity.angle * timeStepSecs
+  },
+
+  applyNormalMoveToPosition(bodyState: BodyState, normalMove: number, angle: number) {
+    const move = new VectorProjections(angle, normalMove, 0).recoverPosition()
+    bodyState.position.x += move.x
+    bodyState.position.y += move.y
   },
 
   getBackupPosition(bodyModel: BodyModel): BodyPosition {

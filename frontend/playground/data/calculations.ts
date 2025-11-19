@@ -6,14 +6,25 @@ export interface Calculations {
   getMass(): number
   getVelocity(): Velocity
   getKineticEnergy(): number
+  calculateNextPosition(timeStepSecs: number): void
+  applyNormalMoveToNextPosition(normalMove: number, angle: number): void
 }
 
-export class BodyCalculations implements Calculations{
+export class BodyCalculations implements Calculations {
   model: BodyModel
   groundContacts?: Set<Contact>
+  nextPosition?: BodyPosition
 
   constructor(model: BodyModel) {
     this.model = model
+  }
+
+  calculateNextPosition(timeStepSecs: number): void {
+    // todo implement
+  }
+
+  applyNormalMoveToNextPosition(normalMove: number, angle: number): void {
+    // todo implement
   }
 
   getMass(): number {
@@ -41,11 +52,21 @@ export interface WheelCalculations {
   velocity: Velocity | undefined
 }
 
-export interface VehicleCalculations extends BodyCalculations {
-  model: VehicleModel
-  nextPosition: BodyPosition | undefined
+export class VehicleCalculations extends BodyCalculations {
+  override model: VehicleModel
   rightWheel: WheelCalculations
   leftWheel: WheelCalculations
+
+  constructor(
+      model: VehicleModel,
+      rightWheel: WheelCalculations,
+      leftWheel: WheelCalculations
+  ) {
+    super(model)
+    this.model = model
+    this.rightWheel = rightWheel
+    this.leftWheel = leftWheel
+  }
 }
 
 export interface BoxCalculations extends BodyCalculations {

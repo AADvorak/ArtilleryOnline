@@ -160,7 +160,7 @@ export class Collision {
     return this.firstNormalVelocity() - this.secondNormalVelocity()
   }
 
-  impactValue(): number {
+  getImpact(): number {
     if (this.impact === null) {
       const closingVelocity = this.closingVelocity()
 

@@ -1,4 +1,4 @@
-import type {BodyPosition, Position, Vector} from "~/playground/data/common";
+import type {BodyPosition, Position, Vector, Velocity} from "~/playground/data/common";
 import type {TrapezeShape} from "~/playground/data/shapes";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 
@@ -136,6 +136,20 @@ export class VectorProjections {
     this.angle = angle
     this.normal = normal
     this.tangential = tangential
+  }
+
+  recoverVelocity(): Velocity {
+    return {
+      x: this.getX(),
+      y: this.getY(),
+    }
+  }
+
+  recoverPosition(): Position {
+    return {
+      x: this.getX(),
+      y: this.getY(),
+    }
   }
 
   static of(vector: Vector, angle: number): VectorProjections {
