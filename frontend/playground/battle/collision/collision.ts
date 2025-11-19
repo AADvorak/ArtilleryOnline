@@ -1,10 +1,12 @@
-import type {Contact, Position, Vector, Velocity} from "~/playground/data/common";
+import {CollideObjectType, type Contact, type Position, type Vector, type Velocity} from "~/playground/data/common";
 import {Segment, VectorProjections} from "~/playground/data/geometry";
 import type {BodyModel} from "~/playground/data/model";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BodyUtils} from "~/playground/utils/body-utils";
 import {GeometryUtils} from "~/playground/utils/geometry-utils";
 import {BattleUtils} from "~/playground/utils/battle-utils";
+import type {Calculations} from "~/playground/data/calculations";
+import {BodyCalculations} from "~/playground/data/calculations";
 
 export class ComponentData {
   constructor(
@@ -108,5 +110,132 @@ export class BodyCollisionData {
 
     const momentOfInertia = bodyModel.preCalc.momentOfInertia
     return (inertiaToMassCoefficient * momentOfInertia / Math.pow(distanceToAxis, 2) + mass) / (1 + inertiaToMassCoefficient)
+  }
+}
+
+export interface BodyCollisionDataPair {
+  first: BodyCollisionData
+  second?: BodyCollisionData
+}
+
+export interface CollisionPair {
+  first: Calculations
+  second?: Calculations
+}
+
+export interface VelocitiesProjections {
+  first: VectorProjections
+  second?: VectorProjections
+}
+
+export class Collision {
+  private static readonly RESTITUTION = 0.5
+  private static readonly GROUND_RESTITUTION = 0.1
+
+  type: CollideObjectType
+  pair: CollisionPair
+  velocitiesProjections: VelocitiesProjections
+  bodyCollisionDataPair: BodyCollisionDataPair
+  contact: Contact
+  impact: number | null = null
+  hit = false
+
+  constructor(
+      type: CollideObjectType,
+      pair: CollisionPair,
+      velocitiesProjections: VelocitiesProjections,
+      bodyCollisionDataPair: BodyCollisionDataPair,
+      contact: Contact,
+      hit = false
+  ) {
+    this.type = type
+    this.pair = pair
+    this.velocitiesProjections = velocitiesProjections
+    this.bodyCollisionDataPair = bodyCollisionDataPair
+    this.contact = contact
+    this.hit = hit
+  }
+
+  closingVelocity(): number {
+    return this.firstNormalVelocity() - this.secondNormalVelocity()
+  }
+
+  impactValue(): number {
+    if (this.impact === null) {
+      const closingVelocity = this.closingVelocity()
+
+      if (closingVelocity <= 0.0) {
+        this.impact = 0.0
+      } else if (!this.pair.second) {
+        const firstData = this.bodyCollisionDataPair.first
+        const mass = firstData !== null ? firstData.normalData.resultMass : this.pair.first.getMass()
+        this.impact = mass * closingVelocity * Collision.GROUND_RESTITUTION
+      } else {
+        const firstData = this.bodyCollisionDataPair.first
+        const secondData = this.bodyCollisionDataPair.second
+        const firstMass = !!firstData ? firstData.normalData.resultMass : this.pair.first.getMass()
+        const secondMass = !!secondData ? secondData.normalData.resultMass : this.pair.second.getMass()
+        this.impact = firstMass * secondMass * closingVelocity * (1 + this.restitution)
+            / (firstMass + secondMass)
+      }
+    }
+    return this.impact
+  }
+
+  sumKineticEnergy(): number {
+    let sumEnergy = this.pair.first.getKineticEnergy()
+    if (this.pair.second) {
+      sumEnergy += this.pair.second.getKineticEnergy()
+    }
+    return sumEnergy
+  }
+
+  static withGround(first: Calculations, contact: Contact): Collision {
+    return this.withUnmovable(first, contact, CollideObjectType.GROUND)
+  }
+
+  static withWall(first: Calculations, contact: Contact): Collision {
+    return this.withUnmovable(first, contact, CollideObjectType.WALL)
+  }
+
+  private firstNormalVelocity(): number {
+    return this.bodyCollisionDataPair.first !== null
+        ? this.bodyCollisionDataPair.first.velocityProjections.normal
+        : this.velocitiesProjections.first.normal
+  }
+
+  private secondNormalVelocity(): number {
+    if (this.bodyCollisionDataPair.second) {
+      return this.bodyCollisionDataPair.second.velocityProjections.normal
+    } else if (this.velocitiesProjections.second) {
+      return this.velocitiesProjections.second.normal
+    }
+    return 0
+  }
+
+  private get restitution(): number {
+    return Collision.RESTITUTION
+  }
+
+  private static withUnmovable(
+      first: Calculations,
+      contact: Contact,
+      type: CollideObjectType
+  ): Collision {
+    let firstData: BodyCollisionData | null = null
+    if (first instanceof BodyCalculations) {
+      const bodyCalculations = first as BodyCalculations
+      firstData = BodyCollisionData.of(bodyCalculations.model, contact, false)
+    }
+
+    const velocityProjections = VectorProjections.of(first.getVelocity(), contact.angle)
+
+    return new Collision(
+        type,
+        {first},
+        {first: velocityProjections},
+        {first: firstData!},
+        contact
+    )
   }
 }

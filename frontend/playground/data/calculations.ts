@@ -1,9 +1,32 @@
 import type {BodyPosition, Contact, Position, Velocity} from "@/playground/data/common"
 import type {BodyModel, BoxModel, DroneModel, VehicleModel} from "~/playground/data/model";
 
-export interface BodyCalculations {
+export interface Calculations {
+  model: any
+  getMass(): number
+  getVelocity(): Velocity
+  getKineticEnergy(): number
+}
+
+export class BodyCalculations implements Calculations{
   model: BodyModel
   groundContacts?: Set<Contact>
+
+  constructor(model: BodyModel) {
+    this.model = model
+  }
+
+  getMass(): number {
+    return this.model.preCalc.mass
+  }
+
+  getVelocity(): Velocity {
+    return this.model.state.velocity
+  }
+
+  getKineticEnergy(): number {
+    return this.getMass() * (Math.pow(this.getVelocity().x, 2) + Math.pow(this.getVelocity().y, 2)) / 2
+  }
 }
 
 export enum WheelSign {
@@ -29,7 +52,7 @@ export interface BoxCalculations extends BodyCalculations {
   model: BoxModel
 }
 
-export interface DroneCalculations {
+export interface DroneCalculations extends Calculations {
   model: DroneModel
   target?: DroneTargetCalculations
 }
