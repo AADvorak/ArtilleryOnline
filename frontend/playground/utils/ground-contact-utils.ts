@@ -187,7 +187,7 @@ export const GroundContactUtils = {
         const depth = BattleUtils.distance(groundPosition, segmentPoint)
         const normal1 = VectorUtils.vectorFromTo(groundPosition, projection)
         VectorUtils.normalize(normal1)
-        const normal2 = VectorUtils.getNormal(this.getGroundAngle(groundPosition, groundIndex, roomModel))
+        const normal2 = VectorUtils.normal(this.getGroundAngle(groundPosition, groundIndex, roomModel))
         VectorUtils.normalize(normal2)
         const normal = VectorUtils.sumOf(normal1, normal2)
         VectorUtils.normalize(normal)
@@ -228,7 +228,7 @@ export const GroundContactUtils = {
       return this.checkDepth({
         depth,
         angle,
-        normal: VectorUtils.getNormal(angle),
+        normal: VectorUtils.normal(angle),
         position,
         description
       })

@@ -1,31 +1,6 @@
 import type {BodyVector, BodyVelocity, Position, Vector} from '@/playground/data/common'
 
 export const VectorUtils = {
-  getVerticalProjection(vector: Vector, groundAngle: number): number {
-    return -vector.x * Math.sin(groundAngle) + vector.y * Math.cos(groundAngle)
-  },
-
-  getHorizontalProjection(vector: Vector, groundAngle: number): number {
-    return vector.x * Math.cos(groundAngle) + vector.y * Math.sin(groundAngle)
-  },
-
-  getComponentX(
-      verticalProjection: number,
-      horizontalProjection: number,
-      groundAngle: number
-  ): number {
-    return (
-        -verticalProjection * Math.sin(groundAngle) + horizontalProjection * Math.cos(groundAngle)
-    )
-  },
-
-  getComponentY(
-      verticalProjection: number,
-      horizontalProjection: number,
-      groundAngle: number
-  ): number {
-    return verticalProjection * Math.cos(groundAngle) + horizontalProjection * Math.sin(groundAngle)
-  },
 
   sumOf(...vectors: Vector[]): Vector {
     let sumX = 0
@@ -92,7 +67,7 @@ export const VectorUtils = {
     return Math.atan2(vector.y, vector.x)
   },
 
-  getNormal(angle: number): Vector {
+  normal(angle: number): Vector {
     return {
       x: Math.cos(angle - Math.PI / 2),
       y: Math.sin(angle - Math.PI / 2)
