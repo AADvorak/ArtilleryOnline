@@ -7,7 +7,14 @@ export const GeometryUtils = {
       point: Position,
       segment: Segment
   ): Position | null {
-    return this.getPointToSegmentOrLineProjection(point, segment, true)
+    return this.getPointToSegmentOrLineProjection(point, segment, false)
+  },
+
+  getPointToLineProjection(
+      point: Position,
+      segment: Segment
+  ): Position {
+    return this.getPointToSegmentOrLineProjection(point, segment, true)!
   },
 
   getPointToSegmentOrLineProjection(
