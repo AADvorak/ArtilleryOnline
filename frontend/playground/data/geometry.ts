@@ -1,4 +1,4 @@
-import type {BodyPosition, Position} from "~/playground/data/common";
+import type {BodyPosition, Position, Vector} from "~/playground/data/common";
 import type {TrapezeShape} from "~/playground/data/shapes";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 
@@ -120,5 +120,39 @@ export class Trapeze {
 
   private topCenter(): Position {
     return BattleUtils.shiftedPosition(this.position, this.shape.height, this.position.angle + Math.PI / 2)
+  }
+}
+
+export class VectorProjections {
+  readonly angle: number
+  normal: number
+  tangential: number
+
+  constructor(
+      angle: number,
+      normal: number,
+      tangential: number
+  ) {
+    this.angle = angle
+    this.normal = normal
+    this.tangential = tangential
+  }
+
+  static of(vector: Vector, angle: number): VectorProjections {
+    const normal = vector.x * Math.sin(angle) - vector.y * Math.cos(angle)
+    const tangential = vector.x * Math.cos(angle) + vector.y * Math.sin(angle)
+    return new VectorProjections(angle, normal, tangential)
+  }
+
+  static copyOf(vectorProjections: VectorProjections): VectorProjections {
+    return new VectorProjections(vectorProjections.angle, vectorProjections.normal, vectorProjections.tangential)
+  }
+
+  private getX(): number {
+    return this.normal * Math.sin(this.angle) + this.tangential * Math.cos(this.angle)
+  }
+
+  private getY(): number {
+    return -this.normal * Math.cos(this.angle) + this.tangential * Math.sin(this.angle)
   }
 }

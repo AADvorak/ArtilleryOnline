@@ -49,6 +49,13 @@ export const VectorUtils = {
     }
   },
 
+  shifted(position: Position, vector: Vector) {
+    return {
+      x: position.x + vector.x,
+      y: position.y + vector.y,
+    }
+  },
+
   getMagnitude(vector: Vector) {
     return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
   },
