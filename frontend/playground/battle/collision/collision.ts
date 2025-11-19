@@ -5,7 +5,7 @@ import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BodyUtils} from "~/playground/utils/body-utils";
 import {GeometryUtils} from "~/playground/utils/geometry-utils";
 import {BattleUtils} from "~/playground/utils/battle-utils";
-import type {Calculations} from "~/playground/data/calculations";
+import {BattleCalculations, type Calculations} from "~/playground/data/calculations";
 import {BodyCalculations} from "~/playground/data/calculations";
 
 export class ComponentData {
@@ -238,4 +238,16 @@ export class Collision {
         contact
     )
   }
+}
+
+export interface CollisionsDetector {
+  detect: (calculations: Calculations, battle: BattleCalculations) => Collision[]
+}
+
+export interface CollisionPreprocessor {
+  process: (collision: Collision, battle: BattleCalculations) => boolean
+}
+
+export interface CollisionsPostprocessor {
+  process: (calculations: Calculations, battle: BattleCalculations) => void
 }
