@@ -363,13 +363,13 @@ export class VehicleCalculations extends BodyCalculationsBase implements BodyCal
     if (turretShape.name === ShapeNames.HALF_CIRCLE) {
       this.groundContacts = GroundContactUtils.getHalfCircleGroundContacts(
           HalfCircle.of(position, (turretShape as HalfCircleShape).radius),
-          roomModel
+          roomModel,false
       )
     }
     if (turretShape.name === ShapeNames.TRAPEZE) {
       this.groundContacts = GroundContactUtils.getTrapezeGroundContacts(
           new Trapeze(position, turretShape as TrapezeShape),
-          roomModel
+          roomModel, false
       )
     }
     const wheelRadius = this.model.specs.wheelRadius
@@ -398,7 +398,7 @@ export class BoxCalculations extends BodyCalculationsBase implements BodyCalcula
     if (shape.name === ShapeNames.TRAPEZE) {
       this.groundContacts = GroundContactUtils.getTrapezeGroundContacts(
           new Trapeze(position, shape as TrapezeShape),
-          roomModel
+          roomModel, false
       )
     }
   }

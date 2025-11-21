@@ -1,3 +1,6 @@
+import {VectorUtils} from "~/playground/utils/vector-utils";
+import {Constants} from "~/playground/data/constants";
+
 export interface Size {
   width: number
   height: number
@@ -101,12 +104,53 @@ export interface Shift {
   angle: number
 }
 
-export interface Contact {
+export class Contact {
   depth: number
   angle: number
   normal: Vector
   position: Position
   description?: string
+
+  constructor(
+      depth: number,
+      angle: number,
+      normal: Vector,
+      position: Position,
+      description?: string
+  ) {
+    this.depth = depth
+    this.angle = angle
+    this.normal = normal
+    this.position = position
+    this.description = description
+  }
+
+  static withAngle(depth: number, angle: number, position: Position, description?: string): Contact | null {
+    return this.checkDepth({
+      depth,
+      angle,
+      normal: VectorUtils.normal(angle),
+      position,
+      description
+    })
+  }
+
+  static withNormal(depth: number, normal: Vector, position: Position, description?: string): Contact | null {
+    return this.checkDepth({
+      depth,
+      angle: VectorUtils.getAngle(normal) + Math.PI / 2,
+      normal,
+      position,
+      description
+    })
+  }
+
+  static checkDepth(contact: Contact): Contact | null {
+    if (contact.depth < Constants.INTERPENETRATION_THRESHOLD) {
+      return null
+    }
+    return contact
+  }
 }
 
 export function zeroVector(): Vector {

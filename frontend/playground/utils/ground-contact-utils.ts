@@ -1,4 +1,4 @@
-import type {Contact, Position, Vector} from "~/playground/data/common";
+import {Contact, type Position} from "~/playground/data/common";
 import type {RoomModel} from "~/playground/data/model";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {VectorUtils} from "~/playground/utils/vector-utils";
@@ -10,7 +10,8 @@ export const GroundContactUtils = {
 
   getHalfCircleGroundContacts(
       halfCircle: HalfCircle,
-      roomModel: RoomModel
+      roomModel: RoomModel,
+      withMaxDepth: boolean
   ): Set<Contact> {
     const groundIndexes = BattleUtils.getGroundIndexesBetween(
         halfCircle.center.x - halfCircle.radius,
@@ -26,12 +27,13 @@ export const GroundContactUtils = {
         halfCircle.center,
         BattleUtils.shiftedPosition(halfCircle.center, 1, halfCircle.angle + Math.PI / 2)
     )
+    const maxDepth = withMaxDepth ? roomModel.specs.groundMaxDepth : 0
 
     for (const groundIndex of groundIndexes) {
       const position = BattleUtils.getGroundPosition(groundIndex, roomModel)
 
       const bottomContact: Contact | null = this.getSegmentGroundContact(bottom,
-          position, groundIndex, roomModel, 'HalfCircle bottom with ground')
+          position, groundIndex, roomModel, maxDepth, 'HalfCircle bottom with ground')
 
       let topContact: Contact | null = null
       const distance = BattleUtils.distance(halfCircle.center, position)
@@ -41,7 +43,7 @@ export const GroundContactUtils = {
         const depth = halfCircle.radius - distance
         const contactPosition = BattleUtils.shiftedPosition(halfCircle.center, halfCircle.radius,
             VectorUtils.angleFromTo(halfCircle.center, position))
-        topContact = this.createContact.withAngle(
+        topContact = Contact.withAngle(
             depth,
             this.getGroundAngle(position, groundIndex, roomModel),
             contactPosition,
@@ -68,7 +70,8 @@ export const GroundContactUtils = {
 
   getTrapezeGroundContacts(
       trapeze: Trapeze,
-      roomModel: RoomModel
+      roomModel: RoomModel,
+      withMaxDepth: boolean
   ): Set<Contact> {
     const maxDistance = trapeze.maxDistanceFromCenter()
     const groundIndexes = BattleUtils.getGroundIndexesBetween(
@@ -86,14 +89,15 @@ export const GroundContactUtils = {
     const top = trapeze.top()
     const right = trapeze.right()
     const left = trapeze.left()
+    const maxDepth = withMaxDepth ? roomModel.specs.groundMaxDepth : 0
 
     for (const index of groundIndexes) {
       const position = BattleUtils.getGroundPosition(index, roomModel)
 
-      const bottomContact = this.getSegmentGroundContact(bottom, position, index, roomModel, 'Trapeze bottom with ground')
-      const topContact = this.getSegmentGroundContact(top, position, index, roomModel, 'Trapeze top with ground')
-      const rightContact = this.getSegmentGroundContact(right, position, index, roomModel, 'Trapeze right with ground')
-      const leftContact = this.getSegmentGroundContact(left, position, index, roomModel, 'Trapeze left with ground')
+      const bottomContact = this.getSegmentGroundContact(bottom, position, index, roomModel, maxDepth, 'Trapeze bottom with ground')
+      const topContact = this.getSegmentGroundContact(top, position, index, roomModel, maxDepth, 'Trapeze top with ground')
+      const rightContact = this.getSegmentGroundContact(right, position, index, roomModel, maxDepth, 'Trapeze right with ground')
+      const leftContact = this.getSegmentGroundContact(left, position, index, roomModel, maxDepth, 'Trapeze left with ground')
 
       let resultContact: Contact | null = null
 
@@ -155,7 +159,7 @@ export const GroundContactUtils = {
       let depth = BattleUtils.distance(nearestPosition, contactPosition)
       if (withMaxDepth) depth -= roomModel.specs.groundMaxDepth
       const groundAngle = VectorUtils.angleFromTo(nearestSegment.begin, nearestSegment.end)
-      return this.createContact.withAngle(
+      return Contact.withAngle(
           depth,
           groundAngle,
           contactPosition
@@ -166,7 +170,7 @@ export const GroundContactUtils = {
     let depth = this.getGroundDepth.fullUnderGround(circle, fallbackPosition.y)
     if (withMaxDepth) depth -= roomModel.specs.groundMaxDepth
     const contactPosition = BattleUtils.shiftedPosition(circle.center, circle.radius, -Math.PI / 2)
-    return this.createContact.withAngle(
+    return Contact.withAngle(
         depth,
         0,
         contactPosition
@@ -178,20 +182,21 @@ export const GroundContactUtils = {
       groundPosition: Position,
       groundIndex: number,
       roomModel: RoomModel,
+      maxDepth: number,
       description: string
   ): Contact | null {
     const segmentPoint = segment.findPointWithX(groundPosition.x)
     if (segmentPoint !== null && segmentPoint.y < groundPosition.y) {
       const projection = GeometryUtils.getPointToSegmentProjection(groundPosition, segment)
       if (projection !== null) {
-        const depth = BattleUtils.distance(groundPosition, segmentPoint)
+        const depth = BattleUtils.distance(groundPosition, segmentPoint) - maxDepth
         const normal1 = VectorUtils.vectorFromTo(groundPosition, projection)
         VectorUtils.normalize(normal1)
         const normal2 = VectorUtils.normal(this.getGroundAngle(groundPosition, groundIndex, roomModel))
         VectorUtils.normalize(normal2)
         const normal = VectorUtils.sumOf(normal1, normal2)
         VectorUtils.normalize(normal)
-        return this.createContact.withNormal(depth, normal, projection, description)
+        return Contact.withNormal(depth, normal, projection, description)
       }
     }
     return null
@@ -222,33 +227,4 @@ export const GroundContactUtils = {
         ? angles.reduce((sum, angle) => sum + angle, 0) / angles.length
         : 0
   },
-
-  createContact: {
-    withAngle(depth: number, angle: number, position: Position, description?: string): Contact | null {
-      return this.checkDepth({
-        depth,
-        angle,
-        normal: VectorUtils.normal(angle),
-        position,
-        description
-      })
-    },
-
-    withNormal(depth: number, normal: Vector, position: Position, description?: string): Contact | null {
-      return this.checkDepth({
-        depth,
-        angle: VectorUtils.getAngle(normal) + Math.PI / 2,
-        normal,
-        position,
-        description
-      })
-    },
-
-    checkDepth(contact: Contact): Contact | null {
-      if (contact.depth < Constants.INTERPENETRATION_THRESHOLD) {
-        return null
-      }
-      return contact
-    }
-  }
 }
