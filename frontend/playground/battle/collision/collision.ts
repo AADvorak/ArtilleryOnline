@@ -5,8 +5,7 @@ import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BodyUtils} from "~/playground/utils/body-utils";
 import {GeometryUtils} from "~/playground/utils/geometry-utils";
 import {BattleUtils} from "~/playground/utils/battle-utils";
-import {BattleCalculations, type Calculations} from "~/playground/data/calculations";
-import {BodyCalculations} from "~/playground/data/calculations";
+import {BattleCalculations, type Calculations, VehicleCalculations} from "~/playground/data/calculations";
 
 export class ComponentData {
   constructor(
@@ -223,9 +222,9 @@ export class Collision {
       type: CollideObjectType
   ): Collision {
     let firstData: BodyCollisionData | null = null
-    if (first instanceof BodyCalculations) {
-      const bodyCalculations = first as BodyCalculations
-      firstData = BodyCollisionData.of(bodyCalculations.model, contact, false)
+    if (first instanceof VehicleCalculations) {
+      const bodyCalculations = first as VehicleCalculations
+      firstData = BodyCollisionData.of(bodyCalculations.getModel(), contact, false)
     }
 
     const velocityProjections = VectorProjections.of(first.getVelocity(), contact.angle)
@@ -241,7 +240,7 @@ export class Collision {
 }
 
 export interface CollisionsDetector {
-  detect: (calculations: Calculations, battle: BattleCalculations) => Collision[]
+  detect: (calculations: Calculations, battle: BattleCalculations) => Set<Collision>
 }
 
 export interface CollisionPreprocessor {

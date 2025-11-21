@@ -1,25 +1,46 @@
-import type {BodyPosition, Contact, Position, Velocity} from "@/playground/data/common"
-import type {BattleModel, BodyModel, BoxModel, DroneModel, VehicleModel} from "~/playground/data/model";
+import {type BodyPosition, type Contact, type Position, type Velocity, zeroVector} from "@/playground/data/common"
+import type {BattleModel, BodyModel, BoxModel, DroneModel, RoomModel, VehicleModel} from "~/playground/data/model";
 import type {Collision} from "~/playground/battle/collision/collision";
+import {BattleUtils} from "~/playground/utils/battle-utils";
+import {VectorUtils} from "~/playground/utils/vector-utils";
+import {GroundContactUtils} from "~/playground/utils/ground-contact-utils";
+import {BodyUtils} from "~/playground/utils/body-utils";
+import {type HalfCircleShape, ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
+import {Circle, HalfCircle, Trapeze, VectorProjections} from "~/playground/data/geometry";
 
 export interface Calculations {
-  model: any
+  getModel(): any
+
   getMass(): number
+
   getVelocity(): Velocity
+
   getKineticEnergy(): number
+
   calculateNextPosition(timeStepSecs: number): void
+
   applyNormalMoveToNextPosition(normalMove: number, angle: number): void
+
   getLastCollisions(): Set<Collision>
+
   getCollisions(iterationNumber: number): Set<Collision>
+
   getAllCollisions(): Set<Collision>
+
   addCollisionsCheckedWith(id: number): void
+
   clearCollisionsCheckedWith(): void
+
   collisionsNotCheckedWith(id: number): boolean
 }
 
 export abstract class CalculationsBase {
   private readonly collisionsCheckedWith: Set<number> = new Set()
   private readonly collisionMap: Map<number, Set<Collision>> = new Map()
+
+  abstract getMass(): number
+
+  abstract getVelocity(): Velocity
 
   public getLastCollisions(): Set<Collision> {
     const maxKey = Math.max(...Array.from(this.collisionMap.keys()), 1)
@@ -54,24 +75,91 @@ export abstract class CalculationsBase {
   public collisionsNotCheckedWith(id: number): boolean {
     return !this.collisionsCheckedWith.has(id)
   }
+
+  getKineticEnergy(): number {
+    return this.getMass() * (Math.pow(this.getVelocity().x, 2) + Math.pow(this.getVelocity().y, 2)) / 2
+  }
 }
 
-export class BodyCalculations extends CalculationsBase implements Calculations {
+export interface BodyCalculations extends Calculations {
   model: BodyModel
-  groundContacts?: Set<Contact>
-  nextPosition?: BodyPosition
 
-  constructor(model: BodyModel) {
-    super()
-    this.model = model
+  getModel(): BodyModel
+
+  getGroundContacts(): Set<Contact>
+
+  calculateAllGroundContacts(roomModel: RoomModel): void
+
+  getNextPosition(): BodyPosition | undefined
+
+  getGeometryPosition(): Position
+
+  getGeometryNextPosition(): BodyPosition | undefined
+
+  getMovingKineticEnergy(): number
+
+  getRotatingKineticEnergy(): number
+}
+
+export abstract class BodyCalculationsBase extends CalculationsBase {
+  model: BodyModel
+  nextPosition?: BodyPosition
+  groundContacts: Set<Contact> = new Set()
+
+  protected constructor(bodyModel: BodyModel) {
+    super();
+    this.model = bodyModel
   }
 
-  calculateNextPosition(timeStepSecs: number): void {
-    // todo implement
+  getModel(): BodyModel {
+    return this.model
+  }
+
+  calculateNextPosition(timeStep: number): void {
+    const position = this.model.state.position
+    const velocity = this.model.state.velocity
+    this.nextPosition = {
+      x: position.x + velocity.x * timeStep,
+      y: position.y + velocity.y * timeStep,
+      angle: position.angle + velocity.angle * timeStep,
+    }
   }
 
   applyNormalMoveToNextPosition(normalMove: number, angle: number): void {
-    // todo implement
+    const move = new VectorProjections(angle, normalMove, 0).recoverPosition()
+    if (this.nextPosition) {
+      this.nextPosition.x += move.x
+      this.nextPosition.y += move.y
+    }
+  }
+
+  getNextPosition(): BodyPosition | undefined {
+    return this.nextPosition
+  }
+
+  getGeometryPosition(): Position {
+    return BodyUtils.getGeometryPosition(this.model)
+  }
+
+  getGeometryBodyPosition(): BodyPosition {
+    return BodyUtils.getGeometryBodyPosition(this.model)
+  }
+
+  getGeometryNextPosition(): BodyPosition | undefined {
+    if (this.nextPosition) {
+      const shift = this.model.preCalc.centerOfMassShift
+      return BattleUtils.shiftedBodyPosition(this.nextPosition, -shift.distance, shift.angle + this.nextPosition.angle)
+    }
+  }
+
+  getMovingKineticEnergy(): number {
+    const velocity = this.model.state.velocity
+    const mass = this.model.preCalc.mass
+    return mass * (Math.pow(velocity.x, 2) + Math.pow(velocity.y, 2)) / 2
+  }
+
+  getRotatingKineticEnergy(): number {
+    return this.model.preCalc.momentOfInertia * Math.pow(this.model.state.velocity.angle, 2) / 2
   }
 
   getMass(): number {
@@ -82,8 +170,12 @@ export class BodyCalculations extends CalculationsBase implements Calculations {
     return this.model.state.velocity
   }
 
-  getKineticEnergy(): number {
-    return this.getMass() * (Math.pow(this.getVelocity().x, 2) + Math.pow(this.getVelocity().y, 2)) / 2
+  override getKineticEnergy(): number {
+    return this.getMovingKineticEnergy() + this.getRotatingKineticEnergy()
+  }
+
+  getGroundContacts(): Set<Contact> {
+    return this.groundContacts
   }
 }
 
@@ -92,32 +184,224 @@ export enum WheelSign {
   LEFT = 1
 }
 
-export interface WheelCalculations {
+export class WheelCalculations implements BodyCalculations {
   sign: WheelSign
-  groundContact: Contact | null
+  model: VehicleModel
+  vehicle: VehicleCalculations
+  groundContact: Contact | null = null
   position: Position | undefined
   velocity: Velocity | undefined
+  nextPosition: Position | undefined
+
+  constructor(
+      sign: WheelSign,
+      vehicle: VehicleCalculations
+  ) {
+    this.sign = sign
+    this.vehicle = vehicle
+    this.model = vehicle.model
+    this.calculatePositionByVehicle()
+    this.recalculateVelocity()
+  }
+
+  getModel(): VehicleModel {
+    return this.vehicle.getModel()
+  }
+
+  getGroundContacts(): Set<Contact> {
+    const contacts: Set<Contact> = new Set<Contact>()
+    this.groundContact && contacts.add(this.groundContact)
+    return contacts
+  }
+
+  calculateGroundContact(wheelRadius: number, roomModel: RoomModel): void {
+    this.groundContact = GroundContactUtils.getCircleGroundContact(
+        new Circle(this.position!, wheelRadius),
+        roomModel,
+        false
+    )
+  }
+
+  calculateAllGroundContacts(roomModel: RoomModel): void {
+    this.vehicle.calculateAllGroundContacts(roomModel)
+  }
+
+  getNextPosition(): BodyPosition | undefined {
+    throw new Error('Method not implemented.')
+  }
+
+  getGeometryPosition(): Position {
+    throw new Error('Method not implemented.')
+  }
+
+  getGeometryNextPosition(): BodyPosition | undefined {
+    throw new Error('Method not implemented.')
+  }
+
+  getMovingKineticEnergy(): number {
+    return this.vehicle.getMovingKineticEnergy()
+  }
+
+  getRotatingKineticEnergy(): number {
+    return this.vehicle.getRotatingKineticEnergy()
+  }
+
+  getMass(): number {
+    return this.vehicle.getMass()
+  }
+
+  getVelocity(): Velocity {
+    if (this.velocity) {
+      return this.velocity
+    }
+    throw new Error('Velocity not calculated')
+  }
+
+  getKineticEnergy(): number {
+    return this.vehicle.getKineticEnergy()
+  }
+
+  calculateNextPosition(timeStepSecs: number): void {
+    this.vehicle.calculateNextPosition(timeStepSecs)
+  }
+
+  applyNormalMoveToNextPosition(normalMove: number, angle: number): void {
+    this.vehicle.applyNormalMoveToNextPosition(normalMove, angle)
+  }
+
+  getLastCollisions(): Set<Collision> {
+    return this.vehicle.getLastCollisions()
+  }
+
+  getCollisions(iterationNumber: number): Set<Collision> {
+    return this.vehicle.getCollisions(iterationNumber)
+  }
+
+  getAllCollisions(): Set<Collision> {
+    return this.vehicle.getAllCollisions()
+  }
+
+  addCollisionsCheckedWith(id: number): void {
+    return this.vehicle.addCollisionsCheckedWith(id)
+  }
+
+  clearCollisionsCheckedWith(): void {
+    this.vehicle.clearCollisionsCheckedWith()
+  }
+
+  collisionsNotCheckedWith(id: number): boolean {
+    return this.vehicle.collisionsNotCheckedWith(id)
+  }
+
+  recalculateVelocity() {
+    const vehicleVelocity = this.vehicle.model.state.velocity
+    const angle = this.vehicle.model.state.position.angle
+    const wheelAngle = angle + Math.PI / 2 + this.sign * this.vehicle.model.preCalc.wheelAngle
+    const wheelDistance = this.vehicle.model.preCalc.wheelDistance
+    const wheelVelocity = VectorUtils.getPointVelocity(vehicleVelocity, wheelDistance, wheelAngle)
+    if (!this.velocity) {
+      this.velocity = zeroVector()
+    }
+    this.velocity.x = wheelVelocity.x
+    this.velocity.y = wheelVelocity.y
+  }
+
+  calculatePositionByVehicle() {
+    this.position = this.getWheelPosition(this.vehicle.model.state.position)
+  }
+
+  calculateNextPositionByVehicle() {
+    if (this.vehicle.nextPosition) {
+      this.nextPosition = this.getWheelPosition(this.vehicle.nextPosition)
+    }
+  }
+
+  private getWheelPosition(vehiclePosition: BodyPosition): Position {
+    const wheelDistance = this.vehicle.model.preCalc.wheelDistance
+    const wheelAngle = this.vehicle.model.preCalc.wheelAngle
+    return BattleUtils.shiftedPosition(vehiclePosition, -this.sign * wheelDistance,
+        vehiclePosition.angle + this.sign * wheelAngle);
+  }
 }
 
-export class VehicleCalculations extends BodyCalculations {
+export class VehicleCalculations extends BodyCalculationsBase implements BodyCalculations {
   override model: VehicleModel
   rightWheel: WheelCalculations
   leftWheel: WheelCalculations
 
   constructor(
-      model: VehicleModel,
-      rightWheel: WheelCalculations,
-      leftWheel: WheelCalculations
+      model: VehicleModel
   ) {
     super(model)
     this.model = model
-    this.rightWheel = rightWheel
-    this.leftWheel = leftWheel
+    this.rightWheel = new WheelCalculations(WheelSign.RIGHT, this)
+    this.leftWheel = new WheelCalculations(WheelSign.LEFT, this)
+  }
+
+  override getModel(): VehicleModel {
+    return this.model
+  }
+
+  override getGroundContacts(): Set<Contact> {
+    const allGroundContacts = new Set(this.groundContacts)
+    if (this.rightWheel.groundContact) {
+      allGroundContacts.add(this.rightWheel.groundContact)
+    }
+    if (this.leftWheel.groundContact) {
+      allGroundContacts.add(this.leftWheel.groundContact)
+    }
+    return allGroundContacts
+  }
+
+  getTurretGroundContacts(): Set<Contact> {
+    return this.groundContacts
+  }
+
+  calculateAllGroundContacts(roomModel: RoomModel): void {
+    const position = this.getGeometryBodyPosition()
+    const turretShape = this.model.specs.turretShape
+    if (turretShape.name === ShapeNames.HALF_CIRCLE) {
+      this.groundContacts = GroundContactUtils.getHalfCircleGroundContacts(
+          HalfCircle.of(position, (turretShape as HalfCircleShape).radius),
+          roomModel
+      )
+    }
+    if (turretShape.name === ShapeNames.TRAPEZE) {
+      this.groundContacts = GroundContactUtils.getTrapezeGroundContacts(
+          new Trapeze(position, turretShape as TrapezeShape),
+          roomModel
+      )
+    }
+    const wheelRadius = this.model.specs.wheelRadius
+    this.rightWheel.calculateGroundContact(wheelRadius, roomModel)
+    this.leftWheel.calculateGroundContact(wheelRadius, roomModel)
+  }
+
+  override calculateNextPosition(timeStep: number): void {
+    super.calculateNextPosition(timeStep)
+    this.rightWheel.calculateNextPositionByVehicle()
+    this.leftWheel.calculateNextPositionByVehicle()
   }
 }
 
-export interface BoxCalculations extends BodyCalculations {
-  model: BoxModel
+export class BoxCalculations extends BodyCalculationsBase implements BodyCalculations {
+  override model: BoxModel
+
+  constructor(model: BoxModel) {
+    super(model);
+    this.model = model
+  }
+
+  calculateAllGroundContacts(roomModel: RoomModel): void {
+    const position = this.getGeometryBodyPosition()
+    const shape = this.model.specs.shape
+    if (shape.name === ShapeNames.TRAPEZE) {
+      this.groundContacts = GroundContactUtils.getTrapezeGroundContacts(
+          new Trapeze(position, shape as TrapezeShape),
+          roomModel
+      )
+    }
+  }
 }
 
 export interface DroneCalculations extends Calculations {

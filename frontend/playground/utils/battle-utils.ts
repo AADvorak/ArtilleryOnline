@@ -1,6 +1,6 @@
 import type { RoomSpecs } from '@/playground/data/specs'
 import type { RoomModel } from '@/playground/data/model'
-import type {Position, Shift} from "@/playground/data/common";
+import type {BodyPosition, Position, Shift} from "@/playground/data/common";
 import type {ParticleState} from "~/playground/data/state";
 import {Segment} from "~/playground/data/geometry";
 
@@ -78,6 +78,14 @@ export const BattleUtils = {
     return {
       x: position.x + distance * Math.cos(angle),
       y: position.y + distance * Math.sin(angle)
+    }
+  },
+
+  shiftedBodyPosition(position: BodyPosition, distance: number, angle: number): BodyPosition {
+    return {
+      x: position.x + distance * Math.cos(angle),
+      y: position.y + distance * Math.sin(angle),
+      angle: position.angle
     }
   },
 

@@ -1,8 +1,8 @@
 import type {BodyState} from "~/playground/data/state";
-import {type BodyPosition, type Position, type Velocity} from "~/playground/data/common";
+import {type BodyPosition, type Contact, type Position, type Velocity} from "~/playground/data/common";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BattleUtils} from "~/playground/utils/battle-utils";
-import type {BodyCalculations, VehicleCalculations} from "~/playground/data/calculations";
+import type {BodyCalculations} from "~/playground/data/calculations";
 import type {BodyModel} from "~/playground/data/model";
 import {VectorProjections} from "~/playground/data/geometry";
 
@@ -26,19 +26,11 @@ export const BodyUtils = {
     }
   },
 
-  getAllGroundContacts(calculations: BodyCalculations) {
-    const allContacts = []
-    if (calculations.groundContacts) {
-      calculations.groundContacts.forEach(contact => allContacts.push(contact))
-    }
-    const vehicleCalculations = calculations as VehicleCalculations
-    if (vehicleCalculations.leftWheel?.groundContact) {
-      allContacts.push(vehicleCalculations.leftWheel.groundContact)
-    }
-    if (vehicleCalculations.rightWheel?.groundContact) {
-      allContacts.push(vehicleCalculations.rightWheel.groundContact)
-    }
-    return allContacts
+  /**
+   * deprecated
+   */
+  getAllGroundContacts(calculations: BodyCalculations): Contact[] {
+    return [...calculations.getGroundContacts()]
   },
 
   getGeometryPosition(bodyModel: BodyModel) {

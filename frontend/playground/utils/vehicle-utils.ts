@@ -1,45 +1,22 @@
 import type {RoomModel, VehicleModel} from '@/playground/data/model'
-import {JetType, MovingDirection, type Position, type Velocity} from '@/playground/data/common'
-import {type VehicleCalculations, type WheelCalculations, WheelSign} from '@/playground/data/calculations'
+import {JetType, type Position} from '@/playground/data/common'
+import {VehicleCalculations, type WheelCalculations} from '@/playground/data/calculations'
 import {DefaultColors} from '~/dictionary/default-colors'
 import {BattleUtils} from "~/playground/utils/battle-utils";
-import {VectorUtils} from "~/playground/utils/vector-utils";
-import {GroundContactUtils} from "~/playground/utils/ground-contact-utils";
-import {Circle, HalfCircle, Trapeze} from "~/playground/data/geometry";
-import {type HalfCircleShape, ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
-import {BodyUtils} from "~/playground/utils/body-utils";
 
 export const VehicleUtils = {
+  /**
+   * @deprecated
+   */
   initVehicleCalculations(model: VehicleModel): VehicleCalculations {
-    const calculations = {
-      model,
-      nextPosition: undefined,
-      rightWheel: this.initWheelCalculations(WheelSign.RIGHT, VehicleUtils.getRightWheelPosition(model)),
-      leftWheel: this.initWheelCalculations(WheelSign.LEFT, VehicleUtils.getLeftWheelPosition(model))
-    }
-    this.calculateWheelsVelocities(calculations)
-    return calculations
+    return new VehicleCalculations(model)
   },
 
-  initWheelCalculations(sign: WheelSign, position: Position): WheelCalculations {
-    return {
-      position,
-      velocity: undefined,
-      groundContact: null,
-      sign,
-    }
-  },
-
+  /**
+   * @deprecated
+   */
   calculateAllGroundContacts(vehicle: VehicleCalculations, roomModel: RoomModel) {
-    const wheelRadius = vehicle.model.specs.wheelRadius
-    this.calculateGroundContact(vehicle.rightWheel, wheelRadius, roomModel)
-    this.calculateGroundContact(vehicle.leftWheel, wheelRadius, roomModel)
-    this.calculateGroundContacts(vehicle, roomModel)
-  },
-
-  calculateWheelsVelocities(vehicle: VehicleCalculations) {
-    this.calculateWheelVelocity(vehicle.model, vehicle.rightWheel)
-    this.calculateWheelVelocity(vehicle.model, vehicle.leftWheel)
+    vehicle.calculateAllGroundContacts(roomModel)
   },
 
   getLeftWheelPosition(vehicleModel: VehicleModel) {
@@ -106,13 +83,6 @@ export const VehicleUtils = {
     return smallWheels
   },
 
-  calculateWheelVelocity(vehicleModel: VehicleModel, wheelCalculations: WheelCalculations): void {
-    const vehicleVelocity = vehicleModel.state.velocity
-    const wheelAngle = vehicleModel.state.position.angle + Math.PI / 2 + wheelCalculations.sign * Math.PI / 2
-    const wheelDistance = vehicleModel.preCalc.wheelDistance
-    wheelCalculations.velocity = VectorUtils.getPointVelocity(vehicleVelocity, wheelDistance, wheelAngle)
-  },
-
   getColor(userKey: string, currentUsername: string, vehicleModel: VehicleModel) {
     if (vehicleModel.config.color) {
       return vehicleModel.config.color
@@ -143,53 +113,10 @@ export const VehicleUtils = {
     return angle > criticalAngle || angle < -criticalAngle
   },
 
+  /**
+   * @deprecated
+   */
   calculateGroundContact(wheel: WheelCalculations, wheelRadius: number, roomModel: RoomModel): void {
-    wheel.groundContact = GroundContactUtils.getCircleGroundContact(
-        new Circle(wheel.position!, wheelRadius),
-        roomModel,
-        false
-    )
-  },
-
-  calculateGroundContacts(vehicle: VehicleCalculations, roomModel: RoomModel): void {
-    const position = BodyUtils.getGeometryBodyPosition(vehicle.model)
-    const turretShape = vehicle.model.specs.turretShape
-
-    if (turretShape.name === ShapeNames.HALF_CIRCLE) {
-      vehicle.groundContacts = GroundContactUtils.getHalfCircleGroundContacts(
-          HalfCircle.of(position, (turretShape as HalfCircleShape).radius),
-          roomModel
-      )
-    }
-
-    if (turretShape.name === ShapeNames.TRAPEZE) {
-      vehicle.groundContacts = GroundContactUtils.getTrapezeGroundContacts(
-          new Trapeze(position, turretShape as TrapezeShape),
-          roomModel
-      )
-    }
-  },
-
-  getWheelVelocityAt(wheelCalculations: WheelCalculations, vehicleModel: VehicleModel, position: Position): Velocity {
-    let angleVelocity = 0.0
-    const movingDirection = vehicleModel.state.movingDirection
-    var angleVelocitySpecs = vehicleModel.specs.wheelAngleVelocity
-    if (MovingDirection.RIGHT === movingDirection) {
-      angleVelocity = - angleVelocitySpecs
-    }
-    if (MovingDirection.LEFT === movingDirection) {
-      angleVelocity = angleVelocitySpecs
-    }
-    const velocityAt = {
-      x: wheelCalculations.velocity!.x,
-      y: wheelCalculations.velocity!.y
-    }
-    if (angleVelocity != 0.0) {
-      const angle = VectorUtils.angleFromTo(wheelCalculations.position!, position)
-      const distance = BattleUtils.distance(wheelCalculations.position!, position)
-      velocityAt.x -= angleVelocity * distance * Math.sin(angle)
-      velocityAt.y += angleVelocity * distance * Math.cos(angle)
-    }
-    return velocityAt
+    wheel.calculateGroundContact(wheelRadius, roomModel)
   },
 }
