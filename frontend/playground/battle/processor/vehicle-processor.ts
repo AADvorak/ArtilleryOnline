@@ -1,6 +1,6 @@
-import type {BattleModel, VehicleModel} from '@/playground/data/model'
+import type {VehicleModel} from '@/playground/data/model'
 import {MovingDirection} from '@/playground/data/common'
-import {type VehicleCalculations} from '@/playground/data/calculations'
+import {BattleCalculations, type VehicleCalculations} from '@/playground/data/calculations'
 import {VehicleUtils} from "~/playground/utils/vehicle-utils";
 import {BodyAccelerationCalculator} from "~/playground/battle/calculator/body-acceleration-calculator";
 import {GravityForceCalculator} from "~/playground/battle/calculator/common/gravity-force-calculator";
@@ -11,7 +11,7 @@ import {EngineForceCalculator} from "~/playground/battle/calculator/vehicle/engi
 import {BodyVelocityCalculator} from "~/playground/battle/calculator/body-velocity-calculator";
 import {GroundFrictionForceCalculator} from "~/playground/battle/calculator/common/ground-friction-force-calculator";
 import {GroundReactionForceCalculator} from "~/playground/battle/calculator/common/ground-reaction-force-calculator";
-import {BodyUtils} from "~/playground/utils/body-utils";
+import type {GunState} from "~/playground/data/state";
 
 export const VehicleProcessor = {
 
@@ -29,28 +29,17 @@ export const VehicleProcessor = {
       )
   ),
 
-  processStep(vehicleModel: VehicleModel, battleModel: BattleModel, timeStepSecs: number) {
-    const calculations = VehicleUtils.initVehicleCalculations(vehicleModel)
-    this.recalculateVelocity(calculations, battleModel, timeStepSecs)
-    BodyUtils.recalculateBodyPosition(vehicleModel, timeStepSecs)
-    this.recalculateGunAngle(vehicleModel, timeStepSecs)
-    if (vehicleModel.state.gunState.loadingShell) {
-      vehicleModel.state.gunState.loadRemainTime -= timeStepSecs
-    }
-    if (vehicleModel.state.jetState && vehicleModel.state.jetState.volume < vehicleModel.config.jet.capacity) {
-      vehicleModel.state.jetState.volume += (VehicleUtils.isJetActive(vehicleModel)
-          ? -vehicleModel.config.jet.consumption
-          : vehicleModel.config.jet.regeneration) * timeStepSecs
-    }
+  processBeforeCollision(vehicle: VehicleCalculations, battle: BattleCalculations) {
+    this.recalculateJetState(vehicle.model, battle.timeStepSecs)
+    vehicle.calculateAllGroundContacts(battle.model.room)
+    this.velocityCalculator.recalculateVelocity(vehicle, battle.model, battle.timeStepSecs)
+    vehicle.calculateNextPosition(battle.timeStepSecs)
+    this.recalculateGunAngle(vehicle.model, battle.timeStepSecs)
+    this.recalculateGunState(vehicle.model.state.gunState, battle.timeStepSecs)
   },
 
-  recalculateVelocity(
-      calculations: VehicleCalculations,
-      battleModel: BattleModel,
-      timeStepSecs: number
-  ) {
-    VehicleUtils.calculateAllGroundContacts(calculations, battleModel.room)
-    this.velocityCalculator.recalculateVelocity(calculations, battleModel, timeStepSecs)
+  processAfterCollision(vehicle: VehicleCalculations, battle: BattleCalculations) {
+    vehicle.applyNextPosition()
   },
 
   recalculateGunAngle(vehicleModel: VehicleModel, timeStepSecs: number) {
@@ -80,6 +69,20 @@ export const VehicleProcessor = {
         gunAngle = this.restrictValue(gunAngle, minGunAngle, maxGunAngle)
         gunState.angle = gunAngle
       }
+    }
+  },
+
+  recalculateGunState(gunState: GunState, timeStepSecs: number) {
+    if (gunState.loadingShell) {
+      gunState.loadRemainTime -= timeStepSecs
+    }
+  },
+
+  recalculateJetState(vehicleModel: VehicleModel, timeStepSecs: number) {
+    if (vehicleModel.state.jetState && vehicleModel.state.jetState.volume < vehicleModel.config.jet.capacity) {
+      vehicleModel.state.jetState.volume += (VehicleUtils.isJetActive(vehicleModel)
+          ? -vehicleModel.config.jet.consumption
+          : vehicleModel.config.jet.regeneration) * timeStepSecs
     }
   },
 

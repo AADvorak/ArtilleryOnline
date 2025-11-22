@@ -59,6 +59,7 @@ export interface CollideObject {
 }
 
 export interface ApplicationSettings {
+  additionalResolveCollisionsIterationsNumber: number
   debug: boolean
   showShellTrajectory: boolean
   clientProcessing: boolean

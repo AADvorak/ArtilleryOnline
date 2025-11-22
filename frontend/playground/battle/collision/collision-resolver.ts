@@ -1,6 +1,6 @@
 import {BodyCollisionData, type Collision, ComponentData} from "~/playground/battle/collision/collision";
 import type {BattleModel, BodyModel} from "~/playground/data/model";
-import {BodyCalculations, type Calculations, VehicleCalculations} from "~/playground/data/calculations";
+import {type Calculations, VehicleCalculations} from "~/playground/data/calculations";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {type BodyVelocity, cloneVector, type Contact, type Velocity} from "~/playground/data/common";
 import {VectorProjections} from "~/playground/data/geometry";
@@ -29,11 +29,11 @@ export class CollisionResolver {
     const firstData = collision.bodyCollisionDataPair.first
     const secondData = collision.bodyCollisionDataPair.second
 
-    if (first instanceof BodyCalculations) {
+    if (first instanceof VehicleCalculations) {
       firstModel = first.model
     }
 
-    if (second instanceof BodyCalculations) {
+    if (second instanceof VehicleCalculations) {
       secondModel = second.model
     }
 
@@ -263,7 +263,7 @@ export class CollisionResolver {
     if (!otherObject) {
       object.applyNormalMoveToNextPosition(-moveMagnitude, collision.contact.angle)
 
-      if (object instanceof BodyCalculations) {
+      if (object instanceof VehicleCalculations) {
         BodyUtils.applyNormalMoveToPosition(object.model.state, -moveMagnitude, collision.contact.angle)
       }
 
@@ -279,11 +279,11 @@ export class CollisionResolver {
       object.applyNormalMoveToNextPosition(-normalMove, collision.contact.angle)
       otherObject.applyNormalMoveToNextPosition(otherNormalMove, collision.contact.angle)
 
-      if (object instanceof BodyCalculations) {
+      if (object instanceof VehicleCalculations) {
         BodyUtils.applyNormalMoveToPosition(object.model.state, -normalMove, collision.contact.angle)
       }
 
-      if (otherObject instanceof BodyCalculations) {
+      if (otherObject instanceof VehicleCalculations) {
         BodyUtils.applyNormalMoveToPosition(otherObject.model.state, otherNormalMove, collision.contact.angle)
       }
 

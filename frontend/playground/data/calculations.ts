@@ -19,6 +19,8 @@ export interface Calculations {
 
   calculateNextPosition(timeStepSecs: number): void
 
+  applyNextPosition(): void
+
   applyNormalMoveToNextPosition(normalMove: number, angle: number): void
 
   getLastCollisions(): Set<Collision>
@@ -125,6 +127,12 @@ export abstract class BodyCalculationsBase extends CalculationsBase {
     }
   }
 
+  applyNextPosition(): void {
+    if (this.nextPosition) {
+      this.model.state.position = this.nextPosition
+    }
+  }
+
   applyNormalMoveToNextPosition(normalMove: number, angle: number): void {
     const move = new VectorProjections(angle, normalMove, 0).recoverPosition()
     if (this.nextPosition) {
@@ -202,6 +210,10 @@ export class WheelCalculations implements BodyCalculations {
     this.model = vehicle.model
     this.calculatePositionByVehicle()
     this.recalculateVelocity()
+  }
+
+  applyNextPosition(): void {
+    this.vehicle.applyNextPosition()
   }
 
   getModel(): VehicleModel {

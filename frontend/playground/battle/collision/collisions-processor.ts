@@ -5,10 +5,10 @@ import {
   type CollisionsDetector,
   type CollisionsPostprocessor
 } from "~/playground/battle/collision/collision";
-import type {CollisionResolver} from "~/playground/battle/collision/collision-resolver";
+import {CollisionResolver} from "~/playground/battle/collision/collision-resolver";
 import {CollideObjectType} from "~/playground/data/common";
 
-class CollisionsProcessor {
+export class CollisionsProcessor {
   private readonly logging: boolean
   private readonly additionalIterationsNumber: number
   private readonly detectors: CollisionsDetector[]
@@ -21,15 +21,14 @@ class CollisionsProcessor {
       additionalIterationsNumber: number,
       detectors: CollisionsDetector[],
       preprocessors: CollisionPreprocessor[],
-      postprocessors: CollisionsPostprocessor[],
-      resolver: CollisionResolver
+      postprocessors: CollisionsPostprocessor[]
   ) {
     this.logging = logging
     this.additionalIterationsNumber = additionalIterationsNumber
     this.detectors = detectors
     this.preprocessors = preprocessors
     this.postprocessors = postprocessors
-    this.resolver = resolver
+    this.resolver = new CollisionResolver(logging)
   }
 
   public process(battle: BattleCalculations): void {

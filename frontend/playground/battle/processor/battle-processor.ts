@@ -7,10 +7,12 @@ import {ExplosionProcessor} from "@/playground/battle/processor/explosion-proces
 import {MissileProcessor} from "~/playground/battle/processor/missile-processor";
 import {DroneProcessor} from "~/playground/battle/processor/drone-processor";
 import {ParticleProcessor} from "~/playground/battle/processor/particle-processor";
-import type {ParticleModel, ShellModel} from "~/playground/data/model";
+import type {ParticleModel, ShellModel, VehicleModel} from "~/playground/data/model";
 import {DefaultColors} from "~/dictionary/default-colors";
 import {BoxProcessor} from "~/playground/battle/processor/box-processor";
 import {BattleUtils} from "~/playground/utils/battle-utils";
+import {BattleCalculations, VehicleCalculations} from "~/playground/data/calculations";
+import {CollisionsProcessor} from "~/playground/battle/collision/collisions-processor";
 
 export function useBattleProcessor() {
 
@@ -19,6 +21,14 @@ export function useBattleProcessor() {
   const processing = ref(true)
 
   const battleStore = useBattleStore()
+
+  const settingsStore = useSettingsStore()
+
+  const collisionsProcessor = new CollisionsProcessor(
+      settingsStore.settings?.debug || false,
+      settingsStore.settings?.additionalResolveCollisionsIterationsNumber || 0,
+      [], [], []
+  )
 
   function startProcessing() {
     setTimeout(processStep, TIME_STEP_MS)
@@ -59,8 +69,9 @@ export function useBattleProcessor() {
   }
 
   function processStepActive(battle: Battle, timeStepSecs: number) {
-    Object.values(battle.model.vehicles).forEach(vehicle => {
-      VehicleProcessor.processStep(vehicle, battle.model, timeStepSecs)
+    const battleCalculations = initBattleCalculations(battle, timeStepSecs)
+    battleCalculations.vehicles.forEach(vehicle => {
+      VehicleProcessor.processBeforeCollision(vehicle, battleCalculations)
     })
     Object.values(battle.model.shells).forEach(shell => {
       ShellProcessor.processStep(shell, timeStepSecs, battle.model.room.specs)
@@ -77,6 +88,10 @@ export function useBattleProcessor() {
     Object.values(battle.model.boxes).forEach(box => {
       BoxProcessor.processStep(box, battle.model, timeStepSecs)
     })
+    collisionsProcessor.process(battleCalculations)
+    battleCalculations.vehicles.forEach(vehicle => {
+      VehicleProcessor.processAfterCollision(vehicle, battleCalculations)
+    })
   }
 
   function processStepActiveParticles(battle: Battle, timeStepSecs: number) {
@@ -91,6 +106,12 @@ export function useBattleProcessor() {
       }
       ParticleProcessor.processStep(particle, timeStepSecs, battle.model.room.specs)
     })
+  }
+
+  function initBattleCalculations(battle: Battle, timeStepSecs: number): BattleCalculations {
+    const vehicles: VehicleCalculations[] = Object.values(battle.model.vehicles)
+        .map((vehicle: VehicleModel) => new VehicleCalculations(vehicle))
+    return new BattleCalculations(battle.model, vehicles, timeStepSecs)
   }
 
   return { startProcessing, stopProcessing }
