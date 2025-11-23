@@ -51,7 +51,8 @@ public class VehicleOnGroundProcessor {
     }
 
     private static double getWheelYOnGround(double x, double wheelRadius, Position groundPosition) {
-        return groundPosition.getY() + Math.sqrt(Math.pow(wheelRadius, 2) - Math.pow(x - groundPosition.getX(), 2));
+        var diff = Math.pow(wheelRadius, 2) - Math.pow(x - groundPosition.getX(), 2);
+        return groundPosition.getY() + Math.signum(diff) * Math.sqrt(Math.abs(diff));
     }
 
     private static double getVehicleAngleOnGround(Position otherWheelPosition, short sign, double vehicleRadius,
