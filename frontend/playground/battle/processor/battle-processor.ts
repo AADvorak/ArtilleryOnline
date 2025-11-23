@@ -13,6 +13,9 @@ import {BoxProcessor} from "~/playground/battle/processor/box-processor";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {BattleCalculations, VehicleCalculations} from "~/playground/data/calculations";
 import {CollisionsProcessor} from "~/playground/battle/collision/collisions-processor";
+import {
+  VehicleGroundCollisionsDetector
+} from "~/playground/battle/collision/detector/vehicle-ground-collision-detector";
 
 export function useBattleProcessor() {
 
@@ -27,7 +30,7 @@ export function useBattleProcessor() {
   const collisionsProcessor = new CollisionsProcessor(
       settingsStore.settings?.debug || false,
       settingsStore.settings?.additionalResolveCollisionsIterationsNumber || 0,
-      [], [], []
+      [new VehicleGroundCollisionsDetector()], [], []
   )
 
   function startProcessing() {
