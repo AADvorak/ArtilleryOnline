@@ -1,21 +1,11 @@
 import {useBattleStore} from "~/stores/battle";
 import type {Battle} from "@/playground/data/battle";
 import {BattleStage} from "@/playground/data/battle";
-import {VehicleProcessor} from "@/playground/battle/processor/vehicle-processor";
-import {ShellProcessor} from "@/playground/battle/processor/shell-processor";
-import {ExplosionProcessor} from "@/playground/battle/processor/explosion-processor";
-import {MissileProcessor} from "~/playground/battle/processor/missile-processor";
-import {DroneProcessor} from "~/playground/battle/processor/drone-processor";
 import {ParticleProcessor} from "~/playground/battle/processor/particle-processor";
-import type {ParticleModel, ShellModel, VehicleModel} from "~/playground/data/model";
+import type {ParticleModel, ShellModel} from "~/playground/data/model";
 import {DefaultColors} from "~/dictionary/default-colors";
-import {BoxProcessor} from "~/playground/battle/processor/box-processor";
 import {BattleUtils} from "~/playground/utils/battle-utils";
-import {BattleCalculations, VehicleCalculations} from "~/playground/data/calculations";
-import {CollisionsProcessor} from "~/playground/battle/collision/collisions-processor";
-import {
-  VehicleGroundCollisionsDetector
-} from "~/playground/battle/collision/detector/vehicle-ground-collision-detector";
+import {useBattleObjectsProcessor} from "~/playground/battle/processor/battle-objects-processor";
 
 export function useBattleProcessor() {
 
@@ -27,10 +17,9 @@ export function useBattleProcessor() {
 
   const settingsStore = useSettingsStore()
 
-  const collisionsProcessor = new CollisionsProcessor(
+  const battleObjectsProcessor = useBattleObjectsProcessor(
       settingsStore.settings?.debug || false,
-      settingsStore.settings?.additionalResolveCollisionsIterationsNumber || 0,
-      [new VehicleGroundCollisionsDetector()], [], []
+      settingsStore.settings?.additionalResolveCollisionsIterationsNumber || 0
   )
 
   function startProcessing() {
@@ -63,38 +52,12 @@ export function useBattleProcessor() {
       const timeStepSecs = timeStep / 1000
       battle.time += timeStep
       if (BattleStage.ACTIVE === battleStage) {
-        processStepActive(battle, timeStepSecs)
+        battleObjectsProcessor.process(battle, timeStepSecs)
         processStepActiveParticles(battle, timeStepSecs)
       }
       battleStore.updateClientBattle(battle, currentTime)
       setTimeout(processStep, TIME_STEP_MS)
     }
-  }
-
-  function processStepActive(battle: Battle, timeStepSecs: number) {
-    const battleCalculations = initBattleCalculations(battle, timeStepSecs)
-    battleCalculations.vehicles.forEach(vehicle => {
-      VehicleProcessor.processBeforeCollision(vehicle, battleCalculations)
-    })
-    Object.values(battle.model.shells).forEach(shell => {
-      ShellProcessor.processStep(shell, timeStepSecs, battle.model.room.specs)
-    })
-    Object.values(battle.model.explosions).forEach(explosion => {
-      ExplosionProcessor.processStep(explosion, timeStepSecs)
-    })
-    Object.values(battle.model.missiles).forEach(missile => {
-      MissileProcessor.processStep(missile, battle.model, timeStepSecs)
-    })
-    Object.values(battle.model.drones).forEach(drone => {
-      DroneProcessor.processStep(drone, battle.model, timeStepSecs)
-    })
-    Object.values(battle.model.boxes).forEach(box => {
-      BoxProcessor.processStep(box, battle.model, timeStepSecs)
-    })
-    collisionsProcessor.process(battleCalculations)
-    battleCalculations.vehicles.forEach(vehicle => {
-      VehicleProcessor.processAfterCollision(vehicle, battleCalculations)
-    })
   }
 
   function processStepActiveParticles(battle: Battle, timeStepSecs: number) {
@@ -109,12 +72,6 @@ export function useBattleProcessor() {
       }
       ParticleProcessor.processStep(particle, timeStepSecs, battle.model.room.specs)
     })
-  }
-
-  function initBattleCalculations(battle: Battle, timeStepSecs: number): BattleCalculations {
-    const vehicles: VehicleCalculations[] = Object.values(battle.model.vehicles)
-        .map((vehicle: VehicleModel) => new VehicleCalculations(vehicle))
-    return new BattleCalculations(battle.model, vehicles, timeStepSecs)
   }
 
   return { startProcessing, stopProcessing }
