@@ -1,6 +1,6 @@
 import {BodyCollisionData, type Collision, ComponentData} from "~/playground/battle/collision/collision";
 import type {BattleModel, BodyModel} from "~/playground/data/model";
-import {type Calculations, VehicleCalculations} from "~/playground/data/calculations";
+import {type Calculations, VehicleCalculations, WheelCalculations} from "~/playground/data/calculations";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {type BodyVelocity, cloneVector, type Contact, type Velocity} from "~/playground/data/common";
 import {VectorProjections} from "~/playground/data/geometry";
@@ -18,6 +18,7 @@ export class CollisionResolver {
     const kineticEnergyBefore = collision.sumKineticEnergy()
 
     if (this.logging) console.log('----------------Begin collision resolution------------------')
+    if (this.logging) console.log(collision)
     if (this.logging) console.log(`before collision resolution energy = ${kineticEnergyBefore.toFixed(3)}`)
 
     const first = collision.pair.first
@@ -29,11 +30,11 @@ export class CollisionResolver {
     const firstData = collision.bodyCollisionDataPair.first
     const secondData = collision.bodyCollisionDataPair.second
 
-    if (first instanceof VehicleCalculations) {
+    if (first instanceof VehicleCalculations || first instanceof WheelCalculations) {
       firstModel = first.model
     }
 
-    if (second instanceof VehicleCalculations) {
+    if (second instanceof VehicleCalculations || second instanceof WheelCalculations) {
       secondModel = second.model
     }
 
@@ -81,16 +82,13 @@ export class CollisionResolver {
     if (this.logging) {
       if (secondModel) {
         console.log(`Collision of objects ids = [${firstModel?.id}, ${secondModel.id}]`)
-        console.log(`${collision.contact}`)
       } else {
         console.log(`Collision with unmovable of object id = ${firstModel?.id}`)
-        console.log(`${collision.contact}`)
       }
     }
 
     if (collision.getImpact() > 0) {
       if (this.logging) console.log('Closing resolving')
-      if (this.logging) console.log(`First object:\n${firstData}`)
 
       if (firstModel && firstData) {
         this.recalculateBodyVelocity(
@@ -111,7 +109,6 @@ export class CollisionResolver {
       }
 
       if (second) {
-        if (this.logging) console.log(`Second object:\n${secondData}`)
         if (secondModel && secondData) {
           this.recalculateBodyVelocity(
               secondModel.state.velocity,
@@ -231,7 +228,7 @@ export class CollisionResolver {
           tangential ? movingVelocityDeltaMagnitude : 0.0
       ).recoverVelocity()
 
-      if (this.logging) console.log(`movingVelocityDelta = ${movingVelocityDelta}`)
+      if (this.logging) console.log('movingVelocityDelta', movingVelocityDelta)
       velocity.x += movingVelocityDelta.x
       velocity.y += movingVelocityDelta.y
     }
@@ -263,7 +260,7 @@ export class CollisionResolver {
     if (!otherObject) {
       object.applyNormalMoveToNextPosition(-moveMagnitude, collision.contact.angle)
 
-      if (object instanceof VehicleCalculations) {
+      if (object instanceof VehicleCalculations || object instanceof WheelCalculations) {
         BodyUtils.applyNormalMoveToPosition(object.model.state, -moveMagnitude, collision.contact.angle)
       }
 
@@ -279,11 +276,11 @@ export class CollisionResolver {
       object.applyNormalMoveToNextPosition(-normalMove, collision.contact.angle)
       otherObject.applyNormalMoveToNextPosition(otherNormalMove, collision.contact.angle)
 
-      if (object instanceof VehicleCalculations) {
+      if (object instanceof VehicleCalculations || object instanceof WheelCalculations) {
         BodyUtils.applyNormalMoveToPosition(object.model.state, -normalMove, collision.contact.angle)
       }
 
-      if (otherObject instanceof VehicleCalculations) {
+      if (otherObject instanceof VehicleCalculations || otherObject instanceof WheelCalculations) {
         BodyUtils.applyNormalMoveToPosition(otherObject.model.state, otherNormalMove, collision.contact.angle)
       }
 

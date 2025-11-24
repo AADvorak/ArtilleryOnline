@@ -5,7 +5,12 @@ import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BodyUtils} from "~/playground/utils/body-utils";
 import {GeometryUtils} from "~/playground/utils/geometry-utils";
 import {BattleUtils} from "~/playground/utils/battle-utils";
-import {BattleCalculations, type Calculations, VehicleCalculations} from "~/playground/data/calculations";
+import {
+  BattleCalculations,
+  type Calculations,
+  VehicleCalculations,
+  WheelCalculations
+} from "~/playground/data/calculations";
 
 export class ComponentData {
   constructor(
@@ -222,7 +227,7 @@ export class Collision {
       type: CollideObjectType
   ): Collision {
     let firstData: BodyCollisionData | null = null
-    if (first instanceof VehicleCalculations) {
+    if (first instanceof VehicleCalculations || first instanceof WheelCalculations) {
       const bodyCalculations = first as VehicleCalculations
       firstData = BodyCollisionData.of(bodyCalculations.getModel(), contact, false)
     }
