@@ -43,10 +43,11 @@ public class GroundReactionForceCalculator implements ForceCalculator<
         if (calculations.getGroundContact() == null) {
             return;
         }
-        var velocityNormalProjectionMagnitude = calculations.getVelocity()
-                .projectionOnto(calculations.getGroundContact().normal())
-                .magnitude();
-        if (velocityNormalProjectionMagnitude > 0) {
+        var velocityNormalProjection = calculations.getVelocity()
+                .projectionOnto(calculations.getGroundContact().normal());
+        var velocityNormalProjectionMagnitude = velocityNormalProjection.magnitude();
+        if (velocityNormalProjectionMagnitude > Constants.ZERO_THRESHOLD
+                && velocityNormalProjection.dotProduct(calculations.getGroundContact().normal()) > 0) {
             var depth = Math.min(calculations.getGroundContact().depth(), groundMaxDepth);
             var force = Force.of(calculations.getGroundContact().normal()
                     .multiply(- velocityNormalProjectionMagnitude * depth * groundReactionCoefficient));

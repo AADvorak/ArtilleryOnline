@@ -37,11 +37,11 @@ export class WheelsGroundReactionForceCalculator implements ForceCalculator<Vehi
       return
     }
 
-    const velocityNormalProjectionMagnitude = VectorUtils.getMagnitude(
-        VectorUtils.projectionOfOnto(calculations.velocity!, groundContact.normal)
-    )
+    const velocityNormalProjection = VectorUtils.projectionOfOnto(calculations.velocity!, groundContact.normal)
+    const velocityNormalProjectionMagnitude = VectorUtils.getMagnitude(velocityNormalProjection)
 
-    if (velocityNormalProjectionMagnitude > 0) {
+    if (velocityNormalProjectionMagnitude > Constants.ZERO_THRESHOLD
+        && VectorUtils.dotProduct(velocityNormalProjection, groundContact.normal) > 0) {
       const depth = Math.min(groundContact.depth, groundMaxDepth)
       const force = VectorUtils.multiply(groundContact.normal,
           -velocityNormalProjectionMagnitude * depth * groundReactionCoefficient)

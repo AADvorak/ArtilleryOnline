@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.calculator.utils;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BodyCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.BodyForce;
+import com.github.aadvorak.artilleryonline.battle.common.Constants;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Force;
 import com.github.aadvorak.artilleryonline.battle.common.Vector;
@@ -41,11 +42,12 @@ public class ForceCalculatorUtils {
             Contact contact, double groundMaxDepth,
             double groundReactionCoefficient, String forceDescription
     ) {
-        var velocityNormalProjectionMagnitude = calculations.getModel().getState()
+        var velocityNormalProjection = calculations.getModel().getState()
                 .getVelocityAt(contact.position())
-                .projectionOnto(contact.normal())
-                .magnitude();
-        if (velocityNormalProjectionMagnitude > 0) {
+                .projectionOnto(contact.normal());
+        var velocityNormalProjectionMagnitude = velocityNormalProjection.magnitude();
+        if (velocityNormalProjection.magnitude() > Constants.ZERO_THRESHOLD
+                && velocityNormalProjection.dotProduct(contact.normal()) > 0) {
             var depth = Math.min(contact.depth(), groundMaxDepth);
             var force = Force.of(contact.normal()
                     .multiply(- velocityNormalProjectionMagnitude * depth * groundReactionCoefficient));

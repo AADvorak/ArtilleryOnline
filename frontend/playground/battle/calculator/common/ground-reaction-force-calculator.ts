@@ -26,16 +26,18 @@ export class GroundReactionForceCalculator implements ForceCalculator<BodyCalcul
       groundReactionCoefficient: number,
       groundMaxDepth: number
   ): void {
-    const groundContacts = calculations.groundContacts
+    const groundContacts = calculations.getGroundContacts()
     if (!groundContacts) {
       return
     }
     const comPosition = calculations.model.state.position
 
     groundContacts.forEach(contact => {
-      const velocityNormalProjectionMagnitude = VectorUtils.getMagnitude(VectorUtils.projectionOfOnto(
-          BodyUtils.getVelocityAt(calculations.model.state, contact.position), contact.normal))
-      if (velocityNormalProjectionMagnitude > 0) {
+      const velocityNormalProjection = VectorUtils.projectionOfOnto(
+          BodyUtils.getVelocityAt(calculations.model.state, contact.position), contact.normal)
+      const velocityNormalProjectionMagnitude = VectorUtils.getMagnitude(velocityNormalProjection)
+      if (velocityNormalProjectionMagnitude > Constants.ZERO_THRESHOLD
+          && VectorUtils.dotProduct(velocityNormalProjection, contact.normal) > 0) {
         const depth = Math.min(contact.depth, groundMaxDepth)
         const force = VectorUtils.multiply(contact.normal,
             -velocityNormalProjectionMagnitude * depth * groundReactionCoefficient)
