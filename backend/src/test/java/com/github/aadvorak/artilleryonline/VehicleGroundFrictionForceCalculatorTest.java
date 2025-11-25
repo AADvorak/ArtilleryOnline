@@ -51,10 +51,15 @@ public class VehicleGroundFrictionForceCalculatorTest {
         var sumForces = forces.stream()
                 .map(bodyForce -> Vector.sumOf(bodyForce.moving(), bodyForce.rotating()))
                 .toList();
+        var roomSpecs = roomModel.getSpecs();
+        var expectedX = - roomSpecs.getGroundFrictionCoefficient() * roomSpecs.getGravityAcceleration()
+                * vehicleCalculations.getMass() / 20;
+        var factX = sumForces.stream().findAny().map(Vector::getX).orElse(0.0);
         assertAll(
                 () -> assertEquals(2, forces.size()),
                 () -> assertFalse(sumForces.stream().anyMatch(force -> force.getX() > 0)),
                 () -> assertFalse(sumForces.stream().anyMatch(force -> Math.abs(force.getY()) > 0)),
+                () -> assertEquals(expectedX, factX, SMALL_DELTA),
                 () -> assertEquals(2, vehicleCalculations.getGroundContacts().size())
         );
     }
