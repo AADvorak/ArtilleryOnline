@@ -1,5 +1,5 @@
 import type {ForceCalculator} from "~/playground/battle/calculator/force-calculator";
-import type {BodyCalculations} from "~/playground/data/calculations";
+import {type BodyCalculations, VehicleCalculations} from "~/playground/data/calculations";
 import type {BattleModel} from "~/playground/data/model";
 import {BodyForce} from "~/playground/battle/calculator/body-force";
 import {VectorUtils} from "~/playground/utils/vector-utils";
@@ -26,7 +26,9 @@ export class GroundReactionForceCalculator implements ForceCalculator<BodyCalcul
       groundReactionCoefficient: number,
       groundMaxDepth: number
   ): void {
-    const groundContacts = calculations.getGroundContacts()
+    const groundContacts = calculations instanceof VehicleCalculations
+        ? calculations.getTurretGroundContacts()
+        : calculations.getGroundContacts()
     if (!groundContacts) {
       return
     }
