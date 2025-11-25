@@ -88,7 +88,6 @@ test('wheels in ground moving down', () => {
   const factY = sumForces.length ? sumForces[0]!.y : 0.0
   const factDepth = calculations.getGroundContacts().size
       ? calculations.getGroundContacts().values().next().value!.depth : 0.0
-  console.log(expectedDepth, factDepth, expectedY, factY)
   expect(forces.length).toBe(2)
   expect(sumForces.filter(force => force.y > 0).length > 0).toBeTruthy()
   expect(sumForces.filter(force => force.y < 0).length > 0).toBeFalsy()
