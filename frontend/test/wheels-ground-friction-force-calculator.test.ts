@@ -50,7 +50,6 @@ test('wheels in ground moving x', () => {
   const expectedX = - roomModel.specs.groundFrictionCoefficient * roomModel.specs.gravityAcceleration
       * calculations.getMass() / 20
   const factX = sumForces.length ? sumForces[0]!.x : 0.0
-  console.log(expectedX,factX)
   expect(forces.length).toBe(2)
   expect(sumForces.filter(force => force.x > 0).length > 0).toBeFalsy()
   expect(sumForces.filter(force => force.x < 0).length > 0).toBeTruthy()
