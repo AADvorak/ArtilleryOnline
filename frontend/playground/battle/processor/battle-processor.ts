@@ -19,6 +19,7 @@ export function useBattleProcessor() {
 
   const battleObjectsProcessor = useBattleObjectsProcessor(
       settingsStore.settings?.debug || false,
+      false,
       settingsStore.settings?.additionalResolveCollisionsIterationsNumber || 0
   )
 

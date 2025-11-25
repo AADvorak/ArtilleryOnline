@@ -14,6 +14,7 @@ import {
 
 export const useBattleObjectsProcessor = function (
     debug: boolean,
+    processCollisions: boolean,
     additionalIterationsNumber: number
 ){
 
@@ -42,7 +43,7 @@ export const useBattleObjectsProcessor = function (
     Object.values(battle.model.boxes).forEach(box => {
       BoxProcessor.processStep(box, battle.model, timeStepSecs)
     })
-    collisionsProcessor.process(battleCalculations)
+    processCollisions && collisionsProcessor.process(battleCalculations)
     battleCalculations.vehicles.forEach(vehicle => {
       VehicleProcessor.processAfterCollision(vehicle, battleCalculations)
     })
