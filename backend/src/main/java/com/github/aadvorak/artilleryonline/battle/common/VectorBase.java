@@ -27,6 +27,6 @@ public abstract class VectorBase {
 
     @Override
     public String toString() {
-        return String.format("(%.3f, %.3f)", getX(), getY());
+        return String.format("(%.6f, %.6f)", getX(), getY());
     }
 }

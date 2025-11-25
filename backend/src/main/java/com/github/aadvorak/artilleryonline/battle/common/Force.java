@@ -15,7 +15,7 @@ public class Force implements Vector {
 
     @Override
     public String toString() {
-        return String.format("(%.3f, %.3f)", x, y);
+        return String.format("(%.6f, %.6f)", x, y);
     }
 
     public static Force of(Vector vector) {

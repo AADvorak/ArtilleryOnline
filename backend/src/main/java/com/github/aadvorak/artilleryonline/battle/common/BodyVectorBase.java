@@ -14,6 +14,6 @@ public abstract class BodyVectorBase extends VectorBase {
 
     @Override
     public String toString() {
-        return String.format("(%.3f, %.3f, %.3f)", getX(), getY(), getAngle());
+        return String.format("(%.6f, %.6f, %.6f)", getX(), getY(), getAngle());
     }
 }

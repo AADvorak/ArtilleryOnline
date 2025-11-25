@@ -53,4 +53,14 @@ public class BodyForce {
     public static BodyForce atCOM(Force force, String description) {
         return new BodyForce(force, null,null, description);
     }
+
+    @Override
+    public String toString() {
+        return "BodyForce{" +
+                "moving=" + moving +
+                ", rotating=" + rotating +
+                ", radiusVector=" + radiusVector +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }
