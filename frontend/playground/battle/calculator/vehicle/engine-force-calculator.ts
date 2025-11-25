@@ -55,7 +55,7 @@ export class EngineForceCalculator implements ForceCalculator<VehicleCalculation
 
     return BodyForce.of(
         force,
-        contact.position,
+        calculations.position!,
         vehicleModel.state.position,
         EngineForceCalculator.FORCE_DESCRIPTION
     )
