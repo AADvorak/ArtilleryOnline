@@ -3,15 +3,21 @@ package com.github.aadvorak.artilleryonline.battle.collision.preprocessor.vehicl
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
+import com.github.aadvorak.artilleryonline.battle.collision.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.collision.preprocessor.CollisionPreprocessor;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
+import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class VehicleCollisionPreprocessor implements CollisionPreprocessor {
+
+    private final ApplicationSettings applicationSettings;
 
     @Override
     public Boolean process(Collision collision, BattleCalculations battle) {
@@ -21,7 +27,10 @@ public class VehicleCollisionPreprocessor implements CollisionPreprocessor {
                 ? (VehicleModel) first.getModel() : null;
         var secondModel = second instanceof VehicleCalculations || second instanceof WheelCalculations
                 ? (VehicleModel) second.getModel() : null;
-        if (firstModel != null) {
+        if (firstModel != null
+                && (!applicationSettings.isClientCollisionsProcessing() ||
+                !CollideObjectType.GROUND.equals(collision.getType())
+                && !CollideObjectType.WALL.equals(collision.getType()))) {
             firstModel.getUpdate().setUpdated();
         }
         if (secondModel != null) {

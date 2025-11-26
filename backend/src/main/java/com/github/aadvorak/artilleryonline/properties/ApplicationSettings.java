@@ -15,6 +15,8 @@ public class ApplicationSettings {
 
     private boolean clientProcessing;
 
+    private boolean clientCollisionsProcessing;
+
     private boolean createSurfaces;
 
     private boolean showShellTrajectory;
