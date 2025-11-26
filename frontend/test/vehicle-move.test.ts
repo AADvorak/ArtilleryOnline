@@ -5,15 +5,12 @@ import type {Battle} from "~/playground/data/battle";
 
 const TIME_STEP = 0.01
 
-const processorWithoutCollision = useBattleObjectsProcessor(false, false, 0)
-const processor = useBattleObjectsProcessor(true, true, 0)
-
 test("vehicle-move-right-no-collisions", () => {
   // @ts-ignore
   const battle = vehicleMoveTestBattle as Battle
   const vehicleModel = battle.model.vehicles['test']!
   for (let i = 0; i < 100; i++) {
-    processorWithoutCollision.process(battle, TIME_STEP)
+    useBattleObjectsProcessor(false, false, 0).process(battle, TIME_STEP)
   }
   const position = vehicleModel.state.position
   expect(position.x).toBeCloseTo(4.463556, 5)
@@ -27,7 +24,7 @@ test("vehicle-move-right-with-collisions", () => {
   const vehicleModel = battle.model.vehicles['test']!
   for (let i = 0; i < 100; i++) {
     console.log('------------- ' + i + ' -------------')
-    processor.process(battle, TIME_STEP)
+    useBattleObjectsProcessor(true, true, 0).process(battle, TIME_STEP)
     console.log(vehicleModel.state.position)
     console.log('--------------------------')
   }
