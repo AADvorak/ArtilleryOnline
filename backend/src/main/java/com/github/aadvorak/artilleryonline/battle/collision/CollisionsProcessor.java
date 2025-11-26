@@ -36,8 +36,12 @@ public class CollisionsProcessor {
 
     public void process(BattleCalculations battle, int iterationNumber) {
         detectAllCollisions(battle, iterationNumber);
+        var collisionsExist = collisionsExist(battle);
+        if (logging() && collisionsExist) {
+            System.out.println("----------------Collisions processing iteration: " + iterationNumber + " ----------");
+        }
         resolveStrongestCollisions(battle);
-        if (collisionsExist(battle)) {
+        if (collisionsExist) {
             var additionalIterationsNumber = settings.getAdditionalResolveCollisionsIterationsNumber();
             if (iterationNumber - 1 < additionalIterationsNumber) {
                 if (battle.getModel().getUpdates().getRemoved() != null) {
@@ -129,5 +133,9 @@ public class CollisionsProcessor {
             }
         }
         return true;
+    }
+
+    private boolean logging() {
+        return settings.isDebug();
     }
 }

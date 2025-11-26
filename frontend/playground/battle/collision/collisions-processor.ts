@@ -38,9 +38,12 @@ export class CollisionsProcessor {
 
   public processIteration(battle: BattleCalculations, iterationNumber: number): void {
     this.detectAllCollisions(battle, iterationNumber)
+    const collisionsExist = this.collisionsExist(battle)
+    if (collisionsExist && this.logging) {
+      console.log('-------Collisions processing iteration:', iterationNumber)
+    }
     this.resolveStrongestCollisions(battle)
-
-    if (this.collisionsExist(battle)) {
+    if (collisionsExist) {
       if (iterationNumber - 1 < this.additionalIterationsNumber) {
         this.processIteration(battle, iterationNumber + 1)
       }
