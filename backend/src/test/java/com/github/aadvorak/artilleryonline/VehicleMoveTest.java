@@ -50,12 +50,12 @@ public class VehicleMoveTest {
 
     private final AllBattleObjectsProcessor processorWithoutCollisions = new AllBattleObjectsProcessor(
             emptyCollisionsProcessor,
-            List.of(), List.of(), List.of(), List.of()
+            List.of(), List.of(), List.of(), List.of(), List.of()
     );
 
     private final AllBattleObjectsProcessor processor = new AllBattleObjectsProcessor(
             collisionsProcessor,
-            List.of(), List.of(), List.of(), List.of()
+            List.of(),List.of(), List.of(), List.of(), List.of()
     );
 
     @Test

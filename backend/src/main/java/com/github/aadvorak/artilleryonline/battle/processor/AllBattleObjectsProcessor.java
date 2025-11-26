@@ -4,8 +4,6 @@ import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.collision.CollisionsProcessor;
-import com.github.aadvorak.artilleryonline.battle.processor.box.BoxDropProcessor;
-import com.github.aadvorak.artilleryonline.battle.processor.drone.DroneLaunchProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionInitializer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,6 +16,8 @@ public class AllBattleObjectsProcessor {
 
     private final CollisionsProcessor collisionsProcessor;
 
+    private final List<BattleProcessor> battleProcessors;
+
     private final List<BeforeStep1Processor> beforeStep1Processors;
 
     private final List<AfterStep1Processor> afterStep1Processors;
@@ -29,8 +29,7 @@ public class AllBattleObjectsProcessor {
     public void process(Battle battle) {
         var battleModel = battle.getModel();
 
-        DroneLaunchProcessor.launch(battle);
-        BoxDropProcessor.drop(battle);
+        battleProcessors.forEach(battleProcessor -> battleProcessor.process(battle));
 
         var battleCalculations = new BattleCalculations(battle);
 

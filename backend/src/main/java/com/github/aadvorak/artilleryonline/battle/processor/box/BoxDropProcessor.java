@@ -9,14 +9,17 @@ import com.github.aadvorak.artilleryonline.battle.model.BoxModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.precalc.BoxPreCalc;
 import com.github.aadvorak.artilleryonline.battle.preset.BoxSpecsPreset;
+import com.github.aadvorak.artilleryonline.battle.processor.BattleProcessor;
 import com.github.aadvorak.artilleryonline.battle.specs.BoxSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.BoxState;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
 
-public class BoxDropProcessor {
+@Component
+public class BoxDropProcessor implements BattleProcessor {
 
     private static final long DROP_DELAY = 45000;
     private static final int MAX_BOXES = 2;
@@ -28,7 +31,7 @@ public class BoxDropProcessor {
             "#8B00FF"   // Violet
     );
 
-    public static void drop(Battle battle) {
+    public void process(Battle battle) {
         var maxBoxes = Math.min(MAX_BOXES, battle.getModel().getVehicles().size());
         if (BattleType.COLLIDER.equals(battle.getType())
                 || battle.getModel().getBoxes().size() >= maxBoxes
@@ -58,7 +61,7 @@ public class BoxDropProcessor {
         battle.setBoxDropTime(battle.getAbsoluteTime());
     }
 
-    private static BoxSpecs getSpecs(Collection<VehicleModel> vehicles) {
+    private BoxSpecs getSpecs(Collection<VehicleModel> vehicles) {
         var hasEmptyAmmo = vehicles.stream()
                 .map(VehicleModel::getRelativeAmmo)
                 .min(Double::compare)
@@ -76,7 +79,7 @@ public class BoxDropProcessor {
         return randomSpecs();
     }
 
-    private static BoxSpecs randomSpecs() {
+    private BoxSpecs randomSpecs() {
         return BoxSpecsPreset.values()[BattleUtils.generateRandom(0, BoxSpecsPreset.values().length)].getSpecs();
     }
 }

@@ -8,21 +8,24 @@ import com.github.aadvorak.artilleryonline.battle.config.DroneConfig;
 import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
 import com.github.aadvorak.artilleryonline.battle.precalc.DronePreCalc;
 import com.github.aadvorak.artilleryonline.battle.preset.DroneSpecsPreset;
+import com.github.aadvorak.artilleryonline.battle.processor.BattleProcessor;
 import com.github.aadvorak.artilleryonline.battle.state.DroneState;
 import com.github.aadvorak.artilleryonline.battle.state.GunState;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DroneLaunchProcessor {
+@Component
+public class DroneLaunchProcessor implements BattleProcessor {
 
     private static final long LAUNCH_DELAY = 10000;
 
     private static final List<String> colors = List.of("#ff5733", "#ffd733", "#ff9633");
 
-    public static void launch(Battle battle) {
+    public void process(Battle battle) {
         if (!BattleType.DRONE_HUNT.equals(battle.getType())) {
             return;
         }
