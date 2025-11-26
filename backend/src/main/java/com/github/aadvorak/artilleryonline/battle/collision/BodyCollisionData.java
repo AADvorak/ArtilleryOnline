@@ -105,8 +105,8 @@ public class BodyCollisionData {
 
         @Override
         public String toString() {
-            return String.format("[inertiaToMassCoefficient = %.3f, rotationSign = %d," +
-                            " distanceToAxis = %.3f, resultMass = %.3f]",
+            return String.format("[inertiaToMassCoefficient = %.6f, rotationSign = %d," +
+                            " distanceToAxis = %.6f, resultMass = %.6f]",
                     inertiaToMassCoefficient, rotationSign, distanceToAxis, resultMass);
         }
     }

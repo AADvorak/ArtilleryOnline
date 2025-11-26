@@ -46,7 +46,7 @@ public record Contact(double depth, double angle, Vector normal, Position positi
 
     @Override
     public String toString() {
-        return String.format("Contact [depth=%.3f, angle=%.3f, normal=%s, position=%s, %s]",
+        return String.format("Contact [depth=%.6f, angle=%.6f, normal=%s, position=%s, %s]",
                 depth, angle, normal, position, description);
     }
 }

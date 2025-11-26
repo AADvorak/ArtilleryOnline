@@ -25,7 +25,7 @@ public class CollisionResolver {
     public void resolve(Collision collision, BattleModel battleModel) {
         var kineticEnergyBefore = collision.getSumKineticEnergy();
         if (logging) System.out.print("----------------Begin collision resolution------------------\n");
-        if (logging) System.out.printf("before collision resolution energy = %.3f\n", kineticEnergyBefore);
+        if (logging) System.out.printf("before collision resolution energy = %.6f\n", kineticEnergyBefore);
         var first = collision.getPair().first();
         var second = collision.getPair().second();
         BodyModel<?, ?, ?, ?> firstModel = null;
@@ -49,7 +49,7 @@ public class CollisionResolver {
                 if (logging) System.out.printf("Object id %d = hits object id = %d]\n%s\nHitData: %s\n",
                         collision.getPair().first().getId(), collision.getPair().second().getId(),
                         collision.getContact(), hitData);
-                if (logging) System.out.printf("Mass = %.3f, recalcMass = %.3f\n", first.getMass(), recalcMass);
+                if (logging) System.out.printf("Mass = %.6f, recalcMass = %.6f\n", first.getMass(), recalcMass);
                 recalculateBodyVelocity(secondModel.getState().getVelocity(), collision.getContact(),
                         hitData, impulseDelta, -1, false);
                 var kineticEnergyAfter = second.getKineticEnergy();
@@ -57,7 +57,7 @@ public class CollisionResolver {
                     var velocityMultiplier = Math.sqrt(kineticEnergyBefore / kineticEnergyAfter);
                     multiplyBodyVelocity(secondModel.getState().getVelocity(), velocityMultiplier);
                 }
-                if (logging) System.out.printf("after collision resolution energy = %.3f\n", second.getKineticEnergy());
+                if (logging) System.out.printf("after collision resolution energy = %.6f\n", second.getKineticEnergy());
                 if (logging) System.out.print("----------------End hit resolution------------------\n");
             }
             return;
@@ -127,7 +127,7 @@ public class CollisionResolver {
             }
         }
 
-        if (logging) System.out.printf("after collision resolution energy = %.3f\n", collision.getSumKineticEnergy());
+        if (logging) System.out.printf("after collision resolution energy = %.6f\n", collision.getSumKineticEnergy());
         if (logging) System.out.print("----------------End collision resolution------------------\n");
     }
 
@@ -158,11 +158,11 @@ public class CollisionResolver {
     ) {
         var velocityDelta = - sign * impulseDelta / componentData.getResultMass();
         var imc = componentData.getInertiaToMassCoefficient();
-        if (logging) System.out.printf("velocityDelta = %.3f\n", velocityDelta);
+        if (logging) System.out.printf("velocityDelta = %.6f\n", velocityDelta);
         if (componentData.getInertiaToMassCoefficient() > 0) {
             var angleVelocityDelta = componentData.getRotationSign() * imc * velocityDelta
                     / componentData.getDistanceToAxis() / (1 + imc);
-            if (logging) System.out.printf("angleVelocityDelta = %.3f\n", angleVelocityDelta);
+            if (logging) System.out.printf("angleVelocityDelta = %.6f\n", angleVelocityDelta);
             velocity.setAngle(velocity.getAngle() + angleVelocityDelta);
         }
         if (componentData.getInertiaToMassCoefficient() < 1) {
@@ -185,7 +185,7 @@ public class CollisionResolver {
             double impulseDelta
     ) {
         var velocityDelta = - impulseDelta / mass;
-        if (logging) System.out.printf("velocityDelta = %.3f\n", velocityDelta);
+        if (logging) System.out.printf("velocityDelta = %.6f\n", velocityDelta);
         var movingVelocityDelta = new VectorProjections(contact.angle())
                 .setNormal(velocityDelta)
                 .recoverVelocity();
