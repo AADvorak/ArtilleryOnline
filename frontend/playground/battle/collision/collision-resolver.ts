@@ -18,8 +18,7 @@ export class CollisionResolver {
     const kineticEnergyBefore = collision.sumKineticEnergy()
 
     if (this.logging) console.log('----------------Begin collision resolution------------------')
-    if (this.logging) console.log(collision)
-    if (this.logging) console.log(`before collision resolution energy = ${kineticEnergyBefore.toFixed(3)}`)
+    if (this.logging) console.log(`before collision resolution energy = ${kineticEnergyBefore.toFixed(6)}`)
 
     const first = collision.pair.first
     const second = collision.pair.second
@@ -55,7 +54,7 @@ export class CollisionResolver {
           console.log(`Object id ${firstModel?.id} = hits object id = ${secondModel.id}]`)
           console.log(`${collision.contact}`)
           console.log(`HitData: ${hitData}`)
-          console.log(`Mass = ${first.getMass().toFixed(3)}, recalcMass = ${recalcMass.toFixed(3)}`)
+          console.log(`Mass = ${first.getMass().toFixed(6)}, recalcMass = ${recalcMass.toFixed(6)}`)
         }
 
         this.recalculateBodyVelocity(
@@ -73,7 +72,7 @@ export class CollisionResolver {
           this.multiplyBodyVelocity(secondModel.state.velocity, velocityMultiplier)
         }
 
-        if (this.logging) console.log(`after collision resolution energy = ${second.getKineticEnergy().toFixed(3)}`)
+        if (this.logging) console.log(`after collision resolution energy = ${second.getKineticEnergy().toFixed(6)}`)
         if (this.logging) console.log('----------------End hit resolution------------------')
       }
       return
@@ -85,12 +84,14 @@ export class CollisionResolver {
       } else {
         console.log(`Collision with unmovable of object id = ${firstModel?.id}`)
       }
+      console.log('Contact', collision.contact)
     }
 
     if (collision.getImpact() > 0) {
       if (this.logging) console.log('Closing resolving')
 
       if (firstModel && firstData) {
+        console.log('First data', firstData)
         this.recalculateBodyVelocity(
             firstModel.state.velocity,
             collision.contact,
@@ -110,6 +111,7 @@ export class CollisionResolver {
 
       if (second) {
         if (secondModel && secondData) {
+          console.log('Second data', secondData)
           this.recalculateBodyVelocity(
               secondModel.state.velocity,
               collision.contact,
@@ -170,7 +172,7 @@ export class CollisionResolver {
       }
     }
 
-    if (this.logging) console.log(`after collision resolution energy = ${collision.sumKineticEnergy().toFixed(3)}`)
+    if (this.logging) console.log(`after collision resolution energy = ${collision.sumKineticEnergy().toFixed(6)}`)
     if (this.logging) console.log('----------------End collision resolution------------------')
   }
 
@@ -211,13 +213,13 @@ export class CollisionResolver {
     const velocityDelta = -sign * impulseDelta / componentData.resultMass
     const imc = componentData.inertiaToMassCoefficient
 
-    if (this.logging) console.log(`velocityDelta = ${velocityDelta.toFixed(3)}`)
+    if (this.logging) console.log(`velocityDelta = ${velocityDelta.toFixed(6)}`)
 
     if (componentData.inertiaToMassCoefficient > 0) {
       const angleVelocityDelta = componentData.rotationSign * imc * velocityDelta /
           componentData.distanceToAxis / (1 + imc)
 
-      if (this.logging) console.log(`angleVelocityDelta = ${angleVelocityDelta.toFixed(3)}`)
+      if (this.logging) console.log(`angleVelocityDelta = ${angleVelocityDelta.toFixed(6)}`)
       velocity.angle += angleVelocityDelta
     }
 
@@ -241,7 +243,7 @@ export class CollisionResolver {
       impulseDelta: number
   ): void {
     const velocityDelta = -impulseDelta / mass
-    if (this.logging) console.log(`velocityDelta = ${velocityDelta.toFixed(3)}`)
+    if (this.logging) console.log(`velocityDelta = ${velocityDelta.toFixed(6)}`)
 
     const movingVelocityDelta = new VectorProjections(contact.angle, velocityDelta, 0).recoverVelocity()
     if (this.logging) console.log(`movingVelocityDelta = ${movingVelocityDelta}`)
