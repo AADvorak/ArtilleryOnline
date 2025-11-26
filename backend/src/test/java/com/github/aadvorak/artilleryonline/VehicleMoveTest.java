@@ -43,7 +43,7 @@ public class VehicleMoveTest {
     private final CollisionsProcessor collisionsProcessor = new CollisionsProcessor(
             SETTINGS,
             Set.of(new VehicleGroundCollisionsDetector()),
-            Set.of(new VehicleCollisionPreprocessor()),
+            Set.of(new VehicleCollisionPreprocessor(SETTINGS)),
             Set.of(new VehicleCollisionPostprocessor()),
             new CollisionResolver(SETTINGS)
     );
