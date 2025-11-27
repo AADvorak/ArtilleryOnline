@@ -5,12 +5,13 @@ import {ExplosionProcessor} from "~/playground/battle/processor/explosion-proces
 import {MissileProcessor} from "~/playground/battle/processor/missile-processor";
 import {DroneProcessor} from "~/playground/battle/processor/drone-processor";
 import {BoxProcessor} from "~/playground/battle/processor/box-processor";
-import {BattleCalculations, VehicleCalculations} from "~/playground/data/calculations";
-import type {VehicleModel} from "~/playground/data/model";
+import {BattleCalculations, BoxCalculations, VehicleCalculations} from "~/playground/data/calculations";
+import type {BoxModel, VehicleModel} from "~/playground/data/model";
 import {CollisionsProcessor} from "~/playground/battle/collision/collisions-processor";
 import {
   VehicleGroundCollisionsDetector
 } from "~/playground/battle/collision/detector/vehicle-ground-collision-detector";
+import {BoxGroundCollisionsDetector} from "~/playground/battle/collision/detector/box-ground-collision-detector";
 
 export const useBattleObjectsProcessor = function (
     debug: boolean,
@@ -20,7 +21,8 @@ export const useBattleObjectsProcessor = function (
 
   const collisionsProcessor = new CollisionsProcessor(
       debug, additionalIterationsNumber,
-      [new VehicleGroundCollisionsDetector()], [], []
+      [new VehicleGroundCollisionsDetector(), new BoxGroundCollisionsDetector()],
+      [], []
   )
 
   function process(battle: Battle, timeStepSecs: number) {
@@ -40,19 +42,24 @@ export const useBattleObjectsProcessor = function (
     Object.values(battle.model.drones).forEach(drone => {
       DroneProcessor.processStep(drone, battle.model, timeStepSecs)
     })
-    Object.values(battle.model.boxes).forEach(box => {
-      BoxProcessor.processStep(box, battle.model, timeStepSecs)
+    battleCalculations.boxes.forEach(box => {
+      BoxProcessor.processBeforeCollision(box, battleCalculations)
     })
     processCollisions && collisionsProcessor.process(battleCalculations)
     battleCalculations.vehicles.forEach(vehicle => {
       VehicleProcessor.processAfterCollision(vehicle, battleCalculations)
+    })
+    battleCalculations.boxes.forEach(box => {
+      BoxProcessor.processAfterCollision(box, battleCalculations)
     })
   }
 
   function initBattleCalculations(battle: Battle, timeStepSecs: number): BattleCalculations {
     const vehicles: VehicleCalculations[] = Object.values(battle.model.vehicles)
         .map((vehicle: VehicleModel) => new VehicleCalculations(vehicle))
-    return new BattleCalculations(battle.model, vehicles, timeStepSecs)
+    const boxes: BoxCalculations[] = Object.values(battle.model.boxes)
+        .map((box: BoxModel) => new BoxCalculations(box))
+    return new BattleCalculations(battle.model, vehicles, boxes, timeStepSecs)
   }
 
   return { process }

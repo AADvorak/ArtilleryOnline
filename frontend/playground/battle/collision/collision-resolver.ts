@@ -3,6 +3,7 @@ import type {BattleModel, BodyModel} from "~/playground/data/model";
 import {
   BoxCalculations,
   type Calculations,
+  isBodyCalculationsImplementation,
   VehicleCalculations,
   WheelCalculations,
   WheelSign
@@ -34,11 +35,11 @@ export class CollisionResolver {
     const firstData = collision.bodyCollisionDataPair.first
     const secondData = collision.bodyCollisionDataPair.second
 
-    if (first instanceof VehicleCalculations || first instanceof WheelCalculations) {
+    if (isBodyCalculationsImplementation(first)) {
       firstModel = first.model
     }
 
-    if (second instanceof VehicleCalculations || second instanceof WheelCalculations) {
+    if (isBodyCalculationsImplementation(second)) {
       secondModel = second.model
     }
 
@@ -269,7 +270,7 @@ export class CollisionResolver {
     if (!otherObject) {
       object.applyNormalMoveToNextPosition(-moveMagnitude, collision.contact.angle)
 
-      if (object instanceof VehicleCalculations || object instanceof WheelCalculations) {
+      if (isBodyCalculationsImplementation(object)) {
         BodyUtils.applyNormalMoveToPosition(object.model.state, -moveMagnitude, collision.contact.angle)
       }
 
@@ -285,11 +286,11 @@ export class CollisionResolver {
       object.applyNormalMoveToNextPosition(-normalMove, collision.contact.angle)
       otherObject.applyNormalMoveToNextPosition(otherNormalMove, collision.contact.angle)
 
-      if (object instanceof VehicleCalculations || object instanceof WheelCalculations) {
+      if (isBodyCalculationsImplementation(object)) {
         BodyUtils.applyNormalMoveToPosition(object.model.state, -normalMove, collision.contact.angle)
       }
 
-      if (otherObject instanceof VehicleCalculations || otherObject instanceof WheelCalculations) {
+      if (isBodyCalculationsImplementation(otherObject)) {
         BodyUtils.applyNormalMoveToPosition(otherObject.model.state, otherNormalMove, collision.contact.angle)
       }
 

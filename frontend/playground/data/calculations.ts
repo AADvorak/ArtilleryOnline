@@ -429,19 +429,28 @@ export interface DroneTargetCalculations {
 export class BattleCalculations {
   model: BattleModel
   vehicles: VehicleCalculations[]
+  boxes: BoxCalculations[]
   timeStepSecs: number
 
   constructor(
       model: BattleModel,
       vehicles: VehicleCalculations[],
+      boxes: BoxCalculations[],
       timeStepSecs: number
   ) {
     this.model = model
     this.vehicles = vehicles
+    this.boxes = boxes
     this.timeStepSecs = timeStepSecs
   }
 
   getMovingObjects(): Calculations[] {
-    return [...this.vehicles]
+    return [...this.vehicles, ...this.boxes]
   }
+}
+
+export function isBodyCalculationsImplementation(calculation: Calculations | undefined) {
+  return calculation instanceof WheelCalculations
+      || calculation instanceof VehicleCalculations
+      || calculation instanceof BoxCalculations
 }

@@ -1,5 +1,5 @@
 import type {BattleModel, BoxModel} from '@/playground/data/model'
-import {BoxCalculations} from '@/playground/data/calculations'
+import {BattleCalculations, BoxCalculations} from '@/playground/data/calculations'
 import {BodyAccelerationCalculator} from "~/playground/battle/calculator/body-acceleration-calculator";
 import {GravityForceCalculator} from "~/playground/battle/calculator/common/gravity-force-calculator";
 import {BodyVelocityCalculator} from "~/playground/battle/calculator/body-velocity-calculator";
@@ -19,6 +19,19 @@ export const BoxProcessor = {
       )
   ),
 
+  processBeforeCollision(box: BoxCalculations, battle: BattleCalculations) {
+    box.calculateAllGroundContacts(battle.model.room)
+    this.velocityCalculator.recalculateVelocity(box, battle.model, battle.timeStepSecs)
+    box.calculateNextPosition(battle.timeStepSecs)
+  },
+
+  processAfterCollision(box: BoxCalculations, battle: BattleCalculations) {
+    box.applyNextPosition()
+  },
+
+  /**
+   * @deprecated
+   */
   processStep(boxModel: BoxModel, battleModel: BattleModel, timeStepSecs: number) {
     const calculations = new BoxCalculations(boxModel)
     this.recalculateVelocity(calculations, battleModel, timeStepSecs)

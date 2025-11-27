@@ -7,9 +7,9 @@ import {GeometryUtils} from "~/playground/utils/geometry-utils";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {
   BattleCalculations,
+  BodyCalculationsBase,
   type Calculations,
-  VehicleCalculations,
-  WheelCalculations
+  isBodyCalculationsImplementation
 } from "~/playground/data/calculations";
 
 export class ComponentData {
@@ -227,8 +227,8 @@ export class Collision {
       type: CollideObjectType
   ): Collision {
     let firstData: BodyCollisionData | null = null
-    if (first instanceof VehicleCalculations || first instanceof WheelCalculations) {
-      const bodyCalculations = first as VehicleCalculations
+    if (isBodyCalculationsImplementation(first)) {
+      const bodyCalculations = first as BodyCalculationsBase
       firstData = BodyCollisionData.of(bodyCalculations.getModel(), contact, false)
     }
 
