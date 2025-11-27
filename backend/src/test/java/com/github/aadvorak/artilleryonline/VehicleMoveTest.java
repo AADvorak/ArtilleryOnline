@@ -60,6 +60,23 @@ public class VehicleMoveTest {
         );
     }
 
+    @Test
+    public void moveRightWithCollisions5Iterations() {
+        var vehicleAndBattle = generateVehicleAndBattle();
+        for (int i = 0; i < 100; i++) {
+            System.out.println("-------- " + i + " --------");
+            getProcessor(true, 5).process(vehicleAndBattle.battle);
+            System.out.println(vehicleAndBattle.vehicle.getState().getPosition());
+            System.out.println("---------------------------");
+        }
+        var position = vehicleAndBattle.vehicle.getState().getPosition();
+        assertAll(
+                () -> assertEquals(4.271656, position.getX(), SMALL_DELTA),
+                () -> assertEquals(1.250587, position.getY(), SMALL_DELTA),
+                () -> assertEquals(0.024006, position.getAngle(), SMALL_DELTA)
+        );
+    }
+
     private VehicleAndBattle generateVehicleAndBattle() {
         var vehicleModel = TestVehicleGenerator.generate("Medium");
         vehicleModel.getState().setMovingDirection(MovingDirection.RIGHT);

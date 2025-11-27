@@ -33,3 +33,19 @@ test("vehicle-move-right-with-collisions", () => {
   expect(position.y).toBeCloseTo(1.244022, 3)
   expect(position.angle).toBeCloseTo(0.008784, 3)
 })
+
+test("vehicle-move-right-with-collisions-5-iterations", () => {
+  // @ts-ignore
+  const battle = vehicleMoveTestBattle as Battle
+  const vehicleModel = battle.model.vehicles['test']!
+  for (let i = 0; i < 100; i++) {
+    console.log('------------- ' + i + ' -------------')
+    useBattleObjectsProcessor(true, true, 5).process(battle, TIME_STEP)
+    console.log(vehicleModel.state.position)
+    console.log('--------------------------')
+  }
+  const position = vehicleModel.state.position
+  expect(position.x).toBeCloseTo(4.271656, 3)
+  expect(position.y).toBeCloseTo(1.250587, 3)
+  expect(position.angle).toBeCloseTo(0.024006, 3)
+})
