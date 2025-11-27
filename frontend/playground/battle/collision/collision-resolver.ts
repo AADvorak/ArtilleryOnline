@@ -98,7 +98,7 @@ export class CollisionResolver {
       if (this.logging) console.log('Closing resolving')
 
       if (firstModel && firstData) {
-        console.log('First data', firstData)
+        if (this.logging) console.log('First data', firstData)
         this.recalculateBodyVelocity(
             firstModel.state.velocity,
             collision.contact,
@@ -118,7 +118,7 @@ export class CollisionResolver {
 
       if (second) {
         if (secondModel && secondData) {
-          console.log('Second data', secondData)
+          if (this.logging) console.log('Second data', secondData)
           this.recalculateBodyVelocity(
               secondModel.state.velocity,
               collision.contact,
