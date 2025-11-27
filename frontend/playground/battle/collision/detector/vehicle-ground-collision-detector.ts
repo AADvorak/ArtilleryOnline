@@ -60,13 +60,13 @@ export class VehicleGroundCollisionsDetector implements CollisionsDetector {
     if (turretShape.name === ShapeNames.HALF_CIRCLE) {
       contacts = GroundContactUtils.getHalfCircleGroundContacts(
           HalfCircle.of(position, (turretShape as HalfCircleShape).radius),
-          roomModel,false
+          roomModel,true
       )
     }
     if (turretShape.name === ShapeNames.TRAPEZE) {
       contacts = GroundContactUtils.getTrapezeGroundContacts(
           new Trapeze(position, turretShape as TrapezeShape),
-          roomModel, false
+          roomModel, true
       )
     }
 
