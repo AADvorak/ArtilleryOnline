@@ -52,10 +52,12 @@ export class CollisionsProcessor {
 
   private detectAllCollisions(battle: BattleCalculations, iterationNumber: number): void {
     battle.getMovingObjects().forEach(object => object.clearCollisionsCheckedWith())
-    battle.getMovingObjects().forEach(object =>
-        this.detectors.forEach(detector =>
-            detector.detect(object, battle).forEach(collision =>
-                object.getCollisions(iterationNumber).add(collision))))
+    battle.getMovingObjects().forEach(object => {
+      const collisions = object.getCollisions(iterationNumber)
+      this.detectors.forEach(detector =>
+          detector.detect(object, battle).forEach(collision =>
+              collisions.add(collision)))
+    })
   }
 
   private resolveStrongestCollisions(battle: BattleCalculations): void {
