@@ -1,8 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.collision.resolver;
 
-import com.github.aadvorak.artilleryonline.battle.calculations.BodyCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.collision.BodyCollisionData;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.*;
@@ -25,7 +23,6 @@ public class CollisionResolver {
     public void resolve(Collision collision, BattleModel battleModel) {
         var kineticEnergyBefore = collision.getSumKineticEnergy();
         if (logging) System.out.print("----------------Begin collision resolution------------------\n");
-        if (logging) System.out.printf("before collision resolution energy = %.6f\n", kineticEnergyBefore);
         var first = collision.getPair().first();
         var second = collision.getPair().second();
         BodyModel<?, ?, ?, ?> firstModel = null;
@@ -39,6 +36,8 @@ public class CollisionResolver {
             secondModel = bodyCalculations.getModel();
         }
 
+        logEnergyVelocityAndPosition("before", kineticEnergyBefore, firstModel, secondModel);
+
         if (collision.isHit()) {
             if (secondModel != null) {
                 var hitDirection = first.getVelocity().normalized();
@@ -46,8 +45,9 @@ public class CollisionResolver {
                         collision.getContact().position());
                 var recalcMass = first.getMass() * hitData.getResultMass() / second.getMass();
                 var impulseDelta = recalcMass * first.getVelocity().magnitude();
-                if (logging) System.out.printf("Object id %d = hits object id = %d]\n%s\nHitData: %s\n",
-                        collision.getPair().first().getId(), collision.getPair().second().getId(),
+                if (logging) System.out.printf("Object %s hits object %s\n%s\nHitData: %s\n",
+                        getObjectDescription(first),
+                        getObjectDescription(second),
                         collision.getContact(), hitData);
                 if (logging) System.out.printf("Mass = %.6f, recalcMass = %.6f\n", first.getMass(), recalcMass);
                 recalculateBodyVelocity(secondModel.getState().getVelocity(), collision.getContact(),
@@ -57,20 +57,21 @@ public class CollisionResolver {
                     var velocityMultiplier = Math.sqrt(kineticEnergyBefore / kineticEnergyAfter);
                     multiplyBodyVelocity(secondModel.getState().getVelocity(), velocityMultiplier);
                 }
-                if (logging) System.out.printf("after collision resolution energy = %.6f\n", second.getKineticEnergy());
+                logEnergyVelocityAndPosition("after", kineticEnergyAfter, firstModel, secondModel);
                 if (logging) System.out.print("----------------End hit resolution------------------\n");
             }
             return;
         }
 
         if (logging) {
-            if (secondModel != null) {
-                System.out.printf("Collision of objects ids = [%d, %d]\n%s\n",
-                        collision.getPair().first().getId(), collision.getPair().second().getId(),
+            if (second != null) {
+                System.out.printf("Collision of objects [%s, %s]\n%s\n",
+                        getObjectDescription(first),
+                        getObjectDescription(second),
                         collision.getContact());
             } else {
-                System.out.printf("Collision with unmovable of object id = %d\n%s\n",
-                        collision.getPair().first().getId(), collision.getContact());
+                System.out.printf("Collision with unmovable of object %s\n%s\n",
+                        getObjectDescription(first), collision.getContact());
             }
         }
 
@@ -127,7 +128,7 @@ public class CollisionResolver {
             }
         }
 
-        if (logging) System.out.printf("after collision resolution energy = %.6f\n", collision.getSumKineticEnergy());
+        logEnergyVelocityAndPosition("after", kineticEnergyAfter, firstModel, secondModel);
         if (logging) System.out.print("----------------End collision resolution------------------\n");
     }
 
@@ -244,5 +245,45 @@ public class CollisionResolver {
             return 25.0;
         }
         return 0.1;
+    }
+
+    private void logEnergyVelocityAndPosition(
+            String prefix,
+            double energy,
+            BodyModel<?,?,?,?> firstModel,
+            BodyModel<?,?,?,?> secondModel
+    ) {
+        if (logging) {
+            System.out.printf("%s collision resolution energy = %.6f\n", prefix, energy);
+            if (firstModel != null) {
+                System.out.printf("first velocity = %s, position = %s\n",
+                        firstModel.getState().getVelocity(),
+                        firstModel.getState().getPosition());
+            }
+            if (secondModel != null) {
+                System.out.printf("second velocity = %s, position = %s\n",
+                        secondModel.getState().getVelocity(),
+                        secondModel.getState().getPosition());
+            }
+        }
+    }
+
+    private String getObjectDescription(Calculations<?> calculations) {
+        var description = calculations.getId().toString();
+        switch (calculations) {
+            case VehicleCalculations vehicle -> description += " (vehicle hull)";
+            case WheelCalculations wheel -> {
+                if (wheel.getSign().equals(WheelSign.LEFT)) {
+                    description += " (vehicle left wheel)";
+                } else if (wheel.getSign().equals(WheelSign.RIGHT)) {
+                    description += " (vehicle right wheel)";
+                }
+            }
+            case BoxCalculations box -> description += " (box)";
+            case DroneCalculations drone -> description += " (drone)";
+            default -> {
+            }
+        }
+        return description;
     }
 }

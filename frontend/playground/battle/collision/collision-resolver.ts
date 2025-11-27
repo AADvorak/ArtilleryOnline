@@ -1,6 +1,12 @@
 import {BodyCollisionData, type Collision, ComponentData} from "~/playground/battle/collision/collision";
 import type {BattleModel, BodyModel} from "~/playground/data/model";
-import {type Calculations, VehicleCalculations, WheelCalculations} from "~/playground/data/calculations";
+import {
+  BoxCalculations,
+  type Calculations,
+  VehicleCalculations,
+  WheelCalculations,
+  WheelSign
+} from "~/playground/data/calculations";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {type BodyVelocity, cloneVector, type Contact, type Velocity} from "~/playground/data/common";
 import {VectorProjections} from "~/playground/data/geometry";
@@ -18,7 +24,6 @@ export class CollisionResolver {
     const kineticEnergyBefore = collision.sumKineticEnergy()
 
     if (this.logging) console.log('----------------Begin collision resolution------------------')
-    if (this.logging) console.log(`before collision resolution energy = ${kineticEnergyBefore.toFixed(6)}`)
 
     const first = collision.pair.first
     const second = collision.pair.second
@@ -37,6 +42,8 @@ export class CollisionResolver {
       secondModel = second.model
     }
 
+    this.logEnergyVelocityAndPosition('before', kineticEnergyBefore, firstModel, secondModel)
+
     if (collision.hit) {
       if (secondModel && second) {
         const hitDirection = cloneVector(first.getVelocity())
@@ -51,7 +58,7 @@ export class CollisionResolver {
         const impulseDelta = recalcMass * VectorUtils.getMagnitude(first.getVelocity())
 
         if (this.logging) {
-          console.log(`Object id ${firstModel?.id} = hits object id = ${secondModel.id}]`)
+          console.log(`Object ${this.getObjectDescription(first)} hits object ${this.getObjectDescription(second)}`)
           console.log(`${collision.contact}`)
           console.log(`HitData: ${hitData}`)
           console.log(`Mass = ${first.getMass().toFixed(6)}, recalcMass = ${recalcMass.toFixed(6)}`)
@@ -72,17 +79,17 @@ export class CollisionResolver {
           this.multiplyBodyVelocity(secondModel.state.velocity, velocityMultiplier)
         }
 
-        if (this.logging) console.log(`after collision resolution energy = ${second.getKineticEnergy().toFixed(6)}`)
+        this.logEnergyVelocityAndPosition('after', kineticEnergyAfter, firstModel, secondModel)
         if (this.logging) console.log('----------------End hit resolution------------------')
       }
       return
     }
 
     if (this.logging) {
-      if (secondModel) {
-        console.log(`Collision of objects ids = [${firstModel?.id}, ${secondModel.id}]`)
+      if (second) {
+        console.log(`Collision of objects [${this.getObjectDescription(first)}, ${this.getObjectDescription(second)}]`)
       } else {
-        console.log(`Collision with unmovable of object id = ${firstModel?.id}`)
+        console.log(`Collision with unmovable of object ${this.getObjectDescription(first)}`)
       }
       console.log('Contact', collision.contact)
     }
@@ -172,7 +179,7 @@ export class CollisionResolver {
       }
     }
 
-    if (this.logging) console.log(`after collision resolution energy = ${collision.sumKineticEnergy().toFixed(6)}`)
+    this.logEnergyVelocityAndPosition('after', kineticEnergyAfter, firstModel, secondModel)
     if (this.logging) console.log('----------------End collision resolution------------------')
   }
 
@@ -309,5 +316,38 @@ export class CollisionResolver {
       return 25.0
     }
     return 0.1
+  }
+
+  private logEnergyVelocityAndPosition(
+      prefix: string,
+      energy: number,
+      firstModel: BodyModel | undefined,
+      secondModel: BodyModel | undefined
+  ) {
+    if (this.logging) {
+      console.log(prefix + ' collision resolution energy', energy.toFixed(6))
+      if (firstModel) {
+        console.log('first velocity', firstModel.state.velocity, 'position', firstModel.state.position)
+      }
+      if (secondModel) {
+        console.log('second velocity', secondModel.state.velocity, 'position', secondModel.state.position)
+      }
+    }
+  }
+
+  private getObjectDescription(calculations: Calculations): string {
+    let description = String(calculations.getModel().id)
+    if (calculations instanceof VehicleCalculations) {
+      description += ' (vehicle hull)'
+    } else if (calculations instanceof WheelCalculations) {
+      if (calculations.sign === WheelSign.LEFT) {
+        description += ' (vehicle left wheel)'
+      } else if (calculations.sign === WheelSign.RIGHT) {
+        description += ' (vehicle right wheel)'
+      }
+    } else if (calculations instanceof BoxCalculations) {
+      description += ' (box)'
+    }
+    return description
   }
 }
