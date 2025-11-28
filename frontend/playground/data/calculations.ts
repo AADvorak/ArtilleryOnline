@@ -123,7 +123,7 @@ export abstract class BodyCalculationsBase extends CalculationsBase {
     this.nextPosition = {
       x: position.x + velocity.x * timeStep,
       y: position.y + velocity.y * timeStep,
-      angle: position.angle + velocity.angle * timeStep,
+      angle: VectorUtils.normalizedAngle(position.angle + velocity.angle * timeStep),
     }
   }
 

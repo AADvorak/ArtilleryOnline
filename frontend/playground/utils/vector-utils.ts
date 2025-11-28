@@ -70,6 +70,13 @@ export const VectorUtils = {
     vector.y /= magnitude
   },
 
+  normalizedAngle(angle: number) {
+    if (angle < -Math.PI || angle > Math.PI) {
+      return Math.atan2(Math.sin(angle), Math.cos(angle))
+    }
+    return angle
+  },
+
   getAngle(vector: Vector) {
     return Math.atan2(vector.y, vector.x)
   },
