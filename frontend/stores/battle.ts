@@ -18,13 +18,6 @@ export const useBattleStore = defineStore('battle', () => {
 
   const currentId = ref<number>(0)
 
-  const battle = computed(() => {
-    if (showServerState.value) {
-      return serverBattle.value
-    }
-    return clientBattle.value || serverBattle.value
-  })
-
   const paused = ref<boolean>(false)
 
   const doStep = ref<boolean>(false)
@@ -32,6 +25,15 @@ export const useBattleStore = defineStore('battle', () => {
   const showServerState = ref<boolean>(false)
 
   const updateTime = ref<number>()
+
+  const needSmoothTransition = ref<boolean>(false)
+
+  const battle = computed(() => {
+    if (showServerState.value) {
+      return serverBattle.value
+    }
+    return clientBattle.value || serverBattle.value
+  })
 
   const vehicles = computed(() => battle.value?.model?.vehicles)
 
@@ -117,6 +119,7 @@ export const useBattleStore = defineStore('battle', () => {
     paused,
     doStep,
     showServerState,
-    updateTime
+    updateTime,
+    needSmoothTransition,
   }
 })

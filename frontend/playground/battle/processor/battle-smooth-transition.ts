@@ -27,11 +27,14 @@ export function useBattleSmoothTransition() {
   }
 
   function doSmoothTransition(serverBattle: Battle, clientBattle: Battle, timeStepSecs: number) {
+    let isSmooth = false
     Object.keys(clientBattle.model.vehicles).forEach(key => {
       const clientModel = clientBattle.model.vehicles[key]!
       const serverModel = serverBattle.model.vehicles[key]
       if (serverModel) {
-        doSmoothTransitionForBody(serverModel, clientModel, timeStepSecs)
+        if (doSmoothTransitionForBody(serverModel, clientModel, timeStepSecs)) {
+          isSmooth = true
+        }
       } else {
         delete clientBattle.model.vehicles[key]
       }
@@ -42,7 +45,9 @@ export function useBattleSmoothTransition() {
       // @ts-ignore
       const serverModel = serverBattle.model.boxes[key] as BoxModel | undefined
       if (serverModel) {
-        doSmoothTransitionForBody(serverModel, clientModel, timeStepSecs)
+        if (doSmoothTransitionForBody(serverModel, clientModel, timeStepSecs)) {
+          isSmooth = true
+        }
       } else {
         // @ts-ignore
         delete clientBattle.model.boxes[key]
@@ -54,7 +59,9 @@ export function useBattleSmoothTransition() {
       // @ts-ignore
       const serverModel = serverBattle.model.drones[key] as DroneModel | undefined
       if (serverModel) {
-        doSmoothTransitionForBody(serverModel, clientModel, timeStepSecs)
+        if (doSmoothTransitionForBody(serverModel, clientModel, timeStepSecs)) {
+          isSmooth = true
+        }
       } else {
         // @ts-ignore
         delete clientBattle.model.drones[key]
@@ -66,7 +73,9 @@ export function useBattleSmoothTransition() {
       // @ts-ignore
       const serverModel = serverBattle.model.missiles[key] as BodyModel | undefined
       if (serverModel) {
-        doSmoothTransitionForBody(serverModel, clientModel, timeStepSecs)
+        if (doSmoothTransitionForBody(serverModel, clientModel, timeStepSecs)) {
+          isSmooth = true
+        }
       } else {
         // @ts-ignore
         delete clientBattle.model.missiles[key]
@@ -78,12 +87,18 @@ export function useBattleSmoothTransition() {
       // @ts-ignore
       const serverModel = serverBattle.model.shells[key] as ShellModel | undefined
       if (serverModel) {
-        doSmoothTransitionForShell(serverModel, clientModel, timeStepSecs)
+        if (doSmoothTransitionForShell(serverModel, clientModel, timeStepSecs)) {
+          isSmooth = true
+        }
       } else {
         // @ts-ignore
         delete clientBattle.model.shells[key]
       }
     })
+
+    if (!isSmooth) {
+      battleStore.needSmoothTransition = false
+    }
 
     Object.keys(serverBattle.model.vehicles).forEach(key => {
       if (!clientBattle.model.vehicles[key]) {
@@ -121,11 +136,14 @@ export function useBattleSmoothTransition() {
   }
 
   function doSmoothTransitionForBody(serverModel: BodyModel, clientModel: BodyModel, timeStepSecs: number) {
+    let isSmooth = false
     const serverState = JSON.parse(JSON.stringify(serverModel.state)) as BodyState
     let clientState = JSON.parse(JSON.stringify(clientModel.state)) as BodyState
     const serverPosition = JSON.parse(JSON.stringify(serverState.position)) as BodyPosition
     const clientPosition = JSON.parse(JSON.stringify(clientState.position)) as BodyPosition
-    doSmoothTransitionForPosition(serverPosition, clientPosition, serverState.velocity, timeStepSecs)
+    if (doSmoothTransitionForPosition(serverPosition, clientPosition, serverState.velocity, timeStepSecs)) {
+      isSmooth = true
+    }
     const angleDiff = BattleUtils.calculateAngleDiff(clientPosition.angle, serverPosition.angle)
     const angleVelocity = serverState.velocity.angle
     const maxAngleMove = Math.max(
@@ -137,10 +155,12 @@ export function useBattleSmoothTransition() {
     } else {
       const direction = Math.sign(angleVelocity !== 0 ? angleVelocity : angleDiff)
       clientPosition.angle += maxAngleMove * direction
+      isSmooth = true
     }
     clientState = serverState
     clientState.position = clientPosition
     clientModel.state = clientState
+    return isSmooth
   }
 
   function doSmoothTransitionForShell(serverModel: ShellModel, clientModel: ShellModel, timeStepSecs: number) {
@@ -148,10 +168,11 @@ export function useBattleSmoothTransition() {
     let clientState = JSON.parse(JSON.stringify(clientModel.state)) as ShellState
     const serverPosition = JSON.parse(JSON.stringify(serverState.position)) as Position
     const clientPosition = JSON.parse(JSON.stringify(clientState.position)) as Position
-    doSmoothTransitionForPosition(serverPosition, clientPosition, serverState.velocity, timeStepSecs)
+    const isSmooth = doSmoothTransitionForPosition(serverPosition, clientPosition, serverState.velocity, timeStepSecs)
     clientState = serverState
     clientState.position = clientPosition
     clientModel.state = clientState
+    return isSmooth
   }
 
   function doSmoothTransitionForPosition(
@@ -160,6 +181,7 @@ export function useBattleSmoothTransition() {
       serverVelocity: Velocity,
       timeStepSecs: number
   ) {
+    let isSmooth = false
     const xDiff = serverPosition.x - clientPosition.x
     const maxXMove = Math.max(
         xDiff / 10,
@@ -170,6 +192,7 @@ export function useBattleSmoothTransition() {
       clientPosition.x = serverPosition.x
     } else {
       clientPosition.x += maxXMove * Math.sign(xDiff)
+      isSmooth = true
     }
     const yDiff = serverPosition.y - clientPosition.y
     const maxYMove = Math.max(
@@ -181,7 +204,9 @@ export function useBattleSmoothTransition() {
       clientPosition.y = serverPosition.y
     } else {
       clientPosition.y += maxYMove * Math.sign(yDiff)
+      isSmooth = true
     }
+    return isSmooth
   }
 
   return { process }

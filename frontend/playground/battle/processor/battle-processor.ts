@@ -58,7 +58,7 @@ export function useBattleProcessor() {
         battleObjectsProcessor.process(battle, timeStepSecs)
         processStepActiveParticles(battle, timeStepSecs)
       }
-      if (settingsStore.settings?.clientSmoothTransition) {
+      if (battleStore.needSmoothTransition) {
         battleStore.updateServerBattle(battle, currentTime)
         smoothTransition.process(battle, timeStepSecs)
       } else {
