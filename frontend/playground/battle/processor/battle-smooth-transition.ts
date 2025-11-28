@@ -3,7 +3,6 @@ import type {Battle} from "@/playground/data/battle";
 import type {BodyState, ShellState} from "~/playground/data/state";
 import type {BodyPosition, Position, Velocity} from "~/playground/data/common";
 import type {BodyModel, BoxModel, DroneModel, ShellModel} from "~/playground/data/model";
-import {BattleUtils} from "~/playground/utils/battle-utils";
 
 const MAX_MOVE = 0.05;
 
@@ -127,15 +126,7 @@ export function useBattleSmoothTransition() {
     const serverPosition = JSON.parse(JSON.stringify(serverState.position)) as BodyPosition
     const clientPosition = JSON.parse(JSON.stringify(clientState.position)) as BodyPosition
     doSmoothTransitionForPosition(serverPosition, clientPosition, serverState.velocity, clientState.velocity, timeStepSecs)
-    const angleDiff = BattleUtils.calculateAngleDiff(clientPosition.angle, serverPosition.angle)
-    const maxAngleMove = Math.max(MAX_MOVE,
-        Math.abs(serverState.velocity.angle) * timeStepSecs,
-        Math.abs(clientState.velocity.angle) * timeStepSecs)
-    if (Math.abs(angleDiff) < maxAngleMove) {
-      clientPosition.angle = serverPosition.angle
-    } else {
-      clientPosition.angle += maxAngleMove * Math.sign(angleDiff)
-    }
+    clientPosition.angle = serverPosition.angle
     clientState = serverState
     clientState.position = clientPosition
     clientModel.state = clientState
