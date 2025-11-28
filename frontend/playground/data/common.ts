@@ -148,6 +148,26 @@ export class Contact {
     })
   }
 
+  static withAngleUncheckedDepth(depth: number, angle: number, position: Position, description?: string): Contact {
+    return {
+      depth,
+      angle,
+      normal: VectorUtils.normal(angle),
+      position,
+      description
+    }
+  }
+
+  static withNormalUncheckedDepth(depth: number, normal: Vector, position: Position, description?: string): Contact {
+    return {
+      depth,
+      angle: VectorUtils.getAngle(normal) + Math.PI / 2,
+      normal,
+      position,
+      description
+    }
+  }
+
   static checkDepth(contact: Contact): Contact | null {
     if (contact.depth < Constants.INTERPENETRATION_THRESHOLD) {
       return null

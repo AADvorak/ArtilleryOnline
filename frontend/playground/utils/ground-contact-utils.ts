@@ -40,10 +40,10 @@ export const GroundContactUtils = {
       const radiusVector = VectorUtils.vectorFromTo(halfCircle.center, position)
 
       if (distance < halfCircle.radius && VectorUtils.dotProduct(halfCircleNormal, radiusVector) > 0) {
-        const depth = halfCircle.radius - distance
+        const depth = halfCircle.radius - distance - maxDepth
         const contactPosition = BattleUtils.shiftedPosition(halfCircle.center, halfCircle.radius,
             VectorUtils.angleFromTo(halfCircle.center, position))
-        topContact = Contact.withAngle(
+        topContact = Contact.withAngleUncheckedDepth(
             depth,
             this.getGroundAngle(position, groundIndex, roomModel),
             contactPosition,
@@ -60,7 +60,7 @@ export const GroundContactUtils = {
         resultContact = bottomContact
       }
 
-      if (resultContact) {
+      if (resultContact && resultContact.depth >= Constants.INTERPENETRATION_THRESHOLD) {
         contacts.add(resultContact)
       }
     }
@@ -196,7 +196,7 @@ export const GroundContactUtils = {
         VectorUtils.normalize(normal2)
         const normal = VectorUtils.sumOf(normal1, normal2)
         VectorUtils.normalize(normal)
-        return Contact.withNormal(depth, normal, projection, description)
+        return Contact.withNormalUncheckedDepth(depth, normal, projection, description)
       }
     }
     return null
