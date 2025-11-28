@@ -3,8 +3,9 @@ import type {Battle} from "@/playground/data/battle";
 import type {BodyState, ShellState} from "~/playground/data/state";
 import type {BodyPosition, Position, Velocity} from "~/playground/data/common";
 import type {BodyModel, BoxModel, DroneModel, ShellModel} from "~/playground/data/model";
+import {BattleUtils} from "~/playground/utils/battle-utils";
 
-const MAX_MOVE = 0.05;
+const MAX_TRANSITION_VELOCITY = 15
 
 export function useBattleSmoothTransition() {
 
@@ -125,8 +126,19 @@ export function useBattleSmoothTransition() {
     let clientState = JSON.parse(JSON.stringify(clientModel.state)) as BodyState
     const serverPosition = JSON.parse(JSON.stringify(serverState.position)) as BodyPosition
     const clientPosition = JSON.parse(JSON.stringify(clientState.position)) as BodyPosition
-    doSmoothTransitionForPosition(serverPosition, clientPosition, serverState.velocity, clientState.velocity, timeStepSecs)
-    clientPosition.angle = serverPosition.angle
+    doSmoothTransitionForPosition(serverPosition, clientPosition, serverState.velocity, timeStepSecs)
+    const angleDiff = BattleUtils.calculateAngleDiff(clientPosition.angle, serverPosition.angle)
+    const angleVelocity = serverState.velocity.angle
+    const maxAngleMove = Math.max(
+        MAX_TRANSITION_VELOCITY * timeStepSecs,
+        Math.abs(angleVelocity) * timeStepSecs
+    )
+    if (Math.abs(angleDiff) < maxAngleMove) {
+      clientPosition.angle = serverPosition.angle
+    } else {
+      const direction = Math.sign(angleVelocity !== 0 ? angleVelocity : angleDiff)
+      clientPosition.angle += maxAngleMove * direction
+    }
     clientState = serverState
     clientState.position = clientPosition
     clientModel.state = clientState
@@ -137,7 +149,7 @@ export function useBattleSmoothTransition() {
     let clientState = JSON.parse(JSON.stringify(clientModel.state)) as ShellState
     const serverPosition = JSON.parse(JSON.stringify(serverState.position)) as Position
     const clientPosition = JSON.parse(JSON.stringify(clientState.position)) as Position
-    doSmoothTransitionForPosition(serverPosition, clientPosition, serverState.velocity, clientState.velocity, timeStepSecs)
+    doSmoothTransitionForPosition(serverPosition, clientPosition, serverState.velocity, timeStepSecs)
     clientState = serverState
     clientState.position = clientPosition
     clientModel.state = clientState
@@ -147,22 +159,25 @@ export function useBattleSmoothTransition() {
       serverPosition: Position,
       clientPosition: Position,
       serverVelocity: Velocity,
-      clientVelocity: Velocity,
       timeStepSecs: number
   ) {
     const xDiff = serverPosition.x - clientPosition.x
-    const maxXMove = Math.max(MAX_MOVE,
-        Math.abs(serverVelocity.x) * timeStepSecs,
-        Math.abs(clientVelocity.x) * timeStepSecs)
+    const maxXMove = Math.max(
+        xDiff / 10,
+        MAX_TRANSITION_VELOCITY * timeStepSecs,
+        Math.abs(serverVelocity.x) * timeStepSecs
+    )
     if (Math.abs(xDiff) < maxXMove) {
       clientPosition.x = serverPosition.x
     } else {
       clientPosition.x += maxXMove * Math.sign(xDiff)
     }
     const yDiff = serverPosition.y - clientPosition.y
-    const maxYMove = Math.max(MAX_MOVE,
-        Math.abs(serverVelocity.y) * timeStepSecs,
-        Math.abs(clientVelocity.y) * timeStepSecs)
+    const maxYMove = Math.max(
+        yDiff / 10,
+        MAX_TRANSITION_VELOCITY * timeStepSecs,
+        Math.abs(serverVelocity.y) * timeStepSecs
+    )
     if (Math.abs(yDiff) < maxYMove) {
       clientPosition.y = serverPosition.y
     } else {
