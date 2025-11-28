@@ -172,7 +172,7 @@ export function useBattleUpdater(player: Player) {
             vehicleModel && showChangeAmmo(vehicleModel)
           })
     }
-    !settingsStore.settings!.clientProcessing || !settingsStore.settings!.clientSmoothTransition
+    !settingsStore.settings!.clientProcessing || !settingsStore.settings!.clientSmoothTransition || battleUpdate.stage
         ? battleStore.updateBattle(battle) : battleStore.updateServerBattle(battle)
   }
 
