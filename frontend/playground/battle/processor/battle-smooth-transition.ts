@@ -4,8 +4,7 @@ import type {BodyState, ShellState} from "~/playground/data/state";
 import type {BodyPosition, Position, Velocity} from "~/playground/data/common";
 import type {BodyModel, BoxModel, DroneModel, ShellModel} from "~/playground/data/model";
 import {BattleUtils} from "~/playground/utils/battle-utils";
-
-const MAX_TRANSITION_VELOCITY = 15
+import {Constants} from "~/playground/data/constants";
 
 export function useBattleSmoothTransition() {
 
@@ -130,7 +129,7 @@ export function useBattleSmoothTransition() {
     const angleDiff = BattleUtils.calculateAngleDiff(clientPosition.angle, serverPosition.angle)
     const angleVelocity = serverState.velocity.angle
     const maxAngleMove = Math.max(
-        MAX_TRANSITION_VELOCITY * timeStepSecs,
+        Constants.MAX_TRANSITION_VELOCITY * timeStepSecs,
         Math.abs(angleVelocity) * timeStepSecs
     )
     if (Math.abs(angleDiff) < maxAngleMove) {
@@ -164,7 +163,7 @@ export function useBattleSmoothTransition() {
     const xDiff = serverPosition.x - clientPosition.x
     const maxXMove = Math.max(
         xDiff / 10,
-        MAX_TRANSITION_VELOCITY * timeStepSecs,
+        Constants.MAX_TRANSITION_VELOCITY * timeStepSecs,
         Math.abs(serverVelocity.x) * timeStepSecs
     )
     if (Math.abs(xDiff) < maxXMove) {
@@ -175,7 +174,7 @@ export function useBattleSmoothTransition() {
     const yDiff = serverPosition.y - clientPosition.y
     const maxYMove = Math.max(
         yDiff / 10,
-        MAX_TRANSITION_VELOCITY * timeStepSecs,
+        Constants.MAX_TRANSITION_VELOCITY * timeStepSecs,
         Math.abs(serverVelocity.y) * timeStepSecs
     )
     if (Math.abs(yDiff) < maxYMove) {

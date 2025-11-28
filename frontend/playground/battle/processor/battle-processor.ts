@@ -7,10 +7,9 @@ import {DefaultColors} from "~/dictionary/default-colors";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {useBattleObjectsProcessor} from "~/playground/battle/processor/battle-objects-processor";
 import {useBattleSmoothTransition} from "~/playground/battle/processor/battle-smooth-transition";
+import {Constants} from "~/playground/data/constants";
 
 export function useBattleProcessor() {
-
-  const TIME_STEP_MS = 10
 
   const processing = ref(true)
 
@@ -27,7 +26,7 @@ export function useBattleProcessor() {
   )
 
   function startProcessing() {
-    setTimeout(processStep, TIME_STEP_MS)
+    setTimeout(processStep, Constants.TIME_STEP_MS)
   }
 
   function stopProcessing() {
@@ -40,7 +39,7 @@ export function useBattleProcessor() {
     }
     const battle = JSON.parse(JSON.stringify(battleStore.serverBattle)) as Battle
     if (battleStore.paused && !battleStore.doStep) {
-      setTimeout(processStep, TIME_STEP_MS)
+      setTimeout(processStep, Constants.TIME_STEP_MS)
       return
     }
     if (battleStore.doStep) {
@@ -50,8 +49,8 @@ export function useBattleProcessor() {
     if ([BattleStage.WAITING, BattleStage.ACTIVE].includes(battleStage)) {
       const currentTime = new Date().getTime()
       let timeStep = currentTime - battleStore.updateTime!
-      if (timeStep > 10 * TIME_STEP_MS) {
-        timeStep = TIME_STEP_MS + Math.ceil(Math.random() * 5)
+      if (timeStep > 10 * Constants.TIME_STEP_MS) {
+        timeStep = Constants.TIME_STEP_MS + Math.ceil(Math.random() * 5)
       }
       const timeStepSecs = timeStep / 1000
       battle.time += timeStep
@@ -65,7 +64,7 @@ export function useBattleProcessor() {
       } else {
         battleStore.updateBattle(battle, currentTime)
       }
-      setTimeout(processStep, TIME_STEP_MS)
+      setTimeout(processStep, Constants.TIME_STEP_MS)
     }
   }
 
