@@ -49,7 +49,7 @@ export function useBattleUpdater(player: Player) {
     if (!battleStore.battle) {
       return
     }
-    !battle.paused || battle.model.updated || !settingsStore.settings!.clientProcessing
+    !settingsStore.settings!.clientProcessing
         ? battleStore.updateBattle(battle) : battleStore.updateServerBattle(battle)
   }
 
@@ -57,7 +57,7 @@ export function useBattleUpdater(player: Player) {
     if (!battleStore.battle) {
       return
     }
-    const battle = JSON.parse(JSON.stringify(battleStore.battle)) as Battle
+    const battle = JSON.parse(JSON.stringify(battleStore.serverBattle)) as Battle
     eventSoundsPlayer.playSounds(battleUpdate, battle)
     battle.time = battleUpdate.time
     battle.fps = battleUpdate.fps
@@ -172,7 +172,8 @@ export function useBattleUpdater(player: Player) {
             vehicleModel && showChangeAmmo(vehicleModel)
           })
     }
-    battleStore.updateBattle(battle)
+    !settingsStore.settings!.clientProcessing || !settingsStore.settings!.clientSmoothTransition
+        ? battleStore.updateBattle(battle) : battleStore.updateServerBattle(battle)
   }
 
   function showChangeHp(model: VehicleModel, oldState: VehicleState, newState: VehicleState) {

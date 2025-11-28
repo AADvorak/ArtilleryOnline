@@ -6,6 +6,7 @@ application:
     debug: ${APP_SETTINGS_DEBUG:false}
     client-processing: ${APP_SETTINGS_CLIENT_PROCESSING:true}
     client-collisions-processing: ${APP_SETTINGS_CLIENT_COLLISIONS_PROCESSING:true}
+    client-smooth-transition: ${APP_SETTINGS_CLIENT_SMOOTH_TRANSITION:true}
     create-surfaces: ${APP_SETTINGS_CREATE_SURFACES:false}
     show-shell-trajectory: ${APP_SETTINGS_SHOW_SHELL_TRAJECTORY:false}
     user-battle-queue-timeout: 30000

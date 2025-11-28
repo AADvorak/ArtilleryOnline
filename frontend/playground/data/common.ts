@@ -64,6 +64,7 @@ export interface ApplicationSettings {
   showShellTrajectory: boolean
   clientProcessing: boolean
   clientCollisionsProcessing: boolean
+  clientSmoothTransition: boolean
   userBattleQueueTimeout: number
 }
 

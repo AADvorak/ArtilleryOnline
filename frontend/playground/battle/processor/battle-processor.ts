@@ -6,6 +6,7 @@ import type {ParticleModel, ShellModel} from "~/playground/data/model";
 import {DefaultColors} from "~/dictionary/default-colors";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {useBattleObjectsProcessor} from "~/playground/battle/processor/battle-objects-processor";
+import {useBattleSmoothTransition} from "~/playground/battle/processor/battle-smooth-transition";
 
 export function useBattleProcessor() {
 
@@ -16,6 +17,8 @@ export function useBattleProcessor() {
   const battleStore = useBattleStore()
 
   const settingsStore = useSettingsStore()
+
+  const smoothTransition = useBattleSmoothTransition()
 
   const battleObjectsProcessor = useBattleObjectsProcessor(
       settingsStore.settings?.debug || false,
@@ -35,7 +38,7 @@ export function useBattleProcessor() {
     if (!battleStore.battle || !processing.value) {
       return
     }
-    const battle = JSON.parse(JSON.stringify(battleStore.battle)) as Battle
+    const battle = JSON.parse(JSON.stringify(battleStore.serverBattle)) as Battle
     if (battleStore.paused && !battleStore.doStep) {
       setTimeout(processStep, TIME_STEP_MS)
       return
@@ -56,7 +59,12 @@ export function useBattleProcessor() {
         battleObjectsProcessor.process(battle, timeStepSecs)
         processStepActiveParticles(battle, timeStepSecs)
       }
-      battleStore.updateClientBattle(battle, currentTime)
+      if (settingsStore.settings?.clientSmoothTransition) {
+        battleStore.updateServerBattle(battle, currentTime)
+        smoothTransition.process(battle, timeStepSecs)
+      } else {
+        battleStore.updateBattle(battle, currentTime)
+      }
       setTimeout(processStep, TIME_STEP_MS)
     }
   }

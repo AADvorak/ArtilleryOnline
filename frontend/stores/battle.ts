@@ -97,6 +97,8 @@ export const useBattleStore = defineStore('battle', () => {
 
   return {
     battle,
+    clientBattle,
+    serverBattle,
     vehicles,
     shells,
     missiles,
