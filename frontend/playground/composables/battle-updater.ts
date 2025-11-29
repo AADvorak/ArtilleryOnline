@@ -225,6 +225,9 @@ export function useBattleUpdater(player: Player) {
   }
 
   function checkNeedSmoothTransition(oldPosition: Position, newPosition: Position) {
+    if (battleStore.needSmoothTransition) {
+      return
+    }
     if (Math.abs(oldPosition.x - newPosition.x) > NEED_SMOOTH_TRANSITION_THRESHOLD
         || Math.abs(oldPosition.y - newPosition.y) > NEED_SMOOTH_TRANSITION_THRESHOLD) {
       battleStore.needSmoothTransition = true
