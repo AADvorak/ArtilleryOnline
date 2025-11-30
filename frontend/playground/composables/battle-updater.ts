@@ -7,8 +7,8 @@ import {useEventSoundsPlayer} from "~/playground/composables/sound/event-sounds-
 import type {Player} from "~/playground/audio/player";
 import {deserializeBattle, deserializeBattleUpdate} from "~/playground/data/battle-deserialize";
 import {DeserializerInput} from "~/deserialization/deserializer-input";
-import type {VehicleModel} from "~/playground/data/model";
-import type {MissileState, ShellState, VehicleState} from "~/playground/data/state";
+import type {BodyModel, ShellModel, VehicleModel} from "~/playground/data/model";
+import type {BodyState, MissileState, ShellState, VehicleState} from "~/playground/data/state";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {DefaultColors} from "~/dictionary/default-colors";
 import {RepairEventType} from "~/playground/data/events";
@@ -16,6 +16,7 @@ import type {Position} from "~/playground/data/common";
 import {Constants} from "~/playground/data/constants";
 
 const NEED_SMOOTH_TRANSITION_THRESHOLD = 2 * Constants.MAX_TRANSITION_VELOCITY * Constants.TIME_STEP_MS / 1000
+const BATTLE_OUTDATED_THRESHOLD = 50
 
 export function useBattleUpdater(player: Player) {
   const battleStore = useBattleStore()
@@ -65,7 +66,12 @@ export function useBattleUpdater(player: Player) {
         && settingsStore.settings!.clientSmoothTransition && !battleUpdate.stage
     const battle = JSON.parse(JSON.stringify(battleStore.serverBattle)) as Battle
     eventSoundsPlayer.playSounds(battleUpdate, battle)
-    battle.time = battleUpdate.time
+    let battleOutdated = false
+    if (!battleUpdate.stage && battle.time - battleUpdate.time > BATTLE_OUTDATED_THRESHOLD) {
+      battleOutdated = true
+    } else {
+      battle.time = battleUpdate.time
+    }
     battle.fps = battleUpdate.fps
     if (battleUpdate.stage) {
       battle.battleStage = battleUpdate.stage
@@ -136,7 +142,11 @@ export function useBattleUpdater(player: Player) {
             const newState = vehicles[key]!
             clientSmoothTransition && checkNeedSmoothTransition(model.state.position, newState.position)
             showChangeHp(model, model.state, newState)
-            model.state = newState
+            if (battleOutdated) {
+              applyExceptPositionAndVelocity(model, newState)
+            } else {
+              model.state = newState
+            }
           }
         })
       }
@@ -149,7 +159,11 @@ export function useBattleUpdater(player: Player) {
             // @ts-ignore
             const newState = shells[key] as ShellState
             clientSmoothTransition && checkNeedSmoothTransition(model.state.position, newState.position)
-            model.state = newState
+            if (battleOutdated) {
+              applyShellExceptPositionAndVelocity(model, newState)
+            } else {
+              model.state = newState
+            }
           }
         })
       }
@@ -162,7 +176,11 @@ export function useBattleUpdater(player: Player) {
             // @ts-ignore
             const newState = missiles[key] as MissileState
             clientSmoothTransition && checkNeedSmoothTransition(model.state.position, newState.position)
-            model.state = newState
+            if (battleOutdated) {
+              applyExceptPositionAndVelocity(model, newState)
+            } else {
+              model.state = newState
+            }
           }
         })
       }
@@ -175,7 +193,11 @@ export function useBattleUpdater(player: Player) {
             // @ts-ignore
             const newState = drones[key]
             clientSmoothTransition && checkNeedSmoothTransition(model.state.position, newState.position)
-            model.state = newState
+            if (battleOutdated) {
+              applyExceptPositionAndVelocity(model, newState)
+            } else {
+              model.state = newState
+            }
           }
         })
       }
@@ -188,7 +210,11 @@ export function useBattleUpdater(player: Player) {
             // @ts-ignore
             const newState = boxes[key]
             clientSmoothTransition && checkNeedSmoothTransition(model.state.position, newState.position)
-            model.state = newState
+            if (battleOutdated) {
+              applyExceptPositionAndVelocity(model, newState)
+            } else {
+              model.state = newState
+            }
           }
         })
       }
@@ -232,6 +258,36 @@ export function useBattleUpdater(player: Player) {
         || Math.abs(oldPosition.y - newPosition.y) > NEED_SMOOTH_TRANSITION_THRESHOLD) {
       battleStore.needSmoothTransition = true
     }
+  }
+
+  function applyExceptPositionAndVelocity(model: BodyModel, state: BodyState) {
+    const position = {
+      x: model.state.position.x,
+      y: model.state.position.y,
+      angle: model.state.position.angle,
+    }
+    const velocity = {
+      x: model.state.velocity.x,
+      y: model.state.velocity.y,
+      angle: model.state.velocity.angle,
+    }
+    model.state = state
+    model.state.position = position
+    model.state.velocity = velocity
+  }
+
+  function applyShellExceptPositionAndVelocity(model: ShellModel, state: ShellState) {
+    const position = {
+      x: model.state.position.x,
+      y: model.state.position.y,
+    }
+    const velocity = {
+      x: model.state.velocity.x,
+      y: model.state.velocity.y,
+    }
+    model.state = state
+    model.state.position = position
+    model.state.velocity = velocity
   }
 
   return { subscribe, unsubscribe }
