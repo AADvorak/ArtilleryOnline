@@ -108,9 +108,9 @@ export const BattleUtils = {
     }
   },
 
-  generateParticle(position: Position, lifeTime?: number): ParticleState {
-    const velocityMagnitude = 2 + 0.5 * Math.random()
-    const velocityAngle = Math.PI / 4 + Math.PI * Math.random() / 2
+  generateParticle(position: Position, lifeTime?: number, angle?: number, magnitude?: number): ParticleState {
+    const velocityMagnitude = magnitude || 2 + 0.5 * Math.random()
+    const velocityAngle = angle || Math.PI / 4 + Math.PI * Math.random() / 2
     const remainTime = lifeTime || 0.3 * Math.random()
     const {x, y} = position
     return {

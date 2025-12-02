@@ -1,4 +1,10 @@
-import {type CollideObject, CollideObjectType, MovingDirection, type ShellHitType} from "~/playground/data/common";
+import {
+  type CollideObject,
+  CollideObjectType,
+  Contact,
+  MovingDirection,
+  type ShellHitType
+} from "~/playground/data/common";
 
 export interface ShellHitEventObject {
   vehicleId?: number
@@ -8,6 +14,7 @@ export interface ShellHitEventObject {
 export interface ShellHitEvent {
   object: ShellHitEventObject
   shellId: number
+  contact: Contact
 }
 
 export interface CollideEvent {
@@ -18,6 +25,7 @@ export interface CollideEvent {
 
 export interface RicochetEvent {
   shellId: number
+  contact: Contact
 }
 
 export interface BomberFlyEvent {

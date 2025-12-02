@@ -1,13 +1,15 @@
 import type {DeserializerInput} from "~/deserialization/deserializer-input";
-import type {
-  Ammo,
-  BodyPosition,
-  BodyVector,
-  BodyVelocity,
-  Missiles,
-  Position, Shift,
-  Vector,
-  Velocity
+import {
+  type Ammo,
+  type BodyPosition,
+  type BodyVector,
+  type BodyVelocity,
+  Contact,
+  type Missiles,
+  type Position,
+  type Shift,
+  type Vector,
+  type Velocity
 } from "~/playground/data/common";
 import {DeserializerBase} from "~/deserialization/deserializer-base";
 
@@ -51,4 +53,10 @@ export function deserializeShift(input: DeserializerInput): Shift {
   const distance = DeserializerBase.readDouble(input)
   const angle = DeserializerBase.readDouble(input)
   return {distance, angle}
+}
+
+export function deserializeContact(input: DeserializerInput) {
+  const position = deserializePosition(input)
+  const angle = DeserializerBase.readDouble(input)
+  return Contact.withAngleUncheckedDepth(0.0, angle, position)
 }

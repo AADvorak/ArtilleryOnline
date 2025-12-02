@@ -10,6 +10,7 @@ import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.processor.bomber.BomberFlyProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.statistics.StatisticsProcessor;
+import com.github.aadvorak.artilleryonline.dto.response.ContactResponse;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -56,7 +57,11 @@ public class ShellCollisionPreprocessor implements CollisionPreprocessor {
         var hitObject = collision.getPair().second();
         ((VehicleModel) hitObject.getModel()).getUpdate().setUpdated();
         if (collision.isRicochet()) {
-            battle.getModel().getEvents().addRicochet(new RicochetEvent().setShellId(shell.getId()));
+            battle.getModel().getEvents().addRicochet(
+                    new RicochetEvent()
+                            .setShellId(shell.getId())
+                            .setContact(ContactResponse.of(collision.getContact()))
+            );
         } else if (!ShellType.SGN.equals(shell.getModel().getSpecs().getType())) {
             collision.setHit(true);
             if (hitObject instanceof VehicleCalculations vehicle) {

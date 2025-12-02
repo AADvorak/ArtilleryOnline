@@ -12,8 +12,9 @@ import type {BodyState, MissileState, ShellState, VehicleState} from "~/playgrou
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {DefaultColors} from "~/dictionary/default-colors";
 import {RepairEventType} from "~/playground/data/events";
-import type {Position} from "~/playground/data/common";
+import {Contact, type Position, ShellHitType, ShellType} from "~/playground/data/common";
 import {Constants} from "~/playground/data/constants";
+import {VectorUtils} from "~/playground/utils/vector-utils";
 
 const NEED_SMOOTH_TRANSITION_THRESHOLD = 2 * Constants.MAX_TRANSITION_VELOCITY * Constants.TIME_STEP_MS / 1000
 const BATTLE_OUTDATED_THRESHOLD = 50
@@ -75,6 +76,24 @@ export function useBattleUpdater(player: Player) {
     battle.fps = battleUpdate.fps
     if (battleUpdate.stage) {
       battle.battleStage = battleUpdate.stage
+    }
+    const hits = battleUpdate.events?.hits
+    if (hits) {
+      hits
+          .filter(hit => !!hit.object && hit.object.type !== ShellHitType.GROUND)
+          .forEach(hit => {
+            const shell = battle.model.shells[hit.shellId]
+            shell && shell.specs.type === ShellType.AP && addHitParticles(hit.contact,
+                VectorUtils.getMagnitude(shell.state.velocity), true)
+          })
+    }
+    const ricochets = battleUpdate.events?.ricochets
+    if (ricochets) {
+      ricochets
+          .forEach(ricochet => {
+            const shell = battle.model.shells[ricochet.shellId]
+            shell && addHitParticles(ricochet.contact, VectorUtils.getMagnitude(shell.state.velocity), false)
+          })
     }
     if (battleUpdate.updates) {
       if (battleUpdate.updates.added) {
@@ -248,6 +267,18 @@ export function useBattleUpdater(player: Player) {
     const position = BattleUtils.shiftedPosition(model.state.position, model.preCalc.maxRadius, Math.PI / 2)
     battleStore.addParticle(BattleUtils.generateParticle(position, 1.0),
         {color: DefaultColors.BRIGHT_GREEN, text: '+ammo'})
+  }
+
+  function addHitParticles(contact: Contact, velocityMagnitude: number, isHit: boolean) {
+    const particlesNumber = isHit ? 20 : 10
+    for (let i = 0; i < particlesNumber; i++) {
+      let angle = contact.angle + Math.random() * Math.PI / 16 - Math.PI / 32
+      let magnitude = Math.random() * velocityMagnitude / 2
+      if (i >= 10) {
+        angle += Math.PI
+      }
+      battleStore.addParticle(BattleUtils.generateParticle(contact.position, 0.25, angle, magnitude), {})
+    }
   }
 
   function checkNeedSmoothTransition(oldPosition: Position, newPosition: Position) {

@@ -10,6 +10,7 @@ import {
 import type {DeserializerInput} from "~/deserialization/deserializer-input";
 import {DeserializerBase} from "~/deserialization/deserializer-base";
 import {type CollideObject, CollideObjectType, type MovingDirection, type ShellHitType} from "~/playground/data/common";
+import {deserializeContact} from "~/playground/data/common-deserialize";
 
 export function deserializeShellHitEventObject(input: DeserializerInput): ShellHitEventObject {
   const vehicleId = DeserializerBase.readNullable(input, DeserializerBase.readInt)
@@ -23,9 +24,11 @@ export function deserializeShellHitEventObject(input: DeserializerInput): ShellH
 export function deserializeShellHitEvent(input: DeserializerInput): ShellHitEvent {
   const object = deserializeShellHitEventObject(input)
   const shellId = DeserializerBase.readInt(input)
+  const contact = deserializeContact(input)
   return {
     object,
-    shellId
+    shellId,
+    contact
   }
 }
 
@@ -51,8 +54,10 @@ export function deserializeVehicleCollideEvent(input: DeserializerInput): Collid
 
 export function deserializeRicochetEvent(input: DeserializerInput): RicochetEvent {
   const shellId = DeserializerBase.readInt(input)
+  const contact = deserializeContact(input)
   return {
-    shellId
+    shellId,
+    contact
   }
 }
 

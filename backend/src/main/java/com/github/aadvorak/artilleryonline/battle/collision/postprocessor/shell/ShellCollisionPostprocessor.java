@@ -4,10 +4,12 @@ import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculation
 import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
 import com.github.aadvorak.artilleryonline.battle.collision.postprocessor.CollisionPostprocessor;
+import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.ShellHitType;
 import com.github.aadvorak.artilleryonline.battle.events.ShellHitEvent;
 import com.github.aadvorak.artilleryonline.battle.events.ShellHitEventObject;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.dto.response.ContactResponse;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,7 +23,8 @@ public class ShellCollisionPostprocessor implements CollisionPostprocessor {
                     battle.getModel().getUpdates().removeShell(shell.getId());
                     var hitType = ShellHitType.of(collision.getPair().second());
                     if (hitType != null) {
-                        addHitEvent(hitType, shell.getId(), collision.getSecondId(), battle.getModel());
+                        addHitEvent(collision.getContact(), hitType, shell.getId(),
+                                collision.getSecondId(), battle.getModel());
                     }
                     return;
                 }
@@ -29,9 +32,16 @@ public class ShellCollisionPostprocessor implements CollisionPostprocessor {
         }
     }
 
-    private void addHitEvent(ShellHitType type, Integer shellId, Integer id, BattleModel battleModel) {
+    private void addHitEvent(
+            Contact contact,
+            ShellHitType type,
+            Integer shellId,
+            Integer id,
+            BattleModel battleModel
+    ) {
         battleModel.getEvents().addHit(new ShellHitEvent()
                 .setShellId(shellId)
+                .setContact(ContactResponse.of(contact))
                 .setObject(new ShellHitEventObject()
                         .setId(id)
                         .setType(type)));

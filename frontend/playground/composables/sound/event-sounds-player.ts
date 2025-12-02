@@ -40,7 +40,7 @@ export function useEventSoundsPlayer(player: Player) {
         battleUpdate.events.collides.forEach(collide => playCollide(collide, battle.model))
       }
       if (battleUpdate.events.ricochets) {
-        battleUpdate.events.ricochets.forEach(ricochet => playRicochet(ricochet, battle.model.shells))
+        battleUpdate.events.ricochets.forEach(ricochet => playRicochet(ricochet))
       }
       if (battleUpdate.events.bomberFlyEvents) {
         battleUpdate.events.bomberFlyEvents.forEach(bomberFly => playBomberFly(bomberFly))
@@ -105,19 +105,15 @@ export function useEventSoundsPlayer(player: Player) {
     const shellType = shellSpecs.type
     const caliber = shellSpecs.caliber
     const hitType = hit.object.type
-    const pan = soundsPlayerBase.calculatePan(shell.state.position.x)
-    const gain = soundsPlayerBase.calculateGain(shell.state.position)
+    const pan = soundsPlayerBase.calculatePan(hit.contact.position.x)
+    const gain = soundsPlayerBase.calculateGain(hit.contact.position)
     const fileName = getHitSoundName(shellType, hitType, caliber)
     fileName && play(fileName, pan, gain)
   }
 
-  function playRicochet(ricochet: RicochetEvent, shellsModels: ShellModels) {
-    const shell = shellsModels[ricochet.shellId]
-    if (!shell) {
-      return
-    }
-    const pan = soundsPlayerBase.calculatePan(shell.state.position.x)
-    const gain = soundsPlayerBase.calculateGain(shell.state.position)
+  function playRicochet(ricochet: RicochetEvent) {
+    const pan = soundsPlayerBase.calculatePan(ricochet.contact.position.x)
+    const gain = soundsPlayerBase.calculateGain(ricochet.contact.position)
     const fileName = getRicochetSoundName()
     fileName && play(fileName, pan, gain)
   }
