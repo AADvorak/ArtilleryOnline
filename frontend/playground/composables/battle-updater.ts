@@ -7,14 +7,11 @@ import {useEventSoundsPlayer} from "~/playground/composables/sound/event-sounds-
 import type {Player} from "~/playground/audio/player";
 import {deserializeBattle, deserializeBattleUpdate} from "~/playground/data/battle-deserialize";
 import {DeserializerInput} from "~/deserialization/deserializer-input";
-import type {BodyModel, ShellModel, VehicleModel} from "~/playground/data/model";
-import type {BodyState, MissileState, ShellState, VehicleState} from "~/playground/data/state";
-import {BattleUtils} from "~/playground/utils/battle-utils";
-import {DefaultColors} from "~/dictionary/default-colors";
-import {RepairEventType} from "~/playground/data/events";
-import {Contact, type Position, ShellHitType, ShellType} from "~/playground/data/common";
+import type {BodyModel, ShellModel} from "~/playground/data/model";
+import type {BodyState, MissileState, ShellState} from "~/playground/data/state";
+import {type Position} from "~/playground/data/common";
 import {Constants} from "~/playground/data/constants";
-import {VectorUtils} from "~/playground/utils/vector-utils";
+import {useBattleUpdateParticlesGenerator} from "~/playground/composables/battle-update-particles-generator";
 
 const NEED_SMOOTH_TRANSITION_THRESHOLD = 2 * Constants.MAX_TRANSITION_VELOCITY * Constants.TIME_STEP_MS / 1000
 const BATTLE_OUTDATED_THRESHOLD = 50
@@ -24,6 +21,7 @@ export function useBattleUpdater(player: Player) {
   const settingsStore = useSettingsStore()
   const stompClientStore = useStompClientStore()
   const eventSoundsPlayer = useEventSoundsPlayer(player)
+  const particlesGenerator = useBattleUpdateParticlesGenerator()
 
   const subscriptions: StompSubscription[] = []
 
@@ -77,24 +75,8 @@ export function useBattleUpdater(player: Player) {
     if (battleUpdate.stage) {
       battle.battleStage = battleUpdate.stage
     }
-    const hits = battleUpdate.events?.hits
-    if (hits) {
-      hits
-          .filter(hit => !!hit.object && hit.object.type !== ShellHitType.GROUND)
-          .forEach(hit => {
-            const shell = battle.model.shells[hit.shellId]
-            shell && shell.specs.type === ShellType.AP && addHitParticles(hit.contact,
-                VectorUtils.getMagnitude(shell.state.velocity), true)
-          })
-    }
-    const ricochets = battleUpdate.events?.ricochets
-    if (ricochets) {
-      ricochets
-          .forEach(ricochet => {
-            const shell = battle.model.shells[ricochet.shellId]
-            shell && addHitParticles(ricochet.contact, VectorUtils.getMagnitude(shell.state.velocity), false)
-          })
-    }
+    particlesGenerator.generate(battleUpdate, battle.model)
+
     if (battleUpdate.updates) {
       if (battleUpdate.updates.added) {
         const addedShells = battleUpdate.updates.added.shells
@@ -160,7 +142,6 @@ export function useBattleUpdater(player: Player) {
           if (model) {
             const newState = vehicles[key]!
             clientSmoothTransition && checkNeedSmoothTransition(model.state.position, newState.position)
-            showChangeHp(model, model.state, newState)
             if (battleOutdated) {
               applyExceptPositionAndVelocity(model, newState)
             } else {
@@ -238,47 +219,9 @@ export function useBattleUpdater(player: Player) {
         })
       }
     }
-    const repairs = battleUpdate.events?.repairs
-    if (repairs) {
-      repairs
-          .filter(repair => repair.type === RepairEventType.REFILL_AMMO)
-          .forEach(repair => {
-            const vehicleModel = Object.values(battle.model.vehicles)
-                .filter(vehicle => vehicle.id === repair.vehicleId)[0]
-            vehicleModel && showChangeAmmo(vehicleModel)
-          })
-    }
+
     clientSmoothTransition && battleStore.needSmoothTransition
         ? battleStore.updateServerBattle(battle) : battleStore.updateBattle(battle)
-  }
-
-  function showChangeHp(model: VehicleModel, oldState: VehicleState, newState: VehicleState) {
-    const hpDiff = newState.hitPoints - oldState.hitPoints
-    if (Math.abs(hpDiff) > 1) {
-      const position = BattleUtils.shiftedPosition(model.state.position, model.preCalc.maxRadius, Math.PI / 2)
-      const color = hpDiff > 0 ? DefaultColors.BRIGHT_GREEN : DefaultColors.BRIGHT_RED
-      const hpDiffToFixed = hpDiff.toFixed(0)
-      const text = hpDiff > 0 ? '+' + hpDiffToFixed : hpDiffToFixed
-      battleStore.addParticle(BattleUtils.generateParticle(position, 1.0), {color, text})
-    }
-  }
-
-  function showChangeAmmo(model: VehicleModel) {
-    const position = BattleUtils.shiftedPosition(model.state.position, model.preCalc.maxRadius, Math.PI / 2)
-    battleStore.addParticle(BattleUtils.generateParticle(position, 1.0),
-        {color: DefaultColors.BRIGHT_GREEN, text: '+ammo'})
-  }
-
-  function addHitParticles(contact: Contact, velocityMagnitude: number, isHit: boolean) {
-    const particlesNumber = isHit ? 20 : 10
-    for (let i = 0; i < particlesNumber; i++) {
-      let angle = contact.angle + Math.random() * Math.PI / 16 - Math.PI / 32
-      let magnitude = Math.random() * velocityMagnitude / 2
-      if (i >= 10) {
-        angle += Math.PI
-      }
-      battleStore.addParticle(BattleUtils.generateParticle(contact.position, 0.25, angle, magnitude), {})
-    }
   }
 
   function checkNeedSmoothTransition(oldPosition: Position, newPosition: Position) {
