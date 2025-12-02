@@ -33,7 +33,7 @@ export function useBattleUpdateParticlesGenerator() {
           .filter(hit => !!hit.object && hit.object.type !== ShellHitType.GROUND)
           .forEach(hit => {
             const shell = battleModel.shells[hit.shellId]
-            shell && shell.specs.type === ShellType.AP && addHitParticles(hit.contact,
+            shell && shell.specs.type === ShellType.AP && addHitParticles(hit.contact, shell.specs.caliber,
                 VectorUtils.getMagnitude(shell.state.velocity), true)
           })
     }
@@ -42,7 +42,8 @@ export function useBattleUpdateParticlesGenerator() {
       ricochets
           .forEach(ricochet => {
             const shell = battleModel.shells[ricochet.shellId]
-            shell && addHitParticles(ricochet.contact, VectorUtils.getMagnitude(shell.state.velocity), false)
+            shell && addHitParticles(ricochet.contact, shell.specs.caliber,
+                VectorUtils.getMagnitude(shell.state.velocity), false)
           })
     }
     const repairs = events.repairs
@@ -74,15 +75,19 @@ export function useBattleUpdateParticlesGenerator() {
         {color: DefaultColors.BRIGHT_GREEN, text: '+ammo'})
   }
 
-  function addHitParticles(contact: Contact, velocityMagnitude: number, isHit: boolean) {
-    const particlesNumber = isHit ? 20 : 10
-    for (let i = 0; i < particlesNumber; i++) {
+  function addHitParticles(contact: Contact, caliber: number, velocityMagnitude: number, isHit: boolean) {
+    if (velocityMagnitude < 5) {
+      return
+    }
+    const particlesNumber = caliber * 150
+    for (let i = 0; i < (isHit ? 2 : 1) * particlesNumber; i++) {
       let angle = contact.angle + Math.random() * Math.PI / 16 - Math.PI / 32
-      let magnitude = Math.random() * velocityMagnitude / 2
-      if (i >= 10) {
+      const magnitude = Math.random() * velocityMagnitude / 2
+      const lifeTime = 0.25 * velocityMagnitude / 15
+      if (i >= particlesNumber) {
         angle += Math.PI
       }
-      battleStore.addParticle(BattleUtils.generateParticle(contact.position, 0.25, angle, magnitude), {})
+      battleStore.addParticle(BattleUtils.generateParticle(contact.position, lifeTime, angle, magnitude), {})
     }
   }
 
