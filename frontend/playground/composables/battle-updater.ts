@@ -8,7 +8,7 @@ import type {Player} from "~/playground/audio/player";
 import {deserializeBattle, deserializeBattleUpdate} from "~/playground/data/battle-deserialize";
 import {DeserializerInput} from "~/deserialization/deserializer-input";
 import type {BodyModel, ShellModel} from "~/playground/data/model";
-import type {BodyState, MissileState, ShellState} from "~/playground/data/state";
+import type {BodyState, ShellState} from "~/playground/data/state";
 import {type Position} from "~/playground/data/common";
 import {Constants} from "~/playground/data/constants";
 import {useBattleUpdateParticlesGenerator} from "~/playground/composables/battle-update-particles-generator";
@@ -152,12 +152,10 @@ export function useBattleUpdater(player: Player) {
       }
       const shells = battleUpdate.state.shells
       if (shells) {
-        Object.keys(shells).forEach(key => {
-          // @ts-ignore
+        Object.keys(shells).map(Number.parseInt).forEach(key => {
           const model = battle.model.shells[key]
           if (model) {
-            // @ts-ignore
-            const newState = shells[key] as ShellState
+            const newState = shells[key]!
             clientSmoothTransition && checkNeedSmoothTransition(model.state.position, newState.position)
             if (battleOutdated) {
               applyShellExceptPositionAndVelocity(model, newState)
@@ -169,14 +167,13 @@ export function useBattleUpdater(player: Player) {
       }
       const missiles = battleUpdate.state.missiles
       if (missiles) {
-        Object.keys(missiles).forEach(key => {
-          // @ts-ignore
+        Object.keys(missiles).map(Number.parseInt).forEach(key => {
           const model = battle.model.missiles[key]
           if (model) {
-            // @ts-ignore
-            const newState = missiles[key] as MissileState
+            const newState = missiles[key]!
             clientSmoothTransition && checkNeedSmoothTransition(model.state.position, newState.position)
             if (battleOutdated) {
+              // @ts-ignore
               applyExceptPositionAndVelocity(model, newState)
             } else {
               model.state = newState
@@ -186,12 +183,10 @@ export function useBattleUpdater(player: Player) {
       }
       const drones = battleUpdate.state.drones
       if (drones) {
-        Object.keys(drones).forEach(key => {
-          // @ts-ignore
+        Object.keys(drones).map(Number.parseInt).forEach(key => {
           const model = battle.model.drones[key]
           if (model) {
-            // @ts-ignore
-            const newState = drones[key]
+            const newState = drones[key]!
             clientSmoothTransition && checkNeedSmoothTransition(model.state.position, newState.position)
             if (battleOutdated) {
               applyExceptPositionAndVelocity(model, newState)
@@ -203,12 +198,10 @@ export function useBattleUpdater(player: Player) {
       }
       const boxes = battleUpdate.state.boxes
       if (boxes) {
-        Object.keys(boxes).forEach(key => {
-          // @ts-ignore
+        Object.keys(boxes).map(Number.parseInt).forEach(key => {
           const model = battle.model.boxes[key]
           if (model) {
-            // @ts-ignore
-            const newState = boxes[key]
+            const newState = boxes[key]!
             clientSmoothTransition && checkNeedSmoothTransition(model.state.position, newState.position)
             if (battleOutdated) {
               applyExceptPositionAndVelocity(model, newState)
