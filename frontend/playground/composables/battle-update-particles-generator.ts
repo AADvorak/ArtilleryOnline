@@ -14,6 +14,7 @@ export function useBattleUpdateParticlesGenerator() {
   const MAX_HIT_VELOCITY = 15
   const MSG_PARTICLE_LIFETIME = 1.0
   const HIT_PARTICLE_LIFETIME = 0.25
+  const HIT_PARTICLE_LIFETIME_RELATIVE_DEVIATION = 0.2
   const HIT_PARTICLES_ANGLE_DEVIATION = Math.PI / 16
   const CALIBER_PARTICLES_NUMBER_COEFFICIENT = 150
 
@@ -93,6 +94,7 @@ export function useBattleUpdateParticlesGenerator() {
       let angle = contact.angle + HIT_PARTICLES_ANGLE_DEVIATION * (Math.random() - 0.5)
       const magnitude = Math.random() * velocityMagnitude / 2
       const lifeTime = HIT_PARTICLE_LIFETIME * velocityMagnitude / MAX_HIT_VELOCITY
+          * (1 + HIT_PARTICLE_LIFETIME_RELATIVE_DEVIATION * (Math.random() - 0.5))
       if (i >= particlesNumber) {
         angle += Math.PI
       }
