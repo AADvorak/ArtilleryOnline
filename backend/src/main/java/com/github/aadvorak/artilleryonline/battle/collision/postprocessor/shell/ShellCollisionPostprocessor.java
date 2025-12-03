@@ -3,8 +3,8 @@ package com.github.aadvorak.artilleryonline.battle.collision.postprocessor.shell
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
+import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.collision.postprocessor.CollisionPostprocessor;
-import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.ShellHitType;
 import com.github.aadvorak.artilleryonline.battle.events.ShellHitEvent;
 import com.github.aadvorak.artilleryonline.battle.events.ShellHitEventObject;
@@ -23,8 +23,7 @@ public class ShellCollisionPostprocessor implements CollisionPostprocessor {
                     battle.getModel().getUpdates().removeShell(shell.getId());
                     var hitType = ShellHitType.of(collision.getPair().second());
                     if (hitType != null) {
-                        addHitEvent(collision.getContact(), hitType, shell.getId(),
-                                collision.getSecondId(), battle.getModel());
+                        addHitEvent(collision, hitType, battle.getModel());
                     }
                     return;
                 }
@@ -33,17 +32,16 @@ public class ShellCollisionPostprocessor implements CollisionPostprocessor {
     }
 
     private void addHitEvent(
-            Contact contact,
+            Collision collision,
             ShellHitType type,
-            Integer shellId,
-            Integer id,
             BattleModel battleModel
     ) {
         battleModel.getEvents().addHit(new ShellHitEvent()
-                .setShellId(shellId)
-                .setContact(ContactResponse.of(contact))
+                .setShellId(collision.getFirstId())
+                .setContact(ContactResponse.of(collision.getContact()))
+                .setClosingVelocity(collision.getClosingVelocity())
                 .setObject(new ShellHitEventObject()
-                        .setId(id)
+                        .setId(collision.getSecondId())
                         .setType(type)));
     }
 }

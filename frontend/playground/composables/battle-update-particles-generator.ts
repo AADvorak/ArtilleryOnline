@@ -41,7 +41,7 @@ export function useBattleUpdateParticlesGenerator() {
           .forEach(hit => {
             const shell = battleModel.shells[hit.shellId]
             shell && shell.specs.type === ShellType.AP && addHitParticles(hit.contact, shell.specs.caliber,
-                VectorUtils.getMagnitude(shell.state.velocity), true)
+                hit.closingVelocity, true)
           })
     }
     const ricochets = events.ricochets

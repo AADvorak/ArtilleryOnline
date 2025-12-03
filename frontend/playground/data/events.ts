@@ -15,6 +15,7 @@ export interface ShellHitEvent {
   object: ShellHitEventObject
   shellId: number
   contact: Contact
+  closingVelocity: number
 }
 
 export interface CollideEvent {

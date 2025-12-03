@@ -25,10 +25,12 @@ export function deserializeShellHitEvent(input: DeserializerInput): ShellHitEven
   const object = deserializeShellHitEventObject(input)
   const shellId = DeserializerBase.readInt(input)
   const contact = deserializeContact(input)
+  const closingVelocity = DeserializerBase.readDouble(input)
   return {
     object,
     shellId,
-    contact
+    contact,
+    closingVelocity
   }
 }
 

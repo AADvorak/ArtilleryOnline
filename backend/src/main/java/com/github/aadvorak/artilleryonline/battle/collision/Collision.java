@@ -35,6 +35,10 @@ public class Collision {
 
     private boolean hit = false;
 
+    public Integer getFirstId() {
+        return pair.first().getId();
+    }
+
     public Integer getSecondId() {
         if (pair.second() != null) {
             return pair.second().getId();

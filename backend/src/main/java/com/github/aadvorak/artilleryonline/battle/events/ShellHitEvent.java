@@ -18,10 +18,13 @@ public class ShellHitEvent implements CompactSerializable {
 
     private ContactResponse contact;
 
+    private double closingVelocity;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeSerializableValue(object);
         stream.writeInt(shellId);
         stream.writeSerializableValue(contact);
+        stream.writeDouble(closingVelocity);
     }
 }
