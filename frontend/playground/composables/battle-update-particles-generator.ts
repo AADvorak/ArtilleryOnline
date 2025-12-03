@@ -10,6 +10,13 @@ import type {BattleUpdate} from "~/playground/data/battle";
 
 export function useBattleUpdateParticlesGenerator() {
 
+  const MIN_HIT_VELOCITY = 5
+  const MAX_HIT_VELOCITY = 15
+  const MSG_PARTICLE_LIFETIME = 1.0
+  const HIT_PARTICLE_LIFETIME = 0.25
+  const HIT_PARTICLES_ANGLE_DEVIATION = Math.PI / 16
+  const CALIBER_PARTICLES_NUMBER_COEFFICIENT = 150
+
   const battleStore = useBattleStore()
 
   function generate(battleUpdate: BattleUpdate, battleModel: BattleModel) {
@@ -65,25 +72,27 @@ export function useBattleUpdateParticlesGenerator() {
       const color = hpDiff > 0 ? DefaultColors.BRIGHT_GREEN : DefaultColors.BRIGHT_RED
       const hpDiffToFixed = hpDiff.toFixed(0)
       const text = hpDiff > 0 ? '+' + hpDiffToFixed : hpDiffToFixed
-      battleStore.addParticle(BattleUtils.generateParticle(position, 1.0), {color, text})
+      battleStore.addParticle(BattleUtils.generateParticle(position, MSG_PARTICLE_LIFETIME), {color, text})
     }
   }
 
   function showChangeAmmo(model: VehicleModel) {
     const position = BattleUtils.shiftedPosition(model.state.position, model.preCalc.maxRadius, Math.PI / 2)
-    battleStore.addParticle(BattleUtils.generateParticle(position, 1.0),
+    battleStore.addParticle(BattleUtils.generateParticle(position, MSG_PARTICLE_LIFETIME),
         {color: DefaultColors.BRIGHT_GREEN, text: '+ammo'})
   }
 
   function addHitParticles(contact: Contact, caliber: number, velocityMagnitude: number, isHit: boolean) {
-    if (velocityMagnitude < 5) {
+    if (velocityMagnitude < MIN_HIT_VELOCITY) {
       return
+    } else if (velocityMagnitude > MAX_HIT_VELOCITY) {
+      velocityMagnitude = MAX_HIT_VELOCITY
     }
-    const particlesNumber = caliber * 150
+    const particlesNumber = caliber * CALIBER_PARTICLES_NUMBER_COEFFICIENT
     for (let i = 0; i < (isHit ? 2 : 1) * particlesNumber; i++) {
-      let angle = contact.angle + Math.random() * Math.PI / 16 - Math.PI / 32
+      let angle = contact.angle + HIT_PARTICLES_ANGLE_DEVIATION * (Math.random() - 0.5)
       const magnitude = Math.random() * velocityMagnitude / 2
-      const lifeTime = 0.25 * velocityMagnitude / 15
+      const lifeTime = HIT_PARTICLE_LIFETIME * velocityMagnitude / MAX_HIT_VELOCITY
       if (i >= particlesNumber) {
         angle += Math.PI
       }
