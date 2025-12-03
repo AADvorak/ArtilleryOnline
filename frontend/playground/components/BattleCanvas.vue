@@ -87,7 +87,7 @@ onMounted(() => {
   calculateCanvasClass()
   addEventListener('resize', onWindowResize)
   if (alignByScreenHeight.value) {
-    setTimeout(scrollToVehicle)
+    setTimeout(() => scrollToVehicle(true))
   }
 })
 
@@ -126,7 +126,7 @@ function initCanvasAndCtx() {
   }
 }
 
-function scrollToVehicle() {
+function scrollToVehicle(noPositionCheck?: boolean) {
   if (!userVehicleRelativePosition.value) {
     return
   }
@@ -136,7 +136,9 @@ function scrollToVehicle() {
   if (maxLeft > 0 && scroll.value) {
     const vehiclePosition = userVehicleRelativePosition.value * cnvWidth
     const left = scroll.value.scrollLeft
-    if (vehiclePosition < left + SCROLL_RESERVE_WIDTH || vehiclePosition > left + wndWidth - SCROLL_RESERVE_WIDTH) {
+    if (noPositionCheck
+        || vehiclePosition < left + SCROLL_RESERVE_WIDTH
+        || vehiclePosition > left + wndWidth - SCROLL_RESERVE_WIDTH) {
       let newLeft = vehiclePosition - wndWidth / 2
       if (newLeft > maxLeft) newLeft = maxLeft
       if (newLeft < 0) newLeft = 0
