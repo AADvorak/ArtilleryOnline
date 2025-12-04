@@ -1,7 +1,6 @@
 import {useBattleStore} from "~/stores/battle";
 import type {Battle} from "@/playground/data/battle";
-import type {BodyState, ShellState} from "~/playground/data/state";
-import type {BodyPosition, Position, Velocity} from "~/playground/data/common";
+import type {Position, Velocity} from "~/playground/data/common";
 import type {BodyModel, BoxModel, DroneModel, ShellModel} from "~/playground/data/model";
 import {Constants} from "~/playground/data/constants";
 
@@ -10,9 +9,7 @@ export function useBattleSmoothTransition() {
   const battleStore = useBattleStore()
 
   function process(serverBattle: Battle, timeStepSecs: number) {
-    const clientBattle = battleStore.clientBattle
-        ? JSON.parse(JSON.stringify(battleStore.clientBattle)) as Battle
-        : undefined
+    const clientBattle = structuredClone(toRaw(battleStore.clientBattle))
     if (clientBattle) {
       clientBattle.battleStage = serverBattle.battleStage
       clientBattle.time = serverBattle.time
@@ -136,10 +133,10 @@ export function useBattleSmoothTransition() {
 
   function doSmoothTransitionForBody(serverModel: BodyModel, clientModel: BodyModel, timeStepSecs: number) {
     let isSmooth = false
-    const serverState = JSON.parse(JSON.stringify(serverModel.state)) as BodyState
-    let clientState = JSON.parse(JSON.stringify(clientModel.state)) as BodyState
-    const serverPosition = JSON.parse(JSON.stringify(serverState.position)) as BodyPosition
-    const clientPosition = JSON.parse(JSON.stringify(clientState.position)) as BodyPosition
+    const serverState = structuredClone(serverModel.state)
+    let clientState = structuredClone(clientModel.state)
+    const serverPosition = structuredClone(serverState.position)
+    const clientPosition = structuredClone(clientState.position)
     if (doSmoothTransitionForPosition(serverPosition, clientPosition, serverState.velocity, timeStepSecs)) {
       isSmooth = true
     }
@@ -151,10 +148,10 @@ export function useBattleSmoothTransition() {
   }
 
   function doSmoothTransitionForShell(serverModel: ShellModel, clientModel: ShellModel, timeStepSecs: number) {
-    const serverState = JSON.parse(JSON.stringify(serverModel.state)) as ShellState
-    let clientState = JSON.parse(JSON.stringify(clientModel.state)) as ShellState
-    const serverPosition = JSON.parse(JSON.stringify(serverState.position)) as Position
-    const clientPosition = JSON.parse(JSON.stringify(clientState.position)) as Position
+    const serverState = structuredClone(serverModel.state)
+    let clientState = structuredClone(clientModel.state)
+    const serverPosition = structuredClone(serverState.position)
+    const clientPosition = structuredClone(clientState.position)
     const isSmooth = doSmoothTransitionForPosition(serverPosition, clientPosition, serverState.velocity, timeStepSecs)
     clientState = serverState
     clientState.position = clientPosition

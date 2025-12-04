@@ -37,7 +37,7 @@ export function useBattleProcessor() {
     if (!battleStore.battle || !processing.value) {
       return
     }
-    const battle = JSON.parse(JSON.stringify(battleStore.serverBattle)) as Battle
+    const battle = structuredClone(toRaw(battleStore.serverBattle!))
     if (battleStore.paused && !battleStore.doStep) {
       setTimeout(processStep, Constants.TIME_STEP_MS)
       return
