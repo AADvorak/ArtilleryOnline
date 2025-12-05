@@ -4,17 +4,23 @@ import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculation
 import com.github.aadvorak.artilleryonline.battle.calculations.BoxCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
+import com.github.aadvorak.artilleryonline.battle.collision.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.collision.preprocessor.CollisionPreprocessor;
 import com.github.aadvorak.artilleryonline.battle.common.BoxType;
 import com.github.aadvorak.artilleryonline.battle.events.RepairEvent;
 import com.github.aadvorak.artilleryonline.battle.events.RepairEventType;
+import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 
 @Component
+@RequiredArgsConstructor
 public class BoxCollisionPreprocessor implements CollisionPreprocessor {
+
+    private final ApplicationSettings applicationSettings;
 
     @Override
     public Boolean process(Collision collision, BattleCalculations battle) {
@@ -32,6 +38,11 @@ public class BoxCollisionPreprocessor implements CollisionPreprocessor {
         }
         if (second instanceof WheelCalculations wheel) {
             return !pickBox(box, wheel.getVehicle(), battle);
+        }
+        if (!applicationSettings.isClientCollisionsProcessing() ||
+                !CollideObjectType.GROUND.equals(collision.getType())
+                        && !CollideObjectType.WALL.equals(collision.getType())) {
+            box.getModel().getUpdate().setUpdated();
         }
         return true;
     }
