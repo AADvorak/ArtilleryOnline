@@ -158,9 +158,11 @@ export function useBattleUpdater(player: Player) {
       }
       const shells = battleUpdate.state.shells
       if (shells) {
-        Object.keys(shells).map(Number.parseInt).forEach(key => {
+        Object.keys(shells).forEach(key => {
+          // @ts-ignore
           const model = battle.model.shells[key]
           if (model) {
+            // @ts-ignore
             const newState = shells[key]!
             if (battleOutdated) {
               applyShellExceptPositionAndVelocity(model, newState)
@@ -173,9 +175,11 @@ export function useBattleUpdater(player: Player) {
       }
       const missiles = battleUpdate.state.missiles
       if (missiles) {
-        Object.keys(missiles).map(Number.parseInt).forEach(key => {
+        Object.keys(missiles).forEach(key => {
+          // @ts-ignore
           const model = battle.model.missiles[key]
           if (model) {
+            // @ts-ignore
             const newState = missiles[key]!
             if (battleOutdated) {
               // @ts-ignore
@@ -189,9 +193,11 @@ export function useBattleUpdater(player: Player) {
       }
       const drones = battleUpdate.state.drones
       if (drones) {
-        Object.keys(drones).map(Number.parseInt).forEach(key => {
+        Object.keys(drones).forEach(key => {
+          // @ts-ignore
           const model = battle.model.drones[key]
           if (model) {
+            // @ts-ignore
             const newState = drones[key]!
             if (battleOutdated) {
               applyExceptPositionAndVelocity(model, newState)
@@ -204,9 +210,11 @@ export function useBattleUpdater(player: Player) {
       }
       const boxes = battleUpdate.state.boxes
       if (boxes) {
-        Object.keys(boxes).map(Number.parseInt).forEach(key => {
+        Object.keys(boxes).forEach(key => {
+          // @ts-ignore
           const model = battle.model.boxes[key]
           if (model) {
+            // @ts-ignore
             const newState = boxes[key]!
             if (battleOutdated) {
               applyExceptPositionAndVelocity(model, newState)
