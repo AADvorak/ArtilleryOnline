@@ -47,4 +47,24 @@ public record Trapeze(BodyPosition position, TrapezeShape shape) implements Body
     private Position topCenter() {
         return position.getCenter().shifted(shape.getHeight(), position.getAngle() + Math.PI / 2);
     }
+
+    @Override
+    public double maxX() {
+        return position.getX() + shape.getMaxSize();
+    }
+
+    @Override
+    public double maxY() {
+        return position.getY() + shape.getMaxSize();
+    }
+
+    @Override
+    public double minX() {
+        return position.getX() - shape.getMaxSize();
+    }
+
+    @Override
+    public double minY() {
+        return position.getY() - shape.getMaxSize();
+    }
 }

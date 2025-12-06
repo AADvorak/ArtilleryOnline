@@ -12,6 +12,14 @@ public interface BodyPart {
 
     Shape shape();
 
+    double maxX();
+
+    double maxY();
+
+    double minX();
+
+    double minY();
+
     static BodyPart of(BodyPosition position, Shape shape) {
         if (shape instanceof CircleShape circleShape) {
             return Circle.of(position, circleShape);

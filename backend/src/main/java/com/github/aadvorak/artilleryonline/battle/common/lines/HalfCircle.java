@@ -41,4 +41,24 @@ public record HalfCircle(BodyPosition position, HalfCircleShape shape) implement
     public static HalfCircle of(Position position, double angle, double radius) {
         return new HalfCircle(BodyPosition.of(position, angle), new HalfCircleShape().setRadius(radius));
     }
+
+    @Override
+    public double maxX() {
+        return position.getX() + shape.getRadius();
+    }
+
+    @Override
+    public double maxY() {
+        return position.getY() + shape.getRadius();
+    }
+
+    @Override
+    public double minX() {
+        return position.getX() - shape.getRadius();
+    }
+
+    @Override
+    public double minY() {
+        return position.getY() - shape.getRadius();
+    }
 }

@@ -6,6 +6,22 @@ import com.github.aadvorak.artilleryonline.battle.common.Vector;
 
 public record Segment(Position begin, Position end) {
 
+    public double maxX() {
+        return Math.max(begin.getX(), end.getX());
+    }
+
+    public double maxY() {
+        return Math.max(begin.getY(), end.getY());
+    }
+
+    public double minX() {
+        return Math.min(begin.getX(), end.getX());
+    }
+
+    public double minY() {
+        return Math.min(begin.getY(), end.getY());
+    }
+
     public Position findPointWithX(double targetX) {
         var x1 = begin().getX();
         var y1 = begin().getY();

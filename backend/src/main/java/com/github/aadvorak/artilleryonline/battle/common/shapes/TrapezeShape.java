@@ -18,6 +18,16 @@ public class TrapezeShape implements Shape {
 
     private double height;
 
+    private Double maxSize = null;
+
+    public double getMaxSize() {
+        if (maxSize == null) {
+            maxSize = Math.max(topRadius, bottomRadius);
+            maxSize = Math.max(height, maxSize);
+        }
+        return maxSize;
+    }
+
     @Override
     public String getName() {
         return NAME;
