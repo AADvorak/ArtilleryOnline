@@ -89,6 +89,7 @@ export interface VehicleState extends BodyState {
 export interface SurfaceState {
   begin: Position
   end: Position
+  width: number
 }
 
 export interface RoomState {

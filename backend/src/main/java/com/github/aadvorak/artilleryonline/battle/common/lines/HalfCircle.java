@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.common.lines;
 
 import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
+import com.github.aadvorak.artilleryonline.battle.common.Boundaries;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.shapes.HalfCircleShape;
 
@@ -43,22 +44,12 @@ public record HalfCircle(BodyPosition position, HalfCircleShape shape) implement
     }
 
     @Override
-    public double maxX() {
-        return position.getX() + shape.getRadius();
-    }
-
-    @Override
-    public double maxY() {
-        return position.getY() + shape.getRadius();
-    }
-
-    @Override
-    public double minX() {
-        return position.getX() - shape.getRadius();
-    }
-
-    @Override
-    public double minY() {
-        return position.getY() - shape.getRadius();
+    public Boundaries boundaries() {
+        return new Boundaries(
+                position.getX() - shape.getRadius(),
+                position.getX() + shape.getRadius(),
+                position.getY() - shape.getRadius(),
+                position.getY() + shape.getRadius()
+        );
     }
 }

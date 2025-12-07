@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.utils;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.lines.*;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
+import com.github.aadvorak.artilleryonline.battle.state.SurfaceState;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -16,42 +17,23 @@ public class SurfaceContactUtils {
         if (surfaces == null || surfaces.isEmpty()) {
             return contacts;
         }
-        surfaces.stream()
-                .map(surface -> new Segment(surface.getBegin(), surface.getEnd()))
-                .forEach(segment -> getContact(bodyPart, segment, withMaxDepth).ifPresent(contacts::add));
+        var maxDepth = withMaxDepth ? roomModel.getSpecs().getGroundMaxDepth() : 0.0;
+        surfaces.forEach(surface -> getContact(bodyPart, surface, maxDepth).ifPresent(contacts::add));
         return contacts;
     }
 
-    private static Optional<Contact> getContact(BodyPart bodyPart, Segment segment, boolean withMaxDepth) {
-        if (
-                bodyPart.minX() > segment.maxX()
-                || bodyPart.maxX() < segment.minX()
-                || bodyPart.minY() > segment.maxY()
-                || bodyPart.maxY() < segment.minY()
-        ) {
+    private static Optional<Contact> getContact(BodyPart bodyPart, SurfaceState surface, double maxDepth) {
+        if (surface.getBoundaries().noOverlap(bodyPart.boundaries())) {
             return Optional.empty();
         }
-        if (bodyPart instanceof Circle circle) {
-            return getContact(circle, segment, withMaxDepth);
+        var contact = ContactUtils.getBodyPartsContact(bodyPart, surface.getTrapeze());
+        if (contact != null) {
+            if (maxDepth > 0) {
+                return Optional.of(Contact.of(contact.depth() - maxDepth,
+                        contact.normal(), contact.position()));
+            }
+            return Optional.of(contact);
         }
-        if (bodyPart instanceof HalfCircle halfCircle) {
-            return getContact(halfCircle, segment, withMaxDepth);
-        }
-        if (bodyPart instanceof Trapeze trapeze) {
-            return getContact(trapeze, segment, withMaxDepth);
-        }
-        return Optional.empty();
-    }
-
-    private static Optional<Contact> getContact(Circle circle, Segment segment, boolean withMaxDepth) {
-        return Optional.empty();
-    }
-
-    private static Optional<Contact> getContact(HalfCircle halfCircle, Segment segment, boolean withMaxDepth) {
-        return Optional.empty();
-    }
-
-    private static Optional<Contact> getContact(Trapeze trapeze, Segment segment, boolean withMaxDepth) {
         return Optional.empty();
     }
 }

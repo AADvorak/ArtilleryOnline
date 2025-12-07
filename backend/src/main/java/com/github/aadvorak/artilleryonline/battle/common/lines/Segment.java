@@ -1,25 +1,19 @@
 package com.github.aadvorak.artilleryonline.battle.common.lines;
 
+import com.github.aadvorak.artilleryonline.battle.common.Boundaries;
 import com.github.aadvorak.artilleryonline.battle.common.Constants;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.Vector;
 
 public record Segment(Position begin, Position end) {
 
-    public double maxX() {
-        return Math.max(begin.getX(), end.getX());
-    }
-
-    public double maxY() {
-        return Math.max(begin.getY(), end.getY());
-    }
-
-    public double minX() {
-        return Math.min(begin.getX(), end.getX());
-    }
-
-    public double minY() {
-        return Math.min(begin.getY(), end.getY());
+    public Boundaries boundaries() {
+        return new Boundaries(
+                Math.min(begin.getX(), end.getX()),
+                Math.max(begin.getX(), end.getX()),
+                Math.min(begin.getY(), end.getY()),
+                Math.max(begin.getY(), end.getY())
+        );
     }
 
     public Position findPointWithX(double targetX) {

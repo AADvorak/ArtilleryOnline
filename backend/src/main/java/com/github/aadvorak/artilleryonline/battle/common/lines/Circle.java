@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.common.lines;
 
 import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
+import com.github.aadvorak.artilleryonline.battle.common.Boundaries;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.shapes.CircleShape;
 import com.github.aadvorak.artilleryonline.battle.common.shapes.Shape;
@@ -18,23 +19,13 @@ public record Circle(Position center, double radius) implements BodyPart {
     }
 
     @Override
-    public double maxX() {
-        return center.getX() + radius;
-    }
-
-    @Override
-    public double maxY() {
-        return center.getY() + radius;
-    }
-
-    @Override
-    public double minX() {
-        return center.getX() - radius;
-    }
-
-    @Override
-    public double minY() {
-        return center.getY() - radius;
+    public Boundaries boundaries() {
+        return new Boundaries(
+                center.getX() - radius,
+                center.getX() + radius,
+                center.getY() - radius,
+                center.getY() + radius
+        );
     }
 
     public static Circle of(BodyPosition position, CircleShape shape) {

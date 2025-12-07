@@ -47,4 +47,11 @@ public class TrapezeShape implements Shape {
                 .setTopRadius(side / 2)
                 .setHeight(side);
     }
+
+    public static TrapezeShape rectangle(double width, double height) {
+        return new TrapezeShape()
+                .setBottomRadius(width / 2)
+                .setTopRadius(width / 2)
+                .setHeight(height);
+    }
 }

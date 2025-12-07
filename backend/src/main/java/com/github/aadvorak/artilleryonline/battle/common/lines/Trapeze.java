@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.common.lines;
 
 import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
+import com.github.aadvorak.artilleryonline.battle.common.Boundaries;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.shapes.TrapezeShape;
 
@@ -49,22 +50,12 @@ public record Trapeze(BodyPosition position, TrapezeShape shape) implements Body
     }
 
     @Override
-    public double maxX() {
-        return position.getX() + shape.getMaxSize();
-    }
-
-    @Override
-    public double maxY() {
-        return position.getY() + shape.getMaxSize();
-    }
-
-    @Override
-    public double minX() {
-        return position.getX() - shape.getMaxSize();
-    }
-
-    @Override
-    public double minY() {
-        return position.getY() - shape.getMaxSize();
+    public Boundaries boundaries() {
+        return new Boundaries(
+                position.getX() - shape.getMaxSize(),
+                position.getX() + shape.getMaxSize(),
+                position.getY() - shape.getMaxSize(),
+                position.getY() + shape.getMaxSize()
+        );
     }
 }

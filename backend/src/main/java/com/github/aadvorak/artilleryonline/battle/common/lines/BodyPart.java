@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.common.lines;
 
 import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
+import com.github.aadvorak.artilleryonline.battle.common.Boundaries;
 import com.github.aadvorak.artilleryonline.battle.common.shapes.CircleShape;
 import com.github.aadvorak.artilleryonline.battle.common.shapes.HalfCircleShape;
 import com.github.aadvorak.artilleryonline.battle.common.shapes.Shape;
@@ -12,13 +13,7 @@ public interface BodyPart {
 
     Shape shape();
 
-    double maxX();
-
-    double maxY();
-
-    double minX();
-
-    double minY();
+    Boundaries boundaries();
 
     static BodyPart of(BodyPosition position, Shape shape) {
         if (shape instanceof CircleShape circleShape) {

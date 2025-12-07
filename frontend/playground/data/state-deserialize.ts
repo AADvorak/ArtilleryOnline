@@ -82,9 +82,11 @@ export function deserializeBoxState(input: DeserializerInput): BoxState {
 export function deserializeSurfaceState(input: DeserializerInput): SurfaceState {
   const begin = deserializePosition(input)
   const end = deserializePosition(input)
+  const width = DeserializerBase.readDouble(input)
   return {
     begin,
-    end
+    end,
+    width
   }
 }
 
