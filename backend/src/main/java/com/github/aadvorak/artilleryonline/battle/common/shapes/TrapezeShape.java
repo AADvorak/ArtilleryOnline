@@ -22,8 +22,8 @@ public class TrapezeShape implements Shape {
 
     public double getMaxSize() {
         if (maxSize == null) {
-            maxSize = Math.max(topRadius, bottomRadius);
-            maxSize = Math.max(height, maxSize);
+            var topCornerDistance = Math.sqrt(topRadius * topRadius + height * height);
+            maxSize = Math.max(topCornerDistance, bottomRadius);
         }
         return maxSize;
     }

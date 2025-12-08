@@ -40,9 +40,7 @@ public record Trapeze(BodyPosition position, TrapezeShape shape) implements Body
     }
 
     public double maxDistanceFromCenter() {
-        var topCornerDistance = Math.sqrt(shape.getTopRadius() * shape.getTopRadius()
-                + shape.getHeight() * shape.getHeight());
-        return Math.max(topCornerDistance, shape.getBottomRadius());
+        return shape.getMaxSize();
     }
 
     private Position topCenter() {
