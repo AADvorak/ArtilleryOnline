@@ -29,7 +29,7 @@ public class SurfaceContactUtils {
         var contact = ContactUtils.getBodyPartsContact(bodyPart, surface.getTrapeze());
         if (contact != null) {
             if (maxDepth > 0) {
-                return Optional.of(Contact.of(contact.depth() - maxDepth,
+                return Optional.ofNullable(Contact.of(contact.depth() - maxDepth,
                         contact.normal(), contact.position()));
             }
             return Optional.of(contact);
