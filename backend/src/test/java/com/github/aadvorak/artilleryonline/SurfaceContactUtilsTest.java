@@ -1,8 +1,11 @@
 package com.github.aadvorak.artilleryonline;
 
+import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
 import com.github.aadvorak.artilleryonline.battle.common.Constants;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
+import com.github.aadvorak.artilleryonline.battle.common.lines.HalfCircle;
+import com.github.aadvorak.artilleryonline.battle.common.shapes.CircleShape;
 import com.github.aadvorak.artilleryonline.battle.state.SurfaceState;
 import com.github.aadvorak.artilleryonline.battle.utils.SurfaceContactUtils;
 import org.junit.jupiter.api.Test;
@@ -17,14 +20,16 @@ public class SurfaceContactUtilsTest {
     private static final double BODY_Y = 10.0;
     private static final double RADIUS = 1.0;
     private static final double SURFACE_WIDTH = 0.1;
-    private static final double EDGE_CIRCLE_DISTANCE = RADIUS - Constants.INTERPENETRATION_THRESHOLD
-            + SURFACE_WIDTH / 2;
+    private static final double EDGE_DISTANCE = SURFACE_WIDTH / 2 - Constants.INTERPENETRATION_THRESHOLD;
+    private static final double EDGE_CIRCLE_DISTANCE = RADIUS + EDGE_DISTANCE;
 
     private static final double SMALL_DELTA = 0.00001;
 
-    private static final Position BODY_CENTER = new Position().setX(BODY_X).setY(BODY_Y);
+    private static final BodyPosition BODY_POSITION = new BodyPosition().setX(BODY_X).setY(BODY_Y);
 
-    private static final Circle CIRCLE = new Circle(BODY_CENTER, RADIUS);
+    private static final Circle CIRCLE = Circle.of(BODY_POSITION, new CircleShape().setRadius(RADIUS));
+
+    private static final HalfCircle HALF_CIRCLE = HalfCircle.of(BODY_POSITION, RADIUS);
 
     @Test
     public void circleBottomContactExists() {
@@ -271,6 +276,254 @@ public class SurfaceContactUtilsTest {
                 .setWidth(SURFACE_WIDTH);
         roomModel.getState().setSurfaces(List.of(surface));
         var contacts = SurfaceContactUtils.getContacts(CIRCLE, roomModel, true);
+        assertTrue(contacts.isEmpty());
+    }
+
+    @Test
+    public void halfCircleBottomContactExists() {
+        var roomModel = TestRoomGenerator.generate();
+        var surfaceY = BODY_Y - EDGE_DISTANCE + SMALL_DELTA;
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(BODY_X - RADIUS).setY(surfaceY))
+                .setEnd(new Position().setX(BODY_X + RADIUS).setY(surfaceY))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(HALF_CIRCLE, roomModel, false);
+        assertEquals(1, contacts.size());
+        var contact = contacts.stream().findAny().get();
+        assertAll(
+                () -> assertEquals(0.0, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(-1.0, contact.normal().getY(), SMALL_DELTA)
+        );
+    }
+
+    // todo @Test
+    public void halfCircleBottomContactNotExists() {
+        var roomModel = TestRoomGenerator.generate();
+        var surfaceY = BODY_Y - EDGE_DISTANCE - SMALL_DELTA;
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(BODY_X - RADIUS).setY(surfaceY))
+                .setEnd(new Position().setX(BODY_X + RADIUS).setY(surfaceY))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(HALF_CIRCLE, roomModel, false);
+        assertTrue(contacts.isEmpty());
+    }
+
+    @Test
+    public void halfCircleBottomContactExistsWithMaxDepth() {
+        var roomModel = TestRoomGenerator.generate();
+        var surfaceY = BODY_Y - EDGE_DISTANCE + SMALL_DELTA + roomModel.getSpecs().getGroundMaxDepth();
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(BODY_X - RADIUS).setY(surfaceY))
+                .setEnd(new Position().setX(BODY_X + RADIUS).setY(surfaceY))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(HALF_CIRCLE, roomModel, true);
+        assertEquals(1, contacts.size());
+        var contact = contacts.stream().findAny().get();
+        assertAll(
+                () -> assertEquals(0.0, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(-1.0, contact.normal().getY(), SMALL_DELTA)
+        );
+    }
+
+    // todo @Test
+    public void halfCircleBottomContactNotExistsWithMaxDepth() {
+        var roomModel = TestRoomGenerator.generate();
+        var surfaceY = BODY_Y - EDGE_DISTANCE - SMALL_DELTA + roomModel.getSpecs().getGroundMaxDepth();
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(BODY_X - RADIUS).setY(surfaceY))
+                .setEnd(new Position().setX(BODY_X + RADIUS).setY(surfaceY))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(HALF_CIRCLE, roomModel, true);
+        assertTrue(contacts.isEmpty());
+    }
+
+    @Test
+    public void halfCircleTopContactExists() {
+        var roomModel = TestRoomGenerator.generate();
+        var surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE - SMALL_DELTA;
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(BODY_X - RADIUS).setY(surfaceY))
+                .setEnd(new Position().setX(BODY_X + RADIUS).setY(surfaceY))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(HALF_CIRCLE, roomModel, false);
+        assertEquals(1, contacts.size());
+        var contact = contacts.stream().findAny().get();
+        assertAll(
+                () -> assertEquals(0.0, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(1.0, contact.normal().getY(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void halfCircleTopContactNotExists() {
+        var roomModel = TestRoomGenerator.generate();
+        var surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE + SMALL_DELTA;
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(BODY_X - RADIUS).setY(surfaceY))
+                .setEnd(new Position().setX(BODY_X + RADIUS).setY(surfaceY))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(HALF_CIRCLE, roomModel, false);
+        assertTrue(contacts.isEmpty());
+    }
+
+    @Test
+    public void halfCircleTopContactExistsWithMaxDepth() {
+        var roomModel = TestRoomGenerator.generate();
+        var surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - roomModel.getSpecs().getGroundMaxDepth();
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(BODY_X - RADIUS).setY(surfaceY))
+                .setEnd(new Position().setX(BODY_X + RADIUS).setY(surfaceY))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(HALF_CIRCLE, roomModel, true);
+        assertEquals(1, contacts.size());
+        var contact = contacts.stream().findAny().get();
+        assertAll(
+                () -> assertEquals(0.0, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(1.0, contact.normal().getY(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void halfCircleTopContactNotExistsWithMaxDepth() {
+        var roomModel = TestRoomGenerator.generate();
+        var surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - roomModel.getSpecs().getGroundMaxDepth();
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(BODY_X - RADIUS).setY(surfaceY))
+                .setEnd(new Position().setX(BODY_X + RADIUS).setY(surfaceY))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(HALF_CIRCLE, roomModel, true);
+        assertTrue(contacts.isEmpty());
+    }
+
+    @Test
+    public void halfCircleRightContactExists() {
+        var roomModel = TestRoomGenerator.generate();
+        var surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE - SMALL_DELTA;
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(surfaceX).setY(BODY_Y - RADIUS))
+                .setEnd(new Position().setX(surfaceX).setY(BODY_Y + RADIUS))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(HALF_CIRCLE, roomModel, false);
+        assertEquals(1, contacts.size());
+        var contact = contacts.stream().findAny().get();
+        assertAll(
+                () -> assertEquals(1.0, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(0.0, contact.normal().getY(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void halfCircleRightContactNotExists() {
+        var roomModel = TestRoomGenerator.generate();
+        var surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE + SMALL_DELTA;
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(surfaceX).setY(BODY_Y - RADIUS))
+                .setEnd(new Position().setX(surfaceX).setY(BODY_Y + RADIUS))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(HALF_CIRCLE, roomModel, false);
+        assertTrue(contacts.isEmpty());
+    }
+
+    @Test
+    public void halfCircleRightContactExistsWithMaxDepth() {
+        var roomModel = TestRoomGenerator.generate();
+        var surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - roomModel.getSpecs().getGroundMaxDepth();
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(surfaceX).setY(BODY_Y - RADIUS))
+                .setEnd(new Position().setX(surfaceX).setY(BODY_Y + RADIUS))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(HALF_CIRCLE, roomModel, true);
+        assertEquals(1, contacts.size());
+        var contact = contacts.stream().findAny().get();
+        assertAll(
+                () -> assertEquals(1.0, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(0.0, contact.normal().getY(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void halfCircleRightContactNotExistsWithMaxDepth() {
+        var roomModel = TestRoomGenerator.generate();
+        var surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - roomModel.getSpecs().getGroundMaxDepth();
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(surfaceX).setY(BODY_Y - RADIUS))
+                .setEnd(new Position().setX(surfaceX).setY(BODY_Y + RADIUS))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(HALF_CIRCLE, roomModel, true);
+        assertTrue(contacts.isEmpty());
+    }
+
+@Test
+    public void halfCircleLeftContactExists() {
+        var roomModel = TestRoomGenerator.generate();
+        var surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE + SMALL_DELTA;
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(surfaceX).setY(BODY_Y - RADIUS))
+                .setEnd(new Position().setX(surfaceX).setY(BODY_Y + RADIUS))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(HALF_CIRCLE, roomModel, false);
+        assertEquals(1, contacts.size());
+        var contact = contacts.stream().findAny().get();
+        assertAll(
+                () -> assertEquals(-1.0, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(0.0, contact.normal().getY(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void halfCircleLeftContactNotExists() {
+        var roomModel = TestRoomGenerator.generate();
+        var surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE - SMALL_DELTA;
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(surfaceX).setY(BODY_Y - RADIUS))
+                .setEnd(new Position().setX(surfaceX).setY(BODY_Y + RADIUS))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(HALF_CIRCLE, roomModel, false);
+        assertTrue(contacts.isEmpty());
+    }
+
+    @Test
+    public void halfCircleLeftContactExistsWithMaxDepth() {
+        var roomModel = TestRoomGenerator.generate();
+        var surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE + SMALL_DELTA + roomModel.getSpecs().getGroundMaxDepth();
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(surfaceX).setY(BODY_Y - RADIUS))
+                .setEnd(new Position().setX(surfaceX).setY(BODY_Y + RADIUS))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(HALF_CIRCLE, roomModel, true);
+        assertEquals(1, contacts.size());
+        var contact = contacts.stream().findAny().get();
+        assertAll(
+                () -> assertEquals(-1.0, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(0.0, contact.normal().getY(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void halfCircleLeftContactNotExistsWithMaxDepth() {
+        var roomModel = TestRoomGenerator.generate();
+        var surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE - SMALL_DELTA + roomModel.getSpecs().getGroundMaxDepth();
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(surfaceX).setY(BODY_Y - RADIUS))
+                .setEnd(new Position().setX(surfaceX).setY(BODY_Y + RADIUS))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(HALF_CIRCLE, roomModel, true);
         assertTrue(contacts.isEmpty());
     }
 }
