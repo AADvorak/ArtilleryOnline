@@ -63,7 +63,7 @@ function padStart(value: number, maxLength: number = 2) {
 <template>
   <div :class="timerClass">{{ leftTimeFormatted }}</div>
   <div v-show="leftTime > 0 && leftTime < WAITING_STAGE_LENGTH" class="centered-timer">
-    <div class="centered-timer-text">{{ t(timerText) }}</div>
+    <div class="centered-timer-text">{{ timerText }}</div>
     <div class="centered-timer-time">{{ leftTimeFormatted }}</div>
   </div>
 </template>
