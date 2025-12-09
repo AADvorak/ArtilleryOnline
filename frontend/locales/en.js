@@ -36,6 +36,10 @@ export const en = {
   battleHistory,
   battleHistoryFiltersForm,
   battleStatistics,
+  battleTimer: {
+    battleStartsIn: 'Battle starts in',
+    battleEndsIn: 'Battle ends in',
+  },
   common,
   commonHistory,
   connectionLostDialog: {
