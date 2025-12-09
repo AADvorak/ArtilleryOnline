@@ -204,7 +204,7 @@ public class ContactUtils {
                 if (contact != null) {
                     return contact.inverted();
                 }
-                contact = getPointAndSegmentContact(halfCircleBottomRight, firstSide, false);
+                contact = getPointAndSegmentContact(halfCircleBottomRight, firstSide, true);
                 if (contact != null) {
                     return contact.inverted();
                 }
