@@ -2,6 +2,11 @@ import type { DrawerBase } from '@/playground/composables/drawer/drawer-base'
 import type { Ref } from 'vue'
 import { useBattleStore } from '~/stores/battle'
 import type {SurfaceState} from "~/playground/data/state";
+import {Segment} from "~/playground/data/geometry";
+import {VectorUtils} from "~/playground/utils/vector-utils";
+import {BattleUtils} from "~/playground/utils/battle-utils";
+import type {BodyPosition} from "~/playground/data/common";
+import {ShapeNames} from "~/playground/data/shapes";
 
 export function useSurfaceDrawer(
   drawerBase: DrawerBase,
@@ -18,18 +23,19 @@ export function useSurfaceDrawer(
 
   function drawSurface(surface: SurfaceState) {
     if (ctx.value) {
-      const begin = drawerBase.transformPosition(surface.begin)
-      const end = drawerBase.transformPosition(surface.end)
-
-      ctx.value.strokeStyle = 'rgb(256 256 256)'
-      ctx.value.lineWidth = 3
-      ctx.value.beginPath()
-
-      ctx.value.moveTo(begin.x, begin.y)
-      ctx.value.lineTo(end.x, end.y)
-      ctx.value.stroke()
-
-      ctx.value.closePath()
+      const segment = new Segment(surface.begin, surface.end)
+      const geometryPosition: BodyPosition = {
+        ...VectorUtils.shifted(segment.center(), VectorUtils.multiply(segment.normal(), -surface.width / 2)),
+        angle: VectorUtils.angleFromTo(surface.begin, surface.end)
+      }
+      const length = BattleUtils.distance(segment.begin, segment.end)
+      // yes, the width of the surface is the height of rectangle
+      drawerBase.drawTrapeze(ctx.value, geometryPosition, {
+        name: ShapeNames.TRAPEZE,
+        bottomRadius: length / 2,
+        topRadius: length / 2,
+        height: surface.width
+      }, 'rgb(256 256 256)')
     }
   }
 

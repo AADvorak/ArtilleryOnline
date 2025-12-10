@@ -1,6 +1,7 @@
 import type {BodyPosition, Position, Vector, Velocity} from "~/playground/data/common";
 import type {TrapezeShape} from "~/playground/data/shapes";
 import {BattleUtils} from "~/playground/utils/battle-utils";
+import {VectorUtils} from "~/playground/utils/vector-utils";
 
 export class Segment {
   begin: Position
@@ -23,6 +24,17 @@ export class Segment {
 
     const y = y1 + ((targetX - x1) * (y2 - y1)) / (x2 - x1)
     return { x: targetX, y }
+  }
+
+  center(): Position {
+    return {
+      x: (this.begin.x + this.end.x) / 2,
+      y: (this.begin.y + this.end.y) / 2,
+    }
+  }
+
+  normal(): Vector {
+    return VectorUtils.normal(VectorUtils.angleFromTo(this.end, this.begin))
   }
 }
 
