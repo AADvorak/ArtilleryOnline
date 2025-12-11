@@ -8,6 +8,7 @@ import {AppearancesNames} from "~/dictionary/appearances-names";
 import {type HalfCircleShape, ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
 import {BodyUtils} from "~/playground/utils/body-utils";
 import {useUserStore} from "~/stores/user";
+import {Trapeze} from "~/playground/data/geometry";
 
 export function useVehicleDrawer(
     drawerBase: DrawerBase,
@@ -72,7 +73,7 @@ export function useVehicleDrawer(
   }
 
   function drawTrapezeTurret(vehicleModel: VehicleModel, turretShape: TrapezeShape) {
-    drawerBase.drawTrapeze(ctx.value!, BodyUtils.getGeometryBodyPosition(vehicleModel), turretShape)
+    drawerBase.drawTrapeze(ctx.value!, new Trapeze(BodyUtils.getGeometryBodyPosition(vehicleModel), turretShape))
   }
 
   function drawWheels(vehicleModel: VehicleModel, wheelRadius: number) {

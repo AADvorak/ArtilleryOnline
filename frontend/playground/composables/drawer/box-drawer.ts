@@ -6,6 +6,7 @@ import {ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {type BodyPosition, BoxType, type Position} from "~/playground/data/common";
 import {BodyUtils} from "~/playground/utils/body-utils";
+import {Trapeze} from "~/playground/data/geometry";
 
 export function useBoxDrawer(
   drawerBase: DrawerBase,
@@ -24,15 +25,15 @@ export function useBoxDrawer(
     if (ctx.value) {
       const color = box.config.color || 'rgb(256 256 256)'
       if (box.specs.shape.name === ShapeNames.TRAPEZE) {
-        const trapeze = box.specs.shape as TrapezeShape
-        const geometryPosition = BodyUtils.getGeometryBodyPosition(box)
-        drawerBase.drawTrapeze(ctx.value, geometryPosition, trapeze, 'rgb(256 256 256)')
+        const shape = box.specs.shape as TrapezeShape
+        const trapeze = new Trapeze(BodyUtils.getGeometryBodyPosition(box), shape)
+        drawerBase.drawTrapeze(ctx.value, trapeze, 'rgb(256 256 256)')
         if (box.specs.type === BoxType.HP) {
-          drawCross(box.state.position, trapeze, color)
+          drawCross(box.state.position, shape, color)
           drawAmount(box)
         }
         if (box.specs.type === BoxType.AMMO) {
-          drawShells(geometryPosition, trapeze, color)
+          drawShells(trapeze, color)
         }
       }
     }
@@ -58,25 +59,25 @@ export function useBoxDrawer(
     drawerBase.drawPolygon(ctx.value!, polygon, color)
   }
 
-  function drawShells(position: BodyPosition, shape: TrapezeShape, color: string) {
-    const angle = position.angle
-    const shellRadius = shape.bottomRadius / 6
+  function drawShells(trapeze: Trapeze, color: string) {
+    const angle = trapeze.position.angle
+    const shellRadius = trapeze.shape.bottomRadius / 6
     const topShellShape: TrapezeShape = {
       name: ShapeNames.TRAPEZE,
       bottomRadius: shellRadius,
       topRadius: 0,
-      height: shape.height / 3
+      height: trapeze.shape.height / 3
     }
     const bottomShellShape = {
       name: ShapeNames.TRAPEZE,
       bottomRadius: shellRadius,
       topRadius: shellRadius,
-      height: shape.height / 2.2
+      height: trapeze.shape.height / 2.2
     }
-    drawShell(position, bottomShellShape, topShellShape, color)
-    drawShell({...BattleUtils.shiftedPosition(position, 3 * bottomShellShape.bottomRadius, angle), angle},
+    drawShell(trapeze.position, bottomShellShape, topShellShape, color)
+    drawShell({...BattleUtils.shiftedPosition(trapeze.position, 3 * bottomShellShape.bottomRadius, angle), angle},
         bottomShellShape, topShellShape, color)
-    drawShell({...BattleUtils.shiftedPosition(position, - 3 * bottomShellShape.bottomRadius, angle), angle},
+    drawShell({...BattleUtils.shiftedPosition(trapeze.position, - 3 * bottomShellShape.bottomRadius, angle), angle},
         bottomShellShape, topShellShape, color)
   }
 
@@ -85,8 +86,8 @@ export function useBoxDrawer(
     const margin = bottomShape.height / 6
     const bottomPosition = BattleUtils.shiftedPosition(position, margin, angle + Math.PI / 2)
     const topPosition = BattleUtils.shiftedPosition(position, 2 * margin + bottomShape.height, angle + Math.PI / 2)
-    drawerBase.drawTrapeze(ctx.value!, {...bottomPosition, angle}, bottomShape, color)
-    drawerBase.drawTrapeze(ctx.value!, {...topPosition, angle}, topShape, color)
+    drawerBase.drawTrapeze(ctx.value!, new Trapeze({...bottomPosition, angle}, bottomShape), color)
+    drawerBase.drawTrapeze(ctx.value!, new Trapeze({...topPosition, angle}, topShape), color)
   }
 
   function drawAmount(box: BoxModel) {

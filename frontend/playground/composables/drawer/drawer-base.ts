@@ -1,12 +1,11 @@
-import type {BodyPosition, Position, Size} from '@/playground/data/common'
-import type { Ref } from 'vue'
-import type {TrapezeShape} from "~/playground/data/shapes";
+import type {Position, Size} from '@/playground/data/common'
+import type {Ref} from 'vue'
 import {BattleUtils} from "~/playground/utils/battle-utils";
-import {Segment} from "~/playground/data/geometry";
+import {Segment, Trapeze} from "~/playground/data/geometry";
 
 export interface DrawerBase {
   drawSegment: (ctx: CanvasRenderingContext2D, segment: Segment, lineWidth: number, color?: string) => void
-  drawTrapeze: (ctx: CanvasRenderingContext2D, bottomCenter: BodyPosition, shape: TrapezeShape, color?: string) => void
+  drawTrapeze: (ctx: CanvasRenderingContext2D, trapeze: Trapeze, color?: string) => void
   drawPolygon: (ctx: CanvasRenderingContext2D, polygon: Position[], color?: string) => void
   transformPosition: (position: Position) => (Position)
   scale: (value: number) => number
@@ -27,15 +26,14 @@ export function useDrawerBase(scaleCoefficient: Ref<number>, canvasSize: Ref<Siz
     ctx.closePath()
   }
 
-  function drawTrapeze(ctx: CanvasRenderingContext2D, bottomCenter: BodyPosition,
-                       shape: TrapezeShape, color?: string) {
-    const angle = bottomCenter.angle
-    const topCenter = BattleUtils.shiftedPosition(bottomCenter, shape.height, angle + Math.PI / 2)
+  function drawTrapeze(ctx: CanvasRenderingContext2D, trapeze: Trapeze, color?: string) {
+    const angle = trapeze.position.angle
+    const topCenter = BattleUtils.shiftedPosition(trapeze.position, trapeze.shape.height, angle + Math.PI / 2)
     const polygon = [
-      BattleUtils.shiftedPosition(bottomCenter, -shape.bottomRadius, angle),
-      BattleUtils.shiftedPosition(bottomCenter, shape.bottomRadius, angle),
-      BattleUtils.shiftedPosition(topCenter, shape.topRadius, angle),
-      BattleUtils.shiftedPosition(topCenter, -shape.topRadius, angle)
+      BattleUtils.shiftedPosition(trapeze.position, -trapeze.shape.bottomRadius, angle),
+      BattleUtils.shiftedPosition(trapeze.position, trapeze.shape.bottomRadius, angle),
+      BattleUtils.shiftedPosition(topCenter, trapeze.shape.topRadius, angle),
+      BattleUtils.shiftedPosition(topCenter, -trapeze.shape.topRadius, angle)
     ]
     drawPolygon(ctx, polygon, color)
   }

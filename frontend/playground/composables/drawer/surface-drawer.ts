@@ -2,7 +2,7 @@ import type { DrawerBase } from '@/playground/composables/drawer/drawer-base'
 import type { Ref } from 'vue'
 import { useBattleStore } from '~/stores/battle'
 import type {SurfaceState} from "~/playground/data/state";
-import {Segment} from "~/playground/data/geometry";
+import {Segment, Trapeze} from "~/playground/data/geometry";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import type {BodyPosition} from "~/playground/data/common";
@@ -30,12 +30,12 @@ export function useSurfaceDrawer(
       }
       const length = BattleUtils.distance(segment.begin, segment.end)
       // yes, the width of the surface is the height of rectangle
-      drawerBase.drawTrapeze(ctx.value, geometryPosition, {
+      drawerBase.drawTrapeze(ctx.value, new Trapeze(geometryPosition, {
         name: ShapeNames.TRAPEZE,
         bottomRadius: length / 2,
         topRadius: length / 2,
         height: surface.width
-      }, 'rgb(256 256 256)')
+      }), 'rgb(256 256 256)')
     }
   }
 
