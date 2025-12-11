@@ -21,7 +21,7 @@ public class SurfaceState implements State, CompactSerializable {
 
     private Position end;
 
-    private double width = 0.05;
+    private double width = 0.1;
 
     private Trapeze trapeze;
 

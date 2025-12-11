@@ -18,12 +18,12 @@ import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
 import com.github.aadvorak.artilleryonline.battle.specs.VehicleSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
 import com.github.aadvorak.artilleryonline.battle.utils.GroundContactUtils;
+import com.github.aadvorak.artilleryonline.battle.utils.SurfaceContactUtils;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -136,14 +136,28 @@ public class VehicleCalculations extends CalculationsBase
     public void calculateAllGroundContacts(RoomModel roomModel) {
         var bodyPosition = BodyPosition.of(getGeometryPosition(), model.getState().getPosition().getAngle());
         var bodyPart = BodyPart.of(bodyPosition, model.getSpecs().getTurretShape());
-        setGroundContacts(GroundContactUtils.getGroundContacts(bodyPart, roomModel, false));
+        var contacts = new HashSet<>(GroundContactUtils.getGroundContacts(bodyPart, roomModel, false));
+        contacts.addAll(
+                SurfaceContactUtils.getContacts(bodyPart, roomModel, false).stream()
+                        .filter(cnt -> cnt.normal().getY() < 0)
+                        .collect(Collectors.toSet())
+        );
+        setGroundContacts(contacts);
+        calculateWheelGroundContact(leftWheel, roomModel);
+        calculateWheelGroundContact(rightWheel, roomModel);
+    }
+
+    private void calculateWheelGroundContact(WheelCalculations wheel, RoomModel roomModel) {
         var wheelRadius = model.getSpecs().getWheelRadius();
-        rightWheel.setGroundContact(GroundContactUtils.getGroundContact(
-                new Circle(rightWheel.getPosition(), wheelRadius),
-                roomModel, false));
-        leftWheel.setGroundContact(GroundContactUtils.getGroundContact(
-                new Circle(leftWheel.getPosition(), wheelRadius),
-                roomModel, false));
+        var circle = new Circle(wheel.getPosition(), wheelRadius);
+        var contact = GroundContactUtils.getGroundContact(circle, roomModel, false);
+        if (contact == null) {
+            contact = SurfaceContactUtils.getContacts(circle, roomModel, false).stream()
+                    .filter(cnt -> cnt.normal().getY() < 0)
+                    .sorted(Comparator.comparingDouble(Contact::depth))
+                    .findAny().orElse(null);
+        }
+        wheel.setGroundContact(contact);
     }
 
     private void calculateOnGround() {
