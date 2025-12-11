@@ -1,7 +1,8 @@
 import type {BodyPosition, Position, Vector, Velocity} from "~/playground/data/common";
-import type {TrapezeShape} from "~/playground/data/shapes";
+import {ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {VectorUtils} from "~/playground/utils/vector-utils";
+import type {SurfaceState} from "~/playground/data/state";
 
 export class Segment {
   begin: Position
@@ -132,6 +133,21 @@ export class Trapeze {
 
   private topCenter(): Position {
     return BattleUtils.shiftedPosition(this.position, this.shape.height, this.position.angle + Math.PI / 2)
+  }
+
+  static ofSurface(surface: SurfaceState): Trapeze {
+    const segment = new Segment(surface.begin, surface.end)
+    const geometryPosition: BodyPosition = {
+      ...VectorUtils.shifted(segment.center(), VectorUtils.multiply(segment.normal(), -surface.width / 2)),
+      angle: VectorUtils.angleFromTo(surface.begin, surface.end)
+    }
+    const length = BattleUtils.distance(segment.begin, segment.end)
+    return new Trapeze(geometryPosition, {
+      name: ShapeNames.TRAPEZE,
+      bottomRadius: length / 2,
+      topRadius: length / 2,
+      height: surface.width
+    })
   }
 }
 
