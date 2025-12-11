@@ -93,7 +93,7 @@ export interface SurfaceState {
 }
 
 export interface RoomState {
-  groundLine: number[]
+  groundLine?: number[]
   surfaces?: SurfaceState[]
 }
 

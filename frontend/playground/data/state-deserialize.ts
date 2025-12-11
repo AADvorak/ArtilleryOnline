@@ -91,7 +91,7 @@ export function deserializeSurfaceState(input: DeserializerInput): SurfaceState 
 }
 
 export function deserializeRoomState(input: DeserializerInput): RoomState {
-  const groundLine = DeserializerBase.readArray(input, DeserializerBase.readDouble)!
+  const groundLine = DeserializerBase.readArray(input, DeserializerBase.readDouble)
   const surfaces = DeserializerBase.readArray(input, deserializeSurfaceState)
   return {
     groundLine,

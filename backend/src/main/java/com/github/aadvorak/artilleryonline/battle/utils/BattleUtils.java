@@ -26,6 +26,10 @@ public class BattleUtils {
         return roomSpecs.getRightTop().getY() - roomSpecs.getLeftBottom().getY();
     }
 
+    public static int getGroundPointsNumber(RoomSpecs roomSpecs) {
+        return (int) Math.floor(getRoomWidth(roomSpecs) / roomSpecs.getStep());
+    }
+
     public static Position getFirstPointUnderGround(Segment segment, RoomModel roomModel) {
         var xMin = Math.min(segment.begin().getX(), segment.end().getX());
         var xMax = Math.max(segment.begin().getX(), segment.end().getX());
@@ -69,7 +73,7 @@ public class BattleUtils {
 
     public static List<Integer> getGroundIndexesBetween(double xMin, double xMax,  RoomModel roomModel) {
         var roomWidth = getRoomWidth(roomModel.getSpecs());
-        var groundPointsNumber = roomModel.getState().getGroundLine().size();
+        var groundPointsNumber = getGroundPointsNumber(roomModel.getSpecs());
         var minGroundIndex = (int) Math.ceil((double) groundPointsNumber * xMin / roomWidth);
         var maxGroundIndex = (int) Math.floor((double) groundPointsNumber * xMax / roomWidth);
         if (minGroundIndex < 0) {
@@ -90,7 +94,7 @@ public class BattleUtils {
 
     public static Position getNearestGroundPosition(double x, RoomModel roomModel) {
         var roomWidth = getRoomWidth(roomModel.getSpecs());
-        var groundPointsNumber = roomModel.getState().getGroundLine().size();
+        var groundPointsNumber = getGroundPointsNumber(roomModel.getSpecs());
         var objectPositionIndex = (double) groundPointsNumber * x / roomWidth;
         var nearestGroundIndex = (int) Math.floor(objectPositionIndex);
         if (nearestGroundIndex < 0) {
@@ -103,17 +107,19 @@ public class BattleUtils {
     }
 
     public static Position getGroundPosition(int index, RoomModel roomModel) {
+        var groundPointsNumber = getGroundPointsNumber(roomModel.getSpecs());
+        if (index < 0 || index >= groundPointsNumber) {
+            return null;
+        }
+        var position = new Position()
+                .setX((double) index * roomModel.getSpecs().getStep());
         var groundLine = roomModel.getState().getGroundLine();
-        if (index < 0 || index >= groundLine.size()) {
-            return null;
+        if (groundLine == null) {
+            position.setY(roomModel.getSpecs().getLeftBottom().getX());
+        } else {
+            position.setY(groundLine.get(index));
         }
-        var y = groundLine.get(index);
-        if (y == null) {
-            return null;
-        }
-        return new Position()
-                .setX((double) index * roomModel.getSpecs().getStep())
-                .setY(y);
+        return position;
     }
 
     public static double generateRandom(double min, double max) {

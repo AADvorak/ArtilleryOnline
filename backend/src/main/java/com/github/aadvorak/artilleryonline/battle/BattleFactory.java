@@ -75,7 +75,7 @@ public class BattleFactory {
                 ? RoomSpecsPreset.NO_GRAVITY.getSpecs()
                 : RoomSpecsPreset.DEFAULT.getSpecs();
         var state = new RoomState()
-                .setGroundLine(createGroundLine(specs))
+                .setGroundLine(applicationSettings.isCreateSurfaces() ? null : createGroundLine(specs))
                 .setSurfaces(applicationSettings.isCreateSurfaces() ? createSurfaces(specs) : null);
         var config = new RoomConfig()
                 .setBackground(BattleUtils.generateRandom(1, 7))

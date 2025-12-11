@@ -13,6 +13,10 @@ export const BattleUtils = {
     return roomSpecs.rightTop.y - roomSpecs.leftBottom.y
   },
 
+  getGroundPointsNumber(roomSpecs: RoomSpecs) {
+    return Math.floor(this.getRoomWidth(roomSpecs) / roomSpecs.step)
+  },
+
   getGroundSegmentsBetween(xMin: number, xMax: number, roomModel: RoomModel): Segment[] {
     const positions: Position[] = this.getGroundIndexesBetween(xMin, xMax, roomModel)
         .map(index => this.getGroundPosition(index, roomModel))
@@ -28,7 +32,7 @@ export const BattleUtils = {
 
   getGroundIndexesBetween(xMin: number, xMax: number, roomModel: RoomModel): number[] {
     const roomWidth = this.getRoomWidth(roomModel.specs)
-    const groundPointsNumber = roomModel.state.groundLine.length
+    const groundPointsNumber = this.getGroundPointsNumber(roomModel.specs)
     let minGroundIndex = Math.ceil((groundPointsNumber * xMin) / roomWidth)
     let maxGroundIndex = Math.floor((groundPointsNumber * xMax) / roomWidth)
 
@@ -49,7 +53,7 @@ export const BattleUtils = {
 
   getNearestGroundPosition(x: number, roomModel: RoomModel) {
     const roomWidth = this.getRoomWidth(roomModel.specs)
-    const groundPointsNumber = roomModel.state.groundLine.length
+    const groundPointsNumber = this.getGroundPointsNumber(roomModel.specs)
     const objectPositionIndex = (groundPointsNumber * x) / roomWidth
     let nearestGroundIndex = Math.floor(objectPositionIndex)
 
@@ -64,9 +68,12 @@ export const BattleUtils = {
   },
 
   getGroundPosition(index: number, roomModel: RoomModel): Position {
-    return {
-      x: index * roomModel.specs.step,
-      y: roomModel.state.groundLine[index]!
+    const groundLine = roomModel.state.groundLine
+    const x = index * roomModel.specs.step
+    if (groundLine) {
+      return {x, y: groundLine[index]!}
+    } else {
+      return {x, y: roomModel.specs.leftBottom.y}
     }
   },
 

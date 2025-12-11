@@ -160,6 +160,10 @@ public class DamageProcessor {
     }
 
     private static void processGroundDamage(Hit hit, BattleModel battleModel) {
+        var groundLine = battleModel.getRoom().getState().getGroundLine();
+        if (groundLine == null) {
+            return;
+        }
         var damageIndexes = BattleUtils.getGroundIndexesBetween(hit.position().getX() - hit.radius(),
                 hit.position().getX() + hit.radius(), battleModel.getRoom());
         if (damageIndexes.isEmpty()) {
@@ -178,7 +182,7 @@ public class DamageProcessor {
                 groundY -= diffY;
             }
             groundY = groundY > 0 ? groundY : 0;
-            battleModel.getRoom().getState().getGroundLine().set(index, groundY);
+            groundLine.set(index, groundY);
         }
         // apply smooth
         var smoothSizeCoefficient = 1.3;
@@ -187,12 +191,12 @@ public class DamageProcessor {
                 hit.position().getX() + hit.radius() * smoothSizeCoefficient,
                 battleModel.getRoom()
         );
-        BattleUtils.gaussianFilter(battleModel.getRoom().getState().getGroundLine(), smoothIndexes);
+        BattleUtils.gaussianFilter(groundLine, smoothIndexes);
         // create update
         var roomStateUpdate = new RoomStateUpdate().setBegin(smoothIndexes.get(0));
         for (var index : smoothIndexes) {
             roomStateUpdate.getGroundLinePart()
-                    .add(battleModel.getRoom().getState().getGroundLine().get(index));
+                    .add(groundLine.get(index));
         }
         battleModel.getUpdates().addRoomStateUpdate(roomStateUpdate);
     }
