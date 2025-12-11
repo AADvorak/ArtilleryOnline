@@ -110,22 +110,30 @@ public class BattleFactory {
     }
 
     private List<SurfaceState> createSurfaces(RoomSpecs roomSpecs) {
-        var halfLength = 2;
-        var y = BattleUtils.getRoomHeight(roomSpecs) * 0.7;
-        var x = BattleUtils.getRoomWidth(roomSpecs) / 2;
         var surfaces = new ArrayList<SurfaceState>();
-        surfaces.add(new SurfaceState()
-                .setBegin(new Position().setX(x - halfLength).setY(y))
-                .setEnd(new Position().setX(x + halfLength).setY(y))
-        );
-        surfaces.add(new SurfaceState()
-                .setBegin(new Position().setX(x - 4 * halfLength).setY(y - halfLength))
-                .setEnd(new Position().setX(x - 2 * halfLength).setY(y + halfLength))
-        );
-        surfaces.add(new SurfaceState()
-                .setBegin(new Position().setX(x + 4 * halfLength).setY(y - halfLength))
-                .setEnd(new Position().setX(x + 2 * halfLength).setY(y + halfLength))
-        );
+        var levelsNumber = 6;
+        var roomHeight = BattleUtils.getRoomHeight(roomSpecs);
+        var roomWidth = BattleUtils.getRoomWidth(roomSpecs);
+        var xMin = roomSpecs.getLeftBottom().getX();
+        var xMax = roomSpecs.getRightTop().getX();
+        var yMax = roomSpecs.getRightTop().getY();
+        var levelHeight = roomHeight / levelsNumber;
+        for (var i = 1; i < levelsNumber; i++) {
+            var y = yMax - levelHeight * i;
+            var xLeft = xMin + BattleUtils.generateRandom(0.7, 1.0) * roomWidth / 3;
+            surfaces.add(new SurfaceState()
+                    .setBegin(new Position().setX(xMin).setY(y))
+                    .setEnd(new Position().setX(xLeft).setY(y)));
+            var xRight = xMax - BattleUtils.generateRandom(0.7, 1.0) * roomWidth / 3;
+            surfaces.add(new SurfaceState()
+                    .setBegin(new Position().setX(xMax).setY(y))
+                    .setEnd(new Position().setX(xRight).setY(y)));
+            if (i < levelsNumber - 1) {
+                surfaces.add(new SurfaceState()
+                        .setBegin(new Position().setX(i % 2 == 0 ? xRight : xLeft).setY(y))
+                        .setEnd(new Position().setX(xMin + roomWidth / 2).setY(y - levelHeight)));
+            }
+        }
         return surfaces;
     }
 
