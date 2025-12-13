@@ -132,5 +132,12 @@ export const VectorUtils = {
       x: Math.cos(angle),
       y: Math.sin(angle)
     }
+  },
+
+  inverted(vector: Vector): Vector {
+    return {
+      x: -vector.x,
+      y: -vector.y
+    }
   }
 }

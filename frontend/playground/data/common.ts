@@ -128,44 +128,49 @@ export class Contact {
     this.description = description
   }
 
+  inverted() {
+    return new Contact(this.depth, this.angle - Math.PI, VectorUtils.inverted(this.normal),
+        this.position, this.description)
+  }
+
   static withAngle(depth: number, angle: number, position: Position, description?: string): Contact | null {
-    return this.checkDepth({
-      depth,
-      angle,
-      normal: VectorUtils.normal(angle),
-      position,
-      description
-    })
+    return this.checkDepth(new Contact(
+        depth,
+        angle,
+        VectorUtils.normal(angle),
+        position,
+        description
+    ))
   }
 
   static withNormal(depth: number, normal: Vector, position: Position, description?: string): Contact | null {
-    return this.checkDepth({
-      depth,
-      angle: VectorUtils.getAngle(normal) + Math.PI / 2,
-      normal,
-      position,
-      description
-    })
+    return this.checkDepth(new Contact(
+        depth,
+        VectorUtils.getAngle(normal) + Math.PI / 2,
+        normal,
+        position,
+        description
+    ))
   }
 
   static withAngleUncheckedDepth(depth: number, angle: number, position: Position, description?: string): Contact {
-    return {
-      depth,
-      angle,
-      normal: VectorUtils.normal(angle),
-      position,
-      description
-    }
+    return new Contact(
+        depth,
+        angle,
+        VectorUtils.normal(angle),
+        position,
+        description
+    )
   }
 
   static withNormalUncheckedDepth(depth: number, normal: Vector, position: Position, description?: string): Contact {
-    return {
-      depth,
-      angle: VectorUtils.getAngle(normal) + Math.PI / 2,
-      normal,
-      position,
-      description
-    }
+    return new Contact(
+        depth,
+        VectorUtils.getAngle(normal) + Math.PI / 2,
+        normal,
+        position,
+        description
+    )
   }
 
   static checkDepth(contact: Contact): Contact | null {
