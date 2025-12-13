@@ -1,8 +1,34 @@
 import type {BodyPosition, Position, Vector, Velocity} from "~/playground/data/common";
-import {ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
+import {
+  type CircleShape,
+  type HalfCircleShape,
+  type Shape,
+  ShapeNames,
+  type TrapezeShape
+} from "~/playground/data/shapes";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import type {SurfaceState} from "~/playground/data/state";
+
+export class Boundaries {
+  constructor(
+      readonly xMin: number,
+      readonly xMax: number,
+      readonly yMin: number,
+      readonly yMax: number
+  ) {}
+
+  noOverlap(boundaries: Boundaries): boolean {
+    return this.xMax < boundaries.xMin || this.xMin > boundaries.xMax
+        || this.yMax < boundaries.yMin || this.yMin > boundaries.yMax
+  }
+}
+
+export interface BodyPart {
+  getPosition: () => BodyPosition
+  getShape: () => Shape
+  getBoundaries: () => Boundaries
+}
 
 export class Segment {
   begin: Position
@@ -39,7 +65,7 @@ export class Segment {
   }
 }
 
-export class Circle {
+export class Circle implements BodyPart {
   center: Position
   radius: number
 
@@ -47,9 +73,36 @@ export class Circle {
     this.center = center
     this.radius = radius
   }
+
+  getPosition(): BodyPosition {
+    return {
+      ...this.center,
+      angle: 0
+    }
+  }
+
+  getShape(): CircleShape {
+    return {
+      name: ShapeNames.CIRCLE,
+      radius: this.radius
+    }
+  }
+
+  getBoundaries(): Boundaries {
+    return new Boundaries(
+        this.center.x - this.radius,
+        this.center.x + this.radius,
+        this.center.y - this.radius,
+        this.center.y + this.radius
+    )
+  }
+
+  static of(position: BodyPosition, shape: CircleShape): Circle {
+    return new Circle(position, shape.radius)
+  }
 }
 
-export class HalfCircle {
+export class HalfCircle implements BodyPart {
   center: Position
   radius: number
   angle: number
@@ -58,6 +111,29 @@ export class HalfCircle {
     this.center = center
     this.radius = radius
     this.angle = angle
+  }
+
+  getPosition(): BodyPosition {
+    return {
+      ...this.center,
+      angle: this.angle
+    }
+  }
+
+  getShape(): HalfCircleShape {
+    return {
+      name: ShapeNames.HALF_CIRCLE,
+      radius: this.radius
+    }
+  }
+
+  getBoundaries(): Boundaries {
+    return new Boundaries(
+        this.center.x - this.radius,
+        this.center.x + this.radius,
+        this.center.y - this.radius,
+        this.center.y + this.radius
+    )
   }
 
   chord(): Segment {
@@ -74,6 +150,14 @@ export class HalfCircle {
     return new Segment(start, end)
   }
 
+  bottomRight(): Position {
+    return BattleUtils.shiftedPosition(this.center, this.radius, this.angle)
+  }
+
+  bottomLeft(): Position {
+    return BattleUtils.shiftedPosition(this.center, -this.radius, this.angle)
+  }
+
   circle(): Circle {
     return new Circle(this.center, this.radius)
   }
@@ -83,13 +167,31 @@ export class HalfCircle {
   }
 }
 
-export class Trapeze {
+export class Trapeze implements BodyPart {
   position: BodyPosition
   shape: TrapezeShape
 
   constructor(position: BodyPosition, shape: TrapezeShape) {
     this.position = position
     this.shape = shape
+  }
+
+  getPosition(): BodyPosition {
+    return this.position
+  }
+
+  getShape(): TrapezeShape {
+    return this.shape
+  }
+
+  getBoundaries(): Boundaries {
+    const maxDistance = this.maxDistanceFromCenter()
+    return new Boundaries(
+        this.position.x - maxDistance,
+        this.position.x + maxDistance,
+        this.position.y - maxDistance,
+        this.position.y + maxDistance
+    )
   }
 
   bottomRight(): Position {
