@@ -1,5 +1,7 @@
 export const controls = {
   title: 'settings / controls',
+  keyboardTitle: 'settings / controls / keyboard',
+  keyboard: 'Keyboard',
   moveLeft: 'Move left',
   moveRight: 'Move right',
   autoMoveLeft: 'Auto move left',

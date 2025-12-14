@@ -1,5 +1,7 @@
 export const controls = {
   title: 'настройки / управление',
+  keyboardTitle: 'настройки / управление / клавиатура',
+  keyboard: 'Клавиатура',
   moveLeft: 'Движение влево',
   moveRight: 'Движение вправо',
   autoMoveLeft: 'Автоматическое движение влево',

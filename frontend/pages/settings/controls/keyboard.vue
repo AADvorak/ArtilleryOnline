@@ -36,7 +36,7 @@ function onEditEnd(newControl: UserSetting) {
 }
 
 function back() {
-  router.push('/settings')
+  router.push('/settings/controls')
 }
 </script>
 
@@ -44,7 +44,7 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: {{ t('controls.title') }}
+        Artillery online: {{ t('controls.keyboardTitle') }}
       </v-card-title>
       <v-card-text>
         <v-table class="mb-4" density="compact">
