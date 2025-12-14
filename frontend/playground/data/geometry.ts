@@ -300,3 +300,28 @@ export class VectorProjections {
     return -this.normal * Math.cos(this.angle) + this.tangential * Math.sin(this.angle)
   }
 }
+
+export class Polygon {
+  private sidesMap: Map<Segment, Segment>
+
+  constructor(trapeze: Trapeze) {
+    const bottom = trapeze.bottom()
+    const right = trapeze.right()
+    const top = trapeze.top()
+    const left = trapeze.left()
+
+    this.sidesMap = new Map()
+    this.sidesMap.set(bottom, right)
+    this.sidesMap.set(right, top)
+    this.sidesMap.set(top, left)
+    this.sidesMap.set(left, bottom)
+  }
+
+  public sides(): Set<Segment> {
+    return new Set(this.sidesMap.keys())
+  }
+
+  public next(segment: Segment): Segment | undefined {
+    return this.sidesMap.get(segment)
+  }
+}
