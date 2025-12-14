@@ -7,4 +7,5 @@ export const AppearancesNames = {
   GROUND_TEXTURE_BACKGROUND: 'showGroundTextureAndBackground',
   SHOW_CONTROL_BUTTONS: 'showControlButtons',
   BATTLEFIELD_ALIGNMENT: 'battlefieldAlignment',
+  CONTROL_BUTTONS_ALIGNMENT: 'controlButtonsAlignment',
 }
