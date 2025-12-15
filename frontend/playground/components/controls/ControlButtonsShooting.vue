@@ -4,10 +4,12 @@ import IconBtn from "~/components/icon-btn.vue";
 import {useI18n} from "vue-i18n";
 import {useCommandsSender} from "~/playground/composables/commands-sender";
 import {Command} from "~/playground/data/command";
+import type {VerticalTooltipLocation} from "~/data/model";
 
 const props = defineProps<{
   mouseEvents: boolean
   showTooltip: boolean
+  tooltipLocation?: VerticalTooltipLocation
 }>()
 
 const {t} = useI18n()
@@ -33,6 +35,7 @@ function releaseTrigger() {
       :icon="mdiTarget"
       :tooltip="t('controls.shoot')"
       :show-tooltip="props.showTooltip"
+      :tooltip-location="props.tooltipLocation"
       color="error"
       @touchstart="pushTrigger"
       @touchend="releaseTrigger"

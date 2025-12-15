@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import {VerticalTooltipLocation} from "~/data/model";
 
+const WIDE_SIZE = '180px'
+const NARROW_SIZE = '30px'
+
 const props = defineProps<{
   tooltip: string
   location?: VerticalTooltipLocation
   show?: boolean
 }>()
 
-const location = computed(() => props.location || VerticalTooltipLocation.TOP)
-
-const textClass = computed(() => `vertical-tooltip-${location.value}`)
+const textClass = computed(() => props.location ? `vertical-tooltip-${props.location}` : '')
 </script>
 
 <template>
@@ -19,9 +20,9 @@ const textClass = computed(() => `vertical-tooltip-${location.value}`)
       :open-on-click="false"
       :open-on-hover="false"
       :open-on-focus="false"
-      :location="location"
-      width="30px"
-      height="180px"
+      :location="props.location"
+      :width="props.location ? NARROW_SIZE : WIDE_SIZE"
+      :height="props.location ? WIDE_SIZE : NARROW_SIZE"
   >
     <div :class="textClass">{{ props.tooltip }}</div>
   </v-tooltip>

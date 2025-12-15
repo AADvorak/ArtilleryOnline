@@ -5,10 +5,12 @@ import {useI18n} from "vue-i18n";
 import {useCommandsSender} from "~/playground/composables/commands-sender";
 import {Command} from "~/playground/data/command";
 import {MovingDirection} from "~/playground/data/common";
+import type {VerticalTooltipLocation} from "~/data/model";
 
 const props = defineProps<{
   mouseEvents: boolean
   showTooltip: boolean
+  tooltipLocation?: VerticalTooltipLocation
 }>()
 
 const {t} = useI18n()
@@ -48,8 +50,7 @@ function stopMoveLeft() {
   <icon-btn
       large prevent-show-tooltip
       :icon="mdiArrowLeftBox"
-      :tooltip="t('controls.moveLeft')"
-      :show-tooltip="props.showTooltip"
+      :tooltip="t('controls.move')"
       @touchstart="startMoveLeft"
       @touchend="stopMoveLeft"
       @mousedown="() => props.mouseEvents && startMoveLeft()"
@@ -58,8 +59,9 @@ function stopMoveLeft() {
   <icon-btn
       large prevent-show-tooltip
       :icon="mdiArrowRightBox"
-      :tooltip="t('controls.moveRight')"
+      :tooltip="t('controls.move')"
       :show-tooltip="props.showTooltip"
+      :tooltip-location="props.tooltipLocation"
       @touchstart="startMoveRight"
       @touchend="stopMoveRight"
       @mousedown="() => props.mouseEvents && startMoveRight()"

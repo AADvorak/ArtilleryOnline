@@ -64,10 +64,12 @@ const rightToolbarClass = computed(() => {
       <ControlButtonsMoving
           :mouse-events="props.mouseEvents"
           :show-tooltip="showTooltip"
+          :tooltip-location="VerticalTooltipLocation.TOP"
       />
       <ControlButtonsShooting
           :mouse-events="props.mouseEvents"
           :show-tooltip="showTooltip"
+          :tooltip-location="VerticalTooltipLocation.TOP"
       />
     </div>
   </v-toolbar>
@@ -93,14 +95,17 @@ const rightToolbarClass = computed(() => {
       <ControlButtonsShooting
           :mouse-events="props.mouseEvents"
           :show-tooltip="showTooltip"
+          :tooltip-location="VerticalTooltipLocation.TOP"
       />
       <ControlButtonsJet
           :mouse-events="props.mouseEvents"
           :show-tooltip="showTooltip"
+          :tooltip-location="VerticalTooltipLocation.TOP"
       />
       <ControlButtonsGunRotating
           :mouse-events="props.mouseEvents"
           :show-tooltip="showTooltip"
+          :tooltip-location="VerticalTooltipLocation.TOP"
       />
     </div>
   </v-toolbar>

@@ -5,10 +5,12 @@ import {useI18n} from "vue-i18n";
 import {useCommandsSender} from "~/playground/composables/commands-sender";
 import {Command} from "~/playground/data/command";
 import {MovingDirection} from "~/playground/data/common";
+import type {VerticalTooltipLocation} from "~/data/model";
 
 const props = defineProps<{
   mouseEvents: boolean
   showTooltip: boolean
+  tooltipLocation?: VerticalTooltipLocation
 }>()
 
 const {t} = useI18n()
@@ -48,8 +50,9 @@ function stopRotateGunLeft() {
   <icon-btn
       large prevent-show-tooltip
       :icon="mdiArrowLeftCircle"
-      :tooltip="t('controls.rotateGunLeft')"
+      :tooltip="t('controls.rotateGun')"
       :show-tooltip="props.showTooltip"
+      :tooltip-location="props.tooltipLocation"
       @touchstart="startRotateGunLeft"
       @touchend="stopRotateGunLeft"
       @mousedown="() => props.mouseEvents && startRotateGunLeft()"
@@ -58,8 +61,7 @@ function stopRotateGunLeft() {
   <icon-btn
       large prevent-show-tooltip
       :icon="mdiArrowRightCircle"
-      :tooltip="t('controls.rotateGunRight')"
-      :show-tooltip="props.showTooltip"
+      :tooltip="t('controls.rotateGun')"
       @touchstart="startRotateGunRight"
       @touchend="stopRotateGunRight"
       @mousedown="() => props.mouseEvents && startRotateGunRight()"
