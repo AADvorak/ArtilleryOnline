@@ -13,7 +13,7 @@ import {usePlayer} from "~/playground/audio/player";
 import {useRoomStore} from "~/stores/room";
 import {useBattleStore} from "~/stores/battle";
 import {useRouter} from "#app";
-import ControlButtons from "~/playground/components/ControlButtons.vue";
+import ControlButtons from "~/playground/components/controls/ControlButtons.vue";
 import {AppearancesNames} from "~/dictionary/appearances-names";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {useColliderKeyboardListener} from "~/playground/composables/collider-keyboard-listener";
