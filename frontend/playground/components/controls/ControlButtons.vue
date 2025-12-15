@@ -21,6 +21,8 @@ const showTooltip = computed(() => globalStateStore.showHelp === VerticalTooltip
 const controlButtonsAlignment = computed(() =>
     userSettingsStore.appearancesOrDefaultsNameValueMapping[AppearancesNames.CONTROL_BUTTONS_ALIGNMENT])
 
+const isVertical = computed(() => controlButtonsAlignment.value === ControlButtonsAlignments.CENTER_VERTICAL)
+
 const leftToolbarClass = computed(() => {
   switch (controlButtonsAlignment.value) {
     case ControlButtonsAlignments.BOTTOM_HORIZONTAL:
@@ -42,70 +44,62 @@ const rightToolbarClass = computed(() => {
       return ''
   }
 })
-
-const innerToolbarClass = computed(() => {
-  switch (controlButtonsAlignment.value) {
-    case ControlButtonsAlignments.CENTER_VERTICAL:
-      return 'd-flex flex-column align-center'
-    default:
-      return ''
-  }
-})
-
-const leftButtonClass = computed(() => {
-  switch (controlButtonsAlignment.value) {
-    case ControlButtonsAlignments.BOTTOM_HORIZONTAL:
-      return 'mr-2'
-    case ControlButtonsAlignments.CENTER_VERTICAL:
-      return 'mb-2'
-    default:
-      return ''
-  }
-})
-
-const rightButtonClass = computed(() => {
-  switch (controlButtonsAlignment.value) {
-    case ControlButtonsAlignments.BOTTOM_HORIZONTAL:
-      return 'ml-2'
-    case ControlButtonsAlignments.CENTER_VERTICAL:
-      return 'mb-2'
-    default:
-      return ''
-  }
-})
 </script>
 
 <template>
   <v-toolbar absolute :class="leftToolbarClass" color="transparent">
-    <div :class="innerToolbarClass">
+    <div v-if="isVertical" class="d-flex flex-column align-center">
+      <ControlButtonsShooting
+          :mouse-events="props.mouseEvents"
+          :show-tooltip="showTooltip"
+      />
+      <div>
+        <ControlButtonsMoving
+            :mouse-events="props.mouseEvents"
+            :show-tooltip="showTooltip"
+        />
+      </div>
+    </div>
+    <div v-else>
       <ControlButtonsMoving
           :mouse-events="props.mouseEvents"
-          :button-class="leftButtonClass"
           :show-tooltip="showTooltip"
       />
       <ControlButtonsShooting
           :mouse-events="props.mouseEvents"
-          :button-class="String('')"
           :show-tooltip="showTooltip"
       />
     </div>
   </v-toolbar>
 
   <v-toolbar absolute :class="rightToolbarClass" color="transparent">
-    <div :class="innerToolbarClass">
+    <div v-if="isVertical" class="d-flex flex-column align-center">
       <ControlButtonsShooting
           :mouse-events="props.mouseEvents"
-          :button-class="rightButtonClass"
+          :show-tooltip="showTooltip"
+      />
+      <div>
+        <ControlButtonsGunRotating
+            :mouse-events="props.mouseEvents"
+            :show-tooltip="showTooltip"
+        />
+      </div>
+      <ControlButtonsJet
+          :mouse-events="props.mouseEvents"
+          :show-tooltip="showTooltip"
+      />
+    </div>
+    <div v-else>
+      <ControlButtonsShooting
+          :mouse-events="props.mouseEvents"
           :show-tooltip="showTooltip"
       />
       <ControlButtonsJet
           :mouse-events="props.mouseEvents"
-          :button-class="rightButtonClass"
           :show-tooltip="showTooltip"
       />
       <ControlButtonsGunRotating
           :mouse-events="props.mouseEvents"
-          :button-class="rightButtonClass"
           :show-tooltip="showTooltip"
       />
     </div>

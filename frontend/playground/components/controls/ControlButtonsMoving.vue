@@ -8,7 +8,6 @@ import {MovingDirection} from "~/playground/data/common";
 
 const props = defineProps<{
   mouseEvents: boolean
-  buttonClass: string
   showTooltip: boolean
 }>()
 
@@ -48,7 +47,6 @@ function stopMoveLeft() {
 <template>
   <icon-btn
       large prevent-show-tooltip
-      :class="props.buttonClass"
       :icon="mdiArrowLeftBox"
       :tooltip="t('controls.moveLeft')"
       :show-tooltip="props.showTooltip"
@@ -59,7 +57,6 @@ function stopMoveLeft() {
   />
   <icon-btn
       large prevent-show-tooltip
-      :class="props.buttonClass"
       :icon="mdiArrowRightBox"
       :tooltip="t('controls.moveRight')"
       :show-tooltip="props.showTooltip"

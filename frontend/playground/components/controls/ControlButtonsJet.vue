@@ -7,7 +7,6 @@ import {Command} from "~/playground/data/command";
 
 const props = defineProps<{
   mouseEvents: boolean
-  buttonClass: string
   showTooltip: boolean
 }>()
 
@@ -31,7 +30,6 @@ function jetOff() {
 <template>
   <icon-btn
       large prevent-show-tooltip
-      :class="props.buttonClass"
       :icon="mdiTurbine"
       :tooltip="t('controls.activateJet')"
       :show-tooltip="props.showTooltip"

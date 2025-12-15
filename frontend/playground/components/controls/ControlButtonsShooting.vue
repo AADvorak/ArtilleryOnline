@@ -7,7 +7,6 @@ import {Command} from "~/playground/data/command";
 
 const props = defineProps<{
   mouseEvents: boolean
-  buttonClass: string
   showTooltip: boolean
 }>()
 
@@ -31,7 +30,6 @@ function releaseTrigger() {
 <template>
   <icon-btn
       large prevent-show-tooltip
-      :class="props.buttonClass"
       :icon="mdiTarget"
       :tooltip="t('controls.shoot')"
       :show-tooltip="props.showTooltip"
