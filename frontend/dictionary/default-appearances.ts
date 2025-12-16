@@ -1,5 +1,6 @@
 import {BattlefieldAlignments} from "~/dictionary/battlefield-alignments";
 import {ControlButtonsAlignments} from "~/dictionary/control-buttons-alignments";
+import {ControlsTypes} from "~/dictionary/controls-types";
 
 export const DefaultAppearances = [
   {name: 'language', value: 'en'},
@@ -11,4 +12,5 @@ export const DefaultAppearances = [
   {name: 'showControlButtons', value: '0', description: 'Show control buttons'},
   {name: 'battlefieldAlignment', value: BattlefieldAlignments.BY_SCREEN_SIZE, description: 'Battlefield alignment'},
   {name: 'controlButtonsAlignment', value: ControlButtonsAlignments.BOTTOM_HORIZONTAL},
+  {name: 'controlsType', value: ControlsTypes.JOYSTICKS},
 ]

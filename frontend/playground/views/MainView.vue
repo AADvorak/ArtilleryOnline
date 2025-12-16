@@ -18,6 +18,8 @@ import {AppearancesNames} from "~/dictionary/appearances-names";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {useColliderKeyboardListener} from "~/playground/composables/collider-keyboard-listener";
 import {BattleType} from "~/playground/data/battle";
+import ControlJoysticks from "~/playground/components/controls/ControlJoysticks.vue";
+import {ControlsTypes} from "~/dictionary/controls-types";
 
 const player = usePlayer()
 const battleUpdater = useBattleUpdater(player)
@@ -27,19 +29,22 @@ const keyboardListener = useKeyboardListener(commandsSender)
 const colliderKeyboardListener = useColliderKeyboardListener(commandsSender)
 const battleStore = useBattleStore()
 const roomStore = useRoomStore()
+const userSettingsStore = useUserSettingsStore()
 const router = useRouter()
 const battleProcessor = useBattleProcessor()
 
 const isMobileBrowser = ref<boolean>(false)
 
 const isClientProcessing = computed(() => useSettingsStore().settings?.clientProcessing)
-const showControlButtons = computed(() => {
-  return isMobileBrowser.value || useUserSettingsStore()
+const showScreenControls = computed(() => {
+  return isMobileBrowser.value || userSettingsStore
       .appearancesOrDefaultsNameValueMapping[AppearancesNames.SHOW_CONTROL_BUTTONS] === '1'
 })
-const isCollider = computed(() => {
-  return battleStore.battle?.type === BattleType.COLLIDER
-})
+const screenControlsType = computed(() => userSettingsStore
+    .appearancesOrDefaultsNameValueMapping[AppearancesNames.CONTROLS_TYPE])
+const isButtons = computed(() => screenControlsType.value === ControlsTypes.BUTTONS)
+const isJoysticks = computed(() => screenControlsType.value === ControlsTypes.JOYSTICKS)
+const isCollider = computed(() => battleStore.battle?.type === BattleType.COLLIDER)
 
 watch(() => battleStore.battle, value => {
   if (!value) {
@@ -69,9 +74,12 @@ function calculateIsMobileBrowser() {
 </script>
 
 <template>
-  <BattleHeader :show-control-buttons="showControlButtons" />
+  <BattleHeader :show-control-buttons="showScreenControls" />
   <BattleCanvas />
-  <ControlButtons v-if="showControlButtons" :mouse-events="!isMobileBrowser" />
+  <template v-if="showScreenControls">
+    <ControlButtons v-if="isButtons" :mouse-events="!isMobileBrowser" />
+    <ControlJoysticks v-if="isJoysticks" />
+  </template>
   <FinishBattleDialog />
   <connection-lost-dialog />
 </template>

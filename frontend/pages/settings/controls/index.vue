@@ -9,8 +9,8 @@ function toKeyboard() {
   router.push('/settings/controls/keyboard')
 }
 
-function toButtons() {
-  router.push('/settings/controls/buttons')
+function toScreenControls() {
+  router.push('/settings/controls/screen')
 }
 
 function back() {
@@ -26,7 +26,7 @@ function back() {
       </v-card-title>
       <v-card-text>
         <v-btn class="mb-4" width="100%" color="secondary" @click="toKeyboard">{{ t('controls.keyboard') }}</v-btn>
-        <v-btn class="mb-4" width="100%" color="secondary" @click="toButtons">{{ t('controls.buttons') }}</v-btn>
+        <v-btn class="mb-4" width="100%" color="secondary" @click="toScreenControls">{{ t('controls.screenControls') }}</v-btn>
         <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>

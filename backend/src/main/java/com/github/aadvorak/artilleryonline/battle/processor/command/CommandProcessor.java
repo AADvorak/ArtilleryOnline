@@ -23,7 +23,7 @@ public class CommandProcessor {
         if (Command.STOP_MOVING.equals(userCommand.getCommand())) {
             var direction = userCommand.getParams().getDirection();
             var vehicleDirection = userVehicle.getState().getMovingDirection();
-            if (direction != null && direction.equals(vehicleDirection)) {
+            if (direction == null || direction.equals(vehicleDirection)) {
                 userVehicle.getState().setMovingDirection(null);
                 userVehicle.getUpdate().setUpdated();
             }
@@ -46,7 +46,7 @@ public class CommandProcessor {
         if (Command.STOP_GUN_ROTATING.equals(userCommand.getCommand())) {
             var direction = userCommand.getParams().getDirection();
             var vehicleDirection = userVehicle.getState().getGunState().getRotatingDirection();
-            if (direction != null && direction.equals(vehicleDirection)) {
+            if (direction == null || direction.equals(vehicleDirection)) {
                 userVehicle.getState().getGunState().setRotatingDirection(null);
                 userVehicle.getUpdate().setUpdated();
             }
