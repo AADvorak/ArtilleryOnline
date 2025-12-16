@@ -1,15 +1,22 @@
 <script setup lang="ts">
-import { Joystick } from "@rbuljan/gamepad";
+import {Joystick} from "@rbuljan/gamepad";
 import {useCommandsSender} from "~/playground/composables/commands-sender";
 import {Command} from "~/playground/data/command";
 import {MovingDirection} from "~/playground/data/common";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
 import {ControlButtonsAlignments} from "~/dictionary/control-buttons-alignments";
+import {useGlobalStateStore} from "~/stores/global-state";
+import {VerticalTooltipLocation} from "~/data/model";
+import VerticalTooltip from "~/components/vertical-tooltip.vue";
+import {useI18n} from "vue-i18n";
 
 const THRESHOLD = 0.3
 
+const {t} = useI18n()
+
 const userSettingsStore = useUserSettingsStore()
+const globalStateStore = useGlobalStateStore()
 const commandsSender = useCommandsSender()
 
 const leftJoystick = ref<Joystick | undefined>(undefined)
@@ -20,15 +27,17 @@ const rotateControl = ref(0)
 const jetControl = ref(0)
 const shootControl = ref(0)
 
+const showTooltip = computed(() => globalStateStore.showHelp === VerticalTooltipLocation.TOP)
+
 const controlsAlignment = computed(() =>
     userSettingsStore.appearancesOrDefaultsNameValueMapping[AppearancesNames.CONTROL_BUTTONS_ALIGNMENT])
 
 const leftJoystickClass = computed(() => {
   switch (controlsAlignment.value) {
     case ControlButtonsAlignments.BOTTOM_HORIZONTAL:
-      return 'bottom-left-joystick'
+      return 'joystick bottom-left-joystick'
     case ControlButtonsAlignments.CENTER_VERTICAL:
-      return 'center-left-joystick'
+      return 'joystick center-left-joystick'
     default:
       return ''
   }
@@ -37,9 +46,9 @@ const leftJoystickClass = computed(() => {
 const rightJoystickClass = computed(() => {
   switch (controlsAlignment.value) {
     case ControlButtonsAlignments.BOTTOM_HORIZONTAL:
-      return 'bottom-right-joystick'
+      return 'joystick bottom-right-joystick'
     case ControlButtonsAlignments.CENTER_VERTICAL:
-      return 'center-right-joystick'
+      return 'joystick center-right-joystick'
     default:
       return ''
   }
@@ -144,32 +153,57 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div id="left-joystick-div" :class="leftJoystickClass"></div>
-  <div id="right-joystick-div" :class="rightJoystickClass"></div>
+  <div id="left-joystick-div" :class="leftJoystickClass">
+    <vertical-tooltip
+        :tooltip="'< ' + t('controls.move') + ' >'"
+        :show="showTooltip"
+    />
+    <vertical-tooltip
+        :tooltip="'< ' + t('controls.activateJet') + ' >'"
+        :show="showTooltip"
+        :location="VerticalTooltipLocation.TOP"
+    />
+  </div>
+  <div id="right-joystick-div" :class="rightJoystickClass">
+    <vertical-tooltip
+        :tooltip="'< ' + t('controls.rotateGun') + ' >'"
+        :show="showTooltip"
+    />
+    <vertical-tooltip
+        :tooltip="'< ' + t('controls.shoot') + ' >'"
+        :show="showTooltip"
+        :location="VerticalTooltipLocation.TOP"
+    />
+  </div>
 </template>
 
 <style scoped>
+.joystick {
+  width: 85px;
+  height: 85px;
+}
+
 .bottom-left-joystick {
   position: fixed;
-  bottom: 50px;
-  left: 50px;
+  bottom: 8px;
+  left: 8px;
 }
 
 .bottom-right-joystick {
   position: fixed;
-  bottom: 50px;
-  right: 50px;
+  bottom: 8px;
+  right: 8px;
 }
 
 .center-left-joystick {
   position: fixed;
   bottom: 50%;
-  left: 50px;
+  left: 8px;
 }
 
 .center-right-joystick {
   position: fixed;
   bottom: 50%;
-  right: 50px;
+  right: 8px;
 }
 </style>
