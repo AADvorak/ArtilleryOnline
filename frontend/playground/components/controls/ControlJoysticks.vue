@@ -7,7 +7,7 @@ import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
 import {ControlButtonsAlignments} from "~/dictionary/control-buttons-alignments";
 
-const THRESHOLD = 25
+const THRESHOLD = 0.3
 
 const userSettingsStore = useUserSettingsStore()
 const commandsSender = useCommandsSender()
@@ -119,8 +119,8 @@ onMounted(() => {
     parentElement: document.querySelector('#left-joystick-div'),
     spring: true,
     onInput(state) {
-      moveControl.value = state.x_diff
-      jetControl.value = state.y_diff
+      moveControl.value = state.value * Math.cos(state.angle)
+      jetControl.value = state.value * Math.sin(state.angle)
     },
   })
   leftJoystick.value.init()
@@ -130,8 +130,8 @@ onMounted(() => {
     parentElement: document.querySelector('#right-joystick-div'),
     spring: true,
     onInput(state) {
-      rotateControl.value = state.x_diff
-      shootControl.value = state.y_diff
+      rotateControl.value = state.value * Math.cos(state.angle)
+      shootControl.value = state.value * Math.sin(state.angle)
     },
   })
   rightJoystick.value.init()
