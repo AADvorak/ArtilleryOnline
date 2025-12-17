@@ -3,7 +3,7 @@ import {useRouter} from "#app";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
 import {useI18n} from "vue-i18n";
-import {ControlButtonsAlignments} from "~/dictionary/control-buttons-alignments";
+import {ScreenControlsAlignments} from "~/dictionary/screen-controls-alignments";
 import {ControlsTypes} from "~/dictionary/controls-types";
 
 const router = useRouter()
@@ -12,34 +12,34 @@ const i18n = useI18n()
 const {t} = i18n
 
 const settings = reactive({
-  showControlButtons: '0',
-  controlButtonsAlignment: ControlButtonsAlignments.BOTTOM,
+  showScreenControls: '0',
+  screenControlsAlignment: ScreenControlsAlignments.BOTTOM,
   screenControlsType: ControlsTypes.JOYSTICKS
 })
 
 const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
 
-const controlButtonsAlignments = computed(() => Object.values(ControlButtonsAlignments).map(key =>
+const screenControlsAlignments = computed(() => Object.values(ScreenControlsAlignments).map(key =>
     ({key, title: t(`controls.${key}`) })))
 
 const screenControlsTypes = computed(() => Object.values(ControlsTypes).map(key =>
     ({key, title: t(`controls.${key}`) })))
 
-watch(() => settings.showControlButtons, value => {
-  const existingValue = appearances.value[AppearancesNames.SHOW_CONTROL_BUTTONS]
+watch(() => settings.showScreenControls, value => {
+  const existingValue = appearances.value[AppearancesNames.SHOW_SCREEN_CONTROLS]
   if (value && value !== existingValue) {
     userSettingsStore.setAppearance({
-      name: AppearancesNames.SHOW_CONTROL_BUTTONS,
+      name: AppearancesNames.SHOW_SCREEN_CONTROLS,
       value
     })
   }
 })
 
-watch(() => settings.controlButtonsAlignment, value => {
-  const existingValue = appearances.value[AppearancesNames.CONTROL_BUTTONS_ALIGNMENT]
+watch(() => settings.screenControlsAlignment, value => {
+  const existingValue = appearances.value[AppearancesNames.SCREEN_CONTROLS_ALIGNMENT]
   if (value && value !== existingValue) {
     userSettingsStore.setAppearance({
-      name: AppearancesNames.CONTROL_BUTTONS_ALIGNMENT,
+      name: AppearancesNames.SCREEN_CONTROLS_ALIGNMENT,
       value
     })
   }
@@ -56,8 +56,8 @@ watch(() => settings.screenControlsType, value => {
 })
 
 onMounted(() => {
-  settings.showControlButtons = appearances.value[AppearancesNames.SHOW_CONTROL_BUTTONS]!
-  settings.controlButtonsAlignment = appearances.value[AppearancesNames.CONTROL_BUTTONS_ALIGNMENT]!
+  settings.showScreenControls = appearances.value[AppearancesNames.SHOW_SCREEN_CONTROLS]!
+  settings.screenControlsAlignment = appearances.value[AppearancesNames.SCREEN_CONTROLS_ALIGNMENT]!
   settings.screenControlsType = appearances.value[AppearancesNames.CONTROLS_TYPE]!
 })
 
@@ -79,7 +79,7 @@ function back() {
             <td>{{ t('controls.alwaysShowScreenControls') }}</td>
             <td>
               <v-switch
-                  v-model="settings.showControlButtons"
+                  v-model="settings.showScreenControls"
                   true-value="1"
                   false-value="0"
               />
@@ -89,8 +89,8 @@ function back() {
             <td>{{ t('controls.screenControlsAlignment') }}</td>
             <td>
               <v-select
-                  v-model="settings.controlButtonsAlignment"
-                  :items="controlButtonsAlignments"
+                  v-model="settings.screenControlsAlignment"
+                  :items="screenControlsAlignments"
                   item-value="key"
                   item-title="title"
                   density="compact"

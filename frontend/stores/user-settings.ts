@@ -14,7 +14,7 @@ import type {ErrorResponse} from '~/data/response'
 import {DefaultSoundSettings} from "~/dictionary/default-sound-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
 import {ControlsTypes} from "~/dictionary/controls-types";
-import {ControlButtonsAlignments} from "~/dictionary/control-buttons-alignments";
+import {ScreenControlsAlignments} from "~/dictionary/screen-controls-alignments";
 import {BattlefieldAlignments} from "~/dictionary/battlefield-alignments";
 
 const SETTINGS_PATH = '/user-settings'
@@ -177,7 +177,7 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
       if (
           name === AppearancesNames.VEHICLE_COLOR ||
           name === AppearancesNames.CONTROLS_TYPE && Object.values(ControlsTypes).includes(value) ||
-          name === AppearancesNames.CONTROL_BUTTONS_ALIGNMENT && Object.values(ControlButtonsAlignments).includes(value) ||
+          name === AppearancesNames.SCREEN_CONTROLS_ALIGNMENT && Object.values(ScreenControlsAlignments).includes(value) ||
           name === AppearancesNames.BATTLEFIELD_ALIGNMENT && Object.values(BattlefieldAlignments).includes(value) ||
           name === AppearancesNames.LANGUAGE && ['ru', 'en'].includes(value) ||
           ['0', '1'].includes(value)

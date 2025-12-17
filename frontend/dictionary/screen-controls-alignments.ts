@@ -1,4 +1,4 @@
-export const ControlButtonsAlignments = {
+export const ScreenControlsAlignments = {
   BOTTOM: 'bottom',
   CENTER: 'center',
 }

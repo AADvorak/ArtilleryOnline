@@ -5,7 +5,7 @@ import {Command} from "~/playground/data/command";
 import {MovingDirection} from "~/playground/data/common";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
-import {ControlButtonsAlignments} from "~/dictionary/control-buttons-alignments";
+import {ScreenControlsAlignments} from "~/dictionary/screen-controls-alignments";
 import {useGlobalStateStore} from "~/stores/global-state";
 import {VerticalTooltipLocation} from "~/data/model";
 import VerticalTooltip from "~/components/vertical-tooltip.vue";
@@ -39,13 +39,13 @@ const shootControl = ref(0)
 const showTooltip = computed(() => globalStateStore.showHelp === VerticalTooltipLocation.TOP)
 
 const controlsAlignment = computed(() =>
-    userSettingsStore.appearancesOrDefaultsNameValueMapping[AppearancesNames.CONTROL_BUTTONS_ALIGNMENT])
+    userSettingsStore.appearancesOrDefaultsNameValueMapping[AppearancesNames.SCREEN_CONTROLS_ALIGNMENT])
 
 const leftJoystickClass = computed(() => {
   switch (controlsAlignment.value) {
-    case ControlButtonsAlignments.BOTTOM:
+    case ScreenControlsAlignments.BOTTOM:
       return 'joystick bottom-left-joystick'
-    case ControlButtonsAlignments.CENTER:
+    case ScreenControlsAlignments.CENTER:
       return 'joystick center-left-joystick'
     default:
       return ''
@@ -54,9 +54,9 @@ const leftJoystickClass = computed(() => {
 
 const rightJoystickClass = computed(() => {
   switch (controlsAlignment.value) {
-    case ControlButtonsAlignments.BOTTOM:
+    case ScreenControlsAlignments.BOTTOM:
       return 'joystick bottom-right-joystick'
-    case ControlButtonsAlignments.CENTER:
+    case ScreenControlsAlignments.CENTER:
       return 'joystick center-right-joystick'
     default:
       return ''

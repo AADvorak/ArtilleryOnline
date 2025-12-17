@@ -5,8 +5,8 @@ export const AppearancesNames = {
   HP_ABOVE: 'showHpBarsAboveVehicles',
   ALL_HP_TOP: 'showAllPlayersHpBarsInTopBar',
   GROUND_TEXTURE_BACKGROUND: 'showGroundTextureAndBackground',
-  SHOW_CONTROL_BUTTONS: 'showControlButtons', // todo showScreenControls
+  SHOW_SCREEN_CONTROLS: 'showScreenControls',
   BATTLEFIELD_ALIGNMENT: 'battlefieldAlignment',
-  CONTROL_BUTTONS_ALIGNMENT: 'controlButtonsAlignment', // todo screenControlsAlignment
+  SCREEN_CONTROLS_ALIGNMENT: 'screenControlsAlignment',
   CONTROLS_TYPE: 'controlsType'
 }

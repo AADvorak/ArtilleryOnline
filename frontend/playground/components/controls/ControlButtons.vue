@@ -2,7 +2,7 @@
 import {useGlobalStateStore} from "~/stores/global-state";
 import {VerticalTooltipLocation} from "~/data/model";
 import {useUserSettingsStore} from "~/stores/user-settings";
-import {ControlButtonsAlignments} from "~/dictionary/control-buttons-alignments";
+import {ScreenControlsAlignments} from "~/dictionary/screen-controls-alignments";
 import {AppearancesNames} from "~/dictionary/appearances-names";
 import ControlButtonsMoving from "~/playground/components/controls/ControlButtonsMoving.vue";
 import ControlButtonsGunRotating from "~/playground/components/controls/ControlButtonsGunRotating.vue";
@@ -19,15 +19,15 @@ const userSettingsStore = useUserSettingsStore()
 const showTooltip = computed(() => globalStateStore.showHelp === VerticalTooltipLocation.TOP)
 
 const controlButtonsAlignment = computed(() =>
-    userSettingsStore.appearancesOrDefaultsNameValueMapping[AppearancesNames.CONTROL_BUTTONS_ALIGNMENT])
+    userSettingsStore.appearancesOrDefaultsNameValueMapping[AppearancesNames.SCREEN_CONTROLS_ALIGNMENT])
 
-const isVertical = computed(() => controlButtonsAlignment.value === ControlButtonsAlignments.CENTER)
+const isVertical = computed(() => controlButtonsAlignment.value === ScreenControlsAlignments.CENTER)
 
 const leftToolbarClass = computed(() => {
   switch (controlButtonsAlignment.value) {
-    case ControlButtonsAlignments.BOTTOM:
+    case ScreenControlsAlignments.BOTTOM:
       return 'bottom-left-controls'
-    case ControlButtonsAlignments.CENTER:
+    case ScreenControlsAlignments.CENTER:
       return 'left-controls'
     default:
       return ''
@@ -36,9 +36,9 @@ const leftToolbarClass = computed(() => {
 
 const rightToolbarClass = computed(() => {
   switch (controlButtonsAlignment.value) {
-    case ControlButtonsAlignments.BOTTOM:
+    case ScreenControlsAlignments.BOTTOM:
       return 'bottom-right-controls'
-    case ControlButtonsAlignments.CENTER:
+    case ScreenControlsAlignments.CENTER:
       return 'right-controls'
     default:
       return ''

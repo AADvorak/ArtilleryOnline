@@ -1,16 +1,17 @@
 import {BattlefieldAlignments} from "~/dictionary/battlefield-alignments";
-import {ControlButtonsAlignments} from "~/dictionary/control-buttons-alignments";
+import {ScreenControlsAlignments} from "~/dictionary/screen-controls-alignments";
 import {ControlsTypes} from "~/dictionary/controls-types";
+import {AppearancesNames} from "~/dictionary/appearances-names";
 
 export const DefaultAppearances = [
-  {name: 'language', value: 'en'},
-  {name: 'vehicleColor', value: '', description: 'Vehicle color'},
-  {name: 'showNicknamesAboveVehicles', value: '1', description: 'Show nicknames above vehicles'},
-  {name: 'showHpBarsAboveVehicles', value: '1', description: 'Show HP bars above vehicles'},
-  {name: 'showAllPlayersHpBarsInTopBar', value: '0', description: 'Show all players HP bars in top bar'},
-  {name: 'showGroundTextureAndBackground', value: '0', description: 'Show ground texture and background'},
-  {name: 'showControlButtons', value: '0', description: 'Show control buttons'},
-  {name: 'battlefieldAlignment', value: BattlefieldAlignments.BY_SCREEN_SIZE, description: 'Battlefield alignment'},
-  {name: 'controlButtonsAlignment', value: ControlButtonsAlignments.BOTTOM},
-  {name: 'controlsType', value: ControlsTypes.JOYSTICKS},
+  {name: AppearancesNames.LANGUAGE, value: 'en'},
+  {name: AppearancesNames.VEHICLE_COLOR, value: ''},
+  {name: AppearancesNames.NICKNAMES_ABOVE, value: '1'},
+  {name: AppearancesNames.HP_ABOVE, value: '1'},
+  {name: AppearancesNames.ALL_HP_TOP, value: '0'},
+  {name: AppearancesNames.GROUND_TEXTURE_BACKGROUND, value: '1'},
+  {name: AppearancesNames.SHOW_SCREEN_CONTROLS, value: '0'},
+  {name: AppearancesNames.BATTLEFIELD_ALIGNMENT, value: BattlefieldAlignments.BY_SCREEN_SIZE},
+  {name: AppearancesNames.SCREEN_CONTROLS_ALIGNMENT, value: ScreenControlsAlignments.BOTTOM},
+  {name: AppearancesNames.CONTROLS_TYPE, value: ControlsTypes.JOYSTICKS},
 ]

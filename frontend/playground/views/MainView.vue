@@ -38,7 +38,7 @@ const isMobileBrowser = ref<boolean>(false)
 const isClientProcessing = computed(() => useSettingsStore().settings?.clientProcessing)
 const showScreenControls = computed(() => {
   return isMobileBrowser.value || userSettingsStore
-      .appearancesOrDefaultsNameValueMapping[AppearancesNames.SHOW_CONTROL_BUTTONS] === '1'
+      .appearancesOrDefaultsNameValueMapping[AppearancesNames.SHOW_SCREEN_CONTROLS] === '1'
 })
 const screenControlsType = computed(() => userSettingsStore
     .appearancesOrDefaultsNameValueMapping[AppearancesNames.CONTROLS_TYPE])
