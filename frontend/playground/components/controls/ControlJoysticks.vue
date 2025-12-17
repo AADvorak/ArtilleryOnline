@@ -232,13 +232,13 @@ onUnmounted(() => {
 
 .center-left-joystick {
   position: fixed;
-  bottom: 50%;
+  bottom: 40%;
   left: 8px;
 }
 
 .center-right-joystick {
   position: fixed;
-  bottom: 50%;
+  bottom: 40%;
   right: 8px;
 }
 
