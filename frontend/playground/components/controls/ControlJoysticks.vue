@@ -19,7 +19,8 @@ import {
   mdiArrowRightBox
 } from "@mdi/js";
 
-const THRESHOLD = 0.3
+const HORIZONTAL_THRESHOLD = 0.3
+const VERTICAL_THRESHOLD = 0.7
 
 const {t} = useI18n()
 
@@ -63,19 +64,19 @@ const rightJoystickClass = computed(() => {
 })
 
 watch(moveControl, (value, oldValue) => {
-  if (value > THRESHOLD && oldValue <= THRESHOLD) {
+  if (value > HORIZONTAL_THRESHOLD && oldValue <= HORIZONTAL_THRESHOLD) {
     commandsSender.sendCommand({
       command: Command.START_MOVING,
       params: {direction: MovingDirection.RIGHT}
     })
   }
-  if (value < -THRESHOLD && oldValue >= -THRESHOLD) {
+  if (value < -HORIZONTAL_THRESHOLD && oldValue >= -HORIZONTAL_THRESHOLD) {
     commandsSender.sendCommand({
       command: Command.START_MOVING,
       params: {direction: MovingDirection.LEFT}
     })
   }
-  if (Math.abs(value) <= THRESHOLD && Math.abs(oldValue) > THRESHOLD) {
+  if (Math.abs(value) <= HORIZONTAL_THRESHOLD && Math.abs(oldValue) > HORIZONTAL_THRESHOLD) {
     commandsSender.sendCommand({
       command: Command.STOP_MOVING,
       params: {}
@@ -84,19 +85,19 @@ watch(moveControl, (value, oldValue) => {
 })
 
 watch(rotateControl, (value, oldValue) => {
-  if (value > THRESHOLD && oldValue <= THRESHOLD) {
+  if (value > HORIZONTAL_THRESHOLD && oldValue <= HORIZONTAL_THRESHOLD) {
     commandsSender.sendCommand({
       command: Command.START_GUN_ROTATING,
       params: {direction: MovingDirection.RIGHT}
     })
   }
-  if (value < -THRESHOLD && oldValue >= -THRESHOLD) {
+  if (value < -HORIZONTAL_THRESHOLD && oldValue >= -HORIZONTAL_THRESHOLD) {
     commandsSender.sendCommand({
       command: Command.START_GUN_ROTATING,
       params: {direction: MovingDirection.LEFT}
     })
   }
-  if (Math.abs(value) <= THRESHOLD && Math.abs(oldValue) > THRESHOLD) {
+  if (Math.abs(value) <= HORIZONTAL_THRESHOLD && Math.abs(oldValue) > HORIZONTAL_THRESHOLD) {
     commandsSender.sendCommand({
       command: Command.STOP_GUN_ROTATING,
       params: {}
@@ -105,12 +106,12 @@ watch(rotateControl, (value, oldValue) => {
 })
 
 watch(jetControl, (value, oldValue) => {
-  if (Math.abs(value) > THRESHOLD && Math.abs(oldValue) <= THRESHOLD) {
+  if (Math.abs(value) > VERTICAL_THRESHOLD && Math.abs(oldValue) <= VERTICAL_THRESHOLD) {
     commandsSender.sendCommand({
       command: Command.JET_ON
     })
   }
-  if (Math.abs(value) <= THRESHOLD && Math.abs(oldValue) > THRESHOLD) {
+  if (Math.abs(value) <= VERTICAL_THRESHOLD && Math.abs(oldValue) > VERTICAL_THRESHOLD) {
     commandsSender.sendCommand({
       command: Command.JET_OFF
     })
@@ -118,12 +119,12 @@ watch(jetControl, (value, oldValue) => {
 })
 
 watch(shootControl, (value, oldValue) => {
-  if (Math.abs(value) > THRESHOLD && Math.abs(oldValue) <= THRESHOLD) {
+  if (Math.abs(value) > VERTICAL_THRESHOLD && Math.abs(oldValue) <= VERTICAL_THRESHOLD) {
     commandsSender.sendCommand({
       command: Command.PUSH_TRIGGER
     })
   }
-  if (Math.abs(value) <= THRESHOLD && Math.abs(oldValue) > THRESHOLD) {
+  if (Math.abs(value) <= VERTICAL_THRESHOLD && Math.abs(oldValue) > VERTICAL_THRESHOLD) {
     commandsSender.sendCommand({
       command: Command.RELEASE_TRIGGER
     })
