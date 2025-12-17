@@ -13,7 +13,7 @@ const {t} = i18n
 
 const settings = reactive({
   showControlButtons: '0',
-  controlButtonsAlignment: ControlButtonsAlignments.BOTTOM_HORIZONTAL,
+  controlButtonsAlignment: ControlButtonsAlignments.BOTTOM,
   screenControlsType: ControlsTypes.JOYSTICKS
 })
 

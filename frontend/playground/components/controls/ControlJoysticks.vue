@@ -43,9 +43,9 @@ const controlsAlignment = computed(() =>
 
 const leftJoystickClass = computed(() => {
   switch (controlsAlignment.value) {
-    case ControlButtonsAlignments.BOTTOM_HORIZONTAL:
+    case ControlButtonsAlignments.BOTTOM:
       return 'joystick bottom-left-joystick'
-    case ControlButtonsAlignments.CENTER_VERTICAL:
+    case ControlButtonsAlignments.CENTER:
       return 'joystick center-left-joystick'
     default:
       return ''
@@ -54,9 +54,9 @@ const leftJoystickClass = computed(() => {
 
 const rightJoystickClass = computed(() => {
   switch (controlsAlignment.value) {
-    case ControlButtonsAlignments.BOTTOM_HORIZONTAL:
+    case ControlButtonsAlignments.BOTTOM:
       return 'joystick bottom-right-joystick'
-    case ControlButtonsAlignments.CENTER_VERTICAL:
+    case ControlButtonsAlignments.CENTER:
       return 'joystick center-right-joystick'
     default:
       return ''

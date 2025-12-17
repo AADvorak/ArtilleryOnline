@@ -21,13 +21,13 @@ const showTooltip = computed(() => globalStateStore.showHelp === VerticalTooltip
 const controlButtonsAlignment = computed(() =>
     userSettingsStore.appearancesOrDefaultsNameValueMapping[AppearancesNames.CONTROL_BUTTONS_ALIGNMENT])
 
-const isVertical = computed(() => controlButtonsAlignment.value === ControlButtonsAlignments.CENTER_VERTICAL)
+const isVertical = computed(() => controlButtonsAlignment.value === ControlButtonsAlignments.CENTER)
 
 const leftToolbarClass = computed(() => {
   switch (controlButtonsAlignment.value) {
-    case ControlButtonsAlignments.BOTTOM_HORIZONTAL:
+    case ControlButtonsAlignments.BOTTOM:
       return 'bottom-left-controls'
-    case ControlButtonsAlignments.CENTER_VERTICAL:
+    case ControlButtonsAlignments.CENTER:
       return 'left-controls'
     default:
       return ''
@@ -36,9 +36,9 @@ const leftToolbarClass = computed(() => {
 
 const rightToolbarClass = computed(() => {
   switch (controlButtonsAlignment.value) {
-    case ControlButtonsAlignments.BOTTOM_HORIZONTAL:
+    case ControlButtonsAlignments.BOTTOM:
       return 'bottom-right-controls'
-    case ControlButtonsAlignments.CENTER_VERTICAL:
+    case ControlButtonsAlignments.CENTER:
       return 'right-controls'
     default:
       return ''
