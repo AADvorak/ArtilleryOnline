@@ -246,6 +246,7 @@ onUnmounted(() => {
   position: absolute;
   width: 14px;
   height: 14px;
+  z-index: -1;
 }
 
 .icon-top {
