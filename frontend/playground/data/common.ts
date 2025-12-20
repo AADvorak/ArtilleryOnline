@@ -45,7 +45,8 @@ export enum CollideObjectType {
   WALL = 'WALL',
   GROUND = 'GROUND',
   VEHICLE = 'VEHICLE',
-  BOX = 'BOX'
+  BOX = 'BOX',
+  SURFACE = 'SURFACE'
 }
 
 export enum BoxType {

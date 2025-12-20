@@ -1,8 +1,10 @@
 import type {RoomModel, VehicleModel} from '@/playground/data/model'
-import {JetType, type Position} from '@/playground/data/common'
+import {type BodyPosition, JetType, type Position} from '@/playground/data/common'
 import {VehicleCalculations, type WheelCalculations} from '@/playground/data/calculations'
 import {DefaultColors} from '~/dictionary/default-colors'
 import {BattleUtils} from "~/playground/utils/battle-utils";
+import {type HalfCircleShape, type Shape, ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
+import {type BodyPart, HalfCircle, Trapeze} from "~/playground/data/geometry";
 
 export const VehicleUtils = {
   /**
@@ -17,6 +19,16 @@ export const VehicleUtils = {
    */
   calculateAllGroundContacts(vehicle: VehicleCalculations, roomModel: RoomModel) {
     vehicle.calculateAllGroundContacts(roomModel)
+  },
+
+  getTurretBodyPart(turretShape: Shape, position: BodyPosition): BodyPart {
+    let bodyPart: BodyPart | null = null
+    if (turretShape.name === ShapeNames.HALF_CIRCLE) {
+      bodyPart = HalfCircle.of(position, (turretShape as HalfCircleShape).radius)
+    } else if (turretShape.name === ShapeNames.TRAPEZE) {
+      bodyPart = new Trapeze(position, turretShape as TrapezeShape)
+    }
+    return bodyPart!
   },
 
   getLeftWheelPosition(vehicleModel: VehicleModel) {

@@ -2,11 +2,21 @@ import {Contact, type Position} from "~/playground/data/common";
 import type {RoomModel} from "~/playground/data/model";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {VectorUtils} from "~/playground/utils/vector-utils";
-import {type Circle, HalfCircle, Segment, Trapeze} from "~/playground/data/geometry";
+import {type BodyPart, type Circle, HalfCircle, Segment, Trapeze} from "~/playground/data/geometry";
 import {GeometryUtils} from "~/playground/utils/geometry-utils";
 import {Constants} from "~/playground/data/constants";
 
 export const GroundContactUtils = {
+
+  getContacts(bodyPart: BodyPart, roomModel: RoomModel, withMaxDepth: boolean): Set<Contact>  {
+    if (bodyPart instanceof HalfCircle) {
+      return GroundContactUtils.getHalfCircleGroundContacts(bodyPart, roomModel, withMaxDepth)
+    }
+    if (bodyPart instanceof Trapeze) {
+      return  GroundContactUtils.getTrapezeGroundContacts(bodyPart, roomModel, withMaxDepth)
+    }
+    return new Set()
+  },
 
   getHalfCircleGroundContacts(
       halfCircle: HalfCircle,

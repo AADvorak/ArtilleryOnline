@@ -202,6 +202,10 @@ export class Collision {
     return this.withUnmovable(first, contact, CollideObjectType.WALL)
   }
 
+  static withSurface(first: Calculations, contact: Contact): Collision {
+    return this.withUnmovable(first, contact, CollideObjectType.SURFACE)
+  }
+
   private firstNormalVelocity(): number {
     return this.bodyCollisionDataPair.first !== null
         ? this.bodyCollisionDataPair.first.velocityProjections.normal

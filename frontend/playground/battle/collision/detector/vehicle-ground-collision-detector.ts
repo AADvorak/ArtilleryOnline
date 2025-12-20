@@ -5,10 +5,10 @@ import {
   VehicleCalculations,
   type WheelCalculations
 } from "~/playground/data/calculations";
-import {Circle, HalfCircle, Trapeze} from "~/playground/data/geometry";
+import {Circle} from "~/playground/data/geometry";
 import {GroundContactUtils} from "~/playground/utils/ground-contact-utils";
-import {type HalfCircleShape, ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
 import {Contact} from "~/playground/data/common";
+import {VehicleUtils} from "~/playground/utils/vehicle-utils";
 
 export class VehicleGroundCollisionsDetector implements CollisionsDetector {
   detect(calculations: Calculations, battle: BattleCalculations): Set<Collision> {
@@ -53,23 +53,11 @@ export class VehicleGroundCollisionsDetector implements CollisionsDetector {
   }
 
   private detectHullGroundCollisions(vehicle: VehicleCalculations, battle: BattleCalculations): Set<Collision> {
-    let contacts: Set<Contact> = new Set()
     const position = vehicle.getGeometryBodyPosition()
     const roomModel = battle.model.room
     const turretShape = vehicle.model.specs.turretShape
-    if (turretShape.name === ShapeNames.HALF_CIRCLE) {
-      contacts = GroundContactUtils.getHalfCircleGroundContacts(
-          HalfCircle.of(position, (turretShape as HalfCircleShape).radius),
-          roomModel,true
-      )
-    }
-    if (turretShape.name === ShapeNames.TRAPEZE) {
-      contacts = GroundContactUtils.getTrapezeGroundContacts(
-          new Trapeze(position, turretShape as TrapezeShape),
-          roomModel, true
-      )
-    }
-
+    const bodyPart = VehicleUtils.getTurretBodyPart(turretShape, position)
+    const contacts = GroundContactUtils.getContacts(bodyPart, roomModel, true)
     const collisions = new Set<Collision>()
     for (const contact of contacts) {
       collisions.add(Collision.withGround(vehicle, contact))

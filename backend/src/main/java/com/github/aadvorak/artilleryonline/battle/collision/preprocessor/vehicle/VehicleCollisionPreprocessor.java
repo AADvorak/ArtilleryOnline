@@ -30,7 +30,8 @@ public class VehicleCollisionPreprocessor implements CollisionPreprocessor {
         if (firstModel != null
                 && (!applicationSettings.isClientCollisionsProcessing() ||
                 !CollideObjectType.GROUND.equals(collision.getType())
-                && !CollideObjectType.WALL.equals(collision.getType()))) {
+                        && !CollideObjectType.SURFACE.equals(collision.getType())
+                        && !CollideObjectType.WALL.equals(collision.getType()))) {
             firstModel.getUpdate().setUpdated();
         }
         if (secondModel != null) {

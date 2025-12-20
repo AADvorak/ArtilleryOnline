@@ -5,8 +5,10 @@ import {BattleUtils} from "~/playground/utils/battle-utils";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {GroundContactUtils} from "~/playground/utils/ground-contact-utils";
 import {BodyUtils} from "~/playground/utils/body-utils";
-import {type HalfCircleShape, ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
-import {Circle, HalfCircle, Trapeze, VectorProjections} from "~/playground/data/geometry";
+import {ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
+import {Circle, Trapeze, VectorProjections} from "~/playground/data/geometry";
+import {SurfaceContactUtils} from "~/playground/utils/surface-contact-utils";
+import {VehicleUtils} from "~/playground/utils/vehicle-utils";
 
 export interface Calculations {
   getModel(): any
@@ -227,11 +229,17 @@ export class WheelCalculations implements BodyCalculations {
   }
 
   calculateGroundContact(wheelRadius: number, roomModel: RoomModel): void {
-    this.groundContact = GroundContactUtils.getCircleGroundContact(
-        new Circle(this.position!, wheelRadius),
-        roomModel,
-        false
-    )
+    const circle = new Circle(this.position!, wheelRadius)
+    let contact = GroundContactUtils.getCircleGroundContact(circle, roomModel, false)
+    if (!contact) {
+      const surfaceContacts = SurfaceContactUtils.getContacts(circle, roomModel, false)
+      const filteredContacts = Array.from(surfaceContacts).filter(cnt => cnt.normal.y < 0)
+      if (filteredContacts.length > 0) {
+        filteredContacts.sort((a, b) => a.depth - b.depth)
+        contact = filteredContacts[0] || null
+      }
+    }
+    this.groundContact = contact
   }
 
   calculateAllGroundContacts(roomModel: RoomModel): void {
@@ -372,18 +380,15 @@ export class VehicleCalculations extends BodyCalculationsBase implements BodyCal
   calculateAllGroundContacts(roomModel: RoomModel): void {
     const position = this.getGeometryBodyPosition()
     const turretShape = this.model.specs.turretShape
-    if (turretShape.name === ShapeNames.HALF_CIRCLE) {
-      this.groundContacts = GroundContactUtils.getHalfCircleGroundContacts(
-          HalfCircle.of(position, (turretShape as HalfCircleShape).radius),
-          roomModel,false
-      )
+    const bodyPart = VehicleUtils.getTurretBodyPart(turretShape, position)
+    const contacts = GroundContactUtils.getContacts(bodyPart, roomModel, false)
+    const surfaceContacts = SurfaceContactUtils.getContacts(bodyPart, roomModel, false)
+    for (const contact of surfaceContacts) {
+        if (contact.normal.y < 0) {
+            contacts.add(contact)
+        }
     }
-    if (turretShape.name === ShapeNames.TRAPEZE) {
-      this.groundContacts = GroundContactUtils.getTrapezeGroundContacts(
-          new Trapeze(position, turretShape as TrapezeShape),
-          roomModel, false
-      )
-    }
+    this.groundContacts = contacts
     const wheelRadius = this.model.specs.wheelRadius
     this.rightWheel.calculateGroundContact(wheelRadius, roomModel)
     this.leftWheel.calculateGroundContact(wheelRadius, roomModel)
