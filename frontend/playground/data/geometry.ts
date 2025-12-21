@@ -137,17 +137,7 @@ export class HalfCircle implements BodyPart {
   }
 
   chord(): Segment {
-    const start: Position = {
-      x: this.center.x + this.radius * Math.cos(this.angle),
-      y: this.center.y + this.radius * Math.sin(this.angle)
-    }
-
-    const end: Position = {
-      x: this.center.x - this.radius * Math.cos(this.angle),
-      y: this.center.y - this.radius * Math.sin(this.angle)
-    }
-
-    return new Segment(start, end)
+    return new Segment(this.bottomLeft(), this.bottomRight())
   }
 
   bottomRight(): Position {
