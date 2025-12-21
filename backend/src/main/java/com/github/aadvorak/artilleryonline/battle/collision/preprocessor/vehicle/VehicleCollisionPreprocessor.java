@@ -3,9 +3,8 @@ package com.github.aadvorak.artilleryonline.battle.collision.preprocessor.vehicl
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
-import com.github.aadvorak.artilleryonline.battle.collision.CollideObjectType;
-import com.github.aadvorak.artilleryonline.battle.collision.preprocessor.CollisionPreprocessor;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
+import com.github.aadvorak.artilleryonline.battle.collision.preprocessor.CollisionPreprocessor;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
@@ -27,14 +26,10 @@ public class VehicleCollisionPreprocessor implements CollisionPreprocessor {
                 ? (VehicleModel) first.getModel() : null;
         var secondModel = second instanceof VehicleCalculations || second instanceof WheelCalculations
                 ? (VehicleModel) second.getModel() : null;
-        if (firstModel != null
-                && (!applicationSettings.isClientCollisionsProcessing() ||
-                !CollideObjectType.GROUND.equals(collision.getType())
-                        && !CollideObjectType.SURFACE.equals(collision.getType())
-                        && !CollideObjectType.WALL.equals(collision.getType()))) {
+        if (firstModel != null && !applicationSettings.isClientCollisionsProcessing()) {
             firstModel.getUpdate().setUpdated();
         }
-        if (secondModel != null) {
+        if (secondModel != null && !applicationSettings.isClientCollisionsProcessing()) {
             secondModel.getUpdate().setUpdated();
         }
         if (firstModel != null && secondModel != null) {

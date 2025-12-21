@@ -206,6 +206,10 @@ export class Collision {
     return this.withUnmovable(first, contact, CollideObjectType.SURFACE)
   }
 
+  static withVehicle(first: Calculations, second: Calculations, contact: Contact): Collision {
+    return this.withMovable(first, second, contact, CollideObjectType.VEHICLE)
+  }
+
   private firstNormalVelocity(): number {
     return this.bodyCollisionDataPair.first !== null
         ? this.bodyCollisionDataPair.first.velocityProjections.normal
@@ -243,6 +247,37 @@ export class Collision {
         {first},
         {first: velocityProjections},
         {first: firstData!},
+        contact
+    )
+  }
+
+  private static withMovable(
+      first: Calculations,
+      second: Calculations,
+      contact: Contact,
+      type: CollideObjectType
+  ): Collision {
+    let firstData: BodyCollisionData | null = null
+    let secondData: BodyCollisionData | null = null
+
+    if (isBodyCalculationsImplementation(first)) {
+      const bodyCalculations = first as BodyCalculationsBase
+      firstData = BodyCollisionData.of(bodyCalculations.getModel(), contact, false)
+    }
+
+    if (isBodyCalculationsImplementation(second)) {
+      const bodyCalculations = second as BodyCalculationsBase
+      secondData = BodyCollisionData.of(bodyCalculations.getModel(), contact, false)
+    }
+
+    const firstVelocityProjections = VectorProjections.of(first.getVelocity(), contact.angle)
+    const secondVelocityProjections = VectorProjections.of(second.getVelocity(), contact.angle)
+
+    return new Collision(
+        type,
+        {first, second},
+        {first: firstVelocityProjections, second: secondVelocityProjections},
+        {first: firstData!, second: secondData!},
         contact
     )
   }
