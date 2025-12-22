@@ -266,12 +266,12 @@ export class Collision {
 
     if (isBodyCalculationsImplementation(first)) {
       const bodyCalculations = first as BodyCalculationsBase
-      firstData = BodyCollisionData.of(bodyCalculations.getModel(), contact, false)
+      firstData = BodyCollisionData.of(bodyCalculations.getModel(), contact, true)
     }
 
     if (isBodyCalculationsImplementation(second)) {
       const bodyCalculations = second as BodyCalculationsBase
-      secondData = BodyCollisionData.of(bodyCalculations.getModel(), contact, false)
+      secondData = BodyCollisionData.of(bodyCalculations.getModel(), contact, true)
     }
 
     const firstVelocityProjections = VectorProjections.of(first.getVelocity(), contact.angle)
