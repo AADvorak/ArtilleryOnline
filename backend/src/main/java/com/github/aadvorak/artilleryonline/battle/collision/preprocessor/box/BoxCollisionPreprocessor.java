@@ -1,9 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.collision.preprocessor.box;
 
-import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.BoxCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
-import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.collision.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.collision.preprocessor.CollisionPreprocessor;
@@ -33,6 +30,9 @@ public class BoxCollisionPreprocessor implements CollisionPreprocessor {
 
     private boolean process(BoxCalculations box, Collision collision, BattleCalculations battle) {
         var second = collision.getPair().second();
+        if (second instanceof BodyCalculations<?,?,?,?,?> body) {
+            body.getModel().getUpdate().setUpdated();
+        }
         if (second instanceof VehicleCalculations vehicle) {
             return !pickBox(box, vehicle, battle);
         }
