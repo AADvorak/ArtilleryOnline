@@ -210,6 +210,10 @@ export class Collision {
     return this.withMovable(first, second, contact, CollideObjectType.VEHICLE)
   }
 
+  static withBox(first: Calculations, second: Calculations, contact: Contact): Collision {
+    return this.withMovable(first, second, contact, CollideObjectType.BOX)
+  }
+
   private firstNormalVelocity(): number {
     return this.bodyCollisionDataPair.first !== null
         ? this.bodyCollisionDataPair.first.velocityProjections.normal
