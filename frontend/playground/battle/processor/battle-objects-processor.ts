@@ -18,6 +18,8 @@ import {
 import {
   VehicleVehicleCollisionsDetector
 } from "~/playground/battle/collision/detector/vehicle-vehicle-collision-detector";
+import {BoxBoxCollisionsDetector} from "~/playground/battle/collision/detector/box-box-collisions-detector";
+import {BoxVehicleCollisionsDetector} from "~/playground/battle/collision/detector/box-vehicle-collisions-detector";
 
 export const useBattleObjectsProcessor = function (
     debug: boolean,
@@ -31,7 +33,9 @@ export const useBattleObjectsProcessor = function (
         new VehicleGroundCollisionsDetector(),
         new VehicleSurfaceCollisionsDetector(),
         new VehicleVehicleCollisionsDetector(),
-        new BoxGroundCollisionsDetector()
+        new BoxGroundCollisionsDetector(),
+        new BoxBoxCollisionsDetector(),
+        new BoxVehicleCollisionsDetector()
       ],
       [], []
   )
