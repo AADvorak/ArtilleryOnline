@@ -8,7 +8,7 @@ import {
 import {Circle} from "~/playground/data/geometry";
 import {GroundContactUtils} from "~/playground/utils/ground-contact-utils";
 import {Contact} from "~/playground/data/common";
-import {VehicleUtils} from "~/playground/utils/vehicle-utils";
+import {BodyUtils} from "~/playground/utils/body-utils";
 
 export class VehicleGroundCollisionsDetector implements CollisionsDetector {
   detect(calculations: Calculations, battle: BattleCalculations): Set<Collision> {
@@ -56,7 +56,7 @@ export class VehicleGroundCollisionsDetector implements CollisionsDetector {
     const position = vehicle.getGeometryBodyPosition()
     const roomModel = battle.model.room
     const turretShape = vehicle.model.specs.turretShape
-    const bodyPart = VehicleUtils.getTurretBodyPart(turretShape, position)
+    const bodyPart = BodyUtils.getBodyPart(turretShape, position)
     const contacts = GroundContactUtils.getContacts(bodyPart, roomModel, true)
     const collisions = new Set<Collision>()
     for (const contact of contacts) {

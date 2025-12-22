@@ -7,7 +7,7 @@ import {
 } from "~/playground/data/calculations";
 import {SurfaceContactUtils} from "~/playground/utils/surface-contact-utils";
 import {Circle} from "~/playground/data/geometry";
-import {VehicleUtils} from "~/playground/utils/vehicle-utils";
+import {BodyUtils} from "~/playground/utils/body-utils";
 
 export class VehicleSurfaceCollisionsDetector implements CollisionsDetector {
   detect(calculations: Calculations, battle: BattleCalculations): Set<Collision> {
@@ -35,7 +35,7 @@ export class VehicleSurfaceCollisionsDetector implements CollisionsDetector {
   }
 
   private detectHullCollisions(vehicle: VehicleCalculations, battle: BattleCalculations): Collision[] {
-    const bodyPart = VehicleUtils.getTurretBodyPart(
+    const bodyPart = BodyUtils.getBodyPart(
         vehicle.model.specs.turretShape,
         vehicle.getGeometryNextPosition()!
     )

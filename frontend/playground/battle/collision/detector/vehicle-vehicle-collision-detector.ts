@@ -7,8 +7,8 @@ import {
 } from "~/playground/data/calculations";
 import {type BodyPart, Circle} from "~/playground/data/geometry";
 import {ContactUtils} from "~/playground/utils/contact-utils";
-import {VehicleUtils} from "~/playground/utils/vehicle-utils";
 import {BattleUtils} from "~/playground/utils/battle-utils";
+import {BodyUtils} from "~/playground/utils/body-utils";
 
 export class VehicleVehicleCollisionsDetector implements CollisionsDetector {
   detect(calculations: Calculations, battle: BattleCalculations, first: boolean = false): Set<Collision> {
@@ -33,7 +33,7 @@ export class VehicleVehicleCollisionsDetector implements CollisionsDetector {
     const leftWheelPosition = vehicle.leftWheel.nextPosition!
     
     const parts = new Map<BodyPart, BodyCalculations>([
-      [VehicleUtils.getTurretBodyPart(vehicle.model.specs.turretShape, position), vehicle],
+      [BodyUtils.getBodyPart(vehicle.model.specs.turretShape, position), vehicle],
       [new Circle(rightWheelPosition, wheelRadius), vehicle.rightWheel],
       [new Circle(leftWheelPosition, wheelRadius), vehicle.leftWheel]
     ])
@@ -54,7 +54,7 @@ export class VehicleVehicleCollisionsDetector implements CollisionsDetector {
       const otherRightWheelPosition = otherVehicle.rightWheel.nextPosition!
       
       const otherParts = new Map<BodyPart, BodyCalculations>([
-        [VehicleUtils.getTurretBodyPart(otherVehicle.model.specs.turretShape, otherPosition), otherVehicle],
+        [BodyUtils.getBodyPart(otherVehicle.model.specs.turretShape, otherPosition), otherVehicle],
         [new Circle(otherLeftWheelPosition, otherWheelRadius), otherVehicle.leftWheel],
         [new Circle(otherRightWheelPosition, otherWheelRadius), otherVehicle.rightWheel]
       ])

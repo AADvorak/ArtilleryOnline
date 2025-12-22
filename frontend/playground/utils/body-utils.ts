@@ -4,7 +4,14 @@ import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import type {BodyCalculations} from "~/playground/data/calculations";
 import type {BodyModel} from "~/playground/data/model";
-import {VectorProjections} from "~/playground/data/geometry";
+import {type BodyPart, Circle, HalfCircle, Trapeze, VectorProjections} from "~/playground/data/geometry";
+import {
+  type CircleShape,
+  type HalfCircleShape,
+  type Shape,
+  ShapeNames,
+  type TrapezeShape
+} from "~/playground/data/shapes";
 
 export const BodyUtils = {
   getVelocityAt(bodyState: BodyState, position: Position): Velocity {
@@ -63,12 +70,15 @@ export const BodyUtils = {
     bodyState.position.y += move.y
   },
 
-  getBackupPosition(bodyModel: BodyModel): BodyPosition {
-    const position = bodyModel.state.position
-    return {
-      x: position.x,
-      y: position.y,
-      angle: position.angle
+  getBodyPart(shape: Shape, position: BodyPosition): BodyPart {
+    let bodyPart: BodyPart | null = null
+    if (shape.name === ShapeNames.CIRCLE) {
+      bodyPart = Circle.of(position, shape as CircleShape)
+    } else if (shape.name === ShapeNames.HALF_CIRCLE) {
+      bodyPart = HalfCircle.of(position, (shape as HalfCircleShape).radius)
+    } else if (shape.name === ShapeNames.TRAPEZE) {
+      bodyPart = new Trapeze(position, shape as TrapezeShape)
     }
+    return bodyPart!
   },
 }

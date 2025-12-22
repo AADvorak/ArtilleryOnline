@@ -8,7 +8,6 @@ import {BodyUtils} from "~/playground/utils/body-utils";
 import {ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
 import {Circle, Trapeze, VectorProjections} from "~/playground/data/geometry";
 import {SurfaceContactUtils} from "~/playground/utils/surface-contact-utils";
-import {VehicleUtils} from "~/playground/utils/vehicle-utils";
 
 export interface Calculations {
   getModel(): any
@@ -380,7 +379,7 @@ export class VehicleCalculations extends BodyCalculationsBase implements BodyCal
   calculateAllGroundContacts(roomModel: RoomModel): void {
     const position = this.getGeometryBodyPosition()
     const turretShape = this.model.specs.turretShape
-    const bodyPart = VehicleUtils.getTurretBodyPart(turretShape, position)
+    const bodyPart = BodyUtils.getBodyPart(turretShape, position)
     const contacts = GroundContactUtils.getContacts(bodyPart, roomModel, false)
     const surfaceContacts = SurfaceContactUtils.getContacts(bodyPart, roomModel, false)
     for (const contact of surfaceContacts) {
