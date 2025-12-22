@@ -132,10 +132,11 @@ export function useBattleUpdater(player: Player) {
           removedVehicleKeys.forEach(vehicleKey => delete battle.model.vehicles[vehicleKey])
         }
       }
-      if (battleUpdate.updates.roomStateUpdates) {
+      const groundLine = battle.model.room.state.groundLine
+      if (battleUpdate.updates.roomStateUpdates && groundLine) {
         for (const roomStateUpdate of battleUpdate.updates.roomStateUpdates) {
           for (let index = 0; index < roomStateUpdate.groundLinePart.length; index++) {
-            battle.model.room.state.groundLine[roomStateUpdate.begin + index] = roomStateUpdate.groundLinePart[index]!
+            groundLine[roomStateUpdate.begin + index] = roomStateUpdate.groundLinePart[index]!
           }
         }
       }
