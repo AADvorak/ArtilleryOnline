@@ -21,6 +21,8 @@ public class Collision {
 
     private static final double GROUND_RESTITUTION = 0.1;
 
+    private static final double SURFACE_RESTITUTION = 0.3;
+
     private CollideObjectType type;
 
     private CollisionPair pair;
@@ -58,7 +60,8 @@ public class Collision {
             } else if (pair.second() == null) {
                 var firstData = bodyCollisionDataPair.first();
                 var mass = firstData != null ? firstData.getNormalData().getResultMass() : pair.first().getMass();
-                impact = mass * closingVelocity * GROUND_RESTITUTION;
+                var restitution = CollideObjectType.SURFACE.equals(type) ? SURFACE_RESTITUTION : GROUND_RESTITUTION;
+                impact = mass * closingVelocity * restitution;
             } else {
                 var firstData = bodyCollisionDataPair.first();
                 var secondData = bodyCollisionDataPair.second();

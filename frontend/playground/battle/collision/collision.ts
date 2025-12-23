@@ -135,6 +135,7 @@ export interface VelocitiesProjections {
 export class Collision {
   private static readonly RESTITUTION = 0.5
   private static readonly GROUND_RESTITUTION = 0.1
+  private static readonly SURFACE_RESTITUTION = 0.3
 
   type: CollideObjectType
   pair: CollisionPair
@@ -173,7 +174,10 @@ export class Collision {
       } else if (!this.pair.second) {
         const firstData = this.bodyCollisionDataPair.first
         const mass = firstData !== null ? firstData.normalData.resultMass : this.pair.first.getMass()
-        this.impact = mass * closingVelocity * Collision.GROUND_RESTITUTION
+        const restitution = this.type === CollideObjectType.SURFACE
+            ? Collision.SURFACE_RESTITUTION
+            : Collision.GROUND_RESTITUTION
+        this.impact = mass * closingVelocity * restitution
       } else {
         const firstData = this.bodyCollisionDataPair.first
         const secondData = this.bodyCollisionDataPair.second
