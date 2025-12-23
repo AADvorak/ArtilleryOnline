@@ -162,7 +162,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div id="left-joystick-div" :class="leftJoystickClass">
+  <div id="left-joystick-div" style="z-index: 1000" :class="leftJoystickClass"></div>
+  <div :class="leftJoystickClass">
     <v-icon
         class="icon-micro icon-top"
         color="warning"
@@ -186,7 +187,8 @@ onUnmounted(() => {
         :location="VerticalTooltipLocation.TOP"
     />
   </div>
-  <div id="right-joystick-div" :class="rightJoystickClass">
+  <div id="right-joystick-div" style="z-index: 1000" :class="rightJoystickClass"></div>
+  <div :class="rightJoystickClass">
     <v-icon
         class="icon-micro icon-top"
         color="error"
@@ -246,7 +248,6 @@ onUnmounted(() => {
   position: absolute;
   width: 14px;
   height: 14px;
-  z-index: -1;
 }
 
 .icon-top {
