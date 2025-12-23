@@ -15,13 +15,16 @@ import com.github.aadvorak.artilleryonline.battle.precalc.BoxPreCalc;
 import com.github.aadvorak.artilleryonline.battle.specs.BoxSpecs;
 import com.github.aadvorak.artilleryonline.battle.state.BoxState;
 import com.github.aadvorak.artilleryonline.battle.utils.GroundContactUtils;
+import com.github.aadvorak.artilleryonline.battle.utils.SurfaceContactUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -104,7 +107,13 @@ public class BoxCalculations extends CalculationsBase
     public void calculateAllGroundContacts(RoomModel roomModel) {
         var bodyPosition = BodyPosition.of(getGeometryPosition(), model.getState().getPosition().getAngle());
         var bodyPart = BodyPart.of(bodyPosition, model.getSpecs().getShape());
-        setGroundContacts(GroundContactUtils.getGroundContacts(bodyPart, roomModel, false));
+        var contacts = new HashSet<>(GroundContactUtils.getGroundContacts(bodyPart, roomModel, false));
+        contacts.addAll(
+                SurfaceContactUtils.getContacts(bodyPart, roomModel, false).stream()
+                        .filter(cnt -> cnt.normal().getY() < 0)
+                        .collect(Collectors.toSet())
+        );
+        setGroundContacts(contacts);
     }
 
     @Override
