@@ -168,7 +168,7 @@ export function useBattleSmoothTransition() {
     let isSmooth = false
     const xDiff = serverPosition.x - clientPosition.x
     const maxXMove = Math.max(
-        xDiff / 10,
+        xDiff / Constants.MAX_TRANSITION_STEPS,
         Constants.MAX_TRANSITION_VELOCITY * timeStepSecs,
         Math.abs(serverVelocity.x) * timeStepSecs
     )
@@ -180,7 +180,7 @@ export function useBattleSmoothTransition() {
     }
     const yDiff = serverPosition.y - clientPosition.y
     const maxYMove = Math.max(
-        yDiff / 10,
+        yDiff / Constants.MAX_TRANSITION_STEPS,
         Constants.MAX_TRANSITION_VELOCITY * timeStepSecs,
         Math.abs(serverVelocity.y) * timeStepSecs
     )
