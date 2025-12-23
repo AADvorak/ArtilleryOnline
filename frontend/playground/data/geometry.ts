@@ -311,6 +311,10 @@ export class Polygon {
     return new Set(this.sidesMap.keys())
   }
 
+  public vertices(): Set<Position> {
+    return new Set(this.sidesMap.keys().map(side => side.begin))
+  }
+
   public next(segment: Segment): Segment | undefined {
     return this.sidesMap.get(segment)
   }

@@ -1,4 +1,4 @@
-import {Contact, type Position} from "~/playground/data/common";
+import {Contact, type Position, type Vector} from "~/playground/data/common";
 import {type BodyPart, Circle, HalfCircle, Polygon, Trapeze, Segment} from "~/playground/data/geometry";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {VectorUtils} from "~/playground/utils/vector-utils";
@@ -382,6 +382,76 @@ export class ContactUtils {
     }
 
     return null
+  }
+
+  static getPolygonsContact(p1: Polygon, p2: Polygon): Contact | null {
+    let bestContact: Contact | null = null
+    bestContact = ContactUtils.checkPolygonAxes(p1, p2, bestContact, false)
+    if (bestContact === null) {
+      return null
+    }
+    bestContact = ContactUtils.checkPolygonAxes(p2, p1, bestContact, true)
+    return bestContact
+  }
+
+  private static checkPolygonAxes(sourcePolygon: Polygon, targetPolygon: Polygon, bestContact: Contact | null, invert: boolean): Contact | null {
+    for (const side of sourcePolygon.sides()) {
+      const contact = ContactUtils.checkSeparatingAxis(sourcePolygon, targetPolygon, side.normal())
+      if (contact === null) {
+        return null
+      }
+      if (bestContact === null || contact.depth < bestContact.depth) {
+        bestContact = invert ? contact.inverted() : contact
+      }
+    }
+    return bestContact
+  }
+
+  private static checkSeparatingAxis(p1: Polygon, p2: Polygon, axis: Vector): Contact | null {
+    // Project polygons onto the axis
+    let min1 = Infinity
+    let max1 = -Infinity
+    let min2 = Infinity
+    let max2 = -Infinity
+
+    // Project first polygon
+    for (const vertex of p1.vertices()) {
+      const projection = vertex.x * axis.x + vertex.y * axis.y
+      min1 = Math.min(min1, projection)
+      max1 = Math.max(max1, projection)
+    }
+
+    // Project second polygon
+    for (const vertex of p2.vertices()) {
+      const projection = vertex.x * axis.x + vertex.y * axis.y
+      min2 = Math.min(min2, projection)
+      max2 = Math.max(max2, projection)
+    }
+
+    // Check for separation
+    if (max1 < min2 || max2 < min1) {
+      return null // Separated along this axis
+    }
+
+    // Calculate overlap depth and contact information
+    const overlap1 = max1 - min2
+    const overlap2 = max2 - min1
+    const depth = Math.min(overlap1, overlap2)
+
+    // Determine contact normal (always point from p1 to p2)
+    let normal = axis
+    if (overlap1 < overlap2) {
+      normal = VectorUtils.inverted(axis)
+    }
+
+    // Calculate contact position (approximate center of overlap)
+    const contactProjection = (Math.max(min1, min2) + Math.min(max1, max2)) / 2.0
+    const contactPosition = {
+      x: contactProjection * normal.x,
+      y: contactProjection * normal.y
+    }
+
+    return Contact.withNormal(depth, VectorUtils.inverted(normal), contactPosition)
   }
 
   private static getPointAndSegmentContact(position: Position, segment: Segment, checkSide: boolean): Contact | null {
