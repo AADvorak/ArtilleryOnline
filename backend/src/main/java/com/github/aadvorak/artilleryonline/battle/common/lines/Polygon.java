@@ -1,8 +1,11 @@
 package com.github.aadvorak.artilleryonline.battle.common.lines;
 
+import com.github.aadvorak.artilleryonline.battle.common.Position;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Polygon {
 
@@ -22,6 +25,12 @@ public class Polygon {
 
     public Set<Segment> sides() {
         return sidesMap.keySet();
+    }
+
+    public Set<Position> vertices() {
+        return sidesMap.keySet().stream()
+                .map(Segment::begin)
+                .collect(Collectors.toSet());
     }
 
     public Segment next(Segment segment) {
