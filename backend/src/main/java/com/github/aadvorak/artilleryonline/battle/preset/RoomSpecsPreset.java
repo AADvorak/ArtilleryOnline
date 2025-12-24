@@ -15,7 +15,7 @@ public enum RoomSpecsPreset {
             .setSurfaceMaxDepth(0.01)
             .setGroundReactionCoefficient(25.4)
             .setGroundFrictionCoefficient(1.8)
-            .setAirFrictionCoefficient(0.1)
+            .setAirFrictionCoefficient(0.03)
             .setStep(0.01)
             .setLeftBottom(new Position().setX(0.0).setY(0.0))
             .setRightTop(new Position().setX(30.0).setY(13.5))),
@@ -26,7 +26,7 @@ public enum RoomSpecsPreset {
             .setSurfaceMaxDepth(0.01)
             .setGroundReactionCoefficient(25.4)
             .setGroundFrictionCoefficient(1.8)
-            .setAirFrictionCoefficient(0.1)
+            .setAirFrictionCoefficient(0.03)
             .setStep(0.01)
             .setLeftBottom(new Position().setX(0.0).setY(0.0))
             .setRightTop(new Position().setX(20.0).setY(9.0)));
