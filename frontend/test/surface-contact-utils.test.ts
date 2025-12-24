@@ -775,3 +775,67 @@ test('trapezeLeftContactNotExistsWithMaxDepth', () => {
   const contacts = SurfaceContactUtils.getContacts(TRAPEZE, model, true)
   expect(contacts.size).toBe(0)
 })
+
+test('trapezeBottomRightContactWith45DegreesSurface', () => {
+  // @ts-ignore
+  const model = roomModel as RoomModel
+  const surface: SurfaceState = {
+    begin: {x: BODY_X, y: BODY_Y - RADIUS},
+    end: {x: BODY_X + 2 * RADIUS, y: BODY_Y + RADIUS},
+    width: SURFACE_WIDTH
+  }
+  model.state.surfaces = [surface]
+  const contacts = SurfaceContactUtils.getContacts(TRAPEZE, model, true)
+  expect(contacts.size).toBe(1)
+  const contact = Array.from(contacts)[0]
+  expect(contact!.normal.x).toBeCloseTo(Math.SQRT1_2, 4)
+  expect(contact!.normal.y).toBeCloseTo(-Math.SQRT1_2, 4)
+})
+
+test('trapezeBottomLeftContactWith135DegreesSurface', () => {
+  // @ts-ignore
+  const model = roomModel as RoomModel
+  const surface: SurfaceState = {
+    begin: {x: BODY_X, y: BODY_Y - RADIUS},
+    end: {x: BODY_X - 2 * RADIUS, y: BODY_Y + RADIUS},
+    width: SURFACE_WIDTH
+  }
+  model.state.surfaces = [surface]
+  const contacts = SurfaceContactUtils.getContacts(TRAPEZE, model, true)
+  expect(contacts.size).toBe(1)
+  const contact = Array.from(contacts)[0]
+  expect(contact!.normal.x).toBeCloseTo(-Math.SQRT1_2, 4)
+  expect(contact!.normal.y).toBeCloseTo(-Math.SQRT1_2, 4)
+})
+
+test('trapezeTopRightContactWith135DegreesSurface', () => {
+  // @ts-ignore
+  const model = roomModel as RoomModel
+  const surface: SurfaceState = {
+    begin: {x: BODY_X, y: BODY_Y + 2 * RADIUS},
+    end: {x: BODY_X + 2 * RADIUS, y: BODY_Y},
+    width: SURFACE_WIDTH
+  }
+  model.state.surfaces = [surface]
+  const contacts = SurfaceContactUtils.getContacts(TRAPEZE, model, true)
+  expect(contacts.size).toBe(1)
+  const contact = Array.from(contacts)[0]
+  expect(contact!.normal.x).toBeCloseTo(Math.SQRT1_2, 4)
+  expect(contact!.normal.y).toBeCloseTo(Math.SQRT1_2, 4)
+})
+
+test('trapezeTopLeftContactWith45DegreesSurface', () => {
+  // @ts-ignore
+  const model = roomModel as RoomModel
+  const surface: SurfaceState = {
+    begin: {x: BODY_X, y: BODY_Y + 2 * RADIUS},
+    end: {x: BODY_X - 2 * RADIUS, y: BODY_Y},
+    width: SURFACE_WIDTH
+  }
+  model.state.surfaces = [surface]
+  const contacts = SurfaceContactUtils.getContacts(TRAPEZE, model, true)
+  expect(contacts.size).toBe(1)
+  const contact = Array.from(contacts)[0]
+  expect(contact!.normal.x).toBeCloseTo(-Math.SQRT1_2, 4)
+  expect(contact!.normal.y).toBeCloseTo(Math.SQRT1_2, 4)
+})
