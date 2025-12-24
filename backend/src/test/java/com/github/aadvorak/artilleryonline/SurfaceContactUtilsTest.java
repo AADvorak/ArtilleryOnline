@@ -69,7 +69,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void circleBottomContactExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceY = BODY_Y - EDGE_CIRCLE_DISTANCE + SMALL_DELTA + roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceY = BODY_Y - EDGE_CIRCLE_DISTANCE + SMALL_DELTA + roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(BODY_X - RADIUS).setY(surfaceY))
                 .setEnd(new Position().setX(BODY_X + RADIUS).setY(surfaceY))
@@ -87,7 +87,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void circleBottomContactNotExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceY = BODY_Y - EDGE_CIRCLE_DISTANCE - SMALL_DELTA + roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceY = BODY_Y - EDGE_CIRCLE_DISTANCE - SMALL_DELTA + roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(BODY_X - RADIUS).setY(surfaceY))
                 .setEnd(new Position().setX(BODY_X + RADIUS).setY(surfaceY))
@@ -131,7 +131,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void circleTopContactExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(BODY_X - RADIUS).setY(surfaceY))
                 .setEnd(new Position().setX(BODY_X + RADIUS).setY(surfaceY))
@@ -149,7 +149,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void circleTopContactNotExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(BODY_X - RADIUS).setY(surfaceY))
                 .setEnd(new Position().setX(BODY_X + RADIUS).setY(surfaceY))
@@ -193,7 +193,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void circleRightContactExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(surfaceX).setY(BODY_Y - RADIUS))
                 .setEnd(new Position().setX(surfaceX).setY(BODY_Y + RADIUS))
@@ -211,7 +211,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void circleRightContactNotExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(surfaceX).setY(BODY_Y - RADIUS))
                 .setEnd(new Position().setX(surfaceX).setY(BODY_Y + RADIUS))
@@ -255,7 +255,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void circleLeftContactExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE + SMALL_DELTA + roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE + SMALL_DELTA + roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(surfaceX).setY(BODY_Y - RADIUS))
                 .setEnd(new Position().setX(surfaceX).setY(BODY_Y + RADIUS))
@@ -273,7 +273,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void circleLeftContactNotExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE - SMALL_DELTA + roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE - SMALL_DELTA + roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(surfaceX).setY(BODY_Y - RADIUS))
                 .setEnd(new Position().setX(surfaceX).setY(BODY_Y + RADIUS))
@@ -317,7 +317,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void halfCircleBottomContactExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceY = BODY_Y - EDGE_DISTANCE + SMALL_DELTA + roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceY = BODY_Y - EDGE_DISTANCE + SMALL_DELTA + roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(BODY_X - RADIUS).setY(surfaceY))
                 .setEnd(new Position().setX(BODY_X + RADIUS).setY(surfaceY))
@@ -335,7 +335,7 @@ public class SurfaceContactUtilsTest {
     // todo @Test
     public void halfCircleBottomContactNotExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceY = BODY_Y - EDGE_DISTANCE - SMALL_DELTA + roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceY = BODY_Y - EDGE_DISTANCE - SMALL_DELTA + roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(BODY_X - RADIUS).setY(surfaceY))
                 .setEnd(new Position().setX(BODY_X + RADIUS).setY(surfaceY))
@@ -379,7 +379,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void halfCircleTopContactExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(BODY_X - RADIUS).setY(surfaceY))
                 .setEnd(new Position().setX(BODY_X + RADIUS).setY(surfaceY))
@@ -397,7 +397,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void halfCircleTopContactNotExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(BODY_X - RADIUS).setY(surfaceY))
                 .setEnd(new Position().setX(BODY_X + RADIUS).setY(surfaceY))
@@ -441,7 +441,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void halfCircleRightContactExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(surfaceX).setY(BODY_Y - RADIUS))
                 .setEnd(new Position().setX(surfaceX).setY(BODY_Y + RADIUS))
@@ -459,7 +459,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void halfCircleRightContactNotExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(surfaceX).setY(BODY_Y - RADIUS))
                 .setEnd(new Position().setX(surfaceX).setY(BODY_Y + RADIUS))
@@ -503,7 +503,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void halfCircleLeftContactExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE + SMALL_DELTA + roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE + SMALL_DELTA + roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(surfaceX).setY(BODY_Y - RADIUS))
                 .setEnd(new Position().setX(surfaceX).setY(BODY_Y + RADIUS))
@@ -521,7 +521,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void halfCircleLeftContactNotExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE - SMALL_DELTA + roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE - SMALL_DELTA + roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(surfaceX).setY(BODY_Y - RADIUS))
                 .setEnd(new Position().setX(surfaceX).setY(BODY_Y + RADIUS))
@@ -565,7 +565,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void trapezeBottomContactExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceY = BODY_Y - EDGE_DISTANCE + SMALL_DELTA + roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceY = BODY_Y - EDGE_DISTANCE + SMALL_DELTA + roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(BODY_X - 2 * RADIUS).setY(surfaceY))
                 .setEnd(new Position().setX(BODY_X + 2 * RADIUS).setY(surfaceY))
@@ -583,7 +583,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void trapezeBottomContactNotExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceY = BODY_Y - EDGE_DISTANCE - SMALL_DELTA + roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceY = BODY_Y - EDGE_DISTANCE - SMALL_DELTA + roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(BODY_X - 2 * RADIUS).setY(surfaceY))
                 .setEnd(new Position().setX(BODY_X + 2 * RADIUS).setY(surfaceY))
@@ -627,7 +627,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void trapezeTopContactExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(BODY_X - 2 * RADIUS).setY(surfaceY))
                 .setEnd(new Position().setX(BODY_X + 2 * RADIUS).setY(surfaceY))
@@ -645,7 +645,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void trapezeTopContactNotExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(BODY_X - 2 * RADIUS).setY(surfaceY))
                 .setEnd(new Position().setX(BODY_X + 2 * RADIUS).setY(surfaceY))
@@ -689,7 +689,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void trapezeRightContactExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(surfaceX).setY(BODY_Y - 2 * RADIUS))
                 .setEnd(new Position().setX(surfaceX).setY(BODY_Y + 2 * RADIUS))
@@ -707,7 +707,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void trapezeRightContactNotExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(surfaceX).setY(BODY_Y - 2 * RADIUS))
                 .setEnd(new Position().setX(surfaceX).setY(BODY_Y + 2 * RADIUS))
@@ -751,7 +751,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void trapezeLeftContactExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE + SMALL_DELTA + roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE + SMALL_DELTA + roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(surfaceX).setY(BODY_Y - 2 * RADIUS))
                 .setEnd(new Position().setX(surfaceX).setY(BODY_Y + 2 * RADIUS))
@@ -769,7 +769,7 @@ public class SurfaceContactUtilsTest {
     @Test
     public void trapezeLeftContactNotExistsWithMaxDepth() {
         var roomModel = TestRoomGenerator.generate();
-        var surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE - SMALL_DELTA + roomModel.getSpecs().getGroundMaxDepth();
+        var surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE - SMALL_DELTA + roomModel.getSpecs().getSurfaceMaxDepth();
         var surface = new SurfaceState()
                 .setBegin(new Position().setX(surfaceX).setY(BODY_Y - 2 * RADIUS))
                 .setEnd(new Position().setX(surfaceX).setY(BODY_Y + 2 * RADIUS))

@@ -64,7 +64,7 @@ test('circleBottomContactNotExists', () => {
 test('circleBottomContactExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceY = BODY_Y - EDGE_CIRCLE_DISTANCE + SMALL_DELTA + model.specs.groundMaxDepth
+  const surfaceY = BODY_Y - EDGE_CIRCLE_DISTANCE + SMALL_DELTA + model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: BODY_X - RADIUS, y: surfaceY},
     end: {x: BODY_X + RADIUS, y: surfaceY},
@@ -81,7 +81,7 @@ test('circleBottomContactExistsWithMaxDepth', () => {
 test('circleBottomContactNotExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceY = BODY_Y - EDGE_CIRCLE_DISTANCE - SMALL_DELTA + model.specs.groundMaxDepth
+  const surfaceY = BODY_Y - EDGE_CIRCLE_DISTANCE - SMALL_DELTA + model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: BODY_X - RADIUS, y: surfaceY},
     end: {x: BODY_X + RADIUS, y: surfaceY},
@@ -126,7 +126,7 @@ test('circleTopContactNotExists', () => {
 test('circleTopContactExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - model.specs.groundMaxDepth
+  const surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: BODY_X - RADIUS, y: surfaceY},
     end: {x: BODY_X + RADIUS, y: surfaceY},
@@ -143,7 +143,7 @@ test('circleTopContactExistsWithMaxDepth', () => {
 test('circleTopContactNotExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - model.specs.groundMaxDepth
+  const surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: BODY_X - RADIUS, y: surfaceY},
     end: {x: BODY_X + RADIUS, y: surfaceY},
@@ -188,7 +188,7 @@ test('circleRightContactNotExists', () => {
 test('circleRightContactExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - model.specs.groundMaxDepth
+  const surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: surfaceX, y: BODY_Y - RADIUS},
     end: {x: surfaceX, y: BODY_Y + RADIUS},
@@ -205,7 +205,7 @@ test('circleRightContactExistsWithMaxDepth', () => {
 test('circleRightContactNotExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - model.specs.groundMaxDepth
+  const surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: surfaceX, y: BODY_Y - RADIUS},
     end: {x: surfaceX, y: BODY_Y + RADIUS},
@@ -250,7 +250,7 @@ test('circleLeftContactNotExists', () => {
 test('circleLeftContactExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE + SMALL_DELTA + model.specs.groundMaxDepth
+  const surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE + SMALL_DELTA + model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: surfaceX, y: BODY_Y - RADIUS},
     end: {x: surfaceX, y: BODY_Y + RADIUS},
@@ -267,7 +267,7 @@ test('circleLeftContactExistsWithMaxDepth', () => {
 test('circleLeftContactNotExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE - SMALL_DELTA + model.specs.groundMaxDepth
+  const surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE - SMALL_DELTA + model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: surfaceX, y: BODY_Y - RADIUS},
     end: {x: surfaceX, y: BODY_Y + RADIUS},
@@ -313,7 +313,7 @@ test('halfCircleBottomContactExists', () => {
 test('halfCircleBottomContactExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceY = BODY_Y - EDGE_DISTANCE + SMALL_DELTA + model.specs.groundMaxDepth
+  const surfaceY = BODY_Y - EDGE_DISTANCE + SMALL_DELTA + model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: BODY_X - RADIUS, y: surfaceY},
     end: {x: BODY_X + RADIUS, y: surfaceY},
@@ -331,7 +331,7 @@ test('halfCircleBottomContactExistsWithMaxDepth', () => {
 /*test('halfCircleBottomContactNotExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceY = BODY_Y - EDGE_DISTANCE - SMALL_DELTA + model.specs.groundMaxDepth
+  const surfaceY = BODY_Y - EDGE_DISTANCE - SMALL_DELTA + model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: BODY_X - RADIUS, y: surfaceY},
     end: {x: BODY_X + RADIUS, y: surfaceY},
@@ -376,7 +376,7 @@ test('halfCircleTopContactNotExists', () => {
 test('halfCircleTopContactExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - model.specs.groundMaxDepth
+  const surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: BODY_X - RADIUS, y: surfaceY},
     end: {x: BODY_X + RADIUS, y: surfaceY},
@@ -393,7 +393,7 @@ test('halfCircleTopContactExistsWithMaxDepth', () => {
 test('halfCircleTopContactNotExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - model.specs.groundMaxDepth
+  const surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: BODY_X - RADIUS, y: surfaceY},
     end: {x: BODY_X + RADIUS, y: surfaceY},
@@ -438,7 +438,7 @@ test('halfCircleRightContactNotExists', () => {
 test('halfCircleRightContactExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - model.specs.groundMaxDepth
+  const surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: surfaceX, y: BODY_Y - RADIUS},
     end: {x: surfaceX, y: BODY_Y + RADIUS},
@@ -455,7 +455,7 @@ test('halfCircleRightContactExistsWithMaxDepth', () => {
 test('halfCircleRightContactNotExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - model.specs.groundMaxDepth
+  const surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: surfaceX, y: BODY_Y - RADIUS},
     end: {x: surfaceX, y: BODY_Y + RADIUS},
@@ -500,7 +500,7 @@ test('halfCircleLeftContactNotExists', () => {
 test('halfCircleLeftContactExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE + SMALL_DELTA + model.specs.groundMaxDepth
+  const surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE + SMALL_DELTA + model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: surfaceX, y: BODY_Y - RADIUS},
     end: {x: surfaceX, y: BODY_Y + RADIUS},
@@ -517,7 +517,7 @@ test('halfCircleLeftContactExistsWithMaxDepth', () => {
 test('halfCircleLeftContactNotExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE - SMALL_DELTA + model.specs.groundMaxDepth
+  const surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE - SMALL_DELTA + model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: surfaceX, y: BODY_Y - RADIUS},
     end: {x: surfaceX, y: BODY_Y + RADIUS},
@@ -562,7 +562,7 @@ test('trapezeBottomContactNotExists', () => {
 test('trapezeBottomContactExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceY = BODY_Y - EDGE_DISTANCE + SMALL_DELTA + model.specs.groundMaxDepth
+  const surfaceY = BODY_Y - EDGE_DISTANCE + SMALL_DELTA + model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: BODY_X - 2 * RADIUS, y: surfaceY},
     end: {x: BODY_X + 2 * RADIUS, y: surfaceY},
@@ -579,7 +579,7 @@ test('trapezeBottomContactExistsWithMaxDepth', () => {
 test('trapezeBottomContactNotExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceY = BODY_Y - EDGE_DISTANCE - SMALL_DELTA + model.specs.groundMaxDepth
+  const surfaceY = BODY_Y - EDGE_DISTANCE - SMALL_DELTA + model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: BODY_X - 2 * RADIUS, y: surfaceY},
     end: {x: BODY_X + 2 * RADIUS, y: surfaceY},
@@ -624,7 +624,7 @@ test('trapezeTopContactNotExists', () => {
 test('trapezeTopContactExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - model.specs.groundMaxDepth
+  const surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: BODY_X - 2 * RADIUS, y: surfaceY},
     end: {x: BODY_X + 2 * RADIUS, y: surfaceY},
@@ -641,7 +641,7 @@ test('trapezeTopContactExistsWithMaxDepth', () => {
 test('trapezeTopContactNotExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - model.specs.groundMaxDepth
+  const surfaceY = BODY_Y + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: BODY_X - 2 * RADIUS, y: surfaceY},
     end: {x: BODY_X + 2 * RADIUS, y: surfaceY},
@@ -686,7 +686,7 @@ test('trapezeRightContactNotExists', () => {
 test('trapezeRightContactExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - model.specs.groundMaxDepth
+  const surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE - SMALL_DELTA - model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: surfaceX, y: BODY_Y - 2 * RADIUS},
     end: {x: surfaceX, y: BODY_Y + 2 * RADIUS},
@@ -703,7 +703,7 @@ test('trapezeRightContactExistsWithMaxDepth', () => {
 test('trapezeRightContactNotExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - model.specs.groundMaxDepth
+  const surfaceX = BODY_X + EDGE_CIRCLE_DISTANCE + SMALL_DELTA - model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: surfaceX, y: BODY_Y - 2 * RADIUS},
     end: {x: surfaceX, y: BODY_Y + 2 * RADIUS},
@@ -748,7 +748,7 @@ test('trapezeLeftContactNotExists', () => {
 test('trapezeLeftContactExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE + SMALL_DELTA + model.specs.groundMaxDepth
+  const surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE + SMALL_DELTA + model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: surfaceX, y: BODY_Y - 2 * RADIUS},
     end: {x: surfaceX, y: BODY_Y + 2 * RADIUS},
@@ -765,7 +765,7 @@ test('trapezeLeftContactExistsWithMaxDepth', () => {
 test('trapezeLeftContactNotExistsWithMaxDepth', () => {
   // @ts-ignore
   const model = roomModel as RoomModel
-  const surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE - SMALL_DELTA + model.specs.groundMaxDepth
+  const surfaceX = BODY_X - EDGE_CIRCLE_DISTANCE - SMALL_DELTA + model.specs.surfaceMaxDepth
   const surface: SurfaceState = {
     begin: {x: surfaceX, y: BODY_Y - 2 * RADIUS},
     end: {x: surfaceX, y: BODY_Y + 2 * RADIUS},

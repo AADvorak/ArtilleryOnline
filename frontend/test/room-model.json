@@ -13,7 +13,8 @@
     "groundReactionCoefficient": 25.4,
     "groundFrictionCoefficient": 1.8,
     "airFrictionCoefficient": 0.1,
-    "groundMaxDepth": 0.04
+    "groundMaxDepth": 0.04,
+    "surfaceMaxDepth": 0.01
   },
   "config": {
     "background": 1,
