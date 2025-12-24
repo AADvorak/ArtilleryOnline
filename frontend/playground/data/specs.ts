@@ -53,6 +53,7 @@ export interface RoomSpecs {
   groundFrictionCoefficient: number
   airFrictionCoefficient: number
   groundMaxDepth: number
+  surfaceMaxDepth: number
 }
 
 export interface VehicleSpecs {

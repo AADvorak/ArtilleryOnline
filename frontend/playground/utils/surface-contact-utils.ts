@@ -13,7 +13,7 @@ export const SurfaceContactUtils = {
     if (!surfaces || surfaces.length === 0) {
       return contacts
     }
-    const maxDepth = withMaxDepth ? roomModel.specs.groundMaxDepth : 0.0
+    const maxDepth = withMaxDepth ? roomModel.specs.surfaceMaxDepth : 0.0
     surfaces.forEach(surface => {
       const contact = this.getContact(bodyPart, surface, maxDepth)
       if (contact) {

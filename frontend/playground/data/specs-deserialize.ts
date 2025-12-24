@@ -85,6 +85,7 @@ export function deserializeRoomSpecs(input: DeserializerInput): RoomSpecs {
   const groundFrictionCoefficient = DeserializerBase.readDouble(input)
   const airFrictionCoefficient = DeserializerBase.readDouble(input)
   const groundMaxDepth = DeserializerBase.readDouble(input)
+  const surfaceMaxDepth = DeserializerBase.readDouble(input)
   return {
     leftBottom,
     rightTop,
@@ -93,7 +94,8 @@ export function deserializeRoomSpecs(input: DeserializerInput): RoomSpecs {
     groundReactionCoefficient,
     groundFrictionCoefficient,
     airFrictionCoefficient,
-    groundMaxDepth
+    groundMaxDepth,
+    surfaceMaxDepth,
   }
 }
 

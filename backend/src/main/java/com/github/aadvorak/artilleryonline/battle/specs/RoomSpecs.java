@@ -28,6 +28,8 @@ public class RoomSpecs implements Specs, CompactSerializable {
 
     private double groundMaxDepth;
 
+    private double surfaceMaxDepth;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeSerializableValue(leftBottom);
@@ -38,5 +40,6 @@ public class RoomSpecs implements Specs, CompactSerializable {
         stream.writeDouble(groundFrictionCoefficient);
         stream.writeDouble(airFrictionCoefficient);
         stream.writeDouble(groundMaxDepth);
+        stream.writeDouble(surfaceMaxDepth);
     }
 }

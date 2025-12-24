@@ -17,7 +17,7 @@ public class SurfaceContactUtils {
         if (surfaces == null || surfaces.isEmpty()) {
             return contacts;
         }
-        var maxDepth = withMaxDepth ? roomModel.getSpecs().getGroundMaxDepth() : 0.0;
+        var maxDepth = withMaxDepth ? roomModel.getSpecs().getSurfaceMaxDepth() : 0.0;
         surfaces.forEach(surface -> getContact(bodyPart, surface, maxDepth).ifPresent(contacts::add));
         return contacts;
     }
