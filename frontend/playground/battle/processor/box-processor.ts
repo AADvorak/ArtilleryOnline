@@ -5,7 +5,6 @@ import {GravityForceCalculator} from "~/playground/battle/calculator/common/grav
 import {BodyVelocityCalculator} from "~/playground/battle/calculator/body-velocity-calculator";
 import {BodyUtils} from "~/playground/utils/body-utils";
 import {GroundFrictionForceCalculator} from "~/playground/battle/calculator/common/ground-friction-force-calculator";
-import {GroundReactionForceCalculator} from "~/playground/battle/calculator/common/ground-reaction-force-calculator";
 
 export const BoxProcessor = {
 
@@ -13,8 +12,7 @@ export const BoxProcessor = {
       new BodyAccelerationCalculator<BoxCalculations>(
           [
             new GravityForceCalculator(),
-            new GroundFrictionForceCalculator(),
-            new GroundReactionForceCalculator()
+            new GroundFrictionForceCalculator()
           ]
       )
   ),
