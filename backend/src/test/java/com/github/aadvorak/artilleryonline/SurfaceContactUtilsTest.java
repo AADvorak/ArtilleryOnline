@@ -18,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SurfaceContactUtilsTest {
 
+    private static final double SQRT_05 = Math.sqrt(0.5);
+
     private static final double BODY_X = 10.0;
     private static final double BODY_Y = 10.0;
     private static final double RADIUS = 1.0;
@@ -777,5 +779,73 @@ public class SurfaceContactUtilsTest {
         roomModel.getState().setSurfaces(List.of(surface));
         var contacts = SurfaceContactUtils.getContacts(TRAPEZE, roomModel, true);
         assertTrue(contacts.isEmpty());
+    }
+
+    @Test
+    public void trapezeBottomRightContactWith45DegreesSurface() {
+        var roomModel = TestRoomGenerator.generate();
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(BODY_X).setY(BODY_Y - RADIUS))
+                .setEnd(new Position().setX(BODY_X + 2 * RADIUS).setY(BODY_Y + RADIUS))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(TRAPEZE, roomModel, true);
+        assertEquals(1, contacts.size());
+        var contact = contacts.stream().findAny().get();
+        assertAll(
+                () -> assertEquals(SQRT_05, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(-SQRT_05, contact.normal().getY(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void trapezeBottomLeftContactWith135DegreesSurface() {
+        var roomModel = TestRoomGenerator.generate();
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(BODY_X).setY(BODY_Y - RADIUS))
+                .setEnd(new Position().setX(BODY_X - 2 * RADIUS).setY(BODY_Y + RADIUS))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(TRAPEZE, roomModel, true);
+        assertEquals(1, contacts.size());
+        var contact = contacts.stream().findAny().get();
+        assertAll(
+                () -> assertEquals(-SQRT_05, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(-SQRT_05, contact.normal().getY(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void trapezeTopRightContactWith135DegreesSurface() {
+        var roomModel = TestRoomGenerator.generate();
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(BODY_X).setY(BODY_Y + 2 * RADIUS))
+                .setEnd(new Position().setX(BODY_X + 2 * RADIUS).setY(BODY_Y))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(TRAPEZE, roomModel, true);
+        assertEquals(1, contacts.size());
+        var contact = contacts.stream().findAny().get();
+        assertAll(
+                () -> assertEquals(SQRT_05, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(SQRT_05, contact.normal().getY(), SMALL_DELTA)
+        );
+    }
+
+    @Test
+    public void trapezeTopLeftContactWith45DegreesSurface() {
+        var roomModel = TestRoomGenerator.generate();
+        var surface = new SurfaceState()
+                .setBegin(new Position().setX(BODY_X).setY(BODY_Y + 2 * RADIUS))
+                .setEnd(new Position().setX(BODY_X - 2 * RADIUS).setY(BODY_Y))
+                .setWidth(SURFACE_WIDTH);
+        roomModel.getState().setSurfaces(List.of(surface));
+        var contacts = SurfaceContactUtils.getContacts(TRAPEZE, roomModel, true);
+        assertEquals(1, contacts.size());
+        var contact = contacts.stream().findAny().get();
+        assertAll(
+                () -> assertEquals(-SQRT_05, contact.normal().getX(), SMALL_DELTA),
+                () -> assertEquals(SQRT_05, contact.normal().getY(), SMALL_DELTA)
+        );
     }
 }
