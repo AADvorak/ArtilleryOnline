@@ -11,13 +11,13 @@ import lombok.RequiredArgsConstructor;
 public enum BoxSpecsPreset {
 
     HP("HP", new BoxSpecs()
-            .setMass(0.2)
+            .setMass(0.05)
             .setType(BoxType.HP)
             .setShape(TrapezeShape.square(0.4))
     ),
 
     AMMO("AMMO", new BoxSpecs()
-            .setMass(0.2)
+            .setMass(0.08)
             .setType(BoxType.AMMO)
             .setShape(TrapezeShape.square(0.4))
     );
