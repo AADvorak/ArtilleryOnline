@@ -409,11 +409,39 @@ public class ContactUtils {
         }
         
         // Calculate contact position (approximate center of overlap)
-        double contactProjection = (Math.max(min1, min2) + Math.min(max1, max2)) / 2.0;
-        Position contactPosition = new Position()
-                .setX(contactProjection * normal.getX())
-                .setY(contactProjection * normal.getY());
+        // The overlap region is from max(min1, min2) to min(max1, max2)
+        double overlapStart = Math.max(min1, min2);
+        double overlapEnd = Math.min(max1, max2);
         
+        // Find vertices that contribute to the overlap region
+        List<Position> overlappingVertices = new ArrayList<>();
+        for (Position vertex : p1.vertices()) {
+            double projection = vertex.getX() * axis.getX() + vertex.getY() * axis.getY();
+            if (projection >= overlapStart && projection <= overlapEnd) {
+                overlappingVertices.add(vertex);
+            }
+        }
+        for (Position vertex : p2.vertices()) {
+            double projection = vertex.getX() * axis.getX() + vertex.getY() * axis.getY();
+            if (projection >= overlapStart && projection <= overlapEnd) {
+                overlappingVertices.add(vertex);
+            }
+        }
+        
+        // Calculate the approximate center of the overlapping region
+        Position contactPosition = new Position();
+        if (!overlappingVertices.isEmpty()) {
+            double sumX = 0;
+            double sumY = 0;
+            for (Position vertex : overlappingVertices) {
+                sumX += vertex.getX();
+                sumY += vertex.getY();
+            }
+            contactPosition
+                    .setX(sumX / overlappingVertices.size())
+                    .setY(sumY / overlappingVertices.size());
+        }
+
         return Contact.of(depth, normal.inverted(), contactPosition);
     }
 

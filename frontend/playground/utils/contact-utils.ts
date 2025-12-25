@@ -444,11 +444,38 @@ export class ContactUtils {
       normal = VectorUtils.inverted(axis)
     }
 
-    // Calculate contact position (approximate center of overlap)
-    const contactProjection = (Math.max(min1, min2) + Math.min(max1, max2)) / 2.0
-    const contactPosition = {
-      x: contactProjection * normal.x,
-      y: contactProjection * normal.y
+    // Calculate overlap region
+    const overlapStart = Math.max(min1, min2)
+    const overlapEnd = Math.min(max1, max2)
+
+    // Find vertices that contribute to the overlap region
+    const overlappingVertices: Position[] = []
+    for (const vertex of p1.vertices()) {
+      const projection = vertex.x * axis.x + vertex.y * axis.y
+      if (projection >= overlapStart && projection <= overlapEnd) {
+        overlappingVertices.push(vertex)
+      }
+    }
+    for (const vertex of p2.vertices()) {
+      const projection = vertex.x * axis.x + vertex.y * axis.y
+      if (projection >= overlapStart && projection <= overlapEnd) {
+        overlappingVertices.push(vertex)
+      }
+    }
+
+    // Calculate the approximate center of the overlapping region
+    let contactPosition: Position = { x: 0, y: 0 }
+    if (overlappingVertices.length > 0) {
+      let sumX = 0
+      let sumY = 0
+      for (const vertex of overlappingVertices) {
+        sumX += vertex.x
+        sumY += vertex.y
+      }
+      contactPosition = {
+        x: sumX / overlappingVertices.length,
+        y: sumY / overlappingVertices.length
+      }
     }
 
     return Contact.withNormal(depth, VectorUtils.inverted(normal), contactPosition)
