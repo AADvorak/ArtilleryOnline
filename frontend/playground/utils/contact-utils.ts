@@ -1,11 +1,104 @@
-import {Contact, type Position, type Vector} from "~/playground/data/common";
-import {type BodyPart, Circle, HalfCircle, Polygon, Trapeze, Segment} from "~/playground/data/geometry";
+import {Contact, type Position} from "~/playground/data/common";
+import {type BodyPart, Circle, HalfCircle, Polygon, Segment, Trapeze} from "~/playground/data/geometry";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {GeometryUtils} from "~/playground/utils/geometry-utils";
+import {
+  type PolygonsContactDetector,
+  SATPolygonsContactDetector
+} from "~/playground/battle/contact/polygons-contact-detector";
+
+export class IntersectionsPolygonsContactDetector implements PolygonsContactDetector {
+  detect(polygon: Polygon, otherPolygon: Polygon): Contact | null {
+    const otherSidesIntersections = new Map<Segment, Set<Segment>>()
+
+    otherPolygon.sides().forEach(otherSide => otherSidesIntersections.set(otherSide, new Set<Segment>()))
+
+    otherSidesIntersections.forEach((intersections, otherSide) => {
+      polygon.sides().forEach(side => {
+        if (GeometryUtils.getSegmentsIntersectionPoint(otherSide, side) !== null) {
+          intersections.add(side)
+        }
+      })
+    })
+
+    for (const [otherSide, intersections] of otherSidesIntersections) {
+      if (intersections.size === 2) {
+        const iterator = intersections.values()
+        const firstSide = iterator.next().value!
+        const secondSide = iterator.next().value!
+
+        if (polygon.next(firstSide) === secondSide) {
+          return ContactUtils.getPointAndSegmentContact(firstSide.end, otherSide, false)
+        } else if (polygon.next(secondSide) === firstSide) {
+          return ContactUtils.getPointAndSegmentContact(secondSide.end, otherSide, false)
+        } else {
+          const contacts = new Set<Contact>()
+          ContactUtils.addContactToSetIfNotNull(contacts, ContactUtils.getPointAndSegmentContact(firstSide.end, otherSide, true))
+          ContactUtils.addContactToSetIfNotNull(contacts, ContactUtils.getPointAndSegmentContact(secondSide.end, otherSide, true))
+          ContactUtils.addContactToSetIfNotNull(contacts, ContactUtils.getPointAndSegmentContact(firstSide.begin, otherSide, true))
+          ContactUtils.addContactToSetIfNotNull(contacts, ContactUtils.getPointAndSegmentContact(secondSide.begin, otherSide, true))
+          return ContactUtils.getDeepestContact(contacts)
+        }
+      } else if (intersections.size === 1) {
+        const firstSide = Array.from(intersections)[0]!
+        const secondOtherSide = otherPolygon.next(otherSide)!
+
+        if (otherSidesIntersections.get(secondOtherSide)?.size === 1) {
+          const secondSide = Array.from(otherSidesIntersections.get(secondOtherSide)!)[0]!
+
+          if (firstSide === secondSide) {
+            return null
+          }
+
+          const edge = polygon.next(firstSide) === secondSide ? firstSide.end : secondSide.end
+          const otherEdge = otherSide.end
+          const edgeOtherSideProjection = GeometryUtils.getPointToLineProjection(edge, otherSide)
+          const edgeOtherSideDistance = BattleUtils.distance(edge, edgeOtherSideProjection)
+          const edgeSecondOtherSideProjection = GeometryUtils.getPointToLineProjection(edge, secondOtherSide)
+          const edgeSecondOtherSideDistance = BattleUtils.distance(edge, edgeSecondOtherSideProjection)
+          const edgeOtherEdgeDistance = BattleUtils.distance(edge, otherEdge)
+
+          if (edgeOtherEdgeDistance < 2 * edgeOtherSideDistance && edgeOtherEdgeDistance < 2 * edgeSecondOtherSideDistance) {
+            const normal = VectorUtils.vectorFromTo(otherEdge, edge)
+            VectorUtils.normalize(normal)
+            return Contact.withNormal(
+                edgeOtherEdgeDistance,
+                normal,
+                new Segment(edge, otherEdge).center()
+            )
+          } else if (edgeOtherSideDistance < edgeSecondOtherSideDistance) {
+            const normal = VectorUtils.vectorFromTo(edgeOtherSideProjection, edge)
+            VectorUtils.normalize(normal)
+            return Contact.withNormal(
+                edgeOtherSideDistance,
+                normal,
+                new Segment(edge, edgeOtherSideProjection).center()
+            )
+          } else {
+            const normal = VectorUtils.vectorFromTo(edgeSecondOtherSideProjection, edge)
+            VectorUtils.normalize(normal)
+            return Contact.withNormal(
+                edgeSecondOtherSideDistance,
+                normal,
+                new Segment(edge, edgeSecondOtherSideProjection).center()
+            )
+          }
+        }
+      }
+    }
+
+    return null
+  }
+}
 
 export class ContactUtils {
+
   static getBodyPartsContact(bodyPart: BodyPart, otherBodyPart: BodyPart): Contact | null {
+    return this.getBodyPartsContactWithDetector(bodyPart, otherBodyPart, new SATPolygonsContactDetector())
+  }
+
+  static getBodyPartsContactWithDetector(bodyPart: BodyPart, otherBodyPart: BodyPart, detector: PolygonsContactDetector): Contact | null {
     if (bodyPart instanceof Circle) {
       const circle = bodyPart as Circle
 
@@ -62,7 +155,7 @@ export class ContactUtils {
 
       if (otherBodyPart instanceof Trapeze) {
         const otherTrapeze = otherBodyPart as Trapeze
-        return ContactUtils.getTrapezesContact(trapeze, otherTrapeze)
+        return ContactUtils.getTrapezesContactWithDetector(trapeze, otherTrapeze, detector)
       }
     }
 
@@ -294,6 +387,10 @@ export class ContactUtils {
   }
 
   static getTrapezesContact(trapeze: Trapeze, otherTrapeze: Trapeze): Contact | null {
+    return this.getTrapezesContactWithDetector(trapeze, otherTrapeze, new SATPolygonsContactDetector())
+  }
+
+  static getTrapezesContactWithDetector(trapeze: Trapeze, otherTrapeze: Trapeze, detector: PolygonsContactDetector): Contact | null {
     const maxDistance = trapeze.maxDistanceFromCenter()
     const otherMaxDistance = otherTrapeze.maxDistanceFromCenter()
     
@@ -303,185 +400,10 @@ export class ContactUtils {
 
     const polygon = new Polygon(trapeze)
     const otherPolygon = new Polygon(otherTrapeze)
-    const otherSidesIntersections = new Map<Segment, Set<Segment>>()
-    
-    otherPolygon.sides().forEach(otherSide => otherSidesIntersections.set(otherSide, new Set<Segment>()))
-    
-    otherSidesIntersections.forEach((intersections, otherSide) => {
-      polygon.sides().forEach(side => {
-        if (GeometryUtils.getSegmentsIntersectionPoint(otherSide, side) !== null) {
-          intersections.add(side)
-        }
-      })
-    })
-
-    for (const [otherSide, intersections] of otherSidesIntersections) {
-      if (intersections.size === 2) {
-        const iterator = intersections.values()
-        const firstSide = iterator.next().value!
-        const secondSide = iterator.next().value!
-        
-        if (polygon.next(firstSide) === secondSide) {
-          return ContactUtils.getPointAndSegmentContact(firstSide.end, otherSide, false)
-        } else if (polygon.next(secondSide) === firstSide) {
-          return ContactUtils.getPointAndSegmentContact(secondSide.end, otherSide, false)
-        } else {
-          const contacts = new Set<Contact>()
-          this.addContactToSetIfNotNull(contacts, ContactUtils.getPointAndSegmentContact(firstSide.end, otherSide, true))
-          this.addContactToSetIfNotNull(contacts, ContactUtils.getPointAndSegmentContact(secondSide.end, otherSide, true))
-          this.addContactToSetIfNotNull(contacts, ContactUtils.getPointAndSegmentContact(firstSide.begin, otherSide, true))
-          this.addContactToSetIfNotNull(contacts, ContactUtils.getPointAndSegmentContact(secondSide.begin, otherSide, true))
-          return ContactUtils.getDeepestContact(contacts)
-        }
-      } else if (intersections.size === 1) {
-        const firstSide = Array.from(intersections)[0]!
-        const secondOtherSide = otherPolygon.next(otherSide)!
-        
-        if (otherSidesIntersections.get(secondOtherSide)?.size === 1) {
-          const secondSide = Array.from(otherSidesIntersections.get(secondOtherSide)!)[0]!
-          
-          if (firstSide === secondSide) {
-            return null
-          }
-
-          const edge = polygon.next(firstSide) === secondSide ? firstSide.end : secondSide.end
-          const otherEdge = otherSide.end
-          const edgeOtherSideProjection = GeometryUtils.getPointToLineProjection(edge, otherSide)
-          const edgeOtherSideDistance = BattleUtils.distance(edge, edgeOtherSideProjection)
-          const edgeSecondOtherSideProjection = GeometryUtils.getPointToLineProjection(edge, secondOtherSide)
-          const edgeSecondOtherSideDistance = BattleUtils.distance(edge, edgeSecondOtherSideProjection)
-          const edgeOtherEdgeDistance = BattleUtils.distance(edge, otherEdge)
-
-          if (edgeOtherEdgeDistance < 2 * edgeOtherSideDistance && edgeOtherEdgeDistance < 2 * edgeSecondOtherSideDistance) {
-            const normal = VectorUtils.vectorFromTo(otherEdge, edge)
-            VectorUtils.normalize(normal)
-            return Contact.withNormal(
-              edgeOtherEdgeDistance,
-              normal,
-              new Segment(edge, otherEdge).center()
-            )
-          } else if (edgeOtherSideDistance < edgeSecondOtherSideDistance) {
-            const normal = VectorUtils.vectorFromTo(edgeOtherSideProjection, edge)
-            VectorUtils.normalize(normal)
-            return Contact.withNormal(
-              edgeOtherSideDistance,
-              normal,
-              new Segment(edge, edgeOtherSideProjection).center()
-            )
-          } else {
-            const normal = VectorUtils.vectorFromTo(edgeSecondOtherSideProjection, edge)
-            VectorUtils.normalize(normal)
-            return Contact.withNormal(
-              edgeSecondOtherSideDistance,
-              normal,
-              new Segment(edge, edgeSecondOtherSideProjection).center()
-            )
-          }
-        }
-      }
-    }
-
-    return null
+    return detector.detect(polygon, otherPolygon)
   }
 
-  static getPolygonsContact(p1: Polygon, p2: Polygon): Contact | null {
-    let bestContact: Contact | null = null
-    bestContact = ContactUtils.checkPolygonAxes(p1, p2, bestContact, false)
-    if (bestContact === null) {
-      return null
-    }
-    bestContact = ContactUtils.checkPolygonAxes(p2, p1, bestContact, true)
-    return bestContact
-  }
-
-  private static checkPolygonAxes(sourcePolygon: Polygon, targetPolygon: Polygon, bestContact: Contact | null, invert: boolean): Contact | null {
-    for (const side of sourcePolygon.sides()) {
-      const contact = ContactUtils.checkSeparatingAxis(sourcePolygon, targetPolygon, side.normal())
-      if (contact === null) {
-        return null
-      }
-      if (bestContact === null || contact.depth < bestContact.depth) {
-        bestContact = invert ? contact.inverted() : contact
-      }
-    }
-    return bestContact
-  }
-
-  private static checkSeparatingAxis(p1: Polygon, p2: Polygon, axis: Vector): Contact | null {
-    // Project polygons onto the axis
-    let min1 = Infinity
-    let max1 = -Infinity
-    let min2 = Infinity
-    let max2 = -Infinity
-
-    // Project first polygon
-    for (const vertex of p1.vertices()) {
-      const projection = vertex.x * axis.x + vertex.y * axis.y
-      min1 = Math.min(min1, projection)
-      max1 = Math.max(max1, projection)
-    }
-
-    // Project second polygon
-    for (const vertex of p2.vertices()) {
-      const projection = vertex.x * axis.x + vertex.y * axis.y
-      min2 = Math.min(min2, projection)
-      max2 = Math.max(max2, projection)
-    }
-
-    // Check for separation
-    if (max1 < min2 || max2 < min1) {
-      return null // Separated along this axis
-    }
-
-    // Calculate overlap depth and contact information
-    const overlap1 = max1 - min2
-    const overlap2 = max2 - min1
-    const depth = Math.min(overlap1, overlap2)
-
-    // Determine contact normal (always point from p1 to p2)
-    let normal = axis
-    if (overlap1 < overlap2) {
-      normal = VectorUtils.inverted(axis)
-    }
-
-    // Calculate overlap region
-    const overlapStart = Math.max(min1, min2)
-    const overlapEnd = Math.min(max1, max2)
-
-    // Find vertices that contribute to the overlap region
-    const overlappingVertices: Position[] = []
-    for (const vertex of p1.vertices()) {
-      const projection = vertex.x * axis.x + vertex.y * axis.y
-      if (projection >= overlapStart && projection <= overlapEnd) {
-        overlappingVertices.push(vertex)
-      }
-    }
-    for (const vertex of p2.vertices()) {
-      const projection = vertex.x * axis.x + vertex.y * axis.y
-      if (projection >= overlapStart && projection <= overlapEnd) {
-        overlappingVertices.push(vertex)
-      }
-    }
-
-    // Calculate the approximate center of the overlapping region
-    let contactPosition: Position = { x: 0, y: 0 }
-    if (overlappingVertices.length > 0) {
-      let sumX = 0
-      let sumY = 0
-      for (const vertex of overlappingVertices) {
-        sumX += vertex.x
-        sumY += vertex.y
-      }
-      contactPosition = {
-        x: sumX / overlappingVertices.length,
-        y: sumY / overlappingVertices.length
-      }
-    }
-
-    return Contact.withNormal(depth, VectorUtils.inverted(normal), contactPosition)
-  }
-
-  private static getPointAndSegmentContact(position: Position, segment: Segment, checkSide: boolean): Contact | null {
+  public static getPointAndSegmentContact(position: Position, segment: Segment, checkSide: boolean): Contact | null {
     const projection = GeometryUtils.getPointToLineProjection(position, segment)
     const normal = segment.normal()
     const direction = VectorUtils.vectorFromTo(projection, position)
@@ -564,7 +486,7 @@ export class ContactUtils {
     return Contact.withNormal(depth, normal, point)
   }
 
-  private static getDeepestContact(contacts: Set<Contact>): Contact | null {
+  public static getDeepestContact(contacts: Set<Contact>): Contact | null {
     let deepestContact: Contact | null = null
     for (const contact of contacts) {
       if (contact && (deepestContact === null || contact.depth > deepestContact.depth)) {
@@ -574,7 +496,7 @@ export class ContactUtils {
     return deepestContact
   }
 
-  private static addContactToSetIfNotNull(contacts: Set<Contact>, contact: Contact | null) {
+  public static addContactToSetIfNotNull(contacts: Set<Contact>, contact: Contact | null) {
     contact && contacts.add(contact)
   }
 }

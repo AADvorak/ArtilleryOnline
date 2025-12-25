@@ -2,14 +2,19 @@ package com.github.aadvorak.artilleryonline.battle.utils;
 
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
-import com.github.aadvorak.artilleryonline.battle.common.Vector;
 import com.github.aadvorak.artilleryonline.battle.common.lines.*;
+import com.github.aadvorak.artilleryonline.battle.contact.PolygonsContactDetector;
+import com.github.aadvorak.artilleryonline.battle.contact.SATPolygonsContactDetector;
 
 import java.util.*;
 
 public class ContactUtils {
 
     public static Contact getBodyPartsContact(BodyPart bodyPart, BodyPart otherBodyPart) {
+        return getBodyPartsContact(bodyPart, otherBodyPart, new SATPolygonsContactDetector());
+    }
+
+    public static Contact getBodyPartsContact(BodyPart bodyPart, BodyPart otherBodyPart, PolygonsContactDetector detector) {
         if (bodyPart instanceof Circle circle) {
             if (otherBodyPart instanceof Circle otherCircle) {
                 return getCirclesContact(circle, otherCircle);
@@ -43,7 +48,7 @@ public class ContactUtils {
                 return getTrapezeHalfCircleContact(trapeze, otherHalfCircle);
             }
             if (otherBodyPart instanceof Trapeze otherTrapeze) {
-                return getTrapezesContact(trapeze, otherTrapeze);
+                return getTrapezesContact(trapeze, otherTrapeze, detector);
             }
         }
         return null;
@@ -243,6 +248,10 @@ public class ContactUtils {
     }
 
     public static Contact getTrapezesContact(Trapeze trapeze, Trapeze otherTrapeze) {
+        return getTrapezesContact(trapeze, otherTrapeze, new SATPolygonsContactDetector());
+    }
+
+    private static Contact getTrapezesContact(Trapeze trapeze, Trapeze otherTrapeze, PolygonsContactDetector detector) {
         var maxDistance = trapeze.maxDistanceFromCenter();
         var otherMaxDistance = otherTrapeze.maxDistanceFromCenter();
         if (trapeze.position().getCenter().distanceTo(otherTrapeze.position().getCenter())
@@ -251,198 +260,7 @@ public class ContactUtils {
         }
         var polygon = new Polygon(trapeze);
         var otherPolygon = new Polygon(otherTrapeze);
-
-        Map<Segment, Set<Segment>> otherSidesIntersections = new HashMap<>();
-        otherPolygon.sides().forEach(otherSide -> otherSidesIntersections.put(otherSide, new HashSet<>()));
-
-        otherSidesIntersections.forEach((otherSide, intersections) ->
-                polygon.sides().forEach(side -> {
-                    if (GeometryUtils.getSegmentsIntersectionPoint(otherSide, side) != null) {
-                        intersections.add(side);
-                    }
-                })
-        );
-
-        for (var otherSide : otherPolygon.sides()) {
-            var intersections = otherSidesIntersections.get(otherSide);
-            if (intersections.size() == 2) {
-                var iterator = intersections.iterator();
-                var firstSide = iterator.next();
-                var secondSide = iterator.next();
-                if (polygon.next(firstSide).equals(secondSide)) {
-                    return getPointAndSegmentContact(firstSide.end(), otherSide, false);
-                } else if (polygon.next(secondSide).equals(firstSide)) {
-                    return getPointAndSegmentContact(secondSide.end(), otherSide, false);
-                } else {
-                    var contacts = new HashSet<Contact>();
-                    contacts.add(getPointAndSegmentContact(firstSide.end(), otherSide, true));
-                    contacts.add(getPointAndSegmentContact(secondSide.end(), otherSide, true));
-                    contacts.add(getPointAndSegmentContact(firstSide.begin(), otherSide, true));
-                    contacts.add(getPointAndSegmentContact(secondSide.begin(), otherSide, true));
-                    return getDeepestContact(contacts);
-                }
-            } else if (intersections.size() == 1) {
-                var firstSide = intersections.iterator().next();
-                var secondOtherSide = otherPolygon.next(otherSide);
-                if (otherSidesIntersections.get(secondOtherSide).size() == 1) {
-                    var secondSide = otherSidesIntersections.get(secondOtherSide).iterator().next();
-                    // todo why equals is possible?
-                    if (firstSide.equals(secondSide)) {
-                        return null;
-                    }
-                    var edge = polygon.next(firstSide).equals(secondSide) ? firstSide.end() : secondSide.end();
-                    var otherEdge = otherSide.end();
-                    var edgeOtherSideProjection = GeometryUtils.getPointToLineProjection(edge, otherSide);
-                    var edgeOtherSideDistance = edge.distanceTo(edgeOtherSideProjection);
-                    var edgeSecondOtherSideProjection = GeometryUtils.getPointToLineProjection(edge, secondOtherSide);
-                    var edgeSecondOtherSideDistance = edge.distanceTo(edgeSecondOtherSideProjection);
-                    var edgeOtherEdgeDistance = edge.distanceTo(otherEdge);
-                    if (edgeOtherEdgeDistance < 2 * edgeOtherSideDistance && edgeOtherEdgeDistance < 2 * edgeSecondOtherSideDistance) {
-                        return Contact.of(
-                                edgeOtherEdgeDistance,
-                                otherEdge.vectorTo(edge).normalized(),
-                                new Segment(edge, otherEdge).center()
-                        );
-                    } else if (edgeOtherSideDistance < edgeSecondOtherSideDistance) {
-                        return Contact.of(
-                                edgeOtherSideDistance,
-                                edgeOtherSideProjection.vectorTo(edge).normalized(),
-                                new Segment(edge, edgeOtherSideProjection).center()
-                        );
-                    } else {
-                        return Contact.of(
-                                edgeSecondOtherSideDistance,
-                                edgeSecondOtherSideProjection.vectorTo(edge).normalized(),
-                                new Segment(edge, edgeSecondOtherSideProjection).center()
-                        );
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Detects collision between two convex polygons using the Separating Axis Theorem (SAT).
-     *
-     * @param p1 First polygon
-     * @param p2 Second polygon
-     * @return Contact information if polygons are colliding, null otherwise
-     */
-    public static Contact getPolygonsContact(Polygon p1, Polygon p2) {
-        Contact bestContact = null;
-        bestContact = checkPolygonAxes(p1, p2, bestContact, false);
-        if (bestContact == null) {
-            return null;
-        }
-        bestContact = checkPolygonAxes(p2, p1, bestContact, true);
-        return bestContact;
-    }
-    
-    /**
-     * Checks separating axes from a polygon against another polygon.
-     *
-     * @param sourcePolygon Polygon whose axes to check
-     * @param targetPolygon Polygon to check against
-     * @param bestContact Current best contact, or null if none
-     * @param invert if contact should be inverted
-     * @return Updated best contact, or null if separating axis found
-     */
-    private static Contact checkPolygonAxes(Polygon sourcePolygon, Polygon targetPolygon,
-                                            Contact bestContact, boolean invert) {
-        for (Segment side : sourcePolygon.sides()) {
-            Contact contact = checkSeparatingAxis(sourcePolygon, targetPolygon, side.normal());
-            if (contact == null) {
-                return null;
-            }
-            if (bestContact == null || contact.depth() < bestContact.depth()) {
-                bestContact = invert ? contact.inverted() : contact;
-            }
-        }
-        return bestContact;
-    }
-
-    /**
-     * Checks if two polygons are separated along a given axis.
-     *
-     * @param p1 First polygon
-     * @param p2 Second polygon
-     * @param axis Normal vector of the axis to check
-     * @return Contact information if overlapping, null if separated
-     */
-    private static Contact checkSeparatingAxis(Polygon p1, Polygon p2, Vector axis) {
-        // Project polygons onto the axis
-        double min1 = Double.POSITIVE_INFINITY;
-        double max1 = Double.NEGATIVE_INFINITY;
-        double min2 = Double.POSITIVE_INFINITY;
-        double max2 = Double.NEGATIVE_INFINITY;
-        
-        // Project first polygon
-        for (Position vertex : p1.vertices()) {
-            double projection = vertex.getX() * axis.getX() + vertex.getY() * axis.getY();
-            min1 = Math.min(min1, projection);
-            max1 = Math.max(max1, projection);
-        }
-        
-        // Project second polygon
-        for (Position vertex : p2.vertices()) {
-            double projection = vertex.getX() * axis.getX() + vertex.getY() * axis.getY();
-            min2 = Math.min(min2, projection);
-            max2 = Math.max(max2, projection);
-        }
-        
-        // Check for separation
-        if (max1 < min2 || max2 < min1) {
-            return null; // Separated along this axis
-        }
-        
-        // Calculate overlap depth and contact information
-        double overlap1 = max1 - min2;
-        double overlap2 = max2 - min1;
-        double depth = Math.min(overlap1, overlap2);
-        
-        // Determine contact normal (always point from p1 to p2)
-        Vector normal = axis;
-        if (overlap1 < overlap2) {
-            normal = axis.inverted();
-        }
-        
-        // Calculate contact position (approximate center of overlap)
-        // The overlap region is from max(min1, min2) to min(max1, max2)
-        double overlapStart = Math.max(min1, min2);
-        double overlapEnd = Math.min(max1, max2);
-        
-        // Find vertices that contribute to the overlap region
-        List<Position> overlappingVertices = new ArrayList<>();
-        for (Position vertex : p1.vertices()) {
-            double projection = vertex.getX() * axis.getX() + vertex.getY() * axis.getY();
-            if (projection >= overlapStart && projection <= overlapEnd) {
-                overlappingVertices.add(vertex);
-            }
-        }
-        for (Position vertex : p2.vertices()) {
-            double projection = vertex.getX() * axis.getX() + vertex.getY() * axis.getY();
-            if (projection >= overlapStart && projection <= overlapEnd) {
-                overlappingVertices.add(vertex);
-            }
-        }
-        
-        // Calculate the approximate center of the overlapping region
-        Position contactPosition = new Position();
-        if (!overlappingVertices.isEmpty()) {
-            double sumX = 0;
-            double sumY = 0;
-            for (Position vertex : overlappingVertices) {
-                sumX += vertex.getX();
-                sumY += vertex.getY();
-            }
-            contactPosition
-                    .setX(sumX / overlappingVertices.size())
-                    .setY(sumY / overlappingVertices.size());
-        }
-
-        return Contact.of(depth, normal.inverted(), contactPosition);
+        return detector.detect(polygon, otherPolygon);
     }
 
     private static Contact getPointAndSegmentContact(Position position, Segment segment, boolean checkSide) {
@@ -522,5 +340,80 @@ public class ContactUtils {
             }
         }
         return contact;
+    }
+
+    public static class IntersectionsPolygonsContactDetector implements PolygonsContactDetector {
+        @Override
+        public Contact detect(Polygon polygon, Polygon otherPolygon) {
+            Map<Segment, Set<Segment>> otherSidesIntersections = new HashMap<>();
+            otherPolygon.sides().forEach(otherSide -> otherSidesIntersections.put(otherSide, new HashSet<>()));
+
+            otherSidesIntersections.forEach((otherSide, intersections) ->
+                    polygon.sides().forEach(side -> {
+                        if (GeometryUtils.getSegmentsIntersectionPoint(otherSide, side) != null) {
+                            intersections.add(side);
+                        }
+                    })
+            );
+
+            for (var otherSide : otherPolygon.sides()) {
+                var intersections = otherSidesIntersections.get(otherSide);
+                if (intersections.size() == 2) {
+                    var iterator = intersections.iterator();
+                    var firstSide = iterator.next();
+                    var secondSide = iterator.next();
+                    if (polygon.next(firstSide).equals(secondSide)) {
+                        return getPointAndSegmentContact(firstSide.end(), otherSide, false);
+                    } else if (polygon.next(secondSide).equals(firstSide)) {
+                        return getPointAndSegmentContact(secondSide.end(), otherSide, false);
+                    } else {
+                        var contacts = new HashSet<Contact>();
+                        contacts.add(getPointAndSegmentContact(firstSide.end(), otherSide, true));
+                        contacts.add(getPointAndSegmentContact(secondSide.end(), otherSide, true));
+                        contacts.add(getPointAndSegmentContact(firstSide.begin(), otherSide, true));
+                        contacts.add(getPointAndSegmentContact(secondSide.begin(), otherSide, true));
+                        return getDeepestContact(contacts);
+                    }
+                } else if (intersections.size() == 1) {
+                    var firstSide = intersections.iterator().next();
+                    var secondOtherSide = otherPolygon.next(otherSide);
+                    if (otherSidesIntersections.get(secondOtherSide).size() == 1) {
+                        var secondSide = otherSidesIntersections.get(secondOtherSide).iterator().next();
+                        // todo why equals is possible?
+                        if (firstSide.equals(secondSide)) {
+                            return null;
+                        }
+                        var edge = polygon.next(firstSide).equals(secondSide) ? firstSide.end() : secondSide.end();
+                        var otherEdge = otherSide.end();
+                        var edgeOtherSideProjection = GeometryUtils.getPointToLineProjection(edge, otherSide);
+                        var edgeOtherSideDistance = edge.distanceTo(edgeOtherSideProjection);
+                        var edgeSecondOtherSideProjection = GeometryUtils.getPointToLineProjection(edge, secondOtherSide);
+                        var edgeSecondOtherSideDistance = edge.distanceTo(edgeSecondOtherSideProjection);
+                        var edgeOtherEdgeDistance = edge.distanceTo(otherEdge);
+                        if (edgeOtherEdgeDistance < 2 * edgeOtherSideDistance && edgeOtherEdgeDistance < 2 * edgeSecondOtherSideDistance) {
+                            return Contact.of(
+                                    edgeOtherEdgeDistance,
+                                    otherEdge.vectorTo(edge).normalized(),
+                                    new Segment(edge, otherEdge).center()
+                            );
+                        } else if (edgeOtherSideDistance < edgeSecondOtherSideDistance) {
+                            return Contact.of(
+                                    edgeOtherSideDistance,
+                                    edgeOtherSideProjection.vectorTo(edge).normalized(),
+                                    new Segment(edge, edgeOtherSideProjection).center()
+                            );
+                        } else {
+                            return Contact.of(
+                                    edgeSecondOtherSideDistance,
+                                    edgeSecondOtherSideProjection.vectorTo(edge).normalized(),
+                                    new Segment(edge, edgeSecondOtherSideProjection).center()
+                            );
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 }

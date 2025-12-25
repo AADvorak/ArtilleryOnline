@@ -26,7 +26,8 @@ public class SurfaceContactUtils {
         if (surface.getBoundaries().noOverlap(bodyPart.boundaries())) {
             return Optional.empty();
         }
-        var contact = ContactUtils.getBodyPartsContact(bodyPart, surface.getTrapeze());
+        var contact = ContactUtils.getBodyPartsContact(bodyPart, surface.getTrapeze(),
+                new ContactUtils.IntersectionsPolygonsContactDetector());
         if (contact != null) {
             if (maxDepth > 0) {
                 return Optional.ofNullable(Contact.of(contact.depth() - maxDepth,

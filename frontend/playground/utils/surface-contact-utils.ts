@@ -1,7 +1,7 @@
 import {Contact} from "~/playground/data/common";
 import type {BodyPart} from "~/playground/data/geometry";
 import type {RoomModel} from "~/playground/data/model";
-import {ContactUtils} from "~/playground/utils/contact-utils";
+import {ContactUtils, IntersectionsPolygonsContactDetector} from "~/playground/utils/contact-utils";
 import {Trapeze} from "~/playground/data/geometry";
 import type {SurfaceState} from "~/playground/data/state";
 
@@ -30,7 +30,8 @@ export const SurfaceContactUtils = {
     if (surfaceBoundaries.noOverlap(bodyBoundaries)) {
       return null
     }
-    const contact = ContactUtils.getBodyPartsContact(bodyPart, trapeze)
+    const contact = ContactUtils.getBodyPartsContactWithDetector(bodyPart, trapeze,
+        new IntersectionsPolygonsContactDetector())
     if (contact) {
       if (maxDepth > 0) {
         return Contact.withNormal(
