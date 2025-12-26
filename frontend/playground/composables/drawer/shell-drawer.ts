@@ -7,6 +7,8 @@ import {BattleUtils} from "~/playground/utils/battle-utils";
 import {ShellType} from "~/playground/data/common";
 import {DefaultColors} from "~/dictionary/default-colors";
 
+const CALIBER_SCALE_COEFFICIENT = 1.2
+
 export function useShellDrawer(
   drawerBase: DrawerBase,
   ctx: Ref<CanvasRenderingContext2D | undefined>
@@ -21,10 +23,10 @@ export function useShellDrawer(
 
   function drawShell(shellModel: ShellModel) {
     if (ctx.value) {
-      const caliber = shellModel.specs.caliber
+      const caliber = shellModel.specs.caliber * CALIBER_SCALE_COEFFICIENT
       const rawHead = shellModel.state.position
       const angle = VectorUtils.getAngle(shellModel.state.velocity)
-      const rawTail = BattleUtils.shiftedPosition(rawHead, - 3 * caliber, angle)
+      const rawTail = BattleUtils.shiftedPosition(rawHead, - 4 * caliber, angle)
       const head = drawerBase.transformPosition(rawHead)
       const tailRight = drawerBase.transformPosition(BattleUtils.shiftedPosition(rawTail,
           caliber, angle + Math.PI / 2))
