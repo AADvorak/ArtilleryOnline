@@ -33,8 +33,10 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const configsStore = useConfigsStore()
 
   try {
-    await settingsStore.loadIfNull()
-    await userStore.loadUserIfNull()
+    await Promise.all([
+      settingsStore.loadIfNull(),
+      userStore.loadUserIfNull()
+    ])
   } catch (e) {
     console.log(e)
     // @ts-ignore
@@ -50,14 +52,16 @@ export default defineNuxtRouteMiddleware(async (to) => {
   }
 
   if (!!userStore.user) {
-    await stompClientStore.connect()
-    await messageStore.loadMessagesIfNull()
-    await messageStore.loadInvitationsIfNull()
-    await userSettingsStore.loadSettingsIfNull()
-    await presetsStore.loadVehiclesIfNull()
-    await roomStore.loadRoomIfNull()
-    await csrfStore.loadCsrfIfNull()
-    to.path === PLAYGROUND_PATH ? await battleStore.loadBattle() : await battleStore.loadBattleIfNull()
+    await Promise.all([
+      stompClientStore.connect(),
+      messageStore.loadMessagesIfNull(),
+      messageStore.loadInvitationsIfNull(),
+      userSettingsStore.loadSettingsIfNull(),
+      presetsStore.loadVehiclesIfNull(),
+      roomStore.loadRoomIfNull(),
+      csrfStore.loadCsrfIfNull(),
+      to.path === PLAYGROUND_PATH ? battleStore.loadBattle() : battleStore.loadBattleIfNull()
+    ])
     messageStore.subscribe()
   } else {
     messageStore.clear()
