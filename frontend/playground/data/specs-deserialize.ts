@@ -125,6 +125,7 @@ export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs 
   const acceleration = DeserializerBase.readDouble(input)
   const wheelAngleVelocity = DeserializerBase.readDouble(input)
   const turretShape = deserializeShape(input)
+  const armor = DeserializerBase.readMap(input, DeserializerBase.readString, DeserializerBase.readDouble)
   const wheelRadius = DeserializerBase.readDouble(input)
   const hullRadius = DeserializerBase.readDouble(input)
   const trackRepairTime = DeserializerBase.readDouble(input)
@@ -143,6 +144,7 @@ export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs 
     acceleration,
     wheelAngleVelocity,
     turretShape,
+    armor,
     wheelRadius,
     hullRadius,
     trackRepairTime,

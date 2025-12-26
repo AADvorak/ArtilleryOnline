@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.specs;
 
+import com.github.aadvorak.artilleryonline.battle.common.HitSurface;
 import com.github.aadvorak.artilleryonline.battle.common.shapes.Shape;
 import com.github.aadvorak.artilleryonline.serialization.ByteArrayOutputStreamWrapper;
 import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
@@ -29,6 +30,8 @@ public class VehicleSpecs implements Specs, CompactSerializable {
     private double wheelAngleVelocity;
 
     private Shape turretShape;
+
+    private Map<HitSurface, Double> armor;
 
     private double wheelRadius;
 
@@ -64,6 +67,7 @@ public class VehicleSpecs implements Specs, CompactSerializable {
         stream.writeDouble(acceleration);
         stream.writeDouble(wheelAngleVelocity);
         stream.writeSerializableValue(turretShape);
+        stream.writeMap(armor, value -> stream.writeString(value.name()), stream::writeDouble);
         stream.writeDouble(wheelRadius);
         stream.writeDouble(hullRadius);
         stream.writeDouble(trackRepairTime);

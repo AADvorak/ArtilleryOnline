@@ -41,6 +41,12 @@ export enum ShellHitType {
   BOX = 'BOX',
 }
 
+export enum HitSurface {
+  TOP = 'TOP',
+  BOTTOM = 'BOTTOM',
+  SIDE = 'SIDE',
+}
+
 export enum CollideObjectType {
   WALL = 'WALL',
   GROUND = 'GROUND',
