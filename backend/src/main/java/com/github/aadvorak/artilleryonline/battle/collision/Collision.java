@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.collision;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.common.Contact;
+import com.github.aadvorak.artilleryonline.battle.common.HitSurface;
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.common.VelocitiesProjections;
 import com.github.aadvorak.artilleryonline.battle.model.BoxModel;
@@ -36,6 +37,8 @@ public class Collision {
     private Double impact;
 
     private boolean hit = false;
+
+    private HitSurface hitSurface;
 
     public Integer getFirstId() {
         return pair.first().getId();
@@ -113,6 +116,13 @@ public class Collision {
     public static Collision withVehicle(Calculations<?> first, Calculations<VehicleModel> second,
                                          Contact contact) {
         return withMovable(first, second, contact, CollideObjectType.VEHICLE);
+    }
+
+    public static Collision withVehicle(Calculations<?> first, Calculations<VehicleModel> second,
+                                        Contact contact, HitSurface hitSurface) {
+        var collision = withMovable(first, second, contact, CollideObjectType.VEHICLE);
+        collision.setHitSurface(hitSurface);
+        return collision;
     }
 
     public static Collision withMissile(Calculations<?> first, Calculations<MissileModel> second,

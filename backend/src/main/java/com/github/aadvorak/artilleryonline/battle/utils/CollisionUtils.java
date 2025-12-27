@@ -5,6 +5,9 @@ import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.common.lines.*;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class CollisionUtils {
@@ -29,27 +32,27 @@ public class CollisionUtils {
         var vehiclePart = BodyPart.of(BodyPosition.of(vehicle.getGeometryPosition(),
                 vehicle.getModel().getState().getPosition().getAngle()),
                 vehicle.getModel().getSpecs().getTurretShape());
+        var intersectionPointsMap = new HashMap<Position, ContactAndHitSurface>();
         if (vehiclePart instanceof HalfCircle halfCircle) {
-            var intersectionPoints = GeometryUtils.getSegmentAndHalfCircleIntersectionPoints(projectileTrace, halfCircle);
-            if (!intersectionPoints.isEmpty()) {
-                var intersectionPoint = findClosestIntersectionPoint(position, intersectionPoints);
-                var contact = Contact.withUncheckedDepthOf(0.0,
-                        intersectionPoint.vectorTo(halfCircle.center()).normalized(), intersectionPoint);
-                return Collision.withVehicle(calculations, vehicle, contact);
-            }
-            var vehicleBottom = halfCircle.chord();
-            var intersectionPoint = GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, vehicleBottom);
-            if (intersectionPoint != null) {
-                var contact = Contact.withUncheckedDepthOf(0.0,
-                        vehicleBottom.normal(), intersectionPoint);
-                return Collision.withVehicle(calculations, vehicle, contact);
-            }
+            GeometryUtils.getSegmentAndHalfCircleIntersectionPoints(projectileTrace, halfCircle)
+                    .forEach(intersectionPoint -> {
+                        var contact = Contact.withUncheckedDepthOf(0.0,
+                                intersectionPoint.vectorTo(halfCircle.center()).normalized(), intersectionPoint);
+                        intersectionPointsMap.put(intersectionPoint, new ContactAndHitSurface(contact, HitSurface.TOP));
+                    });
+            findIntersectionPointAndPutToMap(projectileTrace, halfCircle.chord(), HitSurface.BOTTOM,  intersectionPointsMap);
         }
         if (vehiclePart instanceof Trapeze trapeze) {
-            var contact = findContact(trapeze, projectileTrace);
-            if (contact != null) {
-                return Collision.withVehicle(calculations, vehicle, contact);
-            }
+            List.of(trapeze.left(), trapeze.right()).forEach(side ->
+                    findIntersectionPointAndPutToMap(projectileTrace, side, HitSurface.SIDE, intersectionPointsMap));
+            findIntersectionPointAndPutToMap(projectileTrace, trapeze.bottom(), HitSurface.BOTTOM, intersectionPointsMap);
+            findIntersectionPointAndPutToMap(projectileTrace, trapeze.top(), HitSurface.TOP, intersectionPointsMap);
+        }
+        if (!intersectionPointsMap.isEmpty()) {
+            var closest = findClosestIntersectionPoint(position, intersectionPointsMap.keySet());
+            var contactAndHitSurface = intersectionPointsMap.get(closest);
+            return Collision.withVehicle(calculations, vehicle, contactAndHitSurface.contact(),
+                    contactAndHitSurface.hitSurface());
         }
         return null;
     }
@@ -156,4 +159,16 @@ public class CollisionUtils {
         }
         return closest;
     }
+
+    private static void findIntersectionPointAndPutToMap(Segment projectileTrace, Segment side, HitSurface hitSurface,
+                                                  Map<Position, ContactAndHitSurface> intersectionPointsMap) {
+        var intersectionPoint = GeometryUtils.getSegmentsIntersectionPoint(projectileTrace, side);
+        if (intersectionPoint != null) {
+            var contact = Contact.withUncheckedDepthOf(0.0,
+                    side.normal(), intersectionPoint);
+            intersectionPointsMap.put(intersectionPoint, new ContactAndHitSurface(contact, hitSurface));
+        }
+    }
+
+    private record ContactAndHitSurface(Contact contact, HitSurface hitSurface) {}
 }
