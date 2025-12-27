@@ -25,7 +25,7 @@ public class MissileCollisionPreprocessor implements CollisionPreprocessor {
             case DRONE -> processDrone(missile, collision, battle);
             case VEHICLE -> processVehicle(missile, collision, battle);
             case MISSILE -> processMissile(missile, collision, battle);
-            case GROUND -> processGround(missile, battle);
+            case GROUND -> processGround(missile, collision, battle);
             default -> false;
         };
     }
@@ -35,7 +35,7 @@ public class MissileCollisionPreprocessor implements CollisionPreprocessor {
         drone.getModel().getState().setDestroyed(true);
         battle.getModel().getUpdates().removeDrone(drone.getId());
         StatisticsProcessor.increaseDestroyedDrones(missile.getModel().getUserId(), battle.getModel());
-        DamageProcessor.processHit(missile, battle);
+        DamageProcessor.processHit(missile, collision, battle);
         return false;
     }
 
@@ -47,26 +47,26 @@ public class MissileCollisionPreprocessor implements CollisionPreprocessor {
             var hitObject = collision.getPair().second();
             ((VehicleModel) hitObject.getModel()).getUpdate().setUpdated();
             if (hitObject instanceof VehicleCalculations vehicle) {
-                DamageProcessor.processHitVehicle(vehicle, missile, battle);
+                DamageProcessor.processHitVehicle(vehicle, missile, collision, battle);
             }
             if (hitObject instanceof WheelCalculations wheel) {
-                DamageProcessor.processHitTrack(wheel.getVehicle(), missile, battle);
+                DamageProcessor.processHitTrack(wheel.getVehicle(), missile, collision, battle);
             }
         } else {
-            DamageProcessor.processHit(missile, battle);
+            DamageProcessor.processHit(missile, collision, battle);
         }
         return true;
     }
 
     private boolean processMissile(MissileCalculations missile, Collision collision, BattleCalculations battle) {
         var otherMissile = (MissileCalculations) collision.getPair().second();
-        DamageProcessor.processHit(missile, battle);
-        DamageProcessor.processHit(otherMissile, battle);
+        DamageProcessor.processHit(missile, collision, battle);
+        DamageProcessor.processHit(otherMissile, collision, battle);
         return false;
     }
 
-    private boolean processGround(MissileCalculations missile, BattleCalculations battle) {
-        DamageProcessor.processHit(missile, battle);
+    private boolean processGround(MissileCalculations missile, Collision collision, BattleCalculations battle) {
+        DamageProcessor.processHit(missile, collision, battle);
         return false;
     }
 }

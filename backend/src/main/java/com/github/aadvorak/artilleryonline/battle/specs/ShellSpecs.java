@@ -22,6 +22,8 @@ public class ShellSpecs implements Specs, CompactSerializable {
 
     private double caliber;
 
+    private double penetration;
+
     private ShellType type;
 
     @Override
@@ -31,6 +33,7 @@ public class ShellSpecs implements Specs, CompactSerializable {
         stream.writeDouble(radius);
         stream.writeDouble(mass);
         stream.writeDouble(caliber);
+        stream.writeDouble(penetration);
         stream.writeSerializableValue(type);
     }
 }

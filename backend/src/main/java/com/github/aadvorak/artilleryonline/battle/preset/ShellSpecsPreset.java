@@ -15,6 +15,7 @@ public enum ShellSpecsPreset {
             .setVelocity(14.5)
             .setMass(0.061)
             .setCaliber(0.07)
+            .setPenetration(85.0)
             .setType(ShellType.AP)),
     HEAVY_HE("HE-H", new ShellSpecs()
             .setDamage(8.0)
@@ -29,6 +30,7 @@ public enum ShellSpecsPreset {
             .setVelocity(15.0)
             .setMass(0.02)
             .setCaliber(0.05)
+            .setPenetration(75.0)
             .setType(ShellType.AP)),
     HEAVY_HE_L("HE-HL", new ShellSpecs()
             .setDamage(5.0)
@@ -43,6 +45,7 @@ public enum ShellSpecsPreset {
             .setVelocity(14.5)
             .setMass(0.02)
             .setCaliber(0.05)
+            .setPenetration(75.0)
             .setType(ShellType.AP)),
     MEDIUM_HE("HE-M", new ShellSpecs()
             .setDamage(5.0)
@@ -57,6 +60,7 @@ public enum ShellSpecsPreset {
             .setVelocity(14.5)
             .setMass(0.008)
             .setCaliber(0.03)
+            .setPenetration(55.0)
             .setType(ShellType.AP)),
     LIGHT_AP("AP-L", new ShellSpecs()
             .setDamage(2.0)
@@ -64,6 +68,7 @@ public enum ShellSpecsPreset {
             .setVelocity(13.5)
             .setMass(0.008)
             .setCaliber(0.03)
+            .setPenetration(40.0)
             .setType(ShellType.AP)),
     LIGHT_HE("HE-L", new ShellSpecs()
             .setDamage(4.0)
@@ -83,6 +88,7 @@ public enum ShellSpecsPreset {
             .setVelocity(12.0)
             .setMass(0.005)
             .setCaliber(0.03)
+            .setPenetration(40.0)
             .setType(ShellType.AP)),
     DRONE_HE("HE-D", new ShellSpecs()
             .setDamage(4.0)
@@ -97,6 +103,7 @@ public enum ShellSpecsPreset {
             .setVelocity(12.5)
             .setMass(0.07)
             .setCaliber(0.12)
+            .setPenetration(80.0)
             .setType(ShellType.BMB)),
     BMB("BMB", new ShellSpecs()
             .setDamage(12.0)
@@ -104,6 +111,7 @@ public enum ShellSpecsPreset {
             .setVelocity(5.0)
             .setMass(0.08)
             .setCaliber(0.15)
+            .setPenetration(80.0)
             .setType(ShellType.BMB));
 
     private final String name;

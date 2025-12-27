@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.processor.damage;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
+import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
@@ -12,21 +13,22 @@ import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 public class DamageProcessor {
 
     public static void processHitVehicle(VehicleCalculations vehicle, MissileCalculations missile,
-                                         BattleCalculations battle) {
+                                         Collision collision, BattleCalculations battle) {
         StatisticsProcessor.increaseDirectHits(vehicle.getModel().getUserId(), missile.getModel().getUserId(), battle.getModel());
-        processHit(missile, battle);
-        var headHit = Hit.ofHead(missile);
+        processHit(missile, collision, battle);
+        var headHit = Hit.of(collision, missile);
         applyDamageToVehicle(headHit.damage(), vehicle.getModel(),
                 battle.getModel(), missile.getModel().getUserId());
     }
 
     public static void processHitVehicle(VehicleCalculations vehicle, ShellCalculations shell,
-                                         BattleCalculations battle) {
+                                         Collision collision, BattleCalculations battle) {
         StatisticsProcessor.increaseDirectHits(vehicle.getModel().getUserId(), shell.getModel().getUserId(), battle.getModel());
         var shellSpecs = shell.getModel().getSpecs();
-        var hit = Hit.of(shell);
+        var hit = Hit.of(collision, shell);
         if (shellSpecs.getType().isAP()) {
-            applyDamageToVehicle(shellSpecs.getDamage(), vehicle.getModel(), battle.getModel(),
+            var damage = calculateAPDamage(hit, vehicle.getModel());
+            applyDamageToVehicle(damage, vehicle.getModel(), battle.getModel(),
                     shell.getModel().getUserId());
         }
         if (shellSpecs.getType().isHE()) {
@@ -36,10 +38,10 @@ public class DamageProcessor {
     }
 
     public static void processHitDrone(DroneCalculations drone, ShellCalculations shell,
-                                         BattleCalculations battle) {
+                                       Collision collision, BattleCalculations battle) {
         StatisticsProcessor.increaseDirectHits(drone.getModel().getUserId(), shell.getModel().getUserId(), battle.getModel());
         var shellSpecs = shell.getModel().getSpecs();
-        var hit = Hit.of(shell);
+        var hit = Hit.of(collision, shell);
         if (shellSpecs.getType().isHE()) {
             calculateHEDamage(hit, battle);
             processGroundDamage(hit, battle.getModel());
@@ -47,37 +49,37 @@ public class DamageProcessor {
     }
 
     public static void processHitTrack(VehicleCalculations vehicle, MissileCalculations missile,
-                                       BattleCalculations battle) {
+                                       Collision collision, BattleCalculations battle) {
         StatisticsProcessor.increaseDirectHits(vehicle.getModel().getUserId(), missile.getModel().getUserId(), battle.getModel());
         processTrackBreak(missile.getModel().getSpecs().getCaliber(), missile.getModel().getUserId(),
                 vehicle.getModel(), battle.getModel());
-        processHit(missile, battle);
+        processHit(missile, collision, battle);
     }
 
     public static void processHitTrack(VehicleCalculations vehicle, ShellCalculations shell,
-                                       BattleCalculations battle) {
+                                       Collision collision, BattleCalculations battle) {
         StatisticsProcessor.increaseDirectHits(vehicle.getModel().getUserId(), shell.getModel().getUserId(), battle.getModel());
         var shellSpecs = shell.getModel().getSpecs();
         processTrackBreak(shellSpecs.getCaliber(), shell.getModel().getUserId(),
                 vehicle.getModel(), battle.getModel());
-        var hit = Hit.of(shell);
+        var hit = Hit.of(collision, shell);
         if (shellSpecs.getType().isHE()) {
             calculateHEDamage(hit, battle);
             processGroundDamage(hit, battle.getModel());
         }
     }
 
-    public static void processHit(ShellCalculations shell, BattleCalculations battle) {
+    public static void processHit(ShellCalculations shell, Collision collision, BattleCalculations battle) {
         var shellSpecs = shell.getModel().getSpecs();
-        var hit = Hit.of(shell);
+        var hit = Hit.of(collision, shell);
         if (shellSpecs.getType().isHE()) {
             calculateHEDamage(hit, battle);
         }
         processGroundDamage(hit, battle.getModel());
     }
 
-    public static void processHit(MissileCalculations missile, BattleCalculations battle) {
-        var hit = Hit.of(missile);
+    public static void processHit(MissileCalculations missile, Collision collision, BattleCalculations battle) {
+        var hit = Hit.of(collision, missile);
         calculateHEDamage(hit, battle);
         processGroundDamage(hit, battle.getModel());
     }
@@ -208,5 +210,16 @@ public class DamageProcessor {
         } else {
             return Math.sqrt(discriminant) / 2;
         }
+    }
+
+    private static double calculateAPDamage(Hit hit, VehicleModel vehicleModel) {
+        var shell = (ShellCalculations) hit.collision().getPair().first();
+        var velocityRatio = hit.collision().getClosingVelocity() / shell.getModel().getSpecs().getVelocity();
+        var shellPenetration = shell.getModel().getSpecs().getPenetration();
+        var vehicleArmor = vehicleModel.getSpecs().getArmor().get(hit.collision().getHitSurface());
+        if  (velocityRatio * shellPenetration < vehicleArmor) {
+            return 0.0;
+        }
+        return hit.damage();
     }
 }

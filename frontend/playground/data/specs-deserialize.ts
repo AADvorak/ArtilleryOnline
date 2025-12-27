@@ -105,6 +105,7 @@ export function deserializeShellSpecs(input: DeserializerInput): ShellSpecs {
   const radius = DeserializerBase.readDouble(input)
   const mass = DeserializerBase.readDouble(input)
   const caliber = DeserializerBase.readDouble(input)
+  const penetration = DeserializerBase.readDouble(input)
   const type = DeserializerBase.readString(input) as ShellType
   return {
     velocity,
@@ -112,6 +113,7 @@ export function deserializeShellSpecs(input: DeserializerInput): ShellSpecs {
     radius,
     mass,
     caliber,
+    penetration,
     type
   }
 }

@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle.preset;
 
+import com.github.aadvorak.artilleryonline.battle.common.HitSurface;
 import com.github.aadvorak.artilleryonline.battle.common.shapes.HalfCircleShape;
 import com.github.aadvorak.artilleryonline.battle.common.shapes.TrapezeShape;
 import com.github.aadvorak.artilleryonline.battle.specs.VehicleSpecs;
@@ -19,6 +20,13 @@ public enum VehicleSpecsPreset {
                             .setBottomRadius(0.45)
                             .setTopRadius(0.3)
                             .setHeight(0.35)
+            )
+            .setArmor(
+                    Map.of(
+                            HitSurface.BOTTOM, 10.0,
+                            HitSurface.TOP, 30.0,
+                            HitSurface.SIDE, 80.0
+                    )
             )
             .setHullRadius(0.5)
             .setWheelRadius(0.12)
@@ -52,6 +60,13 @@ public enum VehicleSpecsPreset {
                             .setTopRadius(0.25)
                             .setHeight(0.3)
             )
+            .setArmor(
+                    Map.of(
+                            HitSurface.BOTTOM, 10.0,
+                            HitSurface.TOP, 25.0,
+                            HitSurface.SIDE, 50.0
+                    )
+            )
             .setHullRadius(0.4)
             .setWheelRadius(0.1)
             .setTrackRepairTime(10.0)
@@ -79,6 +94,13 @@ public enum VehicleSpecsPreset {
             .setTurretShape(
                     new HalfCircleShape()
                             .setRadius(0.3)
+            )
+            .setArmor(
+                    Map.of(
+                            HitSurface.BOTTOM, 8.0,
+                            HitSurface.TOP, 30.0,
+                            HitSurface.SIDE, 30.0
+                    )
             )
             .setHullRadius(0.35)
             .setWheelRadius(0.08)

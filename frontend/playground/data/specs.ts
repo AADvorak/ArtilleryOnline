@@ -7,6 +7,7 @@ export interface ShellSpecs {
   radius: number
   mass: number
   caliber: number
+  penetration: number
   type: ShellType
 }
 

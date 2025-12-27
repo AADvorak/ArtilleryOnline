@@ -48,7 +48,7 @@ public class ShellCollisionPreprocessor implements CollisionPreprocessor {
             collision.setHit(true);
             drone.getModel().getState().setDestroyed(true);
             StatisticsProcessor.increaseDestroyedDrones(shell.getModel().getUserId(), battle.getModel());
-            DamageProcessor.processHitDrone(drone, shell, battle);
+            DamageProcessor.processHitDrone(drone, shell, collision, battle);
         }
         return true;
     }
@@ -65,10 +65,10 @@ public class ShellCollisionPreprocessor implements CollisionPreprocessor {
         } else if (!ShellType.SGN.equals(shell.getModel().getSpecs().getType())) {
             collision.setHit(true);
             if (hitObject instanceof VehicleCalculations vehicle) {
-                DamageProcessor.processHitVehicle(vehicle, shell, battle);
+                DamageProcessor.processHitVehicle(vehicle, shell, collision, battle);
             }
             if (hitObject instanceof WheelCalculations wheel) {
-                DamageProcessor.processHitTrack(wheel.getVehicle(), shell, battle);
+                DamageProcessor.processHitTrack(wheel.getVehicle(), shell, collision, battle);
             }
         }
         return true;
@@ -76,8 +76,8 @@ public class ShellCollisionPreprocessor implements CollisionPreprocessor {
 
     private boolean processMissile(ShellCalculations shell, Collision collision, BattleCalculations battle) {
         var missile = (MissileCalculations) collision.getPair().second();
-        DamageProcessor.processHit(missile, battle);
-        DamageProcessor.processHit(shell, battle);
+        DamageProcessor.processHit(missile, collision, battle);
+        DamageProcessor.processHit(shell, collision, battle);
         battle.getModel().getUpdates().removeMissile(missile.getId());
         StatisticsProcessor.increaseDestroyedMissiles(shell.getModel().getUserId(), battle.getModel());
         return false;
@@ -87,7 +87,7 @@ public class ShellCollisionPreprocessor implements CollisionPreprocessor {
         if (!ShellType.SGN.equals(shell.getModel().getSpecs().getType())) {
             collision.setHit(true);
             var box = (BoxCalculations) collision.getPair().second();
-            DamageProcessor.processHit(shell, battle);
+            DamageProcessor.processHit(shell, collision, battle);
             battle.getModel().getUpdates().removeBox(box.getId());
         }
         return false;
@@ -102,7 +102,7 @@ public class ShellCollisionPreprocessor implements CollisionPreprocessor {
             BomberFlyProcessor.fly(shell.getPosition(), shell.getModel().getVehicleId(), battle.getModel());
         } else {
             collision.setHit(true);
-            DamageProcessor.processHit(shell, battle);
+            DamageProcessor.processHit(shell, collision, battle);
         }
         return false;
     }
