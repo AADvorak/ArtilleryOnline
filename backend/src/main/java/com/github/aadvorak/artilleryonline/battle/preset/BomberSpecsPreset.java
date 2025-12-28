@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 public enum BomberSpecsPreset {
 
     DEFAULT("Bomber", new BomberSpecs()
-            .setFlights(3)
-            .setPrepareToFlightTime(30.0)
+            .setFlights(6)
+            .setPrepareToFlightTime(20.0)
             .setFlightTime(3.0)
             .setBombs(ShellSpecsPreset.BMB.getSpecs())
     );
