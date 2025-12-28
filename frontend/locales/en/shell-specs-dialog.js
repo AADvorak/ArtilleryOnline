@@ -4,6 +4,7 @@ export const shellSpecsDialog = {
   dpm: 'Damage per minute',
   velocity: 'Velocity, mps',
   caliber: 'Caliber, mm',
+  penetration: 'Penetration, mm',
   type: 'Type',
   types: {
     AP: 'Armour-piercing',

@@ -28,6 +28,10 @@ const specsToShow = computed(() => [
     value: props.shellSpecs.caliber * 1000
   },
   {
+    key: 'penetration',
+    value: props.shellSpecs.penetration
+  },
+  {
     key: 'type',
     value: t('shellSpecsDialog.types.' + props.shellSpecs.type)
   },

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import type {VehicleSpecs} from "~/playground/data/specs";
+import type {Armor, VehicleSpecs} from "~/playground/data/specs";
+import {HitSurface} from "~/playground/data/common";
 
 const props = defineProps<{
   vehicleSpecs: VehicleSpecs
@@ -14,6 +15,10 @@ const specsToShow = computed(() => [
     value: props.vehicleSpecs.hitPoints
   },
   {
+    key: 'armor',
+    value: props.vehicleSpecs.armor ? formatArmor(props.vehicleSpecs.armor) : ''
+  },
+  {
     key: 'trackRepairTime',
     value: props.vehicleSpecs.trackRepairTime
   },
@@ -24,6 +29,10 @@ const specsToShow = computed(() => [
         .reduce((a, b) => a + (a ? ', ' : '') + b, '')
   },
 ])
+
+function formatArmor(armor: Armor) {
+  return `${armor[HitSurface.SIDE]} / ${armor[HitSurface.TOP]} / ${armor[HitSurface.BOTTOM]}`
+}
 </script>
 
 <template>

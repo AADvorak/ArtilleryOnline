@@ -4,6 +4,7 @@ export const shellSpecsDialog = {
   dpm: 'Урон в минуту',
   velocity: 'Скорость, м/с',
   caliber: 'Калибр, мм',
+  penetration: 'Пробитие, мм',
   type: 'Тип',
   types: {
     AP: 'Бронебойный',
