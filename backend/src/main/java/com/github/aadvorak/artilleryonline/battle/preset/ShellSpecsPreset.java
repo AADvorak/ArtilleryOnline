@@ -15,14 +15,15 @@ public enum ShellSpecsPreset {
             .setVelocity(14.5)
             .setMass(0.061)
             .setCaliber(0.07)
-            .setPenetration(85.0)
+            .setPenetration(55.0)
             .setType(ShellType.AP)),
     HEAVY_HE("HE-H", new ShellSpecs()
-            .setDamage(8.0)
+            .setDamage(7.0)
             .setRadius(0.7)
             .setVelocity(13.5)
             .setMass(0.061)
             .setCaliber(0.07)
+            .setPenetration(20.0)
             .setType(ShellType.HE)),
     HEAVY_AP_L("AP-HL", new ShellSpecs()
             .setDamage(10.0)
@@ -30,7 +31,7 @@ public enum ShellSpecsPreset {
             .setVelocity(15.0)
             .setMass(0.02)
             .setCaliber(0.05)
-            .setPenetration(75.0)
+            .setPenetration(55.0)
             .setType(ShellType.AP)),
     HEAVY_HE_L("HE-HL", new ShellSpecs()
             .setDamage(5.0)
@@ -38,6 +39,7 @@ public enum ShellSpecsPreset {
             .setVelocity(14.0)
             .setMass(0.02)
             .setCaliber(0.05)
+            .setPenetration(20.0)
             .setType(ShellType.HE)),
     MEDIUM_AP("AP-M", new ShellSpecs()
             .setDamage(10.0)
@@ -45,7 +47,7 @@ public enum ShellSpecsPreset {
             .setVelocity(14.5)
             .setMass(0.02)
             .setCaliber(0.05)
-            .setPenetration(75.0)
+            .setPenetration(45.0)
             .setType(ShellType.AP)),
     MEDIUM_HE("HE-M", new ShellSpecs()
             .setDamage(5.0)
@@ -53,6 +55,7 @@ public enum ShellSpecsPreset {
             .setVelocity(13.5)
             .setMass(0.02)
             .setCaliber(0.05)
+            .setPenetration(15.0)
             .setType(ShellType.HE)),
     MEDIUM_AP_L("AP-ML", new ShellSpecs()
             .setDamage(1.2)
@@ -60,7 +63,7 @@ public enum ShellSpecsPreset {
             .setVelocity(14.5)
             .setMass(0.008)
             .setCaliber(0.03)
-            .setPenetration(55.0)
+            .setPenetration(40.0)
             .setType(ShellType.AP)),
     LIGHT_AP("AP-L", new ShellSpecs()
             .setDamage(2.0)
@@ -71,11 +74,12 @@ public enum ShellSpecsPreset {
             .setPenetration(40.0)
             .setType(ShellType.AP)),
     LIGHT_HE("HE-L", new ShellSpecs()
-            .setDamage(4.0)
+            .setDamage(3.0)
             .setRadius(0.4)
             .setVelocity(12.5)
             .setMass(0.01)
             .setCaliber(0.04)
+            .setPenetration(15.0)
             .setType(ShellType.HE)),
     LIGHT_SGN("SGN-L", new ShellSpecs()
             .setVelocity(11.5)
@@ -88,7 +92,7 @@ public enum ShellSpecsPreset {
             .setVelocity(12.0)
             .setMass(0.005)
             .setCaliber(0.03)
-            .setPenetration(40.0)
+            .setPenetration(35.0)
             .setType(ShellType.AP)),
     DRONE_HE("HE-D", new ShellSpecs()
             .setDamage(4.0)
@@ -96,6 +100,7 @@ public enum ShellSpecsPreset {
             .setVelocity(11.0)
             .setMass(0.01)
             .setCaliber(0.04)
+            .setPenetration(15.0)
             .setType(ShellType.HE)),
     BMB_H("BMB-H", new ShellSpecs()
             .setDamage(15.0)
@@ -103,7 +108,7 @@ public enum ShellSpecsPreset {
             .setVelocity(12.5)
             .setMass(0.07)
             .setCaliber(0.12)
-            .setPenetration(80.0)
+            .setPenetration(55.0)
             .setType(ShellType.BMB)),
     BMB("BMB", new ShellSpecs()
             .setDamage(12.0)
@@ -111,7 +116,7 @@ public enum ShellSpecsPreset {
             .setVelocity(5.0)
             .setMass(0.08)
             .setCaliber(0.15)
-            .setPenetration(80.0)
+            .setPenetration(55.0)
             .setType(ShellType.BMB));
 
     private final String name;

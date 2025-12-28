@@ -27,7 +27,7 @@ public class DamageProcessor {
         var shellSpecs = shell.getModel().getSpecs();
         var hit = Hit.of(collision, shell);
         if (shellSpecs.getType().isAP()) {
-            var damage = calculateAPDamage(hit, vehicle.getModel());
+            var damage = getAPDamage(hit, vehicle.getModel());
             applyDamageToVehicle(damage, vehicle.getModel(), battle.getModel(),
                     shell.getModel().getUserId());
         }
@@ -124,14 +124,19 @@ public class DamageProcessor {
             }
         });
         battle.getVehicles().forEach(vehicle -> {
-            var distanceToTarget = hit.position().distanceTo(vehicle.getPosition())
-                    - vehicle.getModel().getPreCalc().getMaxRadius();
-            if (distanceToTarget <= 0) {
-                applyDamageToVehicle(hit.damage(), vehicle.getModel(), battle.getModel(), hit.userId());
-            } else if (distanceToTarget < hit.radius()) {
-                StatisticsProcessor.increaseIndirectHits(vehicle.getModel().getUserId(), hit.userId(), battle.getModel());
-                applyDamageToVehicle(hit.damage() * (hit.radius() - distanceToTarget)
-                        / hit.radius(), vehicle.getModel(), battle.getModel(), hit.userId());
+            if (vehicle.equals(hit.collision().getPair().second()) && isPenetrated(hit, vehicle.getModel())) {
+                applyDamageToVehicle(hit.damage() * (2 + BattleUtils.generateRandom(0.0, 1.5)),
+                        vehicle.getModel(), battle.getModel(), hit.userId());
+            } else {
+                var distanceToTarget = hit.position().distanceTo(vehicle.getPosition())
+                        - vehicle.getModel().getPreCalc().getMaxRadius();
+                if (distanceToTarget <= 0) {
+                    applyDamageToVehicle(hit.damage(), vehicle.getModel(), battle.getModel(), hit.userId());
+                } else if (distanceToTarget < hit.radius()) {
+                    StatisticsProcessor.increaseIndirectHits(vehicle.getModel().getUserId(), hit.userId(), battle.getModel());
+                    applyDamageToVehicle(hit.damage() * (hit.radius() - distanceToTarget)
+                            / hit.radius(), vehicle.getModel(), battle.getModel(), hit.userId());
+                }
             }
             calculateHETrackDamage(vehicle, hit, battle);
         });
@@ -213,14 +218,18 @@ public class DamageProcessor {
         }
     }
 
-    private static double calculateAPDamage(Hit hit, VehicleModel vehicleModel) {
+    private static double getAPDamage(Hit hit, VehicleModel vehicleModel) {
+        if (isPenetrated(hit, vehicleModel)) {
+            return hit.damage();
+        }
+        return 0.0;
+    }
+
+    private static boolean isPenetrated(Hit hit, VehicleModel vehicleModel) {
         var shell = (ShellCalculations) hit.collision().getPair().first();
         var velocityRatio = hit.collision().getClosingVelocity() / shell.getModel().getSpecs().getVelocity();
         var shellPenetration = shell.getModel().getSpecs().getPenetration();
         var vehicleArmor = vehicleModel.getSpecs().getArmor().get(hit.collision().getHitSurface());
-        if  (velocityRatio * shellPenetration < vehicleArmor) {
-            return 0.0;
-        }
-        return hit.damage();
+        return velocityRatio * shellPenetration >= vehicleArmor;
     }
 }

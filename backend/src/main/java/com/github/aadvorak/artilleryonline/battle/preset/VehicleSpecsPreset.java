@@ -25,7 +25,7 @@ public enum VehicleSpecsPreset {
                     Map.of(
                             HitSurface.BOTTOM, 10.0,
                             HitSurface.TOP, 30.0,
-                            HitSurface.SIDE, 80.0
+                            HitSurface.SIDE, 50.0
                     )
             )
             .setHullRadius(0.5)
@@ -64,7 +64,7 @@ public enum VehicleSpecsPreset {
                     Map.of(
                             HitSurface.BOTTOM, 10.0,
                             HitSurface.TOP, 25.0,
-                            HitSurface.SIDE, 50.0
+                            HitSurface.SIDE, 40.0
                     )
             )
             .setHullRadius(0.4)
