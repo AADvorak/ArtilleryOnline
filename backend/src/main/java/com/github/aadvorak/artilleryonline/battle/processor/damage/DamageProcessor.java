@@ -74,8 +74,8 @@ public class DamageProcessor {
         var hit = Hit.of(collision, shell);
         if (shellSpecs.getType().isHE()) {
             calculateHEDamage(hit, battle);
+            processGroundDamage(hit, battle.getModel());
         }
-        processGroundDamage(hit, battle.getModel());
     }
 
     public static void processHit(MissileCalculations missile, Collision collision, BattleCalculations battle) {
@@ -166,15 +166,16 @@ public class DamageProcessor {
         if (groundLine == null) {
             return;
         }
-        var damageIndexes = BattleUtils.getGroundIndexesBetween(hit.position().getX() - hit.radius(),
-                hit.position().getX() + hit.radius(), battleModel.getRoom());
+        var damageRadius = hit.radius() * 0.6;
+        var damageIndexes = BattleUtils.getGroundIndexesBetween(hit.position().getX() - damageRadius,
+                hit.position().getX() + damageRadius, battleModel.getRoom());
         if (damageIndexes.isEmpty()) {
             return;
         }
         // apply damage
         for (var index : damageIndexes) {
             var groundPosition = BattleUtils.getGroundPosition(index, battleModel.getRoom());
-            var explosionShiftY = getExplosionShiftY(groundPosition.getX(), hit);
+            var explosionShiftY = getExplosionShiftY(groundPosition.getX(), damageRadius, hit.position());
             var minY = hit.position().getY() - explosionShiftY;
             var groundY = groundPosition.getY();
             var diffY = groundY - minY;
@@ -189,8 +190,8 @@ public class DamageProcessor {
         // apply smooth
         var smoothSizeCoefficient = 1.3;
         var smoothIndexes = BattleUtils.getGroundIndexesBetween(
-                hit.position().getX() - hit.radius() * smoothSizeCoefficient,
-                hit.position().getX() + hit.radius() * smoothSizeCoefficient,
+                hit.position().getX() - damageRadius * smoothSizeCoefficient,
+                hit.position().getX() + damageRadius * smoothSizeCoefficient,
                 battleModel.getRoom()
         );
         BattleUtils.gaussianFilter(groundLine, smoothIndexes);
@@ -203,8 +204,8 @@ public class DamageProcessor {
         battleModel.getUpdates().addRoomStateUpdate(roomStateUpdate);
     }
 
-    private static double getExplosionShiftY(double x, Hit hit) {
-        var discriminant = 4.0 * (Math.pow(hit.radius(), 2) - Math.pow(x - hit.position().getX(), 2));
+    private static double getExplosionShiftY(double x, double damageRadius, Position damagePosition) {
+        var discriminant = 4.0 * (Math.pow(damageRadius, 2) - Math.pow(x - damagePosition.getX(), 2));
         if (discriminant <= 0) {
             return 0.0;
         } else {
