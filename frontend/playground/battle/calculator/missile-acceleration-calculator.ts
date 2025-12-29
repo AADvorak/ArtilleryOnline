@@ -39,7 +39,7 @@ export const MissileAccelerationCalculator = {
     const positionAngle = missileModel.state.position.angle
     const velocityAngle = VectorUtils.getAngle(velocity)
     const diffAngle = positionAngle - velocityAngle
-    const resultCoefficient = frictionCoefficient * (1 + 6 * Math.abs(Math.sin(diffAngle)))
+    const resultCoefficient = frictionCoefficient * 2 * (1 + 6 * Math.abs(Math.sin(diffAngle)))
 
     return {
       x: -velocity.x * Math.abs(velocity.x) * resultCoefficient,
