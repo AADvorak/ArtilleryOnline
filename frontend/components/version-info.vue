@@ -1,3 +1,3 @@
 <template>
-  <div>v0.8.3, 09.12.2025</div>
+  <div>v0.8.4-alpha1, 29.12.2025</div>
 </template>
