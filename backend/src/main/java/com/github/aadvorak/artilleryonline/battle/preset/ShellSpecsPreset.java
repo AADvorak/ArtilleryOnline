@@ -15,7 +15,7 @@ public enum ShellSpecsPreset {
             .setVelocity(14.5)
             .setMass(0.061)
             .setCaliber(0.07)
-            .setPenetration(55.0)
+            .setPenetration(53.0)
             .setType(ShellType.AP)),
     HEAVY_HE("HE-H", new ShellSpecs()
             .setDamage(7.0)
@@ -31,7 +31,7 @@ public enum ShellSpecsPreset {
             .setVelocity(15.0)
             .setMass(0.02)
             .setCaliber(0.05)
-            .setPenetration(55.0)
+            .setPenetration(53.0)
             .setType(ShellType.AP)),
     HEAVY_HE_L("HE-HL", new ShellSpecs()
             .setDamage(5.0)
@@ -47,7 +47,7 @@ public enum ShellSpecsPreset {
             .setVelocity(14.5)
             .setMass(0.02)
             .setCaliber(0.05)
-            .setPenetration(45.0)
+            .setPenetration(42.0)
             .setType(ShellType.AP)),
     MEDIUM_HE("HE-M", new ShellSpecs()
             .setDamage(5.0)
