@@ -226,10 +226,14 @@ public class DamageProcessor {
     }
 
     private static boolean isPenetrated(Hit hit, VehicleModel vehicleModel) {
-        var shell = (ShellCalculations) hit.collision().getPair().first();
-        var velocityRatio = hit.collision().getClosingVelocity() / shell.getModel().getSpecs().getVelocity();
-        var shellPenetration = shell.getModel().getSpecs().getPenetration();
-        var vehicleArmor = vehicleModel.getSpecs().getArmor().get(hit.collision().getHitSurface());
-        return velocityRatio * shellPenetration >= vehicleArmor;
+        var first = hit.collision().getPair().first();
+        if (first instanceof ShellCalculations shell) {
+            var velocityRatio = hit.collision().getClosingVelocity() / shell.getModel().getSpecs().getVelocity();
+            var shellPenetration = shell.getModel().getSpecs().getPenetration();
+            var resultPenetration = velocityRatio * velocityRatio * shellPenetration;
+            var vehicleArmor = vehicleModel.getSpecs().getArmor().get(hit.collision().getHitSurface());
+            return resultPenetration >= vehicleArmor;
+        }
+        return false;
     }
 }
