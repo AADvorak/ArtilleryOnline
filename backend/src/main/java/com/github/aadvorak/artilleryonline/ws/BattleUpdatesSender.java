@@ -17,8 +17,8 @@ public class BattleUpdatesSender {
     @Async("sendBattleUpdatesExecutor")
     public void start(BattleUpdatesQueue battleUpdatesQueue) {
         while (true) {
-            var queueElement = battleUpdatesQueue.poll();
-            if (queueElement != null) {
+            try {
+                var queueElement = battleUpdatesQueue.take();
                 if (queueElement.getId() == null) {
                     break;
                 }
@@ -28,8 +28,9 @@ public class BattleUpdatesSender {
                 if (queueElement instanceof BattleUpdateResponse battleUpdateResponse) {
                     sendBattleStateUpdate(battleUpdateResponse);
                 }
-            } else {
-                sleep();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
             }
         }
     }
