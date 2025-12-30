@@ -37,6 +37,7 @@ services:
       DB_PASSWORD: artillery
       APP_SETTINGS_DEBUG: false
       APP_SETTINGS_CLIENT_PROCESSING: true
+      APP_LIMITS_MAX_ROOM_MEMBERS: 5
     volumes:
       - ../../backend/target/artilleryonline-0.8.0.jar:/backend/artilleryonline.jar
     stdin_open: true
