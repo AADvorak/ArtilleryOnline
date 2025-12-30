@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.processor.damage;
 import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.preset.VehicleSpecsPreset;
@@ -124,7 +125,11 @@ public class DamageProcessor {
             }
         });
         battle.getVehicles().forEach(vehicle -> {
-            if (vehicle.equals(hit.collision().getPair().second()) && isPenetrated(hit, vehicle.getModel())) {
+            var isBomb = false;
+            if (hit.collision().getPair().first() instanceof ShellCalculations shell) {
+                if (ShellType.BMB.equals(shell.getModel().getSpecs().getType())) isBomb = true;
+            }
+            if (vehicle.equals(hit.collision().getPair().second()) && isPenetrated(hit, vehicle.getModel()) && !isBomb) {
                 applyDamageToVehicle(hit.damage() * (2 + BattleUtils.generateRandom(0.0, 1.5)),
                         vehicle.getModel(), battle.getModel(), hit.userId());
             } else {
