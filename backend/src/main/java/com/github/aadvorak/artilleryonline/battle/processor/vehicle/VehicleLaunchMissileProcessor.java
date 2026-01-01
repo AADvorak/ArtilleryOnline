@@ -20,9 +20,12 @@ public class VehicleLaunchMissileProcessor {
         if (missilesNumber < 1) {
             return;
         }
-        missiles.put(missilesKey, missilesNumber - 1);
         var vehiclePosition = vehicleModel.getState().getPosition();
-        var angle = vehiclePosition.getAngle() + Math.PI / 2;
+        var angle = getAngle(vehiclePosition.getAngle());
+        if (angle == null) {
+            return;
+        }
+        missiles.put(missilesKey, missilesNumber - 1);
         var specs = MissileSpecsPreset.DEFAULT.getSpecs();
         var state = new MissileState()
                 .setPosition(BodyPosition.of(vehiclePosition.getCenter().shifted(specs.getLength() / 2,
@@ -38,5 +41,16 @@ public class VehicleLaunchMissileProcessor {
         battleModel.getMissiles().put(id, missileModel);
         battleModel.getUpdates().addMissile(missileModel);
         vehicleModel.getUpdate().setUpdated();
+    }
+
+    private static Double getAngle(double vehicleAngle) {
+        var vehicleAngleAbs = Math.abs(vehicleAngle);
+        if (vehicleAngleAbs < Math.PI / 4) {
+            return Math.PI / 2;
+        }
+        if (vehicleAngleAbs < Math.PI / 2) {
+            return Math.PI / 2 + Math.signum(vehicleAngle) * (vehicleAngleAbs - Math.PI / 4);
+        }
+        return null;
     }
 }
