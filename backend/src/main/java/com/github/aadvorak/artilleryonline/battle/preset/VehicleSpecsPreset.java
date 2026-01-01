@@ -53,7 +53,7 @@ public enum VehicleSpecsPreset {
 
     MEDIUM("Medium", new VehicleSpecs()
             .setName("Medium")
-            .setMissiles(3)
+            .setMissiles(5)
             .setTurretShape(
                     new TrapezeShape()
                             .setBottomRadius(0.4)
