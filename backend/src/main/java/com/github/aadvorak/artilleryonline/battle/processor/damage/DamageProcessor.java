@@ -33,8 +33,7 @@ public class DamageProcessor {
                     shell.getModel().getUserId());
         }
         if (shellSpecs.getType().isHE()) {
-            calculateHEDamage(hit, battle);
-            processGroundDamage(hit, battle.getModel());
+            processHEDamage(hit, battle);
         }
     }
 
@@ -44,8 +43,7 @@ public class DamageProcessor {
         var shellSpecs = shell.getModel().getSpecs();
         var hit = Hit.of(collision, shell);
         if (shellSpecs.getType().isHE()) {
-            calculateHEDamage(hit, battle);
-            processGroundDamage(hit, battle.getModel());
+            processHEDamage(hit, battle);
         }
     }
 
@@ -65,8 +63,7 @@ public class DamageProcessor {
                 vehicle.getModel(), battle.getModel());
         var hit = Hit.of(collision, shell);
         if (shellSpecs.getType().isHE()) {
-            calculateHEDamage(hit, battle);
-            processGroundDamage(hit, battle.getModel());
+            processHEDamage(hit, battle);
         }
     }
 
@@ -74,15 +71,13 @@ public class DamageProcessor {
         var shellSpecs = shell.getModel().getSpecs();
         var hit = Hit.of(collision, shell);
         if (shellSpecs.getType().isHE()) {
-            calculateHEDamage(hit, battle);
-            processGroundDamage(hit, battle.getModel());
+            processHEDamage(hit, battle);
         }
     }
 
     public static void processHit(MissileCalculations missile, Collision collision, BattleCalculations battle) {
         var hit = Hit.of(collision, missile);
-        calculateHEDamage(hit, battle);
-        processGroundDamage(hit, battle.getModel());
+        processHEDamage(hit, battle);
     }
 
     public static void applyDamageToVehicle(double damage, VehicleModel vehicleModel, BattleModel battleModel, Long userId) {
@@ -110,7 +105,8 @@ public class DamageProcessor {
         }
     }
 
-    private static void calculateHEDamage(Hit hit, BattleCalculations battle) {
+    private static void processHEDamage(Hit hit, BattleCalculations battle) {
+        processGroundDamage(hit, battle.getModel());
         battle.getMissiles().forEach(missile -> {
             var distanceToTarget = hit.position().distanceTo(missile.getPosition());
             if (distanceToTarget < hit.radius()) {
@@ -143,12 +139,12 @@ public class DamageProcessor {
                             / hit.radius(), vehicle.getModel(), battle.getModel(), hit.userId());
                 }
             }
-            calculateHETrackDamage(vehicle, hit, battle);
+            processHETrackDamage(vehicle, hit, battle);
         });
     }
 
-    private static void calculateHETrackDamage(VehicleCalculations vehicle, Hit hit,
-                                               BattleCalculations battle) {
+    private static void processHETrackDamage(VehicleCalculations vehicle, Hit hit,
+                                             BattleCalculations battle) {
         var trackState = vehicle.getModel().getState().getTrackState();
         if (trackState.isBroken()
                 || vehicle.getModel().getSpecs().getName().equals(VehicleSpecsPreset.HEAVY.getSpecs().getName())) {
