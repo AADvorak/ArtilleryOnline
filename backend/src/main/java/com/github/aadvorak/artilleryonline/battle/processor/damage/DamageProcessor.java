@@ -106,6 +106,16 @@ public class DamageProcessor {
     }
 
     private static void processHEDamage(Hit hit, BattleCalculations battle) {
+        if (hit.collision().getPair().second() instanceof VehicleCalculations vehicle
+                && hit.collision().getPair().first() instanceof ShellCalculations shell) {
+            if (isPenetrated(hit, vehicle.getModel())) {
+                var damageCoefficient = ShellType.BMB.equals(shell.getModel().getSpecs().getType())
+                        ? 1.0 : BattleUtils.generateRandom(1.2, 1.8);
+                applyDamageToVehicle(hit.damage() * damageCoefficient,
+                        vehicle.getModel(), battle.getModel(), hit.userId());
+                return;
+            }
+        }
         processGroundDamage(hit, battle.getModel());
         battle.getMissiles().forEach(missile -> {
             var distanceToTarget = hit.position().distanceTo(missile.getPosition());
@@ -121,23 +131,14 @@ public class DamageProcessor {
             }
         });
         battle.getVehicles().forEach(vehicle -> {
-            var isBomb = false;
-            if (hit.collision().getPair().first() instanceof ShellCalculations shell) {
-                if (ShellType.BMB.equals(shell.getModel().getSpecs().getType())) isBomb = true;
-            }
-            if (vehicle.equals(hit.collision().getPair().second()) && isPenetrated(hit, vehicle.getModel()) && !isBomb) {
-                applyDamageToVehicle(hit.damage() * (2 + BattleUtils.generateRandom(0.0, 1.5)),
-                        vehicle.getModel(), battle.getModel(), hit.userId());
-            } else {
-                var distanceToTarget = hit.position().distanceTo(vehicle.getPosition())
-                        - vehicle.getModel().getPreCalc().getMaxRadius();
-                if (distanceToTarget <= 0) {
-                    applyDamageToVehicle(hit.damage(), vehicle.getModel(), battle.getModel(), hit.userId());
-                } else if (distanceToTarget < hit.radius()) {
-                    StatisticsProcessor.increaseIndirectHits(vehicle.getModel().getUserId(), hit.userId(), battle.getModel());
-                    applyDamageToVehicle(hit.damage() * (hit.radius() - distanceToTarget)
-                            / hit.radius(), vehicle.getModel(), battle.getModel(), hit.userId());
-                }
+            var distanceToTarget = hit.position().distanceTo(vehicle.getPosition())
+                    - vehicle.getModel().getPreCalc().getMaxRadius();
+            if (distanceToTarget <= 0) {
+                applyDamageToVehicle(0.5 * hit.damage(), vehicle.getModel(), battle.getModel(), hit.userId());
+            } else if (distanceToTarget < hit.radius()) {
+                StatisticsProcessor.increaseIndirectHits(vehicle.getModel().getUserId(), hit.userId(), battle.getModel());
+                applyDamageToVehicle(0.5 * hit.damage() * (hit.radius() - distanceToTarget)
+                        / hit.radius(), vehicle.getModel(), battle.getModel(), hit.userId());
             }
             processHETrackDamage(vehicle, hit, battle);
         });
