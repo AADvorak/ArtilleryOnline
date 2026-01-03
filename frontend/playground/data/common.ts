@@ -47,6 +47,13 @@ export enum HitSurface {
   SIDE = 'SIDE',
 }
 
+export interface TargetData {
+  contact: Contact
+  hitNormal: Vector
+  armor?: number
+  penetration?: number
+}
+
 export enum CollideObjectType {
   WALL = 'WALL',
   GROUND = 'GROUND',

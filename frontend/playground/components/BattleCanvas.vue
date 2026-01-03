@@ -17,6 +17,7 @@ import {useBoxDrawer} from "~/playground/composables/drawer/box-drawer";
 import {BattlefieldAlignments} from "~/dictionary/battlefield-alignments";
 import {useUserStore} from "~/stores/user";
 import {useVehicleDebugDrawer} from "~/playground/composables/drawer/vehicle-debug-drawer";
+import {useCrosshairDrawer} from "~/playground/composables/drawer/crosshair-drawer";
 
 const HEADER_HEIGHT = 72
 const SCROLL_RESERVE_WIDTH = 40
@@ -72,6 +73,7 @@ const groundDrawer = useGroundDrawer(drawerBase, ctx)
 const surfaceDrawer = useSurfaceDrawer(drawerBase, ctx)
 const particleDrawer = useParticleDrawer(drawerBase, ctx)
 const shellTrajectoryDrawer = useShellTrajectoryDrawer(drawerBase, ctx)
+const crosshairDrawer = useCrosshairDrawer(drawerBase, ctx)
 
 watch(battle, (value) => {
   if (value) {
@@ -166,6 +168,7 @@ function redrawBattle() {
     vehicleDebugDrawer.draw()
     explosionDrawer.draw()
     shellTrajectoryDrawer.draw()
+    crosshairDrawer.draw()
   })
 }
 

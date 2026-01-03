@@ -8,6 +8,7 @@ import {DeserializerInput} from "~/deserialization/deserializer-input";
 import type {ParticleModels} from "~/playground/data/model";
 import type {ParticleState} from "~/playground/data/state";
 import type {ParticleConfig} from "~/playground/data/config";
+import type {Position, TargetData} from "~/playground/data/common";
 
 export const useBattleStore = defineStore('battle', () => {
   const clientBattle = ref<Battle>()
@@ -15,6 +16,10 @@ export const useBattleStore = defineStore('battle', () => {
   const serverBattle = ref<Battle>()
 
   const particles = ref<ParticleModels>({})
+
+  const shellTrajectory = ref<Position[]>()
+
+  const targetData = ref<TargetData | undefined>()
 
   const currentId = ref<number>(0)
 
@@ -121,5 +126,7 @@ export const useBattleStore = defineStore('battle', () => {
     showServerState,
     updateTime,
     needSmoothTransition,
+    shellTrajectory,
+    targetData
   }
 })

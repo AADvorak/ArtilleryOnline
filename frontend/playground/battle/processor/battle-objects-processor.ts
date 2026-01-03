@@ -21,6 +21,7 @@ import {
 import {BoxBoxCollisionsDetector} from "~/playground/battle/collision/detector/box-box-collisions-detector";
 import {BoxVehicleCollisionsDetector} from "~/playground/battle/collision/detector/box-vehicle-collisions-detector";
 import {BoxSurfaceCollisionsDetector} from "~/playground/battle/collision/detector/box-surface-collisions-detector";
+import {TrajectoryAndTargetProcessor} from "~/playground/battle/processor/trajectory-and-target-processor";
 
 export const useBattleObjectsProcessor = function (
     debug: boolean,
@@ -44,6 +45,7 @@ export const useBattleObjectsProcessor = function (
 
   function process(battle: Battle, timeStepSecs: number) {
     const battleCalculations = initBattleCalculations(battle, timeStepSecs)
+    TrajectoryAndTargetProcessor.process(battleCalculations)
     battleCalculations.vehicles.forEach(vehicle => {
       VehicleProcessor.processBeforeCollision(vehicle, battleCalculations)
     })
