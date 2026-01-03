@@ -1,6 +1,7 @@
 import type {DrawerBase} from '@/playground/composables/drawer/drawer-base'
 import type {Ref} from 'vue'
 import {useBattleStore} from '~/stores/battle'
+import {useSettingsStore} from "~/stores/settings";
 import {type Position} from "~/playground/data/common";
 
 export function useShellTrajectoryDrawer(
@@ -8,9 +9,10 @@ export function useShellTrajectoryDrawer(
     ctx: Ref<CanvasRenderingContext2D | undefined>
 ) {
   const battleStore = useBattleStore()
+  const settingsStore = useSettingsStore()
 
   function draw() {
-    if (battleStore.shellTrajectory) {
+    if (settingsStore.settings?.debug && battleStore.shellTrajectory) {
       drawTrajectory(battleStore.shellTrajectory)
     }
   }
