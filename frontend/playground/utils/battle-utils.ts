@@ -128,5 +128,36 @@ export const BattleUtils = {
       },
       remainTime
     }
+  },
+
+  getFirstPointUnderGround(segment: Segment, roomModel: RoomModel): Position | null {
+    const xMin = Math.min(segment.begin.x, segment.end.x)
+    const xMax = Math.max(segment.begin.x, segment.end.x)
+    const indexes = this.getGroundIndexesBetween(xMin, xMax, roomModel)
+    
+    if (indexes.length === 0) {
+      const beginNearestPosition = this.getNearestGroundPosition(segment.begin.x, roomModel)
+      const endNearestPosition = this.getNearestGroundPosition(segment.end.x, roomModel)
+      if (beginNearestPosition.y > segment.begin.y) {
+        return beginNearestPosition
+      }
+      if (endNearestPosition.y > segment.end.y) {
+        return endNearestPosition
+      }
+      return null
+    }
+    
+    const start = segment.begin.x < segment.end.x ? 0 : indexes.length - 1
+    const increment = segment.begin.x < segment.end.x ? 1 : -1
+    
+    for (let index = start; index >= 0 && index < indexes.length; index += increment) {
+      const groundPosition = this.getGroundPosition(indexes[index]!, roomModel)
+      const segmentPosition = segment.findPointWithX(groundPosition.x)
+      if (segmentPosition && groundPosition.y > segmentPosition.y) {
+        return groundPosition
+      }
+    }
+    
+    return null
   }
 }

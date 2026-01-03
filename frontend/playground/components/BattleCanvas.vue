@@ -155,7 +155,6 @@ function scrollToVehicle(noPositionCheck?: boolean) {
 function redrawBattle() {
   requestAnimationFrame(() => {
     clearCanvas()
-    shellTrajectoryDrawer.draw()
     particleDrawer.draw()
     shellDrawer.draw()
     missileDrawer.draw()
@@ -166,6 +165,7 @@ function redrawBattle() {
     vehicleDrawer.draw()
     vehicleDebugDrawer.draw()
     explosionDrawer.draw()
+    shellTrajectoryDrawer.draw()
   })
 }
 
