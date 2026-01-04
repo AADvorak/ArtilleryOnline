@@ -18,6 +18,8 @@ public class BattleResponse implements BattleUpdatesQueueElement, CompactSeriali
 
     private long time;
 
+    private long duration;
+
     private int fps;
 
     private boolean paused;
@@ -31,6 +33,7 @@ public class BattleResponse implements BattleUpdatesQueueElement, CompactSeriali
         stream.writeString(id);
         stream.writeSerializableValue(model);
         stream.writeLong(time);
+        stream.writeLong(duration);
         stream.writeInt(fps);
         stream.writeBoolean(paused);
         stream.writeSerializableValue(battleStage);

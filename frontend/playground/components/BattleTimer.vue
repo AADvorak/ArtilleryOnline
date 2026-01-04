@@ -8,7 +8,6 @@ const MS_IN_MINUTE = 1000 * 60
 const MS_IN_SECOND = 1000
 
 const WAITING_STAGE_LENGTH = 5 * MS_IN_SECOND
-const ACTIVE_STAGE_LENGTH = 5 * MS_IN_MINUTE
 
 const {t} = useI18n()
 
@@ -23,7 +22,7 @@ const leftTime = computed(() => {
     case BattleStage.WAITING:
       return WAITING_STAGE_LENGTH - battle.time
     case BattleStage.ACTIVE:
-      return ACTIVE_STAGE_LENGTH - battle.time
+      return battle.duration - battle.time
     default:
       return 0
   }

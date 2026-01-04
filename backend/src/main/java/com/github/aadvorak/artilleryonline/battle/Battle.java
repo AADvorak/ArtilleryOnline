@@ -28,6 +28,8 @@ public class Battle {
 
     private long time;
 
+    private long duration;
+
     private long droneLaunchTime;
 
     private long boxDropTime;
@@ -72,5 +74,12 @@ public class Battle {
         absoluteTime = currentTime;
         model.setCurrentTimeStepSecs((double) currentTimeStep / 1000);
         fpsCalculator.addTimeStep((int) currentTimeStep);
+    }
+
+    public long getMaxTime() {
+        if (BattleStage.ACTIVE.equals(battleStage)) {
+            return duration;
+        }
+        return battleStage.getMaxTime();
     }
 }

@@ -59,6 +59,7 @@ public class BattleFactory {
         var userMap = createUserMap(participants);
         var battle = new Battle()
                 .setTime(0)
+                .setDuration(battleType.getDuration())
                 .setBattleStage(BattleStage.WAITING)
                 .setType(battleType)
                 .setModel(battleModel)

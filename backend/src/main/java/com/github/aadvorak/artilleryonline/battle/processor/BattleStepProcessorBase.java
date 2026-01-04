@@ -36,7 +36,7 @@ public class BattleStepProcessorBase implements BattleStepProcessor {
 
     protected boolean changeStageIfNeeded(Battle battle) {
         var battleStage = battle.getBattleStage();
-        if (battle.getTime() >= battleStage.getMaxTime()) {
+        if (battle.getTime() >= battle.getMaxTime()) {
             if (BattleStage.WAITING.equals(battleStage)) {
                 battle.setStageAndResetTime(BattleStage.ACTIVE);
                 battle.setBoxDropTime(battle.getAbsoluteTime());

@@ -10,6 +10,7 @@ export function deserializeBattle(input: DeserializerInput): Battle {
   const id = DeserializerBase.readString(input)
   const model = deserializeBattleModel(input)
   const time = DeserializerBase.readLong(input)
+  const duration = DeserializerBase.readLong(input)
   const fps = DeserializerBase.readInt(input)
   const paused = DeserializerBase.readBoolean(input)
   const battleStage = DeserializerBase.readString(input) as BattleStage
@@ -18,6 +19,7 @@ export function deserializeBattle(input: DeserializerInput): Battle {
     id,
     model,
     time,
+    duration,
     fps,
     paused,
     battleStage,
