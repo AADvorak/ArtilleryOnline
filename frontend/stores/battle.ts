@@ -100,6 +100,8 @@ export const useBattleStore = defineStore('battle', () => {
     serverBattle.value = undefined
     currentId.value = 0
     particles.value = {}
+    shellTrajectory.value = undefined
+    targetData.value = undefined
   }
 
   return {
