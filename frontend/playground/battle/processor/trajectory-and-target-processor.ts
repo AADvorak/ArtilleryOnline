@@ -8,21 +8,21 @@ import {Segment} from "~/playground/data/geometry";
 import {TrajectoryContactUtils} from "~/playground/utils/trajectory-contact-utils";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 
-const battleStore = useBattleStore()
-const userStore = useUserStore()
+export function useTrajectoryAndTargetProcessor() {
+  const battleStore = useBattleStore()
+  const userStore = useUserStore()
 
-export const TrajectoryAndTargetProcessor = {
-  process(battle: BattleCalculations) {
+  function process(battle: BattleCalculations) {
     const userVehicle = Object.keys(battleStore.vehicles || [])
         .filter(key => key === userStore.user!.nickname)
         .map(key => battleStore.vehicles![key])[0]
     if (!userVehicle) {
-      this.clearTrajectoryAndTargetData()
+      clearTrajectoryAndTargetData()
       return
     }
     const selectedShell = userVehicle.state.gunState.selectedShell
     if (!selectedShell) {
-      this.clearTrajectoryAndTargetData()
+      clearTrajectoryAndTargetData()
       return
     }
     const shellTrajectory: Position[] = []
@@ -94,10 +94,12 @@ export const TrajectoryAndTargetProcessor = {
     }
     battleStore.targetData = targetData
     battleStore.shellTrajectory = shellTrajectory
-  },
+  }
 
-  clearTrajectoryAndTargetData() {
+  function clearTrajectoryAndTargetData() {
     battleStore.shellTrajectory = []
     battleStore.targetData = undefined
   }
+
+  return { process }
 }
