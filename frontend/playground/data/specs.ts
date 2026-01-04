@@ -70,7 +70,7 @@ export interface VehicleSpecs {
   minAngle: number
   maxAngle: number
   turretShape: Shape | HalfCircleShape | TrapezeShape
-  armor?: Armor
+  armor: Armor
   wheelRadius: number
   hullRadius: number
   trackRepairTime: number

@@ -26,7 +26,7 @@ export const TrajectoryAndTargetProcessor = {
       return
     }
     const shellTrajectory: Position[] = []
-    const velocityMagnitude = userVehicle.config.gun.availableShells[selectedShell]!.velocity
+    const shellSpecs = userVehicle.config.gun.availableShells[selectedShell]!
     const startPosition = VehicleUtils.getGunEndPosition(userVehicle)
     const angle = userVehicle.state.position.angle + userVehicle.state.gunState.angle
     const directionSign = Math.sign(Math.cos(angle))
@@ -41,7 +41,7 @@ export const TrajectoryAndTargetProcessor = {
       x += step * directionSign
       const x1 = x - startPosition.x
       y = startPosition.y + x1 * Math.tan(angle) - battle.model.room.specs.gravityAcceleration * x1 * x1
-          / (2 * velocityMagnitude * velocityMagnitude * Math.cos(angle) * Math.cos(angle))
+          / (2 * shellSpecs.velocity * shellSpecs.velocity * Math.cos(angle) * Math.cos(angle))
       const trajectory = new Segment(previous, {x, y})
       const hitNormal = VectorUtils.vectorFromTo(previous, {x, y})
       VectorUtils.normalize(hitNormal)
@@ -59,7 +59,9 @@ export const TrajectoryAndTargetProcessor = {
           if (cnt) {
             targetData = {
               contact: cnt.contact,
-              hitNormal
+              hitNormal,
+              penetration: shellSpecs.penetration,
+              armor: vehicle.model.specs.armor[cnt.hitSurface]
             }
             break
           }

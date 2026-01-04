@@ -16,7 +16,7 @@ const specsToShow = computed(() => [
   },
   {
     key: 'armor',
-    value: props.vehicleSpecs.armor ? formatArmor(props.vehicleSpecs.armor) : ''
+    value: formatArmor(props.vehicleSpecs.armor)
   },
   {
     key: 'trackRepairTime',
