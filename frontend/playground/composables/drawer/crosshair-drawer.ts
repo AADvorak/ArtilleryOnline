@@ -6,8 +6,8 @@ import {Segment} from "~/playground/data/geometry";
 import {type Position, type TargetData} from "~/playground/data/common";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 
-const CROSSHAIR_RADIUS_X = 0.3
-const CROSSHAIR_RADIUS_Y = 0.1
+const CROSSHAIR_SIZE = 0.25
+const CROSSHAIR_INNER_SIZE = 0.06
 const CROSSHAIR_COLORS = {
   DEFAULT: 'rgb(255,255,255)',
   HARD_PENETRATION: 'rgb(255,3,3)',
@@ -27,7 +27,7 @@ export function useCrosshairDrawer(
     if (targetData) {
       drawCrosshair(
           targetData.contact.position,
-          VectorUtils.getAngle(targetData.hitNormal),
+          0.0,
           getCrosshairColor(targetData)
       )
     }
@@ -35,19 +35,26 @@ export function useCrosshairDrawer(
 
   function drawCrosshair(position: Position, angle: number, color: string) {
     drawerBase.drawSegment(ctx.value!, new Segment(
-        BattleUtils.shiftedPosition(position, CROSSHAIR_RADIUS_Y, angle),
-        BattleUtils.shiftedPosition(position, -CROSSHAIR_RADIUS_Y, angle),
+        BattleUtils.shiftedPosition(position, CROSSHAIR_INNER_SIZE, angle - Math.PI / 2),
+        BattleUtils.shiftedPosition(position, CROSSHAIR_SIZE, angle - Math.PI / 2),
     ), 2, color)
     drawerBase.drawSegment(ctx.value!, new Segment(
-        BattleUtils.shiftedPosition(position, CROSSHAIR_RADIUS_X, angle - Math.PI / 2),
-        BattleUtils.shiftedPosition(position, -CROSSHAIR_RADIUS_X, angle - Math.PI / 2),
+        BattleUtils.shiftedPosition(position, -CROSSHAIR_INNER_SIZE, angle - Math.PI / 2),
+        BattleUtils.shiftedPosition(position, -CROSSHAIR_SIZE, angle - Math.PI / 2),
+    ), 2, color)
+    drawerBase.drawSegment(ctx.value!, new Segment(
+        BattleUtils.shiftedPosition(position, CROSSHAIR_INNER_SIZE, angle),
+        BattleUtils.shiftedPosition(position, CROSSHAIR_SIZE, angle),
+    ), 2, color)
+    drawerBase.drawSegment(ctx.value!, new Segment(
+        BattleUtils.shiftedPosition(position, -CROSSHAIR_INNER_SIZE, angle),
+        BattleUtils.shiftedPosition(position, -CROSSHAIR_SIZE, angle),
     ), 2, color)
     const center = drawerBase.transformPosition(position)
-    const radiusX = drawerBase.scale(CROSSHAIR_RADIUS_X)
-    const radiusY = drawerBase.scale(CROSSHAIR_RADIUS_Y)
+    const radius = drawerBase.scale(CROSSHAIR_INNER_SIZE)
     ctx.value!.strokeStyle = color
     ctx.value!.beginPath()
-    ctx.value!.ellipse(center.x, center.y, radiusX, radiusY, 3 * Math.PI / 2 - angle, 0, 2 * Math.PI)
+    ctx.value!.arc(center.x, center.y, radius, 0, 2 * Math.PI)
     ctx.value!.stroke()
     ctx.value!.closePath()
   }
