@@ -35,7 +35,7 @@ export const TrajectoryAndTargetProcessor = {
     let y = startPosition.y
     let previous: Position = {x, y}
     shellTrajectory.push({x, y})
-    const step = 0.1
+    const step = 0.2
     let targetData: TargetData | undefined = undefined
     while (x > 0 && x < maxX && y > 0) {
       x += step * directionSign
@@ -45,41 +45,43 @@ export const TrajectoryAndTargetProcessor = {
       const trajectory = new Segment(previous, {x, y})
       const hitNormal = VectorUtils.vectorFromTo(previous, {x, y})
       VectorUtils.normalize(hitNormal)
-      const groundPosition = BattleUtils.getFirstPointUnderGround(trajectory, battle.model.room)
-      if (groundPosition) {
-        const contact = Contact.withAngleUncheckedDepth(0, 0, groundPosition)
-        targetData = {
-          contact,
-          hitNormal
+
+      for (const vehicle of battle.vehicles) {
+        const cnt = TrajectoryContactUtils.detectWithVehicle(trajectory, vehicle)
+        if (cnt) {
+          targetData = {
+            contact: cnt.contact,
+            hitNormal,
+            penetration: shellSpecs.penetration,
+            armor: vehicle.model.specs.armor[cnt.hitSurface]
+          }
+          break
+        }
+        const rwc = TrajectoryContactUtils.detectWithWheel(trajectory, vehicle.rightWheel)
+        if (rwc) {
+          targetData = {
+            contact: rwc,
+            hitNormal
+          }
+          break
+        }
+        const lwc = TrajectoryContactUtils.detectWithWheel(trajectory, vehicle.leftWheel)
+        if (lwc) {
+          targetData = {
+            contact: lwc,
+            hitNormal
+          }
+          break
         }
       }
+
       if (!targetData) {
-        for (const vehicle of battle.vehicles) {
-          const cnt = TrajectoryContactUtils.detectWithVehicle(trajectory, vehicle)
-          if (cnt) {
-            targetData = {
-              contact: cnt.contact,
-              hitNormal,
-              penetration: shellSpecs.penetration,
-              armor: vehicle.model.specs.armor[cnt.hitSurface]
-            }
-            break
-          }
-          const rwc = TrajectoryContactUtils.detectWithWheel(trajectory, vehicle.rightWheel)
-          if (rwc) {
-            targetData = {
-              contact: rwc,
-              hitNormal
-            }
-            break
-          }
-          const lwc = TrajectoryContactUtils.detectWithWheel(trajectory, vehicle.leftWheel)
-          if (lwc) {
-            targetData = {
-              contact: lwc,
-              hitNormal
-            }
-            break
+        const groundPosition = BattleUtils.getFirstPointUnderGround(trajectory, battle.model.room)
+        if (groundPosition) {
+          const contact = Contact.withAngleUncheckedDepth(0, 0, groundPosition)
+          targetData = {
+            contact,
+            hitNormal
           }
         }
       }
