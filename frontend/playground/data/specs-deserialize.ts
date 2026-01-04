@@ -25,6 +25,8 @@ export function deserializeGunSpecs(input: DeserializerInput): GunSpecs {
   const ammo = DeserializerBase.readInt(input)
   const loadTime = DeserializerBase.readDouble(input)
   const rotationVelocity = DeserializerBase.readDouble(input)
+  const slowRotationVelocity = DeserializerBase.readDouble(input)
+  const slowToFastRotationTime = DeserializerBase.readDouble(input)
   const length = DeserializerBase.readDouble(input)
   const caliber = DeserializerBase.readDouble(input)
   const availableShells = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeShellSpecs)!
@@ -32,6 +34,8 @@ export function deserializeGunSpecs(input: DeserializerInput): GunSpecs {
     ammo,
     loadTime,
     rotationVelocity,
+    slowRotationVelocity,
+    slowToFastRotationTime,
     length,
     caliber,
     availableShells

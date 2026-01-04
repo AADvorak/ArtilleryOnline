@@ -12,6 +12,7 @@ import {BodyVelocityCalculator} from "~/playground/battle/calculator/body-veloci
 import {GroundFrictionForceCalculator} from "~/playground/battle/calculator/common/ground-friction-force-calculator";
 import {GroundReactionForceCalculator} from "~/playground/battle/calculator/common/ground-reaction-force-calculator";
 import type {GunState} from "~/playground/data/state";
+import type {GunSpecs} from "~/playground/data/specs";
 
 export const VehicleProcessor = {
 
@@ -45,7 +46,6 @@ export const VehicleProcessor = {
   recalculateGunAngle(vehicleModel: VehicleModel, timeStepSecs: number) {
     const gunState = vehicleModel.state.gunState
     const rotatingDirection = gunState.rotatingDirection
-    const rotatingVelocity = vehicleModel.config.gun.rotationVelocity
     const maxGunAngle = vehicleModel.specs.maxAngle
     const minGunAngle = vehicleModel.specs.minAngle
     const vehicleAngle = vehicleModel.state.position.angle
@@ -54,7 +54,8 @@ export const VehicleProcessor = {
         : gunState.targetAngle
     if (rotatingDirection) {
       const sign = MovingDirection.RIGHT === rotatingDirection ? -1 : 1
-      targetAngle += sign * rotatingVelocity * timeStepSecs
+      targetAngle += sign * this.getRotationVelocity(vehicleModel.config.gun, gunState.rotatingTime) * timeStepSecs
+      gunState.rotatingTime += timeStepSecs
     }
     targetAngle = this.restrictValue(targetAngle, minGunAngle + vehicleAngle, maxGunAngle + vehicleAngle)
     gunState.targetAngle = targetAngle
@@ -63,7 +64,7 @@ export const VehicleProcessor = {
     } else {
       let gunAngle = gunState.angle
       const angleDiff = targetAngle - vehicleAngle - gunAngle
-      const angleStep = Math.sign(angleDiff) * rotatingVelocity * timeStepSecs
+      const angleStep = Math.sign(angleDiff) * vehicleModel.config.gun.rotationVelocity * timeStepSecs
       if (Math.abs(angleDiff) > Math.abs(angleStep)) {
         gunAngle += angleStep
         gunAngle = this.restrictValue(gunAngle, minGunAngle, maxGunAngle)
@@ -91,5 +92,16 @@ export const VehicleProcessor = {
       return min
     }
     return Math.min(value, max)
+  },
+
+  getRotationVelocity(gunSpecs: GunSpecs, time: number) {
+    const minVelocity = gunSpecs.slowRotationVelocity
+    const maxVelocity = gunSpecs.rotationVelocity
+    const maxTime = gunSpecs.slowToFastRotationTime
+    if (time > maxTime) {
+      return maxVelocity
+    } else {
+      return minVelocity + (time - maxTime) * (maxVelocity - minVelocity)
+    }
   }
 }

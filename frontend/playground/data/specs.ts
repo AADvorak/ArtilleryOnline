@@ -24,6 +24,8 @@ export interface GunSpecs {
   ammo: number
   loadTime: number
   rotationVelocity: number
+  slowRotationVelocity: number
+  slowToFastRotationTime: number
   length: number
   caliber: number
   availableShells: AvailableShells

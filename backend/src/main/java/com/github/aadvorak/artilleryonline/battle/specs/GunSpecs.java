@@ -19,6 +19,10 @@ public class GunSpecs implements Specs, CompactSerializable {
 
     private double rotationVelocity;
 
+    private double slowRotationVelocity;
+
+    private double slowToFastRotationTime;
+
     private double length;
 
     private double caliber;
@@ -30,6 +34,8 @@ public class GunSpecs implements Specs, CompactSerializable {
         stream.writeInt(ammo);
         stream.writeDouble(loadTime);
         stream.writeDouble(rotationVelocity);
+        stream.writeDouble(slowRotationVelocity);
+        stream.writeDouble(slowToFastRotationTime);
         stream.writeDouble(length);
         stream.writeDouble(caliber);
         stream.writeStringMapOfSerializable(availableShells);

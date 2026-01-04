@@ -40,6 +40,7 @@ public class CommandProcessor {
         if (Command.START_GUN_ROTATING.equals(userCommand.getCommand())) {
             var direction = userCommand.getParams().getDirection();
             userVehicle.getState().getGunState().setRotatingDirection(direction);
+            userVehicle.getState().getGunState().setRotatingTime(0.0);
             userVehicle.getUpdate().setUpdated();
         }
 

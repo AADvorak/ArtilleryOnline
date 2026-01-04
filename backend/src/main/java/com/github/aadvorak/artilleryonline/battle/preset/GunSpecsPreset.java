@@ -14,6 +14,8 @@ public enum GunSpecsPreset {
             .setAmmo(60)
             .setLoadTime(5.0)
             .setRotationVelocity(0.35)
+            .setSlowRotationVelocity(0.2)
+            .setSlowToFastRotationTime(0.5)
             .setLength(0.53)
             .setCaliber(0.07)
             .setAvailableShells(Map.of(
@@ -25,6 +27,8 @@ public enum GunSpecsPreset {
             .setAmmo(30)
             .setLoadTime(9.0)
             .setRotationVelocity(0.3)
+            .setSlowRotationVelocity(0.2)
+            .setSlowToFastRotationTime(0.5)
             .setLength(0.53)
             .setCaliber(0.12)
             .setAvailableShells(Map.of(
@@ -35,6 +39,8 @@ public enum GunSpecsPreset {
             .setAmmo(80)
             .setLoadTime(3.0)
             .setRotationVelocity(0.4)
+            .setSlowRotationVelocity(0.2)
+            .setSlowToFastRotationTime(0.8)
             .setLength(0.55)
             .setCaliber(0.05)
             .setAvailableShells(Map.of(
@@ -46,6 +52,8 @@ public enum GunSpecsPreset {
             .setAmmo(80)
             .setLoadTime(3.0)
             .setRotationVelocity(0.4)
+            .setSlowRotationVelocity(0.2)
+            .setSlowToFastRotationTime(0.8)
             .setLength(0.47)
             .setCaliber(0.05)
             .setAvailableShells(Map.of(
@@ -57,6 +65,8 @@ public enum GunSpecsPreset {
             .setAmmo(360)
             .setLoadTime(0.3)
             .setRotationVelocity(0.45)
+            .setSlowRotationVelocity(0.2)
+            .setSlowToFastRotationTime(0.8)
             .setLength(0.45)
             .setCaliber(0.03)
             .setAvailableShells(Map.of(
@@ -67,6 +77,8 @@ public enum GunSpecsPreset {
             .setAmmo(320)
             .setLoadTime(0.5)
             .setRotationVelocity(0.45)
+            .setSlowRotationVelocity(0.2)
+            .setSlowToFastRotationTime(0.8)
             .setLength(0.35)
             .setCaliber(0.03)
             .setAvailableShells(Map.of(
@@ -78,6 +90,8 @@ public enum GunSpecsPreset {
             .setAmmo(100)
             .setLoadTime(2.2)
             .setRotationVelocity(0.42)
+            .setSlowRotationVelocity(0.2)
+            .setSlowToFastRotationTime(0.8)
             .setLength(0.4)
             .setCaliber(0.04)
             .setAvailableShells(Map.of(
@@ -88,7 +102,6 @@ public enum GunSpecsPreset {
     DRONE_LIGHT("DroneLight", new GunSpecs()
             .setAmmo(8)
             .setLoadTime(0.3)
-            .setRotationVelocity(0.0)
             .setLength(0.2)
             .setCaliber(0.03)
             .setAvailableShells(Map.of(
@@ -98,7 +111,6 @@ public enum GunSpecsPreset {
     DRONE_HEAVY("DroneHeavy", new GunSpecs()
             .setAmmo(3)
             .setLoadTime(2.0)
-            .setRotationVelocity(0.0)
             .setLength(0.25)
             .setCaliber(0.04)
             .setAvailableShells(Map.of(

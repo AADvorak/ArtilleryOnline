@@ -12,6 +12,7 @@ export interface GunState {
   angle: number
   targetAngle: number
   rotatingDirection: MovingDirection
+  rotatingTime: number
   loadedShell?: string
   selectedShell?: string
   loadingShell?: string

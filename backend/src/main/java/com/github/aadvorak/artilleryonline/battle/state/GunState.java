@@ -18,6 +18,8 @@ public class GunState implements State, CompactSerializable {
 
     private MovingDirection rotatingDirection;
 
+    private double rotatingTime;
+
     private String loadedShell;
 
     private String selectedShell;
@@ -35,6 +37,7 @@ public class GunState implements State, CompactSerializable {
         stream.writeDouble(angle);
         stream.writeDouble(targetAngle);
         stream.writeSerializable(rotatingDirection);
+        stream.writeDouble(rotatingTime);
         stream.writeNullable(loadedShell, stream::writeString);
         stream.writeNullable(selectedShell, stream::writeString);
         stream.writeNullable(loadingShell, stream::writeString);
