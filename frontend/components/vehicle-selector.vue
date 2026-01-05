@@ -2,16 +2,19 @@
 import {usePresetsStore} from "~/stores/presets";
 import {useI18n} from "vue-i18n";
 import type VehicleSpecsDialog from "~/components/vehicle-specs-dialog.vue";
-import {mdiInformationOutline} from "@mdi/js";
+import {mdiInformationOutline, mdiCogOutline} from "@mdi/js";
 import IconBtn from "~/components/icon-btn.vue";
+import {useRouter} from "#app";
 
 const props = defineProps<{
   disabled?: boolean
+  noSettings?: boolean
 }>()
 
 const emit = defineEmits(['select'])
 
 const {t} = useI18n()
+const router = useRouter()
 
 const specsDialog = ref<InstanceType<typeof VehicleSpecsDialog> | null>(null)
 
@@ -30,6 +33,10 @@ watch(selectedVehicle, value => {
 
 function setSelectedVehicle(value: string) {
   selectedVehicle.value = value
+}
+
+function toVehicleConfigs() {
+  router.push('/settings/vehicle-configs?selectedVehicle=' + selectedVehicle.value)
 }
 
 function showSpecsDialog() {
@@ -57,6 +64,12 @@ defineExpose({
       clearable
   >
     <template v-if="!!selectedVehicle" v-slot:append>
+      <icon-btn
+          v-if="!noSettings"
+          :icon="mdiCogOutline"
+          :tooltip="t('settings.vehicleConfigs')"
+          @click="toVehicleConfigs"
+      />
       <icon-btn
           :icon="mdiInformationOutline"
           :tooltip="t('common.specs')"

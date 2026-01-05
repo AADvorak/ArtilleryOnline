@@ -196,6 +196,7 @@ function back() {
       <v-card-text>
         <vehicle-selector
             ref="vehicleSelector"
+            no-settings
             @select="v => selectedVehicle = v"
         />
         <div v-show="selectedVehicle">
