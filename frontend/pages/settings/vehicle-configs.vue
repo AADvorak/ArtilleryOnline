@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {useRouter} from "#app";
+import {useRouter, useRoute} from "#app";
 import {usePresetsStore} from "~/stores/presets";
 import type {VehicleSpecs} from "~/playground/data/specs";
 import type {UserVehicleConfig} from "~/data/model";
@@ -11,9 +11,11 @@ import IconBtn from "~/components/icon-btn.vue";
 import ShellSpecsDialog from "~/components/shell-specs-dialog.vue";
 import type {Ammo} from "~/playground/data/common";
 import {useConfigsStore} from "~/stores/configs";
+import VehicleSelector from "~/components/vehicle-selector.vue";
 
 const {t} = useI18n()
 const router = useRouter()
+const route = useRoute()
 const presetsStore = usePresetsStore()
 const configsStore = useConfigsStore()
 
@@ -25,6 +27,7 @@ const oldAmmo = ref<Ammo>({})
 
 const gunSpecsDialog = ref<InstanceType<typeof GunSpecsDialog> | null>(null)
 const shellSpecsDialog = ref<InstanceType<typeof ShellSpecsDialog> | null>(null)
+const vehicleSelector = ref<InstanceType<typeof VehicleSelector> | undefined>()
 
 const vehicleSpecs = computed<VehicleSpecs | undefined>(() => {
   if (!selectedVehicle.value) {
@@ -77,6 +80,17 @@ watch(vehicleSpecs, value => {
   value && loadConfig()
 })
 
+watch(selectedVehicle, (value) => {
+  if (value) {
+    router.replace({
+      query: { ...route.query, selectedVehicle: value }
+    })
+  } else {
+    const { selectedVehicle, ...newQuery } = route.query
+    router.replace({ query: newQuery })
+  }
+})
+
 watch(() => config.value.gun, (value, oldValue) => {
   if (!value || value && oldValue || !config.value.ammo) {
     config.value.ammo = {}
@@ -123,6 +137,14 @@ watch(() => config.value.ammo, () => {
   }
   oldAmmo.value = JSON.parse(JSON.stringify(ammo))
 }, {deep: true})
+
+onMounted(() => {
+  const selectedVehicleParam = route.query.selectedVehicle as string
+  if (selectedVehicleParam) {
+    selectedVehicle.value = selectedVehicleParam
+    vehicleSelector.value?.setSelectedVehicle(selectedVehicleParam)
+  }
+})
 
 async function loadConfig() {
   try {
@@ -172,7 +194,10 @@ function back() {
         Artillery online: {{ t('vehicleConfigs.title') }}
       </v-card-title>
       <v-card-text>
-        <vehicle-selector @select="v => selectedVehicle = v"/>
+        <vehicle-selector
+            ref="vehicleSelector"
+            @select="v => selectedVehicle = v"
+        />
         <div v-show="selectedVehicle">
           <v-select
               v-model="config.gun"
