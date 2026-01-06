@@ -24,7 +24,7 @@ export function useParticleDrawer(
       const position = drawerBase.transformPosition(rawPosition)
       ctx.value.fillStyle = particleModel.config.color || 'rgb(256 256 256)'
       if (particleModel.config.groundTexture) {
-        ctx.value.fillStyle = drawerBase.getGroundFillStyle(ctx.value)
+        ctx.value.fillStyle = drawerBase.getGroundFillStyle()
       }
       if (particleModel.config.text) {
         drawText(position, particleModel.config)

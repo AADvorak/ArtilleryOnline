@@ -27,7 +27,7 @@ export function useBoxDrawer(
       if (box.specs.shape.name === ShapeNames.TRAPEZE) {
         const shape = box.specs.shape as TrapezeShape
         const trapeze = new Trapeze(BodyUtils.getGeometryBodyPosition(box), shape)
-        drawerBase.drawTrapeze(ctx.value, trapeze, 'rgb(256 256 256)')
+        drawerBase.drawTrapeze(trapeze, {fillStyle: 'rgb(256 256 256)'})
         if (box.specs.type === BoxType.HP) {
           drawCross(box.state.position, shape, color)
           drawAmount(box)
@@ -56,7 +56,7 @@ export function useBoxDrawer(
     polygon.push(BattleUtils.shiftedPosition(previous(), length, angle - Math.PI / 2))
     polygon.push(BattleUtils.shiftedPosition(previous(), length, angle - Math.PI))
     polygon.push(BattleUtils.shiftedPosition(previous(), length, angle - Math.PI / 2))
-    drawerBase.drawPolygon(ctx.value!, polygon, color)
+    drawerBase.drawPolygon(polygon, {fillStyle: color})
   }
 
   function drawShells(trapeze: Trapeze, color: string) {
@@ -86,8 +86,8 @@ export function useBoxDrawer(
     const margin = bottomShape.height / 6
     const bottomPosition = BattleUtils.shiftedPosition(position, margin, angle + Math.PI / 2)
     const topPosition = BattleUtils.shiftedPosition(position, 2 * margin + bottomShape.height, angle + Math.PI / 2)
-    drawerBase.drawTrapeze(ctx.value!, new Trapeze({...bottomPosition, angle}, bottomShape), color)
-    drawerBase.drawTrapeze(ctx.value!, new Trapeze({...topPosition, angle}, topShape), color)
+    drawerBase.drawTrapeze(new Trapeze({...bottomPosition, angle}, bottomShape), {fillStyle: color})
+    drawerBase.drawTrapeze(new Trapeze({...topPosition, angle}, topShape), {fillStyle: color})
   }
 
   function drawAmount(box: BoxModel) {

@@ -34,22 +34,22 @@ export function useCrosshairDrawer(
   }
 
   function drawCrosshair(position: Position, angle: number, color: string) {
-    drawerBase.drawSegment(ctx.value!, new Segment(
+    drawerBase.drawSegment(new Segment(
         BattleUtils.shiftedPosition(position, CROSSHAIR_INNER_SIZE, angle - Math.PI / 2),
         BattleUtils.shiftedPosition(position, CROSSHAIR_SIZE, angle - Math.PI / 2),
-    ), 2, color)
-    drawerBase.drawSegment(ctx.value!, new Segment(
+    ), {lineWidth: 2, strokeStyle: color})
+    drawerBase.drawSegment(new Segment(
         BattleUtils.shiftedPosition(position, -CROSSHAIR_INNER_SIZE, angle - Math.PI / 2),
         BattleUtils.shiftedPosition(position, -CROSSHAIR_SIZE, angle - Math.PI / 2),
-    ), 2, color)
-    drawerBase.drawSegment(ctx.value!, new Segment(
+    ), {lineWidth: 2, strokeStyle: color})
+    drawerBase.drawSegment(new Segment(
         BattleUtils.shiftedPosition(position, CROSSHAIR_INNER_SIZE, angle),
         BattleUtils.shiftedPosition(position, CROSSHAIR_SIZE, angle),
-    ), 2, color)
-    drawerBase.drawSegment(ctx.value!, new Segment(
+    ), {lineWidth: 2, strokeStyle: color})
+    drawerBase.drawSegment(new Segment(
         BattleUtils.shiftedPosition(position, -CROSSHAIR_INNER_SIZE, angle),
         BattleUtils.shiftedPosition(position, -CROSSHAIR_SIZE, angle),
-    ), 2, color)
+    ), {lineWidth: 2, strokeStyle: color})
     const center = drawerBase.transformPosition(position)
     const radius = drawerBase.scale(CROSSHAIR_INNER_SIZE)
     ctx.value!.strokeStyle = color

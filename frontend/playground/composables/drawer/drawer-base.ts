@@ -5,17 +5,29 @@ import {Segment, Trapeze} from "~/playground/data/geometry";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
 
+export interface DrawParams {
+  fillStyle?: CanvasPattern | string
+  strokeStyle?: CanvasPattern | string
+  lineWidth?: number
+  stroke?: boolean
+  groundTexture?: boolean
+}
+
 export interface DrawerBase {
-  drawSegment: (ctx: CanvasRenderingContext2D, segment: Segment, lineWidth: number, color?: string) => void
-  drawTrapeze: (ctx: CanvasRenderingContext2D, trapeze: Trapeze, color?: string) => void
-  drawPolygon: (ctx: CanvasRenderingContext2D, polygon: Position[], color?: string) => void
+  drawSegment: (segment: Segment, params?: DrawParams) => void
+  drawTrapeze: (trapeze: Trapeze, params?: DrawParams) => void
+  drawPolygon: (polygon: Position[], params?: DrawParams) => void
   transformPosition: (position: Position) => (Position)
   scale: (value: number) => number
   getFont: (size: number) => string
-  getGroundFillStyle: (ctx: CanvasRenderingContext2D) => CanvasPattern | string
+  getGroundFillStyle: () => CanvasPattern | string
 }
 
-export function useDrawerBase(scaleCoefficient: Ref<number>, canvasSize: Ref<Size>): DrawerBase {
+export function useDrawerBase(
+    ctx: Ref<CanvasRenderingContext2D | undefined>,
+    scaleCoefficient: Ref<number>,
+    canvasSize: Ref<Size>
+): DrawerBase {
   const battleStore = useBattleStore()
   const userSettingsStore = useUserSettingsStore()
 
@@ -24,19 +36,18 @@ export function useDrawerBase(scaleCoefficient: Ref<number>, canvasSize: Ref<Siz
   const img = new Image()
   img.src = `/images/ground-texture-${battleStore.battle?.model.room.config.groundTexture}.jpg`
 
-  function drawSegment(ctx: CanvasRenderingContext2D, segment: Segment, lineWidth: number, color?: string) {
+  function drawSegment(segment: Segment, params?: DrawParams) {
     const begin = transformPosition(segment.begin)
     const end = transformPosition(segment.end)
-    ctx.beginPath()
-    ctx.lineWidth = lineWidth
-    if (color) ctx.strokeStyle = color
-    ctx.moveTo(begin.x, begin.y)
-    ctx.lineTo(end.x, end.y)
-    ctx.stroke()
-    ctx.closePath()
+    params && applyDrawParams(params)
+    ctx.value!.beginPath()
+    ctx.value!.moveTo(begin.x, begin.y)
+    ctx.value!.lineTo(end.x, end.y)
+    ctx.value!.stroke()
+    ctx.value!.closePath()
   }
 
-  function drawTrapeze(ctx: CanvasRenderingContext2D, trapeze: Trapeze, color?: string) {
+  function drawTrapeze(trapeze: Trapeze, params?: DrawParams) {
     const angle = trapeze.position.angle
     const topCenter = BattleUtils.shiftedPosition(trapeze.position, trapeze.shape.height, angle + Math.PI / 2)
     const polygon = [
@@ -45,21 +56,20 @@ export function useDrawerBase(scaleCoefficient: Ref<number>, canvasSize: Ref<Siz
       BattleUtils.shiftedPosition(topCenter, trapeze.shape.topRadius, angle),
       BattleUtils.shiftedPosition(topCenter, -trapeze.shape.topRadius, angle)
     ]
-    drawPolygon(ctx, polygon, color)
+    drawPolygon(polygon, params)
   }
 
-  function drawPolygon(ctx: CanvasRenderingContext2D, polygon: Position[], color?: string) {
-    if (color) ctx.fillStyle = color
-    ctx.lineWidth = 1
-    ctx.beginPath()
+  function drawPolygon(polygon: Position[], params?: DrawParams) {
+    params && applyDrawParams(params)
+    ctx.value!.beginPath()
     const firstPosition = transformPosition(polygon[0]!)
-    ctx.moveTo(firstPosition.x, firstPosition.y)
+    ctx.value!.moveTo(firstPosition.x, firstPosition.y)
     for (let i = 1; i < polygon.length; i++) {
       const position = transformPosition(polygon[i]!)
-      ctx.lineTo(position.x, position.y)
+      ctx.value!.lineTo(position.x, position.y)
     }
-    ctx.fill()
-    ctx.closePath()
+    params?.stroke ? ctx.value!.stroke() : ctx.value!.fill()
+    ctx.value!.closePath()
   }
 
   function transformPosition(position: Position) {
@@ -77,12 +87,24 @@ export function useDrawerBase(scaleCoefficient: Ref<number>, canvasSize: Ref<Siz
     return `bold ${size}px Roboto, sans-serif`
   }
 
-  function getGroundFillStyle(ctx: CanvasRenderingContext2D) {
+  function getGroundFillStyle() {
     if (appearances.value[AppearancesNames.GROUND_TEXTURE_BACKGROUND] === '1') {
-      return ctx.createPattern(img, 'repeat')!
+      return ctx.value!.createPattern(img, 'repeat')!
     } else {
       return 'rgb(80 80 80)'
     }
+  }
+
+  function applyDrawParams(params: DrawParams) {
+    if (params.groundTexture) {
+      ctx.value!.fillStyle = getGroundFillStyle()
+    } else if (params.fillStyle) {
+      ctx.value!.fillStyle = params.fillStyle
+    }
+    if (params.strokeStyle) {
+      ctx.value!.strokeStyle = params.strokeStyle
+    }
+    ctx.value!.lineWidth = params.lineWidth || 1
   }
 
   return { drawSegment, drawTrapeze, drawPolygon, transformPosition, scale, getFont, getGroundFillStyle }

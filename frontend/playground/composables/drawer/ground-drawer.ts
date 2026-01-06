@@ -14,7 +14,7 @@ export function useGroundDrawer(
     const roomModel = battleStore.battle?.model.room
     const groundLine = roomModel?.state.groundLine
     if (ctx.value && roomModel && groundLine) {
-      ctx.value.fillStyle = drawerBase.getGroundFillStyle(ctx.value)
+      ctx.value.fillStyle = drawerBase.getGroundFillStyle()
       ctx.value.lineWidth = 1
       ctx.value.beginPath()
       let position = getGroundPosition(0, roomModel)

@@ -73,7 +73,7 @@ export function useVehicleDrawer(
   }
 
   function drawTrapezeTurret(vehicleModel: VehicleModel, turretShape: TrapezeShape) {
-    drawerBase.drawTrapeze(ctx.value!, new Trapeze(BodyUtils.getGeometryBodyPosition(vehicleModel), turretShape))
+    drawerBase.drawTrapeze(new Trapeze(BodyUtils.getGeometryBodyPosition(vehicleModel), turretShape))
   }
 
   function drawWheels(vehicleModel: VehicleModel, wheelRadius: number) {

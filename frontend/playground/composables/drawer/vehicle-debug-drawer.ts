@@ -1,11 +1,10 @@
 import type {DrawerBase} from '@/playground/composables/drawer/drawer-base'
 import type {Ref} from 'vue'
 import {useBattleStore} from '~/stores/battle'
-import {VehicleUtils} from '@/playground/utils/vehicle-utils'
 import type {VehicleModel} from "~/playground/data/model";
 import {type Contact, type Position} from "~/playground/data/common";
 import {useSettingsStore} from "~/stores/settings";
-import type {VehicleCalculations} from "~/playground/data/calculations";
+import {VehicleCalculations} from "~/playground/data/calculations";
 import {JetForceCalculator} from "~/playground/battle/calculator/vehicle/jet-force-calculator";
 import type {BodyForce} from "~/playground/battle/calculator/body-force";
 import {Segment} from "~/playground/data/geometry";
@@ -28,10 +27,10 @@ export function useVehicleDebugDrawer(
   function drawVehicle(vehicleModel: VehicleModel) {
     if (ctx.value ) {
       const roomModel = battleStore.battle!.model.room
-      const calculations = VehicleUtils.initVehicleCalculations(vehicleModel)
+      const calculations = new VehicleCalculations(vehicleModel)
       const wheelRadius = vehicleModel.specs.wheelRadius
-      VehicleUtils.calculateGroundContact(calculations.rightWheel, wheelRadius, roomModel)
-      VehicleUtils.calculateGroundContact(calculations.leftWheel, wheelRadius, roomModel)
+      calculations.rightWheel.calculateGroundContact(wheelRadius, roomModel)
+      calculations.leftWheel.calculateGroundContact(wheelRadius, roomModel)
       drawCOM(vehicleModel)
       drawGroundContacts(calculations)
       drawJetForces(calculations)
@@ -56,10 +55,10 @@ export function useVehicleDebugDrawer(
   }
 
   function drawGroundContact(contact: Contact) {
-    drawerBase.drawSegment(ctx.value!, new Segment(contact.position, {
+    drawerBase.drawSegment(new Segment(contact.position, {
       x: contact.position.x + contact.normal.x / 4,
       y: contact.position.y + contact.normal.y / 4,
-    }), 2, 'white')
+    }), {strokeStyle: 'white', lineWidth: 2})
   }
 
   function drawEngineForces(calculations: VehicleCalculations) {
@@ -96,10 +95,10 @@ export function useVehicleDebugDrawer(
     if (coefficient) {
       forceNormalized = VectorUtils.multiply(forceNormalized, coefficient)
     }
-    drawerBase.drawSegment(ctx.value!, new Segment(forcePosition, {
+    drawerBase.drawSegment(new Segment(forcePosition, {
       x: forcePosition.x + forceNormalized.x,
       y: forcePosition.y + forceNormalized.y,
-    }), 2, color)
+    }), {fillStyle: color, lineWidth: 2})
   }
 
   return {draw}

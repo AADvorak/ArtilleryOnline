@@ -61,7 +61,7 @@ const canvas = ref<HTMLCanvasElement>()
 const scroll = ref<HTMLElement>()
 const ctx = ref<CanvasRenderingContext2D>()
 
-const drawerBase = useDrawerBase(scaleCoefficient, canvasSize)
+const drawerBase = useDrawerBase(ctx, scaleCoefficient, canvasSize)
 const vehicleDrawer = useVehicleDrawer(drawerBase, ctx)
 const vehicleDebugDrawer = useVehicleDebugDrawer(drawerBase, ctx)
 const shellDrawer = useShellDrawer(drawerBase, ctx)
