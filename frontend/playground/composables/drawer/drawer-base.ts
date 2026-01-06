@@ -13,7 +13,15 @@ export interface DrawParams {
   groundTexture?: boolean
 }
 
+export interface CanvasText {
+  position: Position
+  text: string
+  fontSize: number
+  textWidth?: number
+}
+
 export interface DrawerBase {
+  drawText: (canvasText: CanvasText, params?: DrawParams) => void
   drawSegment: (segment: Segment, params?: DrawParams) => void
   drawCircle: (circle: Circle, params?: DrawParams) => void
   drawTrapeze: (trapeze: Trapeze, params?: DrawParams) => void
@@ -37,6 +45,18 @@ export function useDrawerBase(
 
   const img = new Image()
   img.src = `/images/ground-texture-${battleStore.battle?.model.room.config.groundTexture}.jpg`
+
+  function drawText(canvasText: CanvasText, params?: DrawParams) {
+    const pos = transformPosition(canvasText.position)
+    const width = canvasText.textWidth
+        ? scale(canvasText.textWidth)
+        : canvasText.fontSize * canvasText.text.length
+    params && setDrawParams(params)
+    ctx.value!.beginPath()
+    ctx.value!.font = getFont(canvasText.fontSize)
+    ctx.value!.fillText(canvasText.text, pos.x, pos.y, width)
+    ctx.value!.closePath()
+  }
 
   function drawSegment(segment: Segment, params?: DrawParams) {
     const begin = transformPosition(segment.begin)
@@ -122,6 +142,7 @@ export function useDrawerBase(
   }
 
   return {
+    drawText,
     drawSegment,
     drawCircle,
     drawTrapeze,

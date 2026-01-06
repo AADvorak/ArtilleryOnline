@@ -1,5 +1,4 @@
 import type {DrawerBase} from '@/playground/composables/drawer/drawer-base'
-import type {Ref} from 'vue'
 import {useBattleStore} from '~/stores/battle'
 import type {BoxModel} from "~/playground/data/model";
 import {ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
@@ -9,8 +8,7 @@ import {BodyUtils} from "~/playground/utils/body-utils";
 import {Trapeze} from "~/playground/data/geometry";
 
 export function useBoxDrawer(
-  drawerBase: DrawerBase,
-  ctx: Ref<CanvasRenderingContext2D | undefined>
+  drawerBase: DrawerBase
 ) {
   const battleStore = useBattleStore()
 
@@ -22,19 +20,17 @@ export function useBoxDrawer(
   }
 
   function drawBox(box: BoxModel) {
-    if (ctx.value) {
-      const color = box.config.color || 'rgb(256 256 256)'
-      if (box.specs.shape.name === ShapeNames.TRAPEZE) {
-        const shape = box.specs.shape as TrapezeShape
-        const trapeze = new Trapeze(BodyUtils.getGeometryBodyPosition(box), shape)
-        drawerBase.drawTrapeze(trapeze, {fillStyle: 'rgb(256 256 256)'})
-        if (box.specs.type === BoxType.HP) {
-          drawCross(box.state.position, shape, color)
-          drawAmount(box)
-        }
-        if (box.specs.type === BoxType.AMMO) {
-          drawShells(trapeze, color)
-        }
+    const color = box.config.color || 'rgb(256 256 256)'
+    if (box.specs.shape.name === ShapeNames.TRAPEZE) {
+      const shape = box.specs.shape as TrapezeShape
+      const trapeze = new Trapeze(BodyUtils.getGeometryBodyPosition(box), shape)
+      drawerBase.drawTrapeze(trapeze, {fillStyle: 'rgb(256 256 256)'})
+      if (box.specs.type === BoxType.HP) {
+        drawCross(box.state.position, shape, color)
+        drawAmount(box)
+      }
+      if (box.specs.type === BoxType.AMMO) {
+        drawShells(trapeze, color)
       }
     }
   }
@@ -91,18 +87,16 @@ export function useBoxDrawer(
   }
 
   function drawAmount(box: BoxModel) {
-    ctx.value!.beginPath()
-    ctx.value!.fillStyle = 'rgb(256,256,256)'
-    ctx.value!.font = drawerBase.getFont(12)
-    ctx.value!.lineWidth = 1
     const amountWidth = 1.5 * box.preCalc.maxRadius
-    const amountPosition = drawerBase.transformPosition({
+    const position = {
       x: box.state.position.x - amountWidth / 2,
       y: box.state.position.y + amountWidth / 2 + 0.1
-    })
-    ctx.value!.fillText(box.config.amount.toFixed(0) + 'HP', amountPosition.x, amountPosition.y,
-        drawerBase.scale(amountWidth))
-    ctx.value!.closePath()
+    }
+    drawerBase.drawText({
+      position,
+      text: box.config.amount.toFixed(0) + 'HP',
+      fontSize: 12
+    }, {fillStyle: 'rgb(256 256 256)'})
   }
 
   return { draw }
