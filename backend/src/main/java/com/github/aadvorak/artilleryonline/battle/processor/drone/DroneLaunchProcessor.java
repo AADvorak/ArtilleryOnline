@@ -23,7 +23,16 @@ public class DroneLaunchProcessor implements BattleProcessor {
 
     private static final long LAUNCH_DELAY = 10000;
 
-    private static final List<String> colors = List.of("#ff5733", "#ffd733", "#ff9633");
+    private static final List<String> colors = List.of(
+            "#ff5733",
+            "#ffd733",
+            "#ff9633",
+            "#bf04ec",
+            "#5dfc02",
+            "#02f4fc",
+            "#ffffff",
+            "#fc0688"
+    );
 
     public void process(Battle battle) {
         if (!BattleType.DRONE_HUNT.equals(battle.getType())) {
