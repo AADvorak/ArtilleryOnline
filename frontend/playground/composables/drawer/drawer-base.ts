@@ -43,9 +43,6 @@ export function useDrawerBase(
 
   const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
 
-  const img = new Image()
-  img.src = `/images/ground-texture-${battleStore.battle?.model.room.config.groundTexture}.jpg`
-
   function drawText(canvasText: CanvasText, params?: DrawParams) {
     const pos = transformPosition(canvasText.position)
     const width = canvasText.textWidth
@@ -120,8 +117,8 @@ export function useDrawerBase(
   }
 
   function getGroundFillStyle() {
-    if (appearances.value[AppearancesNames.GROUND_TEXTURE_BACKGROUND] === '1') {
-      return ctx.value!.createPattern(img, 'repeat')!
+    if (appearances.value[AppearancesNames.GROUND_TEXTURE_BACKGROUND] === '1' && battleStore.groundTexture) {
+      return ctx.value!.createPattern(toRaw(battleStore.groundTexture), 'repeat')!
     } else {
       return 'rgb(80 80 80)'
     }

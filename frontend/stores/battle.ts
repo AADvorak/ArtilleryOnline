@@ -33,6 +33,8 @@ export const useBattleStore = defineStore('battle', () => {
 
   const needSmoothTransition = ref<boolean>(false)
 
+  const groundTexture = ref<HTMLImageElement>()
+
   const battle = computed(() => {
     if (showServerState.value) {
       return serverBattle.value
@@ -51,6 +53,17 @@ export const useBattleStore = defineStore('battle', () => {
   const explosions = computed(() => battle.value?.model?.explosions)
 
   const isActive = computed(() => battle.value?.battleStage === BattleStage.ACTIVE)
+
+  watch(battle, (newVal, oldVal) => {
+    if (newVal && !oldVal) {
+      const img = new Image()
+      img.src = `/images/ground-texture-${newVal.model.room.config.groundTexture}.jpg`
+      groundTexture.value = img
+    }
+    if (!newVal) {
+      groundTexture.value = undefined
+    }
+  })
 
   async function loadBattleIfNull() {
     if (!battle.value) {
@@ -115,6 +128,7 @@ export const useBattleStore = defineStore('battle', () => {
     explosions,
     particles,
     isActive,
+    groundTexture,
     loadBattleIfNull,
     loadBattle,
     updateBattle,
