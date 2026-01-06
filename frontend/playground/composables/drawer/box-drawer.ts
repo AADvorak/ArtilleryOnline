@@ -87,15 +87,16 @@ export function useBoxDrawer(
   }
 
   function drawAmount(box: BoxModel) {
-    const amountWidth = 1.5 * box.preCalc.maxRadius
+    const textWidth = 1.5 * box.preCalc.maxRadius
     const position = {
-      x: box.state.position.x - amountWidth / 2,
-      y: box.state.position.y + amountWidth / 2 + 0.1
+      x: box.state.position.x - textWidth / 2,
+      y: box.state.position.y + textWidth / 2 + 0.1
     }
     drawerBase.drawText({
       position,
       text: box.config.amount.toFixed(0) + 'HP',
-      fontSize: 12
+      fontSize: 12,
+      textWidth
     }, {fillStyle: 'rgb(256 256 256)'})
   }
 
