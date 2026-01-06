@@ -1,7 +1,9 @@
 import type {Position, Size} from '@/playground/data/common'
-import type {Ref} from 'vue'
+import {computed, type Ref} from 'vue'
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {Segment, Trapeze} from "~/playground/data/geometry";
+import {useUserSettingsStore} from "~/stores/user-settings";
+import {AppearancesNames} from "~/dictionary/appearances-names";
 
 export interface DrawerBase {
   drawSegment: (ctx: CanvasRenderingContext2D, segment: Segment, lineWidth: number, color?: string) => void
@@ -10,9 +12,17 @@ export interface DrawerBase {
   transformPosition: (position: Position) => (Position)
   scale: (value: number) => number
   getFont: (size: number) => string
+  getGroundFillStyle: (ctx: CanvasRenderingContext2D) => CanvasPattern | string
 }
 
-export function useDrawerBase(scaleCoefficient: Ref<number>, canvasSize: Ref<Size>) {
+export function useDrawerBase(scaleCoefficient: Ref<number>, canvasSize: Ref<Size>): DrawerBase {
+  const battleStore = useBattleStore()
+  const userSettingsStore = useUserSettingsStore()
+
+  const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
+
+  const img = new Image()
+  img.src = `/images/ground-texture-${battleStore.battle?.model.room.config.groundTexture}.jpg`
 
   function drawSegment(ctx: CanvasRenderingContext2D, segment: Segment, lineWidth: number, color?: string) {
     const begin = transformPosition(segment.begin)
@@ -67,5 +77,13 @@ export function useDrawerBase(scaleCoefficient: Ref<number>, canvasSize: Ref<Siz
     return `bold ${size}px Roboto, sans-serif`
   }
 
-  return { drawSegment, drawTrapeze, drawPolygon, transformPosition, scale, getFont }
+  function getGroundFillStyle(ctx: CanvasRenderingContext2D) {
+    if (appearances.value[AppearancesNames.GROUND_TEXTURE_BACKGROUND] === '1') {
+      return ctx.createPattern(img, 'repeat')!
+    } else {
+      return 'rgb(80 80 80)'
+    }
+  }
+
+  return { drawSegment, drawTrapeze, drawPolygon, transformPosition, scale, getFont, getGroundFillStyle }
 }

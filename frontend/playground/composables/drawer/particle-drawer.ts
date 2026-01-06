@@ -22,8 +22,19 @@ export function useParticleDrawer(
       const rawPosition = particleModel.state.position
       const velocity = particleModel.state.velocity
       const position = drawerBase.transformPosition(rawPosition)
+      ctx.value.fillStyle = particleModel.config.color || 'rgb(256 256 256)'
+      if (particleModel.config.groundTexture) {
+        ctx.value.fillStyle = drawerBase.getGroundFillStyle(ctx.value)
+      }
       if (particleModel.config.text) {
         drawText(position, particleModel.config)
+        return
+      }
+      if (particleModel.config.size) {
+        ctx.value.beginPath()
+        ctx.value.arc(position.x, position.y, drawerBase.scale(particleModel.config.size / 2), 0, Math.PI * 2)
+        ctx.value.fill()
+        ctx.value.closePath()
         return
       }
       const timeStep = 0.03
@@ -43,7 +54,6 @@ export function useParticleDrawer(
 
   function drawText(position: Position, config: ParticleConfig) {
     ctx.value!.beginPath()
-    ctx.value!.fillStyle = config.color || 'rgb(256 256 256)'
     const size = 16
     ctx.value!.font = drawerBase.getFont(size)
     ctx.value!.lineWidth = 1

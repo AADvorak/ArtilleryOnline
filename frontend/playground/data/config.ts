@@ -24,6 +24,8 @@ export interface DroneConfig {
 export interface ParticleConfig {
   color?: string
   text?: string
+  size?: number
+  groundTexture?: boolean
 }
 
 export interface BoxConfig {

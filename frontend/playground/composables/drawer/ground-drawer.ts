@@ -1,9 +1,7 @@
-import type { DrawerBase } from '@/playground/composables/drawer/drawer-base'
-import {computed, type Ref} from 'vue'
-import { useBattleStore } from '~/stores/battle'
-import type { RoomModel } from '@/playground/data/model'
-import {useUserSettingsStore} from "~/stores/user-settings";
-import {AppearancesNames} from "~/dictionary/appearances-names";
+import type {DrawerBase} from '@/playground/composables/drawer/drawer-base'
+import {type Ref} from 'vue'
+import {useBattleStore} from '~/stores/battle'
+import type {RoomModel} from '@/playground/data/model'
 import {BattleUtils} from "~/playground/utils/battle-utils";
 
 export function useGroundDrawer(
@@ -11,18 +9,12 @@ export function useGroundDrawer(
   ctx: Ref<CanvasRenderingContext2D | undefined>
 ) {
   const battleStore = useBattleStore()
-  const userSettingsStore = useUserSettingsStore()
-
-  const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
-
-  const img = new Image()
-  img.src = `/images/ground-texture-${battleStore.battle?.model.room.config.groundTexture}.jpg`
 
   function draw() {
     const roomModel = battleStore.battle?.model.room
     const groundLine = roomModel?.state.groundLine
     if (ctx.value && roomModel && groundLine) {
-      ctx.value.fillStyle = getFillStyle()
+      ctx.value.fillStyle = drawerBase.getGroundFillStyle(ctx.value)
       ctx.value.lineWidth = 1
       ctx.value.beginPath()
       let position = getGroundPosition(0, roomModel)
@@ -48,14 +40,6 @@ export function useGroundDrawer(
 
   function getGroundPosition(i: number, roomModel: RoomModel) {
     return drawerBase.transformPosition(BattleUtils.getGroundPosition(i, roomModel))
-  }
-
-  function getFillStyle() {
-    if (appearances.value[AppearancesNames.GROUND_TEXTURE_BACKGROUND] === '1') {
-      return ctx.value!.createPattern(img, 'repeat')!
-    } else {
-      return 'rgb(80 80 80)'
-    }
   }
 
   return { draw }

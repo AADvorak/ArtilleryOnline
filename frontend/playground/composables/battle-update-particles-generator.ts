@@ -14,9 +14,12 @@ export function useBattleUpdateParticlesGenerator() {
   const MAX_HIT_VELOCITY = 15
   const MSG_PARTICLE_LIFETIME = 1.0
   const HIT_PARTICLE_LIFETIME = 0.25
+  const HIT_GROUND_PARTICLE_LIFETIME = 0.25
   const HIT_PARTICLE_LIFETIME_RELATIVE_DEVIATION = 0.2
   const HIT_PARTICLES_ANGLE_DEVIATION = Math.PI / 16
+  const HIT_GROUND_PARTICLES_ANGLE_DEVIATION = Math.PI / 3
   const CALIBER_PARTICLES_NUMBER_COEFFICIENT = 150
+  const GROUND_PARTICLES_NUMBER = 30
 
   const battleStore = useBattleStore()
 
@@ -38,11 +41,14 @@ export function useBattleUpdateParticlesGenerator() {
     const hits = events.hits
     if (hits) {
       hits
-          .filter(hit => !!hit.object && hit.object.type !== ShellHitType.GROUND)
+          .filter(hit => !!hit.object)
           .forEach(hit => {
             const shell = battleModel.shells[hit.shellId]
-            shell && shell.specs.type === ShellType.AP && addHitParticles(hit.contact, shell.specs.caliber,
-                hit.closingVelocity, true)
+            if (shell && shell.specs.type === ShellType.AP) {
+              hit.object.type === ShellHitType.GROUND
+                  ? addHitGroundParticles(hit.contact, shell.specs.caliber, hit.closingVelocity)
+                  : addHitParticles(hit.contact, shell.specs.caliber, hit.closingVelocity, true)
+            }
           })
     }
     const ricochets = events.ricochets
@@ -99,6 +105,19 @@ export function useBattleUpdateParticlesGenerator() {
         angle += Math.PI
       }
       battleStore.addParticle(BattleUtils.generateParticle(contact.position, lifeTime, angle, magnitude), {})
+    }
+  }
+
+  function addHitGroundParticles(contact: Contact, caliber: number, velocityMagnitude: number) {
+    for (let i = 0; i < GROUND_PARTICLES_NUMBER; i++) {
+      let angle = contact.angle + HIT_GROUND_PARTICLES_ANGLE_DEVIATION * (Math.random() - 0.5) + Math.PI / 2
+      const magnitude = Math.random() * velocityMagnitude / 4
+      const lifeTime = HIT_GROUND_PARTICLE_LIFETIME * velocityMagnitude / MAX_HIT_VELOCITY
+          * (1 + HIT_PARTICLE_LIFETIME_RELATIVE_DEVIATION * (Math.random() - 0.5))
+      battleStore.addParticle(
+          BattleUtils.generateParticle(contact.position, lifeTime, angle, magnitude),
+          {size: caliber * (Math.random() + 0.5), groundTexture: true}
+      )
     }
   }
 
