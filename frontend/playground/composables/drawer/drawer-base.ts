@@ -1,7 +1,7 @@
 import type {Position, Size} from '@/playground/data/common'
 import {computed, type Ref} from 'vue'
 import {BattleUtils} from "~/playground/utils/battle-utils";
-import {Segment, Trapeze} from "~/playground/data/geometry";
+import {Circle, Segment, Trapeze} from "~/playground/data/geometry";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
 
@@ -15,12 +15,14 @@ export interface DrawParams {
 
 export interface DrawerBase {
   drawSegment: (segment: Segment, params?: DrawParams) => void
+  drawCircle: (circle: Circle, params?: DrawParams) => void
   drawTrapeze: (trapeze: Trapeze, params?: DrawParams) => void
   drawPolygon: (polygon: Position[], params?: DrawParams) => void
   transformPosition: (position: Position) => (Position)
   scale: (value: number) => number
   getFont: (size: number) => string
   getGroundFillStyle: () => CanvasPattern | string
+  setDrawParams: (params: DrawParams) => void
 }
 
 export function useDrawerBase(
@@ -39,11 +41,21 @@ export function useDrawerBase(
   function drawSegment(segment: Segment, params?: DrawParams) {
     const begin = transformPosition(segment.begin)
     const end = transformPosition(segment.end)
-    params && applyDrawParams(params)
+    params && setDrawParams(params)
     ctx.value!.beginPath()
     ctx.value!.moveTo(begin.x, begin.y)
     ctx.value!.lineTo(end.x, end.y)
     ctx.value!.stroke()
+    ctx.value!.closePath()
+  }
+
+  function drawCircle(circle: Circle, params?: DrawParams) {
+    const center = transformPosition(circle.center)
+    const radius = scale(circle.radius)
+    params && setDrawParams(params)
+    ctx.value!.beginPath()
+    ctx.value!.arc(center.x, center.y, radius, 0, 2 * Math.PI)
+    params?.stroke ? ctx.value!.stroke() : ctx.value!.fill()
     ctx.value!.closePath()
   }
 
@@ -60,7 +72,7 @@ export function useDrawerBase(
   }
 
   function drawPolygon(polygon: Position[], params?: DrawParams) {
-    params && applyDrawParams(params)
+    params && setDrawParams(params)
     ctx.value!.beginPath()
     const firstPosition = transformPosition(polygon[0]!)
     ctx.value!.moveTo(firstPosition.x, firstPosition.y)
@@ -95,7 +107,7 @@ export function useDrawerBase(
     }
   }
 
-  function applyDrawParams(params: DrawParams) {
+  function setDrawParams(params: DrawParams) {
     if (params.groundTexture) {
       ctx.value!.fillStyle = getGroundFillStyle()
     } else if (params.fillStyle) {
@@ -104,8 +116,20 @@ export function useDrawerBase(
     if (params.strokeStyle) {
       ctx.value!.strokeStyle = params.strokeStyle
     }
-    ctx.value!.lineWidth = params.lineWidth || 1
+    if (params.lineWidth) {
+      ctx.value!.lineWidth = params.lineWidth
+    }
   }
 
-  return { drawSegment, drawTrapeze, drawPolygon, transformPosition, scale, getFont, getGroundFillStyle }
+  return {
+    drawSegment,
+    drawCircle,
+    drawTrapeze,
+    drawPolygon,
+    transformPosition,
+    scale,
+    getFont,
+    getGroundFillStyle,
+    setDrawParams
+  }
 }

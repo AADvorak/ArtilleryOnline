@@ -4,6 +4,7 @@ import { useBattleStore } from '~/stores/battle'
 import type {ParticleModel} from '@/playground/data/model'
 import type {Position} from "~/playground/data/common";
 import type {ParticleConfig} from "~/playground/data/config";
+import {Circle, Segment} from "~/playground/data/geometry";
 
 export function useParticleDrawer(
   drawerBase: DrawerBase,
@@ -19,45 +20,34 @@ export function useParticleDrawer(
 
   function drawParticle(particleModel: ParticleModel) {
     if (ctx.value) {
-      const rawPosition = particleModel.state.position
+      const position = particleModel.state.position
       const velocity = particleModel.state.velocity
-      const position = drawerBase.transformPosition(rawPosition)
-      ctx.value.fillStyle = particleModel.config.color || 'rgb(256 256 256)'
-      if (particleModel.config.groundTexture) {
-        ctx.value.fillStyle = drawerBase.getGroundFillStyle()
-      }
       if (particleModel.config.text) {
         drawText(position, particleModel.config)
         return
       }
       if (particleModel.config.size) {
-        ctx.value.beginPath()
-        ctx.value.arc(position.x, position.y, drawerBase.scale(particleModel.config.size / 2), 0, Math.PI * 2)
-        ctx.value.fill()
-        ctx.value.closePath()
+        drawerBase.drawCircle(new Circle(position, particleModel.config.size / 2), {groundTexture: true})
         return
       }
       const timeStep = 0.03
-      const nextPosition = drawerBase.transformPosition({
-        x: rawPosition.x + velocity.x * timeStep,
-        y: rawPosition.y + velocity.y * timeStep,
-      })
-      ctx.value.strokeStyle = particleModel.config.color || 'rgb(256 256 256)'
-      ctx.value.lineWidth = 1
-      ctx.value.beginPath()
-      ctx.value.moveTo(position.x, position.y)
-      ctx.value.lineTo(nextPosition.x, nextPosition.y)
-      ctx.value.stroke()
-      ctx.value.closePath()
+      const nextPosition = {
+        x: position.x + velocity.x * timeStep,
+        y: position.y + velocity.y * timeStep,
+      }
+      drawerBase.drawSegment(new Segment(position, nextPosition),
+          {strokeStyle: particleModel.config.color || 'rgb(256 256 256)', lineWidth: 1})
     }
   }
 
   function drawText(position: Position, config: ParticleConfig) {
+    const pos = drawerBase.transformPosition(position)
+    ctx.value!.fillStyle = config.color || 'rgb(256 256 256)'
     ctx.value!.beginPath()
     const size = 16
     ctx.value!.font = drawerBase.getFont(size)
     ctx.value!.lineWidth = 1
-    ctx.value!.fillText(config.text!, position.x, position.y, size * config.text!.length)
+    ctx.value!.fillText(config.text!, pos.x, pos.y, size * config.text!.length)
     ctx.value!.closePath()
   }
 

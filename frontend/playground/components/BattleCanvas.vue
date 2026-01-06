@@ -73,7 +73,7 @@ const groundDrawer = useGroundDrawer(drawerBase, ctx)
 const surfaceDrawer = useSurfaceDrawer(drawerBase, ctx)
 const particleDrawer = useParticleDrawer(drawerBase, ctx)
 const shellTrajectoryDrawer = useShellTrajectoryDrawer(drawerBase, ctx)
-const crosshairDrawer = useCrosshairDrawer(drawerBase, ctx)
+const crosshairDrawer = useCrosshairDrawer(drawerBase)
 
 watch(battle, (value) => {
   if (value) {

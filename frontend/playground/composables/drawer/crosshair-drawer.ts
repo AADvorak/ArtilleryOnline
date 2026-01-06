@@ -1,8 +1,7 @@
 import type {DrawerBase} from '@/playground/composables/drawer/drawer-base'
-import type {Ref} from 'vue'
 import {useBattleStore} from '~/stores/battle'
 import {BattleUtils} from "~/playground/utils/battle-utils";
-import {Segment} from "~/playground/data/geometry";
+import {Circle, Segment} from "~/playground/data/geometry";
 import {type Position, type TargetData} from "~/playground/data/common";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 
@@ -17,8 +16,7 @@ const CROSSHAIR_COLORS = {
 }
 
 export function useCrosshairDrawer(
-    drawerBase: DrawerBase,
-    ctx: Ref<CanvasRenderingContext2D | undefined>
+    drawerBase: DrawerBase
 ) {
   const battleStore = useBattleStore()
 
@@ -34,29 +32,24 @@ export function useCrosshairDrawer(
   }
 
   function drawCrosshair(position: Position, angle: number, color: string) {
+    drawerBase.setDrawParams({lineWidth: 2, strokeStyle: color})
     drawerBase.drawSegment(new Segment(
         BattleUtils.shiftedPosition(position, CROSSHAIR_INNER_SIZE, angle - Math.PI / 2),
         BattleUtils.shiftedPosition(position, CROSSHAIR_SIZE, angle - Math.PI / 2),
-    ), {lineWidth: 2, strokeStyle: color})
+    ))
     drawerBase.drawSegment(new Segment(
         BattleUtils.shiftedPosition(position, -CROSSHAIR_INNER_SIZE, angle - Math.PI / 2),
         BattleUtils.shiftedPosition(position, -CROSSHAIR_SIZE, angle - Math.PI / 2),
-    ), {lineWidth: 2, strokeStyle: color})
+    ))
     drawerBase.drawSegment(new Segment(
         BattleUtils.shiftedPosition(position, CROSSHAIR_INNER_SIZE, angle),
         BattleUtils.shiftedPosition(position, CROSSHAIR_SIZE, angle),
-    ), {lineWidth: 2, strokeStyle: color})
+    ))
     drawerBase.drawSegment(new Segment(
         BattleUtils.shiftedPosition(position, -CROSSHAIR_INNER_SIZE, angle),
         BattleUtils.shiftedPosition(position, -CROSSHAIR_SIZE, angle),
-    ), {lineWidth: 2, strokeStyle: color})
-    const center = drawerBase.transformPosition(position)
-    const radius = drawerBase.scale(CROSSHAIR_INNER_SIZE)
-    ctx.value!.strokeStyle = color
-    ctx.value!.beginPath()
-    ctx.value!.arc(center.x, center.y, radius, 0, 2 * Math.PI)
-    ctx.value!.stroke()
-    ctx.value!.closePath()
+    ))
+    drawerBase.drawCircle(new Circle(position, CROSSHAIR_INNER_SIZE), {stroke: true})
   }
 
   function getCrosshairColor(targetData: TargetData) {
