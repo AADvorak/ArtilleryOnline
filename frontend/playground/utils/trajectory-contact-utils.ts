@@ -16,11 +16,9 @@ export const TrajectoryContactUtils = {
     if (vehiclePart instanceof HalfCircle) {
       GeometryUtils.getSegmentAndHalfCircleIntersectionPoints(projectileTrace, vehiclePart)
         .forEach(intersectionPoint => {
-          const contact = Contact.withNormalUncheckedDepth(
-            0.0,
-            VectorUtils.vectorFromTo(intersectionPoint, vehiclePart.center),
-            intersectionPoint
-          )
+          const normal = VectorUtils.vectorFromTo(intersectionPoint, vehiclePart.center)
+          VectorUtils.normalize(normal)
+          const contact = Contact.withNormalUncheckedDepth(0.0, normal, intersectionPoint)
           intersectionPointsMap.set(intersectionPoint, new ContactAndHitSurface(contact, HitSurface.TOP))
         })
       this.findIntersectionPointAndPutToMap(projectileTrace, vehiclePart.chord(), HitSurface.BOTTOM, intersectionPointsMap)
