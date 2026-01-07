@@ -13,7 +13,7 @@ public enum ShellSpecsPreset {
             .setDamage(15.0)
             .setRadius(0.15)
             .setVelocity(14.5)
-            .setMass(0.061)
+            .setMass(0.0427)
             .setCaliber(0.07)
             .setPenetration(53.0)
             .setType(ShellType.AP)),
@@ -21,7 +21,7 @@ public enum ShellSpecsPreset {
             .setDamage(7.0)
             .setRadius(0.7)
             .setVelocity(14.5)
-            .setMass(0.061)
+            .setMass(0.0427)
             .setCaliber(0.07)
             .setPenetration(20.0)
             .setType(ShellType.HE)),
@@ -29,7 +29,7 @@ public enum ShellSpecsPreset {
             .setDamage(10.0)
             .setRadius(0.1)
             .setVelocity(15.0)
-            .setMass(0.02)
+            .setMass(0.014)
             .setCaliber(0.05)
             .setPenetration(53.0)
             .setType(ShellType.AP)),
@@ -37,7 +37,7 @@ public enum ShellSpecsPreset {
             .setDamage(5.0)
             .setRadius(0.5)
             .setVelocity(15.0)
-            .setMass(0.02)
+            .setMass(0.014)
             .setCaliber(0.05)
             .setPenetration(20.0)
             .setType(ShellType.HE)),
@@ -45,7 +45,7 @@ public enum ShellSpecsPreset {
             .setDamage(10.0)
             .setRadius(0.1)
             .setVelocity(14.5)
-            .setMass(0.02)
+            .setMass(0.014)
             .setCaliber(0.05)
             .setPenetration(42.0)
             .setType(ShellType.AP)),
@@ -53,7 +53,7 @@ public enum ShellSpecsPreset {
             .setDamage(5.0)
             .setRadius(0.5)
             .setVelocity(14.5)
-            .setMass(0.02)
+            .setMass(0.014)
             .setCaliber(0.05)
             .setPenetration(15.0)
             .setType(ShellType.HE)),
@@ -61,7 +61,7 @@ public enum ShellSpecsPreset {
             .setDamage(1.2)
             .setRadius(0.04)
             .setVelocity(14.5)
-            .setMass(0.008)
+            .setMass(0.0056)
             .setCaliber(0.03)
             .setPenetration(40.0)
             .setType(ShellType.AP)),
@@ -69,7 +69,7 @@ public enum ShellSpecsPreset {
             .setDamage(2.0)
             .setRadius(0.06)
             .setVelocity(13.5)
-            .setMass(0.008)
+            .setMass(0.0056)
             .setCaliber(0.03)
             .setPenetration(40.0)
             .setType(ShellType.AP)),
@@ -77,20 +77,20 @@ public enum ShellSpecsPreset {
             .setDamage(3.0)
             .setRadius(0.4)
             .setVelocity(13.5)
-            .setMass(0.01)
+            .setMass(0.007)
             .setCaliber(0.04)
             .setPenetration(15.0)
             .setType(ShellType.HE)),
     LIGHT_SGN("SGN-L", new ShellSpecs()
             .setVelocity(12.5)
-            .setMass(0.005)
+            .setMass(0.0035)
             .setCaliber(0.07)
             .setType(ShellType.SGN)),
     DRONE_AP("AP-D", new ShellSpecs()
             .setDamage(2.0)
             .setRadius(0.06)
             .setVelocity(12.0)
-            .setMass(0.005)
+            .setMass(0.0035)
             .setCaliber(0.03)
             .setPenetration(35.0)
             .setType(ShellType.AP)),
@@ -98,7 +98,7 @@ public enum ShellSpecsPreset {
             .setDamage(4.0)
             .setRadius(0.4)
             .setVelocity(11.0)
-            .setMass(0.01)
+            .setMass(0.007)
             .setCaliber(0.04)
             .setPenetration(15.0)
             .setType(ShellType.HE)),
@@ -106,7 +106,7 @@ public enum ShellSpecsPreset {
             .setDamage(15.0)
             .setRadius(0.9)
             .setVelocity(12.5)
-            .setMass(0.07)
+            .setMass(0.049)
             .setCaliber(0.12)
             .setPenetration(55.0)
             .setType(ShellType.BMB)),
@@ -114,7 +114,7 @@ public enum ShellSpecsPreset {
             .setDamage(12.0)
             .setRadius(0.7)
             .setVelocity(5.0)
-            .setMass(0.08)
+            .setMass(0.056)
             .setCaliber(0.15)
             .setPenetration(55.0)
             .setType(ShellType.BMB));
