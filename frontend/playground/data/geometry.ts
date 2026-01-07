@@ -2,6 +2,7 @@ import type {BodyPosition, Position, Vector, Velocity} from "~/playground/data/c
 import {
   type CircleShape,
   type HalfCircleShape,
+  type RegularPolygonShape,
   type Shape,
   ShapeNames,
   type TrapezeShape
@@ -154,6 +155,49 @@ export class HalfCircle implements BodyPart {
 
   static of(bodyPosition: BodyPosition, radius: number): HalfCircle {
     return new HalfCircle({x: bodyPosition.x, y: bodyPosition.y}, radius, bodyPosition.angle)
+  }
+}
+
+export class RegularPolygon implements BodyPart {
+  position: BodyPosition
+  shape: RegularPolygonShape
+
+  constructor(position: BodyPosition, shape: RegularPolygonShape) {
+    this.position = position
+    this.shape = shape
+  }
+
+  getPosition(): BodyPosition {
+    return this.position
+  }
+
+  getShape(): RegularPolygonShape {
+    return this.shape
+  }
+
+  getBoundaries(): Boundaries {
+    return new Boundaries(
+        this.position.x - this.radius(),
+        this.position.x + this.radius(),
+        this.position.y - this.radius(),
+        this.position.y + this.radius()
+    )
+  }
+
+  radius(): number {
+    return this.shape.radius
+  }
+
+  sidesNumber(): number {
+    return this.shape.sidesNumber
+  }
+
+  static of(position: BodyPosition, radius: number, sidesNumber: number): RegularPolygon {
+    return new RegularPolygon(position, {
+      name: ShapeNames.REGULAR_POLYGON,
+      radius,
+      sidesNumber
+    })
   }
 }
 

@@ -1,7 +1,8 @@
 export const ShapeNames = {
   CIRCLE: 'Circle',
   HALF_CIRCLE: 'HalfCircle',
-  TRAPEZE: 'Trapeze'
+  TRAPEZE: 'Trapeze',
+  REGULAR_POLYGON: 'RegularPolygon',
 }
 
 export interface Shape {
@@ -20,4 +21,9 @@ export interface TrapezeShape extends Shape {
   bottomRadius: number
   topRadius: number
   height: number
+}
+
+export interface RegularPolygonShape extends Shape {
+  radius: number
+  sidesNumber: number
 }
