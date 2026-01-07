@@ -1,7 +1,7 @@
 import type {Position, Size} from '@/playground/data/common'
 import {computed, type Ref} from 'vue'
 import {BattleUtils} from "~/playground/utils/battle-utils";
-import {Circle, Segment, Trapeze} from "~/playground/data/geometry";
+import {Circle, HalfCircle, Segment, Trapeze} from "~/playground/data/geometry";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
 
@@ -24,6 +24,7 @@ export interface DrawerBase {
   drawText: (canvasText: CanvasText, params?: DrawParams) => void
   drawSegment: (segment: Segment, params?: DrawParams) => void
   drawCircle: (circle: Circle, params?: DrawParams) => void
+  drawHalfCircle: (halfCircle: HalfCircle, params?: DrawParams) => void
   drawTrapeze: (trapeze: Trapeze, params?: DrawParams) => void
   drawPolygon: (polygon: Position[], params?: DrawParams) => void
   transformPosition: (position: Position) => (Position)
@@ -72,6 +73,18 @@ export function useDrawerBase(
     params && setDrawParams(params)
     ctx.value!.beginPath()
     ctx.value!.arc(center.x, center.y, radius, 0, 2 * Math.PI)
+    params?.stroke ? ctx.value!.stroke() : ctx.value!.fill()
+    ctx.value!.closePath()
+  }
+
+  function drawHalfCircle(halfCircle: HalfCircle, params?: DrawParams) {
+    const position = transformPosition(halfCircle.center)
+    const startAngle = Math.PI - halfCircle.angle
+    const endAngle = 2 * Math.PI - halfCircle.angle
+    const radius = scale(halfCircle.radius)
+    params && setDrawParams(params)
+    ctx.value!.beginPath()
+    ctx.value!.arc(position.x, position.y, radius, startAngle, endAngle)
     params?.stroke ? ctx.value!.stroke() : ctx.value!.fill()
     ctx.value!.closePath()
   }
@@ -142,6 +155,7 @@ export function useDrawerBase(
     drawText,
     drawSegment,
     drawCircle,
+    drawHalfCircle,
     drawTrapeze,
     drawPolygon,
     transformPosition,
