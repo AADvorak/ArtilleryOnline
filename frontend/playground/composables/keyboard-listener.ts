@@ -89,6 +89,7 @@ export function useKeyboardListener(commandsSender: CommandsSender) {
     keysDown.delete(e.code)
     const userCommandKey = mapping[e.code]
     if (userCommandKey) {
+      e.preventDefault()
       const userCommand = keyUpCommands.get(userCommandKey)
           || clickCommands.get(userCommandKey)
       if (userCommand) {
@@ -99,6 +100,7 @@ export function useKeyboardListener(commandsSender: CommandsSender) {
 
   function keydownListener(e: KeyboardEvent) {
     if (!keysDown.has(e.code)) {
+      e.preventDefault()
       keysDown.set(e.code, e.key)
       const userCommandKey = mapping[e.code]
       if (userCommandKey) {
