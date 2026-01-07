@@ -43,6 +43,10 @@ export interface ParticleState {
   remainTime: number
 }
 
+export interface BodyParticleState extends BodyState {
+  remainTime: number
+}
+
 export interface MissileState extends BodyState {
 }
 

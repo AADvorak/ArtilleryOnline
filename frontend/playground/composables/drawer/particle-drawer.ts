@@ -1,9 +1,10 @@
-import type {DrawerBase} from '@/playground/composables/drawer/drawer-base'
+import type {DrawerBase, DrawParams} from '@/playground/composables/drawer/drawer-base'
 import {useBattleStore} from '~/stores/battle'
-import type {ParticleModel} from '@/playground/data/model'
+import type {BodyParticleModel, ParticleModel} from '@/playground/data/model'
 import type {Position} from "~/playground/data/common";
 import type {ParticleConfig} from "~/playground/data/config";
-import {Circle, Segment} from "~/playground/data/geometry";
+import {Circle, RegularPolygon, Segment} from "~/playground/data/geometry";
+import {type RegularPolygonShape, ShapeNames} from "~/playground/data/shapes";
 
 export function useParticleDrawer(
   drawerBase: DrawerBase
@@ -13,6 +14,9 @@ export function useParticleDrawer(
   function draw() {
     if (battleStore.particles) {
       Object.values(battleStore.particles).forEach(drawParticle)
+    }
+    if (battleStore.bodyParticles) {
+      Object.values(battleStore.bodyParticles).forEach(drawBodyParticle)
     }
   }
 
@@ -42,6 +46,21 @@ export function useParticleDrawer(
       text: config.text!,
       fontSize: 16
     }, {fillStyle: config.color || 'rgb(256 256 256)'})
+  }
+
+  function drawBodyParticle(particleModel: BodyParticleModel) {
+    const shape = particleModel.config.shape
+    const params: DrawParams = {}
+    if (particleModel.config.groundTexture) {
+      params.groundTexture = particleModel.config.groundTexture
+    }
+    if (particleModel.config.color) {
+      params.fillStyle = particleModel.config.color
+    }
+    if (shape.name === ShapeNames.REGULAR_POLYGON) {
+      drawerBase.drawRegularPolygon(new RegularPolygon(particleModel.state.position,
+          shape as RegularPolygonShape), params)
+    }
   }
 
   return { draw }

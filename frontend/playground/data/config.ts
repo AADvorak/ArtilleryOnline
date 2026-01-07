@@ -1,5 +1,6 @@
 import type {DroneSpecs, GunSpecs, JetSpecs} from "@/playground/data/specs";
 import type {Ammo, Missiles} from "@/playground/data/common";
+import type {Shape} from "~/playground/data/shapes";
 
 export interface VehicleConfig {
   gun: GunSpecs
@@ -26,6 +27,12 @@ export interface ParticleConfig {
   text?: string
   size?: number
   groundTexture?: boolean
+}
+
+export interface BodyParticleConfig {
+  color?: string
+  groundTexture?: boolean
+  shape: Shape
 }
 
 export interface BoxConfig {

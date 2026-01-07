@@ -5,9 +5,9 @@ import { BattleStage } from '~/playground/data/battle'
 import {ApiRequestSender} from "~/api/api-request-sender";
 import {deserializeBattle} from "~/playground/data/battle-deserialize";
 import {DeserializerInput} from "~/deserialization/deserializer-input";
-import type {ParticleModels} from "~/playground/data/model";
-import type {ParticleState} from "~/playground/data/state";
-import type {ParticleConfig} from "~/playground/data/config";
+import type {BodyParticleModels, ParticleModels} from "~/playground/data/model";
+import type {BodyParticleState, ParticleState} from "~/playground/data/state";
+import type {BodyParticleConfig, ParticleConfig} from "~/playground/data/config";
 import type {Position, TargetData} from "~/playground/data/common";
 
 export const useBattleStore = defineStore('battle', () => {
@@ -16,6 +16,8 @@ export const useBattleStore = defineStore('battle', () => {
   const serverBattle = ref<Battle>()
 
   const particles = ref<ParticleModels>({})
+
+  const bodyParticles = ref<BodyParticleModels>({})
 
   const shellTrajectory = ref<Position[]>()
 
@@ -104,8 +106,17 @@ export const useBattleStore = defineStore('battle', () => {
     particles.value[id] = {id, state, config}
   }
 
+  function addBodyParticle(state: BodyParticleState, config: BodyParticleConfig) {
+    const id = currentId.value++
+    bodyParticles.value[id] = {id, state, config}
+  }
+
   function removeParticle(id: number) {
     delete particles.value[id]
+  }
+
+  function removeBodyParticle(id: number) {
+    delete bodyParticles.value[id]
   }
 
   function clear() {
@@ -113,6 +124,7 @@ export const useBattleStore = defineStore('battle', () => {
     serverBattle.value = undefined
     currentId.value = 0
     particles.value = {}
+    bodyParticles.value = {}
     shellTrajectory.value = undefined
     targetData.value = undefined
   }
@@ -127,6 +139,7 @@ export const useBattleStore = defineStore('battle', () => {
     drones,
     explosions,
     particles,
+    bodyParticles,
     isActive,
     groundTexture,
     loadBattleIfNull,
@@ -135,7 +148,9 @@ export const useBattleStore = defineStore('battle', () => {
     updateClientBattle,
     updateServerBattle,
     addParticle,
+    addBodyParticle,
     removeParticle,
+    removeBodyParticle,
     clear,
     paused,
     doStep,

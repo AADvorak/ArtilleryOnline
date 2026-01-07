@@ -2,12 +2,13 @@ import {useBattleStore} from "~/stores/battle";
 import type {Battle} from "@/playground/data/battle";
 import {BattleStage} from "@/playground/data/battle";
 import {ParticleProcessor} from "~/playground/battle/processor/particle-processor";
-import type {ParticleModel, ShellModel} from "~/playground/data/model";
+import type {BodyParticleModel, ParticleModel, ShellModel} from "~/playground/data/model";
 import {DefaultColors} from "~/dictionary/default-colors";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {useBattleObjectsProcessor} from "~/playground/battle/processor/battle-objects-processor";
 import {useBattleSmoothTransition} from "~/playground/battle/processor/battle-smooth-transition";
 import {Constants} from "~/playground/data/constants";
+import {BodyParticleProcessor} from "~/playground/battle/processor/body-particle-processor";
 
 export function useBattleProcessor() {
 
@@ -79,6 +80,12 @@ export function useBattleProcessor() {
         battleStore.removeParticle(particle.id)
       }
       ParticleProcessor.processStep(particle, timeStepSecs, battle.model.room.specs)
+    })
+    Object.values(battleStore.bodyParticles).forEach((particle: BodyParticleModel) => {
+      if (particle.state.remainTime <= 0) {
+        battleStore.removeBodyParticle(particle.id)
+      }
+      BodyParticleProcessor.processStep(particle, timeStepSecs, battle.model.room.specs)
     })
   }
 

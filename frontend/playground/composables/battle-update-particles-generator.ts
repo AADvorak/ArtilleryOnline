@@ -7,6 +7,7 @@ import {BattleUtils} from "~/playground/utils/battle-utils";
 import {DefaultColors} from "~/dictionary/default-colors";
 import {useBattleStore} from "~/stores/battle";
 import type {BattleUpdate} from "~/playground/data/battle";
+import {type RegularPolygonShape, ShapeNames} from "~/playground/data/shapes";
 
 export function useBattleUpdateParticlesGenerator() {
 
@@ -14,12 +15,14 @@ export function useBattleUpdateParticlesGenerator() {
   const MAX_HIT_VELOCITY = 15
   const MSG_PARTICLE_LIFETIME = 1.0
   const HIT_PARTICLE_LIFETIME = 0.25
-  const HIT_GROUND_PARTICLE_LIFETIME = 0.25
+  const HIT_GROUND_PARTICLE_LIFETIME = 0.35
   const HIT_PARTICLE_LIFETIME_RELATIVE_DEVIATION = 0.2
   const HIT_PARTICLES_ANGLE_DEVIATION = Math.PI / 16
   const HIT_GROUND_PARTICLES_ANGLE_DEVIATION = Math.PI / 3
+  const HIT_GROUND_PARTICLES_ANGLE_VELOCITY_DEVIATION = Math.PI / 2
   const CALIBER_PARTICLES_NUMBER_COEFFICIENT = 150
-  const GROUND_PARTICLES_NUMBER = 30
+  const GROUND_PARTICLES_NUMBER = 40
+  const MIN_BODY_PARTICLE_SIZE = 0.04
 
   const battleStore = useBattleStore()
 
@@ -111,13 +114,27 @@ export function useBattleUpdateParticlesGenerator() {
   function addHitGroundParticles(contact: Contact, caliber: number, velocityMagnitude: number) {
     for (let i = 0; i < GROUND_PARTICLES_NUMBER; i++) {
       let angle = contact.angle + HIT_GROUND_PARTICLES_ANGLE_DEVIATION * (Math.random() - 0.5) + Math.PI / 2
-      const magnitude = Math.random() * velocityMagnitude / 4
+      const magnitude = Math.random() * velocityMagnitude / 5
       const lifeTime = HIT_GROUND_PARTICLE_LIFETIME * velocityMagnitude / MAX_HIT_VELOCITY
           * (1 + HIT_PARTICLE_LIFETIME_RELATIVE_DEVIATION * (Math.random() - 0.5))
-      battleStore.addParticle(
-          BattleUtils.generateParticle(contact.position, lifeTime, angle, magnitude),
-          {size: caliber * (Math.random() + 0.5), groundTexture: true}
-      )
+      const size = caliber * (Math.random() + 0.5)
+      if (size < MIN_BODY_PARTICLE_SIZE) {
+        battleStore.addParticle(
+            BattleUtils.generateParticle(contact.position, lifeTime, angle, magnitude),
+            {size, groundTexture: true}
+        )
+      } else {
+        const shape: RegularPolygonShape = {
+          name: ShapeNames.REGULAR_POLYGON,
+          radius: size / 2,
+          sidesNumber: 5
+        }
+        const angleVelocity = HIT_GROUND_PARTICLES_ANGLE_VELOCITY_DEVIATION * (Math.random() - 0.5)
+        battleStore.addBodyParticle(
+            BattleUtils.generateBodyParticle({...contact.position, angle: 0}, lifeTime, angle, magnitude, angleVelocity),
+            {shape, groundTexture: true}
+        )
+      }
     }
   }
 

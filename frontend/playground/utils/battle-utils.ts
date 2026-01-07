@@ -1,7 +1,7 @@
 import type { RoomSpecs } from '@/playground/data/specs'
 import type { RoomModel } from '@/playground/data/model'
 import type {BodyPosition, Position, Shift} from "@/playground/data/common";
-import type {ParticleState} from "~/playground/data/state";
+import type {BodyParticleState, ParticleState} from "~/playground/data/state";
 import {Segment} from "~/playground/data/geometry";
 
 export const BattleUtils = {
@@ -125,6 +125,23 @@ export const BattleUtils = {
       velocity: {
         x: velocityMagnitude * Math.cos(velocityAngle),
         y: velocityMagnitude * Math.sin(velocityAngle),
+      },
+      remainTime
+    }
+  },
+
+  generateBodyParticle(position: BodyPosition, lifeTime?: number, moveAngle?: number,
+                       magnitude?: number, angleVelocity?: number): BodyParticleState {
+    const velocityMagnitude = magnitude || 2 + 0.5 * Math.random()
+    const velocityAngle = moveAngle || Math.PI / 4 + Math.PI * Math.random() / 2
+    const remainTime = lifeTime || 0.3 * Math.random()
+    const {x, y, angle} = position
+    return {
+      position: {x, y, angle},
+      velocity: {
+        x: velocityMagnitude * Math.cos(velocityAngle),
+        y: velocityMagnitude * Math.sin(velocityAngle),
+        angle: angleVelocity || 0
       },
       remainTime
     }

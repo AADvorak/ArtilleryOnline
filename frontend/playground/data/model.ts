@@ -8,6 +8,7 @@ import type {
   VehicleSpecs
 } from "@/playground/data/specs";
 import type {
+  BodyParticleState,
   BodyState,
   BoxState,
   DroneState,
@@ -18,7 +19,14 @@ import type {
   ShellState,
   VehicleState
 } from "@/playground/data/state";
-import type {BoxConfig, DroneConfig, ParticleConfig, RoomConfig, VehicleConfig} from "@/playground/data/config";
+import type {
+  BodyParticleConfig,
+  BoxConfig,
+  DroneConfig,
+  ParticleConfig,
+  RoomConfig,
+  VehicleConfig
+} from "@/playground/data/config";
 import type {Shift} from "~/playground/data/common";
 
 export interface BodyModel {
@@ -43,6 +51,12 @@ export interface ParticleModel {
   id: number
   state: ParticleState
   config: ParticleConfig
+}
+
+export interface BodyParticleModel {
+  id: number
+  state: BodyParticleState
+  config: BodyParticleConfig
 }
 
 export interface MissileModel {
@@ -123,6 +137,10 @@ export interface ExplosionModels {
 
 export interface ParticleModels {
   [id: number]: ParticleModel
+}
+
+export interface BodyParticleModels {
+  [id: number]: BodyParticleModel
 }
 
 export interface BoxModels {

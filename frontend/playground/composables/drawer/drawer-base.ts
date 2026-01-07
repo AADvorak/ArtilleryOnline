@@ -1,7 +1,7 @@
 import type {Position, Size} from '@/playground/data/common'
 import {computed, type Ref} from 'vue'
 import {BattleUtils} from "~/playground/utils/battle-utils";
-import {Circle, HalfCircle, Segment, Trapeze} from "~/playground/data/geometry";
+import {Circle, HalfCircle, RegularPolygon, Segment, Trapeze} from "~/playground/data/geometry";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
 
@@ -26,6 +26,7 @@ export interface DrawerBase {
   drawCircle: (circle: Circle, params?: DrawParams) => void
   drawHalfCircle: (halfCircle: HalfCircle, params?: DrawParams) => void
   drawTrapeze: (trapeze: Trapeze, params?: DrawParams) => void
+  drawRegularPolygon: (regularPolygon: RegularPolygon, params?: DrawParams) => void
   drawPolygon: (polygon: Position[], params?: DrawParams) => void
   transformPosition: (position: Position) => (Position)
   scale: (value: number) => number
@@ -101,6 +102,19 @@ export function useDrawerBase(
     drawPolygon(polygon, params)
   }
 
+  function drawRegularPolygon(regularPolygon: RegularPolygon, params?: DrawParams) {
+    const angleStep = 2 * Math.PI / regularPolygon.sidesNumber()
+    const polygon: Position[] = []
+    for (
+        let angle = regularPolygon.position.angle + angleStep / 2;
+        angle < regularPolygon.position.angle + Math.PI * 2;
+        angle += angleStep
+    ) {
+      polygon.push(BattleUtils.shiftedPosition(regularPolygon.position, regularPolygon.radius(), angle))
+    }
+    drawPolygon(polygon, params)
+  }
+
   function drawPolygon(polygon: Position[], params?: DrawParams) {
     params && setDrawParams(params)
     ctx.value!.beginPath()
@@ -157,6 +171,7 @@ export function useDrawerBase(
     drawCircle,
     drawHalfCircle,
     drawTrapeze,
+    drawRegularPolygon,
     drawPolygon,
     transformPosition,
     scale,
