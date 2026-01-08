@@ -4,18 +4,22 @@ import {ApiRequestSender} from "~/api/api-request-sender";
 import {useBattleStore} from "~/stores/battle";
 import {useQueueStore} from "~/stores/queue";
 import {useSettingsStore} from "~/stores/settings";
-import type {UserBattleQueueParams, UserBattleQueueResponse} from "~/data/response";
+import {useUserSettingsStore} from "~/stores/user-settings";
+import type {ErrorResponse, UserBattleQueueParams, UserBattleQueueResponse} from "~/data/response";
 import {DateUtils} from "~/utils/DateUtils";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import VehicleSelector from "~/components/vehicle-selector.vue";
 import {useI18n} from "vue-i18n";
 import {useRoomStore} from "~/stores/room";
+import {OtherSettingsNames} from "~/dictionary/other-settings-names";
+import {UserSettingsGroup} from "~/data/model";
 
 const {t} = useI18n()
 const router = useRouter()
 const battleStore = useBattleStore()
 const queueStore = useQueueStore()
 const settingsStore = useSettingsStore()
+const userSettingsStore = useUserSettingsStore()
 const roomStore = useRoomStore()
 const api = new ApiRequestSender()
 
@@ -28,6 +32,7 @@ watch(() => queueStore.queue, () => {
 })
 
 onMounted(() => {
+  restoreSelectedVehicle()
   processUserInQueue()
 })
 
@@ -38,7 +43,7 @@ async function randomBattle() {
     }
     queueStore.queue = await api.putJson<UserBattleQueueParams, UserBattleQueueResponse>('/battles/queue', request)
   } catch (e) {
-    useRequestErrorHandler().handle(e)
+    useRequestErrorHandler().handle(e as ErrorResponse)
   }
 }
 
@@ -54,7 +59,7 @@ async function collider() {
   await singleBattle('/collider')
 }
 
-async function singleBattle(path) {
+async function singleBattle(path: string) {
   try {
     const request = {
       selectedVehicle: selectedVehicle.value!
@@ -62,7 +67,27 @@ async function singleBattle(path) {
     await api.postJson<UserBattleQueueParams, void>('/battles' + path, request)
     await router.push('/playground')
   } catch (e) {
-    useRequestErrorHandler().handle(e)
+    useRequestErrorHandler().handle(e as ErrorResponse)
+  }
+}
+
+function setSelectedVehicle(value: string) {
+  if (selectedVehicle.value !== value) {
+    selectedVehicle.value = value
+    const name = OtherSettingsNames.BATTLE_SELECTED_VEHICLE
+    if (value) {
+      userSettingsStore.setOtherSetting({name, value})
+    } else {
+      userSettingsStore.deleteSetting(UserSettingsGroup.OTHERS, name)
+    }
+  }
+}
+
+function restoreSelectedVehicle() {
+  const battleSelectedVehicle = userSettingsStore.otherSettingsMapping[OtherSettingsNames.BATTLE_SELECTED_VEHICLE]
+  if (battleSelectedVehicle) {
+    selectedVehicle.value = battleSelectedVehicle
+    vehicleSelector.value?.setSelectedVehicle(battleSelectedVehicle)
   }
 }
 
@@ -113,7 +138,7 @@ function back() {
           <vehicle-selector
               ref="vehicleSelector"
               :disabled="!!queueStore.queue"
-              @select="v => selectedVehicle = v"
+              @select="setSelectedVehicle"
           />
         </v-form>
         <v-btn class="mb-4" width="100%" color="error" :loading="!!queueStore.queue"

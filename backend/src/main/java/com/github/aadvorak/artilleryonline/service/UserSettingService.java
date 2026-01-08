@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserSettingService {
 
-    private final static List<String> AVAILABLE_GROUP_NAMES = List.of("controls", "appearances", "sounds");
+    private final static List<String> AVAILABLE_GROUP_NAMES = List.of("controls", "appearances", "sounds", "others");
 
     private final UserSettingRepository userSettingRepository;
 
@@ -79,5 +79,14 @@ public class UserSettingService {
         }
         var user = userService.getUserFromContext();
         userSettingRepository.deleteByUserIdAndGroupName(user.getId(), groupName);
+    }
+
+    @Transactional
+    public void clearSetting(String groupName, String name) {
+        if (!AVAILABLE_GROUP_NAMES.contains(groupName)) {
+            throw new NotFoundAppException();
+        }
+        var user = userService.getUserFromContext();
+        userSettingRepository.deleteByUserIdAndGroupNameAndName(user.getId(), groupName, name);
     }
 }

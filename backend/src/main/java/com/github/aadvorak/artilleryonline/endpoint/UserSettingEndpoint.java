@@ -22,17 +22,22 @@ public class UserSettingEndpoint {
     }
 
     @GetMapping("/{groupName}")
-    public List<UserSettingResponse> getSettingsFromGroup(@PathVariable(name = "groupName") String groupName) {
+    public List<UserSettingResponse> getSettingsFromGroup(@PathVariable String groupName) {
         return userSettingService.getSettingsFromGroup(groupName);
     }
 
     @PutMapping("/{groupName}")
-    public void setSetting(@PathVariable(name = "groupName") String groupName, @RequestBody UserSettingRequest request) {
+    public void setSetting(@PathVariable String groupName, @RequestBody UserSettingRequest request) {
         userSettingService.setSetting(groupName, request);
     }
 
     @DeleteMapping("/{groupName}")
-    public void clearSettingsFromGroup(@PathVariable(name = "groupName") String groupName) {
+    public void clearSettingsFromGroup(@PathVariable String groupName) {
         userSettingService.clearSettingsFromGroup(groupName);
+    }
+
+    @DeleteMapping("/{groupName}/{name}")
+    public void clearSetting(@PathVariable String groupName, @PathVariable String name) {
+        userSettingService.clearSetting(groupName, name);
     }
 }

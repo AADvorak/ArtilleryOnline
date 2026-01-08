@@ -15,4 +15,6 @@ public interface UserSettingRepository extends JpaRepository<UserSetting, Long> 
     Optional<UserSetting> findByUserIdAndGroupNameAndName(long userId, String groupName, String name);
 
     void deleteByUserIdAndGroupName(long userId, String groupName);
+
+    void deleteByUserIdAndGroupNameAndName(long userId, String groupName, String name);
 }

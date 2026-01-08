@@ -45,6 +45,13 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     return settings.value[UserSettingsGroup.SOUNDS]
   })
 
+  const otherSettings = computed(() => {
+    if (!settings.value) {
+      return []
+    }
+    return settings.value[UserSettingsGroup.OTHERS]
+  })
+
   const controlsMapping = computed(() => {
     return toNameValueMapping(controls.value)
   })
@@ -55,6 +62,10 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
 
   const soundSettingsMapping = computed(() => {
     return toNameValueMapping(soundSettings.value)
+  })
+
+  const otherSettingsMapping = computed(() => {
+    return toNameValueMapping(otherSettings.value)
   })
 
   const controlsOrDefaults = computed(() => {
@@ -68,8 +79,7 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
   const appearancesOrDefaults = computed(() => {
     return DefaultAppearances.map(appearance => ({
       name: appearance.name,
-      value: getValidAppearanceValue(appearance.name) || appearance.value,
-      description: appearance.description
+      value: getValidAppearanceValue(appearance.name) || appearance.value
     }))
   })
 
@@ -105,6 +115,10 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     await setSetting(newSoundSetting, UserSettingsGroup.SOUNDS)
   }
 
+  async function setOtherSetting(newSetting: UserSetting) {
+    await setSetting(newSetting, UserSettingsGroup.OTHERS)
+  }
+
   async function setSetting(newSetting: UserSetting, group: UserSettingsGroup) {
     try {
       await api.putJson<UserSetting, void>(`${SETTINGS_PATH}/${group}`, newSetting)
@@ -132,6 +146,17 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
       await api.delete(`${SETTINGS_PATH}/${UserSettingsGroup.CONTROLS}`)
       if (settings.value) {
         settings.value[UserSettingsGroup.CONTROLS] = []
+      }
+    } catch (e) {
+      useRequestErrorHandler().handle(e as ErrorResponse)
+    }
+  }
+
+  async function deleteSetting(groupName: string, name: string) {
+    try {
+      await api.delete(`${SETTINGS_PATH}/${groupName}/${name}`)
+      if (settings.value && settings.value[groupName]) {
+        settings.value[groupName] = settings.value[groupName].filter(setting => setting.name !== name)
       }
     } catch (e) {
       useRequestErrorHandler().handle(e as ErrorResponse)
@@ -193,13 +218,16 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
     controlsOrDefaults,
     controlsOrDefaultsValueNameMapping,
     appearancesMapping,
+    otherSettingsMapping,
     appearancesOrDefaults,
     appearancesOrDefaultsNameValueMapping,
     soundSettingsOrDefaultsNameValueMapping,
     setControl,
     setAppearance,
     setSoundSetting,
+    setOtherSetting,
     resetControls,
+    deleteSetting,
     loadSettingsIfNull,
     clear
   }
