@@ -21,7 +21,7 @@ import java.util.List;
 @Component
 public class BoxDropProcessor implements BattleProcessor {
 
-    private static final long DROP_DELAY = 45000;
+    private static final long DROP_DELAY = 30000;
     private static final int MAX_BOXES = 2;
     private static final List<String> COLORS = List.of(
             "#FF0000",  // Red
@@ -38,45 +38,56 @@ public class BoxDropProcessor implements BattleProcessor {
                 || battle.getAbsoluteTime() < battle.getBoxDropTime() + DROP_DELAY) {
             return;
         }
-        var roomSpecs = battle.getModel().getRoom().getSpecs();
-        var specs = getSpecs(battle.getModel().getVehicles().values());
-        var preCalc = new BoxPreCalc(specs);
-        var config = new BoxConfig()
-                .setColor(COLORS.get(BattleUtils.generateRandom(0, COLORS.size())))
-                .setAmount(BattleUtils.generateRandom(10.0, 30.0));
-        var radius = preCalc.getMaxRadius();
-        var x = BattleUtils.generateRandom(radius, BattleUtils.getRoomWidth(roomSpecs) - radius);
-        var y = 1.1 * BattleUtils.getRoomHeight(roomSpecs);
-        var state = new BoxState()
-                .setPosition(BodyPosition.of(new Position().setX(x).setY(y), 0.0));
-        var id = battle.getModel().getIdGenerator().generate();
-        var model = new BoxModel();
-        model.setId(id);
-        model.setState(state);
-        model.setPreCalc(preCalc);
-        model.setConfig(config);
-        model.setSpecs(specs);
-        battle.getModel().getBoxes().put(id, model);
-        battle.getModel().getUpdates().addBox(model);
-        battle.setBoxDropTime(battle.getAbsoluteTime());
+        var vehicles = battle.getModel().getVehicles().values();
+        var hasEmptyAmmo = hasEmptyAmmo(vehicles);
+        var hasLowHp = hasLowHp(vehicles);
+        if (hasEmptyAmmo || hasLowHp) {
+            var roomSpecs = battle.getModel().getRoom().getSpecs();
+            var specs = getSpecs(hasEmptyAmmo, hasLowHp);
+            var preCalc = new BoxPreCalc(specs);
+            var config = new BoxConfig()
+                    .setColor(COLORS.get(BattleUtils.generateRandom(0, COLORS.size())))
+                    .setAmount(BattleUtils.generateRandom(10.0, 30.0));
+            var radius = preCalc.getMaxRadius();
+            var x = BattleUtils.generateRandom(radius, BattleUtils.getRoomWidth(roomSpecs) - radius);
+            var y = 1.1 * BattleUtils.getRoomHeight(roomSpecs);
+            var state = new BoxState()
+                    .setPosition(BodyPosition.of(new Position().setX(x).setY(y), 0.0));
+            var id = battle.getModel().getIdGenerator().generate();
+            var model = new BoxModel();
+            model.setId(id);
+            model.setState(state);
+            model.setPreCalc(preCalc);
+            model.setConfig(config);
+            model.setSpecs(specs);
+            battle.getModel().getBoxes().put(id, model);
+            battle.getModel().getUpdates().addBox(model);
+            battle.setBoxDropTime(battle.getAbsoluteTime());
+        }
     }
 
-    private BoxSpecs getSpecs(Collection<VehicleModel> vehicles) {
-        var hasEmptyAmmo = vehicles.stream()
-                .map(VehicleModel::getRelativeAmmo)
-                .min(Double::compare)
-                .orElse(1.0) < 0.01;
+    private BoxSpecs getSpecs(boolean hasEmptyAmmo, boolean hasLowHp) {
         if (hasEmptyAmmo) {
             return BoxSpecsPreset.AMMO.getSpecs();
         }
-        var hasLowHp = vehicles.stream()
-                .map(VehicleModel::getRelativeHp)
-                .min(Double::compare)
-                .orElse(1.0) < 0.75;
         if (hasLowHp) {
             return BoxSpecsPreset.HP.getSpecs();
         }
         return randomSpecs();
+    }
+
+    private boolean hasEmptyAmmo(Collection<VehicleModel> vehicles) {
+        return vehicles.stream()
+                .map(VehicleModel::getRelativeAmmo)
+                .min(Double::compare)
+                .orElse(1.0) < 0.3;
+    }
+
+    private boolean hasLowHp(Collection<VehicleModel> vehicles) {
+        return vehicles.stream()
+                .map(VehicleModel::getRelativeHp)
+                .min(Double::compare)
+                .orElse(1.0) < 0.5;
     }
 
     private BoxSpecs randomSpecs() {
