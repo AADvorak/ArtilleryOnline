@@ -44,12 +44,4 @@ public class BattleUpdatesSender {
         simpMessagingTemplate.convertAndSend("/topic/battle/"
                 + battleUpdateResponse.getId() + "/updates", battleUpdateResponse.serialize());
     }
-
-    private void sleep() {
-        try {
-            Thread.sleep(10);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
