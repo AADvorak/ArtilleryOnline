@@ -11,7 +11,7 @@ export interface BodyState {
 export interface GunState {
   angle: number
   targetAngle: number
-  rotatingDirection: MovingDirection
+  rotatingDirection: MovingDirection | null
   rotatingTime: number
   loadedShell?: string
   selectedShell?: string

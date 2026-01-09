@@ -32,7 +32,7 @@ export function deserializeExplosionState(input: DeserializerInput): ExplosionSt
 export function deserializeGunState(input: DeserializerInput): GunState {
   const angle = DeserializerBase.readDouble(input)
   const targetAngle = DeserializerBase.readDouble(input)
-  const rotatingDirection = DeserializerBase.readNullable(input, DeserializerBase.readString) as MovingDirection
+  const rotatingDirection = DeserializerBase.readNullable(input, DeserializerBase.readString) as MovingDirection | null
   const rotatingTime = DeserializerBase.readDouble(input)
   const loadedShell = DeserializerBase.readNullable(input, DeserializerBase.readString)
   const selectedShell = DeserializerBase.readNullable(input, DeserializerBase.readString)
