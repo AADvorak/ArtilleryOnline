@@ -12,6 +12,7 @@ import ShellSpecsDialog from "~/components/shell-specs-dialog.vue";
 import type {Ammo} from "~/playground/data/common";
 import {useConfigsStore} from "~/stores/configs";
 import VehicleSelector from "~/components/vehicle-selector.vue";
+import Draggable from "vuedraggable";
 
 const {t} = useI18n()
 const router = useRouter()
@@ -66,6 +67,14 @@ const shells = computed(() => {
     return []
   }
   return Object.keys(gunSpecs.value.availableShells).sort()
+})
+
+const shellsWithPriority = computed(() => {
+  const output = []
+  for (let i = 0; i < shells.value.length; i++) {
+    output.push({priority: i + 1, value: shells.value[i]})
+  }
+  return output
 })
 
 const noChanges = computed(() => {
@@ -216,36 +225,44 @@ function back() {
               />
             </template>
           </v-select>
-          <div class="mb-4" v-for="shell in shells">
-            <template v-if="config.ammo && config.ammo[shell] !== undefined">
-              <div>
-                {{ t(`names.shells.${shell}`) }}
-                <icon-btn
-                    :icon="mdiInformationOutline"
-                    :tooltip="t('common.specs')"
-                    @click="showShellSpecsDialog(shell)"
-                />
-              </div>
-              <v-slider
-                  v-model="config.ammo[shell]"
-                  :max="maxAmmo"
-                  :min="0"
-                  class="align-center"
-                  hide-details
-              >
-                <template v-slot:append>
-                  <v-text-field
-                      v-model="config.ammo[shell]"
-                      density="compact"
-                      style="width: 90px"
-                      type="number"
+          <draggable
+              :model-value="shellsWithPriority"
+              group="shells"
+              item-key="priority"
+          >
+            <template #item="{ element }">
+              <div class="mb-4">
+                <template v-if="config.ammo && config.ammo[element.value] !== undefined">
+                  <div>
+                    {{ t(`names.shells.${element.value}`) }}
+                    <icon-btn
+                        :icon="mdiInformationOutline"
+                        :tooltip="t('common.specs')"
+                        @click="showShellSpecsDialog(element.value)"
+                    />
+                  </div>
+                  <v-slider
+                      v-model="config.ammo[element.value]"
+                      :max="maxAmmo"
+                      :min="0"
+                      class="align-center"
                       hide-details
-                      single-line
-                  ></v-text-field>
+                  >
+                    <template v-slot:append>
+                      <v-text-field
+                          v-model="config.ammo[element.value]"
+                          density="compact"
+                          style="width: 90px"
+                          type="number"
+                          hide-details
+                          single-line
+                      ></v-text-field>
+                    </template>
+                  </v-slider>
                 </template>
-              </v-slider>
+              </div>
             </template>
-          </div>
+          </draggable>
           <v-btn color="success" class="mb-4" width="100%"
                  :loading="submitting" :disabled="noChanges" @click="saveConfig">
             {{ t('common.save') }}
