@@ -5,5 +5,6 @@ export const vehicleConfigs = {
   dragAndDropShellsTip: 'перетащите для изменения порядка',
   warnings: {
     incompleteAmmo: 'Неполный боекомплект',
+    lowSignalShells: 'Недостаточно сигнальных снарядов для авиаудара',
   },
 }

@@ -5,5 +5,6 @@ export const vehicleConfigs = {
   dragAndDropShellsTip: 'drag and drop to change the order',
   warnings: {
     incompleteAmmo: 'Incomplete ammo',
+    lowSignalShells: 'Low signal shells amount for air strike',
   },
 }

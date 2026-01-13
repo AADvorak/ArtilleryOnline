@@ -97,6 +97,10 @@ const warnings = computed(() => {
     if (sumAmmo < maxAmmo.value) {
       warnings.push('incompleteAmmo')
     }
+    const sgnShellsAmount = ammo.filter(item => item.name === 'SGN-L')[0]?.amount
+    if (bomberFlightsNumber.value && (!sgnShellsAmount || sgnShellsAmount < bomberFlightsNumber.value)) {
+      warnings.push('lowSignalShells')
+    }
   }
   return warnings
 })
