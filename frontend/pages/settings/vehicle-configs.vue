@@ -77,6 +77,18 @@ const noChanges = computed(() => {
   return JSON.stringify(config.value) === savedConfigJson.value
 })
 
+const shellsOrderNumbers = computed(() => {
+  const orderNumbers: Ammo = {}
+  const ammo = config.value.ammo
+  if (!ammo) {
+    return orderNumbers
+  }
+  for (let number = 0; number < ammo.length; number++) {
+    orderNumbers[ammo[number]!.name] = number + 1
+  }
+  return orderNumbers
+})
+
 watch(vehicleSpecs, value => {
   config.value = {}
   value && loadConfig()
@@ -218,43 +230,45 @@ function back() {
               />
             </template>
           </v-select>
-          <draggable
-              v-if="config.ammo"
-              v-model="config.ammo"
-              group="shells"
-              item-key="name"
-          >
-            <template #item="{ element }">
-              <div class="mb-4">
-                <div>
-                  {{ t(`names.shells.${element.name}`) }}
-                  <icon-btn
-                      :icon="mdiInformationOutline"
-                      :tooltip="t('common.specs')"
-                      @click="showShellSpecsDialog(element.name)"
-                  />
-                </div>
-                <v-slider
-                    v-model="element.amount"
-                    :max="maxAmmo"
-                    :min="0"
-                    class="align-center"
-                    hide-details
-                >
-                  <template v-slot:append>
-                    <v-text-field
-                        v-model="element.amount"
-                        density="compact"
-                        style="width: 90px"
-                        type="number"
-                        hide-details
-                        single-line
-                    ></v-text-field>
-                  </template>
-                </v-slider>
-              </div>
-            </template>
-          </draggable>
+          <v-list>
+            <draggable
+                v-if="config.ammo"
+                v-model="config.ammo"
+                group="shells"
+                item-key="name"
+            >
+              <template #item="{ element }">
+                <v-list-item class="mb-4 border-lg">
+                  <div>
+                    {{`[${shellsOrderNumbers[element.name]}]`}} {{ t(`names.shells.${element.name}`) }}
+                    <icon-btn
+                        :icon="mdiInformationOutline"
+                        :tooltip="t('common.specs')"
+                        @click="showShellSpecsDialog(element.name)"
+                    />
+                  </div>
+                  <v-slider
+                      v-model="element.amount"
+                      :max="maxAmmo"
+                      :min="0"
+                      class="align-center"
+                      hide-details
+                  >
+                    <template v-slot:append>
+                      <v-text-field
+                          v-model="element.amount"
+                          density="compact"
+                          style="width: 90px"
+                          type="number"
+                          hide-details
+                          single-line
+                      ></v-text-field>
+                    </template>
+                  </v-slider>
+                </v-list-item>
+              </template>
+            </draggable>
+          </v-list>
           <v-btn color="success" class="mb-4" width="100%"
                  :loading="submitting" :disabled="noChanges" @click="saveConfig">
             {{ t('common.save') }}
