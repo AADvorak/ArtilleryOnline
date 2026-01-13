@@ -24,12 +24,16 @@ const ammo = computed(() => {
   return userVehicle.value?.state.ammo
 })
 
+const ammoConfig = computed(() => {
+  return userVehicle.value?.config.ammo
+})
+
 const selectedShell = computed(() => {
   return userVehicle.value?.state.gunState.selectedShell
 })
 
 const ammoKeys = computed(() => {
-  return Object.keys(ammo.value || {}).sort()
+  return (ammoConfig.value || []).map(item => item.name)
 })
 
 const reloadingProgress = computed(() => {
@@ -66,7 +70,7 @@ function keyPressed(e) {
   }
 }
 
-function selectShell(key) {
+function selectShell(key: string) {
   if (key !== selectedShell.value) {
     commandsSender.sendCommand({
       command: Command.SELECT_SHELL,
@@ -81,10 +85,10 @@ function selectShell(key) {
     <no-focus-btn
         class="ammo-btn"
         :color="ammoKey === selectedShell ? 'primary' : ''"
-        :disabled="!ammo[ammoKey]"
+        :disabled="!ammo || !ammo[ammoKey]"
         @click="() => selectShell(ammoKey)"
     >
-      [{{ index + 1 }}] {{ t(`names.shells.${ammoKey}`) }}: {{ ammo[ammoKey] }}
+      [{{ index + 1 }}] {{ t(`names.shells.${ammoKey}`) }}: {{ ammo ? ammo[ammoKey] : 0 }}
       <vertical-tooltip
           :location="VerticalTooltipLocation.BOTTOM"
           :tooltip="ammoKey === selectedShell ? t('controls.selectedShell') : t('controls.selectShell')"

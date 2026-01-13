@@ -1,5 +1,5 @@
 import type {BattleType} from "~/playground/data/battle";
-import type {Ammo} from "~/playground/data/common";
+import type {AmmoConfig} from "~/playground/data/config";
 
 export interface User {
   id: number
@@ -158,7 +158,7 @@ export interface DateRange {
 
 export interface UserVehicleConfig {
   gun?: string
-  ammo?: Ammo
+  ammo?: AmmoConfig[]
 }
 
 export interface UserVehicleConfigs {

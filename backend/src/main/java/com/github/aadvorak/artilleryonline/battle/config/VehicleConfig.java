@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -22,7 +23,7 @@ public class VehicleConfig implements Config, CompactSerializable {
 
     private BomberSpecs bomber;
 
-    private Map<String, Integer> ammo;
+    private List<AmmoConfig> ammo;
 
     private Map<String, Integer> missiles;
 
@@ -33,7 +34,7 @@ public class VehicleConfig implements Config, CompactSerializable {
         stream.writeSerializableValue(gun);
         stream.writeSerializableValue(jet);
         stream.writeSerializable(drone);
-        stream.writeMap(ammo, stream::writeString, stream::writeInt);
+        stream.writeCollectionOfSerializable(ammo);
         stream.writeMap(missiles, stream::writeString, stream::writeInt);
         stream.writeNullable(color, stream::writeString);
     }

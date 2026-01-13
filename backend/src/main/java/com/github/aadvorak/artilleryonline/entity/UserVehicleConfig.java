@@ -29,4 +29,14 @@ public class UserVehicleConfig {
 
     @Column
     private Integer amount;
+
+    @Column
+    private Integer priority;
+
+    public int getPriorityOrDefault() {
+        if (this.priority == null) {
+            return Integer.MAX_VALUE;
+        }
+        return this.priority;
+    }
 }

@@ -13,6 +13,7 @@ import type {Ammo} from "~/playground/data/common";
 import {useConfigsStore} from "~/stores/configs";
 import VehicleSelector from "~/components/vehicle-selector.vue";
 import Draggable from "vuedraggable";
+import type {AmmoConfig} from "~/playground/data/config";
 
 const {t} = useI18n()
 const router = useRouter()
@@ -24,14 +25,14 @@ const selectedVehicle = ref<string>()
 const config = ref<UserVehicleConfig>({})
 const submitting = ref<boolean>(false)
 const savedConfigJson = ref<string>('')
-const oldAmmo = ref<Ammo>({})
+const oldAmmo = ref<AmmoConfig[]>([])
 
 const gunSpecsDialog = ref<InstanceType<typeof GunSpecsDialog> | null>(null)
 const shellSpecsDialog = ref<InstanceType<typeof ShellSpecsDialog> | null>(null)
 const vehicleSelector = ref<InstanceType<typeof VehicleSelector> | undefined>()
 
 const vehicleSpecs = computed<VehicleSpecs | undefined>(() => {
-  if (!selectedVehicle.value) {
+  if (!selectedVehicle.value || !presetsStore.vehicles) {
     return undefined
   }
   return presetsStore.vehicles[selectedVehicle.value] as VehicleSpecs
@@ -62,19 +63,11 @@ const gunSpecs = computed(() => {
   return vehicleSpecs.value.availableGuns[config.value.gun]
 })
 
-const shells = computed(() => {
+const availableShellsNames = computed(() => {
   if (!gunSpecs.value) {
     return []
   }
   return Object.keys(gunSpecs.value.availableShells).sort()
-})
-
-const shellsWithPriority = computed(() => {
-  const output = []
-  for (let i = 0; i < shells.value.length; i++) {
-    output.push({priority: i + 1, value: shells.value[i]})
-  }
-  return output
 })
 
 const noChanges = computed(() => {
@@ -102,19 +95,17 @@ watch(selectedVehicle, (value) => {
 
 watch(() => config.value.gun, (value, oldValue) => {
   if (!value || value && oldValue || !config.value.ammo) {
-    config.value.ammo = {}
-  }
-  if (!Object.keys(config.value.ammo).length) {
-    // todo set default number of shells
     const maxSgnLShells = 10
-    shells.value.forEach(shell => {
-      if (shell === 'SGN-L') {
-        config.value.ammo[shell] = maxSgnLShells
-      } else if (['AP-L', 'HE-L'].includes(shell)) {
-        config.value.ammo[shell] = maxAmmo.value - maxSgnLShells
+    config.value.ammo = availableShellsNames.value.map(name => {
+      let amount = 0
+      if (name === 'SGN-L') {
+        amount = maxSgnLShells
+      } else if (['AP-L', 'HE-L'].includes(name)) {
+        amount = maxAmmo.value - maxSgnLShells
       } else {
-        config.value.ammo[shell] = maxAmmo.value / shells.value.length
+        amount = maxAmmo.value / availableShellsNames.value.length
       }
+      return {name, amount}
     })
   }
 })
@@ -124,26 +115,28 @@ watch(() => config.value.ammo, () => {
   if (!ammo) {
     return
   }
-  const keys = Object.keys(ammo)
-  for (const key of keys) {
-    ammo[key] = parseInt(ammo[key])
-  }
-  const sumAmmo = Object.values(ammo).reduce((a, b) => a + b, 0)
+  const ammoMap: Ammo = {}
+  ammo.forEach(item => ammoMap[item.name] = parseInt(item.amount))
+  const oldAmmoMap: Ammo = {}
+  oldAmmo.value.forEach(item => oldAmmoMap[item.name] = item.amount)
+  const sumAmmo = Object.values(ammoMap).reduce((a, b) => a + b, 0)
+  const keys = Object.keys(ammoMap)
   if (sumAmmo > maxAmmo.value) {
     let changed = ''
     for (const key of keys) {
-      if (oldAmmo.value[key] !== ammo[key]) {
+      if (oldAmmoMap[key] !== ammoMap[key]) {
         changed = key
       }
     }
     let max = ''
     for (const key of keys) {
-      if (key !== changed && (!max || ammo[key] > ammo[max])) {
+      if (key !== changed && (!max || ammoMap[key]! > ammoMap[max]!)) {
         max = key
       }
     }
-    ammo[max] -= sumAmmo - maxAmmo.value
+    ammoMap[max]! -= sumAmmo - maxAmmo.value
   }
+  ammo.forEach(item => item.amount = ammoMap[item.name]!)
   oldAmmo.value = JSON.parse(JSON.stringify(ammo))
 }, {deep: true})
 
@@ -226,40 +219,39 @@ function back() {
             </template>
           </v-select>
           <draggable
-              :model-value="shellsWithPriority"
+              v-if="config.ammo"
+              v-model="config.ammo"
               group="shells"
-              item-key="priority"
+              item-key="name"
           >
             <template #item="{ element }">
               <div class="mb-4">
-                <template v-if="config.ammo && config.ammo[element.value] !== undefined">
-                  <div>
-                    {{ t(`names.shells.${element.value}`) }}
-                    <icon-btn
-                        :icon="mdiInformationOutline"
-                        :tooltip="t('common.specs')"
-                        @click="showShellSpecsDialog(element.value)"
-                    />
-                  </div>
-                  <v-slider
-                      v-model="config.ammo[element.value]"
-                      :max="maxAmmo"
-                      :min="0"
-                      class="align-center"
-                      hide-details
-                  >
-                    <template v-slot:append>
-                      <v-text-field
-                          v-model="config.ammo[element.value]"
-                          density="compact"
-                          style="width: 90px"
-                          type="number"
-                          hide-details
-                          single-line
-                      ></v-text-field>
-                    </template>
-                  </v-slider>
-                </template>
+                <div>
+                  {{ t(`names.shells.${element.name}`) }}
+                  <icon-btn
+                      :icon="mdiInformationOutline"
+                      :tooltip="t('common.specs')"
+                      @click="showShellSpecsDialog(element.name)"
+                  />
+                </div>
+                <v-slider
+                    v-model="element.amount"
+                    :max="maxAmmo"
+                    :min="0"
+                    class="align-center"
+                    hide-details
+                >
+                  <template v-slot:append>
+                    <v-text-field
+                        v-model="element.amount"
+                        density="compact"
+                        style="width: 90px"
+                        type="number"
+                        hide-details
+                        single-line
+                    ></v-text-field>
+                  </template>
+                </v-slider>
               </div>
             </template>
           </draggable>

@@ -4,13 +4,14 @@ import com.github.aadvorak.artilleryonline.battle.calculations.*;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.collision.preprocessor.CollisionPreprocessor;
 import com.github.aadvorak.artilleryonline.battle.common.BoxType;
+import com.github.aadvorak.artilleryonline.battle.config.AmmoConfig;
 import com.github.aadvorak.artilleryonline.battle.events.RepairEvent;
 import com.github.aadvorak.artilleryonline.battle.events.RepairEventType;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -55,7 +56,8 @@ public class BoxCollisionPreprocessor implements CollisionPreprocessor {
             eventType = RepairEventType.HEAL;
         } else if (BoxType.AMMO.equals(box.getModel().getSpecs().getType())
                 && vehicle.getModel().getRelativeAmmo() < 1.0) {
-            vehicle.getModel().getState().setAmmo(new HashMap<>(vehicle.getModel().getConfig().getAmmo()));
+            vehicle.getModel().getState().setAmmo(vehicle.getModel().getConfig().getAmmo().stream()
+                    .collect(Collectors.toMap(AmmoConfig::getName, AmmoConfig::getAmount)));
             eventType = RepairEventType.REFILL_AMMO;
         }
 

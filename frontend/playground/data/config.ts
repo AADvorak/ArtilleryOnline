@@ -6,7 +6,7 @@ export interface VehicleConfig {
   gun: GunSpecs
   jet: JetSpecs
   drone?: DroneSpecs
-  ammo: Ammo
+  ammo: AmmoConfig[]
   missiles: Missiles
   color?: string
 }
@@ -37,5 +37,10 @@ export interface BodyParticleConfig {
 
 export interface BoxConfig {
   color?: string
+  amount: number
+}
+
+export interface AmmoConfig {
+  name: string
   amount: number
 }

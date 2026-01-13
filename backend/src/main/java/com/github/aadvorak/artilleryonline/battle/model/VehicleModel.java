@@ -44,6 +44,6 @@ public class VehicleModel
     @JsonIgnore
     public double getRelativeAmmo() {
         return (float) getState().getAmmo().values().stream().reduce(0, Integer::sum)
-                / (float) getConfig().getAmmo().values().stream().reduce(0, Integer::sum);
+                / (float) getConfig().getGun().getAmmo();
     }
 }

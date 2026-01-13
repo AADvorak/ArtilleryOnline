@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.service;
 
+import com.github.aadvorak.artilleryonline.battle.config.AmmoConfig;
 import com.github.aadvorak.artilleryonline.battle.preset.VehicleSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.specs.VehicleSpecs;
 import com.github.aadvorak.artilleryonline.dto.UserVehicleConfigDto;
@@ -12,11 +13,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -50,11 +47,13 @@ public class UserVehicleConfigService {
         var user = userService.getUserFromContext();
         var configs = userVehicleConfigRepository.findByUserIdAndVehicleName(user.getId(), vehicleName);
         saveGunConfig(configs, user.getId(), vehicleName, dto);
-        dto.getAmmo().entrySet().forEach(entry ->
-                saveAmmoConfig(configs, user.getId(), vehicleName, entry));
+        for (int priority = 0; priority < dto.getAmmo().size();  priority++) {
+            saveAmmoConfig(configs, user.getId(), vehicleName, dto.getAmmo().get(priority), priority);
+        }
+        var ammoNames = dto.getAmmo().stream().map(AmmoConfig::getName).toList();
         configs.stream()
                 .filter(config -> ConfigName.AMMO.getName().equals(config.getName()))
-                .filter(config -> !dto.getAmmo().containsKey(config.getValue()))
+                .filter(config -> !ammoNames.contains(config.getValue()))
                 .forEach(userVehicleConfigRepository::delete);
     }
 
@@ -72,19 +71,20 @@ public class UserVehicleConfigService {
         userVehicleConfigRepository.save(gunConfig);
     }
 
-    private void saveAmmoConfig(List<UserVehicleConfig> configs, long userId, String vehicleName, Map.Entry<String, Integer> entry) {
+    private void saveAmmoConfig(List<UserVehicleConfig> configs, long userId, String vehicleName, AmmoConfig entry, int priority) {
         var ammoConfig = configs.stream()
                 .filter(config -> ConfigName.AMMO.getName().equals(config.getName()))
-                .filter(config -> config.getValue().equals(entry.getKey()))
+                .filter(config -> config.getValue().equals(entry.getName()))
                 .findAny().orElse(null);
         if (ammoConfig == null) {
             ammoConfig = new UserVehicleConfig();
             ammoConfig.setUserId(userId);
             ammoConfig.setVehicleName(vehicleName);
             ammoConfig.setName(ConfigName.AMMO.getName());
-            ammoConfig.setValue(entry.getKey());
+            ammoConfig.setValue(entry.getName());
         }
-        ammoConfig.setAmount(entry.getValue());
+        ammoConfig.setAmount(entry.getAmount());
+        ammoConfig.setPriority(priority);
         userVehicleConfigRepository.save(ammoConfig);
     }
 
@@ -111,7 +111,13 @@ public class UserVehicleConfigService {
                 .findAny().orElse(null);
         var ammo = configs.stream()
                 .filter(config -> ConfigName.AMMO.getName().equals(config.getName()))
-                .collect(Collectors.toMap(UserVehicleConfig::getValue, UserVehicleConfig::getAmount));
+                .sorted(Comparator
+                        .comparingInt(UserVehicleConfig::getPriorityOrDefault)
+                        .thenComparing(UserVehicleConfig::getAmount))
+                .map(userVehicleConfig -> new AmmoConfig()
+                        .setName(userVehicleConfig.getValue())
+                        .setAmount(userVehicleConfig.getAmount()))
+                .toList();
         return new UserVehicleConfigDto()
                 .setGun(gun)
                 .setAmmo(ammo);
@@ -140,7 +146,7 @@ public class UserVehicleConfigService {
             throw new BadRequestAppException(errors);
         }
         var availableShellNames = gunSpecs.getAvailableShells().keySet();
-        dto.getAmmo().keySet().forEach(shellName -> {
+        dto.getAmmo().stream().map(AmmoConfig::getName).forEach(shellName -> {
             if (!availableShellNames.contains(shellName)) {
                 errors.add(new ValidationResponse()
                         .setValidation(Validation.WRONG)
@@ -148,7 +154,7 @@ public class UserVehicleConfigService {
                 throw new BadRequestAppException(errors);
             }
         });
-        var sumAmount = dto.getAmmo().values().stream().reduce(0, Integer::sum);
+        var sumAmount = dto.getAmmo().stream().map(AmmoConfig::getAmount).reduce(0, Integer::sum);
         if (sumAmount > gunSpecs.getAmmo()) {
             errors.add(new ValidationResponse()
                     .setValidation(Validation.WRONG)

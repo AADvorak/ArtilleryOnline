@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.battle;
 import com.github.aadvorak.artilleryonline.battle.command.UserCommand;
 import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.config.AmmoConfig;
 import com.github.aadvorak.artilleryonline.battle.config.BoxConfig;
 import com.github.aadvorak.artilleryonline.battle.config.RoomConfig;
 import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
@@ -17,10 +18,7 @@ import com.github.aadvorak.artilleryonline.battle.preset.RoomSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.preset.VehicleSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleOnGroundProcessor;
-import com.github.aadvorak.artilleryonline.battle.specs.BomberSpecs;
-import com.github.aadvorak.artilleryonline.battle.specs.DroneSpecs;
-import com.github.aadvorak.artilleryonline.battle.specs.JetSpecs;
-import com.github.aadvorak.artilleryonline.battle.specs.RoomSpecs;
+import com.github.aadvorak.artilleryonline.battle.specs.*;
 import com.github.aadvorak.artilleryonline.battle.state.*;
 import com.github.aadvorak.artilleryonline.battle.statistics.UserBattleStatistics;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
@@ -36,6 +34,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -175,16 +174,13 @@ public class BattleFactory {
                 bomberState = new BomberState()
                         .setRemainFlights(bomber.getFlights());
             }
-            var availableShellsNumber = gun.getAvailableShells().size();
-            var ammo = new HashMap<String, Integer>();
-            gun.getAvailableShells().keySet().forEach(shellName ->
-                    ammo.put(shellName, getAmmo(userConfig, shellName, gun.getAmmo(), availableShellsNumber)));
+            var ammoConfig = getAmmoConfig(userConfig, gun.getAvailableShells().keySet(), gun.getAmmo());
             var availableMissilesNumber = vehicleModel.getSpecs().getAvailableMissiles().size();
             var missiles = new HashMap<String, Integer>();
             vehicleModel.getSpecs().getAvailableMissiles().keySet().forEach(missileName ->
                     missiles.put(missileName, vehicleModel.getSpecs().getMissiles() / availableMissilesNumber));
             vehicleModel.setConfig(new VehicleConfig()
-                    .setAmmo(ammo)
+                    .setAmmo(ammoConfig)
                     .setMissiles(missiles)
                     .setGun(gun)
                     .setJet(jet)
@@ -192,7 +188,7 @@ public class BattleFactory {
                     .setBomber(bomber)
                     .setColor(getVehicleColor(participant)));
             vehicleModel.setState(new VehicleState()
-                    .setAmmo(new HashMap<>(vehicleModel.getConfig().getAmmo()))
+                    .setAmmo(ammoConfig.stream().collect(Collectors.toMap(AmmoConfig::getName, AmmoConfig::getAmount)))
                     .setMissiles(new HashMap<>(vehicleModel.getConfig().getMissiles()))
                     .setHitPoints(vehicleModel.getSpecs().getHitPoints())
                     .setPosition(new BodyPosition()
@@ -201,7 +197,7 @@ public class BattleFactory {
                     .setGunState(new GunState()
                             .setAngle(Math.PI / 2)
                             .setTargetAngle(Math.PI / 2)
-                            .setSelectedShell(ammo.keySet().stream().sorted().findFirst().orElseThrow()))
+                            .setSelectedShell(ammoConfig.stream().findFirst().map(AmmoConfig::getName).orElseThrow()))
                     .setTrackState(new TrackState())
                     .setJetState(jet == null ? null : new JetState()
                             .setVolume(jet.getCapacity())
@@ -218,14 +214,20 @@ public class BattleFactory {
         return vehicles;
     }
 
-    private int getAmmo(UserVehicleConfigDto userConfig, String shellName, int ammo, int availableShellsNumber) {
+    private List<AmmoConfig> getAmmoConfig(UserVehicleConfigDto userConfig, Set<String> availableShellsNames, int ammo) {
         if (userConfig.getAmmo() != null) {
-            var userAmount = userConfig.getAmmo().get(shellName);
-            if (userAmount != null) {
-                return userAmount;
-            }
+            return userConfig.getAmmo();
         }
-        // todo set default number of shells
+        var availableShellsNumber = availableShellsNames.size();
+        return availableShellsNames.stream()
+                .sorted()
+                .map(shellName -> new AmmoConfig()
+                        .setName(shellName)
+                        .setAmount(getDefaultShellsNumber(shellName, ammo, availableShellsNumber)))
+                .toList();
+    }
+
+    private int getDefaultShellsNumber(String shellName, int ammo, int availableShellsNumber) {
         final var maxSgnShells = 10;
         final var nonSignalLightShells = List.of(ShellSpecsPreset.LIGHT_AP.getName(), ShellSpecsPreset.LIGHT_HE.getName());
         if (shellName.equals(ShellSpecsPreset.LIGHT_SGN.getName())) {
