@@ -76,6 +76,7 @@ public class VehicleSpecs implements Specs, CompactSerializable {
         stream.writeStringMapOfSerializable(availableJets);
         stream.writeStringMapOfSerializable(availableMissiles);
         stream.writeStringMapOfSerializable(availableDrones);
+        stream.writeStringMapOfSerializable(availableBombers);
         stream.writeString(defaultGun);
     }
 }

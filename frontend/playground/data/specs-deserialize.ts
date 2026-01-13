@@ -1,6 +1,7 @@
 import type {DeserializerInput} from "~/deserialization/deserializer-input";
 import {DeserializerBase} from "~/deserialization/deserializer-base";
 import type {
+  BomberSpecs,
   BoxSpecs,
   DroneSpecs,
   ExplosionSpecs,
@@ -140,6 +141,7 @@ export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs 
   const availableJets = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeJetSpecs)!
   const availableMissiles = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeMissileSpecs)!
   const availableDrones = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeDroneSpecs)!
+  const availableBombers = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeBomberSpecs)!
   const defaultGun = DeserializerBase.readString(input)
   return {
     name,
@@ -159,6 +161,7 @@ export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs 
     availableJets,
     availableMissiles,
     availableDrones,
+    availableBombers,
     defaultGun
   }
 }
@@ -192,5 +195,18 @@ export function deserializeBoxSpecs(input: DeserializerInput): BoxSpecs {
     shape,
     mass,
     type
+  }
+}
+
+export function deserializeBomberSpecs(input: DeserializerInput): BomberSpecs {
+  const flights = DeserializerBase.readInt(input)
+  const prepareToFlightTime = DeserializerBase.readDouble(input)
+  const flightTime = DeserializerBase.readDouble(input)
+  const bombs = deserializeShellSpecs(input)
+  return {
+    flights,
+    prepareToFlightTime,
+    flightTime,
+    bombs
   }
 }

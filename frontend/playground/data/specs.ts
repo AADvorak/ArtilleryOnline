@@ -47,6 +47,10 @@ export interface AvailableDrones {
   [key: string]: DroneSpecs
 }
 
+export interface AvailableBombers {
+  [key: string]: BomberSpecs
+}
+
 export interface Armor {
   [key: string]: number
 }
@@ -81,6 +85,7 @@ export interface VehicleSpecs {
   availableJets: AvailableJets
   availableMissiles: AvailableMissiles
   availableDrones: AvailableDrones
+  availableBombers: AvailableBombers
   defaultGun: string
 }
 
@@ -119,4 +124,11 @@ export interface BoxSpecs {
   shape: Shape | TrapezeShape
   mass: number
   type: BoxType
+}
+
+export interface BomberSpecs {
+  flights: number
+  prepareToFlightTime: number
+  flightTime: number
+  bombs: ShellSpecs
 }

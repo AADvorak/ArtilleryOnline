@@ -101,6 +101,10 @@ const warnings = computed(() => {
   return warnings
 })
 
+const bomberFlightsNumber = computed(() => {
+  return Object.values(vehicleSpecs.value?.availableBombers || {})[0]?.flights
+})
+
 watch(vehicleSpecs, value => {
   config.value = {}
   value && loadConfig()
@@ -119,13 +123,13 @@ watch(selectedVehicle, (value) => {
 
 watch(() => config.value.gun, (value, oldValue) => {
   if (!value || value && oldValue || !config.value.ammo) {
-    const maxSgnLShells = 10
+    const defaultSgnShells = Math.floor((bomberFlightsNumber.value || 6) * 1.5)
     config.value.ammo = availableShellsNames.value.map(name => {
-      let amount = 0
+      let amount
       if (name === 'SGN-L') {
-        amount = maxSgnLShells
+        amount = defaultSgnShells
       } else if (['AP-L', 'HE-L'].includes(name)) {
-        amount = maxAmmo.value - maxSgnLShells
+        amount = maxAmmo.value - defaultSgnShells
       } else {
         amount = maxAmmo.value / availableShellsNames.value.length
       }
