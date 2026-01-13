@@ -89,6 +89,18 @@ const shellsOrderNumbers = computed(() => {
   return orderNumbers
 })
 
+const warnings = computed(() => {
+  const warnings: string[] = []
+  const ammo = config.value.ammo
+  if (ammo) {
+    const sumAmmo = ammo.map(item => parseInt(item.amount)).reduce((a, b) => a + b, 0)
+    if (sumAmmo < maxAmmo.value) {
+      warnings.push('incompleteAmmo')
+    }
+  }
+  return warnings
+})
+
 watch(vehicleSpecs, value => {
   config.value = {}
   value && loadConfig()
@@ -230,45 +242,53 @@ function back() {
               />
             </template>
           </v-select>
-          <v-list>
-            <draggable
-                v-if="config.ammo"
-                v-model="config.ammo"
-                group="shells"
-                item-key="name"
-            >
-              <template #item="{ element }">
-                <v-list-item class="mb-4 border-lg">
-                  <div>
-                    {{`[${shellsOrderNumbers[element.name]}]`}} {{ t(`names.shells.${element.name}`) }}
-                    <icon-btn
-                        :icon="mdiInformationOutline"
-                        :tooltip="t('common.specs')"
-                        @click="showShellSpecsDialog(element.name)"
-                    />
-                  </div>
-                  <v-slider
-                      v-model="element.amount"
-                      :max="maxAmmo"
-                      :min="0"
-                      class="align-center"
-                      hide-details
-                  >
-                    <template v-slot:append>
-                      <v-text-field
-                          v-model="element.amount"
-                          density="compact"
-                          style="width: 90px"
-                          type="number"
-                          hide-details
-                          single-line
-                      ></v-text-field>
-                    </template>
-                  </v-slider>
-                </v-list-item>
-              </template>
-            </draggable>
-          </v-list>
+          <div v-if="config.ammo">
+            <div>
+              {{ t('vehicleConfigs.selectShells') }}
+              <span v-show="config.ammo!.length > 1">({{ t('vehicleConfigs.dragAndDropShellsTip') }})</span>
+            </div>
+            <v-list>
+              <draggable
+                  v-model="config.ammo"
+                  group="shells"
+                  item-key="name"
+              >
+                <template #item="{ element }">
+                  <v-list-item class="mb-4 border-lg">
+                    <div>
+                      [{{ shellsOrderNumbers[element.name] }}] {{ t(`names.shells.${element.name}`) }}
+                      <icon-btn
+                          :icon="mdiInformationOutline"
+                          :tooltip="t('common.specs')"
+                          @click="showShellSpecsDialog(element.name)"
+                      />
+                    </div>
+                    <v-slider
+                        v-model="element.amount"
+                        :max="maxAmmo"
+                        :min="0"
+                        class="align-center"
+                        hide-details
+                    >
+                      <template v-slot:append>
+                        <v-text-field
+                            v-model="element.amount"
+                            density="compact"
+                            style="width: 90px"
+                            type="number"
+                            hide-details
+                            single-line
+                        ></v-text-field>
+                      </template>
+                    </v-slider>
+                  </v-list-item>
+                </template>
+              </draggable>
+            </v-list>
+          </div>
+          <div v-for="warning of warnings">
+            <div style="color: #fb8c00; text-align: center;">{{ t('vehicleConfigs.warnings.' + warning) }}</div>
+          </div>
           <v-btn color="success" class="mb-4" width="100%"
                  :loading="submitting" :disabled="noChanges" @click="saveConfig">
             {{ t('common.save') }}
