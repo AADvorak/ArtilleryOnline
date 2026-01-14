@@ -14,6 +14,7 @@ import {useConfigsStore} from "~/stores/configs";
 import VehicleSelector from "~/components/vehicle-selector.vue";
 import Draggable from "vuedraggable";
 import type {AmmoConfig} from "~/playground/data/config";
+import type {ErrorResponse} from "~/data/response";
 
 const SGN_L_SHELL = 'SGN-L'
 
@@ -99,7 +100,7 @@ const warnings = computed(() => {
   const warnings: string[] = []
   const ammo = config.value.ammo
   if (ammo) {
-    const sumAmmo = ammo.map(item => parseInt(item.amount)).reduce((a, b) => a + b, 0)
+    const sumAmmo = ammo.map(item => parseInt(String(item.amount))).reduce((a, b) => a + b, 0)
     if (sumAmmo < maxAmmo.value) {
       warnings.push('incompleteAmmo')
     }
@@ -154,7 +155,7 @@ watch(() => config.value.ammo, () => {
     return
   }
   const ammoMap: Ammo = {}
-  ammo.forEach(item => ammoMap[item.name] = parseInt(item.amount))
+  ammo.forEach(item => ammoMap[item.name] = getRestrictedAmount(item))
   const oldAmmoMap: Ammo = {}
   oldAmmo.value.forEach(item => oldAmmoMap[item.name] = item.amount)
   const sumAmmo = Object.values(ammoMap).reduce((a, b) => a + b, 0)
@@ -191,7 +192,7 @@ async function loadConfig() {
     config.value = await configsStore.loadVehicleConfig(vehicleSpecs.value!)
     savedConfigJson.value = JSON.stringify(config.value)
   } catch (e) {
-    useRequestErrorHandler().handle(e)
+    useRequestErrorHandler().handle(e as ErrorResponse)
   }
 }
 
@@ -201,7 +202,7 @@ async function saveConfig() {
     await configsStore.saveVehicleConfig(selectedVehicle.value!, config.value)
     savedConfigJson.value = JSON.stringify(config.value)
   } catch (e) {
-    useRequestErrorHandler().handle(e)
+    useRequestErrorHandler().handle(e as ErrorResponse)
   } finally {
     submitting.value = false
   }
@@ -215,11 +216,23 @@ function showShellSpecsDialog(shellName: string) {
   if (!gunSpecs.value) {
     return
   }
-  shellSpecsDialog.value?.show(shellName, gunSpecs.value.availableShells[shellName], gunSpecs.value)
+  shellSpecsDialog.value?.show(shellName, gunSpecs.value.availableShells[shellName]!, gunSpecs.value)
 }
 
 function getGunTitle(key: string) {
   return t(`names.guns.${key}`) + ' (' + t(`descriptions.guns.${key}.short`) + ')'
+}
+
+function getRestrictedAmount(config: AmmoConfig) {
+  const intValue = parseInt(String(config.amount))
+  const max = config.name === SGN_L_SHELL ? maxSgnShells.value : maxAmmo.value
+  if (intValue > max) {
+    return max
+  }
+  if (intValue < 0) {
+    return 0
+  }
+  return intValue
 }
 
 function back() {
