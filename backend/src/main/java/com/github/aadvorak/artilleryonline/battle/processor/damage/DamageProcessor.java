@@ -6,7 +6,6 @@ import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
-import com.github.aadvorak.artilleryonline.battle.preset.VehicleSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.processor.statistics.StatisticsProcessor;
 import com.github.aadvorak.artilleryonline.battle.updates.RoomStateUpdate;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
@@ -147,8 +146,7 @@ public class DamageProcessor {
     private static void processHETrackDamage(VehicleCalculations vehicle, Hit hit,
                                              BattleCalculations battle) {
         var trackState = vehicle.getModel().getState().getTrackState();
-        if (trackState.isBroken()
-                || vehicle.getModel().getSpecs().getName().equals(VehicleSpecsPreset.HEAVY.getSpecs().getName())) {
+        if (trackState.isBroken()) {
             return;
         }
         var wheelRadius = vehicle.getModel().getSpecs().getWheelRadius();
