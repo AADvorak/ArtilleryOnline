@@ -50,10 +50,24 @@ const alignByScreenHeight = computed(() =>
 const userVehicleRelativePosition = computed(() => {
   const userVehicle = battleStore.battle?.model.vehicles[userStore.user!.nickname]
   if (userVehicle) {
-    const xMin = battleStore.battle?.model.room.specs.leftBottom.x
-    const xMax = battleStore.battle?.model.room.specs.rightTop.x
-    const xVehicle = userVehicle.state.position.x
-    return (xVehicle - xMin) / (xMax - xMin)
+    return getRelativePosition(userVehicle.state.position.x)
+  }
+})
+const userTargetRelativePosition = computed(() => {
+  const target = battleStore.targetData
+  if (target) {
+    return getRelativePosition(target.contact.position.x)
+  }
+})
+const preferredScrollPosition = computed(() => {
+  const userVehicle = battleStore.battle?.model.vehicles[userStore.user!.nickname]
+  if (userTargetRelativePosition.value && userVehicleRelativePosition.value && userVehicle) {
+    if (!!userVehicle.state.gunState.rotatingDirection) {
+      return userTargetRelativePosition.value
+    }
+    if (!!userVehicle.state.movingDirection || userVehicle.state.jetState.active) {
+      return userVehicleRelativePosition.value
+    }
   }
 })
 
@@ -89,7 +103,7 @@ onMounted(() => {
   calculateCanvasClass()
   addEventListener('resize', onWindowResize)
   if (alignByScreenHeight.value) {
-    setTimeout(() => scrollToVehicle(true))
+    setTimeout(() => scrollToVehicleOrTarget(true))
   }
 })
 
@@ -128,7 +142,7 @@ function initCanvasAndCtx() {
   }
 }
 
-function scrollToVehicle(noPositionCheck?: boolean) {
+function scrollToVehicleOrTarget(noPositionCheck?: boolean) {
   if (!userVehicleRelativePosition.value) {
     return
   }
@@ -136,12 +150,17 @@ function scrollToVehicle(noPositionCheck?: boolean) {
   const wndWidth = window.innerWidth
   const maxLeft = cnvWidth - wndWidth
   if (maxLeft > 0 && scroll.value) {
-    const vehiclePosition = userVehicleRelativePosition.value * cnvWidth
+    let scrollToPosition: number | undefined = undefined
+    if (noPositionCheck) {
+      scrollToPosition = userVehicleRelativePosition.value * cnvWidth
+    } else if (preferredScrollPosition.value) {
+      scrollToPosition = preferredScrollPosition.value * cnvWidth
+    }
     const left = scroll.value.scrollLeft
-    if (noPositionCheck
-        || vehiclePosition < left + SCROLL_RESERVE_WIDTH
-        || vehiclePosition > left + wndWidth - SCROLL_RESERVE_WIDTH) {
-      let newLeft = vehiclePosition - wndWidth / 2
+    if (scrollToPosition && (noPositionCheck
+        || scrollToPosition < left + SCROLL_RESERVE_WIDTH
+        || scrollToPosition > left + wndWidth - SCROLL_RESERVE_WIDTH)) {
+      let newLeft = scrollToPosition - wndWidth / 2
       if (newLeft > maxLeft) newLeft = maxLeft
       if (newLeft < 0) newLeft = 0
       scroll.value.scrollTo({
@@ -151,7 +170,7 @@ function scrollToVehicle(noPositionCheck?: boolean) {
       })
     }
   }
-  setTimeout(scrollToVehicle, 500)
+  setTimeout(scrollToVehicleOrTarget, 150)
 }
 
 function redrawBattle() {
@@ -221,6 +240,12 @@ function calculateScaleCoefficient() {
   if (battleSize.value && canvasSize.value) {
     scaleCoefficient.value = canvasSize.value.width / battleSize.value.width
   }
+}
+
+function getRelativePosition(x: number) {
+  const xMin = battleStore.battle!.model.room.specs.leftBottom.x
+  const xMax = battleStore.battle!.model.room.specs.rightTop.x
+  return (x - xMin) / (xMax - xMin)
 }
 
 function preventArrowKeysEvents(event) {
