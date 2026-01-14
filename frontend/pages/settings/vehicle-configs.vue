@@ -15,6 +15,8 @@ import VehicleSelector from "~/components/vehicle-selector.vue";
 import Draggable from "vuedraggable";
 import type {AmmoConfig} from "~/playground/data/config";
 
+const SGN_L_SHELL = 'SGN-L'
+
 const {t} = useI18n()
 const router = useRouter()
 const route = useRoute()
@@ -51,6 +53,10 @@ const maxAmmo = computed(() => {
     return 0
   }
   return gunSpecs.value.ammo
+})
+
+const maxSgnShells = computed(() => {
+  return bomberFlightsNumber.value ? bomberFlightsNumber.value * 2 : 20
 })
 
 const gunSpecs = computed(() => {
@@ -97,7 +103,7 @@ const warnings = computed(() => {
     if (sumAmmo < maxAmmo.value) {
       warnings.push('incompleteAmmo')
     }
-    const sgnShellsAmount = ammo.filter(item => item.name === 'SGN-L')[0]?.amount
+    const sgnShellsAmount = ammo.filter(item => item.name === SGN_L_SHELL)[0]?.amount
     if (bomberFlightsNumber.value && (!sgnShellsAmount || sgnShellsAmount < bomberFlightsNumber.value)) {
       warnings.push('lowSignalShells')
     }
@@ -130,7 +136,7 @@ watch(() => config.value.gun, (value, oldValue) => {
     const defaultSgnShells = Math.floor((bomberFlightsNumber.value || 6) * 1.5)
     config.value.ammo = availableShellsNames.value.map(name => {
       let amount
-      if (name === 'SGN-L') {
+      if (name === SGN_L_SHELL) {
         amount = defaultSgnShells
       } else if (['AP-L', 'HE-L'].includes(name)) {
         amount = maxAmmo.value - defaultSgnShells
@@ -273,7 +279,7 @@ function back() {
                     </div>
                     <v-slider
                         v-model="element.amount"
-                        :max="maxAmmo"
+                        :max="element.name === SGN_L_SHELL ? maxSgnShells : maxAmmo"
                         :min="0"
                         class="align-center"
                         hide-details
