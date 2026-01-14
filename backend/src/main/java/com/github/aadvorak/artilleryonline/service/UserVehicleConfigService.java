@@ -113,7 +113,7 @@ public class UserVehicleConfigService {
                 .filter(config -> ConfigName.AMMO.getName().equals(config.getName()))
                 .sorted(Comparator
                         .comparingInt(UserVehicleConfig::getPriorityOrDefault)
-                        .thenComparing(UserVehicleConfig::getAmount))
+                        .thenComparing(UserVehicleConfig::getValue))
                 .map(userVehicleConfig -> new AmmoConfig()
                         .setName(userVehicleConfig.getValue())
                         .setAmount(userVehicleConfig.getAmount()))
