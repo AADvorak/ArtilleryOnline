@@ -76,7 +76,7 @@ export function useTrajectoryAndTargetProcessor() {
       }
 
       if (!targetData) {
-        const groundPosition = BattleUtils.getFirstPointUnderGround(trajectory, battle.model.room)
+        const groundPosition = BattleUtils.getGroundIntersectionPoint(trajectory, battle.model.room)
         if (groundPosition) {
           const contact = Contact.withAngleUncheckedDepth(0, 0, groundPosition)
           targetData = {

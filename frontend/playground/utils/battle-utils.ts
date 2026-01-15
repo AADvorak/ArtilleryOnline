@@ -3,6 +3,7 @@ import type { RoomModel } from '@/playground/data/model'
 import type {BodyPosition, Position, Shift} from "@/playground/data/common";
 import type {BodyParticleState, ParticleState} from "~/playground/data/state";
 import {Segment} from "~/playground/data/geometry";
+import {GeometryUtils} from "~/playground/utils/geometry-utils";
 
 export const BattleUtils = {
   getRoomWidth(roomSpecs: RoomSpecs) {
@@ -33,8 +34,8 @@ export const BattleUtils = {
   getGroundIndexesBetween(xMin: number, xMax: number, roomModel: RoomModel): number[] {
     const roomWidth = this.getRoomWidth(roomModel.specs)
     const groundPointsNumber = this.getGroundPointsNumber(roomModel.specs)
-    let minGroundIndex = Math.ceil((groundPointsNumber * xMin) / roomWidth)
-    let maxGroundIndex = Math.floor((groundPointsNumber * xMax) / roomWidth)
+    let minGroundIndex = Math.floor((groundPointsNumber * xMin) / roomWidth)
+    let maxGroundIndex = Math.ceil((groundPointsNumber * xMax) / roomWidth)
 
     if (minGroundIndex < 0) {
       minGroundIndex = 0
@@ -147,6 +148,9 @@ export const BattleUtils = {
     }
   },
 
+  /**
+   * This method does not work same way as corresponding backend method
+   */
   getFirstPointUnderGround(segment: Segment, roomModel: RoomModel): Position | null {
     const xMin = Math.min(segment.begin.x, segment.end.x)
     const xMax = Math.max(segment.begin.x, segment.end.x)
@@ -171,10 +175,59 @@ export const BattleUtils = {
       const groundPosition = this.getGroundPosition(indexes[index]!, roomModel)
       const segmentPosition = segment.findPointWithX(groundPosition.x)
       if (segmentPosition && groundPosition.y > segmentPosition.y) {
+        // difference with backend
         return groundPosition
       }
     }
     
+    return null
+  },
+
+  getGroundSegmentAround(x: number, roomModel: RoomModel): Segment | null {
+    const roomWidth = this.getRoomWidth(roomModel.specs)
+    const groundPointsNumber = this.getGroundPointsNumber(roomModel.specs)
+    const minGroundIndex = Math.floor((groundPointsNumber * x) / roomWidth)
+    const maxGroundIndex = Math.ceil((groundPointsNumber * x) / roomWidth)
+    if (minGroundIndex >= 0 && maxGroundIndex < groundPointsNumber) {
+      return new Segment(
+        this.getGroundPosition(minGroundIndex, roomModel),
+        this.getGroundPosition(maxGroundIndex, roomModel)
+      )
+    }
+    return null
+  },
+
+  /**
+   * This method does not work same way as corresponding backend method
+   */
+  getGroundIntersectionPoint(segment: Segment, roomModel: RoomModel): Position | null {
+    const xMin = Math.min(segment.begin.x, segment.end.x)
+    const xMax = Math.max(segment.begin.x, segment.end.x)
+    const indexes = this.getGroundIndexesBetween(xMin, xMax, roomModel)
+    if (!indexes.length) {
+      const groundSegment = this.getGroundSegmentAround(xMin, roomModel)
+      if (groundSegment) {
+        return GeometryUtils.getSegmentsIntersectionPoint(segment, groundSegment)
+      }
+    }
+    const start = segment.begin.x < segment.end.x ? 0 : indexes.length - 1
+    const increment = segment.begin.x < segment.end.x ? 1 : -1
+    for (let index = start; index >= 0 && index < indexes.length; index += increment) {
+      const groundPosition = this.getGroundPosition(indexes[index]!, roomModel)
+      const segmentPosition = segment.findPointWithX(groundPosition.x)
+      if (segmentPosition && groundPosition.y > segmentPosition.y) {
+        const previousGroundPosition = this.getGroundPosition(indexes[index]! - increment, roomModel)
+        if (previousGroundPosition) {
+          const groundSegment = new Segment(previousGroundPosition, groundPosition)
+          const intersectionPoint = GeometryUtils.getSegmentsIntersectionPoint(segment, groundSegment)
+          if (intersectionPoint) {
+            return intersectionPoint
+          }
+        }
+        // difference with backend
+        return groundPosition
+      }
+    }
     return null
   }
 }

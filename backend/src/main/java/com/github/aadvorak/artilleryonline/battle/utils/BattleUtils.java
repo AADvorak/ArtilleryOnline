@@ -57,6 +57,50 @@ public class BattleUtils {
         return null;
     }
 
+    public static Position getGroundIntersectionPoint(Segment segment, RoomModel roomModel) {
+        var xMin = Math.min(segment.begin().getX(), segment.end().getX());
+        var xMax = Math.max(segment.begin().getX(), segment.end().getX());
+        var indexes = getGroundIndexesBetween(xMin, xMax, roomModel);
+        if (indexes.isEmpty()) {
+            var groundSegment = getGroundSegmentAround(xMin, roomModel);
+            if (groundSegment != null) {
+                return GeometryUtils.getSegmentsIntersectionPoint(segment, groundSegment);
+            }
+        }
+        var start = segment.begin().getX() < segment.end().getX() ? 0 : indexes.size() - 1;
+        var increment = segment.begin().getX() < segment.end().getX() ? 1 : -1;
+        for (var index = start; index >= 0 && index < indexes.size(); index += increment) {
+            var groundPosition = getGroundPosition(indexes.get(index), roomModel);
+            var segmentPosition = segment.findPointWithX(groundPosition.getX());
+            if (segmentPosition != null && groundPosition.getY() > segmentPosition.getY()) {
+                var previousGroundPosition = getGroundPosition(indexes.get(index) - increment, roomModel);
+                if (previousGroundPosition != null) {
+                    var groundSegment = new Segment(previousGroundPosition, groundPosition);
+                    var intersectionPoint = GeometryUtils.getSegmentsIntersectionPoint(segment, groundSegment);
+                    if (intersectionPoint != null) {
+                        return intersectionPoint;
+                    }
+                }
+                return segmentPosition;
+            }
+        }
+        return null;
+    }
+
+    public static Segment getGroundSegmentAround(double x, RoomModel roomModel) {
+        var roomWidth = getRoomWidth(roomModel.getSpecs());
+        var groundPointsNumber = getGroundPointsNumber(roomModel.getSpecs());
+        var minGroundIndex = (int) Math.floor((double) groundPointsNumber * x / roomWidth);
+        var maxGroundIndex = (int) Math.ceil((double) groundPointsNumber * x / roomWidth);
+        if (minGroundIndex >= 0 && maxGroundIndex < groundPointsNumber) {
+            return new Segment(
+                    getGroundPosition(minGroundIndex, roomModel),
+                    getGroundPosition(maxGroundIndex, roomModel)
+            );
+        }
+        return null;
+    }
+
     public static List<Segment> getGroundSegmentsBetween(double xMin, double xMax,  RoomModel roomModel) {
         var positions = getGroundIndexesBetween(xMin, xMax, roomModel).stream()
                 .map(index -> BattleUtils.getGroundPosition(index, roomModel))
@@ -74,8 +118,8 @@ public class BattleUtils {
     public static List<Integer> getGroundIndexesBetween(double xMin, double xMax,  RoomModel roomModel) {
         var roomWidth = getRoomWidth(roomModel.getSpecs());
         var groundPointsNumber = getGroundPointsNumber(roomModel.getSpecs());
-        var minGroundIndex = (int) Math.ceil((double) groundPointsNumber * xMin / roomWidth);
-        var maxGroundIndex = (int) Math.floor((double) groundPointsNumber * xMax / roomWidth);
+        var minGroundIndex = (int) Math.floor((double) groundPointsNumber * xMin / roomWidth);
+        var maxGroundIndex = (int) Math.ceil((double) groundPointsNumber * xMax / roomWidth);
         if (minGroundIndex < 0) {
             minGroundIndex = 0;
         }

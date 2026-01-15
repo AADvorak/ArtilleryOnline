@@ -13,11 +13,11 @@ public class ShellGroundCollisionsDetector extends ShellCollisionsDetectorBase {
 
     protected Collision detectFirst(ShellCalculations shell, BattleCalculations battle) {
         var shellTrajectory = new Segment(shell.getPosition(), shell.getNext().getPosition());
-        var firstPointUnderGround = BattleUtils.getFirstPointUnderGround(shellTrajectory, battle.getModel().getRoom());
-        if (firstPointUnderGround != null) {
-            var normal = shell.getPosition().vectorTo(firstPointUnderGround).normalized();
+        var intersectionPoint = BattleUtils.getGroundIntersectionPoint(shellTrajectory, battle.getModel().getRoom());
+        if (intersectionPoint != null) {
+            var normal = shell.getPosition().vectorTo(intersectionPoint).normalized();
             return Collision.withGround(shell,
-                    Contact.withUncheckedDepthOf(0.0, normal, firstPointUnderGround));
+                    Contact.withUncheckedDepthOf(0.0, normal, intersectionPoint));
         }
         return null;
     }
