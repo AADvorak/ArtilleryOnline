@@ -61,7 +61,7 @@ public enum ShellSpecsPreset {
             .setDamage(1.2)
             .setRadius(0.04)
             .setVelocity(14.5)
-            .setMass(0.0056)
+            .setMass(0.003)
             .setCaliber(0.03)
             .setPenetration(40.0)
             .setType(ShellType.AP)),

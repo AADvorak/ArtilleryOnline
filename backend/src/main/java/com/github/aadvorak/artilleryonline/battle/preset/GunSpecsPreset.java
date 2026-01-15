@@ -62,7 +62,7 @@ public enum GunSpecsPreset {
             ))),
 
     MEDIUM_L("MediumL", new GunSpecs()
-            .setAmmo(360)
+            .setAmmo(500)
             .setLoadTime(0.3)
             .setRotationVelocity(0.45)
             .setSlowRotationVelocity(0.2)
