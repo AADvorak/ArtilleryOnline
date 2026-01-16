@@ -296,6 +296,8 @@ function back() {
                         :min="0"
                         class="align-center"
                         hide-details
+                        @touchstart.stop
+                        @mousedown.stop
                     >
                       <template v-slot:append>
                         <v-text-field
