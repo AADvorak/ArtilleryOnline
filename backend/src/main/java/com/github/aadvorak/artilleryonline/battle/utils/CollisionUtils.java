@@ -153,6 +153,4 @@ public class CollisionUtils {
             intersectionPointsMap.put(intersectionPoint, new ContactAndHitSurface(contact, hitSurface));
         }
     }
-
-    private record ContactAndHitSurface(Contact contact, HitSurface hitSurface) {}
 }
