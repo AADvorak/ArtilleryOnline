@@ -41,13 +41,26 @@ public class BotsProcessor {
                     .collect(Collectors.toSet());
             var closestPosition = GeometryUtils.findClosestPosition(targetData.contact().position(), otherVehiclePositions);
             if (closestPosition != null) {
+                var vehicleX = vehicle.getPosition().getX();
+                var roomSpecs = battle.getModel().getRoom().getSpecs();
+                var vehicleMaxRadius = vehicle.getModel().getPreCalc().getMaxRadius();
+                var minTargetDistance = vehicleMaxRadius * 5;
+                var wallIsRight = roomSpecs.getRightTop().getX() - vehicleX < vehicleMaxRadius;
+                var wallIsLeft = vehicleX - roomSpecs.getLeftBottom().getX() < vehicleMaxRadius;
+                var vehicleTargetDistance = vehicleX - closestPosition.getX();
                 var targetIsRight = closestPosition.getX() > targetData.contact().position().getX();
                 state.getGunState().setRotatingDirection(targetIsRight ? MovingDirection.RIGHT : MovingDirection.LEFT);
                 if (gunAngle < Math.PI / 3 && targetIsRight) {
                     state.setMovingDirection(MovingDirection.RIGHT);
-                }
-                if (gunAngle > 2 * Math.PI / 3 && !targetIsRight) {
+                } else if (gunAngle > 2 * Math.PI / 3 && !targetIsRight) {
                     state.setMovingDirection(MovingDirection.LEFT);
+                } else if (Math.abs(vehicleTargetDistance) < minTargetDistance) {
+                    if (vehicleTargetDistance > 0 && !wallIsRight) {
+                        state.setMovingDirection(MovingDirection.RIGHT);
+                    }
+                    if (vehicleTargetDistance < 0 && !wallIsLeft) {
+                        state.setMovingDirection(MovingDirection.LEFT);
+                    }
                 }
             }
         }
