@@ -23,10 +23,16 @@ public class BotsProcessor {
         var oldTriggerPushed = state.getGunState().isTriggerPushed();
         var oldGunRotatingDirection = state.getGunState().getRotatingDirection();
         var oldJetActive = state.getJetState().isActive();
+        var oldMovingDirection = state.getMovingDirection();
         var gunAngle = state.getPosition().getAngle() + state.getGunState().getAngle();
         var targetData = targetDataCalculator.calculate(vehicle, battle);
         state.getGunState().setTriggerPushed(targetData != null && targetData.armor() != null); // todo check penetration or use HE
-        if (targetData == null) {
+        state.setMovingDirection(null);
+        if (gunAngle < Math.PI / 4) {
+            state.getGunState().setRotatingDirection(MovingDirection.LEFT);
+        } else if (gunAngle > 3 * Math.PI / 4) {
+            state.getGunState().setRotatingDirection(MovingDirection.RIGHT);
+        } else if (targetData == null) {
             state.getGunState().setRotatingDirection(gunAngle > Math.PI / 2 ? MovingDirection.RIGHT : MovingDirection.LEFT);
         } else if (targetData.armor() == null) {
             var otherVehiclePositions = battle.getVehicles().stream()
@@ -37,6 +43,12 @@ public class BotsProcessor {
             if (closestPosition != null) {
                 var targetIsRight = closestPosition.getX() > targetData.contact().position().getX();
                 state.getGunState().setRotatingDirection(targetIsRight ? MovingDirection.RIGHT : MovingDirection.LEFT);
+                if (gunAngle < Math.PI / 3 && targetIsRight) {
+                    state.setMovingDirection(MovingDirection.RIGHT);
+                }
+                if (gunAngle > 2 * Math.PI / 3 && !targetIsRight) {
+                    state.setMovingDirection(MovingDirection.LEFT);
+                }
             }
         }
         state.getJetState().setActive(state.isTurnedOver());
@@ -44,6 +56,7 @@ public class BotsProcessor {
                 oldTriggerPushed != state.getGunState().isTriggerPushed()
                 || oldJetActive != state.getJetState().isActive()
                 || isChanged(oldGunRotatingDirection, state.getGunState().getRotatingDirection())
+                || isChanged(oldMovingDirection, state.getMovingDirection())
         ) {
             vehicle.getModel().getUpdate().setUpdated();
         }
