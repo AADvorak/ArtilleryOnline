@@ -32,6 +32,13 @@ public class GunState implements State, CompactSerializable {
 
     private boolean fixed = false;
 
+    public void setRotatingDirection(MovingDirection movingDirection) {
+        if (rotatingDirection == null || !rotatingDirection.equals(movingDirection)) {
+            rotatingTime = 0;
+        }
+        this.rotatingDirection = movingDirection;
+    }
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(angle);

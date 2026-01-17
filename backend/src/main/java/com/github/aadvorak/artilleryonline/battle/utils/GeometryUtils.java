@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 public class GeometryUtils {
 
     public static Position findClosestPosition(Position position, Set<Position> positions) {
+        if (positions == null || positions.isEmpty()) return null;
         var iterator = positions.iterator();
         var closest = iterator.next();
         var closestDistance = position.distanceTo(closest);

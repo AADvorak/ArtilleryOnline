@@ -50,18 +50,19 @@ public class BattleFactory {
     public Battle createBattle(Set<BattleParticipant> participants, BattleType battleType) {
         var battleModel = new BattleModel()
                 .setRoom(createRoomModel(battleType));
-        battleModel.setVehicles(createVehicles(participants, battleModel, battleType));
-        if (BattleType.COLLIDER.equals(battleType)) {
-            battleModel.setBoxes(createBoxes(battleModel));
-        }
-        battleModel.setStatistics(createUserBattleStatistics(participants));
-        var userMap = createUserMap(participants);
         var battle = new Battle()
                 .setTime(0)
                 .setDuration(battleType.getDuration())
                 .setBattleStage(BattleStage.WAITING)
                 .setType(battleType)
-                .setModel(battleModel)
+                .setModel(battleModel);
+        battleModel.setVehicles(createVehicles(participants, battle, battleType));
+        if (BattleType.COLLIDER.equals(battleType)) {
+            battleModel.setBoxes(createBoxes(battleModel));
+        }
+        battleModel.setStatistics(createUserBattleStatistics(participants));
+        var userMap = createUserMap(participants);
+        battle
                 .setUserMap(userMap)
                 .setUserVehicleNameMap(createUserVehicleNameMap(participants))
                 .setActiveUserIds(new HashSet<>(userMap.keySet()));
@@ -137,8 +138,9 @@ public class BattleFactory {
         return surfaces;
     }
 
-    private Map<String, VehicleModel> createVehicles(Set<BattleParticipant> participants, BattleModel battleModel,
+    private Map<String, VehicleModel> createVehicles(Set<BattleParticipant> participants, Battle battle,
                                                      BattleType battleType) {
+        var battleModel = battle.getModel();
         var vehicles = new HashMap<String, VehicleModel>();
         var distanceBetweenVehicles = (battleModel.getRoom().getSpecs().getRightTop().getX()
                 - battleModel.getRoom().getSpecs().getLeftBottom().getX())
@@ -146,7 +148,11 @@ public class BattleFactory {
         var vehicleNumber = 1;
         for (var participant : participants) {
             var vehicleModel = new VehicleModel();
-            vehicleModel.setId(battleModel.getIdGenerator().generate());
+            var id = battleModel.getIdGenerator().generate();
+            if (participant.getUser() == null) {
+                battle.getBotsVehicleIds().add(id);
+            }
+            vehicleModel.setId(id);
             if (participant.getUser() != null) {
                 vehicleModel.setUserId(participant.getUser().getId());
             }

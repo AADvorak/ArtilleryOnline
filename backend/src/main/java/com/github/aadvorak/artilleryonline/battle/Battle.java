@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -47,6 +48,8 @@ public class Battle {
     private Map<Long, String> userVehicleNameMap;
 
     private Set<Long> activeUserIds;
+
+    private Set<Integer> botsVehicleIds = new HashSet<>();
 
     private BattleDebug debug = new BattleDebug();
 
