@@ -8,7 +8,6 @@ import com.github.aadvorak.artilleryonline.battle.common.lines.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class CollisionUtils {
 
@@ -49,7 +48,7 @@ public class CollisionUtils {
             findIntersectionPointAndPutToMap(projectileTrace, trapeze.top(), HitSurface.TOP, intersectionPointsMap);
         }
         if (!intersectionPointsMap.isEmpty()) {
-            var closest = findClosestIntersectionPoint(position, intersectionPointsMap.keySet());
+            var closest = GeometryUtils.findClosestPosition(position, intersectionPointsMap.keySet());
             var contactAndHitSurface = intersectionPointsMap.get(closest);
             return Collision.withVehicle(calculations, vehicle, contactAndHitSurface.contact(),
                     contactAndHitSurface.hitSurface());
@@ -78,7 +77,7 @@ public class CollisionUtils {
         var wheelShape = new Circle(wheelPosition, wheelRadius);
         var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(projectileTrace, wheelShape);
         if (!intersectionPoints.isEmpty()) {
-            var intersectionPoint = findClosestIntersectionPoint(position, intersectionPoints);
+            var intersectionPoint = GeometryUtils.findClosestPosition(position, intersectionPoints);
             var contact = Contact.withUncheckedDepthOf(0.0,
                     intersectionPoint.vectorTo(wheelPosition).normalized(), intersectionPoint);
             return Collision.withVehicle(calculations, wheel, contact);
@@ -94,7 +93,7 @@ public class CollisionUtils {
         var droneShape = new Circle(dronePosition, droneRadius);
         var intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(projectileTrace, droneShape);
         if (!intersectionPoints.isEmpty()) {
-            var intersectionPoint = findClosestIntersectionPoint(position, intersectionPoints);
+            var intersectionPoint = GeometryUtils.findClosestPosition(position, intersectionPoints);
             var contact = Contact.withUncheckedDepthOf(0.0,
                     intersectionPoint.vectorTo(dronePosition).normalized(), intersectionPoint);
             return Collision.withDrone(calculations, drone, contact);
@@ -143,21 +142,6 @@ public class CollisionUtils {
             }
         }
         return null;
-    }
-
-    private static Position findClosestIntersectionPoint(Position position, Set<Position> intersectionPoints) {
-        var iterator = intersectionPoints.iterator();
-        var closest = iterator.next();
-        var closestDistance = position.distanceTo(closest);
-        while (iterator.hasNext()) {
-            var point = iterator.next();
-            var distance = position.distanceTo(point);
-            if (distance < closestDistance) {
-                closest = point;
-                closestDistance = distance;
-            }
-        }
-        return closest;
     }
 
     private static void findIntersectionPointAndPutToMap(Segment projectileTrace, Segment side, HitSurface hitSurface,

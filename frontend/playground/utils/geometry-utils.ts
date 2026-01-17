@@ -1,8 +1,23 @@
 import type {Position} from "~/playground/data/common";
 import {Circle, HalfCircle, type Segment} from "~/playground/data/geometry";
 import {VectorUtils} from "~/playground/utils/vector-utils";
+import {BattleUtils} from "~/playground/utils/battle-utils";
 
 export const GeometryUtils = {
+
+  findClosestPosition(position: Position, positions: Position[]): Position {
+    let closest = positions[0]!
+    let closestDistance = BattleUtils.distance(position, closest)
+    for (let i = 1; i < positions.length; i++) {
+      const point = positions[i]!
+      const distance = BattleUtils.distance(position, point)
+      if (distance < closestDistance) {
+        closest = point
+        closestDistance = distance
+      }
+    }
+    return closest
+  },
 
   getPointToSegmentProjection(
       point: Position,

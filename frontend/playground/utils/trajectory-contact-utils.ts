@@ -5,7 +5,6 @@ import {GeometryUtils} from "~/playground/utils/geometry-utils"
 import {VectorUtils} from "~/playground/utils/vector-utils"
 import {type VehicleCalculations, type WheelCalculations} from "~/playground/data/calculations"
 import {BodyUtils} from "~/playground/utils/body-utils"
-import {BattleUtils} from "~/playground/utils/battle-utils"
 
 export const TrajectoryContactUtils = {
 
@@ -32,7 +31,7 @@ export const TrajectoryContactUtils = {
     }
     
     if (intersectionPointsMap.size > 0) {
-      const closest = this.findClosestIntersectionPoint(projectileTrace.begin, Array.from(intersectionPointsMap.keys()))
+      const closest = GeometryUtils.findClosestPosition(projectileTrace.begin, Array.from(intersectionPointsMap.keys()))
       return intersectionPointsMap.get(closest)
 
     }
@@ -45,7 +44,7 @@ export const TrajectoryContactUtils = {
     const wheelShape = new Circle(wheelPosition!, wheelRadius)
     const intersectionPoints = GeometryUtils.getSegmentAndCircleIntersectionPoints(projectileTrace, wheelShape)
     if (intersectionPoints.size > 0) {
-      const intersectionPoint = this.findClosestIntersectionPoint(projectileTrace.begin, Array.from(intersectionPoints))
+      const intersectionPoint = GeometryUtils.findClosestPosition(projectileTrace.begin, Array.from(intersectionPoints))
       return  Contact.withNormalUncheckedDepth(
         0.0,
         VectorUtils.vectorFromTo(intersectionPoint, wheelPosition!),
@@ -53,20 +52,6 @@ export const TrajectoryContactUtils = {
       )
     }
     return undefined
-  },
-
-  findClosestIntersectionPoint(position: Position, intersectionPoints: Position[]): Position {
-    let closest = intersectionPoints[0]!
-    let closestDistance = BattleUtils.distance(position, closest)
-    for (let i = 1; i < intersectionPoints.length; i++) {
-      const point = intersectionPoints[i]!
-      const distance = BattleUtils.distance(position, point)
-      if (distance < closestDistance) {
-        closest = point
-        closestDistance = distance
-      }
-    }
-    return closest
   },
 
   findIntersectionPointAndPutToMap(

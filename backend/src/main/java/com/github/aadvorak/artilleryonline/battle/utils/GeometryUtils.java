@@ -10,6 +10,21 @@ import java.util.stream.Collectors;
 
 public class GeometryUtils {
 
+    public static Position findClosestPosition(Position position, Set<Position> positions) {
+        var iterator = positions.iterator();
+        var closest = iterator.next();
+        var closestDistance = position.distanceTo(closest);
+        while (iterator.hasNext()) {
+            var point = iterator.next();
+            var distance = position.distanceTo(point);
+            if (distance < closestDistance) {
+                closest = point;
+                closestDistance = distance;
+            }
+        }
+        return closest;
+    }
+
     public static boolean isPointLyingOnArc(double pointAngle, double beginAngle, double endAngle) {
         var shiftedPointAngle = pointAngle + 2 * Math.PI;
         return pointAngle > beginAngle && pointAngle < endAngle
