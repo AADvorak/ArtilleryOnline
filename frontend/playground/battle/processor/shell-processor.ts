@@ -15,7 +15,7 @@ export const ShellProcessor = {
     if (nextPosition.x >= roomSpecs.rightTop.x || nextPosition.x <= roomSpecs.leftBottom.x) {
       velocity.x = - velocity.x
     }
-    velocity.y -= roomSpecs.gravityAcceleration * timeStepSecs
+    velocity.y -= 2.25 * roomSpecs.gravityAcceleration * timeStepSecs
     shellModel.state.position = nextPosition
   }
 }

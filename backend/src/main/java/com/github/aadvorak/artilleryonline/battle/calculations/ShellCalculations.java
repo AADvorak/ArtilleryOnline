@@ -55,7 +55,7 @@ public class ShellCalculations extends CalculationsBase implements Calculations<
             velocity.setX(-velocity.getX());
         }
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
-        velocity.setY(velocity.getY() - gravityAcceleration * battleModel.getCurrentTimeStepSecs());
+        velocity.setY(velocity.getY() - 2.25 * gravityAcceleration * battleModel.getCurrentTimeStepSecs());
     }
 
     public void calculateNextPosition(double timeStep) {

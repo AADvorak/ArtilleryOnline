@@ -50,7 +50,7 @@ public class VehicleBomberProcessor extends VehicleProcessor implements BeforeSt
         var specs = vehicleModel.getConfig().getBomber().getBombs();
         var velocityX = target.getX() > BattleUtils.getRoomWidth(roomSpecs) / 2
                 ? specs.getVelocity() : -specs.getVelocity();
-        var x = target.getX() - velocityX * Math.sqrt(2 * height / gravityAcceleration);
+        var x = target.getX() - velocityX * Math.sqrt(2 * height / (gravityAcceleration * 2.25));
         var singleShift = specs.getRadius() * 2;
         var shifts = List.of(-singleShift, 0.0, singleShift);
         for (var shift : shifts) {

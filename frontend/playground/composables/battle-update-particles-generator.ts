@@ -101,8 +101,8 @@ export function useBattleUpdateParticlesGenerator() {
     const particlesNumber = caliber * CALIBER_PARTICLES_NUMBER_COEFFICIENT
     for (let i = 0; i < (isHit ? 2 : 1) * particlesNumber; i++) {
       let angle = contact.angle + HIT_PARTICLES_ANGLE_DEVIATION * (Math.random() - 0.5)
-      const magnitude = Math.random() * velocityMagnitude / 2
-      const lifeTime = HIT_PARTICLE_LIFETIME * velocityMagnitude / MAX_HIT_VELOCITY
+      const magnitude = Math.random() * velocityMagnitude / 3
+      const lifeTime = HIT_PARTICLE_LIFETIME * velocityMagnitude / MAX_HIT_VELOCITY / 1.5
           * (1 + HIT_PARTICLE_LIFETIME_RELATIVE_DEVIATION * (Math.random() - 0.5))
       if (i >= particlesNumber) {
         angle += Math.PI
@@ -114,7 +114,7 @@ export function useBattleUpdateParticlesGenerator() {
   function addHitGroundParticles(contact: Contact, caliber: number, velocityMagnitude: number) {
     for (let i = 0; i < GROUND_PARTICLES_NUMBER; i++) {
       let angle = contact.angle + HIT_GROUND_PARTICLES_ANGLE_DEVIATION * (Math.random() - 0.5) + Math.PI / 2
-      const magnitude = Math.random() * velocityMagnitude / 5
+      const magnitude = Math.random() * velocityMagnitude / 7.5
       const lifeTime = HIT_GROUND_PARTICLE_LIFETIME * velocityMagnitude / MAX_HIT_VELOCITY
           * (1 + HIT_PARTICLE_LIFETIME_RELATIVE_DEVIATION * (Math.random() - 0.5))
       const size = caliber * (Math.random() + 0.5)

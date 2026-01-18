@@ -40,7 +40,7 @@ export function useTrajectoryAndTargetProcessor() {
     while (x > 0 && x < maxX && y > 0) {
       x += step * directionSign
       const x1 = x - startPosition.x
-      y = startPosition.y + x1 * Math.tan(angle) - battle.model.room.specs.gravityAcceleration * x1 * x1
+      y = startPosition.y + x1 * Math.tan(angle) - 2.25 * battle.model.room.specs.gravityAcceleration * x1 * x1
           / (2 * shellSpecs.velocity * shellSpecs.velocity * Math.cos(angle) * Math.cos(angle))
       const trajectory = new Segment(previous, {x, y})
       const hitNormal = VectorUtils.vectorFromTo(previous, {x, y})
