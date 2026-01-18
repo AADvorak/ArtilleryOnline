@@ -7,6 +7,7 @@ import {Contact, type Position, type TargetData} from "~/playground/data/common"
 import {Segment} from "~/playground/data/geometry";
 import {TrajectoryContactUtils} from "~/playground/utils/trajectory-contact-utils";
 import {VectorUtils} from "~/playground/utils/vector-utils";
+import {GeometryUtils} from "~/playground/utils/geometry-utils";
 
 export function useTrajectoryAndTargetProcessor() {
   const battleStore = useBattleStore()
@@ -31,6 +32,8 @@ export function useTrajectoryAndTargetProcessor() {
     const angle = userVehicle.state.position.angle + userVehicle.state.gunState.angle
     const directionSign = Math.sign(Math.cos(angle))
     const maxX = BattleUtils.getRoomWidth(battle.model.room.specs)
+    const rightWall = BattleUtils.getRightWall(battle.model.room.specs)
+    const leftWall = BattleUtils.getLeftWall(battle.model.room.specs)
     let x = startPosition.x
     let y = startPosition.y
     let previous: Position = {x, y}
@@ -46,32 +49,51 @@ export function useTrajectoryAndTargetProcessor() {
       const hitNormal = VectorUtils.vectorFromTo(previous, {x, y})
       VectorUtils.normalize(hitNormal)
 
-      for (const vehicle of battle.vehicles) {
-        const cnt = TrajectoryContactUtils.detectWithVehicle(trajectory, vehicle)
-        if (cnt) {
+      let wall: Segment | null = null
+      if (x > rightWall.begin.x) {
+        wall = rightWall
+      } else if (x < leftWall.begin.x) {
+        wall = leftWall
+      }
+      if (wall) {
+        const intersectionPoint = GeometryUtils.getSegmentsIntersectionPoint(trajectory, wall)
+        if (intersectionPoint) {
+          const contact = Contact.withAngleUncheckedDepth(0, 0, intersectionPoint)
           targetData = {
-            contact: cnt.contact,
-            hitNormal,
-            penetration: shellSpecs.penetration,
-            armor: vehicle.model.specs.armor[cnt.hitSurface]
-          }
-          break
-        }
-        const rwc = TrajectoryContactUtils.detectWithWheel(trajectory, vehicle.rightWheel)
-        if (rwc) {
-          targetData = {
-            contact: rwc,
+            contact,
             hitNormal
           }
-          break
         }
-        const lwc = TrajectoryContactUtils.detectWithWheel(trajectory, vehicle.leftWheel)
-        if (lwc) {
-          targetData = {
-            contact: lwc,
-            hitNormal
+      }
+
+      if (!targetData) {
+        for (const vehicle of battle.vehicles) {
+          const cnt = TrajectoryContactUtils.detectWithVehicle(trajectory, vehicle)
+          if (cnt) {
+            targetData = {
+              contact: cnt.contact,
+              hitNormal,
+              penetration: shellSpecs.penetration,
+              armor: vehicle.model.specs.armor[cnt.hitSurface]
+            }
+            break
           }
-          break
+          const rwc = TrajectoryContactUtils.detectWithWheel(trajectory, vehicle.rightWheel)
+          if (rwc) {
+            targetData = {
+              contact: rwc,
+              hitNormal
+            }
+            break
+          }
+          const lwc = TrajectoryContactUtils.detectWithWheel(trajectory, vehicle.leftWheel)
+          if (lwc) {
+            targetData = {
+              contact: lwc,
+              hitNormal
+            }
+            break
+          }
         }
       }
 

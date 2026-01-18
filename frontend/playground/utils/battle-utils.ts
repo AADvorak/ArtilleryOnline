@@ -6,6 +6,22 @@ import {Segment} from "~/playground/data/geometry";
 import {GeometryUtils} from "~/playground/utils/geometry-utils";
 
 export const BattleUtils = {
+  getRightWall(roomSpecs: RoomSpecs): Segment {
+    const rightBottom = {
+      x: roomSpecs.rightTop.x,
+      y: roomSpecs.leftBottom.y,
+    }
+    return new Segment(rightBottom, roomSpecs.rightTop)
+  },
+
+  getLeftWall(roomSpecs: RoomSpecs): Segment {
+    const leftTop = {
+      x: roomSpecs.leftBottom.x,
+      y: roomSpecs.rightTop.y,
+    }
+    return new Segment(leftTop, roomSpecs.leftBottom)
+  },
+
   getRoomWidth(roomSpecs: RoomSpecs) {
     return roomSpecs.rightTop.x - roomSpecs.leftBottom.x
   },
