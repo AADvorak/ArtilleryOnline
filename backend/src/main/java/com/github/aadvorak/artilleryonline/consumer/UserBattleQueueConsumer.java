@@ -6,6 +6,7 @@ import com.github.aadvorak.artilleryonline.collection.UserBattleQueueElement;
 import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import com.github.aadvorak.artilleryonline.service.BattleService;
+import com.github.aadvorak.artilleryonline.service.OnlineUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -23,6 +24,8 @@ public class UserBattleQueueConsumer implements Runnable {
     private final UserBattleQueue userBattleQueue;
 
     private final BattleService battleService;
+
+    private final OnlineUserService onlineUserService;
 
     private final ApplicationSettings applicationSettings;
 
@@ -45,6 +48,7 @@ public class UserBattleQueueConsumer implements Runnable {
         }
     }
 
+    // todo refactor
     private Set<UserBattleQueueElement> getElementsFromQueue() {
         synchronized (userBattleQueue) {
             if (userBattleQueue.size() == 0) {
@@ -62,7 +66,8 @@ public class UserBattleQueueConsumer implements Runnable {
         var element = userBattleQueue.peek();
         if (element != null) {
             var addTime = element.getAddTime();
-            if (System.currentTimeMillis() - addTime > applicationSettings.getUserBattleQueueTimeout()) {
+            if (System.currentTimeMillis() - addTime > applicationSettings.getUserBattleQueueTimeout()
+                    || onlineUserService.count() < 2) {
                 userBattleQueue.remove(element.getUser().getId());
                 createRandomBattle(Set.of(BattleParticipant.of(element), new BattleParticipant()));
             }
