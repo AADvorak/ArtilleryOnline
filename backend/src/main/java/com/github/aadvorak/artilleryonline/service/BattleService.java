@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -92,6 +93,27 @@ public class BattleService {
             battle.setRoom(room);
             participants.stream()
                     .map(BattleParticipant::getUser)
+                    .forEach(battleStartedSender::send);
+        }
+    }
+
+    public void createRandomBattle(Set<BattleParticipant> participants) {
+        synchronized (userBattleMap) {
+            participants.stream()
+                    .map(BattleParticipant::getUser)
+                    .filter(Objects::nonNull)
+                    .forEach(userAvailabilityService::checkSingleBattleAvailability);
+            participants.stream()
+                    .filter(participant -> participant.getUser() == null)
+                            .forEach(participant -> {
+                                participant.setNickname("ArtyBot");
+                                participant.setParams(new BattleParticipantParams()
+                                        .setSelectedVehicle(getRandomVehicle()));
+                            });
+            battleStarter.start(participants, BattleType.RANDOM);
+            participants.stream()
+                    .map(BattleParticipant::getUser)
+                    .filter(Objects::nonNull)
                     .forEach(battleStartedSender::send);
         }
     }

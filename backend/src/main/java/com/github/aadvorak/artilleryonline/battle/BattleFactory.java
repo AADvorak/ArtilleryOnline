@@ -149,7 +149,7 @@ public class BattleFactory {
         for (var participant : participants) {
             var vehicleModel = new VehicleModel();
             var id = battleModel.getIdGenerator().generate();
-            if (participant.getUser() == null) {
+            if (!BattleType.TEST_DRIVE.equals(battle.getType()) && participant.getUser() == null) {
                 battle.getBotsVehicleIds().add(id);
             }
             vehicleModel.setId(id);

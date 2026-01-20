@@ -9,7 +9,7 @@ application:
     client-smooth-transition: ${APP_SETTINGS_CLIENT_SMOOTH_TRANSITION:true}
     create-surfaces: ${APP_SETTINGS_CREATE_SURFACES:false}
     show-shell-trajectory: ${APP_SETTINGS_SHOW_SHELL_TRAJECTORY:false}
-    user-battle-queue-timeout: 30000
+    user-battle-queue-timeout: 10000
     message-timeout: 600000
     room-invitation-timeout: 60000
     additional-resolve-collisions-iterations-number: 5

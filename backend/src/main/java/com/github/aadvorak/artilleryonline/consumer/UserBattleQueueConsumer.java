@@ -1,12 +1,11 @@
 package com.github.aadvorak.artilleryonline.consumer;
 
 import com.github.aadvorak.artilleryonline.battle.BattleParticipant;
-import com.github.aadvorak.artilleryonline.battle.BattleStarter;
-import com.github.aadvorak.artilleryonline.battle.BattleType;
-import com.github.aadvorak.artilleryonline.collection.*;
+import com.github.aadvorak.artilleryonline.collection.UserBattleQueue;
+import com.github.aadvorak.artilleryonline.collection.UserBattleQueueElement;
 import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
-import com.github.aadvorak.artilleryonline.ws.BattleStartedSender;
+import com.github.aadvorak.artilleryonline.service.BattleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -23,13 +22,9 @@ public class UserBattleQueueConsumer implements Runnable {
 
     private final UserBattleQueue userBattleQueue;
 
-    private final BattleStarter battleStarter;
-
-    private final UserBattleMap userBattleMap;
+    private final BattleService battleService;
 
     private final ApplicationSettings applicationSettings;
-
-    private final BattleStartedSender battleStartedSender;
 
     @EventListener(ApplicationReadyEvent.class)
     public void startConsumer() {
@@ -44,23 +39,9 @@ public class UserBattleQueueConsumer implements Runnable {
                 sleep();
                 continue;
             }
-            var nicknames = elements.stream()
-                    .map(element -> element.getUser().getNickname())
-                    .collect(Collectors.toSet());
-            synchronized (userBattleMap) {
-                try {
-                    battleStarter.start(elements.stream()
-                            .map(BattleParticipant::of).collect(Collectors.toSet()), BattleType.RANDOM);
-                    elements.stream()
-                            .map(UserBattleQueueElement::getUser)
-                            .forEach(battleStartedSender::send);
-                    log.info("Users {} removed from queue to battle, queue size: {}",
-                            nicknames, userBattleQueue.size());
-                } catch (ConflictAppException ex) {
-                    log.info("Users {} removed from queue but battle not started, queue size: {}",
-                            nicknames, userBattleQueue.size());
-                }
-            }
+            createRandomBattle(elements.stream()
+                    .map(BattleParticipant::of)
+                    .collect(Collectors.toSet()));
         }
     }
 
@@ -69,7 +50,7 @@ public class UserBattleQueueConsumer implements Runnable {
             if (userBattleQueue.size() == 0) {
                 waitQueue();
             }
-            removeTimedOutUser();
+            createTimedOutUserWithBotBattle();
             if (userBattleQueue.size() < 2) {
                 return Set.of();
             }
@@ -77,15 +58,29 @@ public class UserBattleQueueConsumer implements Runnable {
         }
     }
 
-    private void removeTimedOutUser() {
+    private void createTimedOutUserWithBotBattle() {
         var element = userBattleQueue.peek();
         if (element != null) {
             var addTime = element.getAddTime();
             if (System.currentTimeMillis() - addTime > applicationSettings.getUserBattleQueueTimeout()) {
                 userBattleQueue.remove(element.getUser().getId());
-                log.info("removeTimedOutUser: {}, queue size: {}",
-                        element.getUser().getNickname(), userBattleQueue.size());
+                createRandomBattle(Set.of(BattleParticipant.of(element), new BattleParticipant()));
             }
+        }
+    }
+
+    private void createRandomBattle(Set<BattleParticipant> participants) {
+        var nicknames = participants.stream()
+                .filter(participant -> participant.getUser() != null)
+                .map(participant -> participant.getUser().getNickname())
+                .collect(Collectors.toSet());
+        try {
+            battleService.createRandomBattle(participants);
+            log.info("Users {} removed from queue to battle, queue size: {}",
+                    nicknames, userBattleQueue.size());
+        } catch (ConflictAppException ex) {
+            log.info("Users {} removed from queue but battle not started, queue size: {}",
+                    nicknames, userBattleQueue.size());
         }
     }
 
