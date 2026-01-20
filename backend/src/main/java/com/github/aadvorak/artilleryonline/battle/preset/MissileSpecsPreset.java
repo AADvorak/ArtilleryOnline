@@ -10,7 +10,7 @@ public enum MissileSpecsPreset {
 
     DEFAULT("MSL", new MissileSpecs()
             .setPushingAcceleration(18.0)
-            .setCorrectingAccelerationCoefficient(5.0)
+            .setCorrectingAccelerationCoefficient(6.0)
             .setMinCorrectingVelocity(5.0)
             .setAnglePrecision(Math.PI / 8)
             .setDamage(6.0)
