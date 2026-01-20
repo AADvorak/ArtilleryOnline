@@ -42,9 +42,13 @@ public class UserBattleQueueConsumer implements Runnable {
                 sleep();
                 continue;
             }
-            createRandomBattle(elements.stream()
+            var participants = elements.stream()
                     .map(BattleParticipant::of)
-                    .collect(Collectors.toSet()));
+                    .collect(Collectors.toSet());
+            if (participants.size() < 2) {
+                participants.add(new BattleParticipant());
+            }
+            createRandomBattle(participants);
         }
     }
 
@@ -54,24 +58,28 @@ public class UserBattleQueueConsumer implements Runnable {
             if (userBattleQueue.size() == 0) {
                 waitQueue();
             }
-            createTimedOutUserWithBotBattle();
-            if (userBattleQueue.size() < 2) {
-                return Set.of();
+            if (userBattleQueue.size() >= 2) {
+                return Set.of(getElementFromQueue(), getElementFromQueue());
             }
-            return Set.of(getElementFromQueue(), getElementFromQueue());
+            var element = getSingleElementFromQueueIfAvailable();
+            if (element != null) {
+                return Set.of(element);
+            }
+            return Set.of();
         }
     }
 
-    private void createTimedOutUserWithBotBattle() {
+    private UserBattleQueueElement getSingleElementFromQueueIfAvailable() {
         var element = userBattleQueue.peek();
         if (element != null) {
             var addTime = element.getAddTime();
             if (System.currentTimeMillis() - addTime > applicationSettings.getUserBattleQueueTimeout()
                     || onlineUserService.count() < 2) {
                 userBattleQueue.remove(element.getUser().getId());
-                createRandomBattle(Set.of(BattleParticipant.of(element), new BattleParticipant()));
+                return element;
             }
         }
+        return null;
     }
 
     private void createRandomBattle(Set<BattleParticipant> participants) {
