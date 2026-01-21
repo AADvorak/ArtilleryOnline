@@ -1,8 +1,12 @@
 package com.github.aadvorak.artilleryonline.battle.processor.bot;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.BoxCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
+import com.github.aadvorak.artilleryonline.battle.common.BoxType;
 import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
+import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 
 import java.util.Set;
@@ -24,10 +28,25 @@ public class BotsProcessor {
         var oldGunRotatingDirection = state.getGunState().getRotatingDirection();
         var oldJetActive = state.getJetState().isActive();
         var oldMovingDirection = state.getMovingDirection();
-        var gunAngle = state.getPosition().getAngle() + state.getGunState().getAngle();
+        var vehicleAngle = state.getPosition().getAngle();
+        var vehicleX = vehicle.getPosition().getX();
+        var gunAngle = vehicleAngle + state.getGunState().getAngle();
+        var needHp = vehicle.getModel().getRelativeHp() < 1.0;
+        var needAmmo = vehicle.getModel().getRelativeAmmo() < 1.0;
+        var isMovingToBox = false;
+        var otherVehiclePositions = battle.getVehicles().stream()
+                .filter(item -> !vehicle.getId().equals(item.getId()))
+                .map(VehicleCalculations::getPosition)
+                .collect(Collectors.toSet());
         var targetData = targetDataCalculator.calculate(vehicle, battle);
         state.getGunState().setTriggerPushed(targetData != null && targetData.armor() != null); // todo check penetration or use HE
         state.setMovingDirection(null);
+        if (needHp) {
+            isMovingToBox = setMovingToBoxIfAvailable(battle.getBoxes(), BoxType.HP, state, otherVehiclePositions);
+        }
+        if (needAmmo && !isMovingToBox) {
+            isMovingToBox = setMovingToBoxIfAvailable(battle.getBoxes(), BoxType.AMMO, state, otherVehiclePositions);
+        }
         if (gunAngle < Math.PI / 4) {
             state.getGunState().setRotatingDirection(MovingDirection.LEFT);
         } else if (gunAngle > 3 * Math.PI / 4) {
@@ -35,36 +54,34 @@ public class BotsProcessor {
         } else if (targetData == null) {
             state.getGunState().setRotatingDirection(gunAngle > Math.PI / 2 ? MovingDirection.RIGHT : MovingDirection.LEFT);
         } else if (targetData.armor() == null) {
-            var otherVehiclePositions = battle.getVehicles().stream()
-                    .filter(item -> !vehicle.getId().equals(item.getId()))
-                    .map(VehicleCalculations::getPosition)
-                    .collect(Collectors.toSet());
             var closestPosition = GeometryUtils.findClosestPosition(targetData.contact().position(), otherVehiclePositions);
             if (closestPosition != null) {
-                var vehicleX = vehicle.getPosition().getX();
-                var roomSpecs = battle.getModel().getRoom().getSpecs();
-                var vehicleMaxRadius = vehicle.getModel().getPreCalc().getMaxRadius();
-                var minTargetDistance = vehicleMaxRadius * 5;
-                var wallIsRight = roomSpecs.getRightTop().getX() - vehicleX < vehicleMaxRadius;
-                var wallIsLeft = vehicleX - roomSpecs.getLeftBottom().getX() < vehicleMaxRadius;
-                var vehicleTargetDistance = vehicleX - closestPosition.getX();
                 var targetIsRight = closestPosition.getX() > targetData.contact().position().getX();
                 state.getGunState().setRotatingDirection(targetIsRight ? MovingDirection.RIGHT : MovingDirection.LEFT);
-                if (gunAngle < Math.PI / 3 && targetIsRight) {
-                    state.setMovingDirection(MovingDirection.RIGHT);
-                } else if (gunAngle > 2 * Math.PI / 3 && !targetIsRight) {
-                    state.setMovingDirection(MovingDirection.LEFT);
-                } else if (Math.abs(vehicleTargetDistance) < minTargetDistance) {
-                    if (vehicleTargetDistance > 0 && !wallIsRight) {
+                if (!isMovingToBox) {
+                    var roomSpecs = battle.getModel().getRoom().getSpecs();
+                    var vehicleMaxRadius = vehicle.getModel().getPreCalc().getMaxRadius();
+                    var minTargetDistance = vehicleMaxRadius * 5;
+                    var wallIsRight = roomSpecs.getRightTop().getX() - vehicleX < vehicleMaxRadius;
+                    var wallIsLeft = vehicleX - roomSpecs.getLeftBottom().getX() < vehicleMaxRadius;
+                    var vehicleTargetDistance = vehicleX - closestPosition.getX();
+                    if (gunAngle < Math.PI / 3 && targetIsRight) {
                         state.setMovingDirection(MovingDirection.RIGHT);
-                    }
-                    if (vehicleTargetDistance < 0 && !wallIsLeft) {
+                    } else if (gunAngle > 2 * Math.PI / 3 && !targetIsRight) {
                         state.setMovingDirection(MovingDirection.LEFT);
+                    } else if (Math.abs(vehicleTargetDistance) < minTargetDistance) {
+                        if (vehicleTargetDistance > 0 && !wallIsRight) {
+                            state.setMovingDirection(MovingDirection.RIGHT);
+                        }
+                        if (vehicleTargetDistance < 0 && !wallIsLeft) {
+                            state.setMovingDirection(MovingDirection.LEFT);
+                        }
                     }
                 }
             }
         }
-        state.getJetState().setActive(state.isTurnedOver());
+        var lowVelocity = state.getVelocity().getMovingVelocity().magnitude() < 1.0;
+        state.getJetState().setActive(state.isTurnedOver() || state.getMovingDirection() != null && lowVelocity);
         if (
                 oldTriggerPushed != state.getGunState().isTriggerPushed()
                 || oldJetActive != state.getJetState().isActive()
@@ -79,5 +96,28 @@ public class BotsProcessor {
         return oldValue != null && newValue == null
                 || oldValue == null && newValue != null
                 || oldValue != null && !oldValue.equals(newValue);
+    }
+
+    private boolean setMovingToBoxIfAvailable(Set<BoxCalculations> boxes, BoxType boxType,
+                                              VehicleState state, Set<Position> otherVehiclePositions) {
+        var vehicleX = state.getPosition().getX();
+        var hpBoxesPositions = boxes.stream()
+                .filter(box -> boxType.equals(box.getModel().getSpecs().getType()))
+                .map(BoxCalculations::getPosition)
+                .filter(position -> notSeparatedByOtherVehicle(vehicleX, position.getX(), otherVehiclePositions))
+                .collect(Collectors.toSet());
+        var closestPosition = GeometryUtils.findClosestPosition(state.getPosition().getCenter(), hpBoxesPositions);
+        if (closestPosition != null) {
+            var xDiff = closestPosition.getX() - vehicleX;
+            state.setMovingDirection(xDiff > 0 ? MovingDirection.RIGHT :  MovingDirection.LEFT);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean notSeparatedByOtherVehicle(double x, double objectX, Set<Position> otherVehiclePositions) {
+        return otherVehiclePositions.stream()
+                .map(Position::getX)
+                .noneMatch(vehicleX -> vehicleX >= Math.min(x, objectX) && vehicleX <= Math.max(x, objectX));
     }
 }
