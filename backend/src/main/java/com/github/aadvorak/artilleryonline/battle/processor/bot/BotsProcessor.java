@@ -6,6 +6,10 @@ import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculatio
 import com.github.aadvorak.artilleryonline.battle.common.BoxType;
 import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
+import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleLaunchDroneProcessor;
 import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 
@@ -38,6 +42,8 @@ public class BotsProcessor {
                 .filter(item -> !vehicle.getId().equals(item.getId()))
                 .map(VehicleCalculations::getPosition)
                 .collect(Collectors.toSet());
+        switchToSignalShellIfAvailable(state);
+        launchDroneIfAvailable(vehicle.getModel(), battle.getModel());
         var targetData = targetDataCalculator.calculate(vehicle, battle);
         state.getGunState().setTriggerPushed(targetData != null && targetData.armor() != null); // todo check penetration or use HE
         state.setMovingDirection(null);
@@ -119,5 +125,27 @@ public class BotsProcessor {
         return otherVehiclePositions.stream()
                 .map(Position::getX)
                 .noneMatch(vehicleX -> vehicleX >= Math.min(x, objectX) && vehicleX <= Math.max(x, objectX));
+    }
+
+    // todo fix do not switch to sgn when already shot
+    private void switchToSignalShellIfAvailable(VehicleState state) {
+        if (state.getBomberState() != null && state.getBomberState().isReadyToFlight()) {
+            var shellName = ShellSpecsPreset.LIGHT_SGN.getName();
+            var ammo = state.getAmmo();
+            var gunState = state.getGunState();
+            if (!shellName.equals(gunState.getSelectedShell())
+                    && ammo.containsKey(shellName) && ammo.get(shellName) > 0) {
+                gunState.setSelectedShell(shellName);
+                gunState.setLoadedShell(null);
+                gunState.setLoadingShell(null);
+            }
+        }
+    }
+
+    private void launchDroneIfAvailable(VehicleModel model, BattleModel battleModel) {
+        var droneState = model.getState().getDroneState();
+        if (droneState != null && droneState.isReadyToLaunch() && !model.getState().isAboutToTurnOver()) {
+            VehicleLaunchDroneProcessor.launch(model, battleModel);
+        }
     }
 }
