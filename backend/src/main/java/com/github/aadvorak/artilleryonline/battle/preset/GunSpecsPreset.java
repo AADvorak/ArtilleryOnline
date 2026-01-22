@@ -40,7 +40,7 @@ public enum GunSpecsPreset {
             .setLoadTime(3.0)
             .setRotationVelocity(0.4)
             .setSlowRotationVelocity(0.2)
-            .setSlowToFastRotationTime(0.8)
+            .setSlowToFastRotationTime(0.5)
             .setLength(0.55)
             .setCaliber(0.05)
             .setAvailableShells(Map.of(
@@ -53,7 +53,7 @@ public enum GunSpecsPreset {
             .setLoadTime(3.0)
             .setRotationVelocity(0.4)
             .setSlowRotationVelocity(0.2)
-            .setSlowToFastRotationTime(0.8)
+            .setSlowToFastRotationTime(0.5)
             .setLength(0.47)
             .setCaliber(0.05)
             .setAvailableShells(Map.of(
@@ -66,7 +66,7 @@ public enum GunSpecsPreset {
             .setLoadTime(0.3)
             .setRotationVelocity(0.45)
             .setSlowRotationVelocity(0.2)
-            .setSlowToFastRotationTime(0.8)
+            .setSlowToFastRotationTime(0.5)
             .setLength(0.45)
             .setCaliber(0.03)
             .setAvailableShells(Map.of(
@@ -78,7 +78,7 @@ public enum GunSpecsPreset {
             .setLoadTime(0.5)
             .setRotationVelocity(0.45)
             .setSlowRotationVelocity(0.2)
-            .setSlowToFastRotationTime(0.8)
+            .setSlowToFastRotationTime(0.5)
             .setLength(0.35)
             .setCaliber(0.03)
             .setAvailableShells(Map.of(
@@ -91,7 +91,7 @@ public enum GunSpecsPreset {
             .setLoadTime(2.2)
             .setRotationVelocity(0.42)
             .setSlowRotationVelocity(0.2)
-            .setSlowToFastRotationTime(0.8)
+            .setSlowToFastRotationTime(0.5)
             .setLength(0.4)
             .setCaliber(0.04)
             .setAvailableShells(Map.of(
