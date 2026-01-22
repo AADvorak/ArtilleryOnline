@@ -15,7 +15,6 @@ import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleLaunchDroneProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleLaunchMissileProcessor;
-import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleMissileLauncherProcessor;
 import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 
@@ -166,14 +165,19 @@ public class BotsProcessor {
     private void runFromShellIfExists(VehicleModel model, Set<ShellCalculations> shells,
                               boolean moveRightBlocked, boolean moveLeftBlocked) {
         var vehiclePosition = model.getState().getPosition().getCenter();
-        var vehicleArea = new Circle(vehiclePosition, model.getPreCalc().getMaxRadius());
+        var maxRadius = model.getPreCalc().getMaxRadius();
+        var vehicleArea = new Circle(vehiclePosition, maxRadius);
         var shellOptional = shells.stream()
                 .filter(item -> {
+                    var shellPosition = item.getPosition();
+                    if (ShellType.SGN.equals(item.getModel().getSpecs().getType())
+                            && item.getModel().getState().isStuck()) {
+                        return Math.abs(shellPosition.getX() - vehiclePosition.getX()) < 3 * maxRadius;
+                    }
                     var trajectoryVector = item.getVelocity().multiply(0.5);
                     if (trajectoryVector.magnitude() == 0) {
                         return false;
                     }
-                    var shellPosition = item.getPosition();
                     var trajectory = new Segment(shellPosition, shellPosition.shifted(trajectoryVector));
                     return !GeometryUtils.getSegmentAndCircleIntersectionPoints(trajectory, vehicleArea).isEmpty();
                 })
