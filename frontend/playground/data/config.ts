@@ -1,5 +1,5 @@
-import type {DroneSpecs, GunSpecs, JetSpecs} from "@/playground/data/specs";
-import type {Ammo, Missiles} from "@/playground/data/common";
+import type {DroneSpecs, GunSpecs, JetSpecs, MissileLauncherSpecs} from "@/playground/data/specs";
+import type {Ammo} from "@/playground/data/common";
 import type {Shape} from "~/playground/data/shapes";
 
 export interface VehicleConfig {
@@ -7,7 +7,7 @@ export interface VehicleConfig {
   jet: JetSpecs
   drone?: DroneSpecs
   ammo: AmmoConfig[]
-  missiles: Missiles
+  missileLauncher?: MissileLauncherSpecs
   color?: string
 }
 

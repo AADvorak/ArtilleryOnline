@@ -5,19 +5,17 @@ import com.github.aadvorak.artilleryonline.battle.common.BodyVelocity;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.MissileModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
-import com.github.aadvorak.artilleryonline.battle.preset.MissileSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.state.MissileState;
 
 public class VehicleLaunchMissileProcessor {
 
     public static void launch(VehicleModel vehicleModel, BattleModel battleModel) {
-        var missiles = vehicleModel.getState().getMissiles();
-        if (missiles.isEmpty()) {
-            return;
-        }
-        var missilesKey = missiles.keySet().iterator().next();
-        var missilesNumber = missiles.get(missilesKey);
-        if (missilesNumber < 1) {
+        var launcherState = vehicleModel.getState().getMissileLauncherState();
+        var launcherSpecs = vehicleModel.getConfig().getMissileLauncher();
+        if (launcherSpecs == null
+                || launcherState == null
+                || launcherState.getRemainMissiles() < 1
+                || launcherState.getPrepareToLaunchRemainTime() > 0) {
             return;
         }
         var vehiclePosition = vehicleModel.getState().getPosition();
@@ -25,8 +23,9 @@ public class VehicleLaunchMissileProcessor {
         if (angle == null) {
             return;
         }
-        missiles.put(missilesKey, missilesNumber - 1);
-        var specs = MissileSpecsPreset.DEFAULT.getSpecs();
+        launcherState.setRemainMissiles(launcherState.getRemainMissiles() - 1);
+        launcherState.setPrepareToLaunchRemainTime(launcherSpecs.getPrepareToLaunchTime());
+        var specs = launcherSpecs.getMissiles();
         var state = new MissileState()
                 .setPosition(BodyPosition.of(vehiclePosition.getCenter().shifted(specs.getLength() / 2,
                         angle), angle))

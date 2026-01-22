@@ -7,6 +7,7 @@ import type {
   ExplosionSpecs,
   GunSpecs,
   JetSpecs,
+  MissileLauncherSpecs,
   MissileSpecs,
   RoomSpecs,
   ShellSpecs,
@@ -139,7 +140,7 @@ export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs 
   const minTrackHitCaliber = DeserializerBase.readDouble(input)
   const availableGuns = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeGunSpecs)!
   const availableJets = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeJetSpecs)!
-  const availableMissiles = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeMissileSpecs)!
+  const availableMissileLaunchers = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeMissileLauncherSpecs)!
   const availableDrones = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeDroneSpecs)!
   const availableBombers = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeBomberSpecs)!
   const defaultGun = DeserializerBase.readString(input)
@@ -159,7 +160,7 @@ export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs 
     minTrackHitCaliber,
     availableGuns,
     availableJets,
-    availableMissiles,
+    availableMissileLaunchers,
     availableDrones,
     availableBombers,
     defaultGun
@@ -208,5 +209,14 @@ export function deserializeBomberSpecs(input: DeserializerInput): BomberSpecs {
     prepareToFlightTime,
     flightTime,
     bombs
+  }
+}
+
+export function deserializeMissileLauncherSpecs(input: DeserializerInput): MissileLauncherSpecs {
+  const prepareToLaunchTime = DeserializerBase.readDouble(input)
+  const missiles = deserializeMissileSpecs(input)
+  return {
+    prepareToLaunchTime,
+    missiles
   }
 }

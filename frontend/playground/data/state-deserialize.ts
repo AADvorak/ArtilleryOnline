@@ -11,12 +11,22 @@ import type {
   ExplosionState,
   GunState,
   JetState,
+  MissileLauncherState,
   MissileState,
   RoomState,
   ShellState, SurfaceState,
   TrackState, VehicleState
 } from "~/playground/data/state";
 import type {MovingDirection} from "~/playground/data/common";
+
+export function deserializeMissileLauncherState(input: DeserializerInput): MissileLauncherState {
+  const prepareToLaunchRemainTime = DeserializerBase.readDouble(input)
+  const remainMissiles = DeserializerBase.readInt(input)
+  return {
+    prepareToLaunchRemainTime,
+    remainMissiles
+  }
+}
 
 export function deserializeExplosionState(input: DeserializerInput): ExplosionState {
   const time = DeserializerBase.readDouble(input)
@@ -151,12 +161,12 @@ export function deserializeVehicleState(input: DeserializerInput): VehicleState 
   const rotatingDirection = DeserializerBase.readNullable(input, DeserializerBase.readString) as MovingDirection
   const hitPoints = DeserializerBase.readDouble(input)
   const ammo = DeserializerBase.readMap(input, DeserializerBase.readString, DeserializerBase.readInt)!
-  const missiles = DeserializerBase.readMap(input, DeserializerBase.readString, DeserializerBase.readInt)!
   const gunState = DeserializerBase.readNullable(input, deserializeGunState)!
   const trackState = DeserializerBase.readNullable(input, deserializeTrackState)!
   const jetState = DeserializerBase.readNullable(input, deserializeJetState)!
   const droneState = DeserializerBase.readNullable(input, deserializeDroneInVehicleState)!
   const bomberState = DeserializerBase.readNullable(input, deserializeBomberState)
+  const missileLauncherState = DeserializerBase.readNullable(input, deserializeMissileLauncherState)
   const onGround = DeserializerBase.readBoolean(input)
   return {
     position,
@@ -166,12 +176,12 @@ export function deserializeVehicleState(input: DeserializerInput): VehicleState 
     rotatingDirection,
     hitPoints,
     ammo,
-    missiles,
     gunState,
     trackState,
     jetState,
     droneState,
     bomberState,
+    missileLauncherState,
     onGround
   }
 }

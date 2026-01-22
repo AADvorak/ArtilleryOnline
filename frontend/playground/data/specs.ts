@@ -39,8 +39,8 @@ export interface AvailableJets {
   [key: string]: JetSpecs
 }
 
-export interface AvailableMissiles {
-  [key: string]: MissileSpecs
+export interface AvailableMissileLaunchers {
+  [key: string]: MissileLauncherSpecs
 }
 
 export interface AvailableDrones {
@@ -83,7 +83,7 @@ export interface VehicleSpecs {
   minTrackHitCaliber: number
   availableGuns: AvailableGuns
   availableJets: AvailableJets
-  availableMissiles: AvailableMissiles
+  availableMissileLaunchers: AvailableMissileLaunchers
   availableDrones: AvailableDrones
   availableBombers: AvailableBombers
   defaultGun: string
@@ -131,4 +131,9 @@ export interface BomberSpecs {
   prepareToFlightTime: number
   flightTime: number
   bombs: ShellSpecs
+}
+
+export interface MissileLauncherSpecs {
+  prepareToLaunchTime: number
+  missiles: MissileSpecs
 }

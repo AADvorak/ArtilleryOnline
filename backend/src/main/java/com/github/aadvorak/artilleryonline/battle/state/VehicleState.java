@@ -29,8 +29,6 @@ public class VehicleState implements BodyState, CompactSerializable {
 
     private Map<String, Integer> ammo;
 
-    private Map<String, Integer> missiles;
-
     private GunState gunState;
 
     private TrackState trackState;
@@ -40,6 +38,8 @@ public class VehicleState implements BodyState, CompactSerializable {
     private DroneInVehicleState droneState;
 
     private BomberState bomberState;
+
+    private MissileLauncherState missileLauncherState;
 
     private boolean onGround;
 
@@ -79,12 +79,12 @@ public class VehicleState implements BodyState, CompactSerializable {
         stream.writeSerializable(rotatingDirection);
         stream.writeDouble(hitPoints);
         stream.writeMap(ammo, stream::writeString, stream::writeInt);
-        stream.writeMap(missiles, stream::writeString, stream::writeInt);
         stream.writeSerializable(gunState);
         stream.writeSerializable(trackState);
         stream.writeSerializable(jetState);
         stream.writeSerializable(droneState);
         stream.writeSerializable(bomberState);
+        stream.writeSerializable(missileLauncherState);
         stream.writeBoolean(onGround);
     }
 }

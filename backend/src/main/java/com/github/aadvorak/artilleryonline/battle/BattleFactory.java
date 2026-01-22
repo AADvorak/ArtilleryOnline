@@ -173,29 +173,32 @@ public class BattleFactory {
             if (!vehicleModel.getSpecs().getAvailableDrones().isEmpty()) {
                 drone = vehicleModel.getSpecs().getAvailableDrones().values().iterator().next();
             }
-            BomberSpecs bomber = null;
+            BomberSpecs bomberSpecs = null;
             BomberState bomberState = null;
             if (!vehicleModel.getSpecs().getAvailableBombers().isEmpty()) {
-                bomber = vehicleModel.getSpecs().getAvailableBombers().values().iterator().next();
+                bomberSpecs = vehicleModel.getSpecs().getAvailableBombers().values().iterator().next();
                 bomberState = new BomberState()
-                        .setRemainFlights(bomber.getFlights());
+                        .setRemainFlights(bomberSpecs.getFlights());
+            }
+            MissileLauncherSpecs missileLauncherSpecs = null;
+            MissileLauncherState missileLauncherState = null;
+            if (!vehicleModel.getSpecs().getAvailableMissileLaunchers().isEmpty()) {
+                missileLauncherSpecs = vehicleModel.getSpecs().getAvailableMissileLaunchers().values().iterator().next();
+                missileLauncherState = new MissileLauncherState()
+                        .setRemainMissiles(vehicleModel.getSpecs().getMissiles());
             }
             var ammoConfig = getAmmoConfig(userConfig, gun.getAvailableShells().keySet(), gun.getAmmo());
-            var availableMissilesNumber = vehicleModel.getSpecs().getAvailableMissiles().size();
-            var missiles = new HashMap<String, Integer>();
-            vehicleModel.getSpecs().getAvailableMissiles().keySet().forEach(missileName ->
-                    missiles.put(missileName, vehicleModel.getSpecs().getMissiles() / availableMissilesNumber));
             vehicleModel.setConfig(new VehicleConfig()
                     .setAmmo(ammoConfig)
-                    .setMissiles(missiles)
+                    .setMissileLauncher(missileLauncherSpecs)
                     .setGun(gun)
                     .setJet(jet)
                     .setDrone(drone)
-                    .setBomber(bomber)
+                    .setBomber(bomberSpecs)
                     .setColor(getVehicleColor(participant)));
             vehicleModel.setState(new VehicleState()
                     .setAmmo(ammoConfig.stream().collect(Collectors.toMap(AmmoConfig::getName, AmmoConfig::getAmount)))
-                    .setMissiles(new HashMap<>(vehicleModel.getConfig().getMissiles()))
+                    .setMissileLauncherState(missileLauncherState)
                     .setHitPoints(vehicleModel.getSpecs().getHitPoints())
                     .setPosition(new BodyPosition()
                             .setX(distanceBetweenVehicles * vehicleNumber)

@@ -45,7 +45,7 @@ public class VehicleSpecs implements Specs, CompactSerializable {
 
     private Map<String, JetSpecs> availableJets;
 
-    private Map<String, MissileSpecs> availableMissiles;
+    private Map<String, MissileLauncherSpecs> availableMissileLaunchers;
 
     private Map<String, DroneSpecs> availableDrones;
 
@@ -74,7 +74,7 @@ public class VehicleSpecs implements Specs, CompactSerializable {
         stream.writeDouble(minTrackHitCaliber);
         stream.writeStringMapOfSerializable(availableGuns);
         stream.writeStringMapOfSerializable(availableJets);
-        stream.writeStringMapOfSerializable(availableMissiles);
+        stream.writeStringMapOfSerializable(availableMissileLaunchers);
         stream.writeStringMapOfSerializable(availableDrones);
         stream.writeStringMapOfSerializable(availableBombers);
         stream.writeString(defaultGun);

@@ -66,6 +66,11 @@ export interface DroneInVehicleState {
   prepareToLaunchRemainTime: number
 }
 
+export interface MissileLauncherState {
+  prepareToLaunchRemainTime: number
+  remainMissiles: number
+}
+
 export interface BomberState {
   readyToFlight: boolean
   flying: boolean
@@ -82,12 +87,12 @@ export interface VehicleState extends BodyState {
   movingDirection?: MovingDirection
   hitPoints: number
   ammo: Ammo
-  missiles: Missiles
   gunState: GunState
   trackState: TrackState
   jetState: JetState
   droneState: DroneInVehicleState
   bomberState?: BomberState
+  missileLauncherState?: MissileLauncherState
   onGround: boolean
 }
 

@@ -25,7 +25,7 @@ public class VehicleConfig implements Config, CompactSerializable {
 
     private List<AmmoConfig> ammo;
 
-    private Map<String, Integer> missiles;
+    private MissileLauncherSpecs missileLauncher;
 
     private String color;
 
@@ -35,7 +35,7 @@ public class VehicleConfig implements Config, CompactSerializable {
         stream.writeSerializableValue(jet);
         stream.writeSerializable(drone);
         stream.writeCollectionOfSerializable(ammo);
-        stream.writeMap(missiles, stream::writeString, stream::writeInt);
+        stream.writeSerializable(missileLauncher);
         stream.writeNullable(color, stream::writeString);
     }
 }

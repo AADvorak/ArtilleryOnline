@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useBattleStore } from '~/stores/battle'
+import {computed} from 'vue'
+import {useBattleStore} from '~/stores/battle'
 import {useUserStore} from '~/stores/user'
 import {useCommandsSender} from "~/playground/composables/commands-sender";
 import {Command} from "~/playground/data/command";
@@ -21,12 +21,8 @@ const userVehicle = computed(() => {
   return battleStore.battle?.model.vehicles[userStore.user!.nickname]
 })
 
-const missiles = computed(() => {
-  return userVehicle.value?.state.missiles
-})
-
-const missileKeys = computed(() => {
-  return Object.keys(missiles.value || {})
+const missileLauncher = computed(() => {
+  return userVehicle.value?.state.missileLauncherState
 })
 
 function launch() {
@@ -37,21 +33,20 @@ function launch() {
 </script>
 
 <template>
-  <template v-for="missileKey in missileKeys">
-    <no-focus-btn
-        class="missile-btn"
-        color="primary"
-        :disabled="!missiles[missileKey]"
-        @click="launch"
-    >
-      {{ missileKey }}: {{ missiles[missileKey] }}
-      <vertical-tooltip
-          :location="VerticalTooltipLocation.BOTTOM"
-          :tooltip="t('controls.launchMissile')"
-          :show="globalStateStore.showHelp === VerticalTooltipLocation.BOTTOM"
-      />
-    </no-focus-btn>
-  </template>
+  <no-focus-btn
+      v-if="missileLauncher"
+      class="missile-btn"
+      color="primary"
+      :disabled="!missileLauncher.remainMissiles"
+      @click="launch"
+  >
+    MSL: {{ missileLauncher.remainMissiles }}
+    <vertical-tooltip
+        :location="VerticalTooltipLocation.BOTTOM"
+        :tooltip="t('controls.launchMissile')"
+        :show="globalStateStore.showHelp === VerticalTooltipLocation.BOTTOM"
+    />
+  </no-focus-btn>
 </template>
 
 <style scoped>
