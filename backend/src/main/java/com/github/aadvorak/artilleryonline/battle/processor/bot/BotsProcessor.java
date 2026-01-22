@@ -2,10 +2,12 @@ package com.github.aadvorak.artilleryonline.battle.processor.bot;
 
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.BoxCalculations;
+import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.BoxType;
 import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
+import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
@@ -42,7 +44,7 @@ public class BotsProcessor {
                 .filter(item -> !vehicle.getId().equals(item.getId()))
                 .map(VehicleCalculations::getPosition)
                 .collect(Collectors.toSet());
-        switchToSignalShellIfAvailable(state);
+        switchToSignalShellIfAvailable(vehicle.getId(), state, battle.getShells());
         launchDroneIfAvailable(vehicle.getModel(), battle.getModel());
         var targetData = targetDataCalculator.calculate(vehicle, battle);
         state.getGunState().setTriggerPushed(targetData != null && targetData.armor() != null); // todo check penetration or use HE
@@ -127,17 +129,21 @@ public class BotsProcessor {
                 .noneMatch(vehicleX -> vehicleX >= Math.min(x, objectX) && vehicleX <= Math.max(x, objectX));
     }
 
-    // todo fix do not switch to sgn when already shot
-    private void switchToSignalShellIfAvailable(VehicleState state) {
+    private void switchToSignalShellIfAvailable(int vehicleId, VehicleState state, Set<ShellCalculations> shells) {
         if (state.getBomberState() != null && state.getBomberState().isReadyToFlight()) {
-            var shellName = ShellSpecsPreset.LIGHT_SGN.getName();
-            var ammo = state.getAmmo();
-            var gunState = state.getGunState();
-            if (!shellName.equals(gunState.getSelectedShell())
-                    && ammo.containsKey(shellName) && ammo.get(shellName) > 0) {
-                gunState.setSelectedShell(shellName);
-                gunState.setLoadedShell(null);
-                gunState.setLoadingShell(null);
+            var alreadyShot = shells.stream()
+                    .anyMatch(shell -> ShellType.SGN.equals(shell.getModel().getSpecs().getType())
+                                    && vehicleId == shell.getModel().getVehicleId());
+            if (!alreadyShot) {
+                var shellName = ShellSpecsPreset.LIGHT_SGN.getName();
+                var ammo = state.getAmmo();
+                var gunState = state.getGunState();
+                if (!shellName.equals(gunState.getSelectedShell())
+                        && ammo.containsKey(shellName) && ammo.get(shellName) > 0) {
+                    gunState.setSelectedShell(shellName);
+                    gunState.setLoadedShell(null);
+                    gunState.setLoadingShell(null);
+                }
             }
         }
     }
