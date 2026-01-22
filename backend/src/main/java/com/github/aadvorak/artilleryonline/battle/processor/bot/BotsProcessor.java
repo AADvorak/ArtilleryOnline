@@ -8,6 +8,8 @@ import com.github.aadvorak.artilleryonline.battle.common.BoxType;
 import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
+import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
+import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
@@ -44,6 +46,10 @@ public class BotsProcessor {
                 .filter(item -> !vehicle.getId().equals(item.getId()))
                 .map(VehicleCalculations::getPosition)
                 .collect(Collectors.toSet());
+        var roomSpecs = battle.getModel().getRoom().getSpecs();
+        var vehicleMaxRadius = vehicle.getModel().getPreCalc().getMaxRadius();
+        var moveRightBlocked = roomSpecs.getRightTop().getX() - vehicleX < vehicleMaxRadius;
+        var moveLeftBlocked = vehicleX - roomSpecs.getLeftBottom().getX() < vehicleMaxRadius;
         switchToSignalShellIfAvailable(vehicle.getId(), state, battle.getShells());
         launchDroneIfAvailable(vehicle.getModel(), battle.getModel());
         var targetData = targetDataCalculator.calculate(vehicle, battle);
@@ -67,26 +73,25 @@ public class BotsProcessor {
                 var targetIsRight = closestPosition.getX() > targetData.contact().position().getX();
                 state.getGunState().setRotatingDirection(targetIsRight ? MovingDirection.RIGHT : MovingDirection.LEFT);
                 if (!isMovingToBox) {
-                    var roomSpecs = battle.getModel().getRoom().getSpecs();
-                    var vehicleMaxRadius = vehicle.getModel().getPreCalc().getMaxRadius();
                     var minTargetDistance = vehicleMaxRadius * 5;
-                    var wallIsRight = roomSpecs.getRightTop().getX() - vehicleX < vehicleMaxRadius;
-                    var wallIsLeft = vehicleX - roomSpecs.getLeftBottom().getX() < vehicleMaxRadius;
                     var vehicleTargetDistance = vehicleX - closestPosition.getX();
                     if (gunAngle < Math.PI / 3 && targetIsRight) {
                         state.setMovingDirection(MovingDirection.RIGHT);
                     } else if (gunAngle > 2 * Math.PI / 3 && !targetIsRight) {
                         state.setMovingDirection(MovingDirection.LEFT);
                     } else if (Math.abs(vehicleTargetDistance) < minTargetDistance) {
-                        if (vehicleTargetDistance > 0 && !wallIsRight) {
+                        if (vehicleTargetDistance > 0 && !moveRightBlocked) {
                             state.setMovingDirection(MovingDirection.RIGHT);
                         }
-                        if (vehicleTargetDistance < 0 && !wallIsLeft) {
+                        if (vehicleTargetDistance < 0 && !moveLeftBlocked) {
                             state.setMovingDirection(MovingDirection.LEFT);
                         }
                     }
                 }
             }
+        }
+        if (state.getMovingDirection() == null) {
+            runFromShellIfExists(vehicle.getModel(), battle.getShells(), moveRightBlocked, moveLeftBlocked);
         }
         var lowVelocity = state.getVelocity().getMovingVelocity().magnitude() < 1.0;
         state.getJetState().setActive(state.isTurnedOver() || state.getMovingDirection() != null && lowVelocity);
@@ -153,5 +158,28 @@ public class BotsProcessor {
         if (droneState != null && droneState.isReadyToLaunch() && !model.getState().isAboutToTurnOver()) {
             VehicleLaunchDroneProcessor.launch(model, battleModel);
         }
+    }
+
+    private void runFromShellIfExists(VehicleModel model, Set<ShellCalculations> shells,
+                              boolean moveRightBlocked, boolean moveLeftBlocked) {
+        var vehiclePosition = model.getState().getPosition().getCenter();
+        var vehicleArea = new Circle(vehiclePosition, model.getPreCalc().getMaxRadius());
+        var shellOptional = shells.stream()
+                .filter(item -> {
+                    var shellPosition = item.getPosition();
+                    var trajectory = new Segment(shellPosition,
+                            shellPosition.shifted(item.getVelocity().multiply(0.5)));
+                    return !GeometryUtils.getSegmentAndCircleIntersectionPoints(trajectory, vehicleArea).isEmpty();
+                })
+                .findAny();
+        shellOptional.ifPresent(shell -> {
+            var shellPosition = shell.getPosition();
+            var shellIsRight = shellPosition.getX() > vehiclePosition.getX();
+            if (shellIsRight && !moveLeftBlocked) {
+                model.getState().setMovingDirection(MovingDirection.LEFT);
+            } else if (!shellIsRight && !moveRightBlocked) {
+                model.getState().setMovingDirection(MovingDirection.RIGHT);
+            }
+        });
     }
 }
