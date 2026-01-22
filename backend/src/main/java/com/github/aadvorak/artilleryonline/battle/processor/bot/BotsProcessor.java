@@ -10,6 +10,7 @@ import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.common.ShellType;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
+import com.github.aadvorak.artilleryonline.battle.config.AmmoConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
@@ -18,6 +19,7 @@ import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleLaunc
 import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 
+import java.util.Comparator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -51,11 +53,11 @@ public class BotsProcessor {
         var vehicleMaxRadius = vehicle.getModel().getPreCalc().getMaxRadius();
         var moveRightBlocked = roomSpecs.getRightTop().getX() - vehicleX < vehicleMaxRadius;
         var moveLeftBlocked = vehicleX - roomSpecs.getLeftBottom().getX() < vehicleMaxRadius;
-        switchToSignalShellIfAvailable(vehicle.getId(), state, battle.getShells());
+        switchShellIfNeeded(vehicle.getId(), state, battle.getShells());
         launchDroneIfAvailable(vehicle.getModel(), battle.getModel());
         VehicleLaunchMissileProcessor.launch(vehicle.getModel(), battle.getModel());
         var targetData = targetDataCalculator.calculate(vehicle, battle);
-        state.getGunState().setTriggerPushed(targetData != null && targetData.armor() != null); // todo check penetration or use HE
+        state.getGunState().setTriggerPushed(targetData != null && targetData.armor() != null);
         state.setMovingDirection(null);
         if (needHp) {
             isMovingToBox = setMovingToBoxIfAvailable(battle.getBoxes(), BoxType.HP, state, otherVehiclePositions);
@@ -136,22 +138,38 @@ public class BotsProcessor {
                 .noneMatch(vehicleX -> vehicleX >= Math.min(x, objectX) && vehicleX <= Math.max(x, objectX));
     }
 
-    private void switchToSignalShellIfAvailable(int vehicleId, VehicleState state, Set<ShellCalculations> shells) {
+    private void switchShellIfNeeded(int vehicleId, VehicleState state, Set<ShellCalculations> shells) {
+        String newSelectedShell = null;
+        var ammo = state.getAmmo();
+        var gunState = state.getGunState();
         if (state.getBomberState() != null && state.getBomberState().isReadyToFlight()) {
             var alreadyShot = shells.stream()
                     .anyMatch(shell -> ShellType.SGN.equals(shell.getModel().getSpecs().getType())
                                     && vehicleId == shell.getModel().getVehicleId());
             if (!alreadyShot) {
                 var shellName = ShellSpecsPreset.LIGHT_SGN.getName();
-                var ammo = state.getAmmo();
-                var gunState = state.getGunState();
-                if (!shellName.equals(gunState.getSelectedShell())
-                        && ammo.containsKey(shellName) && ammo.get(shellName) > 0) {
-                    gunState.setSelectedShell(shellName);
-                    gunState.setLoadedShell(null);
-                    gunState.setLoadingShell(null);
+                if (ammo.containsKey(shellName) && ammo.get(shellName) > 0) {
+                    newSelectedShell = shellName;
                 }
             }
+        } else {
+            var ammoSorted = ammo.entrySet().stream()
+                    .filter(entry -> entry.getValue() > 0)
+                    .map(entry -> new AmmoConfig()
+                            .setName(entry.getKey())
+                            .setAmount(entry.getValue()))
+                    .sorted(Comparator.comparingInt(AmmoConfig::getAmount).reversed())
+                    .toList();
+            if (ammoSorted.size() > 1) {
+                if (ammoSorted.get(0).getAmount() - ammoSorted.get(1).getAmount() > 4) {
+                    newSelectedShell = ammoSorted.getFirst().getName();
+                }
+            }
+        }
+        if (newSelectedShell != null && !newSelectedShell.equals(gunState.getSelectedShell())) {
+            gunState.setSelectedShell(newSelectedShell);
+            gunState.setLoadedShell(null);
+            gunState.setLoadingShell(null);
         }
     }
 
