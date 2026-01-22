@@ -14,6 +14,8 @@ import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleLaunchDroneProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleLaunchMissileProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleMissileLauncherProcessor;
 import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 
@@ -52,6 +54,7 @@ public class BotsProcessor {
         var moveLeftBlocked = vehicleX - roomSpecs.getLeftBottom().getX() < vehicleMaxRadius;
         switchToSignalShellIfAvailable(vehicle.getId(), state, battle.getShells());
         launchDroneIfAvailable(vehicle.getModel(), battle.getModel());
+        VehicleLaunchMissileProcessor.launch(vehicle.getModel(), battle.getModel());
         var targetData = targetDataCalculator.calculate(vehicle, battle);
         state.getGunState().setTriggerPushed(targetData != null && targetData.armor() != null); // todo check penetration or use HE
         state.setMovingDirection(null);
@@ -166,9 +169,12 @@ public class BotsProcessor {
         var vehicleArea = new Circle(vehiclePosition, model.getPreCalc().getMaxRadius());
         var shellOptional = shells.stream()
                 .filter(item -> {
+                    var trajectoryVector = item.getVelocity().multiply(0.5);
+                    if (trajectoryVector.magnitude() == 0) {
+                        return false;
+                    }
                     var shellPosition = item.getPosition();
-                    var trajectory = new Segment(shellPosition,
-                            shellPosition.shifted(item.getVelocity().multiply(0.5)));
+                    var trajectory = new Segment(shellPosition, shellPosition.shifted(trajectoryVector));
                     return !GeometryUtils.getSegmentAndCircleIntersectionPoints(trajectory, vehicleArea).isEmpty();
                 })
                 .findAny();
