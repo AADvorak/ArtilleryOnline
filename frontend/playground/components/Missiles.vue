@@ -21,8 +21,26 @@ const userVehicle = computed(() => {
   return battleStore.battle?.model.vehicles[userStore.user!.nickname]
 })
 
-const missileLauncher = computed(() => {
+const missileLauncherState = computed(() => {
   return userVehicle.value?.state.missileLauncherState
+})
+
+const missileLauncherSpecs = computed(() => {
+  return userVehicle.value?.config.missileLauncher
+})
+
+const progress = computed(() => {
+  let value = 0
+  const state = missileLauncherState.value
+  const specs = missileLauncherSpecs.value
+  if (state && specs) {
+    if (state.prepareToLaunchRemainTime <= 0) {
+      value = 1
+    } else if (state.prepareToLaunchRemainTime < specs.prepareToLaunchTime) {
+      value = (specs.prepareToLaunchTime - state.prepareToLaunchRemainTime) / specs.prepareToLaunchTime
+    }
+  }
+  return Math.floor(value * 100)
 })
 
 function launch() {
@@ -33,24 +51,34 @@ function launch() {
 </script>
 
 <template>
-  <no-focus-btn
-      v-if="missileLauncher"
-      class="missile-btn"
-      color="primary"
-      :disabled="!missileLauncher.remainMissiles"
-      @click="launch"
-  >
-    MSL: {{ missileLauncher.remainMissiles }}
-    <vertical-tooltip
-        :location="VerticalTooltipLocation.BOTTOM"
-        :tooltip="t('controls.launchMissile')"
-        :show="globalStateStore.showHelp === VerticalTooltipLocation.BOTTOM"
-    />
-  </no-focus-btn>
+  <div v-if="missileLauncherState" class="progress-wrapper">
+    <v-progress-linear
+        bg-color="blue-grey"
+        height="16"
+        color="blue"
+        class="progress"
+        :model-value="progress"
+        :disabled="!missileLauncherState.remainMissiles"
+        @click="launch"
+    >
+      <span class="progress-text">MSL: {{ missileLauncherState.remainMissiles }}</span>
+      <vertical-tooltip
+          :location="VerticalTooltipLocation.BOTTOM"
+          :tooltip="t('controls.launchMissile')"
+          :show="globalStateStore.showHelp === VerticalTooltipLocation.BOTTOM"
+      />
+    </v-progress-linear>
+  </div>
 </template>
 
 <style scoped>
-.missile-btn {
-  padding: 0 8px;
+.progress-wrapper {
+  min-width: 60px;
+}
+.progress {
+  cursor: pointer;
+}
+.progress-text {
+  font-size: 16px;
 }
 </style>
