@@ -51,6 +51,7 @@ public class TargetDataCalculator {
                     targetData = new TargetData(
                             bodyContact.contact(),
                             hitNormal,
+                            vehicle.getId(),
                             shellSpecs.getPenetration(),
                             otherVehicle.getModel().getSpecs().getArmor().get(bodyContact.hitSurface())
                     );
@@ -58,12 +59,12 @@ public class TargetDataCalculator {
                 }
                 var wheelContact = TrajectoryContactUtils.detectWithWheel(trajectory, otherVehicle.getRightWheel());
                 if (wheelContact != null) {
-                    targetData = new TargetData(wheelContact, hitNormal, null, null);
+                    targetData = new TargetData(wheelContact, hitNormal, vehicle.getId(), null, null);
                     break;
                 }
                 wheelContact = TrajectoryContactUtils.detectWithWheel(trajectory, otherVehicle.getLeftWheel());
                 if (wheelContact != null) {
-                    targetData = new TargetData(wheelContact, hitNormal, null, null);
+                    targetData = new TargetData(wheelContact, hitNormal, vehicle.getId(), null, null);
                     break;
                 }
             }
@@ -74,7 +75,7 @@ public class TargetDataCalculator {
                 Position groundPosition = BattleUtils.getGroundIntersectionPoint(trajectory, battle.getModel().getRoom());
                 if (groundPosition != null) {
                     var contact = Contact.withUncheckedDepthOf(0, 0, groundPosition);
-                    targetData = new TargetData(contact, hitNormal, null, null);
+                    targetData = new TargetData(contact, hitNormal, null, null, null);
                     break;
                 }
             }
