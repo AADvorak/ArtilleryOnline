@@ -27,6 +27,7 @@ import {battleHeader} from "~/locales/ru/battle-header.js";
 import {names} from "~/locales/ru/names.js";
 import {descriptions} from "~/locales/ru/descriptions.js";
 import {serverCounts} from "~/locales/ru/server-counts.js";
+import {navigation} from "~/locales/ru/navigation.js";
 
 export const ru = {
   menu,
@@ -67,6 +68,7 @@ export const ru = {
     noMessages: 'Нет сообщений'
   },
   names,
+  navigation,
   vehicleSelector,
   vehicleConfigs,
   onlineUsersTable,

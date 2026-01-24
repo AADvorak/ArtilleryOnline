@@ -27,6 +27,7 @@ import {battleHeader} from "~/locales/en/battle-header.js";
 import {names} from "~/locales/en/names.js";
 import {descriptions} from "~/locales/en/descriptions.js";
 import {serverCounts} from "~/locales/en/server-counts.js";
+import {navigation} from "~/locales/en/navigation.js";
 
 export const en = {
   menu,
@@ -67,6 +68,7 @@ export const en = {
     noMessages: 'You have no messages'
   },
   names,
+  navigation,
   vehicleSelector,
   vehicleConfigs,
   onlineUsersTable,

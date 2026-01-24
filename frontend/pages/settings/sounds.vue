@@ -54,7 +54,7 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: {{ t('sounds.title') }}
+        <menu-navigation/>
       </v-card-title>
       <v-card-text>
         <v-table class="mb-4" density="compact">
