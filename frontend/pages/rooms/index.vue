@@ -33,7 +33,7 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: {{ t('rooms.title') }}
+        <menu-navigation/>
       </v-card-title>
       <v-card-text>
         <v-btn v-if="!roomStore.room" class="mb-4" width="100%" color="secondary" @click="createRoom">

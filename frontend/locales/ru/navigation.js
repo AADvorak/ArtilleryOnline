@@ -12,4 +12,7 @@ export const navigation = {
   profile: 'профиль',
   'battle-history': 'история боев',
   'battle-statistics': 'статистика боев',
+  rooms: 'комнаты',
+  room: 'комната',
+  battle: 'бой',
 }

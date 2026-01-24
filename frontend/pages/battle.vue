@@ -130,7 +130,7 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: {{ t('battle.title') }}
+        <menu-navigation/>
       </v-card-title>
       <v-card-text>
         <div v-if="!!roomStore.room" class="mb-4" style="color: crimson">{{ t('battle.leaveRoomToPlay') }}</div>

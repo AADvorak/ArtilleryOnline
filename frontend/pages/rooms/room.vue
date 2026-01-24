@@ -84,7 +84,7 @@ async function exit() {
 }
 
 function back() {
-  router.push('/menu')
+  router.push('/rooms')
 }
 </script>
 
@@ -92,7 +92,7 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: {{ t('room.title') }}
+        <menu-navigation/>
       </v-card-title>
       <v-card-text>
         <v-form>
