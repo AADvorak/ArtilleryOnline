@@ -7,4 +7,8 @@ export const navigation = {
   appearance: 'appearance',
   sounds: 'sounds',
   'vehicle-configs': 'vehicles configuration',
+  user: 'user',
+  profile: 'profile',
+  'battle-history': 'battle history',
+  'battle-statistics': 'battle statistics',
 }

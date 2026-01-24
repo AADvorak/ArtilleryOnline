@@ -26,7 +26,7 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: {{ t('user.title') }}
+        <menu-navigation/>
       </v-card-title>
       <v-card-text>
         <v-btn class="mb-4" width="100%" color="secondary" @click="toProfile">{{ t('user.profile') }}</v-btn>

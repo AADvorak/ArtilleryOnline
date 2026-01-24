@@ -64,7 +64,7 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        Artillery online: {{ t('profile.title') }}
+        <menu-navigation/>
       </v-card-title>
       <v-card-text>
         <div v-if="cannotBeChanged" class="mb-4" style="color: crimson">{{ t('profile.cannotBeChanged') }}</div>

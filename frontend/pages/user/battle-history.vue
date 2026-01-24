@@ -111,7 +111,7 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="1200px">
       <v-card-title>
-        Artillery online: {{ t('battleHistory.title') }}
+        <menu-navigation/>
       </v-card-title>
       <v-card-text>
         <battle-history-filters-form class="mb-4" @change="v => filters = v"/>
