@@ -1,4 +1,5 @@
 export const navigation = {
+  back: 'Back',
   menu: 'Menu',
   settings: 'settings',
   controls: 'controls',

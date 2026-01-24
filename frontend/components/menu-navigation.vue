@@ -2,6 +2,8 @@
 import {useRoute, useRouter} from '#app';
 import {computed} from 'vue';
 import {useI18n} from "vue-i18n";
+import {mdiChevronLeft} from "@mdi/js";
+import IconBtn from "~/components/icon-btn.vue";
 
 const route = useRoute()
 const router = useRouter()
@@ -33,10 +35,19 @@ const pathSegments = computed(() => {
 async function navigateTo(path: string) {
   await router.push(path)
 }
+
+function back() {
+  router.back()
+}
 </script>
 
 <template>
   <div class="menu-navigation">
+    <icon-btn
+        :icon="mdiChevronLeft"
+        :tooltip="t('navigation.back')"
+        @click="back"
+    />
     <span
         class="navigation-link"
         @click="navigateTo('/')"
