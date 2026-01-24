@@ -17,15 +17,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class BattleService {
+
+    private static final List<String> BOT_NICKNAMES = List.of(
+            "Leon",
+            "Markoyo",
+            "Pikor",
+            "Fervor",
+            "Jimmy",
+            "Leyson",
+            "Kiri",
+            "CallMeBot"
+    );
 
     private final UserBattleMap userBattleMap;
 
@@ -106,7 +115,8 @@ public class BattleService {
             participants.stream()
                     .filter(participant -> participant.getUser() == null)
                             .forEach(participant -> {
-                                participant.setNickname("ArtyBot");
+                                var nickname = BOT_NICKNAMES.get(BattleUtils.generateRandom(0, BOT_NICKNAMES.size()));
+                                participant.setNickname(makeUniqueNickname(nickname, participants));
                                 participant.setParams(new BattleParticipantParams()
                                         .setSelectedVehicle(getRandomVehicle()));
                             });
@@ -166,5 +176,16 @@ public class BattleService {
     private String getRandomVehicle() {
         var vehicles = Arrays.stream(VehicleSpecsPreset.values()).map(VehicleSpecsPreset::getName).toList();
         return vehicles.get(BattleUtils.generateRandom(0, vehicles.size()));
+    }
+
+    private String makeUniqueNickname(String nickname, Set<BattleParticipant> participants) {
+        var existingNicknames = participants.stream()
+                .map(BattleParticipant::getNickname)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        while (existingNicknames.contains(nickname)) {
+            nickname += "1";
+        }
+        return nickname;
     }
 }
