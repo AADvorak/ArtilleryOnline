@@ -36,6 +36,17 @@ public class BattleService {
             "CallMeBot"
     );
 
+    private static final List<String> BOT_COLORS = List.of(
+            "#ff5733",
+            "#ffd733",
+            "#ff9633",
+            "#bf04ec",
+            "#5dfc02",
+            "#02f4fc",
+            "#ffffff",
+            "#fc0688"
+    );
+
     private final UserBattleMap userBattleMap;
 
     private final BattleTrackingMap battleTrackingMap;
@@ -115,10 +126,10 @@ public class BattleService {
             participants.stream()
                     .filter(participant -> participant.getUser() == null)
                             .forEach(participant -> {
-                                var nickname = BOT_NICKNAMES.get(BattleUtils.generateRandom(0, BOT_NICKNAMES.size()));
-                                participant.setNickname(makeUniqueNickname(nickname, participants));
+                                participant.setNickname(makeUniqueNickname(getRandomBotNickname(), participants));
                                 participant.setParams(new BattleParticipantParams()
-                                        .setSelectedVehicle(getRandomVehicle()));
+                                        .setSelectedVehicle(getRandomVehicle())
+                                        .setVehicleColor(getRandomBotColor()));
                             });
             battleStarter.start(participants, BattleType.RANDOM);
             participants.stream()
@@ -176,6 +187,14 @@ public class BattleService {
     private String getRandomVehicle() {
         var vehicles = Arrays.stream(VehicleSpecsPreset.values()).map(VehicleSpecsPreset::getName).toList();
         return vehicles.get(BattleUtils.generateRandom(0, vehicles.size()));
+    }
+
+    private String getRandomBotNickname() {
+        return BOT_NICKNAMES.get(BattleUtils.generateRandom(0, BOT_NICKNAMES.size()));
+    }
+
+    private String getRandomBotColor() {
+        return BOT_COLORS.get(BattleUtils.generateRandom(0, BOT_COLORS.size()));
     }
 
     private String makeUniqueNickname(String nickname, Set<BattleParticipant> participants) {

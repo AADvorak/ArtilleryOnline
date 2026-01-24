@@ -10,4 +10,6 @@ import lombok.experimental.Accessors;
 public class BattleParticipantParams {
 
     private String selectedVehicle;
+
+    private String vehicleColor;
 }

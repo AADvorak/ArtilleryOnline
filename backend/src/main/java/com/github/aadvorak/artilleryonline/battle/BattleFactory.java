@@ -283,6 +283,9 @@ public class BattleFactory {
     }
 
     private String getVehicleColor(BattleParticipant participant) {
+        if (participant.getParams().getVehicleColor() != null) {
+            return participant.getParams().getVehicleColor();
+        }
         if (participant.getUser() == null) {
             return null;
         }
