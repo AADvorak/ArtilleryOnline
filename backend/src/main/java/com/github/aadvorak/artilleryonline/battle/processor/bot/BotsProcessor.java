@@ -53,6 +53,7 @@ public class BotsProcessor {
         var vehicleMaxRadius = vehicle.getModel().getPreCalc().getMaxRadius();
         var moveRightBlocked = roomSpecs.getRightTop().getX() - vehicleX < vehicleMaxRadius;
         var moveLeftBlocked = vehicleX - roomSpecs.getLeftBottom().getX() < vehicleMaxRadius;
+        state.setMovingDirection(null);
         if (needHp) {
             isMovingToBox = setMovingToBoxIfAvailable(battle.getBoxes(), BoxType.HP, state, otherVehiclePositions.keySet());
         }
@@ -73,8 +74,7 @@ public class BotsProcessor {
             launchDroneIfAvailable(vehicle.getModel(), battle.getModel());
             VehicleLaunchMissileProcessor.launch(vehicle.getModel(), battle.getModel());
             var targetData = targetDataCalculator.calculate(vehicle, battle);
-            state.getGunState().setTriggerPushed(targetData != null && targetData.armor() != null);
-            state.setMovingDirection(null);
+            state.getGunState().setTriggerPushed(targetData != null && targetData.vehicleId() != null);
             if (isCloseBattle) {
                 if (targetData == null || gunAngle > Math.PI / 4 && gunAngle < 3 * Math.PI / 4) {
                     state.getGunState().setRotatingDirection(vehicleIsRight
