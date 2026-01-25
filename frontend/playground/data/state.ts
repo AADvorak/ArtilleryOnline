@@ -1,4 +1,4 @@
-import type {Ammo, Position, BodyVelocity, Velocity, BodyPosition, Missiles} from "@/playground/data/common";
+import type {Ammo, Position, BodyVelocity, Velocity, BodyPosition} from "@/playground/data/common";
 import {MovingDirection} from "@/playground/data/common";
 
 export interface BodyState {
