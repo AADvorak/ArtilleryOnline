@@ -51,7 +51,7 @@ function launch() {
 </script>
 
 <template>
-  <div v-if="missileLauncherState" class="progress-wrapper">
+  <div v-if="missileLauncherState" class="progress-wrapper ml-2">
     <v-progress-linear
         bg-color="blue-grey"
         height="16"

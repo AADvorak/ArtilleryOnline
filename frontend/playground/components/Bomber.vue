@@ -37,7 +37,7 @@ const progress = computed(() => {
 </script>
 
 <template>
-  <div v-if="bomberState" class="progress-wrapper">
+  <div v-if="bomberState" class="progress-wrapper ml-2">
     <v-progress-linear
         bg-color="blue-grey"
         height="16"

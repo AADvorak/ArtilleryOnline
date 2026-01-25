@@ -52,7 +52,7 @@ function launch() {
 </script>
 
 <template>
-  <div v-if="droneState && !droneState.launched" class="progress-wrapper">
+  <div v-if="droneState && !droneState.launched" class="progress-wrapper ml-2">
     <v-progress-linear
         bg-color="blue-grey"
         height="16"

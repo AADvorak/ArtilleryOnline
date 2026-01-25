@@ -81,22 +81,24 @@ function selectShell(key: string) {
 </script>
 
 <template>
-  <template v-for="(ammoKey, index) in ammoKeys">
-    <no-focus-btn
-        class="ammo-btn"
-        :color="ammoKey === selectedShell ? 'primary' : ''"
-        :disabled="!ammo || !ammo[ammoKey]"
-        @click="() => selectShell(ammoKey)"
-    >
-      [{{ index + 1 }}] {{ t(`names.shells.${ammoKey}`) }}: {{ ammo ? ammo[ammoKey] : 0 }}
-      <vertical-tooltip
-          :location="VerticalTooltipLocation.BOTTOM"
-          :tooltip="ammoKey === selectedShell ? t('controls.selectedShell') : t('controls.selectShell')"
-          :show="globalStateStore.showHelp === VerticalTooltipLocation.BOTTOM"
-      />
-    </no-focus-btn>
-  </template>
-  <v-progress-circular v-if="showProgress" color="lime" :model-value="reloadingProgress" />
+  <div class="ml-2">
+    <template v-for="(ammoKey, index) in ammoKeys">
+      <no-focus-btn
+          class="ammo-btn"
+          :color="ammoKey === selectedShell ? 'primary' : ''"
+          :disabled="!ammo || !ammo[ammoKey]"
+          @click="() => selectShell(ammoKey)"
+      >
+        [{{ index + 1 }}] {{ t(`names.shells.${ammoKey}`) }}: {{ ammo ? ammo[ammoKey] : 0 }}
+        <vertical-tooltip
+            :location="VerticalTooltipLocation.BOTTOM"
+            :tooltip="ammoKey === selectedShell ? t('controls.selectedShell') : t('controls.selectShell')"
+            :show="globalStateStore.showHelp === VerticalTooltipLocation.BOTTOM"
+        />
+      </no-focus-btn>
+    </template>
+    <v-progress-circular v-if="showProgress" color="lime" :model-value="reloadingProgress" />
+  </div>
 </template>
 
 <style scoped>
