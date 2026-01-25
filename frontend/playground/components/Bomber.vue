@@ -32,7 +32,7 @@ const progress = computed(() => {
       value = (specs.prepareToFlightTime - state.prepareToFlightRemainTime) / specs.prepareToFlightTime
     }
   }
-  return Math.floor(value * 100)
+  return value * 100
 })
 </script>
 

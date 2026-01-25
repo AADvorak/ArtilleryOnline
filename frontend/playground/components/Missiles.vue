@@ -40,7 +40,7 @@ const progress = computed(() => {
       value = (specs.prepareToLaunchTime - state.prepareToLaunchRemainTime) / specs.prepareToLaunchTime
     }
   }
-  return Math.floor(value * 100)
+  return value * 100
 })
 
 function launch() {
