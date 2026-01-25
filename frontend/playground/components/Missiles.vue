@@ -61,7 +61,7 @@ function launch() {
         :disabled="!missileLauncherState.remainMissiles"
         @click="launch"
     >
-      <span class="progress-text">MSL: {{ missileLauncherState.remainMissiles }}</span>
+      <span class="progress-text">{{ t('battleHeader.missiles') }}: {{ missileLauncherState.remainMissiles }}</span>
       <vertical-tooltip
           :location="VerticalTooltipLocation.BOTTOM"
           :tooltip="t('controls.launchMissile')"
@@ -73,7 +73,7 @@ function launch() {
 
 <style scoped>
 .progress-wrapper {
-  min-width: 60px;
+  min-width: 80px;
 }
 .progress {
   cursor: pointer;
