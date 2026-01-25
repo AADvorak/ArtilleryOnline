@@ -26,6 +26,24 @@ const droneState = computed(() => {
   return userVehicle.value?.state.droneState
 })
 
+const droneSpecs = computed(() => {
+  return userVehicle.value?.config.drone
+})
+
+const progress = computed(() => {
+  let value = 0
+  const state = droneState.value
+  const specs = droneSpecs.value
+  if (state && specs) {
+    if (state.prepareToLaunchRemainTime <= 0) {
+      value = 1
+    } else if (state.prepareToLaunchRemainTime < specs.prepareToLaunchTime) {
+      value = (specs.prepareToLaunchTime - state.prepareToLaunchRemainTime) / specs.prepareToLaunchTime
+    }
+  }
+  return value * 100
+})
+
 function launch() {
   commandsSender.sendCommand({
     command: Command.LAUNCH_DRONE
@@ -34,25 +52,33 @@ function launch() {
 </script>
 
 <template>
-  <no-focus-btn
-      v-if="droneState && !droneState.launched"
-      class="drone-btn"
-      :color="droneState.readyToLaunch ? 'success' : 'warning'"
-      @click="launch"
-  >
-    {{ t('battleHeader.drone') }}: {{
-      droneState.readyToLaunch ? t('battleHeader.ready') : t('battleHeader.preparing')
-    }}
-    <vertical-tooltip
-        :location="VerticalTooltipLocation.BOTTOM"
-        :tooltip="t('controls.launchDrone')"
-        :show="globalStateStore.showHelp === VerticalTooltipLocation.BOTTOM"
-    />
-  </no-focus-btn>
+  <div v-if="droneState && !droneState.launched" class="progress-wrapper">
+    <v-progress-linear
+        bg-color="blue-grey"
+        height="16"
+        :color="droneState.readyToLaunch ? 'green' : 'orange'"
+        class="progress"
+        :model-value="progress"
+        @click="launch"
+    >
+      <span class="progress-text">{{ t('battleHeader.drone') }}</span>
+      <vertical-tooltip
+          :location="VerticalTooltipLocation.BOTTOM"
+          :tooltip="t('controls.launchDrone')"
+          :show="globalStateStore.showHelp === VerticalTooltipLocation.BOTTOM"
+      />
+    </v-progress-linear>
+  </div>
 </template>
 
 <style scoped>
-.drone-btn {
-  padding: 0 8px;
+.progress-wrapper {
+  min-width: 80px;
+}
+.progress {
+  cursor: pointer;
+}
+.progress-text {
+  font-size: 16px;
 }
 </style>
