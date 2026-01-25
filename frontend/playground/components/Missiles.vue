@@ -55,10 +55,9 @@ function launch() {
     <v-progress-linear
         bg-color="blue-grey"
         height="16"
-        color="blue"
+        :color="missileLauncherState.prepareToLaunchRemainTime <= 0 ? '#2196F3' : '#778899'"
         class="progress"
         :model-value="progress"
-        :disabled="!missileLauncherState.remainMissiles"
         @click="launch"
     >
       <span class="progress-text">{{ t('battleHeader.missiles') }}: {{ missileLauncherState.remainMissiles }}</span>

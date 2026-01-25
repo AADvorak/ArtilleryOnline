@@ -56,7 +56,7 @@ function launch() {
     <v-progress-linear
         bg-color="blue-grey"
         height="16"
-        :color="droneState.readyToLaunch ? 'green' : 'orange'"
+        :color="droneState.readyToLaunch ? '#2196F3' : '#778899'"
         class="progress"
         :model-value="progress"
         @click="launch"

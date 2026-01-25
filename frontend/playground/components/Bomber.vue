@@ -41,10 +41,8 @@ const progress = computed(() => {
     <v-progress-linear
         bg-color="blue-grey"
         height="16"
-        color="blue"
-        class="progress"
+        :color="bomberState.readyToFlight ? '#2196F3' : '#778899'"
         :model-value="progress"
-        :disabled="!bomberState.remainFlights"
     >
       <span class="progress-text">{{ t('battleHeader.bomber') }}: {{ bomberState.remainFlights }}</span>
     </v-progress-linear>
@@ -54,9 +52,6 @@ const progress = computed(() => {
 <style scoped>
 .progress-wrapper {
   min-width: 100px;
-}
-.progress {
-  cursor: pointer;
 }
 .progress-text {
   font-size: 16px;
