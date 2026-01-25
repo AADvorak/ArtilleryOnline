@@ -74,6 +74,7 @@ export interface MissileLauncherState {
 export interface BomberState {
   readyToFlight: boolean
   flying: boolean
+  prepareToFlightRemainTime: number
   remainFlights: number
 }
 

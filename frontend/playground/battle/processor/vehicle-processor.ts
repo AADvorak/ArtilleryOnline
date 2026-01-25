@@ -33,6 +33,7 @@ export const VehicleProcessor = {
   processBeforeCollision(vehicle: VehicleCalculations, battle: BattleCalculations) {
     this.recalculateJetState(vehicle.model, battle.timeStepSecs)
     this.recalculateMissileLauncherState(vehicle.model, battle.timeStepSecs)
+    this.recalculateBomberState(vehicle.model, battle.timeStepSecs)
     vehicle.calculateAllGroundContacts(battle.model.room)
     this.velocityCalculator.recalculateVelocity(vehicle, battle.model, battle.timeStepSecs)
     vehicle.calculateNextPosition(battle.timeStepSecs)
@@ -92,6 +93,13 @@ export const VehicleProcessor = {
     const state = vehicleModel.state.missileLauncherState
     if (state && state.prepareToLaunchRemainTime > 0 && state.remainMissiles > 0) {
       state.prepareToLaunchRemainTime -= timeStepSecs
+    }
+  },
+
+  recalculateBomberState(vehicleModel: VehicleModel, timeStepSecs: number) {
+    const state = vehicleModel.state.bomberState
+    if (state && state.prepareToFlightRemainTime > 0 && state.remainFlights > 0) {
+      state.prepareToFlightRemainTime -= timeStepSecs
     }
   },
 

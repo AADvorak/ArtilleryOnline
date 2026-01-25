@@ -2,6 +2,7 @@ import type {DeserializerInput} from "~/deserialization/deserializer-input";
 import type {AmmoConfig, BoxConfig, DroneConfig, RoomConfig, VehicleConfig} from "~/playground/data/config";
 import {DeserializerBase} from "~/deserialization/deserializer-base";
 import {
+  deserializeBomberSpecs,
   deserializeDroneSpecs,
   deserializeGunSpecs,
   deserializeJetSpecs,
@@ -18,6 +19,7 @@ export function deserializeVehicleConfig(input: DeserializerInput): VehicleConfi
   const gun = deserializeGunSpecs(input)
   const jet = deserializeJetSpecs(input)
   const drone = DeserializerBase.readNullable(input, deserializeDroneSpecs)
+  const bomber = DeserializerBase.readNullable(input, deserializeBomberSpecs)
   const ammo = DeserializerBase.readArray(input, deserializeAmmoConfig)!
   const missileLauncher = DeserializerBase.readNullable(input, deserializeMissileLauncherSpecs)
   const color = DeserializerBase.readNullable(input, DeserializerBase.readString)
@@ -25,6 +27,7 @@ export function deserializeVehicleConfig(input: DeserializerInput): VehicleConfi
     gun,
     jet,
     drone,
+    bomber,
     ammo,
     missileLauncher,
     color

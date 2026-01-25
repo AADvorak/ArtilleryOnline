@@ -34,6 +34,7 @@ public class VehicleConfig implements Config, CompactSerializable {
         stream.writeSerializableValue(gun);
         stream.writeSerializableValue(jet);
         stream.writeSerializable(drone);
+        stream.writeSerializable(bomber);
         stream.writeCollectionOfSerializable(ammo);
         stream.writeSerializable(missileLauncher);
         stream.writeNullable(color, stream::writeString);

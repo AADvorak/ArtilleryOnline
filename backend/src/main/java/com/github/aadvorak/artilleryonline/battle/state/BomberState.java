@@ -28,6 +28,7 @@ public class BomberState implements State, CompactSerializable {
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeBoolean(flying);
         stream.writeBoolean(readyToFlight);
+        stream.writeDouble(prepareToFlightRemainTime);
         stream.writeInt(remainFlights);
     }
 }

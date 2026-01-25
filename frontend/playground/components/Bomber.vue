@@ -16,21 +16,49 @@ const userVehicle = computed(() => {
 const bomberState = computed(() => {
   return userVehicle.value?.state.bomberState
 })
+
+const bomberSpecs = computed(() => {
+  return userVehicle.value?.config.bomber
+})
+
+const progress = computed(() => {
+  let value = 0
+  const state = bomberState.value
+  const specs = bomberSpecs.value
+  if (state && specs) {
+    if (state.prepareToFlightRemainTime <= 0) {
+      value = 1
+    } else if (state.prepareToFlightRemainTime < specs.prepareToFlightTime) {
+      value = (specs.prepareToFlightTime - state.prepareToFlightRemainTime) / specs.prepareToFlightTime
+    }
+  }
+  return Math.floor(value * 100)
+})
 </script>
 
 <template>
-  <v-btn v-if="bomberState && bomberState.remainFlights > 0"
-      class="bomber-btn"
-      :color="bomberState.readyToFlight ? 'success' : 'warning'"
-  >
-    {{ t('battleHeader.bomber') }}:
-    {{ bomberState.readyToFlight ? t('battleHeader.ready') : t('battleHeader.preparing') }},
-    {{ t('battleHeader.flights') }}: {{ bomberState.remainFlights }}
-  </v-btn>
+  <div v-if="bomberState" class="progress-wrapper">
+    <v-progress-linear
+        bg-color="blue-grey"
+        height="16"
+        color="blue"
+        class="progress"
+        :model-value="progress"
+        :disabled="!bomberState.remainFlights"
+    >
+      <span class="progress-text">{{ t('battleHeader.bomber') }}: {{ bomberState.remainFlights }}</span>
+    </v-progress-linear>
+  </div>
 </template>
 
 <style scoped>
-.bomber-btn {
-  padding: 0 8px;
+.progress-wrapper {
+  min-width: 100px;
+}
+.progress {
+  cursor: pointer;
+}
+.progress-text {
+  font-size: 16px;
 }
 </style>

@@ -145,10 +145,12 @@ export function deserializeDroneInVehicleState(input: DeserializerInput): DroneI
 export function deserializeBomberState(input: DeserializerInput): BomberState {
   const flying = DeserializerBase.readBoolean(input)
   const readyToFlight = DeserializerBase.readBoolean(input)
+  const prepareToFlightRemainTime = DeserializerBase.readDouble(input)
   const remainFlights = DeserializerBase.readInt(input)
   return {
     readyToFlight,
     flying,
+    prepareToFlightRemainTime,
     remainFlights
   }
 }
