@@ -28,12 +28,13 @@ public class BattleService {
     private static final List<String> BOT_NICKNAMES = List.of(
             "Leon",
             "Markoyo",
-            "Pikor",
+            "Picore",
             "Fervor",
             "Jimmy",
-            "Leyson",
-            "Kiri",
-            "CallMeBot"
+            "Kirileyson",
+            "Ciri",
+            "CallMeBot",
+            "LadyNemesis"
     );
 
     private static final List<String> BOT_COLORS = List.of(
