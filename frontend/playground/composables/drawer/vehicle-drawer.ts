@@ -121,21 +121,21 @@ export function useVehicleDrawer(
   }
 
   function drawNickname(userKey: string, vehicleModel: VehicleModel) {
-    const textWidth = 1.5 * vehicleModel.preCalc.maxRadius
+    const textHeight = 1.5 * vehicleModel.preCalc.maxRadius
     const position = {
-      x: vehicleModel.state.position.x - textWidth / 2,
-      y: vehicleModel.state.position.y + textWidth + 0.1
+      x: vehicleModel.state.position.x,
+      y: vehicleModel.state.position.y + textHeight + 0.1
     }
     drawerBase.drawText({
       position,
       text: restrictNicknameLength(userKey),
       fontSize: 16,
-      textWidth
+      textAlign: 'center',
     }, {fillStyle: 'rgb(256 256 256)'})
   }
 
   function restrictNicknameLength(nickname: string) {
-    return nickname.substring(0, 8)
+    return nickname.substring(0, 12)
   }
 
   return {draw}
