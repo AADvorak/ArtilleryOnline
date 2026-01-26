@@ -72,7 +72,7 @@ public class BotsProcessor {
                     closestVehiclePosition), battle.getModel().getRoom()) == null;
             switchShellIfNeeded(vehicle.getId(), state, battle.getShells());
             launchDroneIfAvailable(vehicle.getModel(), battle.getModel());
-            VehicleLaunchMissileProcessor.launch(vehicle.getModel(), battle.getModel());
+            launchMissileConditional(vehicle.getModel(), battle.getModel(), isCloseBattle);
             var targetData = targetDataCalculator.calculate(vehicle, battle);
             state.getGunState().setTriggerPushed(targetData != null && targetData.vehicleId() != null);
             if (isCloseBattle) {
@@ -202,6 +202,13 @@ public class BotsProcessor {
         var droneState = model.getState().getDroneState();
         if (droneState != null && droneState.isReadyToLaunch() && !model.getState().isAboutToTurnOver()) {
             VehicleLaunchDroneProcessor.launch(model, battleModel);
+        }
+    }
+
+    private void launchMissileConditional(VehicleModel model, BattleModel battleModel, boolean isCloseBattle) {
+        var relativeHp = model.getRelativeHp();
+        if (relativeHp < 0.7 && !isCloseBattle || relativeHp < 0.3) {
+            VehicleLaunchMissileProcessor.launch(model, battleModel);
         }
     }
 
