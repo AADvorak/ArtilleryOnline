@@ -80,9 +80,10 @@ public class DamageProcessor {
     }
 
     public static void applyDamageToVehicle(double damage, VehicleModel vehicleModel, BattleModel battleModel, Long userId) {
-        StatisticsProcessor.increaseDamage(Math.min(damage, vehicleModel.getState().getHitPoints()),
+        var roundDamage = Math.round(damage - 0.1);
+        StatisticsProcessor.increaseDamage(Math.min(roundDamage, vehicleModel.getState().getHitPoints()),
                 vehicleModel.getUserId(), userId, battleModel);
-        var hitPoints = vehicleModel.getState().getHitPoints() - damage;
+        var hitPoints = vehicleModel.getState().getHitPoints() - roundDamage;
         if (hitPoints <= 0) {
             vehicleModel.getState().setHitPoints(0.0);
             battleModel.getUpdates().removeVehicle(battleModel.getVehicleKeyById(vehicleModel.getId()));
