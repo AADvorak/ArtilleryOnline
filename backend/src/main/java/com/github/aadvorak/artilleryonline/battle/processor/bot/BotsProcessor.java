@@ -43,8 +43,6 @@ public class BotsProcessor {
         var vehicleAngle = state.getPosition().getAngle();
         var vehicleX = vehicle.getPosition().getX();
         var gunAngle = vehicleAngle + state.getGunState().getAngle();
-        var needHp = vehicle.getModel().getRelativeHp() < 1.0;
-        var needAmmo = vehicle.getModel().getRelativeAmmo() < 1.0;
         var isMovingToBox = false;
         var otherVehiclePositions = battle.getVehicles().stream()
                 .filter(item -> !vehicle.getId().equals(item.getId()))
@@ -54,10 +52,15 @@ public class BotsProcessor {
         var moveRightBlocked = roomSpecs.getRightTop().getX() - vehicleX < vehicleMaxRadius;
         var moveLeftBlocked = vehicleX - roomSpecs.getLeftBottom().getX() < vehicleMaxRadius;
         state.setMovingDirection(null);
-        if (needHp) {
+        var needHp = vehicle.getModel().getRelativeHp() < 1.0;
+        var criticalNeedHp = vehicle.getModel().getRelativeHp() < 0.5;
+        var needAmmo = vehicle.getModel().getRelativeAmmo() < 1.0;
+        var criticalNeedAmmo = vehicle.getModel().getRelativeAmmo() < 1.0;
+        var trackBroken = vehicle.getModel().getState().getTrackState().isBroken();
+        if (criticalNeedHp || needHp && !trackBroken) {
             isMovingToBox = setMovingToBoxIfAvailable(battle.getBoxes(), BoxType.HP, state, otherVehiclePositions.keySet());
         }
-        if (needAmmo && !isMovingToBox) {
+        if (!isMovingToBox && (criticalNeedAmmo || needAmmo && !trackBroken)) {
             isMovingToBox = setMovingToBoxIfAvailable(battle.getBoxes(), BoxType.AMMO, state, otherVehiclePositions.keySet());
         }
         var closestVehiclePosition = GeometryUtils.findClosestPosition(vehicle.getPosition(), otherVehiclePositions.keySet());
@@ -93,7 +96,7 @@ public class BotsProcessor {
                         state.getGunState().setRotatingDirection(gunUp ?  MovingDirection.RIGHT : MovingDirection.LEFT);
                     }
                 }
-                if (!isMovingToBox && Math.abs(closestVehicleDistance) < minTargetDistance) {
+                if (!isMovingToBox && !trackBroken && Math.abs(closestVehicleDistance) < minTargetDistance) {
                     if (closestVehicleDistance > 0 && !moveRightBlocked) {
                         state.setMovingDirection(MovingDirection.RIGHT);
                     }
@@ -110,7 +113,7 @@ public class BotsProcessor {
             } else if (targetData.armor() == null) {
                 var targetIsRight = closestVehiclePosition.getX() > targetData.contact().position().getX();
                 state.getGunState().setRotatingDirection(targetIsRight ? MovingDirection.RIGHT : MovingDirection.LEFT);
-                if (!isMovingToBox) {
+                if (!isMovingToBox && !trackBroken) {
                     if (gunAngle < Math.PI / 3 && targetIsRight) {
                         state.setMovingDirection(MovingDirection.RIGHT);
                     } else if (gunAngle > 2 * Math.PI / 3 && !targetIsRight) {
@@ -151,8 +154,10 @@ public class BotsProcessor {
         var closestPosition = GeometryUtils.findClosestPosition(state.getPosition().getCenter(), boxesPositions);
         if (closestPosition != null) {
             var xDiff = closestPosition.getX() - vehicleX;
-            state.setMovingDirection(xDiff > 0 ? MovingDirection.RIGHT :  MovingDirection.LEFT);
-            return true;
+            if (Math.abs(xDiff) > 0.1) {
+                state.setMovingDirection(xDiff > 0 ? MovingDirection.RIGHT :  MovingDirection.LEFT);
+                return true;
+            }
         }
         return false;
     }
