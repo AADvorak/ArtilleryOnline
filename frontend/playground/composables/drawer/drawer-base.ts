@@ -18,6 +18,7 @@ export interface CanvasText {
   text: string
   fontSize: number
   textWidth?: number
+  textAlign?: CanvasTextAlign
 }
 
 export interface DrawerBase {
@@ -50,6 +51,9 @@ export function useDrawerBase(
     const width = canvasText.textWidth
         ? scale(canvasText.textWidth)
         : canvasText.fontSize * canvasText.text.length
+    if (canvasText.textAlign) {
+      ctx.value!.textAlign = canvasText.textAlign
+    }
     params && setDrawParams(params)
     ctx.value!.beginPath()
     ctx.value!.font = getFont(canvasText.fontSize)
