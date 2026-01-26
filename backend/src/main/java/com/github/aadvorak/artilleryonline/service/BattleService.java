@@ -43,7 +43,6 @@ public class BattleService {
             "#bf04ec",
             "#5dfc02",
             "#02f4fc",
-            "#ffffff",
             "#fc0688"
     );
 
