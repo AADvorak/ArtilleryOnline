@@ -28,7 +28,8 @@ function hide() {
 }
 
 defineExpose({
-  show
+  show,
+  leaveBattle
 })
 </script>
 

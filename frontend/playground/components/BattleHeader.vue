@@ -25,6 +25,7 @@ import {useGlobalStateStore} from "~/stores/global-state";
 import {VerticalTooltipLocation} from "~/data/model";
 import FullScreenBtn from "~/components/full-screen-btn.vue";
 import {useRouter} from "#app";
+import {BattleType} from "~/playground/data/battle";
 
 const RESERVED_WIDTH = 416
 const HP_BAR_WIDTH = 216
@@ -101,8 +102,10 @@ onUnmounted(() => {
   removeEventListener('keyup', showHelpIfF1Pressed)
 })
 
-function showLeaveBattleDialog() {
-  leaveBattleDialog.value?.show()
+function leaveBattle() {
+  const battleType = battleStore.battle?.type
+  const withoutDialog = battleType && [BattleType.COLLIDER, BattleType.TEST_DRIVE].includes(battleType)
+  withoutDialog ? leaveBattleDialog.value?.leaveBattle() : leaveBattleDialog.value?.show()
 }
 
 function showHelpIfF1Pressed(e) {
@@ -165,7 +168,7 @@ function calculateAvailableHpSlots() {
     <icon-btn
         :icon="mdiCloseThick"
         :tooltip="t('battleHeader.leaveBattle')"
-        @click="showLeaveBattleDialog"
+        @click="leaveBattle"
     />
     <LeaveBattleDialog ref="leaveBattleDialog"/>
     <HelpDialog ref="helpDialog"/>
