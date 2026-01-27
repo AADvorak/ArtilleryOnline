@@ -49,7 +49,7 @@ public class BattleRunner {
         startUpdatesSender(battle);
         try {
             while (!BattleStage.FINISHED.equals(battle.getBattleStage())
-                    && !battle.getActiveUserIds().isEmpty()) {
+                    && (!battle.getActiveUserIds().isEmpty() || !battle.getBotsVehicleIds().isEmpty())) {
                 try {
                     Thread.sleep(Battle.TIME_STEP_MS);
                 } catch (InterruptedException e) {
