@@ -66,8 +66,7 @@ public class BotsProcessor {
         var closestVehiclePosition = GeometryUtils.findClosestPosition(vehicle.getPosition(), otherVehiclePositions.keySet());
         if (closestVehiclePosition != null) {
             var closestVehicleId = otherVehiclePositions.get(closestVehiclePosition);
-            var vehicleIsRight = closestVehiclePosition.getX() > vehicle.getPosition().getX();
-            var minTargetDistance = vehicleMaxRadius * 5;
+            var minTargetDistance = vehicleMaxRadius * 3;
             var closeBattleDistance = vehicleMaxRadius * 8;
             var closestVehicleDistance = vehicleX - closestVehiclePosition.getX();
             var isCloseBattle = Math.abs(closestVehicleDistance) < closeBattleDistance
@@ -79,23 +78,7 @@ public class BotsProcessor {
             var targetData = targetDataCalculator.calculate(vehicle, battle);
             state.getGunState().setTriggerPushed(targetData != null && targetData.vehicleId() != null);
             if (isCloseBattle) {
-                if (targetData == null || gunAngle > Math.PI / 4 && gunAngle < 3 * Math.PI / 4) {
-                    state.getGunState().setRotatingDirection(vehicleIsRight
-                            ? MovingDirection.RIGHT : MovingDirection.LEFT);
-                } else {
-                    var gunUp = false;
-                    if (targetData.vehicleId() == null || !targetData.vehicleId().equals(closestVehicleId)) {
-                        gunUp = vehicle.getPosition().distanceTo(closestVehiclePosition)
-                                > vehicle.getPosition().distanceTo(targetData.contact().position());
-                    } else {
-                        gunUp = closestVehiclePosition.getY() > targetData.contact().position().getY();
-                    }
-                    if (vehicleIsRight) {
-                        state.getGunState().setRotatingDirection(gunUp ?  MovingDirection.LEFT : MovingDirection.RIGHT);
-                    } else {
-                        state.getGunState().setRotatingDirection(gunUp ?  MovingDirection.RIGHT : MovingDirection.LEFT);
-                    }
-                }
+                closeBattleTargeting(vehicle, targetData, closestVehiclePosition, closestVehicleId);
                 if (!isMovingToBox && !trackBroken && Math.abs(closestVehicleDistance) < minTargetDistance) {
                     if (closestVehicleDistance > 0 && !moveRightBlocked) {
                         state.setMovingDirection(MovingDirection.RIGHT);
@@ -104,22 +87,8 @@ public class BotsProcessor {
                         state.setMovingDirection(MovingDirection.LEFT);
                     }
                 }
-            } else if (gunAngle < Math.PI / 4) {
-                state.getGunState().setRotatingDirection(MovingDirection.LEFT);
-            } else if (gunAngle > 3 * Math.PI / 4) {
-                state.getGunState().setRotatingDirection(MovingDirection.RIGHT);
-            } else if (targetData == null) {
-                state.getGunState().setRotatingDirection(gunAngle > Math.PI / 2 ? MovingDirection.RIGHT : MovingDirection.LEFT);
-            } else if (targetData.armor() == null) {
-                var targetIsRight = closestVehiclePosition.getX() > targetData.contact().position().getX();
-                state.getGunState().setRotatingDirection(targetIsRight ? MovingDirection.RIGHT : MovingDirection.LEFT);
-                if (!isMovingToBox && !trackBroken) {
-                    if (gunAngle < Math.PI / 3 && targetIsRight) {
-                        state.setMovingDirection(MovingDirection.RIGHT);
-                    } else if (gunAngle > 2 * Math.PI / 3 && !targetIsRight) {
-                        state.setMovingDirection(MovingDirection.LEFT);
-                    }
-                }
+            } else {
+                distantBattleTargeting(state, targetData, closestVehiclePosition, !isMovingToBox && !trackBroken);
             }
         }
         if (state.getMovingDirection() == null) {
@@ -160,6 +129,52 @@ public class BotsProcessor {
             }
         }
         return false;
+    }
+
+    private void closeBattleTargeting(VehicleCalculations vehicle, TargetData  targetData,
+                                      Position closestVehiclePosition, Integer closestVehicleId) {
+        var state = vehicle.getModel().getState();
+        var gunAngle = state.getPosition().getAngle() + state.getGunState().getAngle();
+        var vehicleIsRight = closestVehiclePosition.getX() > vehicle.getPosition().getX();
+        if (targetData == null || gunAngle > Math.PI / 4 && gunAngle < 3 * Math.PI / 4) {
+            state.getGunState().setRotatingDirection(vehicleIsRight
+                    ? MovingDirection.RIGHT : MovingDirection.LEFT);
+        } else {
+            var gunUp = false;
+            if (targetData.vehicleId() == null || !targetData.vehicleId().equals(closestVehicleId)) {
+                gunUp = vehicle.getPosition().distanceTo(closestVehiclePosition)
+                        > vehicle.getPosition().distanceTo(targetData.contact().position());
+            } else {
+                gunUp = closestVehiclePosition.getY() > targetData.contact().position().getY();
+            }
+            if (vehicleIsRight) {
+                state.getGunState().setRotatingDirection(gunUp ?  MovingDirection.LEFT : MovingDirection.RIGHT);
+            } else {
+                state.getGunState().setRotatingDirection(gunUp ?  MovingDirection.RIGHT : MovingDirection.LEFT);
+            }
+        }
+    }
+
+    private void distantBattleTargeting(VehicleState state, TargetData targetData,
+                                        Position closestVehiclePosition, boolean allowMove) {
+        var gunAngle = state.getPosition().getAngle() + state.getGunState().getAngle();
+        if (gunAngle < Math.PI / 4) {
+            state.getGunState().setRotatingDirection(MovingDirection.LEFT);
+        } else if (gunAngle > 3 * Math.PI / 4) {
+            state.getGunState().setRotatingDirection(MovingDirection.RIGHT);
+        } else if (targetData == null) {
+            state.getGunState().setRotatingDirection(gunAngle > Math.PI / 2 ? MovingDirection.RIGHT : MovingDirection.LEFT);
+        } else if (targetData.vehicleId() == null) {
+            var targetIsRight = closestVehiclePosition.getX() > targetData.contact().position().getX();
+            state.getGunState().setRotatingDirection(targetIsRight ? MovingDirection.RIGHT : MovingDirection.LEFT);
+            if (allowMove) {
+                if (gunAngle < Math.PI / 3 && targetIsRight) {
+                    state.setMovingDirection(MovingDirection.RIGHT);
+                } else if (gunAngle > 2 * Math.PI / 3 && !targetIsRight) {
+                    state.setMovingDirection(MovingDirection.LEFT);
+                }
+            }
+        }
     }
 
     private boolean notSeparatedByOtherVehicle(double x, double objectX, Set<Position> otherVehiclePositions) {
