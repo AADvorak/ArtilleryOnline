@@ -7,8 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.concurrent.Executor;
-
 @Configuration
 @EnableAsync
 @Slf4j
@@ -28,7 +26,7 @@ public class AsyncConfig {
     }
 
     @Bean(name = "runBattleExecutor")
-    public Executor runBattleExecutor() {
+    public ThreadPoolTaskExecutor runBattleExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(corePoolSize);
         executor.setMaxPoolSize(applicationLimits.getMaxBattles());
@@ -39,7 +37,7 @@ public class AsyncConfig {
     }
 
     @Bean(name = "sendBattleUpdatesExecutor")
-    public Executor sendBattleUpdatesExecutor() {
+    public ThreadPoolTaskExecutor sendBattleUpdatesExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(corePoolSize);
         executor.setMaxPoolSize(maxBattlePoolSize * 2);
