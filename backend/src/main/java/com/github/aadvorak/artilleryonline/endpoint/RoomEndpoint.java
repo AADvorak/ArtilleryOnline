@@ -3,9 +3,12 @@ package com.github.aadvorak.artilleryonline.endpoint;
 import com.github.aadvorak.artilleryonline.battle.BattleParticipantParams;
 import com.github.aadvorak.artilleryonline.dto.request.RoomOpenRequest;
 import com.github.aadvorak.artilleryonline.dto.response.RoomResponse;
+import com.github.aadvorak.artilleryonline.dto.response.RoomShortResponse;
 import com.github.aadvorak.artilleryonline.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/rooms")
@@ -13,6 +16,16 @@ import org.springframework.web.bind.annotation.*;
 public class RoomEndpoint {
 
     private final RoomService roomService;
+
+    @GetMapping()
+    public List<RoomShortResponse> getOpenRoom() {
+        return roomService.getOpenRooms();
+    }
+
+    @PutMapping("/{id}/enter")
+    public RoomResponse enterRoom(@PathVariable String id) {
+        return roomService.enterRoom(id);
+    }
 
     @GetMapping("/my")
     public RoomResponse getRoom() {

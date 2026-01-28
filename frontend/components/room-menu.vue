@@ -26,7 +26,7 @@ async function toRoom() {
 
 async function exit() {
   try {
-    await api.delete('/rooms/exit')
+    await api.delete('/rooms/my/exit')
     roomStore.room = undefined
   } catch (e) {
     requestErrorHandler.handle(e)

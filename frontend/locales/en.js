@@ -77,9 +77,13 @@ export const en = {
     cannotBeChanged: 'Cannot be changed while being in room or in battle'
   },
   rooms: {
-    title: 'rooms',
     createRoom: 'Create room',
-    backToRoom: 'Back to room'
+    backToRoom: 'Back to room',
+    owner: 'Owner',
+    membersCount: 'Members count',
+    inBattle: 'In battle',
+    enter: 'Enter',
+    noRooms: 'No open rooms'
   },
   room,
   roomInvitationCard,

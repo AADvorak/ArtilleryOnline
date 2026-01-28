@@ -77,9 +77,13 @@ export const ru = {
     cannotBeChanged: 'Нельзя изменить находясь в комнате или в бою'
   },
   rooms: {
-    title: 'комнаты',
     createRoom: 'Создать комнату',
-    backToRoom: 'Вернуться в комнату'
+    backToRoom: 'Вернуться в комнату',
+    owner: 'Владелец',
+    membersCount: 'Кол-во участников',
+    inBattle: 'В бою',
+    enter: 'Войти',
+    noRooms: 'Нет открытых комнат'
   },
   room,
   roomInvitationCard,

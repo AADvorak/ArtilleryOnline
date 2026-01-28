@@ -4,15 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
 @Accessors(chain = true)
 public class Room {
+
+    private final String id = UUID.randomUUID().toString();
 
     private BattleParticipant owner;
 

@@ -42,6 +42,7 @@ function back() {
         <v-btn v-else class="mb-4" width="100%" color="secondary" @click="toRoom">
           {{ t('rooms.backToRoom') }}
         </v-btn>
+        <open-rooms-table class="mb-4"/>
         <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>

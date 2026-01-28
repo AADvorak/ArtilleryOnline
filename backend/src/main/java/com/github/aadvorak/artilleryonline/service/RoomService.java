@@ -1,8 +1,11 @@
 package com.github.aadvorak.artilleryonline.service;
 
-import com.github.aadvorak.artilleryonline.battle.*;
+import com.github.aadvorak.artilleryonline.battle.BattleParticipant;
+import com.github.aadvorak.artilleryonline.battle.BattleParticipantParams;
+import com.github.aadvorak.artilleryonline.battle.Room;
 import com.github.aadvorak.artilleryonline.collection.UserRoomMap;
 import com.github.aadvorak.artilleryonline.dto.response.RoomResponse;
+import com.github.aadvorak.artilleryonline.dto.response.RoomShortResponse;
 import com.github.aadvorak.artilleryonline.entity.User;
 import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
 import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
@@ -14,7 +17,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -34,7 +39,53 @@ public class RoomService {
 
     private final ApplicationLimits applicationLimits;
 
+    private final UserAvailabilityService userAvailabilityService;
+
     private final BotsService botsService = new BotsService();
+
+    public List<RoomShortResponse> getOpenRooms() {
+        return userRoomMap.values().stream()
+                .filter(Room::isOpened)
+                .map(room -> room.getOwner().getUser().getId())
+                .distinct()
+                .map(userRoomMap::get)
+                .map(RoomShortResponse::of)
+                .sorted(Comparator.comparingInt(RoomShortResponse::getMembersCount))
+                .toList();
+    }
+
+    // todo common logic with acceptInvitation
+    public RoomResponse enterRoom(String id) {
+        var room = userRoomMap.values().stream()
+                .filter(item -> item.getId().equals(id))
+                .filter(Room::isOpened)
+                .findAny()
+                .orElseThrow(NotFoundAppException::new);
+        if (room.getParticipantsSize() >= applicationLimits.getMaxRoomMembers()) {
+            throw new ConflictAppException("Room is already full",
+                    new Locale().setCode(LocaleCode.ROOM_IS_FULL));
+        }
+        var user = userService.getUserFromContext();
+        userAvailabilityService.checkRoomAvailability(user);
+        var existingRoom = userRoomMap.get(user.getId());
+        if (existingRoom != null) {
+            if (existingRoom.getGuests().containsKey(user.getId())
+                    || room.getOwner().getUser().getId() == user.getId()) {
+                return RoomResponse.of(existingRoom);
+            }
+            exitRoom(user, existingRoom);
+        }
+        room.getGuests().put(user.getId(), BattleParticipant.of(user));
+        userRoomMap.put(user.getId(), room);
+        log.info("enterRoom: nickname {}, map size {}", user.getNickname(), userRoomMap.size());
+        roomUpdatesSender.sendRoomUpdate(room);
+        messageService.createMessage(room.getOwner().getUser(),
+                "User " + user.getNickname() + " entered room",
+                new Locale()
+                        .setCode(LocaleCode.USER_ENTERED_ROOM)
+                        .setParams(Map.of("nickname", user.getNickname())));
+        return RoomResponse.of(room);
+    }
 
     public RoomResponse getRoom() {
         var user = userService.getUserFromContext();

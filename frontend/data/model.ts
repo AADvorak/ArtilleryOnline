@@ -20,6 +20,13 @@ export interface Room {
   opened: boolean
 }
 
+export interface RoomShort {
+  id: string
+  ownerNickname: string
+  membersCount: number
+  inBattle: boolean
+}
+
 export interface Message {
   id: string
   text: string
