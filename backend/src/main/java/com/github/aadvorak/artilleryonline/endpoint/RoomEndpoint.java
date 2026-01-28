@@ -13,7 +13,7 @@ public class RoomEndpoint {
 
     private final RoomService roomService;
 
-    @GetMapping
+    @GetMapping("/my")
     public RoomResponse getRoom() {
         return roomService.getRoom();
     }
@@ -23,27 +23,27 @@ public class RoomEndpoint {
         return roomService.createRoom();
     }
 
-    @PutMapping("/select-vehicle")
+    @PutMapping("/my/select-vehicle")
     public void selectVehicle(@RequestBody BattleParticipantParams request) {
         roomService.selectVehicle(request);
     }
 
-    @PostMapping("/start-battle")
+    @PostMapping("/my/start-battle")
     public void startBattle() {
         roomService.startBattle();
     }
 
-    @DeleteMapping("/exit")
+    @DeleteMapping("/my/exit")
     public void exitRoom() {
         roomService.exitRoom();
     }
 
-    @DeleteMapping("/participants/{nickname}")
+    @DeleteMapping("/my/participants/{nickname}")
     public void removeParticipant(@PathVariable String nickname) {
         roomService.removeParticipant(nickname);
     }
 
-    @PostMapping("/bots")
+    @PostMapping("/my/bots")
     public void addBot() {
         roomService.addBot();
     }

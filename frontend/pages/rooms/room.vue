@@ -38,7 +38,7 @@ const readyToBattle = computed(() => {
 
 watch(selectedVehicle, async (value) => {
   try {
-    await api.putJson('/rooms/select-vehicle', {
+    await api.putJson('/rooms/my/select-vehicle', {
       selectedVehicle: value
     })
   } catch (e) {
@@ -67,7 +67,7 @@ function setSelectedVehicle() {
 
 async function startBattle() {
   try {
-    await api.postJson('/rooms/start-battle', {})
+    await api.postJson('/rooms/my/start-battle', {})
   } catch (e) {
     requestErrorHandler.handle(e)
   }
@@ -75,7 +75,7 @@ async function startBattle() {
 
 async function addBot() {
   try {
-    await api.postJson('/rooms/bots', {})
+    await api.postJson('/rooms/my/bots', {})
   } catch (e) {
     requestErrorHandler.handle(e)
   }
@@ -83,7 +83,7 @@ async function addBot() {
 
 async function exit() {
   try {
-    await api.delete('/rooms/exit')
+    await api.delete('/rooms/my/exit')
     roomStore.room = undefined
     await router.push('/rooms')
   } catch (e) {

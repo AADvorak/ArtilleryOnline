@@ -27,7 +27,7 @@ export const useRoomStore = defineStore('room', () => {
   async function loadRoomIfNull() {
     if (!room.value) {
       try {
-        room.value = await new ApiRequestSender().getJson<Room>('/rooms')
+        room.value = await new ApiRequestSender().getJson<Room>('/rooms/my')
       } catch (e) {
         console.log(e)
       }
