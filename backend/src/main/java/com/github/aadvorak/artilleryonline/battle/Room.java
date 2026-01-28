@@ -22,6 +22,8 @@ public class Room {
 
     private Battle battle;
 
+    private boolean opened = false;
+
     public Set<BattleParticipant> getParticipants() {
         var participants = new HashSet<>(guests.values());
         participants.add(owner);

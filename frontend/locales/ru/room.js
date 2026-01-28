@@ -5,4 +5,5 @@ export const room = {
   invite: 'Пригласить',
   addBot: 'Добавить бота',
   addBots: 'Добавить ботов',
+  opened: 'Открыта',
 }

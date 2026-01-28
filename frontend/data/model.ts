@@ -17,6 +17,7 @@ export interface RoomMember {
 export interface Room {
   members: RoomMember[]
   deleted: boolean
+  opened: boolean
 }
 
 export interface Message {

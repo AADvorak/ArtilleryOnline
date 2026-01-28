@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.endpoint;
 
 import com.github.aadvorak.artilleryonline.battle.BattleParticipantParams;
+import com.github.aadvorak.artilleryonline.dto.request.RoomOpenRequest;
 import com.github.aadvorak.artilleryonline.dto.response.RoomResponse;
 import com.github.aadvorak.artilleryonline.service.RoomService;
 import lombok.RequiredArgsConstructor;
@@ -46,5 +47,10 @@ public class RoomEndpoint {
     @PostMapping("/my/bots")
     public void addBot() {
         roomService.addBot();
+    }
+
+    @PutMapping("/my/opened")
+    public void changeOpened(@RequestBody RoomOpenRequest request) {
+        roomService.changeOpened(request.isOpened());
     }
 }

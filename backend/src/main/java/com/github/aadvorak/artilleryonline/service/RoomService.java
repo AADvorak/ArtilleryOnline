@@ -172,6 +172,13 @@ public class RoomService {
         roomUpdatesSender.sendRoomUpdate(room);
     }
 
+    public void changeOpened(boolean opened) {
+        var user = userService.getUserFromContext();
+        var room = requireOwnRoom(user);
+        room.setOpened(opened);
+        roomUpdatesSender.sendRoomUpdate(room);
+    }
+
     private void removeSelectedVehicles(Room room) {
         room.getOwner().getParams().setSelectedVehicle(null);
         room.getGuests().values().forEach(guest -> guest.getParams().setSelectedVehicle(null));

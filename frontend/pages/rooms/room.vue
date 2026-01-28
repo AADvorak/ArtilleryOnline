@@ -81,6 +81,14 @@ async function addBot() {
   }
 }
 
+async function changeOpened() {
+  try {
+    await api.putJson('/rooms/my/opened', {opened: !roomStore.room?.opened})
+  } catch (e) {
+    requestErrorHandler.handle(e)
+  }
+}
+
 async function exit() {
   try {
     await api.delete('/rooms/my/exit')
@@ -153,6 +161,13 @@ function back() {
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
+        <v-checkbox
+            density="compact"
+            :model-value="roomStore.room?.opened"
+            :label="t('room.opened')"
+            :disabled="!roomStore.userIsRoomOwner"
+            @click="changeOpened"
+        />
         <v-btn class="mb-4" color="warning" width="100%" @click="exit">{{ t('common.exit') }}</v-btn>
         <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
