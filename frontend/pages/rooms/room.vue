@@ -4,7 +4,7 @@ import {ApiRequestSender} from "~/api/api-request-sender";
 import {useRoomStore} from "~/stores/room";
 import RoomMembersTable from "~/components/room-members-table.vue";
 import {useUserStore} from "~/stores/user";
-import {mdiAccountMultiple, mdiAccountPlus} from '@mdi/js'
+import {mdiAccountMultiple, mdiAccountPlus, mdiRobot} from '@mdi/js'
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import VehicleSelector from "~/components/vehicle-selector.vue";
 import {useI18n} from "vue-i18n";
@@ -73,6 +73,14 @@ async function startBattle() {
   }
 }
 
+async function addBot() {
+  try {
+    await api.postJson('/rooms/bots', {})
+  } catch (e) {
+    requestErrorHandler.handle(e)
+  }
+}
+
 async function exit() {
   try {
     await api.delete('/rooms/exit')
@@ -128,6 +136,20 @@ function back() {
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <online-users-table />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+          <v-expansion-panel v-if="roomStore.userIsRoomOwner" value="addBotsPanel">
+            <v-expansion-panel-title>
+              <v-icon class="mr-2" :icon="mdiRobot"/>
+              {{ t('room.addBots') }}
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <v-btn
+                  color="success"
+                  @click="addBot"
+              >
+                {{ t('room.addBot') }}
+              </v-btn>
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>

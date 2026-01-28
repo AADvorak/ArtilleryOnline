@@ -18,11 +18,18 @@ public class Room {
 
     private Map<Long, BattleParticipant> guests = new HashMap<>();
 
+    private Map<String, BattleParticipant> bots = new HashMap<>();
+
     private Battle battle;
 
     public Set<BattleParticipant> getParticipants() {
         var participants = new HashSet<>(guests.values());
         participants.add(owner);
+        participants.addAll(bots.values());
         return participants;
+    }
+
+    public int getParticipantsSize() {
+        return guests.size() + bots.size() + 1;
     }
 }

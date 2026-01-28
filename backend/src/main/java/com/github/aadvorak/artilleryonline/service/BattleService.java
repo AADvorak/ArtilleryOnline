@@ -1,8 +1,6 @@
 package com.github.aadvorak.artilleryonline.service;
 
 import com.github.aadvorak.artilleryonline.battle.*;
-import com.github.aadvorak.artilleryonline.battle.preset.VehicleSpecsPreset;
-import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import com.github.aadvorak.artilleryonline.collection.BattleTrackingMap;
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueParams;
@@ -17,35 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class BattleService {
-
-    private static final List<String> BOT_NICKNAMES = List.of(
-            "Leon",
-            "Markoyo",
-            "Picore",
-            "Fervor",
-            "Jimmy",
-            "Kirileyson",
-            "Ciri",
-            "CallMeBot",
-            "LadyNemesis"
-    );
-
-    private static final List<String> BOT_COLORS = List.of(
-            "#ff5733",
-            "#ffd733",
-            "#ff9633",
-            "#bf04ec",
-            "#5dfc02",
-            "#02f4fc",
-            "#fc0688"
-    );
 
     private final UserBattleMap userBattleMap;
 
@@ -62,6 +39,8 @@ public class BattleService {
     private final BattleStartedSender battleStartedSender;
 
     private final ModelMapper mapper = new ModelMapper();
+
+    private final BotsService botsService = new BotsService();
 
     public BattleResponse getBattle() {
         var user = userService.getUserFromContext();
@@ -113,6 +92,7 @@ public class BattleService {
             battle.setRoom(room);
             participants.stream()
                     .map(BattleParticipant::getUser)
+                    .filter(Objects::nonNull)
                     .forEach(battleStartedSender::send);
         }
     }
@@ -125,12 +105,7 @@ public class BattleService {
                     .forEach(userAvailabilityService::checkSingleBattleAvailability);
             participants.stream()
                     .filter(participant -> participant.getUser() == null)
-                            .forEach(participant -> {
-                                participant.setNickname(makeUniqueNickname(getRandomBotNickname(), participants));
-                                participant.setParams(new BattleParticipantParams()
-                                        .setSelectedVehicle(getRandomVehicle())
-                                        .setVehicleColor(getRandomBotColor()));
-                            });
+                            .forEach(participant -> botsService.fillBot(participant, participants));
             battleStarter.start(participants, BattleType.RANDOM);
             participants.stream()
                     .map(BattleParticipant::getUser)
@@ -179,32 +154,8 @@ public class BattleService {
             var otherParticipant = new BattleParticipant()
                     .setNickname("Dummy player")
                     .setParams(new BattleParticipantParams()
-                            .setSelectedVehicle(getRandomVehicle()));
+                            .setSelectedVehicle(botsService.getRandomVehicle()));
             battleStarter.start(Set.of(userParticipant, otherParticipant), battleType);
         }
-    }
-
-    private String getRandomVehicle() {
-        var vehicles = Arrays.stream(VehicleSpecsPreset.values()).map(VehicleSpecsPreset::getName).toList();
-        return vehicles.get(BattleUtils.generateRandom(0, vehicles.size()));
-    }
-
-    private String getRandomBotNickname() {
-        return BOT_NICKNAMES.get(BattleUtils.generateRandom(0, BOT_NICKNAMES.size()));
-    }
-
-    private String getRandomBotColor() {
-        return BOT_COLORS.get(BattleUtils.generateRandom(0, BOT_COLORS.size()));
-    }
-
-    private String makeUniqueNickname(String nickname, Set<BattleParticipant> participants) {
-        var existingNicknames = participants.stream()
-                .map(BattleParticipant::getNickname)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-        while (existingNicknames.contains(nickname)) {
-            nickname += "1";
-        }
-        return nickname;
     }
 }

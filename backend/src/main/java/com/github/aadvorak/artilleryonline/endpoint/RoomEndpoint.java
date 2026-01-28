@@ -38,8 +38,13 @@ public class RoomEndpoint {
         roomService.exitRoom();
     }
 
-    @DeleteMapping("/guests/{nickname}")
-    public void removeUserFromRoom(@PathVariable String nickname) {
-        roomService.removeUserFromRoom(nickname);
+    @DeleteMapping("/participants/{nickname}")
+    public void removeParticipant(@PathVariable String nickname) {
+        roomService.removeParticipant(nickname);
+    }
+
+    @PostMapping("/bots")
+    public void addBot() {
+        roomService.addBot();
     }
 }

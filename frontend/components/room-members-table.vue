@@ -27,7 +27,7 @@ function sortMembers(a: RoomMember, b: RoomMember) {
 
 async function removeUserFromRoom(nickname: string) {
   try {
-    await api.delete(`/rooms/guests/${nickname}`)
+    await api.delete(`/rooms/participants/${nickname}`)
   } catch (e) {
     useRequestErrorHandler().handle(e)
   }

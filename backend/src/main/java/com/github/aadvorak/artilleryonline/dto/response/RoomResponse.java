@@ -25,6 +25,7 @@ public class RoomResponse {
         var response = new RoomResponse();
         response.members.add(RoomMemberResponse.of(room.getOwner(), true));
         room.getGuests().values().forEach(guest -> response.members.add(RoomMemberResponse.of(guest, false)));
+        room.getBots().values().forEach(bot -> response.members.add(RoomMemberResponse.of(bot, false)));
         return response;
     }
 }

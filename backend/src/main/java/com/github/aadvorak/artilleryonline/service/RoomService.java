@@ -8,6 +8,7 @@ import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
 import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
 import com.github.aadvorak.artilleryonline.model.Locale;
 import com.github.aadvorak.artilleryonline.model.LocaleCode;
+import com.github.aadvorak.artilleryonline.properties.ApplicationLimits;
 import com.github.aadvorak.artilleryonline.ws.RoomUpdatesSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,10 @@ public class RoomService {
     private final RoomUpdatesSender roomUpdatesSender;
 
     private final MessageService messageService;
+
+    private final ApplicationLimits applicationLimits;
+
+    private final BotsService botsService = new BotsService();
 
     public RoomResponse getRoom() {
         var user = userService.getUserFromContext();
@@ -71,7 +76,7 @@ public class RoomService {
     public void startBattle() {
         var user = userService.getUserFromContext();
         var room = requireOwnRoom(user);
-        if (room.getGuests().isEmpty()) {
+        if (room.getParticipantsSize() < 2) {
             throw new ConflictAppException("Not enough players to start battle",
                     new Locale().setCode(LocaleCode.NOT_ENOUGH_PLAYERS));
         }
@@ -87,7 +92,7 @@ public class RoomService {
         }
     }
 
-    public void removeUserFromRoom(String nickname) {
+    public void removeParticipant(String nickname) {
         var user = userService.getUserFromContext();
         var room = requireOwnRoom(user);
         var guestToRemove = room.getGuests().values().stream()
@@ -105,6 +110,14 @@ public class RoomService {
             roomUpdatesSender.sendRoomDelete(room, guest.getUser());
             log.info("removeUserFromRoom: nickname {}, removed by {}, map size {}", nickname,
                     user.getNickname(), userRoomMap.size());
+        });
+        var botToRemove = room.getBots().values().stream()
+                .filter(bot -> bot.getNickname().equals(nickname))
+                .findAny();
+        botToRemove.ifPresent(bot -> {
+            room.getBots().remove(bot.getNickname());
+            roomUpdatesSender.sendRoomUpdate(room);
+            log.info("removeBotFromRoom: nickname {}, removed by {}", nickname, user.getNickname());
         });
     }
 
@@ -145,6 +158,18 @@ public class RoomService {
             roomUpdatesSender.sendRoomUpdate(room, true);
             log.info("exitRoom: (room deleted) nickname {}, map size {}", user.getNickname(), userRoomMap.size());
         }
+    }
+
+    public void addBot() {
+        var user = userService.getUserFromContext();
+        var room = requireOwnRoom(user);
+        if (room.getParticipantsSize() >= applicationLimits.getMaxRoomMembers()) {
+            throw new ConflictAppException("Room is already full",
+                    new Locale().setCode(LocaleCode.ROOM_IS_FULL));
+        }
+        var bot = botsService.generateBot(room.getParticipants());
+        room.getBots().put(bot.getNickname(), bot);
+        roomUpdatesSender.sendRoomUpdate(room);
     }
 
     private void removeSelectedVehicles(Room room) {
