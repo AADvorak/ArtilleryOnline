@@ -5,11 +5,9 @@ import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
 import com.github.aadvorak.artilleryonline.model.Locale;
 import com.github.aadvorak.artilleryonline.model.LocaleCode;
 import com.github.aadvorak.artilleryonline.properties.ApplicationLimits;
-import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
-import com.github.aadvorak.artilleryonline.repository.UserSettingRepository;
-import com.github.aadvorak.artilleryonline.service.UserVehicleConfigService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -28,6 +26,8 @@ public class BattleStarter {
 
     private final BattleFactory battleFactory;
 
+    private final ThreadPoolTaskExecutor runBattleExecutor;
+
     public Battle start(Set<BattleParticipant> participants, BattleType battleType) {
         checkMaxBattles();
         var battle = battleFactory.createBattle(participants, battleType);
@@ -45,7 +45,7 @@ public class BattleStarter {
     }
 
     public void checkMaxBattles() {
-        if (userBattleMap.battlesCount() >= applicationLimits.getMaxBattles()) {
+        if (runBattleExecutor.getActiveCount() >= applicationLimits.getMaxBattles()) {
             throw new ConflictAppException("Max battles limit reached",
                     new Locale().setCode(LocaleCode.MAX_BATTLES_LIMIT_EXCEED));
         }
