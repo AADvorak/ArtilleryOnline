@@ -52,8 +52,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
   }
 
   if (!!userStore.user) {
+    await stompClientStore.connect()
     await Promise.all([
-      stompClientStore.connect(),
       messageStore.loadMessagesIfNull(),
       messageStore.loadInvitationsIfNull(),
       userSettingsStore.loadSettingsIfNull(),
