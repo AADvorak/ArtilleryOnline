@@ -39,6 +39,10 @@ async function enterRoom(id: string) {
     useRequestErrorHandler().handle(e)
   }
 }
+
+defineExpose({
+  loadRooms
+})
 </script>
 
 <template>

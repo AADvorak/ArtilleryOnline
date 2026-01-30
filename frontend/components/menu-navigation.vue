@@ -64,6 +64,9 @@ function back() {
       </span>
       <span v-if="index < pathSegments.length - 1" class="separator"> / </span>
     </template>
+    <div class="slot-content">
+      <slot/>
+    </div>
   </div>
 </template>
 
@@ -72,6 +75,7 @@ function back() {
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .navigation-link {
@@ -83,5 +87,9 @@ function back() {
 .separator {
   margin: 0 4px;
   color: inherit;
+}
+
+.slot-content {
+  margin-left: auto;
 }
 </style>

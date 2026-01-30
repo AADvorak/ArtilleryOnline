@@ -5,11 +5,15 @@ import type {Room} from "~/data/model";
 import {useRoomStore} from "~/stores/room";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import {useI18n} from "vue-i18n";
+import OpenRoomsTable from "~/components/open-rooms-table.vue";
+import {mdiRefresh} from "@mdi/js";
 
 const {t} = useI18n()
 const router = useRouter()
 
 const roomStore = useRoomStore()
+
+const openRoomsTable = ref<InstanceType<typeof OpenRoomsTable> | undefined>()
 
 async function createRoom() {
   try {
@@ -24,6 +28,10 @@ async function toRoom() {
   await router.push('/rooms/room')
 }
 
+function loadRooms() {
+  openRoomsTable.value?.loadRooms()
+}
+
 function back() {
   router.push('/menu')
 }
@@ -33,7 +41,13 @@ function back() {
   <NuxtLayout>
     <v-card width="100%" max-width="600px">
       <v-card-title>
-        <menu-navigation/>
+        <menu-navigation>
+          <icon-btn
+              :icon="mdiRefresh"
+              :tooltip="t('common.refresh')"
+              @click="loadRooms"
+          />
+        </menu-navigation>
       </v-card-title>
       <v-card-text>
         <v-btn v-if="!roomStore.room" class="mb-4" width="100%" color="secondary" @click="createRoom">
@@ -42,7 +56,7 @@ function back() {
         <v-btn v-else class="mb-4" width="100%" color="secondary" @click="toRoom">
           {{ t('rooms.backToRoom') }}
         </v-btn>
-        <open-rooms-table class="mb-4"/>
+        <open-rooms-table ref="openRoomsTable" class="mb-4"/>
         <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>

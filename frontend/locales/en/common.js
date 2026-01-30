@@ -20,4 +20,5 @@ export const common = {
   close: 'Close',
   help: 'Help',
   specs: 'Specs',
+  refresh: 'Refresh',
 }
