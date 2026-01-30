@@ -15,9 +15,10 @@ export interface RoomMember {
 }
 
 export interface Room {
-  members: RoomMember[]
+  members: RoomMember[][]
   deleted: boolean
   opened: boolean
+  teamMode: boolean
 }
 
 export interface RoomShort {

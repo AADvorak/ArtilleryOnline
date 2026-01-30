@@ -12,7 +12,8 @@ const api = new ApiRequestSender()
 const roomStore = useRoomStore()
 
 const roomMembers = computed(() => {
-  return roomStore.room?.members.sort(sortMembers) || []
+  // todo sort
+  return roomStore.room?.members || []
 })
 
 function sortMembers(a: RoomMember, b: RoomMember) {
@@ -35,37 +36,44 @@ async function removeUserFromRoom(nickname: string) {
 </script>
 
 <template>
-  <v-table density="compact">
-    <thead>
-    <tr>
-      <th class="text-left">
-        {{ t('common.nickname') }}
-      </th>
-      <th class="text-left">
-        {{ t('roomMembersTable.selectedVehicle') }}
-      </th>
-      <th v-if="roomStore.userIsRoomOwner"></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr v-for="roomMember of roomMembers">
-      <td>
-        <v-icon :icon="roomMember.owner ? mdiCrown : mdiKnifeMilitary" />
-        {{ roomMember.nickname }}
-      </td>
-      <td>{{ roomMember.selectedVehicle ? t(`names.vehicles.${roomMember.selectedVehicle}`) : '' }}</td>
-      <td v-if="roomStore.userIsRoomOwner" class="btn-column">
-        <icon-btn
-            v-if="!roomMember.owner"
-            color="error"
-            :icon="mdiAccountRemove"
-            :tooltip="t('roomMembersTable.removeFromRoom')"
-            @click="removeUserFromRoom(roomMember.nickname)"
-        />
-      </td>
-    </tr>
-    </tbody>
-  </v-table>
+  <div>
+    <div v-for="(teamMembers, index) in roomMembers">
+      <div v-show="roomStore.room?.teamMode">
+        Team {{ index + 1 }}
+      </div>
+      <v-table density="compact">
+        <thead>
+        <tr>
+          <th class="text-left">
+            {{ t('common.nickname') }}
+          </th>
+          <th class="text-left">
+            {{ t('roomMembersTable.selectedVehicle') }}
+          </th>
+          <th v-if="roomStore.userIsRoomOwner"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="roomMember in teamMembers">
+          <td>
+            <v-icon :icon="roomMember.owner ? mdiCrown : mdiKnifeMilitary" />
+            {{ roomMember.nickname }}
+          </td>
+          <td>{{ roomMember.selectedVehicle ? t(`names.vehicles.${roomMember.selectedVehicle}`) : '' }}</td>
+          <td v-if="roomStore.userIsRoomOwner" class="btn-column">
+            <icon-btn
+                v-if="!roomMember.owner"
+                color="error"
+                :icon="mdiAccountRemove"
+                :tooltip="t('roomMembersTable.removeFromRoom')"
+                @click="removeUserFromRoom(roomMember.nickname)"
+            />
+          </td>
+        </tr>
+        </tbody>
+      </v-table>
+    </div>
+  </div>
 </template>
 
 <style scoped>

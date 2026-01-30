@@ -23,6 +23,8 @@ public class Room {
 
     private boolean opened = false;
 
+    private boolean teamMode = false;
+
     public Set<BattleParticipant> getParticipants() {
         var participants = new HashSet<>(guests.values());
         participants.add(owner);

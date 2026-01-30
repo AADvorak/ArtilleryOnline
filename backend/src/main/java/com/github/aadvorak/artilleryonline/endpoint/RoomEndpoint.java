@@ -1,7 +1,7 @@
 package com.github.aadvorak.artilleryonline.endpoint;
 
 import com.github.aadvorak.artilleryonline.battle.BattleParticipantParams;
-import com.github.aadvorak.artilleryonline.dto.request.RoomOpenRequest;
+import com.github.aadvorak.artilleryonline.dto.request.BooleanRequest;
 import com.github.aadvorak.artilleryonline.dto.response.RoomResponse;
 import com.github.aadvorak.artilleryonline.dto.response.RoomShortResponse;
 import com.github.aadvorak.artilleryonline.service.RoomService;
@@ -63,7 +63,12 @@ public class RoomEndpoint {
     }
 
     @PutMapping("/my/opened")
-    public void changeOpened(@RequestBody RoomOpenRequest request) {
-        roomService.changeOpened(request.isOpened());
+    public void changeOpened(@RequestBody BooleanRequest request) {
+        roomService.changeOpened(request.isOn());
+    }
+
+    @PutMapping("/my/team-mode")
+    public void changeTeamMode(@RequestBody BooleanRequest request) {
+        roomService.changeTeamMode(request.isOn());
     }
 }

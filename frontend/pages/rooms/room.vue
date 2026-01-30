@@ -24,7 +24,7 @@ const selectedVehicle = ref<string>()
 const openedPanels = ref<string[]>(['playersPanel'])
 
 const readyToBattle = computed(() => {
-  const members = roomStore.room?.members || []
+  const members = roomStore.allMembers
   if (members.length <= 1) {
     return false
   }
@@ -57,7 +57,7 @@ onMounted(() => {
 })
 
 function setSelectedVehicle() {
-  const memberVehicle = (roomStore.room?.members || [])
+  const memberVehicle = roomStore.allMembers
       .filter(member => member.nickname === userStore.user!.nickname)
       .map(member => member.selectedVehicle)[0]
   if (memberVehicle && selectedVehicle.value !== memberVehicle) {
@@ -83,7 +83,15 @@ async function addBot() {
 
 async function changeOpened() {
   try {
-    await api.putJson('/rooms/my/opened', {opened: !roomStore.room?.opened})
+    await api.putJson('/rooms/my/opened', {on: !roomStore.room?.opened})
+  } catch (e) {
+    requestErrorHandler.handle(e)
+  }
+}
+
+async function changeTeamMode() {
+  try {
+    await api.putJson('/rooms/my/team-mode', {on: !roomStore.room?.teamMode})
   } catch (e) {
     requestErrorHandler.handle(e)
   }
@@ -167,6 +175,13 @@ function back() {
             :label="t('room.opened')"
             :disabled="!roomStore.userIsRoomOwner"
             @click="changeOpened"
+        />
+        <v-checkbox
+            density="compact"
+            :model-value="roomStore.room?.teamMode"
+            label="Team Mode"
+            :disabled="!roomStore.userIsRoomOwner"
+            @click="changeTeamMode"
         />
         <v-btn class="mb-4" color="warning" width="100%" @click="exit">{{ t('common.exit') }}</v-btn>
         <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>

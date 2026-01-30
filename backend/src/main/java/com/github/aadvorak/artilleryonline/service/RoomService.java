@@ -230,6 +230,24 @@ public class RoomService {
         roomUpdatesSender.sendRoomUpdate(room);
     }
 
+    public void changeTeamMode(boolean teamMode) {
+        var user = userService.getUserFromContext();
+        var room = requireOwnRoom(user);
+        room.setTeamMode(teamMode);
+        if (teamMode) {
+            var index = 0;
+            for (var participant : room.getParticipants()) {
+                participant.setTeamId(index % 2 == 0 ? 0 : 1);
+                index++;
+            }
+        } else {
+            for (var participant : room.getParticipants()) {
+                participant.setTeamId(0);
+            }
+        }
+        roomUpdatesSender.sendRoomUpdate(room);
+    }
+
     private void removeSelectedVehicles(Room room) {
         room.getOwner().getParams().setSelectedVehicle(null);
         room.getGuests().values().forEach(guest -> guest.getParams().setSelectedVehicle(null));

@@ -13,8 +13,12 @@ export const useRoomStore = defineStore('room', () => {
   const userStore = useUserStore()
   const stompClientStore = useStompClientStore()
 
+  const allMembers = computed(() => {
+    return room.value?.members.reduce((p, c) => [...p, ...c], []) || []
+  })
+
   const userIsRoomOwner = computed(() => {
-    const members = room.value?.members || []
+    const members = allMembers.value
     const ownerNickname = members.filter(member => member.owner).map(member => member.nickname)[0]
     const userNickname = userStore.user?.nickname
     return ownerNickname === userNickname
@@ -56,5 +60,5 @@ export const useRoomStore = defineStore('room', () => {
     room.value = undefined
   }
 
-  return {room, loadRoomIfNull, userIsRoomOwner, clear}
+  return {room, allMembers, loadRoomIfNull, userIsRoomOwner, clear}
 })

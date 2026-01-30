@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RoomOpenRequest {
-    private boolean opened;
+public class BooleanRequest {
+    private boolean on;
 }

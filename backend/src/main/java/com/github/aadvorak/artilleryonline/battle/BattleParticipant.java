@@ -17,6 +17,8 @@ public class BattleParticipant {
 
     private BattleParticipantParams params;
 
+    private int teamId;
+
     public static BattleParticipant of(UserBattleQueueElement queueElement) {
        return new BattleParticipant()
                .setUser(queueElement.getUser())
