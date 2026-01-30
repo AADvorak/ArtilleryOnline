@@ -51,6 +51,7 @@ function subscribe() {
 
 <style scoped>
 .default {
+  padding-top: 48px;
   height: 100%;
 }
 </style>
