@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.endpoint;
 
+import com.github.aadvorak.artilleryonline.properties.ApplicationLimits;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import com.github.aadvorak.artilleryonline.service.OnlineUserService;
 import lombok.Getter;
@@ -21,6 +22,8 @@ public class ApplicationEndpoint {
 
     private final ApplicationSettings applicationSettings;
 
+    private final ApplicationLimits applicationLimits;
+
     private final OnlineUserService onlineUserService;
 
     private final ThreadPoolTaskExecutor runBattleExecutor;
@@ -28,6 +31,11 @@ public class ApplicationEndpoint {
     @GetMapping("/settings")
     public ApplicationSettings getApplicationSettings() {
         return applicationSettings;
+    }
+
+    @GetMapping("/limits")
+    public ApplicationLimits getApplicationLimits() {
+        return applicationLimits;
     }
 
     @GetMapping("/timezone")

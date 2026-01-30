@@ -82,6 +82,11 @@ export interface ApplicationSettings {
   userBattleQueueTimeout: number
 }
 
+export interface ApplicationLimits {
+  maxRoomMembers: number
+  maxBattles: number
+}
+
 export interface TimeZone {
   offset: number
 }

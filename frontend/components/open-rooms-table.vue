@@ -11,8 +11,13 @@ const {t} = useI18n()
 const api = new ApiRequestSender()
 const router = useRouter()
 const roomStore = useRoomStore()
+const settingsStore = useSettingsStore()
 
 const rooms = ref<RoomShort[]>([])
+
+const maxRoomMembers = computed(() => {
+  return settingsStore.limits!.maxRoomMembers
+})
 
 onMounted(() => {
   loadRooms()
@@ -56,13 +61,14 @@ async function enterRoom(id: string) {
     <tr v-if="!rooms.length" style="text-align: center;">{{ t('rooms.noRooms') }}</tr>
     <tr v-for="room of rooms">
       <td>{{ room.ownerNickname }}</td>
-      <td>{{ room.membersCount }}</td>
+      <td>{{ room.membersCount }} / {{ maxRoomMembers }}</td>
       <td>{{ room.inBattle ? t('common.yes') : t('common.no') }}</td>
       <td class="btn-column">
         <icon-btn
             color="success"
             :icon="mdiLogin"
             :tooltip="t('rooms.enter')"
+            :disabled="room.membersCount >= maxRoomMembers"
             @click="enterRoom(room.id)"
         />
       </td>

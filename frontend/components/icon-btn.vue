@@ -13,6 +13,7 @@ const props = defineProps<{
   icon: string
   tooltip: string
   large?: boolean
+  disabled?: boolean
   preventShowTooltip?: boolean
   showTooltip?: boolean
   tooltipLocation?: VerticalTooltipLocation
@@ -70,6 +71,7 @@ function mouseUp() {
       :class="props.large ? 'btn-with-icon-large' : 'btn-with-icon'"
       variant="text"
       :color="props.color"
+      :disabled="props.disabled"
       @click="click"
       @mousedown="mouseDown"
       @mouseup="mouseUp"
