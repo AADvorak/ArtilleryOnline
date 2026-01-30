@@ -6,9 +6,11 @@ export function useRequestErrorHandler() {
 
   const router = useRouter()
   const errorsStore = useErrorsStore()
+  const userStore = useUserStore()
 
   function handle(errorResponse: ErrorResponse, formValidation?: FormValidation) {
     if (errorResponse.status === 401) {
+      userStore.user = undefined
       router.push('/login').then()
       return
     }
