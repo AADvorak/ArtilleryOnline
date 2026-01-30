@@ -169,20 +169,23 @@ function back() {
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
-        <v-checkbox
-            density="compact"
-            :model-value="roomStore.room?.opened"
-            :label="t('room.opened')"
-            :disabled="!roomStore.userIsRoomOwner"
-            @click="changeOpened"
-        />
-        <v-checkbox
-            density="compact"
-            :model-value="roomStore.room?.teamMode"
-            label="Team Mode"
-            :disabled="!roomStore.userIsRoomOwner"
-            @click="changeTeamMode"
-        />
+        <v-toolbar color="transparent" density="compact">
+          <v-checkbox
+              density="compact"
+              class="mr-4"
+              :model-value="roomStore.room?.opened"
+              :label="t('room.opened')"
+              :disabled="!roomStore.userIsRoomOwner"
+              @click="changeOpened"
+          />
+          <v-checkbox
+              density="compact"
+              :model-value="roomStore.room?.teamMode"
+              label="Team Mode"
+              :disabled="!roomStore.userIsRoomOwner"
+              @click="changeTeamMode"
+          />
+        </v-toolbar>
         <v-btn class="mb-4" color="warning" width="100%" @click="exit">{{ t('common.exit') }}</v-btn>
         <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
