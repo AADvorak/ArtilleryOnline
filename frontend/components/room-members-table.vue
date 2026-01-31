@@ -5,16 +5,36 @@ import type {RoomMember} from '~/data/model'
 import {ApiRequestSender} from '~/api/api-request-sender'
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import {useI18n} from "vue-i18n";
+import Draggable from "vuedraggable";
 
 const {t} = useI18n()
 const api = new ApiRequestSender()
 
 const roomStore = useRoomStore()
 
-const roomMembers = computed(() => {
-  // todo sort
-  return roomStore.room?.members || []
+const team1Members = ref<RoomMember[]>([])
+const team2Members = ref<RoomMember[]>([])
+
+const room = computed(() => {
+  return roomStore.room
 })
+
+onMounted(() => {
+  if (room.value) {
+    setTeamsMembers(room.value.members)
+  }
+})
+
+watch(room, value => {
+  if (value) {
+    setTeamsMembers(value.members)
+  }
+})
+
+function setTeamsMembers(roomMembers: RoomMember[][]) {
+  team1Members.value = roomMembers[0] ? roomMembers[0].sort(sortMembers) : []
+  team2Members.value = roomMembers[1] ? roomMembers[1].sort(sortMembers) : []
+}
 
 function sortMembers(a: RoomMember, b: RoomMember) {
   if (a.owner) {
@@ -24,6 +44,10 @@ function sortMembers(a: RoomMember, b: RoomMember) {
     return 1
   }
   return a.nickname > b.nickname ? 1 : -1
+}
+
+function onChange(index: number, event: Event) {
+  console.log(index, event)
 }
 
 async function removeUserFromRoom(nickname: string) {
@@ -37,9 +61,9 @@ async function removeUserFromRoom(nickname: string) {
 
 <template>
   <div>
-    <div v-for="(teamMembers, index) in roomMembers">
+    <div v-if="team1Members.length">
       <div v-show="roomStore.room?.teamMode">
-        Team {{ index + 1 }}
+        Team 1
       </div>
       <v-table density="compact">
         <thead>
@@ -53,24 +77,76 @@ async function removeUserFromRoom(nickname: string) {
           <th v-if="roomStore.userIsRoomOwner"></th>
         </tr>
         </thead>
-        <tbody>
-        <tr v-for="roomMember in teamMembers">
-          <td>
-            <v-icon :icon="roomMember.owner ? mdiCrown : mdiKnifeMilitary" />
-            {{ roomMember.nickname }}
-          </td>
-          <td>{{ roomMember.selectedVehicle ? t(`names.vehicles.${roomMember.selectedVehicle}`) : '' }}</td>
-          <td v-if="roomStore.userIsRoomOwner" class="btn-column">
-            <icon-btn
-                v-if="!roomMember.owner"
-                color="error"
-                :icon="mdiAccountRemove"
-                :tooltip="t('roomMembersTable.removeFromRoom')"
-                @click="removeUserFromRoom(roomMember.nickname)"
-            />
-          </td>
+        <draggable
+            v-model="team1Members"
+            tag="tbody"
+            group="teams"
+            item-key="nickname"
+            @change="event => onChange(0, event)"
+        >
+          <template #item="{ element }">
+            <tr>
+              <td>
+                <v-icon :icon="element.owner ? mdiCrown : mdiKnifeMilitary" />
+                {{ element.nickname }}
+              </td>
+              <td>{{ element.selectedVehicle ? t(`names.vehicles.${element.selectedVehicle}`) : '' }}</td>
+              <td v-if="roomStore.userIsRoomOwner" class="btn-column">
+                <icon-btn
+                    v-if="!element.owner"
+                    color="error"
+                    :icon="mdiAccountRemove"
+                    :tooltip="t('roomMembersTable.removeFromRoom')"
+                    @click="removeUserFromRoom(element.nickname)"
+                />
+              </td>
+            </tr>
+          </template>
+        </draggable>
+      </v-table>
+    </div>
+    <div v-if="team2Members.length">
+      <div v-show="roomStore.room?.teamMode">
+        Team 2
+      </div>
+      <v-table density="compact">
+        <thead>
+        <tr>
+          <th class="text-left">
+            {{ t('common.nickname') }}
+          </th>
+          <th class="text-left">
+            {{ t('roomMembersTable.selectedVehicle') }}
+          </th>
+          <th v-if="roomStore.userIsRoomOwner"></th>
         </tr>
-        </tbody>
+        </thead>
+        <draggable
+            v-model="team2Members"
+            tag="tbody"
+            group="teams"
+            item-key="nickname"
+            @change="event => onChange(1, event)"
+        >
+          <template #item="{ element }">
+            <tr>
+              <td>
+                <v-icon :icon="element.owner ? mdiCrown : mdiKnifeMilitary" />
+                {{ element.nickname }}
+              </td>
+              <td>{{ element.selectedVehicle ? t(`names.vehicles.${element.selectedVehicle}`) : '' }}</td>
+              <td v-if="roomStore.userIsRoomOwner" class="btn-column">
+                <icon-btn
+                    v-if="!element.owner"
+                    color="error"
+                    :icon="mdiAccountRemove"
+                    :tooltip="t('roomMembersTable.removeFromRoom')"
+                    @click="removeUserFromRoom(element.nickname)"
+                />
+              </td>
+            </tr>
+          </template>
+        </draggable>
       </v-table>
     </div>
   </div>
