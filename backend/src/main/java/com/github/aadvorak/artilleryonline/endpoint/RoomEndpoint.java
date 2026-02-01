@@ -52,9 +52,14 @@ public class RoomEndpoint {
         roomService.exitRoom();
     }
 
-    @DeleteMapping("/my/participants/{nickname}")
-    public void removeParticipant(@PathVariable String nickname) {
-        roomService.removeParticipant(nickname);
+    @DeleteMapping("/my/members/{nickname}")
+    public void removeMember(@PathVariable String nickname) {
+        roomService.removeMember(nickname);
+    }
+
+    @PutMapping("/my/members/{nickname}/change-team/{teamId}")
+    public void changeMembersTeam(@PathVariable String nickname, @PathVariable int teamId) {
+        roomService.changeMembersTeam(nickname, teamId);
     }
 
     @PostMapping("/my/bots")

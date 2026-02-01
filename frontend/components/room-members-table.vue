@@ -20,15 +20,11 @@ const room = computed(() => {
 })
 
 onMounted(() => {
-  if (room.value) {
-    setTeamsMembers(room.value.members)
-  }
+  room.value && setTeamsMembers(room.value.members)
 })
 
 watch(room, value => {
-  if (value) {
-    setTeamsMembers(value.members)
-  }
+  value && setTeamsMembers(value.members)
 })
 
 function setTeamsMembers(roomMembers: RoomMember[][]) {
@@ -46,13 +42,21 @@ function sortMembers(a: RoomMember, b: RoomMember) {
   return a.nickname > b.nickname ? 1 : -1
 }
 
-function onChange(index: number, event: Event) {
-  console.log(index, event)
+async function onChange(teamId: number, event: any) {
+  if (event.added) {
+    const nickname = event.added.element.nickname
+    try {
+      await api.putJson<undefined, undefined>(`/rooms/my/members/${nickname}/change-team/${teamId}`, undefined)
+    } catch (e) {
+      room.value && setTeamsMembers(room.value.members)
+      useRequestErrorHandler().handle(e)
+    }
+  }
 }
 
 async function removeUserFromRoom(nickname: string) {
   try {
-    await api.delete(`/rooms/my/participants/${nickname}`)
+    await api.delete(`/rooms/my/members/${nickname}`)
   } catch (e) {
     useRequestErrorHandler().handle(e)
   }
@@ -63,7 +67,7 @@ async function removeUserFromRoom(nickname: string) {
   <div>
     <div v-if="team1Members.length">
       <div v-show="roomStore.room?.teamMode">
-        Team 1
+        {{ t('common.team') }} 1
       </div>
       <v-table density="compact">
         <thead>
@@ -105,9 +109,10 @@ async function removeUserFromRoom(nickname: string) {
         </draggable>
       </v-table>
     </div>
-    <div v-if="team2Members.length">
-      <div v-show="roomStore.room?.teamMode">
-        Team 2
+    <div v-if="roomStore.room?.teamMode">
+      <v-divider class="mb-4 mt-4" :thickness="2"/>
+      <div>
+        {{ t('common.team') }} 2
       </div>
       <v-table density="compact">
         <thead>

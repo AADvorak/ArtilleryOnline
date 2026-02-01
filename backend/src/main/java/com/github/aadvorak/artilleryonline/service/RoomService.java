@@ -143,7 +143,7 @@ public class RoomService {
         }
     }
 
-    public void removeParticipant(String nickname) {
+    public void removeMember(String nickname) {
         var user = userService.getUserFromContext();
         var room = requireOwnRoom(user);
         var guestToRemove = room.getGuests().values().stream()
@@ -170,6 +170,24 @@ public class RoomService {
             roomUpdatesSender.sendRoomUpdate(room);
             log.info("removeBotFromRoom: nickname {}, removed by {}", nickname, user.getNickname());
         });
+    }
+
+    public void changeMembersTeam(String nickname, int teamId) {
+        var user = userService.getUserFromContext();
+        var room = userRoomMap.get(user.getId());
+        if (room == null) {
+            throw new NotFoundAppException();
+        }
+        if (!user.getNickname().equals(nickname) && room.getOwner().getUser().getId() != user.getId()) {
+            throw new ConflictAppException("Unable to change members team",
+                    new Locale().setCode(LocaleCode.UNABLE_TO_CHANGE_MEMBERS_TEAM));
+        }
+        var member = room.getParticipants().stream()
+                .filter(participant -> participant.getNickname().equals(nickname))
+                .findAny()
+                .orElseThrow(NotFoundAppException::new);
+        member.setTeamId(teamId);
+        roomUpdatesSender.sendRoomUpdate(room);
     }
 
     public Room requireOwnRoom(User user) {

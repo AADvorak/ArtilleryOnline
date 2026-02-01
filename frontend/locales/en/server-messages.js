@@ -11,5 +11,6 @@ export const serverMessages = {
   userAlreadyInBattleQueue: 'User {nickname} is already in battle queue',
   userAlreadyInBattle: 'User {nickname} is already in battle',
   roomIsFull: 'Room is already full',
-  maxBattlesLimitExceed: 'Max server battles limit reached. Please try later.'
+  maxBattlesLimitExceed: 'Max server battles limit reached. Please try later',
+  unableToChangeMembersTeam: 'Unable to change members team',
 }

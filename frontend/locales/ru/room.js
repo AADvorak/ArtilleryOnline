@@ -6,4 +6,5 @@ export const room = {
   addBot: 'Добавить бота',
   addBots: 'Добавить ботов',
   opened: 'Открыта',
+  teamMode: 'Командный режим',
 }

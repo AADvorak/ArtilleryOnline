@@ -181,7 +181,7 @@ function back() {
           <v-checkbox
               density="compact"
               :model-value="roomStore.room?.teamMode"
-              label="Team Mode"
+              :label="t('room.teamMode')"
               :disabled="!roomStore.userIsRoomOwner"
               @click="changeTeamMode"
           />

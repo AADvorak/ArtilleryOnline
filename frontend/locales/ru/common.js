@@ -21,4 +21,5 @@ export const common = {
   help: 'Помощь',
   specs: 'Характеристики',
   refresh: 'Обновить',
+  team: 'Команда',
 }

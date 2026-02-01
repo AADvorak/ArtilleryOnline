@@ -21,4 +21,5 @@ export const common = {
   help: 'Help',
   specs: 'Specs',
   refresh: 'Refresh',
+  team: 'Team',
 }
