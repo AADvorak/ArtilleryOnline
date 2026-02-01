@@ -94,7 +94,7 @@ public class RoomInvitationService {
         }
         userAvailabilityService.checkRoomAvailability(user);
         var room = invitation.getRoom();
-        if (room.getParticipantsSize() >= applicationLimits.getMaxRoomMembers()) {
+        if (room.getMembersCount() >= applicationLimits.getMaxRoomMembers()) {
             throw new ConflictAppException("Room is already full",
                     new Locale().setCode(LocaleCode.ROOM_IS_FULL));
         }

@@ -22,7 +22,7 @@ public class RoomShortResponse {
         return new RoomShortResponse()
                 .setId(room.getId())
                 .setOwnerNickname(room.getOwner().getNickname())
-                .setMembersCount(room.getParticipantsSize())
+                .setMembersCount(room.getMembersCount())
                 .setInBattle(room.getBattle() != null);
     }
 }

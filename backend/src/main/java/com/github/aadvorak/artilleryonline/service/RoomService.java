@@ -61,7 +61,7 @@ public class RoomService {
                 .filter(Room::isOpened)
                 .findAny()
                 .orElseThrow(NotFoundAppException::new);
-        if (room.getParticipantsSize() >= applicationLimits.getMaxRoomMembers()) {
+        if (room.getMembersCount() >= applicationLimits.getMaxRoomMembers()) {
             throw new ConflictAppException("Room is already full",
                     new Locale().setCode(LocaleCode.ROOM_IS_FULL));
         }
@@ -127,7 +127,7 @@ public class RoomService {
     public void startBattle() {
         var user = userService.getUserFromContext();
         var room = requireOwnRoom(user);
-        if (room.getParticipantsSize() < 2) {
+        if (room.getMembersCount() < 2) {
             throw new ConflictAppException("Not enough players to start battle",
                     new Locale().setCode(LocaleCode.NOT_ENOUGH_PLAYERS));
         }
@@ -182,7 +182,7 @@ public class RoomService {
             throw new ConflictAppException("Unable to change members team",
                     new Locale().setCode(LocaleCode.UNABLE_TO_CHANGE_MEMBERS_TEAM));
         }
-        var member = room.getParticipants().stream()
+        var member = room.getMembers().stream()
                 .filter(participant -> participant.getNickname().equals(nickname))
                 .findAny()
                 .orElseThrow(NotFoundAppException::new);
@@ -232,11 +232,11 @@ public class RoomService {
     public void addBot() {
         var user = userService.getUserFromContext();
         var room = requireOwnRoom(user);
-        if (room.getParticipantsSize() >= applicationLimits.getMaxRoomMembers()) {
+        if (room.getMembersCount() >= applicationLimits.getMaxRoomMembers()) {
             throw new ConflictAppException("Room is already full",
                     new Locale().setCode(LocaleCode.ROOM_IS_FULL));
         }
-        var bot = botsService.generateBot(room.getParticipants());
+        var bot = botsService.generateBot(room.getMembers());
         room.getBots().put(bot.getNickname(), bot);
         roomUpdatesSender.sendRoomUpdate(room);
     }
@@ -254,13 +254,13 @@ public class RoomService {
         room.setTeamMode(teamMode);
         if (teamMode) {
             var index = 0;
-            for (var participant : room.getParticipants()) {
-                participant.setTeamId(index % 2 == 0 ? 0 : 1);
+            for (var member : room.getMembers()) {
+                member.setTeamId(index % 2 == 0 ? 0 : 1);
                 index++;
             }
         } else {
-            for (var participant : room.getParticipants()) {
-                participant.setTeamId(0);
+            for (var member : room.getMembers()) {
+                member.setTeamId(0);
             }
         }
         roomUpdatesSender.sendRoomUpdate(room);

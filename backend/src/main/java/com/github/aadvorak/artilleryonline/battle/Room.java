@@ -25,14 +25,14 @@ public class Room {
 
     private boolean teamMode = false;
 
-    public Set<BattleParticipant> getParticipants() {
+    public Set<BattleParticipant> getMembers() {
         var participants = new HashSet<>(guests.values());
         participants.add(owner);
         participants.addAll(bots.values());
         return participants;
     }
 
-    public int getParticipantsSize() {
+    public int getMembersCount() {
         return guests.size() + bots.size() + 1;
     }
 }

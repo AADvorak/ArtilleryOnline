@@ -86,11 +86,11 @@ public class BattleService {
         synchronized (userBattleMap) {
             checkReadyToBattle(room.getOwner());
             room.getGuests().values().forEach(this::checkReadyToBattle);
-            var participants = room.getParticipants();
-            var battle = battleStarter.start(participants, BattleType.ROOM);
+            var members = room.getMembers();
+            var battle = battleStarter.start(members, BattleType.ROOM);
             room.setBattle(battle);
             battle.setRoom(room);
-            participants.stream()
+            members.stream()
                     .map(BattleParticipant::getUser)
                     .filter(Objects::nonNull)
                     .forEach(battleStartedSender::send);
