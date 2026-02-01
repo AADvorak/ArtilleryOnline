@@ -11,6 +11,8 @@ const props = defineProps<{
   teamId: number
 }>()
 
+const emit = defineEmits(['reset'])
+
 const {t} = useI18n()
 const api = new ApiRequestSender()
 
@@ -23,15 +25,20 @@ const room = computed(() => {
 })
 
 onMounted(() => {
-  room.value && setTeamMembers(room.value.members)
+  resetTeamMembers()
 })
 
 watch(room, value => {
-  value && setTeamMembers(value.members)
+  resetTeamMembers()
 })
 
+function resetTeamMembers() {
+  room.value && setTeamMembers(room.value.members)
+}
+
 function setTeamMembers(roomMembers: RoomMember[][]) {
-  teamMembers.value = roomMembers[props.teamId] ? roomMembers[props.teamId].sort(sortMembers) : []
+  const members = roomMembers[props.teamId]
+  teamMembers.value = members ? members.sort(sortMembers) : []
 }
 
 function sortMembers(a: RoomMember, b: RoomMember) {
@@ -50,8 +57,7 @@ async function onChange(event: any) {
     try {
       await api.putJson<undefined, undefined>(`/rooms/my/members/${nickname}/change-team/${props.teamId}`, undefined)
     } catch (e) {
-      // todo return element to another component
-      room.value && setTeamMembers(room.value.members)
+      emit('reset')
       useRequestErrorHandler().handle(e)
     }
   }
@@ -64,6 +70,10 @@ async function removeUserFromRoom(nickname: string) {
     useRequestErrorHandler().handle(e)
   }
 }
+
+defineExpose({
+  resetTeamMembers
+})
 </script>
 
 <template>
