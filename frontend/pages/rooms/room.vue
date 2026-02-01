@@ -2,7 +2,6 @@
 import {useRouter} from "#app";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import {useRoomStore} from "~/stores/room";
-import RoomMembersTable from "~/components/room-members-table.vue";
 import {useUserStore} from "~/stores/user";
 import {mdiAccountMultiple, mdiAccountPlus, mdiRobot} from '@mdi/js'
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
@@ -142,7 +141,21 @@ function back() {
               {{ t('room.players') }}
             </v-expansion-panel-title>
             <v-expansion-panel-text>
-              <room-members-table class="mb-4"/>
+              <div class="mb-4">
+                <div>
+                  <div v-show="roomStore.room?.teamMode">
+                    {{ t('common.team') }} 1
+                  </div>
+                  <team-members-table :team-id="0"/>
+                </div>
+                <div v-if="roomStore.room?.teamMode">
+                  <v-divider class="mb-4 mt-4" :thickness="2"/>
+                  <div>
+                    {{ t('common.team') }} 2
+                  </div>
+                  <team-members-table :team-id="1"/>
+                </div>
+              </div>
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel v-if="roomStore.userIsRoomOwner" value="invitePlayersPanel">
