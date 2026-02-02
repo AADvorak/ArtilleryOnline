@@ -35,11 +35,11 @@ public class RoomResponse {
         if (response.isTeamMode()) {
             response.members.add(new HashSet<>());
         }
-        response.members.get(room.getOwner().getTeamId()).add(RoomMemberResponse.of(room.getOwner(), true));
+        response.members.get(room.getOwner().getTeamId()).add(RoomMemberResponse.of(room.getOwner(), true, false));
         room.getGuests().values().forEach(guest ->
-                response.members.get(guest.getTeamId()).add(RoomMemberResponse.of(guest, false)));
+                response.members.get(guest.getTeamId()).add(RoomMemberResponse.of(guest, false, false)));
         room.getBots().values().forEach(bot ->
-                response.members.get(bot.getTeamId()).add(RoomMemberResponse.of(bot, false)));
+                response.members.get(bot.getTeamId()).add(RoomMemberResponse.of(bot, false, true)));
         return response;
     }
 }

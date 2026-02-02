@@ -12,6 +12,7 @@ export interface RoomMember {
   nickname: string
   selectedVehicle?: string
   owner: boolean
+  bot: boolean
 }
 
 export interface Room {

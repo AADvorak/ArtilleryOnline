@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {mdiAccountRemove, mdiCrown, mdiKnifeMilitary} from "@mdi/js";
+import {mdiAccountRemove, mdiCrown, mdiAccount, mdiRobot} from "@mdi/js";
 import Draggable from "vuedraggable";
 import {useI18n} from "vue-i18n";
 import {ApiRequestSender} from "~/api/api-request-sender";
@@ -73,6 +73,16 @@ async function removeUserFromRoom(nickname: string) {
   }
 }
 
+function getMembersIcon(member: RoomMember) {
+  if (member.owner) {
+    return mdiCrown
+  }
+  if (member.bot) {
+    return mdiRobot
+  }
+  return mdiAccount
+}
+
 defineExpose({
   resetTeamMembers
 })
@@ -96,7 +106,7 @@ defineExpose({
     <template #item="{ element }">
       <tr>
         <td>
-          <v-icon :icon="element.owner ? mdiCrown : mdiKnifeMilitary"/>
+          <v-icon class="mr-2" :icon="getMembersIcon(element)"/>
           <span :class="element.nickname === userStore.user!.nickname ? 'players-nickname' : ''">
             {{ element.nickname }}
           </span>
@@ -122,6 +132,6 @@ defineExpose({
 }
 
 .players-nickname {
-  color: yellowgreen;
+  color: #fb8c00;
 }
 </style>

@@ -16,10 +16,13 @@ public class RoomMemberResponse {
 
     private boolean owner;
 
-    public static RoomMemberResponse of(BattleParticipant participant, boolean owner) {
+    private boolean bot;
+
+    public static RoomMemberResponse of(BattleParticipant participant, boolean owner, boolean bot) {
         return new RoomMemberResponse()
                 .setNickname(participant.getNickname())
                 .setSelectedVehicle(participant.getParams() != null ? participant.getParams().getSelectedVehicle() : null)
-                .setOwner(owner);
+                .setOwner(owner)
+                .setBot(bot);
     }
 }
