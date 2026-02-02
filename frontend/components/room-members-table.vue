@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TeamMembersTable from "~/components/team-members-table.vue";
+import TeamMembersRows from "~/components/team-members-rows.vue";
 import {useI18n} from "vue-i18n";
 import {useRoomStore} from "~/stores/room";
 
@@ -7,12 +7,12 @@ const {t} = useI18n()
 
 const roomStore = useRoomStore()
 
-const team1MembersTable = ref<InstanceType<typeof TeamMembersTable> | undefined>()
-const team2MembersTable = ref<InstanceType<typeof TeamMembersTable> | undefined>()
+const team1MembersRows = ref<InstanceType<typeof TeamMembersRows> | undefined>()
+const team2MembersRows = ref<InstanceType<typeof TeamMembersRows> | undefined>()
 
 function onResetTeams() {
-  team1MembersTable.value?.resetTeamMembers()
-  team2MembersTable.value?.resetTeamMembers()
+  team1MembersRows.value?.resetTeamMembers()
+  team2MembersRows.value?.resetTeamMembers()
 }
 </script>
 
@@ -30,8 +30,8 @@ function onResetTeams() {
         <th v-if="roomStore.userIsRoomOwner"></th>
       </tr>
       </thead>
-      <team-members-table
-          ref="team1MembersTable"
+      <team-members-rows
+          ref="team1MembersRows"
           :team-id="0"
           @reset="onResetTeams"
       />
@@ -43,8 +43,8 @@ function onResetTeams() {
           </td>
         </tr>
         </tbody>
-        <team-members-table
-            ref="team2MembersTable"
+        <team-members-rows
+            ref="team2MembersRows"
             :team-id="1"
             @reset="onResetTeams"
         />
