@@ -6,6 +6,7 @@ import {ApiRequestSender} from "~/api/api-request-sender";
 import {useRoomStore} from "~/stores/room";
 import type {RoomMember} from "~/data/model";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
+import {useUserStore} from "~/stores/user";
 
 const props = defineProps<{
   teamId: number
@@ -17,6 +18,7 @@ const {t} = useI18n()
 const api = new ApiRequestSender()
 
 const roomStore = useRoomStore()
+const userStore = useUserStore()
 
 const teamMembers = ref<RoomMember[]>([])
 
@@ -95,7 +97,9 @@ defineExpose({
       <tr>
         <td>
           <v-icon :icon="element.owner ? mdiCrown : mdiKnifeMilitary"/>
-          {{ element.nickname }}
+          <span :class="element.nickname === userStore.user!.nickname ? 'players-nickname' : ''">
+            {{ element.nickname }}
+          </span>
         </td>
         <td>{{ element.selectedVehicle ? t(`names.vehicles.${element.selectedVehicle}`) : '' }}</td>
         <td v-if="roomStore.userIsRoomOwner" class="btn-column">
@@ -115,5 +119,9 @@ defineExpose({
 <style scoped>
 .btn-column {
   text-align: right;
+}
+
+.players-nickname {
+  color: yellowgreen;
 }
 </style>
