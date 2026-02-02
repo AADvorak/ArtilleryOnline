@@ -18,26 +18,37 @@ function onResetTeams() {
 
 <template>
   <div class="mb-4">
-    <div>
-      <div v-show="roomStore.room?.teamMode">
-        {{ t('common.team') }} 1
-      </div>
+    <v-table density="compact">
+      <thead>
+      <tr>
+        <th class="text-left">
+          {{ t('common.nickname') }}
+        </th>
+        <th class="text-left">
+          {{ t('roomMembersTable.selectedVehicle') }}
+        </th>
+        <th v-if="roomStore.userIsRoomOwner"></th>
+      </tr>
+      </thead>
       <team-members-table
           ref="team1MembersTable"
           :team-id="0"
           @reset="onResetTeams"
       />
-    </div>
-    <div v-if="roomStore.room?.teamMode">
-      <v-divider class="mb-4 mt-4" :thickness="2"/>
-      <div>
-        {{ t('common.team') }} 2
-      </div>
-      <team-members-table
-          ref="team2MembersTable"
-          :team-id="1"
-          @reset="onResetTeams"
-      />
-    </div>
+      <template v-if="roomStore.room?.teamMode">
+        <tbody>
+        <tr>
+          <td colspan="3" style="padding: 0;">
+            <v-divider :thickness="2"/>
+          </td>
+        </tr>
+        </tbody>
+        <team-members-table
+            ref="team2MembersTable"
+            :team-id="1"
+            @reset="onResetTeams"
+        />
+      </template>
+    </v-table>
   </div>
 </template>

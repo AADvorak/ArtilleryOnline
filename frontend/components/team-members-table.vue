@@ -77,45 +77,39 @@ defineExpose({
 </script>
 
 <template>
-  <v-table density="compact">
-    <thead>
-    <tr>
-      <th class="text-left">
-        {{ t('common.nickname') }}
-      </th>
-      <th class="text-left">
-        {{ t('roomMembersTable.selectedVehicle') }}
-      </th>
-      <th v-if="roomStore.userIsRoomOwner"></th>
-    </tr>
-    </thead>
-    <draggable
-        v-model="teamMembers"
-        tag="tbody"
-        group="teams"
-        item-key="nickname"
-        @change="onChange"
-    >
-      <template #item="{ element }">
-        <tr>
-          <td>
-            <v-icon :icon="element.owner ? mdiCrown : mdiKnifeMilitary" />
-            {{ element.nickname }}
-          </td>
-          <td>{{ element.selectedVehicle ? t(`names.vehicles.${element.selectedVehicle}`) : '' }}</td>
-          <td v-if="roomStore.userIsRoomOwner" class="btn-column">
-            <icon-btn
-                v-if="!element.owner"
-                color="error"
-                :icon="mdiAccountRemove"
-                :tooltip="t('roomMembersTable.removeFromRoom')"
-                @click="removeUserFromRoom(element.nickname)"
-            />
-          </td>
-        </tr>
-      </template>
-    </draggable>
-  </v-table>
+  <tbody v-if="!teamMembers.length">
+  <tr>
+    <td colspan="3" style="padding: 0;">
+      {{ t('room.noPlayersInTeam') }}
+    </td>
+  </tr>
+  </tbody>
+  <draggable
+      v-model="teamMembers"
+      tag="tbody"
+      group="teams"
+      item-key="nickname"
+      @change="onChange"
+  >
+    <template #item="{ element }">
+      <tr>
+        <td>
+          <v-icon :icon="element.owner ? mdiCrown : mdiKnifeMilitary"/>
+          {{ element.nickname }}
+        </td>
+        <td>{{ element.selectedVehicle ? t(`names.vehicles.${element.selectedVehicle}`) : '' }}</td>
+        <td v-if="roomStore.userIsRoomOwner" class="btn-column">
+          <icon-btn
+              v-if="!element.owner"
+              color="error"
+              :icon="mdiAccountRemove"
+              :tooltip="t('roomMembersTable.removeFromRoom')"
+              @click="removeUserFromRoom(element.nickname)"
+          />
+        </td>
+      </tr>
+    </template>
+  </draggable>
 </template>
 
 <style scoped>
