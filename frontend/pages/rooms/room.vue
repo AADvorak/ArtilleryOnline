@@ -7,7 +7,7 @@ import {mdiAccountMultiple, mdiAccountPlus, mdiRobot} from '@mdi/js'
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import VehicleSelector from "~/components/vehicle-selector.vue";
 import {useI18n} from "vue-i18n";
-import TeamMembersTable from "~/components/team-members-table.vue";
+import RoomMembersTable from "~/components/room-members-table.vue";
 
 const api = new ApiRequestSender()
 const requestErrorHandler = useRequestErrorHandler()
@@ -19,8 +19,6 @@ const roomStore = useRoomStore()
 const userStore = useUserStore()
 
 const vehicleSelector = ref<InstanceType<typeof VehicleSelector> | undefined>()
-const team1MembersTable = ref<InstanceType<typeof TeamMembersTable> | undefined>()
-const team2MembersTable = ref<InstanceType<typeof TeamMembersTable> | undefined>()
 
 const selectedVehicle = ref<string>()
 const openedPanels = ref<string[]>(['playersPanel'])
@@ -109,11 +107,6 @@ async function exit() {
   }
 }
 
-function onResetTeams() {
-  team1MembersTable.value?.resetTeamMembers()
-  team2MembersTable.value?.resetTeamMembers()
-}
-
 function back() {
   router.push('/rooms')
 }
@@ -149,29 +142,7 @@ function back() {
               {{ t('room.players') }}
             </v-expansion-panel-title>
             <v-expansion-panel-text>
-              <div class="mb-4">
-                <div>
-                  <div v-show="roomStore.room?.teamMode">
-                    {{ t('common.team') }} 1
-                  </div>
-                  <team-members-table
-                      ref="team1MembersTable"
-                      :team-id="0"
-                      @reset="onResetTeams"
-                  />
-                </div>
-                <div v-if="roomStore.room?.teamMode">
-                  <v-divider class="mb-4 mt-4" :thickness="2"/>
-                  <div>
-                    {{ t('common.team') }} 2
-                  </div>
-                  <team-members-table
-                      ref="team2MembersTable"
-                      :team-id="1"
-                      @reset="onResetTeams"
-                  />
-                </div>
-              </div>
+              <room-members-table class="mb-4"/>
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel v-if="roomStore.userIsRoomOwner" value="invitePlayersPanel">
