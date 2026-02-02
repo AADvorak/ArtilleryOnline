@@ -1,16 +1,12 @@
 package com.github.aadvorak.artilleryonline.service;
 
-import com.github.aadvorak.artilleryonline.battle.BattleParticipant;
 import com.github.aadvorak.artilleryonline.battle.RoomInvitation;
 import com.github.aadvorak.artilleryonline.collection.RoomInvitationMap;
 import com.github.aadvorak.artilleryonline.collection.UserRoomMap;
 import com.github.aadvorak.artilleryonline.dto.request.RoomInvitationRequest;
 import com.github.aadvorak.artilleryonline.dto.response.RoomInvitationResponse;
 import com.github.aadvorak.artilleryonline.dto.response.RoomResponse;
-import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
 import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
-import com.github.aadvorak.artilleryonline.model.Locale;
-import com.github.aadvorak.artilleryonline.model.LocaleCode;
 import com.github.aadvorak.artilleryonline.properties.ApplicationLimits;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import com.github.aadvorak.artilleryonline.ws.RoomUpdatesSender;
@@ -22,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executors;
 
 @Service
@@ -92,30 +87,10 @@ public class RoomInvitationService {
         if (userRoomMap.get(invitation.getRoom().getOwner().getUser().getId()) == null) {
             throw new NotFoundAppException();
         }
-        userAvailabilityService.checkRoomAvailability(user);
-        var room = invitation.getRoom();
-        if (room.getMembersCount() >= applicationLimits.getMaxRoomMembers()) {
-            throw new ConflictAppException("Room is already full",
-                    new Locale().setCode(LocaleCode.ROOM_IS_FULL));
-        }
-        var existingRoom = userRoomMap.get(user.getId());
-        if (existingRoom != null) {
-            if (existingRoom.getGuests().containsKey(user.getId())) {
-                return RoomResponse.of(existingRoom);
-            }
-            roomService.exitRoom(user, existingRoom);
-        }
-        room.getGuests().put(user.getId(), BattleParticipant.of(user));
-        userRoomMap.put(user.getId(), room);
         log.info("acceptInvitation: nickname {}, map size {}, invitation map size {}", user.getNickname(),
                 userRoomMap.size(), roomInvitationMap.size());
-        roomUpdatesSender.sendRoomUpdate(room);
-        messageService.createMessage(invitation.getRoom().getOwner().getUser(),
-                "User " + user.getNickname() + " entered room",
-                new Locale()
-                        .setCode(LocaleCode.USER_ENTERED_ROOM)
-                        .setParams(Map.of("nickname", user.getNickname())));
-        return RoomResponse.of(room);
+        var room = invitation.getRoom();
+        return roomService.enterRoom(user, room);
     }
 
     public void deleteInvitation(String invitationId) {

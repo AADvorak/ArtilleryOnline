@@ -54,18 +54,21 @@ public class RoomService {
                 .toList();
     }
 
-    // todo common logic with acceptInvitation
     public RoomResponse enterRoom(String id) {
         var room = userRoomMap.values().stream()
                 .filter(item -> item.getId().equals(id))
                 .filter(Room::isOpened)
                 .findAny()
                 .orElseThrow(NotFoundAppException::new);
+        var user = userService.getUserFromContext();
+        return enterRoom(user, room);
+    }
+
+    public RoomResponse enterRoom(User user, Room room) {
         if (room.getMembersCount() >= applicationLimits.getMaxRoomMembers()) {
             throw new ConflictAppException("Room is already full",
                     new Locale().setCode(LocaleCode.ROOM_IS_FULL));
         }
-        var user = userService.getUserFromContext();
         userAvailabilityService.checkRoomAvailability(user);
         var existingRoom = userRoomMap.get(user.getId());
         if (existingRoom != null) {
@@ -75,7 +78,11 @@ public class RoomService {
             }
             exitRoom(user, existingRoom);
         }
-        room.getGuests().put(user.getId(), BattleParticipant.of(user));
+        var member = BattleParticipant.of(user);
+        if (room.isTeamMode()) {
+            member.setTeamId(room.getSmallestTeamId());
+        }
+        room.getGuests().put(user.getId(), member);
         userRoomMap.put(user.getId(), room);
         log.info("enterRoom: nickname {}, map size {}", user.getNickname(), userRoomMap.size());
         roomUpdatesSender.sendRoomUpdate(room);
@@ -237,6 +244,9 @@ public class RoomService {
                     new Locale().setCode(LocaleCode.ROOM_IS_FULL));
         }
         var bot = botsService.generateBot(room.getMembers());
+        if (room.isTeamMode()) {
+            bot.setTeamId(room.getSmallestTeamId());
+        }
         room.getBots().put(bot.getNickname(), bot);
         roomUpdatesSender.sendRoomUpdate(room);
     }

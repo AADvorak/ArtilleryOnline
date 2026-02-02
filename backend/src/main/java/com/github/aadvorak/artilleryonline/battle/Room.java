@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 @Getter
 @Setter
@@ -26,13 +27,23 @@ public class Room {
     private boolean teamMode = false;
 
     public Set<BattleParticipant> getMembers() {
-        var participants = new HashSet<>(guests.values());
-        participants.add(owner);
-        participants.addAll(bots.values());
-        return participants;
+        var members = new HashSet<>(guests.values());
+        members.add(owner);
+        members.addAll(bots.values());
+        return members;
     }
 
     public int getMembersCount() {
         return guests.size() + bots.size() + 1;
+    }
+
+    public Integer getSmallestTeamId() {
+        var members = getMembers();
+        var counts = Stream.of(0, 1)
+                .map(teamId -> members.stream()
+                        .filter(member -> teamId == member.getTeamId())
+                        .count())
+                .toList();
+        return counts.get(0) <= counts.get(1) ? 0 : 1;
     }
 }
