@@ -21,6 +21,7 @@ import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,12 @@ public class BotsProcessor {
         var otherVehiclePositions = battle.getVehicles().stream()
                 .filter(item -> !vehicle.getId().equals(item.getId()))
                 .collect(Collectors.toMap(VehicleCalculations::getPosition, VehicleCalculations::getId));
+        var teamId = battle.getVehicleIdTeamMap().get(vehicle.getId());
+        var enemyVehiclePositions = battle.getType().isTeam()
+                ? battle.getVehicles().stream()
+                .filter(item -> !Objects.equals(battle.getVehicleIdTeamMap().get(item.getId()), teamId))
+                .collect(Collectors.toMap(VehicleCalculations::getPosition, VehicleCalculations::getId))
+                : otherVehiclePositions;
         var roomSpecs = battle.getModel().getRoom().getSpecs();
         var vehicleMaxRadius = vehicle.getModel().getPreCalc().getMaxRadius();
         var moveRightBlocked = roomSpecs.getRightTop().getX() - vehicleX < vehicleMaxRadius;
@@ -63,32 +70,32 @@ public class BotsProcessor {
         if (!isMovingToBox && (criticalNeedAmmo || needAmmo && !trackBroken)) {
             isMovingToBox = setMovingToBoxIfAvailable(battle.getBoxes(), BoxType.AMMO, state, otherVehiclePositions.keySet());
         }
-        var closestVehiclePosition = GeometryUtils.findClosestPosition(vehicle.getPosition(), otherVehiclePositions.keySet());
-        if (closestVehiclePosition != null) {
-            var closestVehicleId = otherVehiclePositions.get(closestVehiclePosition);
+        var closestEnemyPosition = GeometryUtils.findClosestPosition(vehicle.getPosition(), enemyVehiclePositions.keySet());
+        if (closestEnemyPosition != null) {
+            var closestEnemyId = enemyVehiclePositions.get(closestEnemyPosition);
             var minTargetDistance = vehicleMaxRadius * 3;
             var closeBattleDistance = vehicleMaxRadius * 8;
-            var closestVehicleDistance = vehicleX - closestVehiclePosition.getX();
-            var isCloseBattle = Math.abs(closestVehicleDistance) < closeBattleDistance
+            var closestEnemyDistance = vehicleX - closestEnemyPosition.getX();
+            var isCloseBattle = Math.abs(closestEnemyDistance) < closeBattleDistance
                     && BattleUtils.getFirstPointUnderGround(new Segment(vehicle.getPosition(),
-                    closestVehiclePosition), battle.getModel().getRoom()) == null;
+                    closestEnemyPosition), battle.getModel().getRoom()) == null;
             switchShellIfNeeded(vehicle.getId(), state, battle.getShells());
             launchDroneIfAvailable(vehicle.getModel(), battle.getModel());
             launchMissileConditional(vehicle.getModel(), battle.getModel(), isCloseBattle);
             var targetData = targetDataCalculator.calculate(vehicle, battle);
             state.getGunState().setTriggerPushed(targetData != null && targetData.vehicleId() != null);
             if (isCloseBattle) {
-                closeBattleTargeting(vehicle, targetData, closestVehiclePosition, closestVehicleId);
-                if (!isMovingToBox && !trackBroken && Math.abs(closestVehicleDistance) < minTargetDistance) {
-                    if (closestVehicleDistance > 0 && !moveRightBlocked) {
+                closeBattleTargeting(vehicle, targetData, closestEnemyPosition, closestEnemyId);
+                if (!isMovingToBox && !trackBroken && Math.abs(closestEnemyDistance) < minTargetDistance) {
+                    if (closestEnemyDistance > 0 && !moveRightBlocked) {
                         state.setMovingDirection(MovingDirection.RIGHT);
                     }
-                    if (closestVehicleDistance < 0 && !moveLeftBlocked) {
+                    if (closestEnemyDistance < 0 && !moveLeftBlocked) {
                         state.setMovingDirection(MovingDirection.LEFT);
                     }
                 }
             } else {
-                distantBattleTargeting(state, targetData, closestVehiclePosition, !isMovingToBox && !trackBroken);
+                distantBattleTargeting(state, targetData, closestEnemyPosition, !isMovingToBox && !trackBroken);
             }
         }
         if (state.getMovingDirection() == null) {
