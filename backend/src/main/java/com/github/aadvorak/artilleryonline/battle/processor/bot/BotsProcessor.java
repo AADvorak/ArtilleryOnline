@@ -62,7 +62,7 @@ public class BotsProcessor {
         var needHp = vehicle.getModel().getRelativeHp() < 1.0;
         var criticalNeedHp = vehicle.getModel().getRelativeHp() < 0.5;
         var needAmmo = vehicle.getModel().getRelativeAmmo() < 1.0;
-        var criticalNeedAmmo = vehicle.getModel().getRelativeAmmo() < 1.0;
+        var criticalNeedAmmo = vehicle.getModel().getRelativeAmmo() < 0.3;
         var trackBroken = vehicle.getModel().getState().getTrackState().isBroken();
         if (criticalNeedHp || needHp && !trackBroken) {
             isMovingToBox = setMovingToBoxIfAvailable(battle.getBoxes(), BoxType.HP, state, otherVehiclePositions.keySet());
