@@ -146,10 +146,17 @@ public class BattleFactory {
                                                      BattleType battleType) {
         var battleModel = battle.getModel();
         var vehicles = new HashMap<String, VehicleModel>();
-        var distanceBetweenVehicles = (battleModel.getRoom().getSpecs().getRightTop().getX()
-                - battleModel.getRoom().getSpecs().getLeftBottom().getX())
-                / (participants.size() + 1);
+        var roomWidth = BattleUtils.getRoomWidth(battleModel.getRoom().getSpecs());
+        var roomLeftX = battleModel.getRoom().getSpecs().getLeftBottom().getX();
+        var distancesBetweenVehicles = new HashMap<Integer, Double>();
+        if (battle.getType().isTeam()) {
+            distancesBetweenVehicles.put(0, 0.5 * roomWidth / (battle.getTeamNicknames(0).size() + 1));
+            distancesBetweenVehicles.put(1, 0.5 * roomWidth / (battle.getTeamNicknames(1).size() + 1));
+        } else {
+            distancesBetweenVehicles.put(0, roomWidth / (participants.size() + 1));
+        }
         var vehicleNumber = 1;
+        var vehicleNumber1 = 1;
         for (var participant : participants) {
             var vehicleModel = new VehicleModel();
             var id = battleModel.getIdGenerator().generate();
@@ -192,6 +199,10 @@ public class BattleFactory {
                         .setRemainMissiles(vehicleModel.getSpecs().getMissiles());
             }
             var ammoConfig = getAmmoConfig(userConfig, gun.getAvailableShells().keySet(), gun.getAmmo());
+            var teamId = battle.getType().isTeam() ? battle.getNicknameTeamMap().get(participant.getNickname()) : 0;
+            var currentVehicleNumber = teamId == 0 ? vehicleNumber : vehicleNumber1;
+            var vehicleX = roomLeftX + teamId * roomWidth / 2
+                    + distancesBetweenVehicles.get(teamId) * currentVehicleNumber;
             vehicleModel.setConfig(new VehicleConfig()
                     .setAmmo(ammoConfig)
                     .setMissileLauncher(missileLauncherSpecs)
@@ -205,7 +216,7 @@ public class BattleFactory {
                     .setMissileLauncherState(missileLauncherState)
                     .setHitPoints(vehicleModel.getSpecs().getHitPoints())
                     .setPosition(new BodyPosition()
-                            .setX(distanceBetweenVehicles * vehicleNumber)
+                            .setX(vehicleX)
                             .setY(BattleUtils.getRoomHeight(battleModel.getRoom().getSpecs()) / 2))
                     .setGunState(new GunState()
                             .setAngle(Math.PI / 2)
@@ -222,7 +233,11 @@ public class BattleFactory {
                 VehicleOnGroundProcessor.correctVehiclePositionAndAngleOnGround(vehicleModel, battleModel.getRoom());
             }
             vehicles.put(participant.getNickname(), vehicleModel);
-            vehicleNumber++;
+            if (teamId == 0) {
+                vehicleNumber++;
+            } else {
+                vehicleNumber1++;
+            }
         }
         return vehicles;
     }

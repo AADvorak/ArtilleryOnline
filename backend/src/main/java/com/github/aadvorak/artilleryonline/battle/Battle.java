@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -83,5 +84,13 @@ public class Battle {
             return duration;
         }
         return battleStage.getMaxTime();
+    }
+
+    public Set<String> getTeamNicknames(int teamId) {
+        return nicknameTeamMap.entrySet().stream()
+                .filter(entry -> entry.getValue() == teamId)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+
     }
 }
