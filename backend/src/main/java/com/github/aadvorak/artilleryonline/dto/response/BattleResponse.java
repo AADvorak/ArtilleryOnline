@@ -8,6 +8,9 @@ import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Getter
 @Setter
 public class BattleResponse implements BattleUpdatesQueueElement, CompactSerializable {
@@ -28,6 +31,8 @@ public class BattleResponse implements BattleUpdatesQueueElement, CompactSeriali
 
     private BattleType type;
 
+    private Map<String, Integer> nicknameTeamMap = new HashMap<>();
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeString(id);
@@ -38,5 +43,6 @@ public class BattleResponse implements BattleUpdatesQueueElement, CompactSeriali
         stream.writeBoolean(paused);
         stream.writeSerializableValue(battleStage);
         stream.writeSerializableValue(type);
+        stream.writeMap(nicknameTeamMap, stream::writeString, stream::writeInt);
     }
 }

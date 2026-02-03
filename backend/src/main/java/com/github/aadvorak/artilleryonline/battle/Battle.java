@@ -7,10 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -58,6 +55,8 @@ public class Battle {
     private BattleQueues queues = new BattleQueues();
 
     private BattleAggregated aggregated = new BattleAggregated();
+
+    private Map<String, Integer> nicknameTeamMap = new HashMap<>();
 
     public void setStageAndResetTime(BattleStage battleStage) {
         this.battleStage = battleStage;

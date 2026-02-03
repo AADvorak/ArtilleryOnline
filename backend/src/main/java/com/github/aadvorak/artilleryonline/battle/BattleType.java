@@ -12,11 +12,17 @@ public enum BattleType implements CompactSerializable {
     RANDOM((short) 2, 10 * 60 * 1000),
     ROOM((short) 3, 10 * 60 * 1000),
     DRONE_HUNT((short) 4, 5 * 60 * 1000),
-    COLLIDER((short) 5, 10 * 60 * 1000),;
+    COLLIDER((short) 5, 10 * 60 * 1000),
+    TEAM_ELIMINATION((short) 6, 10 * 60 * 1000),
+    ;
 
     private final Short id;
 
     private final long duration;
+
+    public boolean isTeam() {
+        return this == TEAM_ELIMINATION;
+    }
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {

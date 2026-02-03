@@ -43,8 +43,13 @@ export function useVehicleDrawer(
       if (appearances.value[AppearancesNames.HP_ABOVE] === '1') {
         drawHpBar(vehicleModel)
       }
-      if (appearances.value[AppearancesNames.NICKNAMES_ABOVE] === '1') {
+      const nicknameAbove = appearances.value[AppearancesNames.NICKNAMES_ABOVE] === '1'
+      if (nicknameAbove) {
         drawNickname(userKey, vehicleModel)
+      }
+      const teamId = battleStore.battle?.nicknameTeamMap[userKey]
+      if (teamId !== undefined) {
+        drawTeamId(teamId, vehicleModel, nicknameAbove)
       }
     }
   }
@@ -129,6 +134,20 @@ export function useVehicleDrawer(
     drawerBase.drawText({
       position,
       text: restrictNicknameLength(userKey),
+      fontSize: 16,
+      textAlign: 'center',
+    }, {fillStyle: 'rgb(256 256 256)'})
+  }
+
+  function drawTeamId(teamId: number, vehicleModel: VehicleModel, nicknameAbove: boolean) {
+    const textHeight = 1.5 * vehicleModel.preCalc.maxRadius
+    const position = {
+      x: vehicleModel.state.position.x,
+      y: vehicleModel.state.position.y + textHeight + (nicknameAbove ? 0.35 : 0.15)
+    }
+    drawerBase.drawText({
+      position,
+      text: '[' + (teamId + 1) + ']',
       fontSize: 16,
       textAlign: 'center',
     }, {fillStyle: 'rgb(256 256 256)'})

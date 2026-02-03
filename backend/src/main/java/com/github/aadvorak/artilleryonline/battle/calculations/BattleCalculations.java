@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,6 +36,10 @@ public class BattleCalculations {
 
     private Set<Calculations<?>> movingObjects;
 
+    private Map<String, Integer> nicknameTeamMap = new HashMap<>();
+
+    private Map<Integer, Integer> vehicleIdTeamMap = new HashMap<>();
+
     public BattleCalculations(Battle battle) {
         var model = battle.getModel();
         this.model = model;
@@ -54,6 +60,10 @@ public class BattleCalculations {
         boxes = model.getBoxes().values().stream()
                 .map(BoxCalculations::new)
                 .collect(Collectors.toSet());
+        nicknameTeamMap = battle.getNicknameTeamMap();
+        vehicleIdTeamMap = new HashMap<>();
+        nicknameTeamMap.forEach((key, value) ->
+                vehicleIdTeamMap.put(model.getVehicles().get(key).getId(), value));
     }
 
     public Set<BoxCalculations> getBoxes() {

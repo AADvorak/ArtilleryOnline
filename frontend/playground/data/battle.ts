@@ -18,6 +18,10 @@ export enum BattleType {
   COLLIDER = 'COLLIDER'
 }
 
+export interface NicknameTeamMap {
+  [key: string]: number
+}
+
 export interface Battle {
   id: string
   model: BattleModel
@@ -27,6 +31,7 @@ export interface Battle {
   paused: boolean
   battleStage: BattleStage
   type: BattleType
+  nicknameTeamMap: NicknameTeamMap
 }
 
 export interface BattleUpdate {

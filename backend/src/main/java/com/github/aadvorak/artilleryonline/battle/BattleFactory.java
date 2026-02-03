@@ -56,6 +56,10 @@ public class BattleFactory {
                 .setBattleStage(BattleStage.WAITING)
                 .setType(battleType)
                 .setModel(battleModel);
+        if (battleType.isTeam()) {
+            battle.setNicknameTeamMap(participants.stream()
+                    .collect(Collectors.toMap(BattleParticipant::getNickname, BattleParticipant::getTeamId)));
+        }
         battleModel.setVehicles(createVehicles(participants, battle, battleType));
         if (BattleType.COLLIDER.equals(battleType)) {
             battleModel.setBoxes(createBoxes(battleModel));
