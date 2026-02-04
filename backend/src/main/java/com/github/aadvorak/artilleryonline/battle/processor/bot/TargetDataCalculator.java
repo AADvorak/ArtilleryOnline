@@ -51,7 +51,7 @@ public class TargetDataCalculator {
                     targetData = new TargetData(
                             bodyContact.contact(),
                             hitNormal,
-                            vehicle.getId(),
+                            otherVehicle.getId(),
                             shellSpecs.getPenetration(),
                             otherVehicle.getModel().getSpecs().getArmor().get(bodyContact.hitSurface())
                     );
