@@ -33,8 +33,6 @@ public class BattleCalculations {
 
     private Set<Calculations<?>> movingObjects;
 
-    private Map<String, Integer> nicknameTeamMap = new HashMap<>();
-
     private Map<Integer, Integer> vehicleIdTeamMap = new HashMap<>();
 
     public BattleCalculations(Battle battle) {
@@ -57,9 +55,8 @@ public class BattleCalculations {
         boxes = model.getBoxes().values().stream()
                 .map(BoxCalculations::new)
                 .collect(Collectors.toSet());
-        nicknameTeamMap = battle.getNicknameTeamMap();
         vehicleIdTeamMap = new HashMap<>();
-        nicknameTeamMap.forEach((key, value) -> {
+        battle.getNicknameTeamMap().forEach((key, value) -> {
             var vehicleModel = model.getVehicles().get(key);
             if (vehicleModel != null) {
                 vehicleIdTeamMap.put(vehicleModel.getId(), value);
