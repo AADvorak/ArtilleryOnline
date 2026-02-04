@@ -7,10 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -116,5 +113,11 @@ public class BattleCalculations {
             movingObjects.addAll(getBoxes());
         }
         return movingObjects;
+    }
+
+    public boolean allowedTarget(int vehicleId1, int vehicleId2) {
+        return !Objects.equals(vehicleId1, vehicleId2)
+                && (!type.isTeam()
+                || !Objects.equals(vehicleIdTeamMap.get(vehicleId1), vehicleIdTeamMap.get(vehicleId2)));
     }
 }

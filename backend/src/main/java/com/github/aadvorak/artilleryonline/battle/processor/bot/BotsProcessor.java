@@ -48,12 +48,9 @@ public class BotsProcessor {
         var otherVehiclePositions = battle.getVehicles().stream()
                 .filter(item -> !vehicle.getId().equals(item.getId()))
                 .collect(Collectors.toMap(VehicleCalculations::getPosition, VehicleCalculations::getId));
-        var teamId = battle.getVehicleIdTeamMap().get(vehicle.getId());
-        var enemyVehiclePositions = battle.getType().isTeam()
-                ? battle.getVehicles().stream()
-                .filter(item -> !Objects.equals(battle.getVehicleIdTeamMap().get(item.getId()), teamId))
-                .collect(Collectors.toMap(VehicleCalculations::getPosition, VehicleCalculations::getId))
-                : otherVehiclePositions;
+        var enemyVehiclePositions = battle.getVehicles().stream()
+                .filter(item -> battle.allowedTarget(vehicle.getId(), item.getId()))
+                .collect(Collectors.toMap(VehicleCalculations::getPosition, VehicleCalculations::getId));
         var roomSpecs = battle.getModel().getRoom().getSpecs();
         var vehicleMaxRadius = vehicle.getModel().getPreCalc().getMaxRadius();
         var moveRightBlocked = roomSpecs.getRightTop().getX() - vehicleX < vehicleMaxRadius;
@@ -83,7 +80,8 @@ public class BotsProcessor {
             launchDroneIfAvailable(vehicle.getModel(), battle.getModel());
             launchMissileConditional(vehicle.getModel(), battle.getModel(), isCloseBattle);
             var targetData = targetDataCalculator.calculate(vehicle, battle);
-            state.getGunState().setTriggerPushed(targetData != null && targetData.vehicleId() != null);
+            state.getGunState().setTriggerPushed(targetData != null && targetData.vehicleId() != null
+                    && battle.allowedTarget(vehicle.getId(), targetData.vehicleId()));
             if (isCloseBattle) {
                 closeBattleTargeting(vehicle, targetData, closestEnemyPosition, closestEnemyId);
                 if (!isMovingToBox && !trackBroken && Math.abs(closestEnemyDistance) < minTargetDistance) {
