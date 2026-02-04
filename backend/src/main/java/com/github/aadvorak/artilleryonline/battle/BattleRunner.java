@@ -111,12 +111,15 @@ public class BattleRunner {
         battle.getUserMap().values().forEach(user -> messageService.createMessage(user,
                 "Battle has finished",
                 new Locale().setCode(LocaleCode.BATTLE_FINISHED),
-                new MessageSpecial().setUserBattleResult(createUserBattleResult(battle.getModel(), user))));
+                new MessageSpecial().setUserBattleResult(createUserBattleResult(battle, user))));
     }
 
-    private UserBattleResult createUserBattleResult(BattleModel battleModel, User user) {
+    private UserBattleResult createUserBattleResult(Battle battle, User user) {
+        var battleModel = battle.getModel();
         return new ModelMapper().map(battleModel.getStatistics().get(user.getId()), UserBattleResult.class)
-                .setSurvived(battleModel.getVehicles().get(user.getNickname()) != null);
+                .setSurvived(battleModel.getVehicles().get(user.getNickname()) != null)
+                .setTeamMode(battle.getType().isTeam())
+                .setWon(battle.getWon(user.getNickname()));
     }
 
     private void writeBattleToHistory(Battle battle) {

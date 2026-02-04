@@ -119,6 +119,8 @@ export interface UserBattleResult {
   receivedIndirectHits: number
   receivedTrackBreaks: number
   survived: boolean
+  teamMode: boolean
+  won?: boolean
 }
 
 export interface UserBattleStatistics {

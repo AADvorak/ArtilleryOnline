@@ -31,6 +31,23 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         if (super.changeStageIfNeeded(battle)) {
             return true;
         }
+        if (battle.getType().isTeam()) {
+            var team0VehiclesCount = battle.getTeamNicknames(0).stream()
+                    .filter(nickname -> battle.getModel().getVehicles().get(nickname) != null)
+                    .count();
+            var team1VehiclesCount = battle.getTeamNicknames(1).stream()
+                    .filter(nickname -> battle.getModel().getVehicles().get(nickname) != null)
+                    .count();
+            if (team0VehiclesCount == 0) {
+                battle.setWinnerTeamId(1);
+            } else if (team1VehiclesCount == 0) {
+                battle.setWinnerTeamId(0);
+            }
+            if (battle.getWinnerTeamId() != null) {
+                battle.setStageAndResetTime(BattleStage.FINISHED);
+                return true;
+            }
+        }
         if (battle.getModel().getVehicles().isEmpty()
                 && battle.getModel().getShells().isEmpty()
                 && battle.getModel().getExplosions().isEmpty()

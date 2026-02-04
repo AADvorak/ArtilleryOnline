@@ -9,6 +9,7 @@ const props = defineProps<{
 const {t} = useI18n()
 
 const config = ref([
+  {localeKey: 'commonHistory.battleResult', value: getBattleResult()},
   {localeKey: 'battleHistory.survived', value: props.result.survived ? t('common.yes') : t('common.no')},
   {localeKey: 'commonHistory.madeShots', value: props.result.madeShots},
   {localeKey: 'commonHistory.destroyedVehicles', value: props.result.destroyedVehicles},
@@ -26,6 +27,19 @@ const causedReceivedConfig = ref([
   {localeKey: 'commonHistory.trackBreaks', causedValue: props.result.causedTrackBreaks,
     receivedValue: props.result.receivedTrackBreaks},
 ])
+
+function getBattleResult() {
+  if (props.result.teamMode) {
+    if (props.result.won === true) {
+      return t('commonHistory.battleResults.victory')
+    }
+    if (props.result.won === false) {
+      return t('commonHistory.battleResults.defeat')
+    }
+    return t('commonHistory.battleResults.draw')
+  }
+  return ''
+}
 </script>
 
 <template>

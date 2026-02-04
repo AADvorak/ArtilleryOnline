@@ -62,8 +62,12 @@ public class BattleCalculations {
                 .collect(Collectors.toSet());
         nicknameTeamMap = battle.getNicknameTeamMap();
         vehicleIdTeamMap = new HashMap<>();
-        nicknameTeamMap.forEach((key, value) ->
-                vehicleIdTeamMap.put(model.getVehicles().get(key).getId(), value));
+        nicknameTeamMap.forEach((key, value) -> {
+            var vehicleModel = model.getVehicles().get(key);
+            if (vehicleModel != null) {
+                vehicleIdTeamMap.put(vehicleModel.getId(), value);
+            }
+        });
     }
 
     public Set<BoxCalculations> getBoxes() {

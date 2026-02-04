@@ -11,6 +11,10 @@ public class UserBattleResult {
 
     private boolean survived;
 
+    private boolean teamMode;
+
+    private Boolean won;
+
     private double causedDamage;
 
     private int madeShots;

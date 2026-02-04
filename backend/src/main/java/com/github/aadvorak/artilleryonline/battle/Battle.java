@@ -59,6 +59,8 @@ public class Battle {
 
     private Map<String, Integer> nicknameTeamMap = new HashMap<>();
 
+    private Integer winnerTeamId;
+
     public void setStageAndResetTime(BattleStage battleStage) {
         this.battleStage = battleStage;
         this.stageUpdated = true;
@@ -92,5 +94,12 @@ public class Battle {
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
 
+    }
+
+    public Boolean getWon(String nickname) {
+        if (winnerTeamId != null) {
+            return nicknameTeamMap.get(nickname).equals(winnerTeamId);
+        }
+        return null;
     }
 }
