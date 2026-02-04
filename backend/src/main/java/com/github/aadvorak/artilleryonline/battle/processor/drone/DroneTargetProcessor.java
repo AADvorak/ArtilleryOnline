@@ -10,6 +10,6 @@ public class DroneTargetProcessor implements BeforeStep1Processor {
 
     @Override
     public void process(BattleCalculations battle) {
-        battle.getDrones().forEach(drone -> DroneTargetCalculator.calculate(drone, battle.getModel()));
+        battle.getDrones().forEach(drone -> DroneTargetCalculator.calculate(drone, battle));
     }
 }

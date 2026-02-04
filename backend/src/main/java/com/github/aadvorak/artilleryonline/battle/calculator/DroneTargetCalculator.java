@@ -1,8 +1,8 @@
 package com.github.aadvorak.artilleryonline.battle.calculator;
 
+import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.DroneCalculations;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
-import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 
 import java.util.Set;
@@ -10,13 +10,13 @@ import java.util.stream.Collectors;
 
 public class DroneTargetCalculator {
 
-    public static void calculate(DroneCalculations drone, BattleModel battleModel) {
+    public static void calculate(DroneCalculations drone, BattleCalculations battle) {
         if (drone.getModel().getState().isDestroyed()) {
             drone.getModel().getState().getGunState().setTriggerPushed(false);
             return;
         }
         var ammo = drone.getModel().getState().getAmmo().values().iterator().next();
-        var targets = getTargets(drone, battleModel, ammo);
+        var targets = getTargets(drone, battle, ammo);
         if (targets.isEmpty()) {
             return;
         }
@@ -44,11 +44,11 @@ public class DroneTargetCalculator {
         );
     }
 
-    private static Set<Position> getTargets(DroneCalculations drone, BattleModel battleModel, Integer ammo) {
+    private static Set<Position> getTargets(DroneCalculations drone, BattleCalculations battle, Integer ammo) {
         if (ammo > 0) {
-            return TargetCalculator.calculatePositions(drone.getModel().getVehicleId(), battleModel);
+            return TargetCalculator.calculatePositions(drone.getModel().getVehicleId(), battle);
         } else {
-            return battleModel.getVehicles().values().stream()
+            return battle.getModel().getVehicles().values().stream()
                     .filter(vehicleModel -> drone.getModel().getVehicleId() != null
                             && vehicleModel.getId() == drone.getModel().getVehicleId())
                     .map(vehicleModel -> vehicleModel.getState().getPosition().getCenter())

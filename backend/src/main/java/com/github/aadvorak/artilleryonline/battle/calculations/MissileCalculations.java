@@ -21,6 +21,8 @@ public class MissileCalculations extends CalculationsBase implements Calculation
 
     private final Positions positions;
 
+    private double correctingAcceleration = 0.0;
+
     public MissileCalculations(MissileModel model) {
         this.model = model;
         positions = new Positions(model.getSpecs().getLength());
