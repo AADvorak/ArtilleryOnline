@@ -126,6 +126,15 @@ export interface Shift {
   angle: number
 }
 
+export interface PlayerInfo {
+  nickname: string
+  color: string
+  hp: number
+  maxHp: number
+  frags: number
+  damage: number
+}
+
 export class Contact {
   depth: number
   angle: number

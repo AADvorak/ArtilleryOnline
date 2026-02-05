@@ -55,11 +55,9 @@ public class BattleFactory {
                 .setDuration(battleType.getDuration())
                 .setBattleStage(BattleStage.WAITING)
                 .setType(battleType)
-                .setModel(battleModel);
-        if (battleType.isTeam()) {
-            battle.setNicknameTeamMap(participants.stream()
-                    .collect(Collectors.toMap(BattleParticipant::getNickname, BattleParticipant::getTeamId)));
-        }
+                .setModel(battleModel)
+                .setNicknameTeamMap(participants.stream()
+                        .collect(Collectors.toMap(BattleParticipant::getNickname, BattleParticipant::getTeamId)));
         battleModel.setVehicles(createVehicles(participants, battle, battleType));
         if (BattleType.COLLIDER.equals(battleType)) {
             battleModel.setBoxes(createBoxes(battleModel));

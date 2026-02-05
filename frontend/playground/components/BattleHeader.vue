@@ -26,6 +26,7 @@ import {VerticalTooltipLocation} from "~/data/model";
 import FullScreenBtn from "~/components/full-screen-btn.vue";
 import {useRouter} from "#app";
 import {BattleType} from "~/playground/data/battle";
+import PlayersInfo from "~/playground/components/PlayersInfo.vue";
 
 const RESERVED_WIDTH = 416
 const HP_BAR_WIDTH = 216
@@ -183,6 +184,7 @@ function calculateAvailableHpSlots() {
     <Bomber />
     <ReloadingProgress />
   </v-toolbar>
+  <PlayersInfo />
 </template>
 
 <style scoped>
