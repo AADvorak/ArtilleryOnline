@@ -1,27 +1,28 @@
-import type {BattleModel, MissileModel} from "~/playground/data/model";
+import type {MissileModel} from "~/playground/data/model";
 import type {Acceleration, BodyAcceleration} from "~/playground/data/common";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {
   CorrectingAccelerationCalculator
 } from "~/playground/battle/calculator/missile/correcting-acceleration-calculator";
+import type {BattleCalculations} from "~/playground/data/calculations";
 
 export const MissileAccelerationCalculator = {
-  calculate(missileModel: MissileModel, battleModel: BattleModel): BodyAcceleration {
+  calculate(missileModel: MissileModel, battle: BattleCalculations): BodyAcceleration {
     const gravity = {
       x: 0.0,
-      y: -battleModel.room.specs.gravityAcceleration
+      y: -battle.model.room.specs.gravityAcceleration
     }
     const pushing = this.calculatePushing(missileModel)
     const movingSum = VectorUtils.sumOf(gravity, pushing)
 
-    const correcting = CorrectingAccelerationCalculator.calculate(missileModel, battleModel)
+    const correcting = CorrectingAccelerationCalculator.calculate(missileModel, battle)
 
     const bodyAcceleration = {
       x: movingSum.x,
       y: movingSum.y,
       angle: correcting
     }
-    const friction = this.calculateFriction(missileModel, battleModel.room.specs.airFrictionCoefficient)
+    const friction = this.calculateFriction(missileModel, battle.model.room.specs.airFrictionCoefficient)
     return VectorUtils.sumOfBody(bodyAcceleration, friction)
   },
 

@@ -423,9 +423,17 @@ export class BoxCalculations extends BodyCalculationsBase implements BodyCalcula
   }
 }
 
-export interface DroneCalculations extends Calculations {
-  model: DroneModel
+export class DroneCalculations extends BodyCalculationsBase implements BodyCalculations {
+  override model: DroneModel
   target?: DroneTargetCalculations
+
+  constructor(model: DroneModel) {
+    super(model);
+    this.model = model
+  }
+
+  calculateAllGroundContacts(roomModel: RoomModel): void {
+  }
 }
 
 export interface DroneTargetCalculations {

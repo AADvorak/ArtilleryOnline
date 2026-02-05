@@ -1,15 +1,14 @@
-import type {BattleModel, DroneModel} from "~/playground/data/model";
+import type {DroneModel} from "~/playground/data/model";
 import {DroneAccelerationCalculator} from "~/playground/battle/calculator/drone-acceleration-calculator";
 import {DroneTargetCalculator} from "~/playground/battle/calculator/drone-target-calculator";
+import {BattleCalculations, DroneCalculations} from "~/playground/data/calculations";
 
 export const DroneProcessor = {
-  processStep(droneModel: DroneModel, battleModel: BattleModel, timeStepSecs: number) {
-    const droneCalculations = {
-      model: droneModel
-    }
-    DroneTargetCalculator.calculate(droneCalculations, battleModel)
+  processStep(droneModel: DroneModel, battle: BattleCalculations, timeStepSecs: number) {
+    const droneCalculations: DroneCalculations = new DroneCalculations(droneModel);
+    DroneTargetCalculator.calculate(droneCalculations, battle)
 
-    const acceleration = DroneAccelerationCalculator.calculate(droneCalculations, battleModel, timeStepSecs)
+    const acceleration = DroneAccelerationCalculator.calculate(droneCalculations, battle.model, timeStepSecs)
     const velocity = droneModel.state.velocity
     const position = droneModel.state.position
 

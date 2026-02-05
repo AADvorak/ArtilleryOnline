@@ -1,9 +1,10 @@
-import type {BattleModel, MissileModel} from "~/playground/data/model";
+import type {MissileModel} from "~/playground/data/model";
 import {MissileAccelerationCalculator} from "~/playground/battle/calculator/missile-acceleration-calculator";
+import type {BattleCalculations} from "~/playground/data/calculations";
 
 export const MissileProcessor = {
-  processStep(missileModel: MissileModel, battleModel: BattleModel, timeStepSecs: number) {
-    const acceleration = MissileAccelerationCalculator.calculate(missileModel, battleModel)
+  processStep(missileModel: MissileModel, battle: BattleCalculations, timeStepSecs: number) {
+    const acceleration = MissileAccelerationCalculator.calculate(missileModel, battle)
     const velocity = missileModel.state.velocity
     const position = missileModel.state.position
 

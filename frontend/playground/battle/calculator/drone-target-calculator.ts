@@ -1,21 +1,20 @@
-import type {DroneCalculations} from "~/playground/data/calculations";
-import type {BattleModel} from "~/playground/data/model";
+import {BattleCalculations, type DroneCalculations} from "~/playground/data/calculations";
 import type {Position} from "~/playground/data/common";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {TargetCalculator} from "~/playground/battle/calculator/target-calculator";
 
 export const DroneTargetCalculator = {
-  calculate(drone: DroneCalculations, battleModel: BattleModel) {
+  calculate(drone: DroneCalculations, battle: BattleCalculations) {
     if (drone.model.state.destroyed) return
 
     const ammo = Object.values(drone.model.state.ammo)[0]
     let targets: Position[] = []
 
     if (ammo && ammo > 0) {
-      targets = TargetCalculator.calculatePositions(drone.model.vehicleId, battleModel)
+      targets = TargetCalculator.calculatePositions(drone.model.vehicleId, battle)
     } else {
-      targets = Object.values(battleModel.vehicles)
+      targets = Object.values(battle.model.vehicles)
           .filter(vehicle => vehicle.id === drone.model.vehicleId)
           .map(vehicle => ({
             x: vehicle.state.position.x,

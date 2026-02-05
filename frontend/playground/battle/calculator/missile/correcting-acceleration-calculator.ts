@@ -1,8 +1,9 @@
-import type {BattleModel, MissileModel} from "~/playground/data/model";
+import type {MissileModel} from "~/playground/data/model";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {TargetCalculator} from "~/playground/battle/calculator/target-calculator";
 import type {MissileSpecs} from "~/playground/data/specs";
+import type {BattleCalculations} from "~/playground/data/calculations";
 
 const PRECISION_THRESHOLD = 6.0
 const CLOSE_EDGE_DISTANCE = 5.0
@@ -23,7 +24,7 @@ class TargetData {
 
 export const CorrectingAccelerationCalculator = {
 
-  calculate(missileModel: MissileModel, battleModel: BattleModel): number {
+  calculate(missileModel: MissileModel, battle: BattleCalculations): number {
     const state = missileModel.state
     const specs = missileModel.specs
     const velocityMagnitude = VectorUtils.getMagnitude(state.velocity)
@@ -40,7 +41,7 @@ export const CorrectingAccelerationCalculator = {
       )
     }
 
-    const targets = TargetCalculator.calculatePositions(missileModel.vehicleId, battleModel)
+    const targets = TargetCalculator.calculatePositions(missileModel.vehicleId, battle)
     if (!targets.length) {
       return 0.0
     }

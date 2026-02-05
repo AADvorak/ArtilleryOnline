@@ -58,10 +58,10 @@ export const useBattleObjectsProcessor = function (
       ExplosionProcessor.processStep(explosion, timeStepSecs)
     })
     Object.values(battle.model.missiles).forEach(missile => {
-      MissileProcessor.processStep(missile, battle.model, timeStepSecs)
+      MissileProcessor.processStep(missile, battleCalculations, timeStepSecs)
     })
     Object.values(battle.model.drones).forEach(drone => {
-      DroneProcessor.processStep(drone, battle.model, timeStepSecs)
+      DroneProcessor.processStep(drone, battleCalculations, timeStepSecs)
     })
     battleCalculations.boxes.forEach(box => {
       BoxProcessor.processBeforeCollision(box, battleCalculations)
