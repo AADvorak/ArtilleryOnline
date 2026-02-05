@@ -45,7 +45,7 @@ const allInfo = computed<PlayerInfo[]>(() => {
             :color="player.color"
             :model-value="Math.floor(100 * player.hp / player.maxHp)"
         >
-          <span class="progress-text">{{ player.nickname }}: {{ player.hp }}</span>
+          <span class="progress-text">{{ player.nickname }}: {{ Math.floor(player.hp) }}</span>
         </v-progress-linear>
       </td>
       <td></td>

@@ -19,7 +19,7 @@ import {useUserStore} from "~/stores/user";
 import {useVehicleDebugDrawer} from "~/playground/composables/drawer/vehicle-debug-drawer";
 import {useCrosshairDrawer} from "~/playground/composables/drawer/crosshair-drawer";
 
-const HEADER_HEIGHT = 72
+const HEADER_HEIGHT = 36
 const SCROLL_RESERVE_WIDTH = 40
 
 const battleStore = useBattleStore()

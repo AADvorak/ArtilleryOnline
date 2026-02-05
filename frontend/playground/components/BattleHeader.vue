@@ -2,7 +2,6 @@
 import {computed} from "vue";
 import {useBattleStore} from "~/stores/battle";
 import ReloadingProgress from "@/playground/components/ReloadingProgress.vue";
-import HitPointsBar from "@/playground/components/HitPointsBar.vue";
 import BattleTimer from "@/playground/components/BattleTimer.vue";
 import BattleDebugButtons from "@/playground/components/BattleDebugButtons.vue";
 import {useSettingsStore} from "~/stores/settings";
@@ -12,8 +11,6 @@ import {useUserStore} from "~/stores/user";
 import {mdiCloseThick, mdiHelp, mdiMenu} from '@mdi/js'
 import IconBtn from "~/components/icon-btn.vue";
 import HelpDialog from "~/playground/components/HelpDialog.vue";
-import {useUserSettingsStore} from "~/stores/user-settings";
-import {AppearancesNames} from "~/dictionary/appearances-names";
 import {useI18n} from "vue-i18n";
 import BattleFps from "~/playground/components/BattleFps.vue";
 import BattlePing from "~/playground/components/BattlePing.vue";
@@ -28,14 +25,10 @@ import {useRouter} from "#app";
 import {BattleType} from "~/playground/data/battle";
 import PlayersInfo from "~/playground/components/PlayersInfo.vue";
 
-const RESERVED_WIDTH = 416
-const HP_BAR_WIDTH = 216
-
 const {t} = useI18n()
 const battleStore = useBattleStore()
 const userStore = useUserStore()
 const settingsStore = useSettingsStore()
-const userSettingsStore = useUserSettingsStore()
 const globalStateStore = useGlobalStateStore()
 const router = useRouter()
 
@@ -43,47 +36,8 @@ const props = defineProps<{
   showControlButtons: boolean
 }>()
 
-const availableHpSlots = ref<number>(0)
-
 const leaveBattleDialog = ref<InstanceType<typeof LeaveBattleDialog> | null>(null)
 const helpDialog = ref<InstanceType<typeof HelpDialog> | null>(null)
-
-const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
-
-const userKeys = computed(() => {
-  if (!availableHpSlots.value) {
-    return []
-  }
-  const keys = Object.keys(battleStore.vehicles || [])
-  if (appearances.value[AppearancesNames.ALL_HP_TOP] !== '1' || keys.length > 2 * availableHpSlots.value) {
-    return [userStore.user!.nickname]
-  }
-  return keys
-})
-
-const userKeyPairs = computed(() => {
-  const usersCount = userKeys.value.length
-  const pairs = []
-  if (usersCount === 0) {
-    return pairs
-  }
-  if (usersCount <= availableHpSlots.value) {
-    for (const userKey of userKeys.value) {
-      pairs.push([userKey])
-    }
-  } else {
-    const pairsCount = Math.ceil(usersCount / 2)
-    for (let pairNumber = 0; pairNumber < pairsCount; pairNumber++) {
-      const pair = []
-      const first = userKeys.value[2 * pairNumber]
-      first && pair.push(first)
-      const second = userKeys.value[2 * pairNumber + 1]
-      second && pair.push(second)
-      pairs.push(pair)
-    }
-  }
-  return pairs
-})
 
 const jetAvailable = computed(() => {
   const vehicle = battleStore.battle?.model.vehicles[userStore.user!.nickname]
@@ -93,13 +47,10 @@ const jetAvailable = computed(() => {
 const isDebugMode = computed(() => settingsStore.settings?.debug)
 
 onMounted(() => {
-  calculateAvailableHpSlots()
-  addEventListener('resize', calculateAvailableHpSlots)
   addEventListener('keyup', showHelpIfF1Pressed)
 })
 
 onUnmounted(() => {
-  removeEventListener('resize', calculateAvailableHpSlots)
   removeEventListener('keyup', showHelpIfF1Pressed)
 })
 
@@ -128,12 +79,6 @@ function showHelp() {
 function toMenu() {
   router.push('/menu')
 }
-
-function calculateAvailableHpSlots() {
-  let availableWidth = window.innerWidth - RESERVED_WIDTH
-  if (availableWidth < 0) availableWidth = 0
-  availableHpSlots.value = Math.floor(availableWidth / HP_BAR_WIDTH)
-}
 </script>
 
 <template>
@@ -150,9 +95,14 @@ function calculateAvailableHpSlots() {
     <div class="ml-2 battle-ping-wrapper">
       <BattlePing />
     </div>
-    <div class="ml-4 hit-points-bar-wrapper" v-for="userKeyPair in userKeyPairs">
-      <HitPointsBar v-for="userKey in userKeyPair" :user-key="userKey" />
+    <div v-if="jetAvailable" class="ml-4 jet-bar-wrapper">
+      <JetBar />
     </div>
+    <Gun />
+    <Missiles />
+    <Drone />
+    <Bomber />
+    <ReloadingProgress />
     <v-spacer/>
     <icon-btn
         :icon="mdiHelp"
@@ -174,16 +124,6 @@ function calculateAvailableHpSlots() {
     <LeaveBattleDialog ref="leaveBattleDialog"/>
     <HelpDialog ref="helpDialog"/>
   </v-toolbar>
-  <v-toolbar height="36px" color="transparent" class="toolbar">
-    <div v-if="jetAvailable" class="ml-4 jet-bar-wrapper">
-      <JetBar />
-    </div>
-    <Gun />
-    <Missiles />
-    <Drone />
-    <Bomber />
-    <ReloadingProgress />
-  </v-toolbar>
   <PlayersInfo />
 </template>
 
@@ -198,10 +138,6 @@ function calculateAvailableHpSlots() {
 
 .battle-ping-wrapper {
   min-width: 70px;
-}
-
-.hit-points-bar-wrapper {
-  min-width: 200px;
 }
 
 .jet-bar-wrapper {
