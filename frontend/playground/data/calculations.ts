@@ -7,6 +7,7 @@ import {GroundContactUtils} from "~/playground/utils/ground-contact-utils";
 import {BodyUtils} from "~/playground/utils/body-utils";
 import {Circle, VectorProjections} from "~/playground/data/geometry";
 import {SurfaceContactUtils} from "~/playground/utils/surface-contact-utils";
+import {BattleType, type NicknameTeamMap} from "~/playground/data/battle";
 
 export interface Calculations {
   getModel(): any
@@ -437,21 +438,40 @@ export class BattleCalculations {
   vehicles: VehicleCalculations[]
   boxes: BoxCalculations[]
   timeStepSecs: number
+  type: BattleType
+  vehicleIdTeamMap: Map<number, number>
 
   constructor(
       model: BattleModel,
       vehicles: VehicleCalculations[],
       boxes: BoxCalculations[],
-      timeStepSecs: number
+      timeStepSecs: number,
+      type: BattleType,
+      nicknameTeamMap: NicknameTeamMap
   ) {
     this.model = model
     this.vehicles = vehicles
     this.boxes = boxes
     this.timeStepSecs = timeStepSecs
+    this.type = type
+    this.vehicleIdTeamMap = new Map()
+    Object.keys(nicknameTeamMap).forEach((teamId) => {
+      const nickname = nicknameTeamMap[teamId]!
+      const vehicleModel = model.vehicles[nickname]
+      if (vehicleModel) {
+        this.vehicleIdTeamMap.set(vehicleModel.id, parseInt(teamId))
+      }
+    })
   }
 
   getMovingObjects(): Calculations[] {
     return [...this.vehicles, ...this.boxes]
+  }
+
+  allowedTarget(vehicleId1: number, vehicleId2: number): boolean {
+    return vehicleId1 !== vehicleId2 &&
+        (this.type !== BattleType.TEAM_ELIMINATION ||
+            this.vehicleIdTeamMap.get(vehicleId1) !== this.vehicleIdTeamMap.get(vehicleId2))
   }
 }
 

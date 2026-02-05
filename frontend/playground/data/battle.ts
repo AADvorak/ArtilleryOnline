@@ -15,7 +15,8 @@ export enum BattleType {
   RANDOM = 'RANDOM',
   ROOM = 'ROOM',
   DRONE_HUNT = 'DRONE_HUNT',
-  COLLIDER = 'COLLIDER'
+  COLLIDER = 'COLLIDER',
+  TEAM_ELIMINATION = 'TEAM_ELIMINATION',
 }
 
 export interface NicknameTeamMap {

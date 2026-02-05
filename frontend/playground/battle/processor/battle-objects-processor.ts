@@ -80,7 +80,7 @@ export const useBattleObjectsProcessor = function (
         .map((vehicle: VehicleModel) => new VehicleCalculations(vehicle))
     const boxes: BoxCalculations[] = Object.values(battle.model.boxes)
         .map((box: BoxModel) => new BoxCalculations(box))
-    return new BattleCalculations(battle.model, vehicles, boxes, timeStepSecs)
+    return new BattleCalculations(battle.model, vehicles, boxes, timeStepSecs, battle.type, battle.nicknameTeamMap)
   }
 
   return { process }
