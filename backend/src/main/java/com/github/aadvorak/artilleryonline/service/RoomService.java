@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.service;
 import com.github.aadvorak.artilleryonline.battle.BattleParticipant;
 import com.github.aadvorak.artilleryonline.battle.BattleParticipantParams;
 import com.github.aadvorak.artilleryonline.battle.Room;
+import com.github.aadvorak.artilleryonline.collection.RoomMap;
 import com.github.aadvorak.artilleryonline.collection.UserRoomMap;
 import com.github.aadvorak.artilleryonline.dto.response.RoomResponse;
 import com.github.aadvorak.artilleryonline.dto.response.RoomShortResponse;
@@ -17,10 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +26,8 @@ import java.util.Map;
 public class RoomService {
 
     private final UserService userService;
+
+    private final RoomMap roomMap;
 
     private final UserRoomMap userRoomMap;
 
@@ -44,22 +44,18 @@ public class RoomService {
     private final BotsService botsService = new BotsService();
 
     public List<RoomShortResponse> getOpenRooms() {
-        return userRoomMap.values().stream()
+        return roomMap.values().stream()
                 .filter(Room::isOpened)
-                .map(room -> room.getOwner().getUser().getId())
-                .distinct()
-                .map(userRoomMap::get)
                 .map(RoomShortResponse::of)
                 .sorted(Comparator.comparingInt(RoomShortResponse::getMembersCount))
                 .toList();
     }
 
     public RoomResponse enterRoom(String id) {
-        var room = userRoomMap.values().stream()
-                .filter(item -> item.getId().equals(id))
-                .filter(Room::isOpened)
-                .findAny()
-                .orElseThrow(NotFoundAppException::new);
+        var room = roomMap.get(id);
+        if (room == null) {
+            throw new NotFoundAppException();
+        }
         var user = userService.getUserFromContext();
         return enterRoom(user, room);
     }
@@ -70,7 +66,7 @@ public class RoomService {
                     new Locale().setCode(LocaleCode.ROOM_IS_FULL));
         }
         userAvailabilityService.checkRoomAvailability(user);
-        var existingRoom = userRoomMap.get(user.getId());
+        var existingRoom = getUserRoomOrNull(user.getId());
         if (existingRoom != null) {
             if (existingRoom.getGuests().containsKey(user.getId())
                     || room.getOwner().getUser().getId() == user.getId()) {
@@ -83,8 +79,9 @@ public class RoomService {
             member.setTeamId(room.getSmallestTeamId());
         }
         room.getGuests().put(user.getId(), member);
-        userRoomMap.put(user.getId(), room);
-        log.info("enterRoom: nickname {}, map size {}", user.getNickname(), userRoomMap.size());
+        userRoomMap.put(user.getId(), room.getId());
+        log.info("enterRoom: nickname {}, users in rooms size {}, rooms size {}",
+                user.getNickname(), userRoomMap.size(), roomMap.size());
         roomUpdatesSender.sendRoomUpdate(room);
         messageService.createMessage(room.getOwner().getUser(),
                 "User " + user.getNickname() + " entered room",
@@ -96,33 +93,28 @@ public class RoomService {
 
     public RoomResponse getRoom() {
         var user = userService.getUserFromContext();
-        var room = userRoomMap.get(user.getId());
-        if (room == null) {
-            throw new NotFoundAppException();
-        }
-        log.info("getRoom: nickname {}, map size {}", user.getNickname(), userRoomMap.size());
+        var room = requireUserRoom(user.getId());
         return RoomResponse.of(room);
     }
 
     public RoomResponse createRoom() {
         var user = userService.getUserFromContext();
-        var existingRoom = userRoomMap.get(user.getId());
+        var existingRoom = getUserRoomOrNull(user.getId());
         if (existingRoom != null) {
             return RoomResponse.of(existingRoom);
         }
         var room = new Room();
         room.setOwner(BattleParticipant.of(user));
-        userRoomMap.put(user.getId(), room);
-        log.info("createRoom: nickname {}, map size {}", user.getNickname(), userRoomMap.size());
+        roomMap.put(room.getId(), room);
+        userRoomMap.put(user.getId(), room.getId());
+        log.info("createRoom: nickname {}, users in rooms size {}, rooms size {}",
+                user.getNickname(), userRoomMap.size(), roomMap.size());
         return RoomResponse.of(room);
     }
 
     public void selectVehicle(BattleParticipantParams request) {
         var user = userService.getUserFromContext();
-        var room = userRoomMap.get(user.getId());
-        if (room == null) {
-            throw new NotFoundAppException();
-        }
+        var room = requireUserRoom(user.getId());
         if (room.getOwner().getUser().getId() == user.getId()) {
             room.getOwner().setParams(request);
         } else {
@@ -144,10 +136,7 @@ public class RoomService {
 
     public void exitRoom() {
         var user = userService.getUserFromContext();
-        var room = userRoomMap.get(user.getId());
-        if (room != null) {
-            exitRoom(user, room);
-        }
+        getUserRoom(user.getId()).ifPresent(room -> exitRoom(user, room));
     }
 
     public void removeMember(String nickname) {
@@ -166,8 +155,8 @@ public class RoomService {
                             .setParams(Map.of("nickname", user.getNickname())));
             roomUpdatesSender.sendRoomUpdate(room);
             roomUpdatesSender.sendRoomDelete(room, guest.getUser());
-            log.info("removeUserFromRoom: nickname {}, removed by {}, map size {}", nickname,
-                    user.getNickname(), userRoomMap.size());
+            log.info("removeUserFromRoom: nickname {}, removed by {}, users in rooms size {}, rooms size {}",
+                    nickname, user.getNickname(), userRoomMap.size(), roomMap.size());
         });
         var botToRemove = room.getBots().values().stream()
                 .filter(bot -> bot.getNickname().equals(nickname))
@@ -175,16 +164,12 @@ public class RoomService {
         botToRemove.ifPresent(bot -> {
             room.getBots().remove(bot.getNickname());
             roomUpdatesSender.sendRoomUpdate(room);
-            log.info("removeBotFromRoom: nickname {}, removed by {}", nickname, user.getNickname());
         });
     }
 
     public void changeMembersTeam(String nickname, int teamId) {
         var user = userService.getUserFromContext();
-        var room = userRoomMap.get(user.getId());
-        if (room == null) {
-            throw new NotFoundAppException();
-        }
+        var room = requireUserRoom(user.getId());
         if (!user.getNickname().equals(nickname) && room.getOwner().getUser().getId() != user.getId()) {
             throw new ConflictAppException("Unable to change members team",
                     new Locale().setCode(LocaleCode.UNABLE_TO_CHANGE_MEMBERS_TEAM));
@@ -198,10 +183,7 @@ public class RoomService {
     }
 
     public Room requireOwnRoom(User user) {
-        var room = userRoomMap.get(user.getId());
-        if (room == null) {
-            throw new NotFoundAppException();
-        }
+        var room = requireUserRoom(user.getId());
         if (room.getOwner().getUser().getId() != user.getId()) {
             throw new NotFoundAppException();
         }
@@ -218,7 +200,8 @@ public class RoomService {
                     new Locale()
                             .setCode(LocaleCode.USER_LEFT_ROOM)
                             .setParams(Map.of("nickname", user.getNickname())));
-            log.info("exitRoom: nickname {}, map size {}", user.getNickname(), userRoomMap.size());
+            log.info("exitRoom: nickname {}, users in rooms size {}, rooms size {}",
+                    user.getNickname(), userRoomMap.size(), roomMap.size());
         } else {
             var userIds = new HashSet<Long>();
             userIds.add(user.getId());
@@ -231,8 +214,10 @@ public class RoomService {
                                 .setParams(Map.of("nickname", user.getNickname())));
             });
             userIds.forEach(userRoomMap::remove);
+            roomMap.remove(room.getId());
             roomUpdatesSender.sendRoomUpdate(room, true);
-            log.info("exitRoom: (room deleted) nickname {}, map size {}", user.getNickname(), userRoomMap.size());
+            log.info("exitRoom: (room deleted) nickname {}, users in rooms size {}, rooms size {}",
+                    user.getNickname(), userRoomMap.size(), roomMap.size());
         }
     }
 
@@ -274,6 +259,18 @@ public class RoomService {
             }
         }
         roomUpdatesSender.sendRoomUpdate(room);
+    }
+
+    private Room getUserRoomOrNull(long userId) {
+        return getUserRoom(userId).orElse(null);
+    }
+
+    private Room requireUserRoom(long userId) {
+        return getUserRoom(userId).orElseThrow(NotFoundAppException::new);
+    }
+
+    private Optional<Room> getUserRoom(long userId) {
+        return Optional.ofNullable(userRoomMap.get(userId)).map(roomMap::get);
     }
 
     private void removeSelectedVehicles(Room room) {

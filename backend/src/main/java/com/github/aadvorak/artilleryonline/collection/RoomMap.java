@@ -1,0 +1,8 @@
+package com.github.aadvorak.artilleryonline.collection;
+
+import com.github.aadvorak.artilleryonline.battle.Room;
+
+import java.util.concurrent.ConcurrentHashMap;
+
+public class RoomMap extends ConcurrentHashMap<String, Room> {
+}

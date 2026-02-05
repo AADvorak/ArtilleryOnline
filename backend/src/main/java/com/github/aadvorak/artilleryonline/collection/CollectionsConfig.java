@@ -17,6 +17,11 @@ public class CollectionsConfig {
     }
 
     @Bean
+    public RoomMap roomMap() {
+        return new RoomMap();
+    }
+
+    @Bean
     public UserRoomMap userRoomMap() {
         return new UserRoomMap();
     }
