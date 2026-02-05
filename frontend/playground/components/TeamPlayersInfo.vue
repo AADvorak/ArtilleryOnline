@@ -5,7 +5,8 @@ import type {PlayerInfo} from "~/playground/data/common";
 const props = defineProps<{
   teamNumber: number
   teamPlayers: PlayerInfo[]
-  hideTotals?: boolean
+  showTotals?: boolean
+  showDetails?: boolean
 }>()
 
 const teamTotals = computed<PlayerInfo>(() => {
@@ -23,13 +24,18 @@ const teamTotals = computed<PlayerInfo>(() => {
 })
 
 const allInfo = computed<PlayerInfo[]>(() => {
-  return props.hideTotals ? props.teamPlayers : [teamTotals.value, ...props.teamPlayers]
+  const output: PlayerInfo[] = []
+  if (props.showTotals) {
+    output.push(teamTotals.value)
+  }
+  if (props.showDetails) props.teamPlayers.forEach(info => output.push(info))
+  return output
 })
 </script>
 
 <template>
   <v-table class="team-table" density="compact">
-    <thead>
+    <thead v-show="showDetails">
     <tr>
       <th colspan="2">Hit points</th>
       <th>Frags</th>

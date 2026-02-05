@@ -1,16 +1,19 @@
 <template>
-  <div class="players-info-container">
+  <div v-show="showDetails || isTeamBattle" class="players-info-container">
     <div class="teams-container">
       <team-players-info
           :team-number="1"
           :team-players="team1Players"
-          :hide-totals="!isTeamBattle"
+          :show-totals="isTeamBattle"
+          :show-details="showDetails"
       />
       <template v-if="isTeamBattle">
         <div class="table-spacer"></div>
         <team-players-info
             :team-number="2"
             :team-players="team2Players"
+            show-totals
+            :show-details="showDetails"
         />
       </template>
     </div>
@@ -26,6 +29,8 @@ import {BattleType} from "~/playground/data/battle";
 
 const battleStore = useBattleStore()
 
+const showDetails = ref(false)
+
 const isTeamBattle = computed(() => battleStore.battle?.type === BattleType.TEAM_ELIMINATION)
 
 const team1Players = computed<PlayerInfo[]>(() => {
@@ -35,6 +40,20 @@ const team1Players = computed<PlayerInfo[]>(() => {
 const team2Players = computed<PlayerInfo[]>(() => {
   return getTeamNicknames(1).map(nicknameToPlayerInfo)
 })
+
+onMounted(() => {
+  addEventListener('keyup', switchShowDetailsIfTabPressed)
+})
+
+onUnmounted(() => {
+  removeEventListener('keyup', switchShowDetailsIfTabPressed)
+})
+
+function switchShowDetailsIfTabPressed(e) {
+  if (e.code === 'Tab') {
+    showDetails.value = !showDetails.value
+  }
+}
 
 function getTeamNicknames(teamId: number): string[] {
   const nicknameTeamMap = battleStore.battle?.nicknameTeamMap || {}
