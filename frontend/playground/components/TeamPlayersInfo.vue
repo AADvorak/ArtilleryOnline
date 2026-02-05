@@ -98,7 +98,7 @@ const allInfo = computed<PlayerInfo[]>(() => {
 }
 
 .progress-text {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
   color: white;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
