@@ -3,18 +3,27 @@ const props = defineProps<{
   value: number
   text: string
   color: string
+  clickable?: boolean
 }>()
+
+const emit = defineEmits(['click'])
+
+const progressClass = computed(() => {
+  return `progress ${props.clickable ? 'progress-clickable' : ''}`
+})
 </script>
 
 <template>
   <v-progress-linear
-      class="progress"
+      :class="progressClass"
       bg-color="blue-grey"
       height="16"
       :color="props.color"
       :model-value="props.value"
+      @click="emit('click')"
   >
     <span class="progress-text">{{ props.text }}</span>
+    <slot/>
   </v-progress-linear>
 </template>
 
@@ -22,6 +31,10 @@ const props = defineProps<{
 .progress {
   border-radius: 4px;
   overflow: hidden;
+}
+
+.progress-clickable {
+  cursor: pointer;
 }
 
 .progress-text {
