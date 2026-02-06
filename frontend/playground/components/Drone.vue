@@ -8,6 +8,7 @@ import {Command} from "~/playground/data/command";
 import VerticalTooltip from "~/components/vertical-tooltip.vue";
 import {useGlobalStateStore} from "~/stores/global-state";
 import {VerticalTooltipLocation} from "~/data/model";
+import BattleLinearProgress from "~/playground/components/BattleLinearProgress.vue";
 
 const {t} = useI18n()
 
@@ -53,32 +54,24 @@ function launch() {
 
 <template>
   <div v-if="droneState && !droneState.launched" class="progress-wrapper ml-2">
-    <v-progress-linear
-        bg-color="blue-grey"
-        height="16"
+    <battle-linear-progress
+        :value="progress"
+        :text="t('battleHeader.drone')"
         :color="droneState.readyToLaunch ? '#2196F3' : '#778899'"
-        class="progress"
-        :model-value="progress"
+        clickable
         @click="launch"
     >
-      <span class="progress-text">{{ t('battleHeader.drone') }}</span>
       <vertical-tooltip
           :location="VerticalTooltipLocation.BOTTOM"
           :tooltip="t('controls.launchDrone')"
           :show="globalStateStore.showHelp === VerticalTooltipLocation.BOTTOM"
       />
-    </v-progress-linear>
+    </battle-linear-progress>
   </div>
 </template>
 
 <style scoped>
 .progress-wrapper {
   min-width: 80px;
-}
-.progress {
-  cursor: pointer;
-}
-.progress-text {
-  font-size: 16px;
 }
 </style>
