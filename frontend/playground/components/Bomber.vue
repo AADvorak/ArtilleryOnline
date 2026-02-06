@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useBattleStore } from '~/stores/battle'
 import {useUserStore} from '~/stores/user'
 import {useI18n} from "vue-i18n";
+import BattleLinearProgress from "~/playground/components/BattleLinearProgress.vue";
 
 const {t} = useI18n()
 
@@ -38,22 +39,16 @@ const progress = computed(() => {
 
 <template>
   <div v-if="bomberState" class="progress-wrapper ml-2">
-    <v-progress-linear
-        bg-color="blue-grey"
-        height="16"
+    <battle-linear-progress
+        :value="progress"
+        :text="t('battleHeader.bomber') + ': ' + bomberState.remainFlights"
         :color="bomberState.readyToFlight ? '#2196F3' : '#778899'"
-        :model-value="progress"
-    >
-      <span class="progress-text">{{ t('battleHeader.bomber') }}: {{ bomberState.remainFlights }}</span>
-    </v-progress-linear>
+    />
   </div>
 </template>
 
 <style scoped>
 .progress-wrapper {
   min-width: 100px;
-}
-.progress-text {
-  font-size: 16px;
 }
 </style>
