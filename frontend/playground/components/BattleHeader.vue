@@ -90,6 +90,7 @@ function toMenu() {
     <div class="ml-2 battle-ping-wrapper">
       <BattlePing />
     </div>
+    <v-spacer/>
     <JetBar />
     <Gun />
     <Missiles />
