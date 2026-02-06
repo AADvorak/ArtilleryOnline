@@ -39,11 +39,6 @@ const props = defineProps<{
 const leaveBattleDialog = ref<InstanceType<typeof LeaveBattleDialog> | null>(null)
 const helpDialog = ref<InstanceType<typeof HelpDialog> | null>(null)
 
-const jetAvailable = computed(() => {
-  const vehicle = battleStore.battle?.model.vehicles[userStore.user!.nickname]
-  return !!vehicle && !!vehicle.config.jet
-})
-
 const isDebugMode = computed(() => settingsStore.settings?.debug)
 
 onMounted(() => {
@@ -95,9 +90,7 @@ function toMenu() {
     <div class="ml-2 battle-ping-wrapper">
       <BattlePing />
     </div>
-    <div v-if="jetAvailable" class="ml-4 jet-bar-wrapper">
-      <JetBar />
-    </div>
+    <JetBar />
     <Gun />
     <Missiles />
     <Drone />
@@ -138,10 +131,6 @@ function toMenu() {
 
 .battle-ping-wrapper {
   min-width: 70px;
-}
-
-.jet-bar-wrapper {
-  min-width: 200px;
 }
 
 .toolbar {

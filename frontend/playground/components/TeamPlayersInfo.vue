@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {computed} from "vue";
 import type {PlayerInfo} from "~/playground/data/common";
+import BattleLinearProgress from "~/playground/components/BattleLinearProgress.vue";
 
 const props = defineProps<{
   teamNumber: number
@@ -45,14 +46,11 @@ const allInfo = computed<PlayerInfo[]>(() => {
     <tbody>
     <tr v-for="player in allInfo" :key="player.nickname">
       <td class="progress-cell">
-        <v-progress-linear
-            bg-color="blue-grey"
-            height="16"
+        <battle-linear-progress
+            :value="Math.floor(100 * player.hp / player.maxHp)"
+            :text="player.nickname + ' ' + Math.floor(player.hp)"
             :color="player.color"
-            :model-value="Math.floor(100 * player.hp / player.maxHp)"
-        >
-          <span class="progress-text">{{ player.nickname }}: {{ Math.floor(player.hp) }}</span>
-        </v-progress-linear>
+        />
       </td>
       <td></td>
       <td class="text-center">{{ player.frags }}</td>
@@ -79,31 +77,9 @@ const allInfo = computed<PlayerInfo[]>(() => {
   border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
-.team-header {
-  text-align: center !important;
-  font-size: 18px;
-  font-weight: bold;
-  padding: 8px 16px;
-  background-color: rgba(255, 255, 255, 0.1) !important;
-}
-
 .progress-cell {
   min-width: 200px;
   padding: 4px 8px !important;
-}
-
-.progress-cell :deep(.v-progress-linear) {
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.progress-text {
-  font-size: 14px;
-  font-weight: bold;
-  color: white;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-  padding: 0 4px;
-  white-space: nowrap;
 }
 
 .text-center {
