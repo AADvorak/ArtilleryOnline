@@ -34,6 +34,7 @@ const router = useRouter()
 const battleProcessor = useBattleProcessor()
 
 const isMobileBrowser = ref<boolean>(false)
+const separateHeaderToolbars = ref<boolean>(false)
 
 const isClientProcessing = computed(() => useSettingsStore().settings?.clientProcessing)
 const showScreenControls = computed(() => {
@@ -54,10 +55,12 @@ watch(() => battleStore.battle, value => {
 
 onMounted(() => {
   calculateIsMobileBrowser()
+  calculateSeparateHeaderToolbars()
   isCollider.value ? colliderKeyboardListener.startListening() : keyboardListener.startListening()
   battleUpdater.subscribe()
   isClientProcessing.value && battleProcessor.startProcessing()
   continuousSoundsPlayer.start()
+  addEventListener('resize', calculateSeparateHeaderToolbars)
 })
 
 onBeforeUnmount(() => {
@@ -65,17 +68,25 @@ onBeforeUnmount(() => {
   battleProcessor.stopProcessing()
   battleUpdater.unsubscribe()
   continuousSoundsPlayer.stopAll()
+  removeEventListener('resize', calculateSeparateHeaderToolbars)
 })
 
 function calculateIsMobileBrowser() {
   const userAgent = navigator.userAgent || navigator.vendor
   isMobileBrowser.value = /Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(userAgent)
 }
+
+function calculateSeparateHeaderToolbars() {
+  separateHeaderToolbars.value = window.innerWidth < 950
+}
 </script>
 
 <template>
-  <BattleHeader :show-control-buttons="showScreenControls" />
-  <BattleCanvas />
+  <BattleHeader
+      :show-control-buttons="showScreenControls"
+      :separate-header-toolbars="separateHeaderToolbars"
+  />
+  <BattleCanvas :separate-header-toolbars="separateHeaderToolbars" />
   <template v-if="showScreenControls">
     <ControlButtons v-if="isButtons" :mouse-events="!isMobileBrowser" />
     <ControlJoysticks v-if="isJoysticks" />

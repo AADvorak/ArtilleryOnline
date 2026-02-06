@@ -22,6 +22,10 @@ import {useCrosshairDrawer} from "~/playground/composables/drawer/crosshair-draw
 const HEADER_HEIGHT = 36
 const SCROLL_RESERVE_WIDTH = 40
 
+const props = defineProps<{
+  separateHeaderToolbars: boolean
+}>()
+
 const battleStore = useBattleStore()
 const userStore = useUserStore()
 const userSettingsStore = useUserSettingsStore()
@@ -125,7 +129,8 @@ function onWindowResize() {
 
 function calculateCanvasClass() {
   const classes = []
-  if (canvasHeight.value > window.innerHeight - HEADER_HEIGHT) {
+  const headerHeight = (props.separateHeaderToolbars ? 2 : 1) * HEADER_HEIGHT
+  if (canvasHeight.value > window.innerHeight - headerHeight) {
     classes.push('canvas-absolute-bottom')
   }
   if (alignByScreenHeight.value) {

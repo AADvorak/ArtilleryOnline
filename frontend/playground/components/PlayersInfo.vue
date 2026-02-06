@@ -1,5 +1,5 @@
 <template>
-  <div v-show="showDetails || isTeamBattle" class="players-info-container">
+  <div v-show="showDetails || isTeamBattle" :class="containerClass">
     <div class="teams-container">
       <team-players-info
           :team-number="1"
@@ -27,6 +27,10 @@ import {computed} from "vue";
 import {useBattleStore} from "~/stores/battle";
 import {BattleType} from "~/playground/data/battle";
 
+const props = defineProps<{
+  separateHeaderToolbars: boolean
+}>()
+
 const battleStore = useBattleStore()
 
 const showDetails = ref(false)
@@ -39,6 +43,10 @@ const team1Players = computed<PlayerInfo[]>(() => {
 
 const team2Players = computed<PlayerInfo[]>(() => {
   return getTeamNicknames(1).map(nicknameToPlayerInfo)
+})
+
+const containerClass = computed(() => {
+  return 'players-info-container ' + (props.separateHeaderToolbars ? 'double-top' : 'small-top')
 })
 
 onMounted(() => {
@@ -90,12 +98,19 @@ function nicknameToPlayerInfo(nickname: string): PlayerInfo {
 <style scoped>
 .players-info-container {
   position: absolute;
-  top: 36px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
   opacity: 0.9;
   pointer-events: none;
+}
+
+.small-top {
+  top: 36px;
+}
+
+.double-top {
+  top: 72px;
 }
 
 .teams-container {

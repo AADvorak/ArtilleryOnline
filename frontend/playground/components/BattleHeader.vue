@@ -34,6 +34,7 @@ const router = useRouter()
 
 const props = defineProps<{
   showControlButtons: boolean
+  separateHeaderToolbars: boolean
 }>()
 
 const leaveBattleDialog = ref<InstanceType<typeof LeaveBattleDialog> | null>(null)
@@ -91,13 +92,15 @@ function toMenu() {
       <BattlePing />
     </div>
     <v-spacer/>
-    <JetBar />
-    <Gun />
-    <Missiles />
-    <Drone />
-    <Bomber />
-    <ReloadingProgress />
-    <v-spacer/>
+    <template v-if="!separateHeaderToolbars">
+      <JetBar />
+      <Gun />
+      <Missiles />
+      <Drone />
+      <Bomber />
+      <ReloadingProgress />
+      <v-spacer/>
+    </template>
     <icon-btn
         :icon="mdiHelp"
         :tooltip="t('common.help')"
@@ -118,7 +121,17 @@ function toMenu() {
     <LeaveBattleDialog ref="leaveBattleDialog"/>
     <HelpDialog ref="helpDialog"/>
   </v-toolbar>
-  <PlayersInfo />
+  <v-toolbar v-if="separateHeaderToolbars" height="36px" color="transparent" class="toolbar">
+    <v-spacer/>
+    <JetBar />
+    <Gun />
+    <Missiles />
+    <Drone />
+    <Bomber />
+    <ReloadingProgress />
+    <v-spacer/>
+  </v-toolbar>
+  <PlayersInfo :separate-header-toolbars="separateHeaderToolbars" />
 </template>
 
 <style scoped>
