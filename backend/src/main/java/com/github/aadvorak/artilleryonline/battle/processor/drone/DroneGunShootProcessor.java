@@ -37,10 +37,6 @@ public class DroneGunShootProcessor implements AfterStep1Processor {
         var shellModel = new ShellModel();
         shellModel.setId(battleModel.getIdGenerator().generate());
         shellModel.setVehicleId(drone.getModel().getVehicleId());
-        if (drone.getModel().getUserId() != null) {
-            shellModel.setUserId(drone.getModel().getUserId());
-            battleModel.getStatistics().get(drone.getModel().getUserId()).increaseMadeShots();
-        }
         shellModel.setSpecs(loadedShellSpecs);
         shellModel.setState(new ShellState()
                 .setPosition(getShellInitialPosition(drone))

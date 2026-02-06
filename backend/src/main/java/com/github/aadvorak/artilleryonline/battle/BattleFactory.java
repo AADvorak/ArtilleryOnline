@@ -20,7 +20,7 @@ import com.github.aadvorak.artilleryonline.battle.preset.VehicleSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleOnGroundProcessor;
 import com.github.aadvorak.artilleryonline.battle.specs.*;
 import com.github.aadvorak.artilleryonline.battle.state.*;
-import com.github.aadvorak.artilleryonline.battle.statistics.UserBattleStatistics;
+import com.github.aadvorak.artilleryonline.battle.statistics.PlayerBattleStatistics;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import com.github.aadvorak.artilleryonline.dto.UserVehicleConfigDto;
 import com.github.aadvorak.artilleryonline.entity.User;
@@ -163,7 +163,7 @@ public class BattleFactory {
             }
             vehicleModel.setId(id);
             if (participant.getUser() != null) {
-                vehicleModel.setUserId(participant.getUser().getId());
+                vehicleModel.setNickname(participant.getNickname());
             }
             vehicleModel.setSpecs(Arrays.stream(VehicleSpecsPreset.values())
                     .filter(preset -> preset.getName().equals(participant.getParams().getSelectedVehicle()))
@@ -290,12 +290,10 @@ public class BattleFactory {
         return userVehicleNameMap;
     }
 
-    private Map<Long, UserBattleStatistics> createUserBattleStatistics(Set<BattleParticipant> participants) {
-        var userBattleStatistics = new HashMap<Long, UserBattleStatistics>();
-        participants.stream()
-                .filter(participant -> participant.getUser() != null)
-                .forEach(element -> userBattleStatistics.put(element.getUser().getId(),
-                        new UserBattleStatistics()));
+    private Map<String, PlayerBattleStatistics> createUserBattleStatistics(Set<BattleParticipant> participants) {
+        var userBattleStatistics = new HashMap<String, PlayerBattleStatistics>();
+        participants.forEach(element -> userBattleStatistics.put(element.getNickname(),
+                        new PlayerBattleStatistics()));
         return userBattleStatistics;
     }
 

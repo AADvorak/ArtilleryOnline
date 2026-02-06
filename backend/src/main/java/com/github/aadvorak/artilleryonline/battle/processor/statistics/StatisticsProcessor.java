@@ -4,52 +4,52 @@ import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 
 public class StatisticsProcessor {
 
-    public static void increaseDestroyedDrones(Long userId, BattleModel battleModel) {
-        if (userId != null) {
-            battleModel.getStatistics().get(userId).increaseDestroyedDrones();
+    public static void increaseDestroyedDrones(String nickname, BattleModel battleModel) {
+        if (nickname != null) {
+            battleModel.getStatistics().get(nickname).increaseDestroyedDrones();
         }
     }
 
-    public static void increaseDestroyedMissiles(Long userId, BattleModel battleModel) {
-        if (userId != null) {
-            battleModel.getStatistics().get(userId).increaseDestroyedMissiles();
+    public static void increaseDestroyedMissiles(String nickname, BattleModel battleModel) {
+        if (nickname != null) {
+            battleModel.getStatistics().get(nickname).increaseDestroyedMissiles();
         }
     }
 
-    public static void increaseDamage(double damage, Long receiverId,
-                                      Long causerId, BattleModel battleModel) {
-        if (receiverId != null) {
-            battleModel.getStatistics().get(receiverId).increaseReceivedDamage(damage);
+    public static void increaseDamage(double damage, String receiverNickname,
+                                      String causerNickname, BattleModel battleModel) {
+        if (receiverNickname != null) {
+            battleModel.getStatistics().get(receiverNickname).increaseReceivedDamage(damage);
         }
-        if (causerId != null) {
-            battleModel.getStatistics().get(causerId).increaseCausedDamage(damage);
-        }
-    }
-
-    public static void increaseTrackBreaks(Long receiverId, Long causerId, BattleModel battleModel) {
-        if (receiverId != null) {
-            battleModel.getStatistics().get(receiverId).increaseReceivedTrackBreaks();
-        }
-        if (causerId != null) {
-            battleModel.getStatistics().get(causerId).increaseCausedTrackBreaks();
+        if (causerNickname != null) {
+            battleModel.getStatistics().get(causerNickname).increaseCausedDamage(damage);
         }
     }
 
-    public static void increaseDirectHits(Long receiverId, Long causerId, BattleModel battleModel) {
-        if (receiverId != null) {
-            battleModel.getStatistics().get(receiverId).increaseReceivedDirectHits();
+    public static void increaseTrackBreaks(String receiverNickname, String causerNickname, BattleModel battleModel) {
+        if (receiverNickname != null) {
+            battleModel.getStatistics().get(receiverNickname).increaseReceivedTrackBreaks();
         }
-        if (causerId != null) {
-            battleModel.getStatistics().get(causerId).increaseCausedDirectHits();
+        if (causerNickname != null) {
+            battleModel.getStatistics().get(causerNickname).increaseCausedTrackBreaks();
         }
     }
 
-    public static void increaseIndirectHits(Long receiverId, Long causerId, BattleModel battleModel) {
-        if (receiverId != null) {
-            battleModel.getStatistics().get(receiverId).increaseReceivedIndirectHits();
+    public static void increaseDirectHits(String receiverNickname, String causerNickname, BattleModel battleModel) {
+        if (receiverNickname != null) {
+            battleModel.getStatistics().get(receiverNickname).increaseReceivedDirectHits();
         }
-        if (causerId != null) {
-            battleModel.getStatistics().get(causerId).increaseCausedIndirectHits();
+        if (causerNickname != null) {
+            battleModel.getStatistics().get(causerNickname).increaseCausedDirectHits();
+        }
+    }
+
+    public static void increaseIndirectHits(String receiverNickname, String causerNickname, BattleModel battleModel) {
+        if (receiverNickname != null) {
+            battleModel.getStatistics().get(receiverNickname).increaseReceivedIndirectHits();
+        }
+        if (causerNickname != null) {
+            battleModel.getStatistics().get(causerNickname).increaseCausedIndirectHits();
         }
     }
 }

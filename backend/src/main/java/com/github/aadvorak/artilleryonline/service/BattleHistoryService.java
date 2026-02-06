@@ -60,7 +60,7 @@ public class BattleHistoryService {
                 .setBeginTime(LocalDateTime.ofInstant(Instant.ofEpochMilli(battle.getBeginTime()),
                         ZoneId.systemDefault())));
         battle.getUserMap().values().forEach(user -> {
-            var statistics = battle.getModel().getStatistics().get(user.getId());
+            var statistics = battle.getModel().getStatistics().get(user.getNickname());
             var userBattleHistory = mapper.map(statistics, UserBattleHistory.class)
                     .setId(new UserBattleHistoryId()
                             .setBattleHistoryId(battleHistory.getId())

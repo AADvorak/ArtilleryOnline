@@ -45,7 +45,7 @@ public class VehicleLaunchDroneProcessor {
         var model = new DroneModel();
         model.setId(id);
         model.setVehicleId(vehicleModel.getId());
-        model.setUserId(vehicleModel.getUserId());
+        model.setNickname(vehicleModel.getNickname());
         model.setState(state);
         model.setConfig(config);
         model.setSpecs(specs);

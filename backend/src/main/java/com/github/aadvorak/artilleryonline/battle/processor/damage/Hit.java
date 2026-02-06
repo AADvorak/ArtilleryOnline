@@ -5,7 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 
-public record Hit(Collision collision, double damage, double radius, Long userId) {
+public record Hit(Collision collision, double damage, double radius, String nickname) {
 
     Position position() {
         return collision.getContact().position();
@@ -16,7 +16,7 @@ public record Hit(Collision collision, double damage, double radius, Long userId
                 collision,
                 shell.getModel().getSpecs().getDamage(),
                 shell.getModel().getSpecs().getRadius(),
-                shell.getModel().getUserId()
+                shell.getModel().getNickname()
         );
     }
 
@@ -25,7 +25,7 @@ public record Hit(Collision collision, double damage, double radius, Long userId
                 collision,
                 missile.getModel().getSpecs().getDamage(),
                 missile.getModel().getSpecs().getRadius(),
-                missile.getModel().getUserId()
+                missile.getModel().getNickname()
         );
     }
 }

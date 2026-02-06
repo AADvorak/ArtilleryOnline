@@ -62,7 +62,7 @@ public class VehicleBomberProcessor extends VehicleProcessor implements BeforeSt
             var id = battleModel.getIdGenerator().generate();
             var model = new ShellModel();
             model.setId(id);
-            model.setUserId(vehicleModel.getUserId());
+            model.setNickname(vehicleModel.getNickname());
             model.setState(state);
             model.setSpecs(specs);
             battleModel.getShells().put(id, model);

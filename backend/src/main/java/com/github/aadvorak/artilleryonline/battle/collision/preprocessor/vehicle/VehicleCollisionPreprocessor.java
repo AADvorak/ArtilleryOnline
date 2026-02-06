@@ -50,7 +50,7 @@ public class VehicleCollisionPreprocessor implements CollisionPreprocessor {
         var impact = collision.getImpact();
         if (impact > minImpact) {
             var damage = receiver.getSpecs().getCollisionDamageCoefficient() * (impact - minImpact);
-            DamageProcessor.applyDamageToVehicle(damage, receiver, battleModel, causer.getUserId());
+            DamageProcessor.applyDamageToVehicle(damage, receiver, battleModel, causer.getNickname());
         }
     }
 }

@@ -19,7 +19,7 @@ public class VehicleModel
     private int id;
 
     @JsonIgnore
-    private Long userId;
+    private String nickname;
 
     @JsonIgnore
     private Long turnedOverTime;

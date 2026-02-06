@@ -1,7 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle;
 
 import com.github.aadvorak.artilleryonline.battle.events.BattleModelEvents;
-import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.processor.ActiveBattleStepProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.BattleUpdatesProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.WaitingBattleStepProcessor;
@@ -22,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -116,14 +117,14 @@ public class BattleRunner {
 
     private UserBattleResult createUserBattleResult(Battle battle, User user) {
         var battleModel = battle.getModel();
-        return new ModelMapper().map(battleModel.getStatistics().get(user.getId()), UserBattleResult.class)
+        return new ModelMapper().map(battleModel.getStatistics().get(user.getNickname()), UserBattleResult.class)
                 .setSurvived(battleModel.getVehicles().get(user.getNickname()) != null)
                 .setTeamMode(battle.getType().isTeam())
                 .setWon(battle.getWon(user.getNickname()));
     }
 
     private void writeBattleToHistory(Battle battle) {
-        if (battle.getType().equals(BattleType.RANDOM) || battle.getType().equals(BattleType.ROOM)) {
+        if (List.of(BattleType.RANDOM, BattleType.ROOM, BattleType.TEAM_ELIMINATION).contains(battle.getType())) {
             battleHistoryService.writeHistory(battle);
         }
     }

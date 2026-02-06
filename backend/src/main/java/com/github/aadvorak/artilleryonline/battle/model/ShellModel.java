@@ -18,7 +18,7 @@ public class ShellModel extends GenericSpecsConfigStateModel<ShellSpecs, ShellCo
     private Integer vehicleId;
 
     @JsonIgnore
-    private Long userId;
+    private String nickname;
 
     @JsonIgnore
     private boolean updated = false;

@@ -34,7 +34,7 @@ public class MissileCollisionPreprocessor implements CollisionPreprocessor {
         var drone = (DroneCalculations) collision.getPair().second();
         drone.getModel().getState().setDestroyed(true);
         battle.getModel().getUpdates().removeDrone(drone.getId());
-        StatisticsProcessor.increaseDestroyedDrones(missile.getModel().getUserId(), battle.getModel());
+        StatisticsProcessor.increaseDestroyedDrones(missile.getModel().getNickname(), battle.getModel());
         DamageProcessor.processHit(missile, collision, battle);
         return false;
     }

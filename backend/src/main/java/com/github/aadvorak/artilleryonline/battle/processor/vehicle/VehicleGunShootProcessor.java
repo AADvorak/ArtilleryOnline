@@ -40,9 +40,9 @@ public class VehicleGunShootProcessor extends VehicleProcessor implements Before
         var shellModel = new ShellModel();
         shellModel.setId(battleModel.getIdGenerator().generate());
         shellModel.setVehicleId(vehicleModel.getId());
-        if (vehicleModel.getUserId() != null) {
-            shellModel.setUserId(vehicleModel.getUserId());
-            battleModel.getStatistics().get(vehicleModel.getUserId()).increaseMadeShots();
+        if (vehicleModel.getNickname() != null) {
+            shellModel.setNickname(vehicleModel.getNickname());
+            battleModel.getStatistics().get(vehicleModel.getNickname()).increaseMadeShots();
         }
         shellModel.setSpecs(loadedShellSpecs);
         shellModel.setState(new ShellState()

@@ -24,7 +24,7 @@ public class DroneModel
     private Integer vehicleId;
 
     @JsonIgnore
-    private Long userId;
+    private String nickname;
 
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {

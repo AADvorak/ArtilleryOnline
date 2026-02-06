@@ -34,7 +34,7 @@ public class VehicleLaunchMissileProcessor {
         var missileModel = new MissileModel();
         missileModel.setId(id);
         missileModel.setVehicleId(vehicleModel.getId());
-        missileModel.setUserId(vehicleModel.getUserId());
+        missileModel.setNickname(vehicleModel.getNickname());
         missileModel.setState(state);
         missileModel.setSpecs(specs);
         battleModel.getMissiles().put(id, missileModel);

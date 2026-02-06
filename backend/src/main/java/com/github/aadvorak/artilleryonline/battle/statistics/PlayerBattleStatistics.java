@@ -3,7 +3,7 @@ package com.github.aadvorak.artilleryonline.battle.statistics;
 import lombok.Getter;
 
 @Getter
-public class UserBattleStatistics {
+public class PlayerBattleStatistics {
 
     private double causedDamage;
 
