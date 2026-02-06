@@ -8,6 +8,7 @@ import {useGlobalStateStore} from "~/stores/global-state";
 import VerticalTooltip from "~/components/vertical-tooltip.vue";
 import {useI18n} from "vue-i18n";
 import {VerticalTooltipLocation} from "~/data/model";
+import BattleLinearProgress from "~/playground/components/BattleLinearProgress.vue";
 
 const {t} = useI18n()
 
@@ -45,13 +46,6 @@ const reloadingProgress = computed(() => {
   return Math.floor((100 * (loadTime - loadRemainTime)) / loadTime)
 })
 
-const showProgress = computed(() => {
-  if (!userVehicle.value) {
-    return false
-  }
-  return !!userVehicle.value.state.gunState.loadingShell
-})
-
 onMounted(() => {
   addEventListener('keyup', keyPressed)
 })
@@ -78,31 +72,35 @@ function selectShell(key: string) {
     })
   }
 }
+
+function getAmmoText(ammoKey: string, index: number) {
+  const localeKey = `names.shells.${ammoKey}`
+  return `[${index + 1}] ${t(localeKey)}: ${ammo.value ? ammo.value[ammoKey] : 0}`
+}
 </script>
 
 <template>
-  <div class="ml-2">
-    <template v-for="(ammoKey, index) in ammoKeys">
-      <no-focus-btn
-          class="ammo-btn"
-          :color="ammoKey === selectedShell ? 'primary' : ''"
-          :disabled="!ammo || !ammo[ammoKey]"
+  <template v-for="(ammoKey, index) in ammoKeys">
+    <div :class="'progress-wrapper ml-' + (index === 0 ? '4' : '2')" >
+      <battle-linear-progress
+          :value="ammoKey === selectedShell ? reloadingProgress : 0"
+          :text="getAmmoText(ammoKey, index)"
+          :color="ammoKey === selectedShell ? '#2196F3' : '#778899'"
+          :clickable="!!(ammo && ammo[ammoKey])"
           @click="() => selectShell(ammoKey)"
       >
-        [{{ index + 1 }}] {{ t(`names.shells.${ammoKey}`) }}: {{ ammo ? ammo[ammoKey] : 0 }}
         <vertical-tooltip
             :location="VerticalTooltipLocation.BOTTOM"
             :tooltip="ammoKey === selectedShell ? t('controls.selectedShell') : t('controls.selectShell')"
             :show="globalStateStore.showHelp === VerticalTooltipLocation.BOTTOM"
         />
-      </no-focus-btn>
-    </template>
-    <v-progress-circular v-if="showProgress" color="lime" :model-value="reloadingProgress" />
-  </div>
+      </battle-linear-progress>
+    </div>
+  </template>
 </template>
 
 <style scoped>
-.ammo-btn {
-  padding: 0 8px;
+.progress-wrapper {
+  min-width: 110px;
 }
 </style>
