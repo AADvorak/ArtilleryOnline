@@ -29,6 +29,7 @@ import {computed} from "vue";
 import {useBattleStore} from "~/stores/battle";
 import {BattleType} from "~/playground/data/battle";
 import {useUserStore} from "~/stores/user";
+import {DefaultColors} from "~/dictionary/default-colors";
 
 const props = defineProps<{
   separateHeaderToolbars: boolean
@@ -84,7 +85,7 @@ function getTeamNicknames(teamId: number): string[] {
 function nicknameToPlayerInfo(nickname: string): PlayerInfo {
   const vehicle = battleStore.vehicles && battleStore.vehicles[nickname]
   const statistics = battleStore.battle?.model.statistics[nickname]
-  let color = 'white'
+  let color = DefaultColors.VEHICLE
   let hp = 0
   let maxHp = 0
   let damage = 0
