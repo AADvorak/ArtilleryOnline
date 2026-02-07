@@ -10,6 +10,7 @@ import {BodyUtils} from "~/playground/utils/body-utils";
 import {useUserStore} from "~/stores/user";
 import {Circle, HalfCircle, Segment, Trapeze} from "~/playground/data/geometry";
 import {BattleType} from "~/playground/data/battle";
+import {DefaultColors} from "~/dictionary/default-colors";
 
 export function useVehicleDrawer(
     drawerBase: DrawerBase,
@@ -147,13 +148,14 @@ export function useVehicleDrawer(
       x: vehicleModel.state.position.x,
       y: vehicleModel.state.position.y + textHeight + (nicknameAbove ? 0.35 : 0.15)
     }
+    const userTeamId = battleStore.battle!.nicknameTeamMap[userStore.user!.nickname]
     const teamNumber = teamId + 1
     drawerBase.drawText({
       position,
       text: '[' + teamNumber + ']',
       fontSize: 16,
       textAlign: 'center',
-    }, {fillStyle: teamNumber % 2 == 0 ? 'blue' : 'red'})
+    }, {fillStyle: teamId === userTeamId ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM})
   }
 
   function restrictNicknameLength(nickname: string) {

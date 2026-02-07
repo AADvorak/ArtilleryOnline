@@ -2,25 +2,29 @@
 import {computed} from "vue";
 import type {PlayerInfo} from "~/playground/data/common";
 import BattleLinearProgress from "~/playground/components/BattleLinearProgress.vue";
+import {DefaultColors} from "~/dictionary/default-colors";
 
 const props = defineProps<{
-  teamNumber: number
+  usersTeamId: number
+  teamId: number
   teamPlayers: PlayerInfo[]
   showTotals?: boolean
   showDetails?: boolean
 }>()
 
 const teamTotals = computed<PlayerInfo>(() => {
+  const nickname = 'Team' + (props.teamId + 1)
+  const color = props.teamId === props.usersTeamId ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM
   return props.teamPlayers.reduce(
       (totals, player) => ({
-        nickname: 'Team' + props.teamNumber,
-        color: props.teamNumber % 2 == 0 ? 'blue' : 'red',
+        nickname,
+        color,
         hp: totals.hp + player.hp,
         maxHp: totals.maxHp + player.maxHp,
         frags: totals.frags + player.frags,
         damage: totals.damage + player.damage
       }),
-      { nickname: 'Team' + props.teamNumber, color: 'gray', hp: 0, maxHp: 0, frags: 0, damage: 0 }
+      { nickname, color, hp: 0, maxHp: 0, frags: 0, damage: 0 }
   )
 })
 

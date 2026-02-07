@@ -87,7 +87,7 @@ export const VehicleUtils = {
     if (vehicleModel.config.color) {
       return vehicleModel.config.color
     }
-    return userKey === currentUsername ? DefaultColors.ALLY_VEHICLE : DefaultColors.ENEMY_VEHICLE
+    return DefaultColors.VEHICLE
   },
 
   isJetActive(vehicleModel: VehicleModel) {

@@ -2,7 +2,8 @@
   <div v-show="showDetails || isTeamBattle" :class="containerClass">
     <div class="teams-container">
       <team-players-info
-          :team-number="1"
+          :team-id="0"
+          :users-team-id="usersTeamId"
           :team-players="team1Players"
           :show-totals="isTeamBattle"
           :show-details="showDetails"
@@ -10,7 +11,8 @@
       <template v-if="isTeamBattle">
         <div class="table-spacer"></div>
         <team-players-info
-            :team-number="2"
+            :team-id="1"
+            :users-team-id="usersTeamId"
             :team-players="team2Players"
             show-totals
             :show-details="showDetails"
@@ -26,12 +28,19 @@ import TeamPlayersInfo from "~/playground/components/TeamPlayersInfo.vue";
 import {computed} from "vue";
 import {useBattleStore} from "~/stores/battle";
 import {BattleType} from "~/playground/data/battle";
+import {useUserStore} from "~/stores/user";
 
 const props = defineProps<{
   separateHeaderToolbars: boolean
 }>()
 
 const battleStore = useBattleStore()
+
+const userStore = useUserStore()
+
+const usersTeamId = computed<number>(() => {
+  return battleStore.battle!.nicknameTeamMap[userStore.user!.nickname] || 0
+})
 
 const showDetails = ref(false)
 
