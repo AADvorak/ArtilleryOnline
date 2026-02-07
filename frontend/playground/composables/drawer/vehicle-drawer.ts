@@ -9,6 +9,7 @@ import {type HalfCircleShape, ShapeNames, type TrapezeShape} from "~/playground/
 import {BodyUtils} from "~/playground/utils/body-utils";
 import {useUserStore} from "~/stores/user";
 import {Circle, HalfCircle, Segment, Trapeze} from "~/playground/data/geometry";
+import {BattleType} from "~/playground/data/battle";
 
 export function useVehicleDrawer(
     drawerBase: DrawerBase,
@@ -47,8 +48,9 @@ export function useVehicleDrawer(
       if (nicknameAbove) {
         drawNickname(userKey, vehicleModel)
       }
-      const teamId = battleStore.battle?.nicknameTeamMap[userKey]
-      if (teamId !== undefined) {
+      const teamId = battleStore.battle?.type === BattleType.TEAM_ELIMINATION
+          && battleStore.battle?.nicknameTeamMap[userKey]
+      if (teamId !== undefined && teamId !== false) {
         drawTeamId(teamId, vehicleModel, nicknameAbove)
       }
     }
@@ -145,12 +147,13 @@ export function useVehicleDrawer(
       x: vehicleModel.state.position.x,
       y: vehicleModel.state.position.y + textHeight + (nicknameAbove ? 0.35 : 0.15)
     }
+    const teamNumber = teamId + 1
     drawerBase.drawText({
       position,
-      text: '[' + (teamId + 1) + ']',
+      text: '[' + teamNumber + ']',
       fontSize: 16,
       textAlign: 'center',
-    }, {fillStyle: 'rgb(256 256 256)'})
+    }, {fillStyle: teamNumber % 2 == 0 ? 'blue' : 'red'})
   }
 
   function restrictNicknameLength(nickname: string) {
