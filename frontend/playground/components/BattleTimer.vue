@@ -70,12 +70,14 @@ function padStart(value: number, maxLength: number = 2) {
 <style scoped>
 .battle-timer {
   color: aquamarine;
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 .battle-timer_waiting {
   color: crimson;
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 .centered-timer {
