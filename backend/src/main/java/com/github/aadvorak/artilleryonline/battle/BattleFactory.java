@@ -159,7 +159,7 @@ public class BattleFactory {
             var vehicleModel = new VehicleModel();
             var id = battleModel.getIdGenerator().generate();
             if (!BattleType.TEST_DRIVE.equals(battle.getType()) && participant.getUser() == null) {
-                battle.getBotsVehicleIds().add(id);
+                battle.getBotsData().getVehicleIds().add(id);
             }
             vehicleModel.setId(id);
             vehicleModel.setNickname(participant.getNickname());

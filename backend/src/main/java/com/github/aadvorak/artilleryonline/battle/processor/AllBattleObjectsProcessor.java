@@ -36,7 +36,7 @@ public class AllBattleObjectsProcessor {
 
         var battleCalculations = new BattleCalculations(battle);
 
-        botsProcessor.process(battle.getBotsVehicleIds(), battleCalculations);
+        botsProcessor.process(battleCalculations);
 
         beforeStep1Processors.forEach(processor -> processor.process(battleCalculations));
         battleCalculations.getMovingObjects().forEach(movingObject -> {

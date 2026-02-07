@@ -47,7 +47,7 @@ public class Battle {
 
     private Set<Long> activeUserIds;
 
-    private Set<Integer> botsVehicleIds = new HashSet<>();
+    private BattleBotsData botsData = new BattleBotsData();
 
     private BattleDebug debug = new BattleDebug();
 

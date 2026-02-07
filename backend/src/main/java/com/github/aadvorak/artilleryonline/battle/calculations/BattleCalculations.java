@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.calculations;
 
 import com.github.aadvorak.artilleryonline.battle.Battle;
+import com.github.aadvorak.artilleryonline.battle.BattleBotsData;
 import com.github.aadvorak.artilleryonline.battle.BattleType;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import lombok.Getter;
@@ -35,6 +36,8 @@ public class BattleCalculations {
 
     private Map<Integer, Integer> vehicleIdTeamMap = new HashMap<>();
 
+    private BattleBotsData botsData;
+
     public BattleCalculations(Battle battle) {
         var model = battle.getModel();
         this.model = model;
@@ -62,6 +65,7 @@ public class BattleCalculations {
                 vehicleIdTeamMap.put(vehicleModel.getId(), value);
             }
         });
+        botsData = battle.getBotsData();
     }
 
     public Set<BoxCalculations> getBoxes() {

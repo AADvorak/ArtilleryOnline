@@ -26,12 +26,17 @@ import java.util.stream.Collectors;
 
 public class BotsProcessor {
 
+    private static final long DELAY = 200;
+
     private final TargetDataCalculator targetDataCalculator =  new TargetDataCalculator();
 
-    public void process(Set<Integer> botVehicleIds, BattleCalculations battle) {
-        battle.getVehicles().stream()
-                .filter(vehicle -> botVehicleIds.contains(vehicle.getId()))
-                .forEach(vehicle -> processVehicle(vehicle, battle));
+    public void process(BattleCalculations battle) {
+        if (battle.getTime() - battle.getBotsData().getLastTimeProcessed() > DELAY) {
+            battle.getVehicles().stream()
+                    .filter(vehicle -> battle.getBotsData().getVehicleIds().contains(vehicle.getId()))
+                    .forEach(vehicle -> processVehicle(vehicle, battle));
+            battle.getBotsData().setLastTimeProcessed(battle.getTime());
+        }
     }
 
     private void processVehicle(VehicleCalculations vehicle, BattleCalculations battle) {
