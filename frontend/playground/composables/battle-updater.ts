@@ -228,6 +228,13 @@ export function useBattleUpdater(player: Player) {
       }
     }
 
+    if (battleUpdate.statistics) {
+      Object.keys(battleUpdate.statistics).forEach(nickname => {
+        // @ts-ignore
+        battle.model.statistics[nickname] = battleUpdate.statistics[nickname]
+      })
+    }
+
     clientSmoothTransition && battleStore.needSmoothTransition
         ? battleStore.updateServerBattle(battle) : battleStore.updateBattle(battle)
   }

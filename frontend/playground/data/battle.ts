@@ -1,4 +1,4 @@
-import type {BattleModel} from "@/playground/data/model";
+import type {BattleModel, PlayersBattleStatistics} from "@/playground/data/model";
 import type {BattleModelState} from "@/playground/data/state";
 import type {BattleModelUpdates} from "~/playground/data/updates";
 import type {BattleModelEvents} from "~/playground/data/events";
@@ -42,4 +42,5 @@ export interface BattleUpdate {
   state?: BattleModelState
   updates?: BattleModelUpdates
   events?: BattleModelEvents
+  statistics?: PlayersBattleStatistics
 }

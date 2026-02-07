@@ -1,7 +1,7 @@
 import type {DeserializerInput} from "~/deserialization/deserializer-input";
 import {type Battle, BattleStage, BattleType, type BattleUpdate, type NicknameTeamMap} from "~/playground/data/battle";
 import {DeserializerBase} from "~/deserialization/deserializer-base";
-import {deserializeBattleModel} from "~/playground/data/model-deserialize";
+import {deserializeBattleModel, deserializePlayerBattleStatistics} from "~/playground/data/model-deserialize";
 import {deserializeBattleModelState} from "~/playground/data/state-deserialize";
 import {deserializeBattleModelUpdates} from "~/playground/data/updates-deserialize";
 import {deserializeBattleModelEvents} from "~/playground/data/events-deserialize";
@@ -37,12 +37,14 @@ export function deserializeBattleUpdate(input: DeserializerInput): BattleUpdate 
   const state = DeserializerBase.readNullable(input, deserializeBattleModelState)
   const updates = DeserializerBase.readNullable(input, deserializeBattleModelUpdates)
   const events = DeserializerBase.readNullable(input, deserializeBattleModelEvents)
+  const statistics = DeserializerBase.readMap(input, DeserializerBase.readString, deserializePlayerBattleStatistics)
   return {
     time,
     fps,
     stage,
     state,
     updates,
-    events
+    events,
+    statistics
   }
 }

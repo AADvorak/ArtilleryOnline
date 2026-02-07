@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.Map;
+
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -31,6 +33,8 @@ public class BattleUpdateResponse implements BattleUpdatesQueueElement, CompactS
 
     private BattleModelEvents events;
 
+    private Map<String, PlayerBattleStatisticsResponse> statistics;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeLong(time);
@@ -39,5 +43,6 @@ public class BattleUpdateResponse implements BattleUpdatesQueueElement, CompactS
         stream.writeSerializable(state);
         stream.writeSerializable(updates);
         stream.writeSerializable(events);
+        stream.writeStringMapOfSerializable(statistics);
     }
 }

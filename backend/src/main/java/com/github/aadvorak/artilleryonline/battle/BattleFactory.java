@@ -162,9 +162,7 @@ public class BattleFactory {
                 battle.getBotsVehicleIds().add(id);
             }
             vehicleModel.setId(id);
-            if (participant.getUser() != null) {
-                vehicleModel.setNickname(participant.getNickname());
-            }
+            vehicleModel.setNickname(participant.getNickname());
             vehicleModel.setSpecs(Arrays.stream(VehicleSpecsPreset.values())
                     .filter(preset -> preset.getName().equals(participant.getParams().getSelectedVehicle()))
                     .map(VehicleSpecsPreset::getSpecs).findAny().orElseThrow());

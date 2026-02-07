@@ -29,8 +29,11 @@ public class PlayerBattleStatistics {
 
     private int receivedTrackBreaks;
 
+    private boolean updated = false;
+
     public void increaseCausedDamage(double causedDamage) {
         this.causedDamage += causedDamage;
+        this.updated = true;
     }
 
     public void increaseMadeShots() {
@@ -51,6 +54,7 @@ public class PlayerBattleStatistics {
 
     public void increaseDestroyedVehicles() {
         destroyedVehicles++;
+        this.updated = true;
     }
 
     public void increaseDestroyedDrones() {
@@ -75,5 +79,9 @@ public class PlayerBattleStatistics {
 
     public void increaseReceivedTrackBreaks() {
         receivedTrackBreaks++;
+    }
+
+    public void resetUpdated() {
+        this.updated = false;
     }
 }

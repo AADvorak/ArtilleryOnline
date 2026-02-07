@@ -2,7 +2,7 @@ import type {DeserializerInput} from "~/deserialization/deserializer-input";
 import type {
   BattleModel, BoxModel, BoxPreCalc, DroneModel, DronePreCalc,
   ExplosionModel,
-  MissileModel,
+  MissileModel, PlayerBattleStatistics,
   RoomModel,
   ShellModel,
   VehicleModel,
@@ -175,6 +175,7 @@ export function deserializeBattleModel(input: DeserializerInput): BattleModel {
   const boxes = DeserializerBase.readMap(input, DeserializerBase.readInt, deserializeBoxModel)!
   const room = deserializeRoomModel(input)
   const vehicles = DeserializerBase.readMap(input, DeserializerBase.readString, deserializeVehicleModel)!
+  const statistics = DeserializerBase.readMap(input, DeserializerBase.readString, deserializePlayerBattleStatistics)!
   const updated = DeserializerBase.readBoolean(input)
   return {
     shells,
@@ -184,6 +185,16 @@ export function deserializeBattleModel(input: DeserializerInput): BattleModel {
     boxes,
     room,
     vehicles,
+    statistics,
     updated
+  }
+}
+
+export function deserializePlayerBattleStatistics(input: DeserializerInput): PlayerBattleStatistics {
+  const causedDamage = DeserializerBase.readDouble(input)
+  const destroyedVehicles = DeserializerBase.readInt(input)
+  return {
+    causedDamage,
+    destroyedVehicles,
   }
 }

@@ -74,6 +74,7 @@ function getTeamNicknames(teamId: number): string[] {
 
 function nicknameToPlayerInfo(nickname: string): PlayerInfo {
   const vehicle = battleStore.vehicles && battleStore.vehicles[nickname]
+  const statistics = battleStore.battle?.model.statistics[nickname]
   let color = 'white'
   let hp = 0
   let maxHp = 0
@@ -83,6 +84,10 @@ function nicknameToPlayerInfo(nickname: string): PlayerInfo {
     hp = vehicle.state.hitPoints
     maxHp = vehicle.specs.hitPoints
     if (vehicle.config.color) color = vehicle.config.color
+  }
+  if (statistics) {
+    damage = Math.floor(statistics.causedDamage)
+    frags = statistics.destroyedVehicles
   }
   return {
     nickname,

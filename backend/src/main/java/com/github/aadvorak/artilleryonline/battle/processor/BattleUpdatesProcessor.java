@@ -3,10 +3,12 @@ package com.github.aadvorak.artilleryonline.battle.processor;
 import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
+import com.github.aadvorak.artilleryonline.battle.statistics.PlayerBattleStatistics;
 import com.github.aadvorak.artilleryonline.battle.updates.RoomStateUpdate;
 import com.github.aadvorak.artilleryonline.dto.response.BattleModelStateResponse;
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
 import com.github.aadvorak.artilleryonline.dto.response.BattleUpdateResponse;
+import com.github.aadvorak.artilleryonline.dto.response.PlayerBattleStatisticsResponse;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -89,6 +91,8 @@ public class BattleUpdatesProcessor {
         var sendState = existsUpdatedModel(battle.getModel()) || !applicationSettings.isClientProcessing();
         var sendUpdates = !battle.getModel().getUpdates().isEmpty();
         var sendEvents = !battle.getModel().getEvents().isEmpty();
+        var sendStatistics = battle.getModel().getStatistics().values().stream()
+                .anyMatch(PlayerBattleStatistics::isUpdated);
         if (sendStage || sendState || sendUpdates || sendEvents) {
             var battleUpdateResponse = new BattleUpdateResponse()
                     .setId(battle.getId())
@@ -106,12 +110,24 @@ public class BattleUpdatesProcessor {
                 if (sendEvents) {
                     battleUpdateResponse.setEvents(battle.getModel().getEvents());
                 }
+                if (sendStatistics) {
+                    battleUpdateResponse.setStatistics(mapStatistics(battle.getModel().getStatistics()));
+                }
             }
             battle.getQueues().getBattleUpdatesQueue().add(battleUpdateResponse);
             //aggregateUpdates(battle, battleUpdateResponse);
             return true;
         }
         return false;
+    }
+
+    private Map<String, PlayerBattleStatisticsResponse> mapStatistics(Map<String, PlayerBattleStatistics> statistics) {
+        return statistics.entrySet().stream()
+                .filter(entry -> entry.getValue().isUpdated())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> mapper.map(entry.getValue(), PlayerBattleStatisticsResponse.class))
+                );
     }
 
     private void aggregateUpdates(Battle battle, BattleUpdateResponse update) {
@@ -215,5 +231,6 @@ public class BattleUpdatesProcessor {
         battle.getModel().getMissiles().values().forEach(missile -> missile.getUpdate().resetUpdated());
         battle.getModel().getDrones().values().forEach(drone -> drone.getUpdate().resetUpdated());
         battle.getModel().getBoxes().values().forEach(box -> box.getUpdate().resetUpdated());
+        battle.getModel().getStatistics().values().forEach(PlayerBattleStatistics::resetUpdated);
     }
 }

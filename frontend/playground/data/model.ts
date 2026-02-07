@@ -155,5 +155,15 @@ export interface BattleModel {
   missiles: MissileModels
   drones: DroneModels
   boxes: BoxModels
+  statistics: PlayersBattleStatistics
   updated: boolean
+}
+
+export interface PlayerBattleStatistics {
+  causedDamage: number
+  destroyedVehicles: number
+}
+
+export interface PlayersBattleStatistics {
+  [nickname: string]: PlayerBattleStatistics
 }
