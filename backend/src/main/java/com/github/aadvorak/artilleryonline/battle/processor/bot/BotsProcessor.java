@@ -106,7 +106,8 @@ public class BotsProcessor {
             }
         }
         var lowVelocity = state.getVelocity().getMovingVelocity().magnitude() < 1.0;
-        state.getJetState().setActive(state.isTurnedOver() || state.getMovingDirection() != null && lowVelocity);
+        var lowJet = state.getJetState().getVolume() < vehicle.getModel().getConfig().getJet().getCapacity() / 3;
+        state.getJetState().setActive(state.isTurnedOver() && !lowJet || state.getMovingDirection() != null && lowVelocity);
         if (
                 oldTriggerPushed != state.getGunState().isTriggerPushed()
                 || oldJetActive != state.getJetState().isActive()
