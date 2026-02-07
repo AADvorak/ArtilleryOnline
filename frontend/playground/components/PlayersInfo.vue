@@ -5,7 +5,7 @@
           :team-id="0"
           :users-team-id="usersTeamId"
           :team-players="team1Players"
-          :show-totals="isTeamBattle"
+          :show-totals="isTeamBattle && !showDetails"
           :show-details="showDetails"
       />
       <template v-if="isTeamBattle">
@@ -14,7 +14,7 @@
             :team-id="1"
             :users-team-id="usersTeamId"
             :team-players="team2Players"
-            show-totals
+            :show-totals="!showDetails"
             :show-details="showDetails"
         />
       </template>
