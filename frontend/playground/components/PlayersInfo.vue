@@ -131,10 +131,7 @@ function nicknameToPlayerInfo(nickname: string): PlayerInfo {
 .teams-container {
   display: flex;
   gap: 32px;
-  background-color: rgba(0, 0, 0, 0.6);
-  border-radius: 8px;
-  padding: 16px;
-  backdrop-filter: blur(4px);
+  padding: 8px;
 }
 
 .table-spacer {
