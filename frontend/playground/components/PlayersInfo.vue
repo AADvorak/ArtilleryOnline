@@ -40,7 +40,7 @@ const battleStore = useBattleStore()
 const userStore = useUserStore()
 
 const usersTeamId = computed<number>(() => {
-  return battleStore.battle!.nicknameTeamMap[userStore.user!.nickname] || 0
+  return battleStore.battle?.nicknameTeamMap[userStore.user!.nickname] || 0
 })
 
 const showDetails = ref(false)

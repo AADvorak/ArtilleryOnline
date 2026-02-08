@@ -8,5 +8,8 @@ export const battleHeader = {
   flights: 'flights',
   gun: 'Gun',
   fixed: 'fixed',
-  autoAngle: 'auto-angle'
+  autoAngle: 'auto-angle',
+  hitPoints: 'Hit points',
+  damage: 'Damage',
+  frags: 'Frags',
 }

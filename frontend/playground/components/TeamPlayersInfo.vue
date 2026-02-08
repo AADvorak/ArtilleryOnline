@@ -3,6 +3,7 @@ import {computed} from "vue";
 import type {PlayerInfo} from "~/playground/data/common";
 import BattleLinearProgress from "~/playground/components/BattleLinearProgress.vue";
 import {DefaultColors} from "~/dictionary/default-colors";
+import {useI18n} from "vue-i18n";
 
 const props = defineProps<{
   usersTeamId: number
@@ -11,6 +12,8 @@ const props = defineProps<{
   showTotals?: boolean
   showDetails?: boolean
 }>()
+
+const {t} = useI18n()
 
 const teamTotals = computed<PlayerInfo>(() => {
   const nickname = 'Team' + (props.teamId + 1)
@@ -42,9 +45,9 @@ const allInfo = computed<PlayerInfo[]>(() => {
   <v-table class="team-table" density="compact">
     <thead v-show="showDetails">
     <tr>
-      <th colspan="2">Hit points</th>
-      <th>Frags</th>
-      <th>Damage</th>
+      <th>{{ t('battleHeader.hitPoints') }}</th>
+      <th>{{ t('battleHeader.frags') }}</th>
+      <th>{{ t('battleHeader.damage') }}</th>
     </tr>
     </thead>
     <tbody>
@@ -52,13 +55,12 @@ const allInfo = computed<PlayerInfo[]>(() => {
       <td class="progress-cell">
         <battle-linear-progress
             :value="Math.floor(100 * player.hp / player.maxHp)"
-            :text="player.nickname + ' ' + Math.floor(player.hp)"
+            :text="player.nickname + ': ' + Math.floor(player.hp)"
             :color="player.color"
         />
       </td>
-      <td></td>
-      <td class="text-center">{{ player.frags }}</td>
-      <td class="text-center">{{ player.damage }}</td>
+      <td class="text-right">{{ player.frags }}</td>
+      <td class="text-right">{{ player.damage }}</td>
     </tr>
     </tbody>
   </v-table>
@@ -82,12 +84,12 @@ const allInfo = computed<PlayerInfo[]>(() => {
 }
 
 .progress-cell {
-  min-width: 200px;
+  min-width: 250px;
   padding: 4px 8px !important;
 }
 
-.text-center {
-  text-align: center;
+.text-right {
+  text-align: right;
 }
 
 /* Make sure the tables are transparent */
