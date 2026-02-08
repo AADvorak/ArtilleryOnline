@@ -32,18 +32,20 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
             return true;
         }
         if (battle.getType().isTeam()) {
-            var team0VehiclesCount = battle.getTeamNicknames(0).stream()
-                    .filter(nickname -> battle.getModel().getVehicles().get(nickname) != null)
-                    .count();
-            var team1VehiclesCount = battle.getTeamNicknames(1).stream()
-                    .filter(nickname -> battle.getModel().getVehicles().get(nickname) != null)
-                    .count();
-            if (team0VehiclesCount == 0) {
-                battle.setWinnerTeamId(1);
-            } else if (team1VehiclesCount == 0) {
-                battle.setWinnerTeamId(0);
+            if (battle.getWinnerTeamId() == null) {
+                var team0VehiclesCount = battle.getTeamNicknames(0).stream()
+                        .filter(nickname -> battle.getModel().getVehicles().get(nickname) != null)
+                        .count();
+                var team1VehiclesCount = battle.getTeamNicknames(1).stream()
+                        .filter(nickname -> battle.getModel().getVehicles().get(nickname) != null)
+                        .count();
+                if (team0VehiclesCount == 0) {
+                    battle.setWinnerTeamId(1);
+                } else if (team1VehiclesCount == 0) {
+                    battle.setWinnerTeamId(0);
+                }
             }
-            if (battle.getWinnerTeamId() != null) {
+            if (battle.getWinnerTeamId() != null && battle.getModel().getExplosions().isEmpty()) {
                 battle.setStageAndResetTime(BattleStage.FINISHED);
                 return true;
             }
