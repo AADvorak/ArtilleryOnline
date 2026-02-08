@@ -4,6 +4,7 @@ import type {PlayerInfo} from "~/playground/data/common";
 import BattleLinearProgress from "~/playground/components/BattleLinearProgress.vue";
 import {DefaultColors} from "~/dictionary/default-colors";
 import {useI18n} from "vue-i18n";
+import {mdiSkullOutline, mdiBullseyeArrow} from "@mdi/js";
 
 const props = defineProps<{
   usersTeamId: number
@@ -15,9 +16,17 @@ const props = defineProps<{
 
 const {t} = useI18n()
 
+const teamTitle = computed(() => {
+  return t('common.team') + ' ' + (props.teamId + 1)
+})
+
+const teamColor = computed(() => {
+  return props.teamId === props.usersTeamId ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM
+})
+
 const teamTotals = computed<PlayerInfo>(() => {
-  const nickname = 'Team' + (props.teamId + 1)
-  const color = props.teamId === props.usersTeamId ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM
+  const nickname = teamTitle.value
+  const color = teamColor.value
   return props.teamPlayers.reduce(
       (totals, player) => ({
         nickname,
@@ -45,9 +54,9 @@ const allInfo = computed<PlayerInfo[]>(() => {
   <v-table class="team-table" density="compact">
     <thead v-show="showDetails">
     <tr>
-      <th>{{ t('battleHeader.hitPoints') }}</th>
-      <th>{{ t('battleHeader.frags') }}</th>
-      <th>{{ t('battleHeader.damage') }}</th>
+      <th><span :style="'color: ' + teamColor">{{ teamTitle }}</span></th>
+      <th class="text-right"><v-icon :icon="mdiSkullOutline"/></th>
+      <th class="text-right"><v-icon :icon="mdiBullseyeArrow"/></th>
     </tr>
     </thead>
     <tbody>
@@ -59,8 +68,14 @@ const allInfo = computed<PlayerInfo[]>(() => {
             :color="player.color"
         />
       </td>
-      <td class="text-right">{{ player.frags }}</td>
-      <td class="text-right">{{ player.damage }}</td>
+      <td class="text-right">
+        <v-icon v-show="!showDetails" class="mr-2" :icon="mdiSkullOutline"/>
+        <span>{{ player.frags }}</span>
+      </td>
+      <td class="text-right">
+        <v-icon v-show="!showDetails" class="mr-2" :icon="mdiBullseyeArrow"/>
+        <span>{{ player.damage }}</span>
+      </td>
     </tr>
     </tbody>
   </v-table>

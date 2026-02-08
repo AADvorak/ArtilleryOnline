@@ -130,7 +130,7 @@ function nicknameToPlayerInfo(nickname: string): PlayerInfo {
 
 .teams-container {
   display: flex;
-  gap: 32px;
+  gap: 8px;
   padding: 8px;
 }
 
