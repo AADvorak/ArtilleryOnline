@@ -15,7 +15,6 @@ const settings = reactive({
   vehicleColor: '',
   showNicknamesAboveVehicles: '1',
   showHpBarsAboveVehicles: '1',
-  showAllPlayersHpBarsInTopBar: '0',
   showGroundTextureAndBackground: '0',
   battlefieldAlignment: BattlefieldAlignments.BY_SCREEN_SIZE
 })
@@ -64,16 +63,6 @@ watch(() => settings.showHpBarsAboveVehicles, value => {
   }
 })
 
-watch(() => settings.showAllPlayersHpBarsInTopBar, value => {
-  const existingValue = appearances.value[AppearancesNames.ALL_HP_TOP]
-  if (value && value !== existingValue) {
-    userSettingsStore.setAppearance({
-      name: AppearancesNames.ALL_HP_TOP,
-      value
-    })
-  }
-})
-
 watch(() => settings.showGroundTextureAndBackground, value => {
   const existingValue = appearances.value[AppearancesNames.GROUND_TEXTURE_BACKGROUND]
   if (value && value !== existingValue) {
@@ -99,7 +88,6 @@ onMounted(() => {
   settings.vehicleColor = appearances.value[AppearancesNames.VEHICLE_COLOR]!
   settings.showNicknamesAboveVehicles = appearances.value[AppearancesNames.NICKNAMES_ABOVE]!
   settings.showHpBarsAboveVehicles = appearances.value[AppearancesNames.HP_ABOVE]!
-  settings.showAllPlayersHpBarsInTopBar = appearances.value[AppearancesNames.ALL_HP_TOP]!
   settings.showGroundTextureAndBackground = appearances.value[AppearancesNames.GROUND_TEXTURE_BACKGROUND]!
   settings.battlefieldAlignment = appearances.value[AppearancesNames.BATTLEFIELD_ALIGNMENT]!
 })
@@ -156,16 +144,6 @@ function back() {
             <td>
               <v-switch
                   v-model="settings.showHpBarsAboveVehicles"
-                  true-value="1"
-                  false-value="0"
-              />
-            </td>
-          </tr>
-          <tr>
-            <td>{{ t('appearance.showAllPlayersHpBarsInTopBar') }}</td>
-            <td>
-              <v-switch
-                  v-model="settings.showAllPlayersHpBarsInTopBar"
                   true-value="1"
                   false-value="0"
               />

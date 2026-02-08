@@ -8,7 +8,6 @@ export const DefaultAppearances = [
   {name: AppearancesNames.VEHICLE_COLOR, value: ''},
   {name: AppearancesNames.NICKNAMES_ABOVE, value: '1'},
   {name: AppearancesNames.HP_ABOVE, value: '1'},
-  {name: AppearancesNames.ALL_HP_TOP, value: '0'},
   {name: AppearancesNames.GROUND_TEXTURE_BACKGROUND, value: '1'},
   {name: AppearancesNames.SHOW_SCREEN_CONTROLS, value: '0'},
   {name: AppearancesNames.BATTLEFIELD_ALIGNMENT, value: BattlefieldAlignments.BY_SCREEN_SIZE},

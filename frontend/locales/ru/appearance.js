@@ -4,7 +4,6 @@ export const appearance = {
   vehicleColor: 'Цвет техники',
   showNicknamesAboveVehicles: 'Показывать ники над техникой',
   showHpBarsAboveVehicles: 'Показывать полоску ХП над техникой',
-  showAllPlayersHpBarsInTopBar: 'Показывать ХП всех игроков сверху',
   showGroundTextureAndBackground: 'Показывать текстуру почвы и фон',
   battlefieldAlignment: 'Выравнивание игрового поля',
   byScreenSize: 'По размеру экрана',
