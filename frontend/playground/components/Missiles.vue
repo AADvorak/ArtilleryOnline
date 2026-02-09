@@ -52,7 +52,7 @@ function launch() {
 </script>
 
 <template>
-  <div v-if="missileLauncherState" class="progress-wrapper ml-2">
+  <div v-if="missileLauncherState" class="progress-wrapper ml-4">
     <battle-linear-progress
         :value="progress"
         :text="t('battleHeader.missiles') + ': ' + missileLauncherState.remainMissiles"

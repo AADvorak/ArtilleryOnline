@@ -34,7 +34,7 @@ function switchMode() {
 
 <template>
   <icon-btn
-      class="ml-2"
+      class="ml-4"
       v-if="!!gunState"
       :icon="gunState.fixed ? mdiCrosshairsOff : mdiCrosshairs"
       :tooltip="t('controls.switchGunMode')"

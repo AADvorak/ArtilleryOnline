@@ -25,7 +25,7 @@ const value = computed(() => {
 </script>
 
 <template>
-  <div v-if="jetAvailable" class="progress-wrapper ml-4">
+  <div v-if="jetAvailable" class="progress-wrapper ml-2">
     <battle-linear-progress
         :value="value"
         :text="t('jetBar.title')"

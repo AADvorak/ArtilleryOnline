@@ -93,8 +93,8 @@ function toMenu() {
     </div>
     <v-spacer/>
     <template v-if="!separateHeaderToolbars">
-      <JetBar />
       <Gun />
+      <JetBar />
       <Missiles />
       <Drone />
       <Bomber />
@@ -123,8 +123,8 @@ function toMenu() {
   </v-toolbar>
   <v-toolbar v-if="separateHeaderToolbars" height="36px" color="transparent" class="toolbar">
     <v-spacer/>
-    <JetBar />
     <Gun />
+    <JetBar />
     <Missiles />
     <Drone />
     <Bomber />
