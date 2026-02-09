@@ -52,6 +52,7 @@ export interface TargetData {
   hitNormal: Vector
   armor?: number
   penetration?: number
+  deconcentrated?: boolean
 }
 
 export enum CollideObjectType {

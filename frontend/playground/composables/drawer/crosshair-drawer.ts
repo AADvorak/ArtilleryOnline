@@ -9,6 +9,7 @@ const CROSSHAIR_SIZE = 0.25
 const CROSSHAIR_INNER_SIZE = 0.06
 const CROSSHAIR_COLORS = {
   DEFAULT: 'rgb(255,255,255)',
+  DECONCENTRATED: 'rgb(150,150,150)',
   HARD_PENETRATION: 'rgb(255,3,3)',
   MODERATE_PENETRATION: 'rgb(255,98,1)',
   MODERATE_EASY_PENETRATION: 'rgb(255,204,1)',
@@ -53,6 +54,9 @@ export function useCrosshairDrawer(
   }
 
   function getCrosshairColor(targetData: TargetData) {
+    if (targetData.deconcentrated) {
+      return CROSSHAIR_COLORS.DECONCENTRATED
+    }
     if (!targetData.armor || !targetData.penetration) {
       return CROSSHAIR_COLORS.DEFAULT
     }

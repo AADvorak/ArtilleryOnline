@@ -29,7 +29,11 @@ export function useTrajectoryAndTargetProcessor() {
     const shellTrajectory: Position[] = []
     const shellSpecs = userVehicle.config.gun.availableShells[selectedShell]!
     const startPosition = VehicleUtils.getGunEndPosition(userVehicle)
-    const angle = userVehicle.state.position.angle + userVehicle.state.gunState.angle
+    const fixed = userVehicle.state.gunState.fixed
+    const targetAngle = userVehicle.state.gunState.targetAngle
+    const actualAngle = userVehicle.state.position.angle + userVehicle.state.gunState.angle
+    const angle = fixed ? actualAngle : targetAngle
+    const deconcentrated = fixed ? false : Math.abs(actualAngle - targetAngle) > 0.1
     const directionSign = Math.sign(Math.cos(angle))
     const maxX = BattleUtils.getRoomWidth(battle.model.room.specs)
     const rightWall = BattleUtils.getRightWall(battle.model.room.specs)
@@ -113,6 +117,9 @@ export function useTrajectoryAndTargetProcessor() {
       }
       shellTrajectory.push({x, y})
       previous = {x, y}
+    }
+    if (targetData) {
+      targetData.deconcentrated = deconcentrated
     }
     battleStore.targetData = targetData
     battleStore.shellTrajectory = shellTrajectory
