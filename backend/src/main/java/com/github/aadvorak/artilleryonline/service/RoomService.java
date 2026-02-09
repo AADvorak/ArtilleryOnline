@@ -126,7 +126,8 @@ public class RoomService {
     public void startBattle() {
         var user = userService.getUserFromContext();
         var room = requireOwnRoom(user);
-        if (room.getMembersCount() < 2) {
+        if (room.getMembersCount() < 2 || room.isTeamMode()
+                && (room.getTeamMembersCount(0) < 1 || room.getTeamMembersCount(1) < 1)) {
             throw new ConflictAppException("Not enough players to start battle",
                     new Locale().setCode(LocaleCode.NOT_ENOUGH_PLAYERS));
         }

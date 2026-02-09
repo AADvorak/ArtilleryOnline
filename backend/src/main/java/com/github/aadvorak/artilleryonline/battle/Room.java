@@ -37,12 +37,15 @@ public class Room {
         return guests.size() + bots.size() + 1;
     }
 
+    public int getTeamMembersCount(int teamId) {
+        return (int) getMembers().stream()
+                .filter(member -> teamId == member.getTeamId())
+                .count();
+    }
+
     public Integer getSmallestTeamId() {
-        var members = getMembers();
         var counts = Stream.of(0, 1)
-                .map(teamId -> members.stream()
-                        .filter(member -> teamId == member.getTeamId())
-                        .count())
+                .map(this::getTeamMembersCount)
                 .toList();
         return counts.get(0) <= counts.get(1) ? 0 : 1;
     }
