@@ -27,4 +27,5 @@ export const controls = {
   resetToDefaults: 'Сбросить по умолчанию',
   selectShell: 'Выбор снаряда',
   selectedShell: 'Выбранный снаряд',
+  switchPlayersDetails: 'Показать / скрыть детализацию по игрокам',
 }

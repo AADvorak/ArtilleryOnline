@@ -27,4 +27,5 @@ export const controls = {
   resetToDefaults: 'Reset to defaults',
   selectShell: 'Select shell',
   selectedShell: 'Selected shell',
+  switchPlayersDetails: 'Show / hide players details',
 }

@@ -2,6 +2,7 @@
   <div v-show="showDetails || isTeamBattle" :class="'players-info-container ' + containerClass">
     <div class="teams-container">
       <team-players-info
+          :isTeamBattle="isTeamBattle"
           :team-id="0"
           :users-team-id="usersTeamId"
           :team-players="team1Players"
@@ -11,6 +12,7 @@
       <template v-if="isTeamBattle">
         <div class="table-spacer"></div>
         <team-players-info
+            is-team-battle
             :team-id="1"
             :users-team-id="usersTeamId"
             :team-players="team2Players"
@@ -27,7 +29,6 @@
         @click="switchShowDetails"
     />
   </div>
-
 </template>
 
 <script setup lang="ts">
@@ -40,6 +41,7 @@ import {useUserStore} from "~/stores/user";
 import {DefaultColors} from "~/dictionary/default-colors";
 import {mdiChevronUp, mdiChevronDown} from "@mdi/js";
 import {useI18n} from "vue-i18n";
+import {useUserSettingsStore} from "~/stores/user-settings";
 
 const props = defineProps<{
   separateHeaderToolbars: boolean
@@ -51,8 +53,15 @@ const battleStore = useBattleStore()
 
 const userStore = useUserStore()
 
+const userSettingsStore = useUserSettingsStore()
+
 const usersTeamId = computed<number>(() => {
   return battleStore.battle?.nicknameTeamMap[userStore.user!.nickname] || 0
+})
+
+const switchShowDetailsKey = computed(() => {
+  return userSettingsStore.controlsOrDefaults
+      .filter(item => item.name === 'switchPlayersDetails')[0]?.value
 })
 
 const showDetails = ref(false)
@@ -80,7 +89,8 @@ onUnmounted(() => {
 })
 
 function switchShowDetailsIfTabPressed(e) {
-  if (e.code === 'Tab') {
+  if (e.code === switchShowDetailsKey.value) {
+    e.preventDefault()
     switchShowDetails()
   }
 }

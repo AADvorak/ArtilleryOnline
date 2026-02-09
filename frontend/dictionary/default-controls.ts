@@ -10,4 +10,5 @@ export const DefaultControls = [
   {name: 'launchMissile', value: 'KeyM', description: 'Launch missile'},
   {name: 'launchDrone', value: 'KeyN', description: 'Launch drone'},
   {name: 'switchGunMode', value: 'KeyG', description: 'Switch gun mode'},
+  {name: 'switchPlayersDetails', value: 'Tab', description: 'Switch players details'},
 ]

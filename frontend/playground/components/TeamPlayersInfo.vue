@@ -7,6 +7,7 @@ import {useI18n} from "vue-i18n";
 import {mdiSkullOutline, mdiBullseyeArrow} from "@mdi/js";
 
 const props = defineProps<{
+  isTeamBattle: boolean
   usersTeamId: number
   teamId: number
   teamPlayers: PlayerInfo[]
@@ -54,7 +55,7 @@ const allInfo = computed<PlayerInfo[]>(() => {
   <v-table class="team-table" density="compact">
     <thead v-show="showDetails">
     <tr>
-      <th><span :style="'color: ' + teamColor">{{ teamTitle }}</span></th>
+      <th><span v-if="isTeamBattle" :style="'color: ' + teamColor">{{ teamTitle }}</span></th>
       <th class="text-right"><v-icon :icon="mdiSkullOutline"/></th>
       <th class="text-right"><v-icon :icon="mdiBullseyeArrow"/></th>
     </tr>
