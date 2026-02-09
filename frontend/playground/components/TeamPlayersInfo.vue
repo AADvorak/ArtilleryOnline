@@ -69,11 +69,11 @@ const allInfo = computed<PlayerInfo[]>(() => {
             :color="player.color"
         />
       </td>
-      <td class="text-right">
+      <td :class="'text-right' + (showDetails ? '' : ' cell-with-icon')">
         <v-icon v-show="!showDetails" class="mr-2" :icon="mdiSkullOutline"/>
         <span>{{ player.frags }}</span>
       </td>
-      <td class="text-right">
+      <td :class="'text-right' + (showDetails ? '' : ' cell-with-icon')">
         <v-icon v-show="!showDetails" class="mr-2" :icon="mdiBullseyeArrow"/>
         <span>{{ player.damage }}</span>
       </td>
@@ -106,6 +106,10 @@ const allInfo = computed<PlayerInfo[]>(() => {
 
 .text-right {
   text-align: right;
+}
+
+.cell-with-icon {
+  min-width: 90px;
 }
 
 /* Make sure the tables are transparent */
