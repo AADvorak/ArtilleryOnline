@@ -28,6 +28,7 @@ const commandsSender = useCommandsSender()
 const keyboardListener = useKeyboardListener(commandsSender)
 const colliderKeyboardListener = useColliderKeyboardListener(commandsSender)
 const battleStore = useBattleStore()
+const userStore = useUserStore()
 const roomStore = useRoomStore()
 const userSettingsStore = useUserSettingsStore()
 const router = useRouter()
@@ -46,6 +47,9 @@ const screenControlsType = computed(() => userSettingsStore
 const isButtons = computed(() => screenControlsType.value === ControlsTypes.BUTTONS)
 const isJoysticks = computed(() => screenControlsType.value === ControlsTypes.JOYSTICKS)
 const isCollider = computed(() => battleStore.battle?.type === BattleType.COLLIDER)
+const userVehicle = computed(() => {
+  return battleStore.battle?.model.vehicles[userStore.user!.nickname]
+})
 
 watch(() => battleStore.battle, value => {
   if (!value) {
@@ -77,7 +81,7 @@ function calculateIsMobileBrowser() {
 }
 
 function calculateSeparateHeaderToolbars() {
-  separateHeaderToolbars.value = window.innerWidth < 950
+  separateHeaderToolbars.value = window.innerWidth < 950 && !!userVehicle.value
 }
 </script>
 
