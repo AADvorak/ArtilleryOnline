@@ -131,7 +131,6 @@ public class RoomService {
                     new Locale().setCode(LocaleCode.NOT_ENOUGH_PLAYERS));
         }
         battleService.createRoomBattle(room);
-        removeSelectedVehicles(room);
     }
 
     public void exitRoom() {
@@ -271,10 +270,5 @@ public class RoomService {
 
     private Optional<Room> getUserRoom(long userId) {
         return Optional.ofNullable(userRoomMap.get(userId)).map(roomMap::get);
-    }
-
-    private void removeSelectedVehicles(Room room) {
-        room.getOwner().getParams().setSelectedVehicle(null);
-        room.getGuests().values().forEach(guest -> guest.getParams().setSelectedVehicle(null));
     }
 }
