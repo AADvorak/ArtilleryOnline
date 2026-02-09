@@ -22,6 +22,10 @@ public class BotsService {
             "Kirileyson",
             "Ciri",
             "CallMeBot",
+            "LanceBot",
+            "YoloBot",
+            "Noob",
+            "Worm",
             "LadyNemesis"
     );
 
