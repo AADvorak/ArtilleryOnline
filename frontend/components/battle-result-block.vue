@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type {UserBattleResult} from "~/data/model";
 import {useI18n} from "vue-i18n";
+import {DefaultColors} from "~/dictionary/default-colors";
 
 const props = defineProps<{
   result: UserBattleResult
@@ -9,8 +10,9 @@ const props = defineProps<{
 const {t} = useI18n()
 
 const config = ref([
-  {localeKey: 'commonHistory.battleResult', value: getBattleResult()},
-  {localeKey: 'battleHistory.survived', value: props.result.survived ? t('common.yes') : t('common.no')},
+  {localeKey: 'commonHistory.battleResult', value: getBattleResult(), color: getBattleResultColor()},
+  {localeKey: 'battleHistory.survived', value: props.result.survived ? t('common.yes') : t('common.no'),
+    color: props.result.survived ? DefaultColors.BRIGHT_GREEN : DefaultColors.BRIGHT_RED},
   {localeKey: 'commonHistory.madeShots', value: props.result.madeShots},
   {localeKey: 'commonHistory.destroyedVehicles', value: props.result.destroyedVehicles},
   {localeKey: 'commonHistory.destroyedDrones', value: props.result.destroyedDrones},
@@ -40,6 +42,19 @@ function getBattleResult() {
   }
   return ''
 }
+
+function getBattleResultColor() {
+  if (props.result.teamMode) {
+    if (props.result.won === true) {
+      return DefaultColors.BRIGHT_GREEN
+    }
+    if (props.result.won === false) {
+      return DefaultColors.BRIGHT_RED
+    }
+    return DefaultColors.BRIGHT_ORANGE
+  }
+  return ''
+}
 </script>
 
 <template>
@@ -48,7 +63,7 @@ function getBattleResult() {
     <template v-for="item of config">
       <tr v-if="item.value">
         <td>{{ t(item.localeKey) }}</td>
-        <td class="number-column">{{ item.value }}</td>
+        <td class="number-column" :style="item.color ? 'color: ' + item.color : ''">{{ item.value }}</td>
       </tr>
     </template>
     </tbody>
