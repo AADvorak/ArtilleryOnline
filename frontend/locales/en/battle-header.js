@@ -12,4 +12,6 @@ export const battleHeader = {
   hitPoints: 'Hit points',
   damage: 'Damage',
   frags: 'Frags',
+  showPlayersDetails: 'Show players details',
+  hidePlayersDetails: 'Hide players details',
 }

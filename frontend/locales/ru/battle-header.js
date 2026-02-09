@@ -12,4 +12,6 @@ export const battleHeader = {
   hitPoints: 'Хитпоинты',
   damage: 'Урон',
   frags: 'Фраги',
+  showPlayersDetails: 'Показать детализацию по игрокам',
+  hidePlayersDetails: 'Скрыть детализацию по игрокам',
 }

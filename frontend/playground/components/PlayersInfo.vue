@@ -1,5 +1,5 @@
 <template>
-  <div v-show="showDetails || isTeamBattle" :class="containerClass">
+  <div v-show="showDetails || isTeamBattle" :class="'players-info-container ' + containerClass">
     <div class="teams-container">
       <team-players-info
           :team-id="0"
@@ -20,6 +20,14 @@
       </template>
     </div>
   </div>
+  <div :class="'details-switcher-container ' + containerClass">
+    <icon-btn
+        :icon="showDetails ? mdiChevronUp : mdiChevronDown"
+        :tooltip="t(showDetails ? 'battleHeader.hidePlayersDetails' : 'battleHeader.showPlayersDetails')"
+        @click="switchShowDetails"
+    />
+  </div>
+
 </template>
 
 <script setup lang="ts">
@@ -30,10 +38,14 @@ import {useBattleStore} from "~/stores/battle";
 import {BattleType} from "~/playground/data/battle";
 import {useUserStore} from "~/stores/user";
 import {DefaultColors} from "~/dictionary/default-colors";
+import {mdiChevronUp, mdiChevronDown} from "@mdi/js";
+import {useI18n} from "vue-i18n";
 
 const props = defineProps<{
   separateHeaderToolbars: boolean
 }>()
+
+const {t} = useI18n()
 
 const battleStore = useBattleStore()
 
@@ -56,7 +68,7 @@ const team2Players = computed<PlayerInfo[]>(() => {
 })
 
 const containerClass = computed(() => {
-  return 'players-info-container ' + (props.separateHeaderToolbars ? 'double-top' : 'small-top')
+  return props.separateHeaderToolbars ? 'double-top' : 'small-top'
 })
 
 onMounted(() => {
@@ -69,8 +81,12 @@ onUnmounted(() => {
 
 function switchShowDetailsIfTabPressed(e) {
   if (e.code === 'Tab') {
-    showDetails.value = !showDetails.value
+    switchShowDetails()
   }
+}
+
+function switchShowDetails() {
+  showDetails.value = !showDetails.value
 }
 
 function getTeamNicknames(teamId: number): string[] {
@@ -111,6 +127,13 @@ function nicknameToPlayerInfo(nickname: string): PlayerInfo {
 </script>
 
 <style scoped>
+.details-switcher-container {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%,-30%);
+  z-index: 1000;
+}
+
 .players-info-container {
   position: absolute;
   left: 50%;
