@@ -61,7 +61,7 @@ public class BotsService {
         return BOT_NICKNAMES.get(BattleUtils.generateRandom(0, BOT_NICKNAMES.size()));
     }
 
-    private String getRandomColor() {
+    public String getRandomColor() {
         return BOT_COLORS.get(BattleUtils.generateRandom(0, BOT_COLORS.size()));
     }
 

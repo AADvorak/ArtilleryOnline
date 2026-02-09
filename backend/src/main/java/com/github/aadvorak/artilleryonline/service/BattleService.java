@@ -155,7 +155,8 @@ public class BattleService {
             var otherParticipant = new BattleParticipant()
                     .setNickname("Dummy player")
                     .setParams(new BattleParticipantParams()
-                            .setSelectedVehicle(botsService.getRandomVehicle()));
+                            .setSelectedVehicle(botsService.getRandomVehicle())
+                            .setVehicleColor(botsService.getRandomColor()));
             battleStarter.start(Set.of(userParticipant, otherParticipant), battleType);
         }
     }
