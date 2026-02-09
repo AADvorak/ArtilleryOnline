@@ -78,6 +78,7 @@ export function useBattleUpdater(player: Player) {
       rejectedUpdatesCount = 0
     }
     battle.fps = battleUpdate.fps
+    battle.winnerTeamId = battleUpdate.winnerTeamId
     if (battleUpdate.stage) {
       battle.battleStage = battleUpdate.stage
     }

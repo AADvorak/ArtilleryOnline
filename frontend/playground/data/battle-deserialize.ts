@@ -38,6 +38,7 @@ export function deserializeBattleUpdate(input: DeserializerInput): BattleUpdate 
   const updates = DeserializerBase.readNullable(input, deserializeBattleModelUpdates)
   const events = DeserializerBase.readNullable(input, deserializeBattleModelEvents)
   const statistics = DeserializerBase.readMap(input, DeserializerBase.readString, deserializePlayerBattleStatistics)
+  const winnerTeamId = DeserializerBase.readNullable(input, DeserializerBase.readInt)
   return {
     time,
     fps,
@@ -45,6 +46,7 @@ export function deserializeBattleUpdate(input: DeserializerInput): BattleUpdate 
     state,
     updates,
     events,
-    statistics
+    statistics,
+    winnerTeamId
   }
 }

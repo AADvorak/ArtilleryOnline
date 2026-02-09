@@ -93,11 +93,12 @@ public class BattleUpdatesProcessor {
         var sendEvents = !battle.getModel().getEvents().isEmpty();
         var sendStatistics = battle.getModel().getStatistics().values().stream()
                 .anyMatch(PlayerBattleStatistics::isUpdated);
-        if (sendStage || sendState || sendUpdates || sendEvents) {
+        if (sendStage || sendState || sendUpdates || sendEvents || sendStatistics) {
             var battleUpdateResponse = new BattleUpdateResponse()
                     .setId(battle.getId())
                     .setTime(battle.getTime())
-                    .setFps(battle.getFpsCalculator().getFps());
+                    .setFps(battle.getFpsCalculator().getFps())
+                    .setWinnerTeamId(battle.getWinnerTeamId());
             if (sendStage) {
                 battleUpdateResponse.setStage(battle.getBattleStage());
             } else {

@@ -35,6 +35,8 @@ public class BattleUpdateResponse implements BattleUpdatesQueueElement, CompactS
 
     private Map<String, PlayerBattleStatisticsResponse> statistics;
 
+    private Integer winnerTeamId;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeLong(time);
@@ -44,5 +46,6 @@ public class BattleUpdateResponse implements BattleUpdatesQueueElement, CompactS
         stream.writeSerializable(updates);
         stream.writeSerializable(events);
         stream.writeStringMapOfSerializable(statistics);
+        stream.writeNullable(winnerTeamId, stream::writeInt);
     }
 }

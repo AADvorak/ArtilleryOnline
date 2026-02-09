@@ -1,11 +1,21 @@
 <script setup lang="ts">
 import {computed, ref, watch} from 'vue'
 import {useBattleStore} from '~/stores/battle'
-import {BattleStage} from '@/playground/data/battle'
+import {BattleStage, BattleType} from '@/playground/data/battle'
 import {useI18n} from "vue-i18n";
+import {useUserStore} from "~/stores/user";
+import {DefaultColors} from "~/dictionary/default-colors";
+
+enum BattleResult {
+  DRAW = 'draw',
+  VICTORY = 'victory',
+  DEFEAT = 'defeat',
+}
 
 const {t} = useI18n()
 const battleStore = useBattleStore()
+
+const userStore = useUserStore()
 
 const battle = computed(() => battleStore.battle)
 
@@ -29,6 +39,30 @@ const message = computed(() => {
     return t('finishBattleDialog.errorMessage')
   }
   return ''
+})
+
+const usersTeamId = computed<number>(() => {
+  return battleStore.battle?.nicknameTeamMap[userStore.user!.nickname] || 0
+})
+
+const battleResult = computed(() => {
+  if (battle.value?.type === BattleType.TEAM_ELIMINATION) {
+    if (battle.value.winnerTeamId !== undefined) {
+      return usersTeamId.value === battle.value.winnerTeamId ? BattleResult.VICTORY : BattleResult.DEFEAT
+    }
+    return BattleResult.DRAW
+  }
+})
+
+const battleResultColor = computed(() => {
+  switch (battleResult.value) {
+    case BattleResult.VICTORY:
+      return DefaultColors.BRIGHT_GREEN
+    case BattleResult.DEFEAT:
+      return DefaultColors.BRIGHT_RED
+    case BattleResult.DRAW:
+      return DefaultColors.BRIGHT_ORANGE
+  }
 })
 
 const opened = ref(false)
@@ -55,6 +89,9 @@ function hideAndCleanBattle() {
       <v-card-title>{{ title }}</v-card-title>
       <v-card-text>
         <div class="d-flex">{{ message }}</div>
+        <div v-if="battleResult" :style="'color: ' + battleResultColor">
+          {{ t('commonHistory.battleResults.' + battleResult) }}
+        </div>
         <div class="d-flex mt-4">
           <v-btn color="primary" @click="hideAndCleanBattle">{{ t('common.ok') }}</v-btn>
         </div>

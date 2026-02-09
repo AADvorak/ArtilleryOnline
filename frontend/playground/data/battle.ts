@@ -33,6 +33,7 @@ export interface Battle {
   battleStage: BattleStage
   type: BattleType
   nicknameTeamMap: NicknameTeamMap
+  winnerTeamId?: number
 }
 
 export interface BattleUpdate {
@@ -43,4 +44,5 @@ export interface BattleUpdate {
   updates?: BattleModelUpdates
   events?: BattleModelEvents
   statistics?: PlayersBattleStatistics
+  winnerTeamId?: number
 }
