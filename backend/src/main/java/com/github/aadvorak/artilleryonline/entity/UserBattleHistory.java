@@ -56,4 +56,7 @@ public class UserBattleHistory {
 
     @Column
     private boolean survived;
+
+    @Column
+    private Boolean won;
 }

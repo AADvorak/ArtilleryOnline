@@ -66,6 +66,7 @@ public class BattleHistoryService {
                             .setBattleHistoryId(battleHistory.getId())
                             .setUserId(user.getId()))
                     .setSurvived(battle.getModel().getVehicles().containsKey(user.getNickname()))
+                    .setWon(battle.getWon(user.getNickname()))
                     .setVehicleName(battle.getUserVehicleNameMap().get(user.getId()));
             userBattleHistoryRepository.save(userBattleHistory);
         });
