@@ -9,6 +9,7 @@ import {DateUtils} from "~/utils/DateUtils";
 import BattleHistoryFiltersForm from "~/components/battle-history-filters-form.vue";
 import {useI18n} from "vue-i18n";
 import {BattleType} from "~/playground/data/battle";
+import {DefaultColors} from "~/dictionary/default-colors";
 
 const {t} = useI18n()
 const router = useRouter()
@@ -29,8 +30,7 @@ const headers = computed(() => [
     value: item => t('commonHistory.battleTypes.' + item.battleType)},
   {title: t('commonHistory.vehicle'), key: 'vehicleName', align: 'start', sortable: true,
     value: item => t(`names.vehicles.${item.vehicleName}`)},
-  {title: t('commonHistory.battleResult'), key: 'won', align: 'start', sortable: false,
-    value: getBattleResult},
+  {title: t('commonHistory.battleResult'), key: 'won', align: 'start', sortable: false},
   {title: t('battleHistory.survived'), key: 'survived', align: 'start', sortable: false,
     value: item => item.survived ? t('common.yes') : t('common.no')},
   {title: t('commonHistory.madeShots'), key: 'madeShots', align: 'end', sortable: true},
@@ -105,6 +105,10 @@ async function loadHistoryPage() {
   }
 }
 
+function isTeamBattle(item: UserBattleHistory) {
+  return item.battleType === BattleType.TEAM_ELIMINATION
+}
+
 function getBattleResult(item: UserBattleHistory) {
   if (item.battleType === BattleType.TEAM_ELIMINATION) {
     if (item.won === true) {
@@ -114,6 +118,19 @@ function getBattleResult(item: UserBattleHistory) {
       return t('commonHistory.battleResults.defeat')
     }
     return t('commonHistory.battleResults.draw')
+  }
+  return ''
+}
+
+function getBattleResultColor(item: UserBattleHistory) {
+  if (item.battleType === BattleType.TEAM_ELIMINATION) {
+    if (item.won === true) {
+      return DefaultColors.BRIGHT_GREEN
+    }
+    if (item.won === false) {
+      return DefaultColors.BRIGHT_RED
+    }
+    return DefaultColors.BRIGHT_ORANGE
   }
   return ''
 }
@@ -146,6 +163,11 @@ function back() {
         >
           <template v-slot:no-data>
             {{ t('common.noDataAvailable') }}
+          </template>
+          <template v-slot:item.won="{ item }">
+            <v-chip v-show="isTeamBattle(item)" :color="getBattleResultColor(item)">
+              {{ getBattleResult(item) }}
+            </v-chip>
           </template>
         </v-data-table-server>
         <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
