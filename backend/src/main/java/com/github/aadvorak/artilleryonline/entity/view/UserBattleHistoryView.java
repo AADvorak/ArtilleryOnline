@@ -44,4 +44,6 @@ public class UserBattleHistoryView {
     private int receivedTrackBreaks;
 
     private boolean survived;
+
+    private Boolean won;
 }

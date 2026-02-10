@@ -8,6 +8,7 @@ import type {PageRequest, SortRequest, UserBattleHistoryFiltersRequest} from "~/
 import {DateUtils} from "~/utils/DateUtils";
 import BattleHistoryFiltersForm from "~/components/battle-history-filters-form.vue";
 import {useI18n} from "vue-i18n";
+import {BattleType} from "~/playground/data/battle";
 
 const {t} = useI18n()
 const router = useRouter()
@@ -28,6 +29,8 @@ const headers = computed(() => [
     value: item => t('commonHistory.battleTypes.' + item.battleType)},
   {title: t('commonHistory.vehicle'), key: 'vehicleName', align: 'start', sortable: true,
     value: item => t(`names.vehicles.${item.vehicleName}`)},
+  {title: t('commonHistory.battleResult'), key: 'won', align: 'start', sortable: false,
+    value: getBattleResult},
   {title: t('battleHistory.survived'), key: 'survived', align: 'start', sortable: false,
     value: item => item.survived ? t('common.yes') : t('common.no')},
   {title: t('commonHistory.madeShots'), key: 'madeShots', align: 'end', sortable: true},
@@ -100,6 +103,19 @@ async function loadHistoryPage() {
   } catch (e) {
     useRequestErrorHandler().handle(e)
   }
+}
+
+function getBattleResult(item: UserBattleHistory) {
+  if (item.battleType === BattleType.TEAM_ELIMINATION) {
+    if (item.won === true) {
+      return t('commonHistory.battleResults.victory')
+    }
+    if (item.won === false) {
+      return t('commonHistory.battleResults.defeat')
+    }
+    return t('commonHistory.battleResults.draw')
+  }
+  return ''
 }
 
 function back() {

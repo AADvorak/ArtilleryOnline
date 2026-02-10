@@ -40,7 +40,8 @@ public class JdbcFilterUserBattleHistoryRepositoryImpl extends JdbcBattleHistory
                     .setReceivedDirectHits(rs.getInt("received_direct_hits"))
                     .setReceivedIndirectHits(rs.getInt("received_indirect_hits"))
                     .setReceivedTrackBreaks(rs.getInt("received_track_breaks"))
-                    .setSurvived(rs.getBoolean("survived"));
+                    .setSurvived(rs.getBoolean("survived"))
+                    .setWon(rs.getObject("won") != null ? rs.getBoolean("won") : null);
 
     private final JdbcPageQueryExecutor<UserBattleHistoryView> queryExecutor;
 

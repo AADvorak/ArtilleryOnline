@@ -103,6 +103,7 @@ export interface UserBattleHistory {
   receivedIndirectHits: number
   receivedTrackBreaks: number
   survived: boolean
+  won?: boolean
 }
 
 export interface UserBattleResult {
