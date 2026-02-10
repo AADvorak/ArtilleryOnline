@@ -36,7 +36,9 @@ defineExpose({
           <tbody>
           <tr v-for="control of controls">
             <td>{{ t('controls.' + control.name) }}</td>
-            <td>{{ removeKeyStr(control.value) }}</td>
+            <td style="text-align: right">
+              <v-hotkey :keys="removeKeyStr(control.value).toLowerCase()"/>
+            </td>
           </tr>
           </tbody>
         </v-table>

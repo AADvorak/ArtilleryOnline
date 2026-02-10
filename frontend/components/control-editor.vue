@@ -2,8 +2,7 @@
 import type {UserSetting} from "~/data/model";
 
 const props = defineProps<{
-  control: UserSetting,
-  editing: boolean
+  control: UserSetting
 }>()
 
 const emit = defineEmits(['edit-start', 'edit-end'])
@@ -14,7 +13,7 @@ const buttonText = computed(() => {
   if (editing.value) {
     return 'Press key...'
   }
-  return removeKeyStr(props.control.value)
+  return removeKeyStr(props.control.value).toLowerCase()
 })
 
 function edit() {
@@ -38,5 +37,6 @@ function removeKeyStr(str: string) {
 </script>
 
 <template>
-  <v-btn density="compact" variant="text" @click="edit" :disabled="props.editing">{{ buttonText }}</v-btn>
+  <span v-if="editing">{{ buttonText }}</span>
+  <v-hotkey v-else style="cursor: pointer;" :keys="buttonText" @click="edit"/>
 </template>

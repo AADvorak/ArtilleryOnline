@@ -51,10 +51,9 @@ function back() {
           <tbody>
           <tr v-for="control of controls">
             <td>{{ t('controls.' + control.name) }}</td>
-            <td>
+            <td style="text-align: right">
               <control-editor
                   :control="control"
-                  :editing="editing"
                   @edit-start="onEditStart"
                   @edit-end="onEditEnd"/>
             </td>
