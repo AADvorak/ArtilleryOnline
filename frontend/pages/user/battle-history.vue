@@ -37,9 +37,9 @@ const headers = computed(() => [
   {
     title: t('commonHistory.damage'), align: 'center', children: [
       {title: t('commonHistory.caused'), key: 'causedDamage', align: 'end', sortable: true,
-        value: item => item.causedDamage.toFixed(2)},
+        value: item => item.causedDamage.toFixed(0)},
       {title: t('commonHistory.received'), key: 'receivedDamage', align: 'end', sortable: true,
-        value: item => item.receivedDamage.toFixed(2)}
+        value: item => item.receivedDamage.toFixed(0)}
     ]
   },
   {

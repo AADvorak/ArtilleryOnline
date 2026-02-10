@@ -21,7 +21,7 @@ const sumsConfig = computed(() => [
 ])
 const sumsCausedReceivedConfig = computed(() => [
   {causedKey: 'causedDamage', receivedKey: 'receivedDamage', name: t('commonHistory.damage'),
-    format: value => value.toFixed(2)},
+    format: value => value.toFixed(0)},
   {causedKey: 'causedDirectHits', receivedKey: 'receivedDirectHits', name: t('commonHistory.directHits'),
     format: value => value},
   {causedKey: 'causedIndirectHits', receivedKey: 'receivedIndirectHits', name: t('commonHistory.indirectHits'),
