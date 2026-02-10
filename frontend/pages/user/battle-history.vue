@@ -31,8 +31,7 @@ const headers = computed(() => [
   {title: t('commonHistory.vehicle'), key: 'vehicleName', align: 'start', sortable: true,
     value: item => t(`names.vehicles.${item.vehicleName}`)},
   {title: t('commonHistory.battleResult'), key: 'won', align: 'start', sortable: false},
-  {title: t('battleHistory.survived'), key: 'survived', align: 'start', sortable: false,
-    value: item => item.survived ? t('common.yes') : t('common.no')},
+  {title: t('battleHistory.survived'), key: 'survived', align: 'start', sortable: false},
   {title: t('commonHistory.madeShots'), key: 'madeShots', align: 'end', sortable: true},
   {title: t('commonHistory.destroyedVehicles'), key: 'destroyedVehicles', align: 'end', sortable: true},
   {title: t('commonHistory.destroyedDrones'), key: 'destroyedDrones', align: 'end', sortable: true},
@@ -167,6 +166,11 @@ function back() {
           <template v-slot:item.won="{ item }">
             <v-chip v-show="isTeamBattle(item)" :color="getBattleResultColor(item)">
               {{ getBattleResult(item) }}
+            </v-chip>
+          </template>
+          <template v-slot:item.survived="{ item }">
+            <v-chip :color="item.survived ? DefaultColors.BRIGHT_GREEN : DefaultColors.BRIGHT_RED">
+              {{ item.survived ? t('common.yes') : t('common.no') }}
             </v-chip>
           </template>
         </v-data-table-server>
