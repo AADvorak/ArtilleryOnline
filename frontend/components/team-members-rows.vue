@@ -29,6 +29,9 @@ const room = computed(() => {
 })
 
 const teamColor = computed<string>(() => {
+  if (room.value!.members.length <= 1) {
+    return ''
+  }
   const isUsersTeam = teamMembers.value.filter(member => member.nickname === userStore.user!.nickname).length > 0
   return isUsersTeam ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM
 })
@@ -113,7 +116,11 @@ defineExpose({
     <template #item="{ element }">
       <tr>
         <td>
-          <v-icon class="mr-2" :style="'color: ' + teamColor" :icon="getMembersIcon(element)"/>
+          <v-icon
+              class="mr-2"
+              :style="teamColor ? 'color: ' + teamColor : ''"
+              :icon="getMembersIcon(element)"
+          />
           <span :class="element.nickname === userStore.user!.nickname ? 'players-nickname' : ''">
             {{ element.nickname }}
           </span>
