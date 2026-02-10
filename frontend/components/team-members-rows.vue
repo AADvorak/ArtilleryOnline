@@ -7,6 +7,8 @@ import {useRoomStore} from "~/stores/room";
 import type {RoomMember} from "~/data/model";
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import {useUserStore} from "~/stores/user";
+import {computed} from "vue";
+import {DefaultColors} from "~/dictionary/default-colors";
 
 const props = defineProps<{
   teamId: number
@@ -24,6 +26,11 @@ const teamMembers = ref<RoomMember[]>([])
 
 const room = computed(() => {
   return roomStore.room
+})
+
+const teamColor = computed<string>(() => {
+  const isUsersTeam = teamMembers.value.filter(member => member.nickname === userStore.user!.nickname).length > 0
+  return isUsersTeam ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM
 })
 
 onMounted(() => {
@@ -106,7 +113,7 @@ defineExpose({
     <template #item="{ element }">
       <tr>
         <td>
-          <v-icon class="mr-2" :icon="getMembersIcon(element)"/>
+          <v-icon class="mr-2" :style="'color: ' + teamColor" :icon="getMembersIcon(element)"/>
           <span :class="element.nickname === userStore.user!.nickname ? 'players-nickname' : ''">
             {{ element.nickname }}
           </span>
