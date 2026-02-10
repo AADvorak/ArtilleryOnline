@@ -63,7 +63,8 @@ function getBattleResultColor() {
     <template v-for="item of config">
       <tr v-if="item.value">
         <td>{{ t(item.localeKey) }}</td>
-        <td class="number-column" :style="item.color ? 'color: ' + item.color : ''">{{ item.value }}</td>
+        <td v-if="item.color" class="number-column"><v-chip :color="item.color">{{ item.value }}</v-chip></td>
+        <td v-else class="number-column">{{ item.value }}</td>
       </tr>
     </template>
     </tbody>
