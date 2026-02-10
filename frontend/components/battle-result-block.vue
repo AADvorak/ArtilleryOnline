@@ -20,8 +20,8 @@ const config = ref([
 ])
 
 const causedReceivedConfig = ref([
-  {localeKey: 'commonHistory.damage', causedValue: props.result.causedDamage.toFixed(2),
-    receivedValue: props.result.receivedDamage.toFixed(2)},
+  {localeKey: 'commonHistory.damage', causedValue: props.result.causedDamage.toFixed(0),
+    receivedValue: props.result.receivedDamage.toFixed(0)},
   {localeKey: 'commonHistory.directHits', causedValue: props.result.causedDirectHits,
     receivedValue: props.result.receivedDirectHits},
   {localeKey: 'commonHistory.indirectHits', causedValue: props.result.causedIndirectHits,
