@@ -5,7 +5,6 @@ import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculatio
 import com.github.aadvorak.artilleryonline.battle.calculations.WheelCalculations;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.collision.preprocessor.CollisionPreprocessor;
-import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
@@ -33,24 +32,24 @@ public class VehicleCollisionPreprocessor implements CollisionPreprocessor {
             secondModel.getUpdate().setUpdated();
         }
         if (firstModel != null && secondModel != null) {
-            calculateAndApplyDamage(collision, firstModel, secondModel, battle.getModel());
+            calculateAndApplyDamage(collision, firstModel, secondModel, battle);
         }
         return null;
     }
 
     private void calculateAndApplyDamage(Collision collision, VehicleModel firstModel,
-                                         VehicleModel secondModel, BattleModel battleModel) {
-        calculateAndApplyDamage(collision, battleModel, firstModel, secondModel);
-        calculateAndApplyDamage(collision, battleModel, secondModel, firstModel);
+                                         VehicleModel secondModel, BattleCalculations battle) {
+        calculateAndApplyDamage(collision, battle, firstModel, secondModel);
+        calculateAndApplyDamage(collision, battle, secondModel, firstModel);
     }
 
-    private void calculateAndApplyDamage(Collision collision, BattleModel battleModel,
-                                                VehicleModel receiver, VehicleModel causer) {
+    private void calculateAndApplyDamage(Collision collision, BattleCalculations battle,
+                                         VehicleModel receiver, VehicleModel causer) {
         var minImpact = receiver.getSpecs().getMinCollisionDamageImpact();
         var impact = collision.getImpact();
         if (impact > minImpact) {
             var damage = receiver.getSpecs().getCollisionDamageCoefficient() * (impact - minImpact);
-            DamageProcessor.applyDamageToVehicle(damage, receiver, battleModel, causer.getNickname());
+            DamageProcessor.applyDamageToVehicle(damage, receiver, battle, causer.getNickname());
         }
     }
 }

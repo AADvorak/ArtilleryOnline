@@ -47,7 +47,7 @@ public class ShellCollisionPreprocessor implements CollisionPreprocessor {
         if (!ShellType.SGN.equals(shell.getModel().getSpecs().getType())) {
             collision.setHit(true);
             drone.getModel().getState().setDestroyed(true);
-            StatisticsProcessor.increaseDestroyedDrones(shell.getModel().getNickname(), battle.getModel());
+            StatisticsProcessor.increaseDestroyedDrones(shell.getModel().getNickname(), battle);
             DamageProcessor.processHitDrone(drone, shell, collision, battle);
         }
         return true;
@@ -79,7 +79,7 @@ public class ShellCollisionPreprocessor implements CollisionPreprocessor {
         DamageProcessor.processHit(missile, collision, battle);
         DamageProcessor.processHit(shell, collision, battle);
         battle.getModel().getUpdates().removeMissile(missile.getId());
-        StatisticsProcessor.increaseDestroyedMissiles(shell.getModel().getNickname(), battle.getModel());
+        StatisticsProcessor.increaseDestroyedMissiles(shell.getModel().getNickname(), battle);
         return false;
     }
 

@@ -34,7 +34,9 @@ public class BattleCalculations {
 
     private Set<Calculations<?>> movingObjects;
 
-    private Map<Integer, Integer> vehicleIdTeamMap = new HashMap<>();
+    private Map<String, Integer> nicknameTeamMap;
+
+    private Map<Integer, Integer> vehicleIdTeamMap;
 
     private BattleBotsData botsData;
 
@@ -58,6 +60,7 @@ public class BattleCalculations {
         boxes = model.getBoxes().values().stream()
                 .map(BoxCalculations::new)
                 .collect(Collectors.toSet());
+        nicknameTeamMap = battle.getNicknameTeamMap();
         vehicleIdTeamMap = new HashMap<>();
         battle.getNicknameTeamMap().forEach((key, value) -> {
             var vehicleModel = model.getVehicles().get(key);
@@ -120,5 +123,11 @@ public class BattleCalculations {
         return !Objects.equals(vehicleId1, vehicleId2)
                 && (!type.isTeam()
                 || !Objects.equals(vehicleIdTeamMap.get(vehicleId1), vehicleIdTeamMap.get(vehicleId2)));
+    }
+
+    public boolean allowedTarget(String nickname1, String nickname2) {
+        return !Objects.equals(nickname1, nickname2)
+                && (!type.isTeam() || nickname1 == null || nickname2 == null
+                || !Objects.equals(nicknameTeamMap.get(nickname1), nicknameTeamMap.get(nickname2)));
     }
 }
