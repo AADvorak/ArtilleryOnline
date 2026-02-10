@@ -12,7 +12,7 @@ const onlineUsers = ref<User[]>([])
 const invitedUsers = ref<User[]>([])
 
 const roomMemberNicknames = computed(() => {
-  const members = roomStore.room?.members || []
+  const members = roomStore.allMembers
   return members.map(member => member.nickname)
 })
 
