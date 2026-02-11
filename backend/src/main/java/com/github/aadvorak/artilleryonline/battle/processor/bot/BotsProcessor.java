@@ -4,14 +4,12 @@ import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculation
 import com.github.aadvorak.artilleryonline.battle.calculations.BoxCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.VehicleCalculations;
-import com.github.aadvorak.artilleryonline.battle.common.BoxType;
-import com.github.aadvorak.artilleryonline.battle.common.MovingDirection;
-import com.github.aadvorak.artilleryonline.battle.common.Position;
-import com.github.aadvorak.artilleryonline.battle.common.ShellType;
+import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
 import com.github.aadvorak.artilleryonline.battle.config.AmmoConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
+import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleLaunchDroneProcessor;
@@ -64,11 +62,14 @@ public class BotsProcessor {
         var needAmmo = vehicle.getModel().getRelativeAmmo() < 1.0;
         var criticalNeedAmmo = vehicle.getModel().getRelativeAmmo() < 0.3;
         var trackBroken = vehicle.getModel().getState().getTrackState().isBroken();
+        var verticalJet = vehicle.getModel().getConfig().getJet().getType().equals(JetType.VERTICAL);
         if (criticalNeedHp || needHp && !trackBroken) {
-            isMovingToBox = setMovingToBoxIfAvailable(battle.getBoxes(), BoxType.HP, state, otherVehiclePositions);
+            isMovingToBox = setMovingToBoxIfAvailable(battle.getBoxes(), BoxType.HP, state,
+                    verticalJet ? null : otherVehiclePositions);
         }
         if (!isMovingToBox && (criticalNeedAmmo || needAmmo && !trackBroken)) {
-            isMovingToBox = setMovingToBoxIfAvailable(battle.getBoxes(), BoxType.AMMO, state, otherVehiclePositions);
+            isMovingToBox = setMovingToBoxIfAvailable(battle.getBoxes(), BoxType.AMMO, state,
+                    verticalJet ? null : otherVehiclePositions);
         }
         var closestEnemyPosition = GeometryUtils.findClosestPosition(vehicle.getPosition(), enemyVehiclePositions.keySet());
         if (closestEnemyPosition != null) {
@@ -107,7 +108,17 @@ public class BotsProcessor {
         }
         var lowVelocity = state.getVelocity().getMovingVelocity().magnitude() < 1.0;
         var lowJet = state.getJetState().getVolume() < vehicle.getModel().getConfig().getJet().getCapacity() / 3;
-        state.getJetState().setActive(state.isTurnedOver() && !lowJet || state.getMovingDirection() != null && lowVelocity);
+        var highJet = state.getJetState().getVolume() > vehicle.getModel().getConfig().getJet().getCapacity() * 0.8;
+        if (state.getJetState().isActive() && (state.getMovingDirection() == null
+                && !state.isTurnedOver() || state.getJetState().getVolume() < 1.0)) {
+            state.getJetState().setActive(false);
+        } else if (!state.getJetState().isActive() && (state.isTurnedOver() && !lowJet
+                || state.getMovingDirection() != null && lowVelocity)) {
+            state.getJetState().setActive(true);
+        }
+        if (verticalJet && highJet && getHeight(state.getPosition().getCenter(), battle.getModel().getRoom()) < 2.0) {
+            state.setMovingDirection(null);
+        }
         if (
                 oldTriggerPushed != state.getGunState().isTriggerPushed()
                 || oldJetActive != state.getJetState().isActive()
@@ -130,7 +141,8 @@ public class BotsProcessor {
         var boxesPositions = boxes.stream()
                 .filter(box -> boxType.equals(box.getModel().getSpecs().getType()))
                 .map(BoxCalculations::getPosition)
-                .filter(position -> notSeparatedByOtherVehicle(vehicleX, position.getX(), otherVehiclePositions))
+                .filter(position -> otherVehiclePositions == null
+                        || notSeparatedByOtherVehicle(vehicleX, position.getX(), otherVehiclePositions))
                 .collect(Collectors.toSet());
         var closestPosition = GeometryUtils.findClosestPosition(state.getPosition().getCenter(), boxesPositions);
         if (closestPosition != null) {
@@ -287,5 +299,10 @@ public class BotsProcessor {
                 vehicle.getModel().getState().setMovingDirection(MovingDirection.RIGHT);
             }
         }
+    }
+
+    private double getHeight(Position position, RoomModel roomModel) {
+        var groundPosition = BattleUtils.getNearestGroundPosition(position.getX(), roomModel);
+        return position.getY() - groundPosition.getY();
     }
 }
