@@ -113,7 +113,7 @@ function nicknameToPlayerInfo(nickname: string): PlayerInfo {
   const statistics = battleStore.battle?.model.statistics[nickname]
   let color = DefaultColors.VEHICLE
   let hp = 0
-  let maxHp = 0
+  let maxHp = 1
   let damage = 0
   let frags = 0
   if (vehicle) {
@@ -168,6 +168,6 @@ function nicknameToPlayerInfo(nickname: string): PlayerInfo {
 }
 
 .table-spacer {
-  width: 32px;
+  width: 8px;
 }
 </style>

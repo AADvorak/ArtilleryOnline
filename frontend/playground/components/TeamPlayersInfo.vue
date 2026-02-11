@@ -100,7 +100,7 @@ const allInfo = computed<PlayerInfo[]>(() => {
 }
 
 .progress-cell {
-  min-width: 250px;
+  min-width: 230px;
   padding: 4px 8px !important;
 }
 
