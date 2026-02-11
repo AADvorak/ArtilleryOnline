@@ -1,6 +1,6 @@
 <template>
   <div v-show="showDetails || isTeamBattle" :class="'players-info-container ' + containerClass">
-    <div class="teams-container">
+    <div :class="narrowScreen ? 'teams-container-narrow' : 'teams-container'">
       <team-players-info
           :isTeamBattle="isTeamBattle"
           :team-id="0"
@@ -55,6 +55,10 @@ const userStore = useUserStore()
 
 const userSettingsStore = useUserSettingsStore()
 
+const showDetails = ref(false)
+
+const narrowScreen = ref(false)
+
 const usersTeamId = computed<number>(() => {
   return battleStore.battle?.nicknameTeamMap[userStore.user!.nickname] || 0
 })
@@ -63,8 +67,6 @@ const switchShowDetailsKey = computed(() => {
   return userSettingsStore.controlsOrDefaults
       .filter(item => item.name === 'switchPlayersDetails')[0]?.value
 })
-
-const showDetails = ref(false)
 
 const isTeamBattle = computed(() => battleStore.battle?.type === BattleType.TEAM_ELIMINATION)
 
@@ -81,11 +83,14 @@ const containerClass = computed(() => {
 })
 
 onMounted(() => {
+  calculateNarrowScreen()
   addEventListener('keyup', switchShowDetailsIfTabPressed)
+  addEventListener('resize', calculateNarrowScreen)
 })
 
 onUnmounted(() => {
   removeEventListener('keyup', switchShowDetailsIfTabPressed)
+  removeEventListener('resize', calculateNarrowScreen)
 })
 
 function switchShowDetailsIfTabPressed(e) {
@@ -134,6 +139,10 @@ function nicknameToPlayerInfo(nickname: string): PlayerInfo {
     frags
   }
 }
+
+function calculateNarrowScreen() {
+  narrowScreen.value = window.innerWidth < 850
+}
 </script>
 
 <style scoped>
@@ -167,7 +176,12 @@ function nicknameToPlayerInfo(nickname: string): PlayerInfo {
   padding: 8px;
 }
 
+.teams-container-narrow {
+  padding: 8px;
+}
+
 .table-spacer {
   width: 8px;
+  height: 8px;
 }
 </style>
