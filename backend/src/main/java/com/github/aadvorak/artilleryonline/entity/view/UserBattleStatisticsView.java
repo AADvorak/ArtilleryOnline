@@ -11,6 +11,8 @@ public class UserBattleStatisticsView {
 
     private int battlesPlayed;
 
+    private int teamBattlesPlayed;
+
     private double causedDamage;
 
     private int madeShots;
@@ -36,4 +38,6 @@ public class UserBattleStatisticsView {
     private int receivedTrackBreaks;
 
     private int battlesSurvived;
+
+    private int battlesWon;
 }

@@ -25,6 +25,7 @@ export function useStatisticsCalculator() {
   function calculateCoefficients(statistics: UserBattleStatistics): UserBattleStatisticsCoefficients {
     return {
       survivalRate: statistics.battlesPlayed ? Math.round(100 * statistics.battlesSurvived / statistics.battlesPlayed) : 0,
+      winRate: statistics.teamBattlesPlayed ? Math.round(100 * statistics.battlesWon / statistics.teamBattlesPlayed) : 0,
       directHitRate: statistics.madeShots ? Math.round(100 * statistics.causedDirectHits / statistics.madeShots) : 0,
       indirectHitRate: statistics.madeShots ? Math.round(100 * statistics.causedIndirectHits / statistics.madeShots) : 0,
       trackBreakRate: statistics.madeShots ? Math.round(100 * statistics.causedTrackBreaks / statistics.madeShots) : 0,

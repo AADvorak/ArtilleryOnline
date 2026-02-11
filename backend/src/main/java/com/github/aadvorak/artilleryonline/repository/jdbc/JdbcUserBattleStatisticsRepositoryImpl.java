@@ -17,6 +17,7 @@ public class JdbcUserBattleStatisticsRepositoryImpl extends JdbcBattleHistoryRep
     private static final String QUERY_BASE = """
             select
                 count(bh.id) as battles_played,
+                sum(case when bh.battle_type_id = 6 then 1 else 0 end) as team_battles_played,
                 sum(ubh.caused_damage) as caused_damage,
                 sum(ubh.made_shots) as made_shots,
                 sum(ubh.caused_direct_hits) as caused_direct_hits,
@@ -29,7 +30,8 @@ public class JdbcUserBattleStatisticsRepositoryImpl extends JdbcBattleHistoryRep
                 sum(ubh.received_direct_hits) as received_direct_hits,
                 sum(ubh.received_indirect_hits) as received_indirect_hits,
                 sum(ubh.received_track_breaks) as received_track_breaks,
-                sum(ubh.survived::int) as battles_survived
+                sum(ubh.survived::int) as battles_survived,
+                sum(ubh.won::int) as battles_won
             from battle_history bh
                 join public.user_battle_history ubh on bh.id = ubh.battle_history_id
             where ubh.user_id = :userId
@@ -38,6 +40,7 @@ public class JdbcUserBattleStatisticsRepositoryImpl extends JdbcBattleHistoryRep
     private static final RowMapper<UserBattleStatisticsView> ROW_MAPPER = (rs, rowNum) ->
             new UserBattleStatisticsView()
                     .setBattlesPlayed(rs.getInt("battles_played"))
+                    .setTeamBattlesPlayed(rs.getInt("team_battles_played"))
                     .setCausedDamage(rs.getFloat("caused_damage"))
                     .setMadeShots(rs.getInt("made_shots"))
                     .setCausedDirectHits(rs.getInt("caused_direct_hits"))
@@ -50,7 +53,8 @@ public class JdbcUserBattleStatisticsRepositoryImpl extends JdbcBattleHistoryRep
                     .setReceivedDirectHits(rs.getInt("received_direct_hits"))
                     .setReceivedIndirectHits(rs.getInt("received_indirect_hits"))
                     .setReceivedTrackBreaks(rs.getInt("received_track_breaks"))
-                    .setBattlesSurvived(rs.getInt("battles_survived"));
+                    .setBattlesSurvived(rs.getInt("battles_survived"))
+                    .setBattlesWon(rs.getInt("battles_won"));
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 

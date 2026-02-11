@@ -1,8 +1,10 @@
 export const battleStatistics = {
   title: 'user / battle statistics',
   battlesPlayed: 'Battles played',
+  battlesWon: 'Battles won',
   battlesSurvived: 'Battles survived',
   survivalRate: 'Survival rate',
+  winRate: 'Win rate',
   directHitRate: 'Direct hit rate',
   indirectHitRate: 'Indirect hit rate',
   trackBreakRate: 'Track break rate',

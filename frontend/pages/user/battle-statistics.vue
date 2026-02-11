@@ -14,6 +14,7 @@ const router = useRouter()
 const sumsConfig = computed(() => [
   {key: 'battlesPlayed', name: t('battleStatistics.battlesPlayed')},
   {key: 'battlesSurvived', name: t('battleStatistics.battlesSurvived')},
+  {key: 'battlesWon', name: t('battleStatistics.battlesWon')},
   {key: 'madeShots', name: t('commonHistory.madeShots')},
   {key: 'destroyedVehicles', name: t('commonHistory.destroyedVehicles')},
   {key: 'destroyedDrones', name: t('commonHistory.destroyedDrones')},
@@ -43,6 +44,7 @@ const perBattleCausedReceivedConfig = computed(() => [
 ])
 const coefficientsConfig = ref([
   {key: 'survivalRate', fractionDigits: 0},
+  {key: 'winRate', fractionDigits: 0},
   {key: 'directHitRate', fractionDigits: 0},
   {key: 'indirectHitRate', fractionDigits: 0},
   {key: 'trackBreakRate', fractionDigits: 0},

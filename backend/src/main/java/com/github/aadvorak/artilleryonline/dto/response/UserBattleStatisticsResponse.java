@@ -13,6 +13,8 @@ public class UserBattleStatisticsResponse {
 
     private int battlesPlayed;
 
+    private int teamBattlesPlayed;
+
     private double causedDamage;
 
     private int madeShots;
@@ -38,6 +40,8 @@ public class UserBattleStatisticsResponse {
     private int receivedTrackBreaks;
 
     private int battlesSurvived;
+
+    private int battlesWon;
 
     public static UserBattleStatisticsResponse of(UserBattleStatisticsView view) {
         return new ModelMapper().map(view, UserBattleStatisticsResponse.class);

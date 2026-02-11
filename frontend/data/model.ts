@@ -126,6 +126,7 @@ export interface UserBattleResult {
 
 export interface UserBattleStatistics {
   battlesPlayed: number
+  teamBattlesPlayed: number
   causedDamage: number
   madeShots: number
   causedDirectHits: number
@@ -139,6 +140,7 @@ export interface UserBattleStatistics {
   receivedIndirectHits: number
   receivedTrackBreaks: number
   battlesSurvived: number
+  battlesWon: number
 }
 
 export interface UserBattleStatisticsPerBattle {
@@ -158,6 +160,7 @@ export interface UserBattleStatisticsPerBattle {
 
 export interface UserBattleStatisticsCoefficients {
   survivalRate: number
+  winRate: number
   directHitRate: number
   indirectHitRate: number
   trackBreakRate: number

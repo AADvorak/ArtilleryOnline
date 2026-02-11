@@ -1,8 +1,10 @@
 export const battleStatistics = {
   title: 'пользователь / статистика боев',
   battlesPlayed: 'Сыграно боев',
+  battlesWon: 'Победил в боях',
   battlesSurvived: 'Выжил в боях',
   survivalRate: 'Процент выживания',
+  winRate: 'Процент побед',
   directHitRate: 'Процент прямых попаданий',
   indirectHitRate: 'Процент непрямых попаданий',
   trackBreakRate: 'Процент сбития гусениц',
