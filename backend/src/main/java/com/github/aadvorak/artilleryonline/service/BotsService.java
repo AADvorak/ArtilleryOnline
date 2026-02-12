@@ -46,7 +46,7 @@ public class BotsService {
     }
 
     public void fillBot(BattleParticipant bot, Set<BattleParticipant> participants) {
-        bot.setNickname(makeUniqueNickname(getRandomNickname(), participants));
+        bot.setNickname(getRandomNickname(participants));
         bot.setParams(new BattleParticipantParams()
                 .setSelectedVehicle(getRandomVehicle())
                 .setVehicleColor(getRandomColor()));
@@ -57,22 +57,25 @@ public class BotsService {
         return vehicles.get(BattleUtils.generateRandom(0, vehicles.size()));
     }
 
-    private String getRandomNickname() {
-        return BOT_NICKNAMES.get(BattleUtils.generateRandom(0, BOT_NICKNAMES.size()));
-    }
-
-    public String getRandomColor() {
-        return BOT_COLORS.get(BattleUtils.generateRandom(0, BOT_COLORS.size()));
-    }
-
-    private String makeUniqueNickname(String nickname, Set<BattleParticipant> participants) {
+    private String getRandomNickname(Set<BattleParticipant> participants) {
         var existingNicknames = participants.stream()
                 .map(BattleParticipant::getNickname)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
+        var freeNicknames = BOT_NICKNAMES.stream()
+                .filter(nickname -> !existingNicknames.contains(nickname))
+                .toList();
+        if (!freeNicknames.isEmpty()) {
+            return freeNicknames.get(BattleUtils.generateRandom(0, freeNicknames.size()));
+        }
+        var nickname = BOT_NICKNAMES.get(BattleUtils.generateRandom(0, BOT_NICKNAMES.size()));
         while (existingNicknames.contains(nickname)) {
             nickname += "1";
         }
         return nickname;
+    }
+
+    public String getRandomColor() {
+        return BOT_COLORS.get(BattleUtils.generateRandom(0, BOT_COLORS.size()));
     }
 }
