@@ -19,7 +19,7 @@ export interface Room {
   members: RoomMember[][]
   deleted: boolean
   opened: boolean
-  teamMode: boolean
+  battleType: BattleType
 }
 
 export interface RoomShort {

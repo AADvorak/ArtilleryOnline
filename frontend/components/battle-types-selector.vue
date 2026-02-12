@@ -6,6 +6,7 @@ const battleType = defineModel<BattleType | undefined>()
 
 const props = defineProps<{
   availableTypes: BattleType[]
+  clearable?: boolean
 }>()
 
 const {t} = useI18n()
@@ -22,6 +23,6 @@ const battleTypes = computed(() => props.availableTypes
       item-title="name"
       density="compact"
       :label="t('commonHistory.battleType')"
-      clearable
+      :clearable="clearable"
   />
 </template>

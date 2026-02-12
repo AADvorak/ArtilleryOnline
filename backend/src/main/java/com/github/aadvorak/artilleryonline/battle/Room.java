@@ -24,7 +24,7 @@ public class Room {
 
     private boolean opened = false;
 
-    private boolean teamMode = false;
+    private BattleType battleType = BattleType.DEATHMATCH;
 
     public Set<BattleParticipant> getMembers() {
         var members = new HashSet<>(guests.values());

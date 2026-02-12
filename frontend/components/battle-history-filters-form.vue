@@ -100,6 +100,7 @@ function getVehicleTitle(key: string) {
         <battle-types-selector
             v-model="selectedBattleType"
             :available-types="availableBattleTypes"
+            clearable
         />
       </v-col>
       <v-col class="ml-4">

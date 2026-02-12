@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.service;
 
 import com.github.aadvorak.artilleryonline.battle.BattleParticipant;
 import com.github.aadvorak.artilleryonline.battle.BattleParticipantParams;
+import com.github.aadvorak.artilleryonline.battle.BattleType;
 import com.github.aadvorak.artilleryonline.battle.Room;
 import com.github.aadvorak.artilleryonline.collection.RoomMap;
 import com.github.aadvorak.artilleryonline.collection.UserRoomMap;
@@ -24,6 +25,8 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class RoomService {
+
+    private static final Set<BattleType> availableBattleTypes = Set.of(BattleType.DEATHMATCH, BattleType.TEAM_ELIMINATION);
 
     private final UserService userService;
 
@@ -86,7 +89,7 @@ public class RoomService {
             exitRoom(user, existingRoom);
         }
         var member = BattleParticipant.of(user);
-        if (room.isTeamMode()) {
+        if (room.getBattleType().isTeam()) {
             member.setTeamId(room.getSmallestTeamId());
         }
         room.getGuests().put(user.getId(), member);
@@ -137,7 +140,7 @@ public class RoomService {
     public void startBattle() {
         var user = userService.getUserFromContext();
         var room = requireOwnRoom(user);
-        if (room.getMembersCount() < 2 || room.isTeamMode()
+        if (room.getMembersCount() < 2 || room.getBattleType().isTeam()
                 && (room.getTeamMembersCount(0) < 1 || room.getTeamMembersCount(1) < 1)) {
             throw new ConflictAppException("Not enough players to start battle",
                     new Locale().setCode(LocaleCode.NOT_ENOUGH_PLAYERS));
@@ -240,7 +243,7 @@ public class RoomService {
                     new Locale().setCode(LocaleCode.ROOM_IS_FULL));
         }
         var bot = botsService.generateBot(room.getMembers());
-        if (room.isTeamMode()) {
+        if (room.getBattleType().isTeam()) {
             bot.setTeamId(room.getSmallestTeamId());
         }
         room.getBots().put(bot.getNickname(), bot);
@@ -254,11 +257,14 @@ public class RoomService {
         roomUpdatesSender.sendRoomUpdate(room);
     }
 
-    public void changeTeamMode(boolean teamMode) {
+    public void changeBattleType(BattleType battleType) {
+        if (battleType == null || !availableBattleTypes.contains(battleType)) {
+            return;
+        }
         var user = userService.getUserFromContext();
         var room = requireOwnRoom(user);
-        room.setTeamMode(teamMode);
-        if (teamMode) {
+        room.setBattleType(battleType);
+        if (battleType.isTeam()) {
             var index = 0;
             for (var member : room.getMembers()) {
                 member.setTeamId(index % 2 == 0 ? 0 : 1);

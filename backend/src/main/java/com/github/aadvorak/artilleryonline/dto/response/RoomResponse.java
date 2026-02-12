@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.dto.response;
 
+import com.github.aadvorak.artilleryonline.battle.BattleType;
 import com.github.aadvorak.artilleryonline.battle.Room;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +22,7 @@ public class RoomResponse {
 
     private boolean opened = false;
 
-    private boolean teamMode = false;
+    private BattleType battleType;
 
     public static RoomResponse deletedOf(Room room) {
         return of(room).setDeleted(true);
@@ -30,9 +31,9 @@ public class RoomResponse {
     public static RoomResponse of(Room room) {
         var response = new RoomResponse()
                 .setOpened(room.isOpened())
-                .setTeamMode(room.isTeamMode());
+                .setBattleType(room.getBattleType());
         response.members.add(new HashSet<>());
-        if (response.isTeamMode()) {
+        if (response.getBattleType().isTeam()) {
             response.members.add(new HashSet<>());
         }
         response.members.get(room.getOwner().getTeamId()).add(RoomMemberResponse.of(room.getOwner(), true, false));
