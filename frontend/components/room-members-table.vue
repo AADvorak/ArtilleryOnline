@@ -50,5 +50,8 @@ function onResetTeams() {
         />
       </template>
     </v-table>
+    <div v-if="roomStore.room?.teamMode" class="mt-4">
+      {{ roomStore.userIsRoomOwner ? t('roomMembersTable.movePlayersTip') : t('roomMembersTable.moveYourselfTip') }}
+    </div>
   </div>
 </template>
