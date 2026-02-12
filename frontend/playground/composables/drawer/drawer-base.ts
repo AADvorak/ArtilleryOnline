@@ -26,6 +26,7 @@ export interface DrawerBase {
   drawSegment: (segment: Segment, params?: DrawParams) => void
   drawCircle: (circle: Circle, params?: DrawParams) => void
   drawHalfCircle: (halfCircle: HalfCircle, params?: DrawParams) => void
+  drawArc: (center: Position, radius: number, startAngle: number, endAngle: number, params?: DrawParams) => void
   drawTrapeze: (trapeze: Trapeze, params?: DrawParams) => void
   drawRegularPolygon: (regularPolygon: RegularPolygon, params?: DrawParams) => void
   drawPolygon: (polygon: Position[], params?: DrawParams) => void
@@ -73,23 +74,18 @@ export function useDrawerBase(
   }
 
   function drawCircle(circle: Circle, params?: DrawParams) {
-    const center = transformPosition(circle.center)
-    const radius = scale(circle.radius)
-    params && setDrawParams(params)
-    ctx.value!.beginPath()
-    ctx.value!.arc(center.x, center.y, radius, 0, 2 * Math.PI)
-    params?.stroke ? ctx.value!.stroke() : ctx.value!.fill()
-    ctx.value!.closePath()
+    drawArc(circle.center, circle.radius, 0, 2 * Math.PI, params)
   }
 
   function drawHalfCircle(halfCircle: HalfCircle, params?: DrawParams) {
-    const position = transformPosition(halfCircle.center)
-    const startAngle = Math.PI - halfCircle.angle
-    const endAngle = 2 * Math.PI - halfCircle.angle
-    const radius = scale(halfCircle.radius)
+    drawArc(halfCircle.center, halfCircle.radius, Math.PI - halfCircle.angle, 2 * Math.PI - halfCircle.angle, params)
+  }
+
+  function drawArc(center: Position, radius: number, startAngle: number, endAngle: number, params?: DrawParams) {
+    const position = transformPosition(center)
     params && setDrawParams(params)
     ctx.value!.beginPath()
-    ctx.value!.arc(position.x, position.y, radius, startAngle, endAngle)
+    ctx.value!.arc(position.x, position.y, scale(radius), startAngle, endAngle)
     params?.stroke ? ctx.value!.stroke() : ctx.value!.fill()
     ctx.value!.closePath()
   }
@@ -174,6 +170,7 @@ export function useDrawerBase(
     drawSegment,
     drawCircle,
     drawHalfCircle,
+    drawArc,
     drawTrapeze,
     drawRegularPolygon,
     drawPolygon,
