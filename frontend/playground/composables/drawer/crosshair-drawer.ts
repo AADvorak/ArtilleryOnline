@@ -4,9 +4,11 @@ import {BattleUtils} from "~/playground/utils/battle-utils";
 import {Circle, Segment} from "~/playground/data/geometry";
 import {type Position, type TargetData} from "~/playground/data/common";
 import {VectorUtils} from "~/playground/utils/vector-utils";
+import {useUserStore} from "~/stores/user";
+import {computed} from "vue";
 
 const CROSSHAIR_SIZE = 0.25
-const CROSSHAIR_INNER_SIZE = 0.06
+const CROSSHAIR_INNER_SIZE = 0.08
 const CROSSHAIR_COLORS = {
   DEFAULT: 'rgb(255,255,255)',
   DECONCENTRATED: 'rgb(150,150,150)',
@@ -20,6 +22,20 @@ export function useCrosshairDrawer(
     drawerBase: DrawerBase
 ) {
   const battleStore = useBattleStore()
+  const userStore = useUserStore()
+
+  const userVehicle = computed(() => {
+    return battleStore.battle?.model.vehicles[userStore.user!.nickname]
+  })
+
+  const reloadingProgress = computed(() => {
+    if (!userVehicle.value) {
+      return 0
+    }
+    const loadTime = userVehicle.value.config.gun.loadTime
+    const loadRemainTime = userVehicle.value.state.gunState.loadRemainTime
+    return (2 * Math.PI * (loadTime - loadRemainTime)) / loadTime
+  })
 
   function draw() {
     const targetData = battleStore.targetData
@@ -50,7 +66,7 @@ export function useCrosshairDrawer(
         BattleUtils.shiftedPosition(position, -CROSSHAIR_INNER_SIZE, angle),
         BattleUtils.shiftedPosition(position, -CROSSHAIR_SIZE, angle),
     ))
-    drawerBase.drawCircle(new Circle(position, CROSSHAIR_INNER_SIZE), {stroke: true})
+    drawerBase.drawArc(position, CROSSHAIR_INNER_SIZE, 0, reloadingProgress.value, {stroke: true})
   }
 
   function getCrosshairColor(targetData: TargetData) {
