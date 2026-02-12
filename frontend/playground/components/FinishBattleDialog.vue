@@ -65,6 +65,17 @@ const battleResultColor = computed(() => {
   }
 })
 
+const cardColor = computed(() => {
+  switch (battleResult.value) {
+    case BattleResult.VICTORY:
+      return DefaultColors.BRIGHT_GREEN_BG
+    case BattleResult.DEFEAT:
+      return DefaultColors.BRIGHT_RED_BG
+    case BattleResult.DRAW:
+      return DefaultColors.BRIGHT_ORANGE_BG
+  }
+})
+
 const opened = ref(false)
 
 watch(battle, (value) => {
@@ -85,12 +96,15 @@ function hideAndCleanBattle() {
 
 <template>
   <v-dialog :model-value="opened" :persistent="true" max-width="600px">
-    <v-card width="100%">
+    <v-card :color="cardColor" width="100%">
       <v-card-title>{{ title }}</v-card-title>
       <v-card-text>
         <div class="d-flex">{{ message }}</div>
-        <div v-if="battleResult" :style="'color: ' + battleResultColor">
-          {{ t('commonHistory.battleResults.' + battleResult) }}
+        <div v-if="battleResult">
+          {{ t('commonHistory.battleResult') }}:&nbsp;
+          <span :style="'color: ' + battleResultColor">
+            {{ t('commonHistory.battleResults.' + battleResult) }}
+          </span>
         </div>
         <div class="d-flex mt-4">
           <v-btn color="primary" @click="hideAndCleanBattle">{{ t('common.ok') }}</v-btn>
