@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class BotsService {
 
@@ -61,7 +60,7 @@ public class BotsService {
         var existingNicknames = participants.stream()
                 .map(BattleParticipant::getNickname)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+                .toList();
         var freeNicknames = BOT_NICKNAMES.stream()
                 .filter(nickname -> !existingNicknames.contains(nickname))
                 .toList();
