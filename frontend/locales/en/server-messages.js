@@ -13,4 +13,5 @@ export const serverMessages = {
   roomIsFull: 'Room is already full',
   maxBattlesLimitExceed: 'Max server battles limit reached. Please try later',
   unableToChangeMembersTeam: 'Unable to change members team',
+  doubleNickname: 'There is already player having the same nickname {nickname} in the room',
 }

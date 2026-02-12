@@ -13,4 +13,5 @@ export const serverMessages = {
   roomIsFull: 'Комната уже заполнена',
   maxBattlesLimitExceed: 'Достигнуто максимальное количество боев на сервере. Повторите попытку позже',
   unableToChangeMembersTeam: 'Невозможно поменять команду для данного игрока',
+  doubleNickname: 'В комнате уже есть игрок с таким ником {nickname}',
 }

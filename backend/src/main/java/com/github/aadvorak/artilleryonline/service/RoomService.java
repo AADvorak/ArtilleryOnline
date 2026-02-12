@@ -65,6 +65,17 @@ public class RoomService {
             throw new ConflictAppException("Room is already full",
                     new Locale().setCode(LocaleCode.ROOM_IS_FULL));
         }
+        var existingNicknames = room.getMembers().stream()
+                .map(BattleParticipant::getNickname)
+                .toList();
+        if (existingNicknames.contains(user.getNickname())) {
+            throw new ConflictAppException(
+                    "There is already player having the same nickname " + user.getNickname() + " in the room",
+                    new Locale()
+                            .setCode(LocaleCode.DOUBLE_NICKNAME)
+                            .setParams(Map.of("nickname", user.getNickname()))
+            );
+        }
         userAvailabilityService.checkRoomAvailability(user);
         var existingRoom = getUserRoomOrNull(user.getId());
         if (existingRoom != null) {

@@ -21,7 +21,9 @@ public enum LocaleCode {
     USER_ALREADY_IN_BATTLE("userAlreadyInBattle"),
     ROOM_IS_FULL("roomIsFull"),
     MAX_BATTLES_LIMIT_EXCEED("maxBattlesLimitExceed"),
-    UNABLE_TO_CHANGE_MEMBERS_TEAM("unableToChangeMembersTeam"),;
+    UNABLE_TO_CHANGE_MEMBERS_TEAM("unableToChangeMembersTeam"),
+    DOUBLE_NICKNAME("doubleNickname"),
+    ;
 
     private final String value;
 }
