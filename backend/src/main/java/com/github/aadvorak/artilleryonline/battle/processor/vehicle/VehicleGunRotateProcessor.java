@@ -28,7 +28,7 @@ public class VehicleGunRotateProcessor extends VehicleProcessor implements After
         var maxGunAngle = vehicle.getModel().getSpecs().getMaxAngle();
         var minGunAngle = vehicle.getModel().getSpecs().getMinAngle();
         var vehicleAngle = vehicle.getNextPosition().getAngle();
-        var targetAngle = gunState.isFixed() || rotatingDirection != null
+        var targetAngle = gunState.isFixed()
                 ? vehicleAngle + gunState.getAngle()
                 : gunState.getTargetAngle();
         if (rotatingDirection != null) {
@@ -39,7 +39,7 @@ public class VehicleGunRotateProcessor extends VehicleProcessor implements After
         }
         targetAngle = restrictValue(targetAngle, minGunAngle + vehicleAngle, maxGunAngle + vehicleAngle);
         gunState.setTargetAngle(targetAngle);
-        if (gunState.isFixed() || rotatingDirection != null) {
+        if (gunState.isFixed()) {
             gunState.setAngle(targetAngle - vehicleAngle);
         } else {
             var gunAngle = gunState.getAngle();

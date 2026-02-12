@@ -51,7 +51,7 @@ export const VehicleProcessor = {
     const maxGunAngle = vehicleModel.specs.maxAngle
     const minGunAngle = vehicleModel.specs.minAngle
     const vehicleAngle = vehicleModel.state.position.angle
-    let targetAngle = gunState.fixed || rotatingDirection
+    let targetAngle = gunState.fixed
         ? vehicleAngle + gunState.angle
         : gunState.targetAngle
     if (rotatingDirection) {
@@ -61,7 +61,7 @@ export const VehicleProcessor = {
     }
     targetAngle = this.restrictValue(targetAngle, minGunAngle + vehicleAngle, maxGunAngle + vehicleAngle)
     gunState.targetAngle = targetAngle
-    if (gunState.fixed || rotatingDirection) {
+    if (gunState.fixed) {
       gunState.angle = targetAngle - vehicleAngle
     } else {
       let gunAngle = gunState.angle
