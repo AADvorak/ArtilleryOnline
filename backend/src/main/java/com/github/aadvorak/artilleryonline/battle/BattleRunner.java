@@ -109,6 +109,10 @@ public class BattleRunner {
     }
 
     private void createBattleFinishedMessages(Battle battle) {
+        if (battle.getType().equals(BattleType.TEST_DRIVE)
+                || battle.getType().equals(BattleType.COLLIDER)) {
+            return;
+        }
         battle.getUserMap().values().forEach(user -> messageService.createMessage(user,
                 "Battle has finished",
                 new Locale().setCode(LocaleCode.BATTLE_FINISHED),
