@@ -23,9 +23,8 @@ const selectedBattleType = ref<BattleType | undefined>()
 const selectedVehicleName = ref<string | undefined>()
 const selectedDateRange = ref<DateRange | undefined>()
 const selectedDateMode = ref<string | undefined>()
+const availableBattleTypes = ref<BattleType[]>([BattleType.RANDOM, BattleType.DEATHMATCH, BattleType.TEAM_ELIMINATION])
 
-const battleTypes = computed(() => [BattleType.RANDOM, BattleType.DEATHMATCH, BattleType.TEAM_ELIMINATION]
-    .map(key => ({key, name: t('commonHistory.battleTypes.' + key)})))
 const vehicles = computed(() => {
   return Object.keys(presetsStore.vehicles)
       .map(key => ({key, title: getVehicleTitle(key)}))
@@ -98,14 +97,9 @@ function getVehicleTitle(key: string) {
   <v-form>
     <v-row no-gutters>
       <v-col>
-        <v-select
+        <battle-types-selector
             v-model="selectedBattleType"
-            :items="battleTypes"
-            item-value="key"
-            item-title="name"
-            density="compact"
-            :label="t('commonHistory.battleType')"
-            clearable
+            :available-types="availableBattleTypes"
         />
       </v-col>
       <v-col class="ml-4">
