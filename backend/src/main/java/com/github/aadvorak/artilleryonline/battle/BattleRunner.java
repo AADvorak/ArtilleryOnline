@@ -128,7 +128,7 @@ public class BattleRunner {
     }
 
     private void writeBattleToHistory(Battle battle) {
-        if (List.of(BattleType.RANDOM, BattleType.ROOM, BattleType.TEAM_ELIMINATION).contains(battle.getType())) {
+        if (List.of(BattleType.RANDOM, BattleType.DEATHMATCH, BattleType.TEAM_ELIMINATION).contains(battle.getType())) {
             battleHistoryService.writeHistory(battle);
         }
     }

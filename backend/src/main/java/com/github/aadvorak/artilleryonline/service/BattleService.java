@@ -88,7 +88,7 @@ public class BattleService {
             room.getGuests().values().forEach(this::checkReadyToBattle);
             var members = room.getMembers();
             var battle = battleStarter.start(members,
-                    room.isTeamMode() ? BattleType.TEAM_ELIMINATION : BattleType.ROOM);
+                    room.isTeamMode() ? BattleType.TEAM_ELIMINATION : BattleType.DEATHMATCH);
             room.setBattle(battle);
             battle.setRoom(room);
             members.stream()

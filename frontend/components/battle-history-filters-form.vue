@@ -24,7 +24,7 @@ const selectedVehicleName = ref<string | undefined>()
 const selectedDateRange = ref<DateRange | undefined>()
 const selectedDateMode = ref<string | undefined>()
 
-const battleTypes = computed(() => [BattleType.RANDOM, BattleType.ROOM, BattleType.DRONE_HUNT, BattleType.TEAM_ELIMINATION]
+const battleTypes = computed(() => [BattleType.RANDOM, BattleType.DEATHMATCH, BattleType.TEAM_ELIMINATION]
     .map(key => ({key, name: t('commonHistory.battleTypes.' + key)})))
 const vehicles = computed(() => {
   return Object.keys(presetsStore.vehicles)

@@ -13,7 +13,7 @@ export const commonHistory = {
   vehicle: 'Техника',
   battleTypes: {
     RANDOM: 'Случайный',
-    ROOM: 'Комната',
+    DEATHMATCH: 'Выживание',
     DRONE_HUNT: 'Охота на дроны',
     TEAM_ELIMINATION: 'Командный (уничтожение)',
   },

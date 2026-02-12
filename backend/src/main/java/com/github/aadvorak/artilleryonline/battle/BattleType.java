@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 public enum BattleType implements CompactSerializable {
     TEST_DRIVE((short) 1, 5 * 60 * 1000),
     RANDOM((short) 2, 10 * 60 * 1000),
-    ROOM((short) 3, 10 * 60 * 1000),
+    DEATHMATCH((short) 3, 10 * 60 * 1000),
     DRONE_HUNT((short) 4, 5 * 60 * 1000),
     COLLIDER((short) 5, 10 * 60 * 1000),
     TEAM_ELIMINATION((short) 6, 10 * 60 * 1000),

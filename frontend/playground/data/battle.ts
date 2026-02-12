@@ -13,7 +13,7 @@ export enum BattleStage {
 export enum BattleType {
   TEST_DRIVE = 'TEST_DRIVE',
   RANDOM = 'RANDOM',
-  ROOM = 'ROOM',
+  DEATHMATCH = 'DEATHMATCH',
   DRONE_HUNT = 'DRONE_HUNT',
   COLLIDER = 'COLLIDER',
   TEAM_ELIMINATION = 'TEAM_ELIMINATION',
