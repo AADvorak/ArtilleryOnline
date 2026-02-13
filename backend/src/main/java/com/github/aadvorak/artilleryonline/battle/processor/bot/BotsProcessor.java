@@ -106,19 +106,7 @@ public class BotsProcessor {
                 state.setMovingDirection(moveRightBlocked ? MovingDirection.LEFT : MovingDirection.RIGHT);
             }
         }
-        var lowVelocity = state.getVelocity().getMovingVelocity().magnitude() < 1.0;
-        var lowJet = state.getJetState().getVolume() < vehicle.getModel().getConfig().getJet().getCapacity() / 3;
-        var highJet = state.getJetState().getVolume() > vehicle.getModel().getConfig().getJet().getCapacity() * 0.8;
-        if (state.getJetState().isActive() && (state.getMovingDirection() == null
-                && !state.isTurnedOver() || state.getJetState().getVolume() < 1.0)) {
-            state.getJetState().setActive(false);
-        } else if (!state.getJetState().isActive() && (state.isTurnedOver() && !lowJet
-                || state.getMovingDirection() != null && lowVelocity)) {
-            state.getJetState().setActive(true);
-        }
-        if (verticalJet && highJet && getHeight(state.getPosition().getCenter(), battle.getModel().getRoom()) < 2.0) {
-            state.setMovingDirection(null);
-        }
+        controlJet(vehicle, battle);
         if (
                 oldTriggerPushed != state.getGunState().isTriggerPushed()
                 || oldJetActive != state.getJetState().isActive()
@@ -298,6 +286,28 @@ public class BotsProcessor {
             }  else if (!vehicleIsRight && !moveRightBlocked) {
                 vehicle.getModel().getState().setMovingDirection(MovingDirection.RIGHT);
             }
+        }
+    }
+
+    private void controlJet(VehicleCalculations vehicle, BattleCalculations battle) {
+        var verticalJet = vehicle.getModel().getConfig().getJet().getType().equals(JetType.VERTICAL);
+        var state = vehicle.getModel().getState();
+        var lowVelocity = state.getVelocity().getMovingVelocity().magnitude() < 1.0;
+        // todo climbing
+        var jetRelativeVolume = state.getJetState().getVolume() / vehicle.getModel().getConfig().getJet().getCapacity();
+        var lowJet = jetRelativeVolume < 0.6;
+        var highJet = jetRelativeVolume > 0.8;
+        var zeroJet = jetRelativeVolume < 0.01;
+        var needJetToMoveOrReturn = state.isTurnedOver() || state.getMovingDirection() != null && lowVelocity;
+        if (state.getJetState().isActive() && (!needJetToMoveOrReturn || zeroJet)) {
+            state.getJetState().setActive(false);
+            //System.out.printf("%d: jet OFF, volume = %.6f\n", battle.getTime(), jetRelativeVolume);
+        } else if (!state.getJetState().isActive() && !lowJet && needJetToMoveOrReturn) {
+            state.getJetState().setActive(true);
+            //System.out.printf("%d: jet ON, volume = %.6f\n", battle.getTime(), jetRelativeVolume);
+        }
+        if (verticalJet && highJet && getHeight(state.getPosition().getCenter(), battle.getModel().getRoom()) < 2.0) {
+            state.setMovingDirection(null);
         }
     }
 
