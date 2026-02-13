@@ -64,6 +64,10 @@ public class RoomService {
     }
 
     public RoomResponse enterRoom(User user, Room room) {
+        var existingRoom = getUserRoomOrNull(user.getId());
+        if (existingRoom != null && room.getId().equals(existingRoom.getId())) {
+            return RoomResponse.of(existingRoom);
+        }
         if (room.getMembersCount() >= applicationLimits.getMaxRoomMembers()) {
             throw new ConflictAppException("Room is already full",
                     new Locale().setCode(LocaleCode.ROOM_IS_FULL));
@@ -80,12 +84,7 @@ public class RoomService {
             );
         }
         userAvailabilityService.checkRoomAvailability(user);
-        var existingRoom = getUserRoomOrNull(user.getId());
         if (existingRoom != null) {
-            if (existingRoom.getGuests().containsKey(user.getId())
-                    || room.getOwner().getUser().getId() == user.getId()) {
-                return RoomResponse.of(existingRoom);
-            }
             exitRoom(user, existingRoom);
         }
         var member = BattleParticipant.of(user);
