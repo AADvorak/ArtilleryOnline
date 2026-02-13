@@ -4,6 +4,7 @@
       <team-players-info
           :isTeamBattle="isTeamBattle"
           :team-id="0"
+          :users-nickname="usersNickname"
           :users-team-id="usersTeamId"
           :team-players="team1Players"
           :show-totals="isTeamBattle && !showDetails"
@@ -14,6 +15,7 @@
         <team-players-info
             is-team-battle
             :team-id="1"
+            :users-nickname="usersNickname"
             :users-team-id="usersTeamId"
             :team-players="team2Players"
             :show-totals="!showDetails"
@@ -59,8 +61,12 @@ const showDetails = ref(false)
 
 const narrowScreen = ref(false)
 
+const usersNickname = computed(() => {
+  return userStore.user!.nickname
+})
+
 const usersTeamId = computed<number>(() => {
-  return battleStore.battle?.nicknameTeamMap[userStore.user!.nickname] || 0
+  return battleStore.battle?.nicknameTeamMap[usersNickname.value] || 0
 })
 
 const switchShowDetailsKey = computed(() => {

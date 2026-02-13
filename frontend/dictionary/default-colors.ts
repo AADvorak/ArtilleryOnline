@@ -8,5 +8,6 @@ export const DefaultColors = {
   ENEMY_TEAM: 'rgb(200 0 0)',
   ALLY_TEAM: 'rgb(60,200,0)',
   VEHICLE: 'rgb(60,200,0)',
-  SIGNAL_SHELL: 'rgb(248,105,4)'
+  SIGNAL_SHELL: 'rgb(248,105,4)',
+  SELF_COLOR: '#fb8c00',
 }

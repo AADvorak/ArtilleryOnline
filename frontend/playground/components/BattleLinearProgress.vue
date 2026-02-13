@@ -4,6 +4,7 @@ const props = defineProps<{
   text: string
   color: string
   clickable?: boolean
+  textColor?: string
 }>()
 
 const emit = defineEmits(['click'])
@@ -22,7 +23,12 @@ const progressClass = computed(() => {
       :model-value="props.value"
       @click="emit('click')"
   >
-    <span class="progress-text">{{ props.text }}</span>
+    <span
+        :style="textColor ? 'color: ' + textColor : ''"
+        class="progress-text"
+    >
+      {{ props.text }}
+    </span>
     <slot/>
   </v-progress-linear>
 </template>

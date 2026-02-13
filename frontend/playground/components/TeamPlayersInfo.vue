@@ -8,6 +8,7 @@ import {mdiSkullOutline, mdiBullseyeArrow} from "@mdi/js";
 
 const props = defineProps<{
   isTeamBattle: boolean
+  usersNickname: string
   usersTeamId: number
   teamId: number
   teamPlayers: PlayerInfo[]
@@ -49,6 +50,10 @@ const allInfo = computed<PlayerInfo[]>(() => {
   if (props.showDetails) props.teamPlayers.forEach(info => output.push(info))
   return output
 })
+
+function getColor(nickname: string): string {
+  return nickname === props.usersNickname ? DefaultColors.SELF_COLOR : 'white'
+}
 </script>
 
 <template>
@@ -67,15 +72,16 @@ const allInfo = computed<PlayerInfo[]>(() => {
             :value="Math.floor(100 * player.hp / player.maxHp)"
             :text="player.nickname + ': ' + Math.floor(player.hp)"
             :color="player.color"
+            :text-color="getColor(player.nickname)"
         />
       </td>
       <td :class="'text-right' + (showDetails ? '' : ' cell-with-icon')">
         <v-icon v-show="!showDetails" class="mr-2" :icon="mdiSkullOutline"/>
-        <span>{{ player.frags }}</span>
+        <span :style="'color: ' + getColor(player.nickname) + ';'">{{ player.frags }}</span>
       </td>
       <td :class="'text-right' + (showDetails ? '' : ' cell-with-icon')">
         <v-icon v-show="!showDetails" class="mr-2" :icon="mdiBullseyeArrow"/>
-        <span>{{ player.damage }}</span>
+        <span :style="'color: ' + getColor(player.nickname) + ';'">{{ player.damage }}</span>
       </td>
     </tr>
     </tbody>
