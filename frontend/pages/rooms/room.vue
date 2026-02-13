@@ -135,6 +135,7 @@ function back() {
           <battle-types-selector
               v-model="battleType"
               :available-types="availableBattleTypes"
+              :disabled="!roomStore.userIsRoomOwner"
           />
           <v-checkbox
               density="compact"
