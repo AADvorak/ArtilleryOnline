@@ -12,6 +12,7 @@ import com.github.aadvorak.artilleryonline.model.Locale;
 import com.github.aadvorak.artilleryonline.model.LocaleCode;
 import com.github.aadvorak.artilleryonline.model.MessageSpecial;
 import com.github.aadvorak.artilleryonline.model.UserBattleResult;
+import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import com.github.aadvorak.artilleryonline.service.BattleHistoryService;
 import com.github.aadvorak.artilleryonline.service.MessageService;
 import com.github.aadvorak.artilleryonline.ws.BattleAggregatedSender;
@@ -44,6 +45,8 @@ public class BattleRunner {
     private final ActiveBattleStepProcessor activeBattleStepProcessor;
 
     private final BattleUpdatesProcessor battleUpdatesProcessor;
+
+    private final ApplicationSettings applicationSettings;
 
     @Async("runBattleExecutor")
     public void runBattle(Battle battle) {
@@ -109,8 +112,8 @@ public class BattleRunner {
     }
 
     private void createBattleFinishedMessages(Battle battle) {
-        if (battle.getType().equals(BattleType.TEST_DRIVE)
-                || battle.getType().equals(BattleType.COLLIDER)) {
+        if (!applicationSettings.isDebug() && (battle.getType().equals(BattleType.TEST_DRIVE)
+                || battle.getType().equals(BattleType.COLLIDER))) {
             return;
         }
         battle.getUserMap().values().forEach(user -> messageService.createMessage(user,
