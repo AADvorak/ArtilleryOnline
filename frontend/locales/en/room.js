@@ -5,7 +5,7 @@ export const room = {
   invite: 'Invite',
   addBot: 'Add bot',
   addBots: 'Add bots',
-  opened: 'Open',
+  open: 'Open',
   teamMode: 'Team mode',
   noPlayersInTeam: 'There is no players in team',
 }

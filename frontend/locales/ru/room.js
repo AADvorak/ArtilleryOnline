@@ -5,7 +5,7 @@ export const room = {
   invite: 'Пригласить',
   addBot: 'Добавить бота',
   addBots: 'Добавить ботов',
-  opened: 'Открыта',
+  open: 'Открыта',
   teamMode: 'Командный режим',
   noPlayersInTeam: 'В команде нет игроков',
 }

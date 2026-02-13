@@ -68,9 +68,9 @@ public class RoomEndpoint {
         roomService.addBot();
     }
 
-    @PutMapping("/my/opened")
-    public void changeOpened(@RequestBody BooleanRequest request) {
-        roomService.changeOpened(request.isOn());
+    @PutMapping("/my/open")
+    public void changeOpen(@RequestBody BooleanRequest request) {
+        roomService.changeOpen(request.isOn());
     }
 
     @PutMapping("/my/battle-type")

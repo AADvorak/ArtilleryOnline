@@ -18,7 +18,7 @@ export interface RoomMember {
 export interface Room {
   members: RoomMember[][]
   deleted: boolean
-  opened: boolean
+  open: boolean
   battleType: BattleType
 }
 

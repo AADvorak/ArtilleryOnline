@@ -93,9 +93,9 @@ async function addBot() {
   }
 }
 
-async function changeOpened() {
+async function changeOpen() {
   try {
-    await api.putJson('/rooms/my/opened', {on: !roomStore.room?.opened})
+    await api.putJson('/rooms/my/open', {on: !roomStore.room?.open})
   } catch (e) {
     requestErrorHandler.handle(e)
   }
@@ -139,10 +139,10 @@ function back() {
           <v-checkbox
               density="compact"
               class="ml-4"
-              :model-value="roomStore.room?.opened"
-              :label="t('room.opened')"
+              :model-value="roomStore.room?.open"
+              :label="t('room.open')"
               :disabled="!roomStore.userIsRoomOwner"
-              @click="changeOpened"
+              @click="changeOpen"
           />
         </v-toolbar>
         <v-form>

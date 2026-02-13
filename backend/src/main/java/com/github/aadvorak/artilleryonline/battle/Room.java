@@ -22,7 +22,7 @@ public class Room {
 
     private Battle battle;
 
-    private boolean opened = false;
+    private boolean open = false;
 
     private BattleType battleType = BattleType.DEATHMATCH;
 

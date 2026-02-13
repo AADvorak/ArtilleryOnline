@@ -48,7 +48,7 @@ public class RoomService {
 
     public List<RoomShortResponse> getOpenRooms() {
         return roomMap.values().stream()
-                .filter(Room::isOpened)
+                .filter(Room::isOpen)
                 .map(RoomShortResponse::of)
                 .sorted(Comparator.comparingInt(RoomShortResponse::getMembersCount))
                 .toList();
@@ -250,10 +250,10 @@ public class RoomService {
         roomUpdatesSender.sendRoomUpdate(room);
     }
 
-    public void changeOpened(boolean opened) {
+    public void changeOpen(boolean open) {
         var user = userService.getUserFromContext();
         var room = requireOwnRoom(user);
-        room.setOpened(opened);
+        room.setOpen(open);
         roomUpdatesSender.sendRoomUpdate(room);
     }
 

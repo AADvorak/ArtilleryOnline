@@ -20,7 +20,7 @@ public class RoomResponse {
 
     private boolean deleted = false;
 
-    private boolean opened = false;
+    private boolean open = false;
 
     private BattleType battleType;
 
@@ -30,7 +30,7 @@ public class RoomResponse {
 
     public static RoomResponse of(Room room) {
         var response = new RoomResponse()
-                .setOpened(room.isOpened())
+                .setOpen(room.isOpen())
                 .setBattleType(room.getBattleType());
         response.members.add(new HashSet<>());
         if (response.getBattleType().isTeam()) {
