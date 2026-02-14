@@ -25,7 +25,16 @@ public class BotsService {
             "YoloBot",
             "Noob",
             "Worm",
-            "LadyNemesis"
+            "LadyNemesis",
+            "KV-2",
+            "IS-3",
+            "Tiger",
+            "Panther",
+            "T1",
+            "MS-1",
+            "M3 Lee",
+            "Sherman",
+            "Leopard"
     );
 
     private static final List<String> BOT_COLORS = List.of(
