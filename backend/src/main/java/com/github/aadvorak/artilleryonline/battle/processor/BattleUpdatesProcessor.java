@@ -9,6 +9,7 @@ import com.github.aadvorak.artilleryonline.dto.response.BattleModelStateResponse
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
 import com.github.aadvorak.artilleryonline.dto.response.BattleUpdateResponse;
 import com.github.aadvorak.artilleryonline.dto.response.PlayerBattleStatisticsResponse;
+import com.github.aadvorak.artilleryonline.entity.User;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -42,6 +43,8 @@ public class BattleUpdatesProcessor {
             var battleResponse = mapper.map(battle, BattleResponse.class);
             battleResponse.setPaused(battle.getDebug().isPaused());
             battleResponse.setFps(battle.getFpsCalculator().getFps());
+            battleResponse.setUserNicknames(battle.getUserMap().values().stream()
+                    .map(User::getNickname).collect(Collectors.toSet()));
             battle.getQueues().getBattleUpdatesQueue().add(battleResponse);
         }
     }

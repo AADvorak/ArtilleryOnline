@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.collection.BattleTrackingMap;
 import com.github.aadvorak.artilleryonline.collection.UserBattleMap;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueParams;
 import com.github.aadvorak.artilleryonline.dto.response.BattleResponse;
+import com.github.aadvorak.artilleryonline.entity.User;
 import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
 import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
 import com.github.aadvorak.artilleryonline.model.Locale;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +51,10 @@ public class BattleService {
             throw new NotFoundAppException();
         }
         log.info("getBattle: user {}, battle {}, map size {}", user.getNickname(), battle.getId(), userBattleMap.size());
-        return mapper.map(battle, BattleResponse.class);
+        var response = mapper.map(battle, BattleResponse.class);
+        response.setUserNicknames(battle.getUserMap().values().stream()
+                .map(User::getNickname).collect(Collectors.toSet()));
+        return response;
     }
 
     public String getBattleTracking(String battleId) {

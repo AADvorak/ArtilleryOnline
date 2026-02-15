@@ -7,6 +7,7 @@
           :users-nickname="usersNickname"
           :users-team-id="usersTeamId"
           :team-players="team1Players"
+          :user-nicknames="userNicknames"
           :show-totals="isTeamBattle && !showDetails"
           :show-details="showDetails"
       />
@@ -18,6 +19,7 @@
             :users-nickname="usersNickname"
             :users-team-id="usersTeamId"
             :team-players="team2Players"
+            :user-nicknames="userNicknames"
             :show-totals="!showDetails"
             :show-details="showDetails"
         />
@@ -67,6 +69,10 @@ const usersNickname = computed(() => {
 
 const usersTeamId = computed<number>(() => {
   return battleStore.battle?.nicknameTeamMap[usersNickname.value] || 0
+})
+
+const userNicknames = computed<string[]>(() => {
+  return battleStore.battle?.userNicknames || []
 })
 
 const switchShowDetailsKey = computed(() => {

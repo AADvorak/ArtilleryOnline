@@ -33,6 +33,7 @@ export interface Battle {
   battleStage: BattleStage
   type: BattleType
   nicknameTeamMap: NicknameTeamMap
+  userNicknames: string[]
   winnerTeamId?: number
 }
 

@@ -4,7 +4,7 @@ import type {PlayerInfo} from "~/playground/data/common";
 import BattleLinearProgress from "~/playground/components/BattleLinearProgress.vue";
 import {DefaultColors} from "~/dictionary/default-colors";
 import {useI18n} from "vue-i18n";
-import {mdiSkullOutline, mdiBullseyeArrow} from "@mdi/js";
+import {mdiSkullOutline, mdiBullseyeArrow, mdiRobot, mdiAccount} from "@mdi/js";
 
 const props = defineProps<{
   isTeamBattle: boolean
@@ -12,6 +12,7 @@ const props = defineProps<{
   usersTeamId: number
   teamId: number
   teamPlayers: PlayerInfo[]
+  userNicknames: string[]
   showTotals?: boolean
   showDetails?: boolean
 }>()
@@ -60,13 +61,22 @@ function getColor(nickname: string): string {
   <v-table class="team-table" density="compact">
     <thead v-show="showDetails">
     <tr>
-      <th><span v-if="isTeamBattle" :style="'color: ' + teamColor">{{ teamTitle }}</span></th>
+      <th :colspan="showDetails ? 2 : 1">
+        <span v-if="isTeamBattle" :style="'color: ' + teamColor">{{ teamTitle }}</span>
+      </th>
       <th class="text-right"><v-icon :icon="mdiSkullOutline"/></th>
       <th class="text-right"><v-icon :icon="mdiBullseyeArrow"/></th>
     </tr>
     </thead>
     <tbody>
     <tr v-for="player in allInfo" :key="player.nickname">
+      <td v-show="showDetails">
+        <v-icon
+            class="mr-2"
+            :color="teamColor"
+            :icon="userNicknames.includes(player.nickname) ? mdiAccount : mdiRobot"
+        />
+      </td>
       <td class="progress-cell">
         <battle-linear-progress
             :value="Math.floor(100 * player.hp / player.maxHp)"

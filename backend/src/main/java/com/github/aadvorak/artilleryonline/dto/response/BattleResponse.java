@@ -9,7 +9,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -33,6 +35,8 @@ public class BattleResponse implements BattleUpdatesQueueElement, CompactSeriali
 
     private Map<String, Integer> nicknameTeamMap = new HashMap<>();
 
+    private Set<String> userNicknames = new HashSet<>();
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeString(id);
@@ -44,5 +48,6 @@ public class BattleResponse implements BattleUpdatesQueueElement, CompactSeriali
         stream.writeSerializableValue(battleStage);
         stream.writeSerializableValue(type);
         stream.writeMap(nicknameTeamMap, stream::writeString, stream::writeInt);
+        stream.writeCollection(userNicknames, stream::writeString);
     }
 }

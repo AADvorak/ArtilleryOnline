@@ -17,6 +17,7 @@ export function deserializeBattle(input: DeserializerInput): Battle {
   const type = DeserializerBase.readString(input) as BattleType
   const nicknameTeamMap = DeserializerBase.readMap(input,
       DeserializerBase.readString, DeserializerBase.readInt) as NicknameTeamMap
+  const userNicknames = DeserializerBase.readArray(input, DeserializerBase.readString) || []
   return {
     id,
     model,
@@ -26,7 +27,8 @@ export function deserializeBattle(input: DeserializerInput): Battle {
     paused,
     battleStage,
     type,
-    nicknameTeamMap
+    nicknameTeamMap,
+    userNicknames
   }
 }
 
