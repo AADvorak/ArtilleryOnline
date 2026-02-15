@@ -26,7 +26,7 @@ function onResetTeams() {
     <v-table density="compact">
       <thead>
       <tr>
-        <th class="text-left">
+        <th colspan="2" class="text-left">
           {{ t('common.nickname') }}
         </th>
         <th class="text-left">
@@ -43,7 +43,7 @@ function onResetTeams() {
       <template v-if="teamMode">
         <tbody>
         <tr>
-          <td colspan="3" style="padding: 0;">
+          <td colspan="4" style="padding: 0;">
             <v-divider :thickness="2"/>
           </td>
         </tr>

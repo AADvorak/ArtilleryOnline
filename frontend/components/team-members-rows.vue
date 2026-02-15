@@ -115,12 +115,13 @@ defineExpose({
   >
     <template #item="{ element }">
       <tr>
-        <td>
+        <td class="icon-column">
           <v-icon
-              class="mr-2"
               :style="teamColor ? 'color: ' + teamColor : ''"
               :icon="getMembersIcon(element)"
           />
+        </td>
+        <td>
           <span :class="element.nickname === userStore.user!.nickname ? 'players-nickname' : ''">
             {{ element.nickname }}
           </span>
@@ -141,6 +142,10 @@ defineExpose({
 </template>
 
 <style scoped>
+.icon-column {
+  max-width: 36px;
+}
+
 .btn-column {
   text-align: right;
 }
