@@ -142,6 +142,8 @@ export function useBattleUpdater(player: Player) {
         }
       }
     }
+
+    let missingModel = false
     if (battleUpdate.state) {
       const vehicles = battleUpdate.state.vehicles
       if (vehicles) {
@@ -155,6 +157,8 @@ export function useBattleUpdater(player: Player) {
               clientSmoothTransition && checkNeedSmoothTransition(model.state.position, newState.position)
               model.state = newState
             }
+          } else {
+            missingModel = true
           }
         })
       }
@@ -172,6 +176,8 @@ export function useBattleUpdater(player: Player) {
               clientSmoothTransition && checkNeedSmoothTransition(model.state.position, newState.position)
               model.state = newState
             }
+          } else {
+            missingModel = true
           }
         })
       }
@@ -190,6 +196,8 @@ export function useBattleUpdater(player: Player) {
               clientSmoothTransition && checkNeedSmoothTransition(model.state.position, newState.position)
               model.state = newState
             }
+          } else {
+            missingModel = true
           }
         })
       }
@@ -207,6 +215,8 @@ export function useBattleUpdater(player: Player) {
               clientSmoothTransition && checkNeedSmoothTransition(model.state.position, newState.position)
               model.state = newState
             }
+          } else {
+            missingModel = true
           }
         })
       }
@@ -224,9 +234,17 @@ export function useBattleUpdater(player: Player) {
               clientSmoothTransition && checkNeedSmoothTransition(model.state.position, newState.position)
               model.state = newState
             }
+          } else {
+            missingModel = true
           }
         })
       }
+    }
+
+    if (missingModel) {
+      console.warn('missingModel')
+      battleStore.loadBattle().then()
+      return
     }
 
     if (battleUpdate.statistics) {
