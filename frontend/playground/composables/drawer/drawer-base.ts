@@ -22,6 +22,7 @@ export interface CanvasText {
 }
 
 export interface DrawerBase {
+  drawMDIIcon: (path: string, position: Position, color: string) => void
   drawText: (canvasText: CanvasText, params?: DrawParams) => void
   drawSegment: (segment: Segment, params?: DrawParams) => void
   drawCircle: (circle: Circle, params?: DrawParams) => void
@@ -46,6 +47,16 @@ export function useDrawerBase(
   const userSettingsStore = useUserSettingsStore()
 
   const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
+
+  function drawMDIIcon(path: string, position: Position, color: string) {
+    const pos = transformPosition(position)
+    ctx.value!.save()
+    ctx.value!.translate(pos.x - scale(0.18), pos.y - scale(0.25))
+    const path2D = new Path2D(path)
+    ctx.value!.fillStyle = color
+    ctx.value!.fill(path2D)
+    ctx.value!.restore()
+  }
 
   function drawText(canvasText: CanvasText, params?: DrawParams) {
     const pos = transformPosition(canvasText.position)
@@ -166,6 +177,7 @@ export function useDrawerBase(
   }
 
   return {
+    drawMDIIcon,
     drawText,
     drawSegment,
     drawCircle,

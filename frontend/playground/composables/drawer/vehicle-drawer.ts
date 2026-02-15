@@ -11,6 +11,7 @@ import {useUserStore} from "~/stores/user";
 import {Circle, HalfCircle, Segment, Trapeze} from "~/playground/data/geometry";
 import {BattleType} from "~/playground/data/battle";
 import {DefaultColors} from "~/dictionary/default-colors";
+import {mdiAccount, mdiRobot} from "@mdi/js";
 
 export function useVehicleDrawer(
     drawerBase: DrawerBase,
@@ -52,7 +53,7 @@ export function useVehicleDrawer(
       const teamId = battleStore.battle?.type === BattleType.TEAM_ELIMINATION
           && battleStore.battle?.nicknameTeamMap[userKey]
       if (teamId !== undefined && teamId !== false) {
-        drawTeamId(teamId, vehicleModel, nicknameAbove)
+        drawTeamIcon(userKey, teamId, vehicleModel, nicknameAbove)
       }
     }
   }
@@ -142,20 +143,17 @@ export function useVehicleDrawer(
     }, {fillStyle: 'rgb(256 256 256)'})
   }
 
-  function drawTeamId(teamId: number, vehicleModel: VehicleModel, nicknameAbove: boolean) {
+  function drawTeamIcon(nickname: string, teamId: number, vehicleModel: VehicleModel, nicknameAbove: boolean) {
     const textHeight = 1.5 * vehicleModel.preCalc.maxRadius
     const position = {
       x: vehicleModel.state.position.x,
       y: vehicleModel.state.position.y + textHeight + (nicknameAbove ? 0.35 : 0.15)
     }
-    const userTeamId = battleStore.battle!.nicknameTeamMap[userStore.user!.nickname]
-    const teamNumber = teamId + 1
-    drawerBase.drawText({
-      position,
-      text: '[' + teamNumber + ']',
-      fontSize: 16,
-      textAlign: 'center',
-    }, {fillStyle: teamId === userTeamId ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM})
+    const playerTeamId = battleStore.battle!.nicknameTeamMap[userStore.user!.nickname]
+    const color = playerTeamId === teamId ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM
+    const isUser = battleStore.battle?.userNicknames.includes(nickname)
+    const icon = isUser ? mdiAccount : mdiRobot
+    drawerBase.drawMDIIcon(icon, position, color)
   }
 
   function restrictNicknameLength(nickname: string) {
