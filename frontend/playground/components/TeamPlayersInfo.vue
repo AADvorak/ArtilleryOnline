@@ -73,7 +73,7 @@ function getColor(nickname: string): string {
       <td v-show="showDetails">
         <v-icon
             class="mr-2"
-            :color="teamColor"
+            :color="isTeamBattle ? teamColor : ''"
             :icon="userNicknames.includes(player.nickname) ? mdiAccount : mdiRobot"
         />
       </td>
