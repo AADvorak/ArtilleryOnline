@@ -51,7 +51,7 @@ export function useDrawerBase(
   function drawMDIIcon(path: string, position: Position, color: string) {
     const pos = transformPosition(position)
     ctx.value!.save()
-    ctx.value!.translate(pos.x - scale(0.18), pos.y - scale(0.25))
+    ctx.value!.translate(pos.x - 12, pos.y - 25)
     const path2D = new Path2D(path)
     ctx.value!.fillStyle = color
     ctx.value!.fill(path2D)

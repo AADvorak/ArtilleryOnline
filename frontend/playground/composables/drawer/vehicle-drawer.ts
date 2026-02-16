@@ -119,7 +119,7 @@ export function useVehicleDrawer(
     const hpBarWidth = 1.5 * vehicleModel.preCalc.maxRadius
     const hpBarTopLeft = drawerBase.transformPosition({
       x: vehicleModel.state.position.x - hpBarWidth / 2,
-      y: vehicleModel.state.position.y + hpBarWidth + hpBarHeight
+      y: vehicleModel.state.position.y + hpBarWidth
     })
     const hpRatio = vehicleModel.state.hitPoints / vehicleModel.specs.hitPoints
     ctx.value!.strokeRect(hpBarTopLeft.x, hpBarTopLeft.y,
