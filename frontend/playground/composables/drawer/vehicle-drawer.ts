@@ -129,7 +129,7 @@ export function useVehicleDrawer(
     ctx.value!.closePath()
   }
 
-  function drawNickname(userKey: string, vehicleModel: VehicleModel) {
+  function drawNickname(nickname: string, vehicleModel: VehicleModel) {
     const textHeight = 1.5 * vehicleModel.preCalc.maxRadius
     const position = {
       x: vehicleModel.state.position.x,
@@ -137,17 +137,17 @@ export function useVehicleDrawer(
     }
     drawerBase.drawText({
       position,
-      text: restrictNicknameLength(userKey),
-      fontSize: 16,
+      text: restrictNicknameLength(nickname),
+      fontSize: 14,
       textAlign: 'center',
-    }, {fillStyle: 'rgb(256 256 256)'})
+    }, {fillStyle: nickname === userStore.user!.nickname ? DefaultColors.SELF_COLOR : 'rgb(256 256 256)'})
   }
 
   function drawTeamIcon(nickname: string, teamId: number, vehicleModel: VehicleModel, nicknameAbove: boolean) {
     const textHeight = 1.5 * vehicleModel.preCalc.maxRadius
     const position = {
       x: vehicleModel.state.position.x,
-      y: vehicleModel.state.position.y + textHeight + (nicknameAbove ? 0.35 : 0.15)
+      y: vehicleModel.state.position.y + textHeight + (nicknameAbove ? 0.3 : 0.15)
     }
     const playerTeamId = battleStore.battle!.nicknameTeamMap[userStore.user!.nickname]
     const color = playerTeamId === teamId ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM

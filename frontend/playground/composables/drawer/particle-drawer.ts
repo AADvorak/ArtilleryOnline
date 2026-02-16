@@ -44,7 +44,7 @@ export function useParticleDrawer(
     drawerBase.drawText({
       position,
       text: config.text!,
-      fontSize: 16
+      fontSize: 14
     }, {fillStyle: config.color || 'rgb(256 256 256)'})
   }
 
