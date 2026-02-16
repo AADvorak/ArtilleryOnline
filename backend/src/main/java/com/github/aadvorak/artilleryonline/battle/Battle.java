@@ -43,7 +43,7 @@ public class Battle {
 
     private Map<Long, User> userMap;
 
-    private Map<Long, String> userVehicleNameMap;
+    private Map<String, String> playerVehicleNameMap;
 
     private Set<Long> activeUserIds;
 

@@ -66,7 +66,7 @@ public class BattleFactory {
         var userMap = createUserMap(participants);
         battle
                 .setUserMap(userMap)
-                .setUserVehicleNameMap(createUserVehicleNameMap(participants))
+                .setPlayerVehicleNameMap(createPlayerVehicleNameMap(participants))
                 .setActiveUserIds(new HashSet<>(userMap.keySet()));
         battle.getQueues().setUserCommandQueues(createUserCommandQueues(participants));
         return battle;
@@ -279,13 +279,11 @@ public class BattleFactory {
         return userNicknameMap;
     }
 
-    private Map<Long, String> createUserVehicleNameMap(Set<BattleParticipant> participants) {
-        var userVehicleNameMap = new HashMap<Long, String>();
-        participants.stream()
-                .filter(participant -> participant.getUser() != null)
-                .forEach(element -> userVehicleNameMap.put(element.getUser().getId(),
-                        element.getParams().getSelectedVehicle()));
-        return userVehicleNameMap;
+    private Map<String, String> createPlayerVehicleNameMap(Set<BattleParticipant> participants) {
+        var playerVehicleNameMap = new HashMap<String, String>();
+        participants.forEach(element ->
+                playerVehicleNameMap.put(element.getNickname(), element.getParams().getSelectedVehicle()));
+        return playerVehicleNameMap;
     }
 
     private Map<String, PlayerBattleStatistics> createUserBattleStatistics(Set<BattleParticipant> participants) {
