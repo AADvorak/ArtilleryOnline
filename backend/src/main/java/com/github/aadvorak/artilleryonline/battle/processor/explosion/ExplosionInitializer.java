@@ -13,7 +13,7 @@ public class ExplosionInitializer {
             return;
         }
         var explosionSpecs = new ExplosionSpecs()
-                .setDuration(0.8 * radius)
+                .setDuration(0.4 * radius)
                 .setRadius(radius);
         var explosionState = new ExplosionState()
                 .setTime(0.0)
