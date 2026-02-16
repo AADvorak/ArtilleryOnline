@@ -1,5 +1,5 @@
 <template>
-  <div v-show="showDetails || isTeamBattle" :class="'players-info-container ' + containerClass">
+  <div :class="'players-info-container ' + containerClass">
     <div :class="narrowScreen ? 'teams-container-narrow' : 'teams-container'">
       <team-players-info
           :isTeamBattle="isTeamBattle"

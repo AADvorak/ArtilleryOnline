@@ -48,7 +48,13 @@ const allInfo = computed<PlayerInfo[]>(() => {
   if (props.showTotals) {
     output.push(teamTotals.value)
   }
-  if (props.showDetails) props.teamPlayers.forEach(info => output.push(info))
+  if (props.showDetails) {
+    props.teamPlayers.forEach(info => output.push(info))
+  } else if (!props.isTeamBattle) {
+    props.teamPlayers
+        .filter(info => info.nickname === props.usersNickname)
+        .forEach(info => output.push(info))
+  }
   return output
 })
 
