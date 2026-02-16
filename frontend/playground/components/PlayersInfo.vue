@@ -59,6 +59,8 @@ const userStore = useUserStore()
 
 const userSettingsStore = useUserSettingsStore()
 
+const presetsStore = usePresetsStore()
+
 const showDetails = ref(false)
 
 const narrowScreen = ref(false)
@@ -128,6 +130,7 @@ function getTeamNicknames(teamId: number): string[] {
 function nicknameToPlayerInfo(nickname: string): PlayerInfo {
   const vehicle = battleStore.vehicles && battleStore.vehicles[nickname]
   const statistics = battleStore.battle?.model.statistics[nickname]
+  const vehicleName = battleStore.battle?.playerVehicleNameMap[nickname]
   let color = DefaultColors.VEHICLE
   let hp = 0
   let maxHp = 1
@@ -137,6 +140,8 @@ function nicknameToPlayerInfo(nickname: string): PlayerInfo {
     hp = vehicle.state.hitPoints
     maxHp = vehicle.specs.hitPoints
     if (vehicle.config.color) color = vehicle.config.color
+  } else if (vehicleName && presetsStore.vehicles && presetsStore.vehicles[vehicleName]) {
+    maxHp = presetsStore.vehicles[vehicleName].hitPoints
   }
   if (statistics) {
     damage = Math.floor(statistics.causedDamage)

@@ -37,6 +37,8 @@ public class BattleResponse implements BattleUpdatesQueueElement, CompactSeriali
 
     private Set<String> userNicknames = new HashSet<>();
 
+    private Map<String, String> playerVehicleNameMap;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeString(id);
@@ -49,5 +51,6 @@ public class BattleResponse implements BattleUpdatesQueueElement, CompactSeriali
         stream.writeSerializableValue(type);
         stream.writeMap(nicknameTeamMap, stream::writeString, stream::writeInt);
         stream.writeCollection(userNicknames, stream::writeString);
+        stream.writeMap(playerVehicleNameMap, stream::writeString, stream::writeString);
     }
 }

@@ -23,6 +23,10 @@ export interface NicknameTeamMap {
   [key: string]: number
 }
 
+export interface PlayerVehicleNameMap {
+  [key: string]: string
+}
+
 export interface Battle {
   id: string
   model: BattleModel
@@ -34,6 +38,7 @@ export interface Battle {
   type: BattleType
   nicknameTeamMap: NicknameTeamMap
   userNicknames: string[]
+  playerVehicleNameMap: PlayerVehicleNameMap
   winnerTeamId?: number
 }
 
