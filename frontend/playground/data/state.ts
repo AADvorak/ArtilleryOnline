@@ -64,6 +64,7 @@ export interface DroneInVehicleState {
   launched: boolean
   readyToLaunch: boolean
   prepareToLaunchRemainTime: number
+  remainDrones: number
 }
 
 export interface MissileLauncherState {

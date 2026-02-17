@@ -135,10 +135,12 @@ export function deserializeDroneInVehicleState(input: DeserializerInput): DroneI
   const launched = DeserializerBase.readBoolean(input)
   const readyToLaunch = DeserializerBase.readBoolean(input)
   const prepareToLaunchRemainTime = DeserializerBase.readDouble(input)
+  const remainDrones = DeserializerBase.readInt(input)
   return {
     launched,
     readyToLaunch,
-    prepareToLaunchRemainTime
+    prepareToLaunchRemainTime,
+    remainDrones,
   }
 }
 

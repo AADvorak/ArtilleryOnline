@@ -11,7 +11,8 @@ public class VehicleDroneProcessor extends VehicleProcessor implements BeforeSte
     @Override
     protected void processVehicle(VehicleCalculations vehicle, BattleCalculations battle) {
         var inVehicleState = vehicle.getModel().getState().getDroneState();
-        if (inVehicleState == null || inVehicleState.isLaunched() || inVehicleState.isReadyToLaunch()) {
+        if (inVehicleState == null || inVehicleState.isLaunched()
+                || inVehicleState.isReadyToLaunch() || inVehicleState.getRemainDrones() < 1) {
             return;
         }
         var prepareToLaunchRemainTime = inVehicleState.getPrepareToLaunchRemainTime()

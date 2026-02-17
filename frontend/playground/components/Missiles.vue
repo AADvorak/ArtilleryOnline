@@ -56,7 +56,7 @@ function launch() {
     <battle-linear-progress
         :value="progress"
         :text="t('battleHeader.missiles') + ': ' + missileLauncherState.remainMissiles"
-        :color="missileLauncherState.prepareToLaunchRemainTime <= 0 ? '#2196F3' : '#778899'"
+        color="#2196F3"
         clickable
         @click="launch"
     >

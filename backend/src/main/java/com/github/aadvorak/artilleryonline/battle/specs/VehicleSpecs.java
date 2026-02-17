@@ -21,6 +21,8 @@ public class VehicleSpecs implements Specs, CompactSerializable {
 
     private int missiles;
 
+    private int drones;
+
     private double minAngle;
 
     private double maxAngle;
@@ -62,6 +64,7 @@ public class VehicleSpecs implements Specs, CompactSerializable {
         stream.writeString(name);
         stream.writeDouble(hitPoints);
         stream.writeInt(missiles);
+        stream.writeInt(drones);
         stream.writeDouble(minAngle);
         stream.writeDouble(maxAngle);
         stream.writeDouble(acceleration);

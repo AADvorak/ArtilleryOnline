@@ -73,6 +73,7 @@ export interface VehicleSpecs {
   wheelAngleVelocity: number
   hitPoints: number
   missiles: number
+  drones: number
   minAngle: number
   maxAngle: number
   turretShape: Shape | HalfCircleShape | TrapezeShape

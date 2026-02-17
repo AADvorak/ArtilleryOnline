@@ -1,6 +1,6 @@
 export const battleHeader = {
   leaveBattle: 'Покинуть бой',
-  drone: 'Дрон',
+  drones: 'Дроны',
   bomber: 'Авиаудар',
   missiles: 'Ракеты',
   ready: 'готов',

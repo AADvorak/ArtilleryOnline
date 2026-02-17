@@ -47,12 +47,7 @@ public class DroneTargetCalculator {
     private static Set<Position> getTargets(DroneCalculations drone, BattleCalculations battle, Integer ammo) {
         if (ammo > 0) {
             return TargetCalculator.calculatePositions(drone.getModel().getVehicleId(), battle);
-        } else {
-            return battle.getModel().getVehicles().values().stream()
-                    .filter(vehicleModel -> drone.getModel().getVehicleId() != null
-                            && vehicleModel.getId() == drone.getModel().getVehicleId())
-                    .map(vehicleModel -> vehicleModel.getState().getPosition().getCenter())
-                    .collect(Collectors.toSet());
         }
+        return Set.of();
     }
 }

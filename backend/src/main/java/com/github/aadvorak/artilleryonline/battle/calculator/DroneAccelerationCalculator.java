@@ -62,10 +62,6 @@ public class DroneAccelerationCalculator {
         var gravityAcceleration = battleModel.getRoom().getSpecs().getGravityAcceleration();
         var landingAcceleration = 0.7 * gravityAcceleration;
         if (drone.getModel().getState().getAmmo().values().iterator().next() == 0
-                && drone.getTarget() != null
-                && Math.abs(drone.getTarget().getAngleDiff()) < Math.PI / 16) {
-            return landingAcceleration;
-        } else if (drone.getModel().getState().getAmmo().values().iterator().next() == 0
                 && drone.getTarget() == null) {
             return maxAcceleration;
         } else if (drone.getHeight() > 1.5 * flyHeight) {

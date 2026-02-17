@@ -53,11 +53,11 @@ function launch() {
 </script>
 
 <template>
-  <div v-if="droneState && !droneState.launched" class="progress-wrapper ml-2">
+  <div v-if="droneState" class="progress-wrapper ml-4">
     <battle-linear-progress
         :value="progress"
-        :text="t('battleHeader.drone')"
-        :color="droneState.readyToLaunch ? '#2196F3' : '#778899'"
+        :text="t('battleHeader.drones') + ': ' + droneState.remainDrones"
+        color="#2196F3"
         clickable
         @click="launch"
     >

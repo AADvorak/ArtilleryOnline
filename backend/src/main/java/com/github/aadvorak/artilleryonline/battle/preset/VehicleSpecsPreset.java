@@ -15,6 +15,7 @@ public enum VehicleSpecsPreset {
 
     HEAVY("Heavy", new VehicleSpecs()
             .setName("Heavy")
+            .setDrones(3)
             .setTurretShape(
                     new TrapezeShape()
                             .setBottomRadius(0.45)

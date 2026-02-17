@@ -17,10 +17,13 @@ public class DroneInVehicleState implements State, CompactSerializable {
 
     private double prepareToLaunchRemainTime;
 
+    private int remainDrones;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeBoolean(this.launched);
         stream.writeBoolean(this.readyToLaunch);
         stream.writeDouble(this.prepareToLaunchRemainTime);
+        stream.writeInt(this.remainDrones);
     }
 }

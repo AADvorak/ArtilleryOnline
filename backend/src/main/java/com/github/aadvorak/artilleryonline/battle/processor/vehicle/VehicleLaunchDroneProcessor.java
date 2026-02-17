@@ -20,7 +20,7 @@ public class VehicleLaunchDroneProcessor {
             return;
         }
         var inVehicleState = vehicleModel.getState().getDroneState();
-        if (inVehicleState == null || !inVehicleState.isReadyToLaunch()) {
+        if (inVehicleState == null || !inVehicleState.isReadyToLaunch() || inVehicleState.getRemainDrones() < 1) {
             return;
         }
         var specs = vehicleModel.getConfig().getDrone();
@@ -55,5 +55,7 @@ public class VehicleLaunchDroneProcessor {
         vehicleModel.getUpdate().setUpdated();
         inVehicleState.setReadyToLaunch(false);
         inVehicleState.setLaunched(true);
+        inVehicleState.setRemainDrones(inVehicleState.getRemainDrones() - 1);
+        inVehicleState.setPrepareToLaunchRemainTime(vehicleModel.getConfig().getDrone().getPrepareToLaunchTime());
     }
 }

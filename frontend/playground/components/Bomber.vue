@@ -38,11 +38,11 @@ const progress = computed(() => {
 </script>
 
 <template>
-  <div v-if="bomberState" class="progress-wrapper ml-2">
+  <div v-if="bomberState" class="progress-wrapper ml-4">
     <battle-linear-progress
         :value="progress"
         :text="t('battleHeader.bomber') + ': ' + bomberState.remainFlights"
-        :color="bomberState.readyToFlight ? '#2196F3' : '#778899'"
+        color="#2196F3"
     />
   </div>
 </template>

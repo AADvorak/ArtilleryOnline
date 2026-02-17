@@ -128,6 +128,7 @@ export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs 
   const name = DeserializerBase.readString(input)
   const hitPoints = DeserializerBase.readDouble(input)
   const missiles = DeserializerBase.readInt(input)
+  const drones = DeserializerBase.readInt(input)
   const minAngle = DeserializerBase.readDouble(input)
   const maxAngle = DeserializerBase.readDouble(input)
   const acceleration = DeserializerBase.readDouble(input)
@@ -148,6 +149,7 @@ export function deserializeVehicleSpecs(input: DeserializerInput): VehicleSpecs 
     name,
     hitPoints,
     missiles,
+    drones,
     minAngle,
     maxAngle,
     acceleration,

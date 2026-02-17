@@ -15,7 +15,7 @@ import {useI18n} from "vue-i18n";
 import BattleFps from "~/playground/components/BattleFps.vue";
 import BattlePing from "~/playground/components/BattlePing.vue";
 import Missiles from "~/playground/components/Missiles.vue";
-import Drone from "~/playground/components/Drone.vue";
+import Drones from "~/playground/components/Drones.vue";
 import Bomber from "~/playground/components/Bomber.vue";
 import Gun from "~/playground/components/Gun.vue";
 import {useGlobalStateStore} from "~/stores/global-state";
@@ -124,7 +124,7 @@ function toMenu() {
     <Gun />
     <JetBar />
     <Missiles />
-    <Drone />
+    <Drones />
     <Bomber />
     <ReloadingProgress />
   </v-toolbar>

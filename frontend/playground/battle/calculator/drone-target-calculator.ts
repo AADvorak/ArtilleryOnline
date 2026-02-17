@@ -13,13 +13,6 @@ export const DroneTargetCalculator = {
 
     if (ammo && ammo > 0) {
       targets = TargetCalculator.calculatePositions(drone.model.vehicleId, battle)
-    } else {
-      targets = Object.values(battle.model.vehicles)
-          .filter(vehicle => vehicle.id === drone.model.vehicleId)
-          .map(vehicle => ({
-            x: vehicle.state.position.x,
-            y: vehicle.state.position.y
-          }))
     }
 
     if (targets.length === 0) return

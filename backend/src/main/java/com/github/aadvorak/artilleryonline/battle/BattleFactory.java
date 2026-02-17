@@ -222,7 +222,8 @@ public class BattleFactory {
                     .setJetState(jet == null ? null : new JetState()
                             .setVolume(jet.getCapacity())
                             .setActive(false))
-                    .setDroneState(drone == null ? null : new DroneInVehicleState())
+                    .setDroneState(drone == null ? null : new DroneInVehicleState()
+                            .setRemainDrones(vehicleModel.getSpecs().getDrones()))
                     .setBomberState(bomberState));
             if (!BattleType.COLLIDER.equals(battleType)) {
                 VehicleOnGroundProcessor.estimateVehicleAngleByPosition(vehicleModel, battleModel.getRoom());

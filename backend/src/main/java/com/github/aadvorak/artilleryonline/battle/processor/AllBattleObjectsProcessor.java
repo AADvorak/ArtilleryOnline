@@ -4,6 +4,7 @@ import com.github.aadvorak.artilleryonline.battle.Battle;
 import com.github.aadvorak.artilleryonline.battle.calculations.BattleCalculations;
 import com.github.aadvorak.artilleryonline.battle.calculations.Calculations;
 import com.github.aadvorak.artilleryonline.battle.collision.CollisionsProcessor;
+import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.processor.bot.BotsProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.explosion.ExplosionInitializer;
 import lombok.RequiredArgsConstructor;
@@ -93,6 +94,9 @@ public class AllBattleObjectsProcessor {
                         ExplosionInitializer.init(droneModel.getState().getPosition().getCenter(),
                                 droneModel.getSpecs().getEnginesRadius(), battleModel);
                     }
+                    if (droneModel != null && droneModel.getVehicleId() != null) {
+                        resetDroneLaunched(droneModel.getVehicleId(), battleModel);
+                    }
                     battleModel.removeDroneById(id);
                 });
             }
@@ -106,5 +110,18 @@ public class AllBattleObjectsProcessor {
                 });
             }
         }
+    }
+
+    private void resetDroneLaunched(int vehicleId, BattleModel battleModel) {
+        battleModel.getVehicles().values().stream()
+                .filter(model -> model.getId() == vehicleId)
+                .findAny().ifPresent(vehicleModel -> {
+                    var droneState = vehicleModel.getState().getDroneState();
+                    if (droneState != null) {
+                        droneState.setLaunched(false);
+                        droneState.setReadyToLaunch(false);
+                        vehicleModel.getUpdate().setUpdated();
+                    }
+                });
     }
 }
