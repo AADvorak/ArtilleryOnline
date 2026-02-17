@@ -15,7 +15,7 @@ export const commonHistory = {
     RANDOM: 'Случайный',
     DEATHMATCH: 'Выживание',
     DRONE_HUNT: 'Охота на дроны',
-    TEAM_ELIMINATION: 'Командный (уничтожение)',
+    TEAM_ELIMINATION: 'Командный: уничтожение',
   },
   battleResult: 'Результат боя',
   battleResults: {
