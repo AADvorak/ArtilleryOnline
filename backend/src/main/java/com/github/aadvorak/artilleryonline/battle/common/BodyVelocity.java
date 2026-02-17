@@ -26,6 +26,13 @@ public class BodyVelocity extends BodyVectorBase implements BodyVector {
                 .setY(getY());
     }
 
+    public BodyVelocity plus(BodyVelocity velocity) {
+        return new BodyVelocity()
+                .setX(getX() + velocity.getX())
+                .setY(getY() + velocity.getY())
+                .setAngle(getAngle() + velocity.getAngle());
+    }
+
     public void recalculate(BodyAcceleration acceleration, double timeStep) {
         validateAndSetX(getX() + acceleration.getX() * timeStep);
         validateAndSetY(getY() + acceleration.getY() * timeStep);
@@ -44,5 +51,12 @@ public class BodyVelocity extends BodyVectorBase implements BodyVector {
                 .setX(velocity.getX())
                 .setY(velocity.getY())
                 .setAngle(velocity.getAngle());
+    }
+
+    public static BodyVelocity of(Velocity velocity, double angle) {
+        return new BodyVelocity()
+                .setX(velocity.getX())
+                .setY(velocity.getY())
+                .setAngle(angle);
     }
 }

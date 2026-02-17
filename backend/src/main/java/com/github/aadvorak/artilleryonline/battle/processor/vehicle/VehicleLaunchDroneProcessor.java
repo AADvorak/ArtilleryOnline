@@ -2,6 +2,7 @@ package com.github.aadvorak.artilleryonline.battle.processor.vehicle;
 
 import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
 import com.github.aadvorak.artilleryonline.battle.common.BodyVelocity;
+import com.github.aadvorak.artilleryonline.battle.common.Velocity;
 import com.github.aadvorak.artilleryonline.battle.config.DroneConfig;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
@@ -14,6 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class VehicleLaunchDroneProcessor {
+
+    private static final double ADDITIONAL_VELOCITY_MAGNITUDE = 2.0;
 
     public static void launch(VehicleModel vehicleModel, BattleModel battleModel) {
         if (vehicleModel.getConfig().getDrone() == null) {
@@ -33,9 +36,11 @@ public class VehicleLaunchDroneProcessor {
                 .setGun(gunSpecs)
                 .setAmmo(Map.of(shellName, gunSpecs.getAmmo()))
                 .setColor(vehicleModel.getConfig().getColor());
+        var shiftAngle = angle + Math.PI / 2;
+        var additionalVelocity = BodyVelocity.of(Velocity.of(ADDITIONAL_VELOCITY_MAGNITUDE, shiftAngle), 0.0);
         var state = new DroneState()
-                .setPosition(BodyPosition.of(vehiclePosition.getCenter().shifted(vehicleRadius, angle + Math.PI / 2), angle))
-                .setVelocity(BodyVelocity.of(vehicleModel.getState().getVelocity()))
+                .setPosition(BodyPosition.of(vehiclePosition.getCenter().shifted(vehicleRadius, shiftAngle), angle))
+                .setVelocity(BodyVelocity.of(vehicleModel.getState().getVelocity()).plus(additionalVelocity))
                 .setAmmo(new HashMap<>(config.getAmmo()))
                 .setGunState(new GunState()
                         .setSelectedShell(shellName)

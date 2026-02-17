@@ -21,4 +21,10 @@ public class Velocity extends VectorBase implements Vector {
         }
         return new Velocity().setX(sumX).setY(sumY);
     }
+
+    public static Velocity of(double magnitude, double angle) {
+        return new Velocity()
+                .setX(magnitude * Math.cos(angle))
+                .setY(magnitude * Math.sin(angle));
+    }
 }
