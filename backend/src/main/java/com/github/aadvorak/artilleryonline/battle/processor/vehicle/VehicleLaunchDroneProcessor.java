@@ -26,20 +26,22 @@ public class VehicleLaunchDroneProcessor {
         if (inVehicleState == null || !inVehicleState.isReadyToLaunch() || inVehicleState.getRemainDrones() < 1) {
             return;
         }
+        var launchAngle = vehicleModel.getState().getLaunchAngle();
+        if (launchAngle == null) {
+            return;
+        }
         var specs = vehicleModel.getConfig().getDrone();
         var vehiclePosition = vehicleModel.getState().getPosition();
         var vehicleRadius = vehicleModel.getPreCalc().getMaxRadius();
-        var angle = vehiclePosition.getAngle();
         var gunSpecs = specs.getAvailableGuns().values().iterator().next();
         var shellName = gunSpecs.getAvailableShells().keySet().iterator().next();
         var config = new DroneConfig()
                 .setGun(gunSpecs)
                 .setAmmo(Map.of(shellName, gunSpecs.getAmmo()))
                 .setColor(vehicleModel.getConfig().getColor());
-        var shiftAngle = angle + Math.PI / 2;
-        var additionalVelocity = BodyVelocity.of(Velocity.of(ADDITIONAL_VELOCITY_MAGNITUDE, shiftAngle), 0.0);
+        var additionalVelocity = BodyVelocity.of(Velocity.of(ADDITIONAL_VELOCITY_MAGNITUDE, launchAngle), 0.0);
         var state = new DroneState()
-                .setPosition(BodyPosition.of(vehiclePosition.getCenter().shifted(vehicleRadius, shiftAngle), angle))
+                .setPosition(BodyPosition.of(vehiclePosition.getCenter().shifted(vehicleRadius, launchAngle), launchAngle - Math.PI / 2))
                 .setVelocity(BodyVelocity.of(vehicleModel.getState().getVelocity()).plus(additionalVelocity))
                 .setAmmo(new HashMap<>(config.getAmmo()))
                 .setGunState(new GunState()
