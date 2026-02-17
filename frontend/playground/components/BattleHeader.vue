@@ -42,6 +42,10 @@ const helpDialog = ref<InstanceType<typeof HelpDialog> | null>(null)
 
 const isDebugMode = computed(() => settingsStore.settings?.debug)
 
+const centerToolbarClass = computed(() => {
+  return 'toolbar center-top-toolbar ' + (props.separateHeaderToolbars ? 'top-toolbar-separate' : 'top-toolbar-merged')
+})
+
 onMounted(() => {
   addEventListener('keyup', showHelpIfF1Pressed)
 })
@@ -78,10 +82,11 @@ function toMenu() {
 </script>
 
 <template>
-  <v-toolbar height="36px" color="transparent" class="toolbar">
-    <div v-if="isDebugMode" class="ml-4">
-      <BattleDebugButtons />
-    </div>
+  <v-toolbar
+      height="36px"
+      color="transparent"
+      class="toolbar"
+  >
     <div class="ml-4 battle-timer-wrapper">
       <BattleTimer />
     </div>
@@ -92,15 +97,6 @@ function toMenu() {
       <BattlePing />
     </div>
     <v-spacer/>
-    <template v-if="!separateHeaderToolbars">
-      <Gun />
-      <JetBar />
-      <Missiles />
-      <Drone />
-      <Bomber />
-      <ReloadingProgress />
-      <v-spacer/>
-    </template>
     <icon-btn
         :icon="mdiHelp"
         :tooltip="t('common.help')"
@@ -118,20 +114,32 @@ function toMenu() {
         :tooltip="t('battleHeader.leaveBattle')"
         @click="leaveBattle"
     />
-    <LeaveBattleDialog ref="leaveBattleDialog"/>
-    <HelpDialog ref="helpDialog"/>
   </v-toolbar>
-  <v-toolbar v-if="separateHeaderToolbars" height="36px" color="transparent" class="toolbar">
-    <v-spacer/>
+  <v-toolbar
+      absolute
+      height="36px"
+      color="transparent"
+      :class="centerToolbarClass"
+  >
     <Gun />
     <JetBar />
     <Missiles />
     <Drone />
     <Bomber />
     <ReloadingProgress />
-    <v-spacer/>
+  </v-toolbar>
+  <v-toolbar
+      v-if="isDebugMode"
+      absolute
+      height="36px"
+      color="transparent"
+      class="toolbar left-top-toolbar top-toolbar-separate"
+  >
+    <BattleDebugButtons />
   </v-toolbar>
   <PlayersInfo :separate-header-toolbars="separateHeaderToolbars" />
+  <HelpDialog ref="helpDialog"/>
+  <LeaveBattleDialog ref="leaveBattleDialog"/>
 </template>
 
 <style scoped>
@@ -145,6 +153,26 @@ function toMenu() {
 
 .battle-ping-wrapper {
   min-width: 70px;
+}
+
+.left-top-toolbar {
+  top: 0;
+  left: 0;
+  width: auto;
+}
+
+.center-top-toolbar {
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+}
+
+.top-toolbar-merged {
+  top: 0
+}
+
+.top-toolbar-separate {
+  top: 36px
 }
 
 .toolbar {
