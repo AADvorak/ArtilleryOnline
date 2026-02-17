@@ -51,11 +51,16 @@ public class JetForceCalculator implements ForceCalculator<
             addVerticalSide(forces, magnitude / 2, direction);
         }
         if (JetType.HORIZONTAL.equals(jetSpecs.getType())) {
-            if (MovingDirection.RIGHT.equals(direction)) {
-                addHorizontalForWheel(forces, calculations.getRightWheel(), magnitude, direction);
-            }
-            if (MovingDirection.LEFT.equals(direction)) {
-                addHorizontalForWheel(forces, calculations.getLeftWheel(), magnitude, direction);
+            if (!calculations.getTurretGroundContacts().isEmpty()
+                    || isCloseVehicle(calculations, battleModel)) {
+                addPushUp(forces, calculations, magnitude, direction);
+            } else {
+                if (MovingDirection.RIGHT.equals(direction)) {
+                    addHorizontalForWheel(forces, calculations.getRightWheel(), magnitude, direction);
+                }
+                if (MovingDirection.LEFT.equals(direction)) {
+                    addHorizontalForWheel(forces, calculations.getLeftWheel(), magnitude, direction);
+                }
             }
             if (forces.isEmpty()) {
                 addHorizontal(forces, magnitude, angle, direction);
@@ -116,8 +121,8 @@ public class JetForceCalculator implements ForceCalculator<
         }
         if (MovingDirection.LEFT.equals(direction)) {
             force
-                    .setX( - magnitude * Math.cos(contact.angle() - HORIZONTAL_JET_ANGLE))
-                    .setY( - magnitude * Math.sin(contact.angle() - HORIZONTAL_JET_ANGLE));
+                    .setX(-magnitude * Math.cos(contact.angle() - HORIZONTAL_JET_ANGLE))
+                    .setY(-magnitude * Math.sin(contact.angle() - HORIZONTAL_JET_ANGLE));
         }
         forces.add(BodyForce.of(force, calculations.getPosition(),
                 calculations.getModel().getState().getPosition().getCenter(), FORCE_DESCRIPTION));
@@ -136,8 +141,26 @@ public class JetForceCalculator implements ForceCalculator<
                             double magnitude, double angle) {
         var maxRadius = calculations.getModel().getPreCalc().getMaxRadius();
         var comPosition = calculations.getPosition();
-        var position = comPosition.shifted(- maxRadius * Math.signum(angle), 0.0);
+        var position = comPosition.shifted(-maxRadius * Math.signum(angle), 0.0);
         forces.add(BodyForce.of(new Force().setY(magnitude * 1.5), position, comPosition, FORCE_DESCRIPTION));
         forces.add(BodyForce.atCOM(new Force().setY(magnitude * 0.5), FORCE_DESCRIPTION));
+    }
+
+    private void addPushUp(List<BodyForce> forces, VehicleCalculations calculations,
+                           double magnitude, MovingDirection direction) {
+        var maxRadius = calculations.getModel().getPreCalc().getMaxRadius();
+        var comPosition = calculations.getPosition();
+        var angle = MovingDirection.RIGHT.equals(direction) ? Math.PI / 3 : Math.PI - Math.PI / 3;
+        forces.add(BodyForce.atCOM(Force.of(magnitude, angle), FORCE_DESCRIPTION));
+    }
+
+    private boolean isCloseVehicle(VehicleCalculations calculations, BattleModel battleModel) {
+        return battleModel.getVehicles().values().stream()
+                .filter(vehicleModel -> vehicleModel.getId() != calculations.getId())
+                .anyMatch(vehicleModel -> {
+                    var distance = vehicleModel.getState().getPosition().getCenter().distanceTo(calculations.getPosition());
+                    var sumMaxRadius = calculations.getModel().getPreCalc().getMaxRadius() + vehicleModel.getPreCalc().getMaxRadius();
+                    return distance < sumMaxRadius + 0.3;
+                });
     }
 }

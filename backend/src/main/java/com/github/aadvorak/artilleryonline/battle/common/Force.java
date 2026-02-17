@@ -23,4 +23,10 @@ public class Force implements Vector {
                 .setX(vector.getX())
                 .setY(vector.getY());
     }
+
+    public static Force of(double magnitude, double angle) {
+        return new Force()
+                .setX(magnitude * Math.cos(angle))
+                .setY(magnitude * Math.sin(angle));
+    }
 }

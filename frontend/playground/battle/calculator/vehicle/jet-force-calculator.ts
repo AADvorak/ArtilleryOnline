@@ -2,7 +2,7 @@ import type {ForceCalculator} from "~/playground/battle/calculator/force-calcula
 import type {VehicleCalculations, WheelCalculations} from "~/playground/data/calculations";
 import type {BattleModel, VehicleModel} from "~/playground/data/model";
 import {BodyForce} from "~/playground/battle/calculator/body-force";
-import {JetType, MovingDirection, zeroVector} from "~/playground/data/common";
+import {JetType, MovingDirection, vectorOfMagnitudeAndAngle, zeroVector} from "~/playground/data/common";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {VehicleUtils} from "~/playground/utils/vehicle-utils";
 
@@ -35,10 +35,14 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
       this.addVerticalUp(forces, calculations.rightWheel, vehicleModel, magnitude / 2, angle, direction)
       this.addVerticalSide(forces, magnitude / 2, direction)
     } else if (jetSpecs.type === JetType.HORIZONTAL) {
-      direction === MovingDirection.RIGHT && this.addHorizontalForWheel(forces, calculations.rightWheel,
-          vehicleModel, magnitude, direction)
-      direction === MovingDirection.LEFT && this.addHorizontalForWheel(forces, calculations.leftWheel,
-          vehicleModel, magnitude, direction)
+      if (calculations.getTurretGroundContacts().size > 0 || this.isCloseVehicle(calculations, battleModel)) {
+        this.addPushUp(forces, calculations, magnitude, direction)
+      } else {
+        direction === MovingDirection.RIGHT && this.addHorizontalForWheel(forces, calculations.rightWheel,
+            vehicleModel, magnitude, direction)
+        direction === MovingDirection.LEFT && this.addHorizontalForWheel(forces, calculations.leftWheel,
+            vehicleModel, magnitude, direction)
+      }
       if (forces.length === 0) {
         this.addHorizontal(forces, magnitude, angle, direction)
       }
@@ -164,5 +168,23 @@ export class JetForceCalculator implements ForceCalculator<VehicleCalculations> 
       y: magnitude * 1.5
     }, position, comPosition, JetForceCalculator.FORCE_DESCRIPTION))
     forces.push(BodyForce.atCOM({x: 0, y: magnitude * 0.5}, JetForceCalculator.FORCE_DESCRIPTION))
+  }
+
+  private addPushUp(forces: BodyForce[], calculations: VehicleCalculations,
+                     magnitude: number, direction: MovingDirection) {
+    const maxRadius = calculations.getModel().preCalc.maxRadius
+    const comPosition = calculations.getModel().state.position
+    const angle = MovingDirection.RIGHT === direction ? Math.PI / 3 : Math.PI - Math.PI / 3
+    forces.push(BodyForce.atCOM(vectorOfMagnitudeAndAngle(magnitude, angle), JetForceCalculator.FORCE_DESCRIPTION))
+  }
+
+  private isCloseVehicle(calculations: VehicleCalculations, battleModel: BattleModel): boolean {
+    return !!Object.values(battleModel.vehicles)
+        .filter(vehicleModel => vehicleModel.id !== calculations.getModel().id)
+        .filter(vehicleModel => {
+          const distance = BattleUtils.distance(vehicleModel.state.position, calculations.getModel().state.position)
+          const sumMaxRadius = calculations.getModel().preCalc.maxRadius + vehicleModel.preCalc.maxRadius
+          return distance < sumMaxRadius + 0.3
+        }).length
   }
 }

@@ -217,6 +217,13 @@ export function zeroVector(): Vector {
   }
 }
 
+export function vectorOfMagnitudeAndAngle(magnitude: number, angle: number): Vector {
+  return {
+    x: magnitude * Math.cos(angle),
+    y: magnitude * Math.sin(angle)
+  }
+}
+
 export function zeroBodyVector(): BodyVector {
   return {
     x: 0,
