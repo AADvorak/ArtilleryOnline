@@ -9,6 +9,7 @@ import VerticalTooltip from "~/components/vertical-tooltip.vue";
 import {useGlobalStateStore} from "~/stores/global-state";
 import {VerticalTooltipLocation} from "~/data/model";
 import BattleLinearProgress from "~/playground/components/BattleLinearProgress.vue";
+import {DefaultColors} from "~/dictionary/default-colors";
 
 const {t} = useI18n()
 
@@ -45,6 +46,10 @@ const progress = computed(() => {
   return value * 100
 })
 
+const progressColor = computed(() => {
+  return progress.value === 100 ? DefaultColors.PROGRESS_READY : DefaultColors.PROGRESS_NOT_READY
+})
+
 function launch() {
   commandsSender.sendCommand({
     command: Command.LAUNCH_DRONE
@@ -57,7 +62,7 @@ function launch() {
     <battle-linear-progress
         :value="progress"
         :text="t('battleHeader.drones') + ': ' + droneState.remainDrones"
-        color="#2196F3"
+        :color="progressColor"
         clickable
         @click="launch"
     >

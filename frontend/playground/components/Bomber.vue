@@ -4,6 +4,7 @@ import { useBattleStore } from '~/stores/battle'
 import {useUserStore} from '~/stores/user'
 import {useI18n} from "vue-i18n";
 import BattleLinearProgress from "~/playground/components/BattleLinearProgress.vue";
+import {DefaultColors} from "~/dictionary/default-colors";
 
 const {t} = useI18n()
 
@@ -35,6 +36,10 @@ const progress = computed(() => {
   }
   return value * 100
 })
+
+const progressColor = computed(() => {
+  return progress.value === 100 ? DefaultColors.PROGRESS_READY : DefaultColors.PROGRESS_NOT_READY
+})
 </script>
 
 <template>
@@ -42,7 +47,7 @@ const progress = computed(() => {
     <battle-linear-progress
         :value="progress"
         :text="t('battleHeader.bomber') + ': ' + bomberState.remainFlights"
-        color="#2196F3"
+        :color="progressColor"
     />
   </div>
 </template>

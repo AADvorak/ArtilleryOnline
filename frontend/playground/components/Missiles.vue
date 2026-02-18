@@ -9,6 +9,7 @@ import {VerticalTooltipLocation} from "~/data/model";
 import VerticalTooltip from "~/components/vertical-tooltip.vue";
 import {useI18n} from "vue-i18n";
 import BattleLinearProgress from "~/playground/components/BattleLinearProgress.vue";
+import {DefaultColors} from "~/dictionary/default-colors";
 
 const {t} = useI18n()
 
@@ -44,6 +45,10 @@ const progress = computed(() => {
   return value * 100
 })
 
+const progressColor = computed(() => {
+  return progress.value === 100 ? DefaultColors.PROGRESS_READY : DefaultColors.PROGRESS_NOT_READY
+})
+
 function launch() {
   commandsSender.sendCommand({
     command: Command.LAUNCH_MISSILE
@@ -56,7 +61,7 @@ function launch() {
     <battle-linear-progress
         :value="progress"
         :text="t('battleHeader.missiles') + ': ' + missileLauncherState.remainMissiles"
-        color="#2196F3"
+        :color="progressColor"
         clickable
         @click="launch"
     >

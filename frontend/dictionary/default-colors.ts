@@ -10,4 +10,6 @@ export const DefaultColors = {
   VEHICLE: 'rgb(60,200,0)',
   SIGNAL_SHELL: 'rgb(248,105,4)',
   SELF_COLOR: '#fb8c00',
+  PROGRESS_READY: '#2196F3',
+  PROGRESS_NOT_READY: '#778899',
 }

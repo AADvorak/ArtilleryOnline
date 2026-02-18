@@ -9,6 +9,7 @@ import VerticalTooltip from "~/components/vertical-tooltip.vue";
 import {useI18n} from "vue-i18n";
 import {VerticalTooltipLocation} from "~/data/model";
 import BattleLinearProgress from "~/playground/components/BattleLinearProgress.vue";
+import {DefaultColors} from "~/dictionary/default-colors";
 
 const {t} = useI18n()
 
@@ -44,6 +45,10 @@ const reloadingProgress = computed(() => {
   const loadTime = userVehicle.value.config.gun.loadTime
   const loadRemainTime = userVehicle.value.state.gunState.loadRemainTime
   return Math.floor((100 * (loadTime - loadRemainTime)) / loadTime)
+})
+
+const progressColor = computed(() => {
+  return reloadingProgress.value === 100 ? DefaultColors.PROGRESS_READY : DefaultColors.PROGRESS_NOT_READY
 })
 
 onMounted(() => {
@@ -85,7 +90,7 @@ function getAmmoText(ammoKey: string, index: number) {
       <battle-linear-progress
           :value="ammoKey === selectedShell ? reloadingProgress : 0"
           :text="getAmmoText(ammoKey, index)"
-          :color="ammoKey === selectedShell ? '#2196F3' : '#778899'"
+          :color="progressColor"
           :clickable="!!(ammo && ammo[ammoKey])"
           @click="() => selectShell(ammoKey)"
       >
