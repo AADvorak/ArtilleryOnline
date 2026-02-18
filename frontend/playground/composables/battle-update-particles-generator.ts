@@ -77,7 +77,7 @@ export function useBattleUpdateParticlesGenerator() {
 
   function showChangeHp(model: VehicleModel, oldState: VehicleState, newState: VehicleState) {
     const hpDiff = newState.hitPoints - oldState.hitPoints
-    if (Math.abs(hpDiff) > 1) {
+    if (Math.abs(hpDiff) >= 1) {
       const position = BattleUtils.shiftedPosition(model.state.position, model.preCalc.maxRadius, Math.PI / 2)
       const color = hpDiff > 0 ? DefaultColors.BRIGHT_GREEN : DefaultColors.BRIGHT_RED
       const hpDiffToFixed = hpDiff.toFixed(0)
