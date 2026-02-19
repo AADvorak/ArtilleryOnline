@@ -2,7 +2,6 @@
 import TeamMembersRows from "~/components/team-members-rows.vue";
 import {useI18n} from "vue-i18n";
 import {useRoomStore} from "~/stores/room";
-import {BattleType} from "~/playground/data/battle";
 
 const {t} = useI18n()
 
@@ -10,10 +9,6 @@ const roomStore = useRoomStore()
 
 const team1MembersRows = ref<InstanceType<typeof TeamMembersRows> | undefined>()
 const team2MembersRows = ref<InstanceType<typeof TeamMembersRows> | undefined>()
-
-const teamMode = computed(() => {
-  return roomStore.room?.battleType === BattleType.TEAM_ELIMINATION
-})
 
 function onResetTeams() {
   team1MembersRows.value?.resetTeamMembers()
@@ -40,7 +35,7 @@ function onResetTeams() {
           :team-id="0"
           @reset="onResetTeams"
       />
-      <template v-if="teamMode">
+      <template v-if="roomStore.isTeamMode">
         <tbody>
         <tr>
           <td colspan="4" style="padding: 0;">
@@ -55,7 +50,7 @@ function onResetTeams() {
         />
       </template>
     </v-table>
-    <div v-if="teamMode" class="mt-4">
+    <div v-if="roomStore.isTeamMode" class="mt-4">
       {{ roomStore.userIsRoomOwner ? t('roomMembersTable.movePlayersTip') : t('roomMembersTable.moveYourselfTip') }}
     </div>
   </div>

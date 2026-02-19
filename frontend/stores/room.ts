@@ -4,6 +4,7 @@ import {ApiRequestSender} from '~/api/api-request-sender'
 import type {ChatMessage, Room} from '~/data/model'
 import {useUserStore} from '~/stores/user'
 import {useStompClientStore} from "~/stores/stomp-client";
+import {BattleType} from "~/playground/data/battle";
 
 export const useRoomStore = defineStore('room', () => {
 
@@ -27,6 +28,10 @@ export const useRoomStore = defineStore('room', () => {
     const ownerNickname = members.filter(member => member.owner).map(member => member.nickname)[0]
     const userNickname = userStore.user?.nickname
     return ownerNickname === userNickname
+  })
+
+  const isTeamMode = computed(() => {
+    return BattleType.TEAM_ELIMINATION === room.value?.battleType
   })
 
   watch(room, value => {
@@ -88,5 +93,13 @@ export const useRoomStore = defineStore('room', () => {
     messages.value = []
   }
 
-  return {room, messages, allMembers, loadRoomIfNull, userIsRoomOwner, clear}
+  return {
+    room,
+    messages,
+    allMembers,
+    loadRoomIfNull,
+    userIsRoomOwner,
+    isTeamMode,
+    clear
+  }
 })

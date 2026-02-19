@@ -43,9 +43,21 @@ const readyToBattle = computed(() => {
 
 const nicknameColors = computed(() => {
   const colors = {}
-  for (const member of roomStore.allMembers) {
-    colors[member.nickname] = member.nickname === userStore.user!.nickname
-        ? DefaultColors.SELF_COLOR : DefaultColors.ENEMY_TEAM
+  const room = roomStore.room
+  if (room) {
+    for (let teamId = 0; teamId <= 1; teamId++) {
+      const teamMembers = room.members[teamId]
+      if (teamMembers) {
+        const isUsersTeam = teamMembers.filter(teamMember => teamMember.nickname === userStore.user!.nickname).length > 0
+        for (const member of teamMembers) {
+          if (roomStore.isTeamMode) {
+            colors[member.nickname] = isUsersTeam ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM
+          } else {
+            colors[member.nickname] = member.nickname === userStore.user!.nickname ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM
+          }
+        }
+      }
+    }
   }
   return colors
 })
