@@ -3,9 +3,12 @@ package com.github.aadvorak.artilleryonline.endpoint;
 import com.github.aadvorak.artilleryonline.battle.BattleParticipantParams;
 import com.github.aadvorak.artilleryonline.dto.request.BattleTypeRequest;
 import com.github.aadvorak.artilleryonline.dto.request.BooleanRequest;
+import com.github.aadvorak.artilleryonline.dto.request.ChatMessageRequest;
+import com.github.aadvorak.artilleryonline.dto.response.ChatMessageResponse;
 import com.github.aadvorak.artilleryonline.dto.response.RoomResponse;
 import com.github.aadvorak.artilleryonline.dto.response.RoomShortResponse;
 import com.github.aadvorak.artilleryonline.service.RoomService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -76,5 +79,15 @@ public class RoomEndpoint {
     @PutMapping("/my/battle-type")
     public void changeBattleType(@RequestBody BattleTypeRequest request) {
         roomService.changeBattleType(request.getBattleType());
+    }
+
+    @GetMapping("/my/messages")
+    public List<ChatMessageResponse> getMessages() {
+        return roomService.getMessages();
+    }
+
+    @PostMapping("/my/messages")
+    public void postMessage(@RequestBody @Valid ChatMessageRequest request) {
+        roomService.postMessage(request.getText());
     }
 }

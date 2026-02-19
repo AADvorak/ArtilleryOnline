@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.battle;
 
+import com.github.aadvorak.artilleryonline.collection.LimitedQueue;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -25,6 +26,8 @@ public class Room {
     private boolean open = false;
 
     private BattleType battleType = BattleType.DEATHMATCH;
+
+    private LimitedQueue<ChatMessage> messages =  new LimitedQueue<>(100);
 
     public Set<BattleParticipant> getMembers() {
         var members = new HashSet<>(guests.values());

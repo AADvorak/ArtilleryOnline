@@ -28,6 +28,7 @@ import {names} from "~/locales/ru/names.js";
 import {descriptions} from "~/locales/ru/descriptions.js";
 import {serverCounts} from "~/locales/ru/server-counts.js";
 import {navigation} from "~/locales/ru/navigation.js";
+import {messenger} from "~/locales/ru/messenger.js";
 
 export const ru = {
   menu,
@@ -67,6 +68,7 @@ export const ru = {
     messages: 'Сообщения',
     noMessages: 'Нет сообщений'
   },
+  messenger,
   names,
   navigation,
   vehicleSelector,

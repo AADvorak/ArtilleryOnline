@@ -3,12 +3,14 @@ import {useRouter} from "#app";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import {useRoomStore} from "~/stores/room";
 import {useUserStore} from "~/stores/user";
-import {mdiAccountMultiple, mdiAccountPlus, mdiRobot} from '@mdi/js'
+import {mdiAccountMultiple, mdiAccountPlus, mdiRobot, mdiMessageTextOutline} from '@mdi/js'
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import VehicleSelector from "~/components/vehicle-selector.vue";
 import {useI18n} from "vue-i18n";
 import RoomMembersTable from "~/components/room-members-table.vue";
 import {BattleType} from "~/playground/data/battle";
+import RoomMessenger from "~/components/room-messenger.vue";
+import {DefaultColors} from "~/dictionary/default-colors";
 
 const api = new ApiRequestSender()
 const requestErrorHandler = useRequestErrorHandler()
@@ -37,6 +39,15 @@ const readyToBattle = computed(() => {
     }
   }
   return true
+})
+
+const nicknameColors = computed(() => {
+  const colors = {}
+  for (const member of roomStore.allMembers) {
+    colors[member.nickname] = member.nickname === userStore.user!.nickname
+        ? DefaultColors.SELF_COLOR : DefaultColors.ENEMY_TEAM
+  }
+  return colors
 })
 
 watch(selectedVehicle, async (value) => {
@@ -170,6 +181,20 @@ function back() {
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <room-members-table class="mb-4"/>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+          <v-expansion-panel value="messengerPanel">
+            <v-expansion-panel-title>
+              <v-icon class="mr-2" :icon="mdiMessageTextOutline"/>
+              {{ t('messenger.messages') }}
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <room-messenger
+                  :model-value="roomStore.messages"
+                  :nickname-colors="nicknameColors"
+                  :user-nickname="userStore.user!.nickname"
+                  class="mb-4"
+              />
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel v-if="roomStore.userIsRoomOwner" value="invitePlayersPanel">

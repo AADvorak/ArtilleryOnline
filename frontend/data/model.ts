@@ -29,6 +29,13 @@ export interface RoomShort {
   inBattle: boolean
 }
 
+export interface ChatMessage {
+  id: string
+  nickname: string
+  time: string
+  text: string
+}
+
 export interface Message {
   id: string
   text: string

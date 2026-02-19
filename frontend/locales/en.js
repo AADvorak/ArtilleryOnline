@@ -28,6 +28,7 @@ import {names} from "~/locales/en/names.js";
 import {descriptions} from "~/locales/en/descriptions.js";
 import {serverCounts} from "~/locales/en/server-counts.js";
 import {navigation} from "~/locales/en/navigation.js";
+import {messenger} from "~/locales/en/messenger.js";
 
 export const en = {
   menu,
@@ -67,6 +68,7 @@ export const en = {
     messages: 'Messages',
     noMessages: 'You have no messages'
   },
+  messenger,
   names,
   navigation,
   vehicleSelector,

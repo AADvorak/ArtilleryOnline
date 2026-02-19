@@ -1,11 +1,9 @@
 package com.github.aadvorak.artilleryonline.service;
 
-import com.github.aadvorak.artilleryonline.battle.BattleParticipant;
-import com.github.aadvorak.artilleryonline.battle.BattleParticipantParams;
-import com.github.aadvorak.artilleryonline.battle.BattleType;
-import com.github.aadvorak.artilleryonline.battle.Room;
+import com.github.aadvorak.artilleryonline.battle.*;
 import com.github.aadvorak.artilleryonline.collection.RoomMap;
 import com.github.aadvorak.artilleryonline.collection.UserRoomMap;
+import com.github.aadvorak.artilleryonline.dto.response.ChatMessageResponse;
 import com.github.aadvorak.artilleryonline.dto.response.RoomResponse;
 import com.github.aadvorak.artilleryonline.dto.response.RoomShortResponse;
 import com.github.aadvorak.artilleryonline.entity.User;
@@ -275,6 +273,26 @@ public class RoomService {
             }
         }
         roomUpdatesSender.sendRoomUpdate(room);
+    }
+
+    public List<ChatMessageResponse> getMessages() {
+        var user = userService.getUserFromContext();
+        var messages = requireUserRoom(user.getId()).getMessages();
+        return messages.getAll().stream().map(ChatMessageResponse::of).toList();
+    }
+
+    public void postMessage(String text) {
+        var user = userService.getUserFromContext();
+        var room = requireUserRoom(user.getId());
+        var messages = room.getMessages();
+        var message = ChatMessage.builder()
+                .text(text)
+                .nickname(user.getNickname())
+                .build();
+        synchronized (messages) {
+            messages.add(message);
+        }
+        roomUpdatesSender.sendRoomMessage(room, message);
     }
 
     private Room getUserRoomOrNull(long userId) {
