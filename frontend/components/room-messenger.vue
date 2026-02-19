@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue'
+import {computed, nextTick, ref, watch} from 'vue'
 import {mdiSend} from "@mdi/js";
 import type {ChatMessage} from "~/data/model";
 import {ApiRequestSender} from "~/api/api-request-sender";
-import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import {useI18n} from "vue-i18n";
+import {useValidationLocaleUtil} from "~/composables/validation-locale-util";
 
 interface NicknameColors {
   [nickname: string]: string
@@ -17,16 +17,23 @@ interface Props {
 }
 
 const {t} = useI18n()
+const {localize} = useValidationLocaleUtil(t)
 const api = new ApiRequestSender()
-const requestErrorHandler = useRequestErrorHandler()
 
 const props = defineProps<Props>()
 
-const newMessage = ref('')
 const bottomAnchor = ref<HTMLElement>()
 
+const form = reactive({
+  text: ''
+})
+const validation = reactive({
+  text: []
+})
+const submitting = ref<boolean>(false)
+
 const canSendMessage = computed(() => {
-  return newMessage.value.trim().length > 0
+  return form.text.trim().length > 0
 })
 
 const getNicknameColor = (nickname: string): string => {
@@ -35,14 +42,10 @@ const getNicknameColor = (nickname: string): string => {
 
 async function sendMessage() {
   if (!canSendMessage.value) return
-  try {
-    await api.postJson('/rooms/my/messages', {
-      text: newMessage.value
-    })
-    newMessage.value = ''
-  } catch (e) {
-    requestErrorHandler.handle(e)
-  }
+  await useFormSubmit({form, validation, submitting}).submit(async () => {
+    await api.postJson('/rooms/my/messages', form)
+    form.text = ''
+  })
 }
 
 const scrollToBottom = async () => {
@@ -93,33 +96,36 @@ watch(bottomAnchor, () => {
       <div ref="bottomAnchor" />
     </div>
     <v-divider />
-    <v-text-field
-        class="mt-4"
-        v-model="newMessage"
-        variant="outlined"
-        density="compact"
-        :placeholder="t('messenger.enterMessage')"
-        hide-details
-        @keyup.enter="sendMessage"
-    >
-      <template v-slot:append>
-        <icon-btn
-            color="primary"
-            :icon="mdiSend"
-            :tooltip="t('messenger.sendMessage')"
-            :disabled="!canSendMessage"
-            @click="sendMessage"
-        />
-      </template>
-    </v-text-field>
+    <v-form @submit.prevent>
+      <v-text-field
+          class="mt-4"
+          v-model="form.text"
+          :error="!!validation.text.length"
+          :error-messages="localize(validation.text)"
+          variant="outlined"
+          density="compact"
+          :placeholder="t('messenger.enterMessage')"
+          @keyup.enter="sendMessage"
+      >
+        <template v-slot:append>
+          <icon-btn
+              color="primary"
+              :icon="mdiSend"
+              :tooltip="t('messenger.sendMessage')"
+              :disabled="!canSendMessage || submitting"
+              @click="sendMessage"
+          />
+        </template>
+      </v-text-field>
+    </v-form>
   </div>
 </template>
 
 <style scoped>
 .room-messenger {
   height: 100%;
-  min-height: 300px;
-  max-height: 300px;
+  min-height: 100px;
+  max-height: 400px;
 }
 
 .messages-container {
