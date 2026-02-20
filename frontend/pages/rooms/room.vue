@@ -12,6 +12,13 @@ import {BattleType} from "~/playground/data/battle";
 import RoomMessenger from "~/components/room-messenger.vue";
 import {ref} from "vue";
 
+const ExpansionPanels = {
+  PLAYERS: 'playersPanel',
+  MESSENGER: 'messengerPanel',
+  INVITE_PLAYERS: 'invitePlayersPanel',
+  ADD_BOTS: 'addBotsPanel',
+}
+
 const api = new ApiRequestSender()
 const requestErrorHandler = useRequestErrorHandler()
 
@@ -25,7 +32,7 @@ const vehicleSelector = ref<InstanceType<typeof VehicleSelector> | undefined>()
 const messengerBottomAnchor = ref<HTMLElement>()
 
 const selectedVehicle = ref<string>()
-const openedPanels = ref<string[]>(['playersPanel'])
+const openedPanels = ref<string[]>([ExpansionPanels.PLAYERS])
 const availableBattleTypes = ref<BattleType[]>([BattleType.DEATHMATCH, BattleType.TEAM_ELIMINATION])
 const battleType = ref<BattleType | undefined>()
 
@@ -62,6 +69,12 @@ watch(() => roomStore.room, value => {
 
 watch(battleType, (value, oldValue) => {
   value && oldValue && value !== oldValue && changeBattleType(value)
+})
+
+watch(openedPanels, (value, oldValue) => {
+  if (value.includes(ExpansionPanels.MESSENGER) && !oldValue.includes(ExpansionPanels.MESSENGER)) {
+    scrollToMessengerBottomAnchor()
+  }
 })
 
 onMounted(() => {
@@ -172,7 +185,7 @@ function back() {
           {{ t('room.battle') }}
         </v-btn>
         <v-expansion-panels class="mb-4" v-model="openedPanels" multiple>
-          <v-expansion-panel value="playersPanel">
+          <v-expansion-panel :value="ExpansionPanels.PLAYERS">
             <v-expansion-panel-title>
               <v-icon class="mr-2" :icon="mdiAccountMultiple"/>
               {{ t('room.players') }}
@@ -181,7 +194,7 @@ function back() {
               <room-members-table class="mb-4"/>
             </v-expansion-panel-text>
           </v-expansion-panel>
-          <v-expansion-panel value="messengerPanel" @click="scrollToMessengerBottomAnchor">
+          <v-expansion-panel :value="ExpansionPanels.MESSENGER">
             <v-expansion-panel-title>
               <v-badge
                   v-if="roomStore.newMessagesCount > 0"
@@ -199,7 +212,7 @@ function back() {
               <div ref="messengerBottomAnchor"></div>
             </v-expansion-panel-text>
           </v-expansion-panel>
-          <v-expansion-panel v-if="roomStore.userIsRoomOwner" value="invitePlayersPanel">
+          <v-expansion-panel v-if="roomStore.userIsRoomOwner" :value="ExpansionPanels.INVITE_PLAYERS">
             <v-expansion-panel-title>
               <v-icon class="mr-2" :icon="mdiAccountPlus"/>
               {{ t('room.invite') }}
@@ -208,7 +221,7 @@ function back() {
               <online-users-table />
             </v-expansion-panel-text>
           </v-expansion-panel>
-          <v-expansion-panel v-if="roomStore.userIsRoomOwner" value="addBotsPanel">
+          <v-expansion-panel v-if="roomStore.userIsRoomOwner" :value="ExpansionPanels.ADD_BOTS">
             <v-expansion-panel-title>
               <v-icon class="mr-2" :icon="mdiRobot"/>
               {{ t('room.addBots') }}
