@@ -3,14 +3,13 @@ import {useRouter} from "#app";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import {useRoomStore} from "~/stores/room";
 import {useUserStore} from "~/stores/user";
-import {mdiAccountMultiple, mdiAccountPlus, mdiRobot, mdiMessageTextOutline} from '@mdi/js'
+import {mdiAccountMultiple, mdiAccountPlus, mdiMessageTextOutline, mdiRobot} from '@mdi/js'
 import {useRequestErrorHandler} from "~/composables/request-error-handler";
 import VehicleSelector from "~/components/vehicle-selector.vue";
 import {useI18n} from "vue-i18n";
 import RoomMembersTable from "~/components/room-members-table.vue";
 import {BattleType} from "~/playground/data/battle";
 import RoomMessenger from "~/components/room-messenger.vue";
-import {DefaultColors} from "~/dictionary/default-colors";
 
 const api = new ApiRequestSender()
 const requestErrorHandler = useRequestErrorHandler()
@@ -39,27 +38,6 @@ const readyToBattle = computed(() => {
     }
   }
   return true
-})
-
-const nicknameColors = computed(() => {
-  const colors = {}
-  const room = roomStore.room
-  if (room) {
-    for (let teamId = 0; teamId <= 1; teamId++) {
-      const teamMembers = room.members[teamId]
-      if (teamMembers) {
-        const isUsersTeam = teamMembers.filter(teamMember => teamMember.nickname === userStore.user!.nickname).length > 0
-        for (const member of teamMembers) {
-          if (roomStore.isTeamMode) {
-            colors[member.nickname] = isUsersTeam ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM
-          } else {
-            colors[member.nickname] = member.nickname === userStore.user!.nickname ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM
-          }
-        }
-      }
-    }
-  }
-  return colors
 })
 
 watch(selectedVehicle, async (value) => {
@@ -197,16 +175,19 @@ function back() {
           </v-expansion-panel>
           <v-expansion-panel value="messengerPanel">
             <v-expansion-panel-title>
-              <v-icon class="mr-2" :icon="mdiMessageTextOutline"/>
+              <v-badge
+                  v-if="roomStore.newMessagesCount > 0"
+                  class="mr-2"
+                  color="error"
+                  :content="roomStore.newMessagesCount"
+              >
+                <v-icon :icon="mdiMessageTextOutline"/>
+              </v-badge>
+              <v-icon v-else class="mr-2" :icon="mdiMessageTextOutline"/>
               {{ t('messenger.messages') }}
             </v-expansion-panel-title>
             <v-expansion-panel-text>
-              <room-messenger
-                  :model-value="roomStore.messages"
-                  :nickname-colors="nicknameColors"
-                  :user-nickname="userStore.user!.nickname"
-                  class="mb-4"
-              />
+              <room-messenger class="mb-4"/>
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel v-if="roomStore.userIsRoomOwner" value="invitePlayersPanel">

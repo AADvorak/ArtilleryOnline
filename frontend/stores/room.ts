@@ -12,6 +12,8 @@ export const useRoomStore = defineStore('room', () => {
 
   const messages = ref<ChatMessage[]>([])
 
+  const newMessagesCount = ref(0)
+
   const updatesSubscription = ref()
 
   const messagesSubscription = ref()
@@ -40,6 +42,8 @@ export const useRoomStore = defineStore('room', () => {
       loadMessages().then()
     } else {
       unsubscribe()
+      messages.value = []
+      newMessagesCount.value = 0
     }
   })
 
@@ -73,6 +77,7 @@ export const useRoomStore = defineStore('room', () => {
     if (!messagesSubscription.value) {
       messagesSubscription.value = stompClientStore.client!.subscribe('/user/topic/room/messages', function (msgOut) {
         messages.value.push(JSON.parse(msgOut.body) as ChatMessage)
+        newMessagesCount.value = newMessagesCount.value + 1
       })
     }
   }
@@ -90,12 +95,12 @@ export const useRoomStore = defineStore('room', () => {
 
   function clear() {
     room.value = undefined
-    messages.value = []
   }
 
   return {
     room,
     messages,
+    newMessagesCount,
     allMembers,
     loadRoomIfNull,
     userIsRoomOwner,

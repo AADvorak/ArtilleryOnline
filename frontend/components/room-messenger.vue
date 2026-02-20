@@ -1,28 +1,25 @@
 <script setup lang="ts">
 import {computed, nextTick, ref, watch} from 'vue'
 import {mdiSend} from "@mdi/js";
-import type {ChatMessage} from "~/data/model";
 import {ApiRequestSender} from "~/api/api-request-sender";
 import {useI18n} from "vue-i18n";
 import {useValidationLocaleUtil} from "~/composables/validation-locale-util";
+import {useRoomStore} from "~/stores/room";
+import {useUserStore} from "~/stores/user";
+import {DefaultColors} from "~/dictionary/default-colors";
 
 interface NicknameColors {
   [nickname: string]: string
-}
-
-interface Props {
-  modelValue: ChatMessage[]
-  userNickname: string
-  nicknameColors: NicknameColors
 }
 
 const {t} = useI18n()
 const {localize} = useValidationLocaleUtil(t)
 const api = new ApiRequestSender()
 
-const props = defineProps<Props>()
-
 const bottomAnchor = ref<HTMLElement>()
+
+const roomStore = useRoomStore()
+const userStore = useUserStore()
 
 const form = reactive({
   text: ''
@@ -36,8 +33,29 @@ const canSendMessage = computed(() => {
   return form.text.trim().length > 0
 })
 
+const nicknameColors = computed<NicknameColors>(() => {
+  const colors: NicknameColors = {}
+  const room = roomStore.room
+  if (room) {
+    for (let teamId = 0; teamId <= 1; teamId++) {
+      const teamMembers = room.members[teamId]
+      if (teamMembers) {
+        const isUsersTeam = teamMembers.filter(teamMember => teamMember.nickname === userStore.user!.nickname).length > 0
+        for (const member of teamMembers) {
+          if (roomStore.isTeamMode) {
+            colors[member.nickname] = isUsersTeam ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM
+          } else {
+            colors[member.nickname] = member.nickname === userStore.user!.nickname ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM
+          }
+        }
+      }
+    }
+  }
+  return colors
+})
+
 const getNicknameColor = (nickname: string): string => {
-  return props.nicknameColors[nickname] || '#757575' // Серый цвет по умолчанию
+  return nicknameColors.value[nickname] || '#757575'
 }
 
 async function sendMessage() {
@@ -53,9 +71,10 @@ const scrollToBottom = async () => {
   if (bottomAnchor.value) {
     bottomAnchor.value.scrollIntoView({ behavior: 'smooth' })
   }
+  roomStore.newMessagesCount = 0
 }
 
-watch(() => props.modelValue.length, () => {
+watch(() => roomStore.messages.length, () => {
   scrollToBottom()
 })
 
@@ -67,14 +86,14 @@ watch(bottomAnchor, () => {
 <template>
   <div class="room-messenger d-flex flex-column h-100">
     <div class="messages-container flex-grow-1 overflow-y-auto pa-4">
-      <div v-if="!modelValue?.length" class="text-center mt-4">
+      <div v-if="!roomStore.messages.length" class="text-center mt-4">
         {{ t('messenger.noMessages') }}
       </div>
       <div
-          v-for="(message, index) in modelValue"
+          v-for="(message, index) in roomStore.messages"
           :key="index"
           class="message-wrapper"
-          :class="{ 'own-message': message.nickname === userNickname }"
+          :class="{ 'own-message': message.nickname === userStore.user!.nickname }"
       >
         <div class="message-bubble">
           <div class="message-header d-flex align-center">
