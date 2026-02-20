@@ -10,6 +10,7 @@ import {useI18n} from "vue-i18n";
 import RoomMembersTable from "~/components/room-members-table.vue";
 import {BattleType} from "~/playground/data/battle";
 import RoomMessenger from "~/components/room-messenger.vue";
+import {ref} from "vue";
 
 const api = new ApiRequestSender()
 const requestErrorHandler = useRequestErrorHandler()
@@ -21,6 +22,7 @@ const roomStore = useRoomStore()
 const userStore = useUserStore()
 
 const vehicleSelector = ref<InstanceType<typeof VehicleSelector> | undefined>()
+const messengerBottomAnchor = ref<HTMLElement>()
 
 const selectedVehicle = ref<string>()
 const openedPanels = ref<string[]>(['playersPanel'])
@@ -68,6 +70,12 @@ onMounted(() => {
   }
   setSelectedVehicle()
 })
+
+function scrollToMessengerBottomAnchor() {
+  setTimeout(() => {
+    messengerBottomAnchor.value && messengerBottomAnchor.value.scrollIntoView({behavior: 'smooth'})
+  }, 200)
+}
 
 function setSelectedVehicle() {
   const memberVehicle = roomStore.allMembers
@@ -173,7 +181,7 @@ function back() {
               <room-members-table class="mb-4"/>
             </v-expansion-panel-text>
           </v-expansion-panel>
-          <v-expansion-panel value="messengerPanel">
+          <v-expansion-panel value="messengerPanel" @click="scrollToMessengerBottomAnchor">
             <v-expansion-panel-title>
               <v-badge
                   v-if="roomStore.newMessagesCount > 0"
@@ -188,6 +196,7 @@ function back() {
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <room-messenger class="mb-4"/>
+              <div ref="messengerBottomAnchor"></div>
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel v-if="roomStore.userIsRoomOwner" value="invitePlayersPanel">

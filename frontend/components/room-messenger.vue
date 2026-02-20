@@ -16,7 +16,7 @@ const {t} = useI18n()
 const {localize} = useValidationLocaleUtil(t)
 const api = new ApiRequestSender()
 
-const bottomAnchor = ref<HTMLElement>()
+const messagesContainer = ref<HTMLElement>()
 
 const roomStore = useRoomStore()
 const userStore = useUserStore()
@@ -68,24 +68,27 @@ async function sendMessage() {
 
 const scrollToBottom = async () => {
   await nextTick()
-  if (bottomAnchor.value) {
-    bottomAnchor.value.scrollIntoView({ behavior: 'smooth' })
+  if (messagesContainer.value) {
+    messagesContainer.value.scrollTo({
+      top: messagesContainer.value.scrollHeight,
+      behavior: 'smooth'
+    })
   }
   roomStore.newMessagesCount = 0
 }
 
-watch(() => roomStore.messages.length, () => {
+onMounted(() => {
   scrollToBottom()
 })
 
-watch(bottomAnchor, () => {
+watch(() => roomStore.messages.length, () => {
   scrollToBottom()
-}, { immediate: true })
+})
 </script>
 
 <template>
   <div class="room-messenger d-flex flex-column h-100">
-    <div class="messages-container flex-grow-1 overflow-y-auto pa-4">
+    <div ref="messagesContainer" class="messages-container flex-grow-1 overflow-y-auto pa-4">
       <div v-if="!roomStore.messages.length" class="text-center mt-4">
         {{ t('messenger.noMessages') }}
       </div>
@@ -112,7 +115,6 @@ watch(bottomAnchor, () => {
           </div>
         </div>
       </div>
-      <div ref="bottomAnchor" />
     </div>
     <v-divider />
     <v-form @submit.prevent>
