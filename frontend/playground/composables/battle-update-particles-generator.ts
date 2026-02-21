@@ -9,6 +9,8 @@ import {useBattleStore} from "~/stores/battle";
 import type {BattleUpdate} from "~/playground/data/battle";
 import {type RegularPolygonShape, ShapeNames} from "~/playground/data/shapes";
 import {mdiSkullCrossbones} from "@mdi/js";
+import {useUserSettingsStore} from "~/stores/user-settings";
+import {AppearancesNames} from "~/dictionary/appearances-names";
 
 export function useBattleUpdateParticlesGenerator() {
 
@@ -26,6 +28,10 @@ export function useBattleUpdateParticlesGenerator() {
   const MIN_BODY_PARTICLE_SIZE = 0.04
 
   const battleStore = useBattleStore()
+
+  const userSettingsStore = useUserSettingsStore()
+
+  const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
 
   function generate(battleUpdate: BattleUpdate, battleModel: BattleModel) {
     battleUpdate.events && generateForEvents(battleUpdate.events, battleModel)
@@ -101,7 +107,12 @@ export function useBattleUpdateParticlesGenerator() {
   }
 
   function showDestroy(model: VehicleModel) {
-    const position = BattleUtils.shiftedPosition(model.state.position, model.preCalc.maxRadius, Math.PI / 2)
+    const nicknameAbove = appearances.value[AppearancesNames.NICKNAMES_ABOVE] === '1'
+    const position = BattleUtils.shiftedPosition(
+        model.state.position,
+        1.5 * model.preCalc.maxRadius + (nicknameAbove ? 0.3 : 0.15),
+        Math.PI / 2
+    )
     battleStore.addParticle(BattleUtils.generateParticle(position, MSG_PARTICLE_LIFETIME),
         {color: DefaultColors.BRIGHT_RED, icon: mdiSkullCrossbones})
   }
