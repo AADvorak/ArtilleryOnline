@@ -8,6 +8,7 @@ import {DefaultColors} from "~/dictionary/default-colors";
 import {useBattleStore} from "~/stores/battle";
 import type {BattleUpdate} from "~/playground/data/battle";
 import {type RegularPolygonShape, ShapeNames} from "~/playground/data/shapes";
+import {mdiSkullCrossbones} from "@mdi/js";
 
 export function useBattleUpdateParticlesGenerator() {
 
@@ -36,6 +37,13 @@ export function useBattleUpdateParticlesGenerator() {
           const newState = vehicles[key]!
           showChangeHp(model, model.state, newState)
         }
+      })
+    }
+    const destroyedVehicleKeys = battleUpdate.updates?.removed?.vehicleKeys
+    if (destroyedVehicleKeys) {
+      destroyedVehicleKeys.forEach(key => {
+        const model = battleModel.vehicles[key]
+        model && showDestroy(model)
       })
     }
   }
@@ -90,6 +98,12 @@ export function useBattleUpdateParticlesGenerator() {
     const position = BattleUtils.shiftedPosition(model.state.position, model.preCalc.maxRadius, Math.PI / 2)
     battleStore.addParticle(BattleUtils.generateParticle(position, MSG_PARTICLE_LIFETIME),
         {color: DefaultColors.BRIGHT_GREEN, text: '+ammo'})
+  }
+
+  function showDestroy(model: VehicleModel) {
+    const position = BattleUtils.shiftedPosition(model.state.position, model.preCalc.maxRadius, Math.PI / 2)
+    battleStore.addParticle(BattleUtils.generateParticle(position, MSG_PARTICLE_LIFETIME),
+        {color: DefaultColors.BRIGHT_RED, icon: mdiSkullCrossbones})
   }
 
   function addHitParticles(contact: Contact, caliber: number, velocityMagnitude: number, isHit: boolean) {

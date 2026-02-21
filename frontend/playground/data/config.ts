@@ -27,6 +27,7 @@ export interface ParticleConfig {
   color?: string
   text?: string
   size?: number
+  icon?: string
   groundTexture?: boolean
 }
 

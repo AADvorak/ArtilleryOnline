@@ -27,6 +27,10 @@ export function useParticleDrawer(
       drawText(position, particleModel.config)
       return
     }
+    if (particleModel.config.icon) {
+      drawerBase.drawMDIIcon(particleModel.config.icon, position, particleModel.config.color || 'rgb(256 256 256)')
+      return
+    }
     if (particleModel.config.size) {
       drawerBase.drawCircle(new Circle(position, particleModel.config.size / 2), {groundTexture: true})
       return
