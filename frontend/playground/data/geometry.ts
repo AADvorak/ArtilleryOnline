@@ -64,6 +64,21 @@ export class Segment {
   normal(): Vector {
     return VectorUtils.normal(VectorUtils.angleFromTo(this.end, this.begin))
   }
+
+  grid(step: number): Position[] {
+    const grid: Position[] = []
+    const center = this.center()
+    grid.push(center)
+    const angle = VectorUtils.angleFromTo(this.begin, this.end)
+    const halfLength = BattleUtils.distance(this.begin, this.end) / 2
+    let i = 1
+    while (step * i <= halfLength) {
+      grid.push(BattleUtils.shiftedPosition(center, step * i, angle))
+      grid.push(BattleUtils.shiftedPosition(center, -step * i, angle))
+      i++
+    }
+    return grid
+  }
 }
 
 export class Circle implements BodyPart {
@@ -267,8 +282,32 @@ export class Trapeze implements BodyPart {
     return Math.max(topCornerDistance, this.shape.bottomRadius)
   }
 
+  grid(step: number): Position[] {
+    let i = 0
+    const grid: Position[] = []
+    while (step * i <= this.shape.height) {
+      const radius = this.getRadius(step * i)
+      const segmentCenter = BattleUtils.shiftedPosition(this.position, step * i, this.position.angle + Math.PI / 2)
+      const segment = new Segment(
+          BattleUtils.shiftedPosition(segmentCenter, radius, this.position.angle),
+          BattleUtils.shiftedPosition(segmentCenter, -radius, this.position.angle)
+      )
+      grid.push(...segment.grid(step))
+      i++
+    }
+    return grid
+  }
+
   private topCenter(): Position {
     return BattleUtils.shiftedPosition(this.position, this.shape.height, this.position.angle + Math.PI / 2)
+  }
+
+  private getRadius(distanceFromBottom: number): number {
+    if (distanceFromBottom < 0 || distanceFromBottom > this.shape.height) {
+      return 0
+    }
+    return distanceFromBottom * (this.shape.topRadius - this.shape.bottomRadius)
+        / this.shape.height + this.shape.bottomRadius
   }
 
   static ofSurface(surface: SurfaceState): Trapeze {
