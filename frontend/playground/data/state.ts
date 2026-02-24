@@ -1,4 +1,4 @@
-import type {Ammo, Position, BodyVelocity, Velocity, BodyPosition} from "@/playground/data/common";
+import type {Ammo, Position, BodyVelocity, Velocity, BodyPosition, BodyAcceleration} from "@/playground/data/common";
 import {MovingDirection} from "@/playground/data/common";
 
 export interface BodyState {
@@ -47,6 +47,7 @@ export interface ParticleState {
 export interface BodyParticleState extends BodyState {
   remainTime: number
   firstStepPassed?: boolean
+  acceleration?: BodyAcceleration
 }
 
 export interface MissileState extends BodyState {
