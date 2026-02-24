@@ -3,8 +3,14 @@ import {useBattleStore} from '~/stores/battle'
 import type {BodyParticleModel, ParticleModel} from '@/playground/data/model'
 import type {Position} from "~/playground/data/common";
 import type {ParticleConfig} from "~/playground/data/config";
-import {Circle, RegularPolygon, Segment} from "~/playground/data/geometry";
-import {type CircleShape, type RegularPolygonShape, ShapeNames} from "~/playground/data/shapes";
+import {Circle, HalfCircle, RegularPolygon, Segment, Trapeze} from "~/playground/data/geometry";
+import {
+  type CircleShape,
+  type HalfCircleShape,
+  type RegularPolygonShape,
+  ShapeNames,
+  type TrapezeShape
+} from "~/playground/data/shapes";
 
 export function useParticleDrawer(
   drawerBase: DrawerBase
@@ -68,6 +74,13 @@ export function useParticleDrawer(
     if (shape.name === ShapeNames.CIRCLE) {
       drawerBase.drawCircle(new Circle(particleModel.state.position,
           (shape as CircleShape).radius), params)
+    }
+    if (shape.name === ShapeNames.HALF_CIRCLE) {
+      drawerBase.drawHalfCircle(new HalfCircle(particleModel.state.position,
+          (shape as HalfCircleShape).radius, particleModel.state.position.angle), params)
+    }
+    if (shape.name === ShapeNames.TRAPEZE) {
+      drawerBase.drawTrapeze(new Trapeze(particleModel.state.position, shape as TrapezeShape), params)
     }
   }
 

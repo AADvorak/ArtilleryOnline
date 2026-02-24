@@ -42,9 +42,14 @@ export function useBattleUpdateParticlesGenerator() {
   const CALIBER_PARTICLES_NUMBER_COEFFICIENT = 150
   const GROUND_PARTICLES_NUMBER = 40
   const MIN_BODY_PARTICLE_SIZE = 0.04
+  const DESTROY_PARTICLES_VELOCITY = 1.5
+  const DESTROY_PARTICLES_VELOCITY_DEVIATION = 1.5
+  const DESTROY_PARTICLES_ANGLE_VELOCITY_DEVIATION = Math.PI / 2
   const DESTROY_PARTICLES_ACCELERATION = 30
   const DESTROY_PARTICLES_ACCELERATION_DEVIATION = 10
-  const DESTROY_PARTICLES_ANGLE_ACCELERATION_DEVIATION = Math.PI / 2
+  const DESTROY_PARTICLES_ANGLE_ACCELERATION_DEVIATION = 6 * Math.PI
+
+  const ACCELERATION_PARTICLES = true
 
   const battleStore = useBattleStore()
 
@@ -200,28 +205,53 @@ export function useBattleUpdateParticlesGenerator() {
     }
     VehicleUtils.getSmallWheels(vehicleModel).forEach(position =>
         addVehicleExplosionParticle(position, smallWheelShape, vehicleModel, gravityAcceleration))
+    !ACCELERATION_PARTICLES && addVehicleExplosionTurretParticle(vehicleModel)
     const gridStep = 0.05
-    const gridParticleShape: RegularPolygonShape = {
-      name: ShapeNames.REGULAR_POLYGON,
-      radius: gridStep * (1 + Math.random() / 2),
-      sidesNumber: 3
-    }
+    const iterations = ACCELERATION_PARTICLES ? 2 : 1
     getTurretGrid(vehicleModel, gridStep).forEach(position => {
-      for (let i = 0; i < 2; i++) {
-        gridParticleShape.sidesNumber = getRandomInt(3, 6)
+      for (let i = 0; i < iterations; i++) {
+        const gridParticleShape: RegularPolygonShape = {
+          name: ShapeNames.REGULAR_POLYGON,
+          radius: gridStep * (1 + Math.random() / 2),
+          sidesNumber: getRandomInt(3, 6)
+        }
         addVehicleExplosionParticle(position, gridParticleShape, vehicleModel, gravityAcceleration)
       }
     })
   }
 
   function addVehicleExplosionParticle(position: Position, shape: Shape,
-                                       vehicleModel: VehicleModel, gravityAcceleration: number) {
+                                                       vehicleModel: VehicleModel, gravityAcceleration: number) {
+    ACCELERATION_PARTICLES
+        ? addVehicleExplosionParticleWithAcceleration(position, shape, vehicleModel, gravityAcceleration)
+        : addVehicleExplosionParticleWithVelocity(position, shape, vehicleModel)
+  }
+
+  function addVehicleExplosionParticleWithVelocity(position: Position, shape: Shape, vehicleModel: VehicleModel) {
+    const movingVelocity = BodyUtils.getVelocityAt(vehicleModel.state, position)
+    const vectorFromCOM = VectorUtils.vectorFromTo(vehicleModel.state.position, position)
+    const explosionVelocityMagnitude = DESTROY_PARTICLES_VELOCITY
+        + DESTROY_PARTICLES_VELOCITY_DEVIATION * 2 * (Math.random() - 0.5)
+    VectorUtils.normalize(vectorFromCOM)
+    const velocity: BodyVelocity = {
+      x: movingVelocity.x + vectorFromCOM.x * explosionVelocityMagnitude,
+      y: movingVelocity.y + vectorFromCOM.y * explosionVelocityMagnitude,
+      angle: DESTROY_PARTICLES_ANGLE_VELOCITY_DEVIATION * (Math.random() - 0.5)
+    }
+    battleStore.addBodyParticle(
+        {position: {...position, angle: 0}, velocity, remainTime: 0.3},
+        {shape, color: vehicleModel.config.color}
+    )
+  }
+
+  function addVehicleExplosionParticleWithAcceleration(position: Position, shape: Shape,
+                                                       vehicleModel: VehicleModel, gravityAcceleration: number) {
     const movingVelocity = BodyUtils.getVelocityAt(vehicleModel.state, position)
     const vectorFromCOM = VectorUtils.vectorFromTo(vehicleModel.state.position, position)
     const distanceCoefficient = BattleUtils.distance(vehicleModel.state.position, position)
         / vehicleModel.preCalc.maxRadius
     const remainTime = 0.3 + 0.2 * (Math.random() - 0.5)
-    const explosionVelocityMagnitude = distanceCoefficient * (DESTROY_PARTICLES_ACCELERATION
+    const explosionAccelerationMagnitude = distanceCoefficient * (DESTROY_PARTICLES_ACCELERATION
         + DESTROY_PARTICLES_ACCELERATION_DEVIATION * Math.random()) / remainTime
     VectorUtils.normalize(vectorFromCOM)
     const velocity: BodyVelocity = {
@@ -230,13 +260,36 @@ export function useBattleUpdateParticlesGenerator() {
       angle: 0
     }
     const acceleration: BodyAcceleration = {
-      x: vectorFromCOM.x * explosionVelocityMagnitude,
-      y: vectorFromCOM.y * explosionVelocityMagnitude + gravityAcceleration + 2.0,
+      x: vectorFromCOM.x * explosionAccelerationMagnitude + 0.5 * Math.random() * explosionAccelerationMagnitude,
+      y: vectorFromCOM.y * explosionAccelerationMagnitude + 0.5 * Math.random() * explosionAccelerationMagnitude + gravityAcceleration + 2.0,
       angle: distanceCoefficient * DESTROY_PARTICLES_ANGLE_ACCELERATION_DEVIATION * 2 * (Math.random() - 0.5) / remainTime
     }
     battleStore.addBodyParticle(
         {position: {...position, angle: 0}, velocity, acceleration, remainTime},
         {shape, color: vehicleModel.config.color}
+    )
+  }
+
+  function addVehicleExplosionTurretParticle(vehicleModel: VehicleModel) {
+    const remainTime = 1.0 + 0.5 * Math.random()
+    const explosionVelocityMagnitude = DESTROY_PARTICLES_VELOCITY
+        + DESTROY_PARTICLES_VELOCITY_DEVIATION * 2 * (Math.random() - 0.5)
+    const upVector = VectorUtils.vectorFromTo(BodyUtils.getGeometryPosition(vehicleModel),
+        vehicleModel.state.position)
+    VectorUtils.normalize(upVector)
+    const addVelocity: BodyVelocity = {
+      x: upVector.x * explosionVelocityMagnitude,
+      y: upVector.y * explosionVelocityMagnitude,
+      angle: Math.PI / 2 * 2 * (Math.random() - 0.5)
+    }
+    const velocity = {
+      x: vehicleModel.state.velocity.x + addVelocity.x,
+      y: vehicleModel.state.velocity.y + addVelocity.y,
+      angle: vehicleModel.state.velocity.angle + addVelocity.angle
+    }
+    battleStore.addBodyParticle(
+        {position: vehicleModel.state.position, velocity, remainTime},
+        {shape: vehicleModel.specs.turretShape, color: vehicleModel.config.color}
     )
   }
 
