@@ -168,6 +168,29 @@ export class HalfCircle implements BodyPart {
     return new Circle(this.center, this.radius)
   }
 
+  grid(step: number): Position[] {
+    let i = 0
+    const grid: Position[] = []
+    while (step * i <= this.radius) {
+      const radius = this.getRadius(step * i)
+      const segmentCenter = BattleUtils.shiftedPosition(this.center, step * i, this.angle + Math.PI / 2)
+      const segment = new Segment(
+          BattleUtils.shiftedPosition(segmentCenter, radius, this.angle),
+          BattleUtils.shiftedPosition(segmentCenter, -radius, this.angle)
+      )
+      grid.push(...segment.grid(step))
+      i++
+    }
+    return grid
+  }
+
+  private getRadius(distanceFromBottom: number): number {
+    if (distanceFromBottom < 0 || distanceFromBottom > this.radius) {
+      return 0
+    }
+    return this.radius * Math.cos(Math.PI / 2 * distanceFromBottom / this.radius)
+  }
+
   static of(bodyPosition: BodyPosition, radius: number): HalfCircle {
     return new HalfCircle({x: bodyPosition.x, y: bodyPosition.y}, radius, bodyPosition.angle)
   }
