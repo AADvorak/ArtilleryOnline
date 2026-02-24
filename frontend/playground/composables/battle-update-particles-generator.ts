@@ -42,8 +42,8 @@ export function useBattleUpdateParticlesGenerator() {
   const CALIBER_PARTICLES_NUMBER_COEFFICIENT = 150
   const GROUND_PARTICLES_NUMBER = 40
   const MIN_BODY_PARTICLE_SIZE = 0.04
-  const DESTROY_PARTICLES_ACCELERATION = 20
-  const DESTROY_PARTICLES_ACCELERATION_DEVIATION = 5
+  const DESTROY_PARTICLES_ACCELERATION = 30
+  const DESTROY_PARTICLES_ACCELERATION_DEVIATION = 10
   const DESTROY_PARTICLES_ANGLE_ACCELERATION_DEVIATION = Math.PI / 2
 
   const battleStore = useBattleStore()
@@ -219,7 +219,7 @@ export function useBattleUpdateParticlesGenerator() {
         / vehicleModel.preCalc.maxRadius
     const remainTime = 0.3 + 0.2 * (Math.random() - 0.5)
     const explosionVelocityMagnitude = distanceCoefficient * (DESTROY_PARTICLES_ACCELERATION
-        + DESTROY_PARTICLES_ACCELERATION_DEVIATION * 2 * (Math.random() - 0.5)) / remainTime
+        + DESTROY_PARTICLES_ACCELERATION_DEVIATION * Math.random()) / remainTime
     VectorUtils.normalize(vectorFromCOM)
     const velocity: BodyVelocity = {
       x: movingVelocity.x,
