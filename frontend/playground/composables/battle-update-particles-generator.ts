@@ -70,7 +70,7 @@ export function useBattleUpdateParticlesGenerator() {
         const model = battleModel.vehicles[key]
         if (model) {
           showDestroy(model)
-          addVehicleExplosionParticles(model)
+          addVehicleExplosionParticles(model, battleModel.room.specs.gravityAcceleration)
         }
       })
     }
@@ -185,19 +185,21 @@ export function useBattleUpdateParticlesGenerator() {
     }
   }
 
-  function addVehicleExplosionParticles(vehicleModel: VehicleModel) {
+  function addVehicleExplosionParticles(vehicleModel: VehicleModel, gravityAcceleration: number) {
     const wheelShape: CircleShape = {
       name: ShapeNames.CIRCLE,
       radius: vehicleModel.specs.wheelRadius,
     }
-    addVehicleExplosionParticle(VehicleUtils.getRightWheelPosition(vehicleModel), wheelShape, vehicleModel)
-    addVehicleExplosionParticle(VehicleUtils.getLeftWheelPosition(vehicleModel), wheelShape, vehicleModel)
+    addVehicleExplosionParticle(VehicleUtils.getRightWheelPosition(vehicleModel),
+        wheelShape, vehicleModel, gravityAcceleration)
+    addVehicleExplosionParticle(VehicleUtils.getLeftWheelPosition(vehicleModel),
+        wheelShape, vehicleModel, gravityAcceleration)
     const smallWheelShape: CircleShape = {
       name: ShapeNames.CIRCLE,
       radius: vehicleModel.specs.wheelRadius / 2,
     }
     VehicleUtils.getSmallWheels(vehicleModel).forEach(position =>
-        addVehicleExplosionParticle(position, smallWheelShape, vehicleModel))
+        addVehicleExplosionParticle(position, smallWheelShape, vehicleModel, gravityAcceleration))
     const gridStep = 0.05
     const gridParticleShape: RegularPolygonShape = {
       name: ShapeNames.REGULAR_POLYGON,
@@ -207,12 +209,13 @@ export function useBattleUpdateParticlesGenerator() {
     getTurretGrid(vehicleModel, gridStep).forEach(position => {
       for (let i = 0; i < 2; i++) {
         gridParticleShape.sidesNumber = getRandomInt(3, 6)
-        addVehicleExplosionParticle(position, gridParticleShape, vehicleModel)
+        addVehicleExplosionParticle(position, gridParticleShape, vehicleModel, gravityAcceleration)
       }
     })
   }
 
-  function addVehicleExplosionParticle(position: Position, shape: Shape, vehicleModel: VehicleModel) {
+  function addVehicleExplosionParticle(position: Position, shape: Shape,
+                                       vehicleModel: VehicleModel, gravityAcceleration: number) {
     const movingVelocity = BodyUtils.getVelocityAt(vehicleModel.state, position)
     const vectorFromCOM = VectorUtils.vectorFromTo(vehicleModel.state.position, position)
     const distanceCoefficient = BattleUtils.distance(vehicleModel.state.position, position)
@@ -228,7 +231,7 @@ export function useBattleUpdateParticlesGenerator() {
     }
     const acceleration: BodyAcceleration = {
       x: vectorFromCOM.x * explosionVelocityMagnitude,
-      y: vectorFromCOM.y * explosionVelocityMagnitude + 10.0,
+      y: vectorFromCOM.y * explosionVelocityMagnitude + gravityAcceleration + 2.0,
       angle: distanceCoefficient * DESTROY_PARTICLES_ANGLE_ACCELERATION_DEVIATION * 2 * (Math.random() - 0.5) / remainTime
     }
     battleStore.addBodyParticle(
