@@ -17,6 +17,8 @@ public class Battle {
 
     public static final long TIME_STEP_MS = 10;
 
+    public static final long FINISH_TIMEOUT = 2000;
+
     private BattleModel model;
 
     private final String id = UUID.randomUUID().toString();
@@ -60,6 +62,8 @@ public class Battle {
     private Map<String, Integer> nicknameTeamMap = new HashMap<>();
 
     private Integer winnerTeamId;
+
+    private Long finishTime;
 
     public void setStageAndResetTime(BattleStage battleStage) {
         this.battleStage = battleStage;

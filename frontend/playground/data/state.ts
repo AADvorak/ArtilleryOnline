@@ -41,10 +41,12 @@ export interface ParticleState {
   position: Position
   velocity: Velocity
   remainTime: number
+  firstStepPassed?: boolean
 }
 
 export interface BodyParticleState extends BodyState {
   remainTime: number
+  firstStepPassed?: boolean
 }
 
 export interface MissileState extends BodyState {

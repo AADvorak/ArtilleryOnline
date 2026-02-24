@@ -4,7 +4,7 @@ import type {BodyParticleModel, ParticleModel} from '@/playground/data/model'
 import type {Position} from "~/playground/data/common";
 import type {ParticleConfig} from "~/playground/data/config";
 import {Circle, RegularPolygon, Segment} from "~/playground/data/geometry";
-import {type RegularPolygonShape, ShapeNames} from "~/playground/data/shapes";
+import {type CircleShape, type RegularPolygonShape, ShapeNames} from "~/playground/data/shapes";
 
 export function useParticleDrawer(
   drawerBase: DrawerBase
@@ -64,6 +64,10 @@ export function useParticleDrawer(
     if (shape.name === ShapeNames.REGULAR_POLYGON) {
       drawerBase.drawRegularPolygon(new RegularPolygon(particleModel.state.position,
           shape as RegularPolygonShape), params)
+    }
+    if (shape.name === ShapeNames.CIRCLE) {
+      drawerBase.drawCircle(new Circle(particleModel.state.position,
+          (shape as CircleShape).radius), params)
     }
   }
 

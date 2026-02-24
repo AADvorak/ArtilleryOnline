@@ -102,12 +102,7 @@ public class AllBattleObjectsProcessor {
             }
             var removedVehicleKeys = battleModel.getUpdates().getRemoved().getVehicleKeys();
             if (removedVehicleKeys != null) {
-                removedVehicleKeys.forEach(key -> {
-                    var vehicleModel = battleModel.getVehicles().get(key);
-                    ExplosionInitializer.init(vehicleModel.getState().getPosition().getCenter(),
-                            vehicleModel.getPreCalc().getMaxRadius(), battleModel);
-                    battleModel.removeVehicleByKey(key);
-                });
+                removedVehicleKeys.forEach(battleModel::removeVehicleByKey);
             }
         }
     }

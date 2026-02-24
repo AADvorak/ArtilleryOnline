@@ -24,12 +24,24 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
     protected void doStepLogic(Battle battle) {
         readCommandsFromQueue(battle);
         allBattleObjectsProcessor.process(battle);
+        checkFinished(battle);
     }
 
     @Override
     protected boolean changeStageIfNeeded(Battle battle) {
         if (super.changeStageIfNeeded(battle)) {
             return true;
+        }
+        if (battle.getFinishTime() != null && battle.getTime() - battle.getFinishTime() > Battle.FINISH_TIMEOUT) {
+            battle.setStageAndResetTime(BattleStage.FINISHED);
+            return true;
+        }
+        return false;
+    }
+
+    private void checkFinished(Battle battle) {
+        if (battle.getFinishTime() != null) {
+            return;
         }
         if (battle.getType().isTeam()) {
             if (battle.getWinnerTeamId() == null) {
@@ -45,28 +57,19 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
                     battle.setWinnerTeamId(0);
                 }
             }
-            if (battle.getWinnerTeamId() != null && battle.getModel().getExplosions().isEmpty()) {
-                battle.setStageAndResetTime(BattleStage.FINISHED);
-                return true;
+            if (battle.getWinnerTeamId() != null) {
+                battle.setFinishTime(battle.getTime());
+                return;
             }
         }
-        if (battle.getModel().getVehicles().isEmpty()
-                && battle.getModel().getShells().isEmpty()
-                && battle.getModel().getExplosions().isEmpty()
-                && battle.getModel().getMissiles().isEmpty()) {
-            battle.setStageAndResetTime(BattleStage.FINISHED);
-            return true;
+        if (battle.getModel().getVehicles().isEmpty()) {
+            battle.setFinishTime(battle.getTime());
+            return;
         }
         if (!BattleType.DRONE_HUNT.equals(battle.getType())
-                && battle.getModel().getVehicles().size() == 1
-                && battle.getModel().getShells().isEmpty()
-                && battle.getModel().getExplosions().isEmpty()
-                && battle.getModel().getMissiles().isEmpty()
-                && battle.getModel().getDrones().isEmpty()) {
-            battle.setStageAndResetTime(BattleStage.FINISHED);
-            return true;
+                && battle.getModel().getVehicles().size() == 1) {
+            battle.setFinishTime(battle.getTime());
         }
-        return false;
     }
 
     private void readCommandsFromQueue(Battle battle) {

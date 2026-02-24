@@ -1,16 +1,31 @@
 import {type BattleModelEvents, RepairEventType} from "~/playground/data/events";
 import type {BattleModel, VehicleModel} from "~/playground/data/model";
-import {Contact, ShellHitType, ShellType} from "~/playground/data/common";
+import {
+  type BodyVelocity,
+  Contact,
+  type Position,
+  ShellHitType,
+  ShellType
+} from "~/playground/data/common";
 import {VectorUtils} from "~/playground/utils/vector-utils";
 import type {VehicleState} from "~/playground/data/state";
 import {BattleUtils} from "~/playground/utils/battle-utils";
 import {DefaultColors} from "~/dictionary/default-colors";
 import {useBattleStore} from "~/stores/battle";
 import type {BattleUpdate} from "~/playground/data/battle";
-import {type RegularPolygonShape, ShapeNames} from "~/playground/data/shapes";
+import {
+  type CircleShape,
+  type HalfCircleShape,
+  type RegularPolygonShape,
+  type Shape,
+  ShapeNames, type TrapezeShape
+} from "~/playground/data/shapes";
 import {mdiSkullCrossbones} from "@mdi/js";
 import {useUserSettingsStore} from "~/stores/user-settings";
 import {AppearancesNames} from "~/dictionary/appearances-names";
+import {VehicleUtils} from "~/playground/utils/vehicle-utils";
+import {BodyUtils} from "~/playground/utils/body-utils";
+import {HalfCircle, Trapeze} from "~/playground/data/geometry";
 
 export function useBattleUpdateParticlesGenerator() {
 
@@ -26,6 +41,9 @@ export function useBattleUpdateParticlesGenerator() {
   const CALIBER_PARTICLES_NUMBER_COEFFICIENT = 150
   const GROUND_PARTICLES_NUMBER = 40
   const MIN_BODY_PARTICLE_SIZE = 0.04
+  const DESTROY_PARTICLES_VELOCITY = 1.5
+  const DESTROY_PARTICLES_VELOCITY_DEVIATION = 1.5
+  const DESTROY_PARTICLES_ANGLE_VELOCITY_DEVIATION = Math.PI / 2
 
   const battleStore = useBattleStore()
 
@@ -49,7 +67,10 @@ export function useBattleUpdateParticlesGenerator() {
     if (destroyedVehicleKeys) {
       destroyedVehicleKeys.forEach(key => {
         const model = battleModel.vehicles[key]
-        model && showDestroy(model)
+        if (model) {
+          showDestroy(model)
+          addVehicleExplosionParticles(model)
+        }
       })
     }
   }
@@ -161,6 +182,66 @@ export function useBattleUpdateParticlesGenerator() {
         )
       }
     }
+  }
+
+  function addVehicleExplosionParticles(vehicleModel: VehicleModel) {
+    const wheelShape: CircleShape = {
+      name: ShapeNames.CIRCLE,
+      radius: vehicleModel.specs.wheelRadius,
+    }
+    addVehicleExplosionParticle(VehicleUtils.getRightWheelPosition(vehicleModel), wheelShape, vehicleModel)
+    addVehicleExplosionParticle(VehicleUtils.getLeftWheelPosition(vehicleModel), wheelShape, vehicleModel)
+    const smallWheelShape: CircleShape = {
+      name: ShapeNames.CIRCLE,
+      radius: vehicleModel.specs.wheelRadius / 2,
+    }
+    VehicleUtils.getSmallWheels(vehicleModel).forEach(position =>
+        addVehicleExplosionParticle(position, smallWheelShape, vehicleModel))
+    const gridStep = 0.05
+    const gridParticleShape: RegularPolygonShape = {
+      name: ShapeNames.REGULAR_POLYGON,
+      radius: gridStep * 1.3,
+      sidesNumber: 5
+    }
+    getTurretGrid(vehicleModel, gridStep).forEach(position =>
+        addVehicleExplosionParticle(position, gridParticleShape, vehicleModel))
+  }
+
+  function addVehicleExplosionParticle(position: Position, shape: Shape, vehicleModel: VehicleModel) {
+    const movingVelocity = BodyUtils.getVelocityAt(vehicleModel.state, position)
+    const vectorFromCOM = VectorUtils.vectorFromTo(vehicleModel.state.position, position)
+    const explosionVelocityMagnitude = DESTROY_PARTICLES_VELOCITY
+        + DESTROY_PARTICLES_VELOCITY_DEVIATION * (Math.random() - 0.5)
+    VectorUtils.normalize(vectorFromCOM)
+    const velocity: BodyVelocity = {
+      x: movingVelocity.x + vectorFromCOM.x * explosionVelocityMagnitude,
+      y: movingVelocity.y + vectorFromCOM.y * explosionVelocityMagnitude,
+      angle: DESTROY_PARTICLES_ANGLE_VELOCITY_DEVIATION * (Math.random() - 0.5)
+    }
+    battleStore.addBodyParticle(
+        {position: {...position, angle: 0}, velocity, remainTime: 0.3},
+        {shape, color: vehicleModel.config.color}
+    )
+  }
+
+  function getTurretGrid(vehicleModel: VehicleModel, step: number): Position[] {
+    const turretShape = vehicleModel.specs.turretShape
+    switch (turretShape.name) {
+      case ShapeNames.HALF_CIRCLE:
+        return getHalfCircleGrid(vehicleModel, turretShape as HalfCircleShape, step)
+      case ShapeNames.TRAPEZE:
+        return getTrapezeGrid(vehicleModel, turretShape as TrapezeShape, step)
+    }
+    return []
+  }
+
+  function getHalfCircleGrid(vehicleModel: VehicleModel, turretShape: HalfCircleShape, step: number): Position[] {
+    return new HalfCircle(BodyUtils.getGeometryPosition(vehicleModel), turretShape.radius,
+        vehicleModel.state.position.angle).grid(step)
+  }
+
+  function getTrapezeGrid(vehicleModel: VehicleModel, turretShape: TrapezeShape, step: number): Position[] {
+    return new Trapeze(BodyUtils.getGeometryBodyPosition(vehicleModel), turretShape).grid(step)
   }
 
   return { generate }
