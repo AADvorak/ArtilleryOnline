@@ -20,6 +20,7 @@ public enum BoxSpecsPreset {
             .setMass(0.08)
             .setType(BoxType.AMMO)
             .setShape(TrapezeShape.square(0.4))
+            .setExplosionDamage(30.0)
     );
 
     private final String name;

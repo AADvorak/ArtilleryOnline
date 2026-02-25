@@ -9,6 +9,7 @@ import com.github.aadvorak.artilleryonline.battle.events.RicochetEvent;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.processor.bomber.BomberFlyProcessor;
 import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.damage.Hit;
 import com.github.aadvorak.artilleryonline.battle.processor.statistics.StatisticsProcessor;
 import com.github.aadvorak.artilleryonline.dto.response.ContactResponse;
 import org.springframework.stereotype.Component;
@@ -87,6 +88,7 @@ public class ShellCollisionPreprocessor implements CollisionPreprocessor {
         if (!ShellType.SGN.equals(shell.getModel().getSpecs().getType())) {
             collision.setHit(true);
             var box = (BoxCalculations) collision.getPair().second();
+            DamageProcessor.processHEDamage(Hit.explosionOf(box.getModel(), shell.getModel().getNickname()), battle);
             DamageProcessor.processHit(shell, collision, battle);
             battle.getModel().getUpdates().removeBox(box.getId());
         }

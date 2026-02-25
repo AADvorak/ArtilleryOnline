@@ -105,7 +105,7 @@ public class DamageProcessor {
         }
     }
 
-    private static void processHEDamage(Hit hit, BattleCalculations battle) {
+    public static void processHEDamage(Hit hit, BattleCalculations battle) {
         if (hit.collision() != null
                 && hit.collision().getPair().second() instanceof VehicleCalculations vehicle
                 && hit.collision().getPair().first() instanceof ShellCalculations shell) {

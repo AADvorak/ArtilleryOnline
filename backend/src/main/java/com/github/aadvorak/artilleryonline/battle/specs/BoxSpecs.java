@@ -19,6 +19,8 @@ public class BoxSpecs implements Specs, CompactSerializable {
 
     private BoxType type;
 
+    private double explosionDamage;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeSerializableValue(shape);
