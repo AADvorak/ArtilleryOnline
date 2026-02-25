@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.collision.preprocessor.Collisi
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.damage.Hit;
 import com.github.aadvorak.artilleryonline.battle.processor.statistics.StatisticsProcessor;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +37,7 @@ public class MissileCollisionPreprocessor implements CollisionPreprocessor {
         battle.getModel().getUpdates().removeDrone(drone.getId());
         StatisticsProcessor.increaseDestroyedDrones(missile.getModel().getNickname(), battle);
         DamageProcessor.processHit(missile, collision, battle);
+        DamageProcessor.processHEDamage(Hit.explosionOf(drone.getModel()), battle);
         return false;
     }
 

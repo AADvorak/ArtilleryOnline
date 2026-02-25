@@ -5,6 +5,8 @@ import com.github.aadvorak.artilleryonline.battle.calculations.DroneCalculations
 import com.github.aadvorak.artilleryonline.battle.collision.CollideObjectType;
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.collision.preprocessor.CollisionPreprocessor;
+import com.github.aadvorak.artilleryonline.battle.processor.damage.DamageProcessor;
+import com.github.aadvorak.artilleryonline.battle.processor.damage.Hit;
 import com.github.aadvorak.artilleryonline.battle.updates.BattleModelRemoved;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +30,7 @@ public class DroneCollisionPreprocessor implements CollisionPreprocessor {
     // todo refactor
     private boolean process(DroneCalculations drone, Collision collision, BattleCalculations battle) {
         if (drone.getModel().getState().isDestroyed() && drone.getHeight() < REMOVE_DESTROYED_MIN_HEIGHT) {
+            DamageProcessor.processHEDamage(Hit.explosionOf(drone.getModel()), battle);
             battle.getModel().getUpdates().removeDrone(drone.getId());
             return false;
         }
@@ -38,6 +41,7 @@ public class DroneCollisionPreprocessor implements CollisionPreprocessor {
                 && collision.getImpact() > drone.getModel().getSpecs().getMinCollisionDestroyImpact()) {
             drone.getModel().getState().setDestroyed(true);
             if (CollideObjectType.GROUND.equals(collision.getType())) {
+                DamageProcessor.processHEDamage(Hit.explosionOf(drone.getModel()), battle);
                 battle.getModel().getUpdates().removeDrone(drone.getId());
             }
         }

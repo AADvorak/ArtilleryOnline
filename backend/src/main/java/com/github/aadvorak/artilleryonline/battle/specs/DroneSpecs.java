@@ -31,6 +31,8 @@ public class DroneSpecs implements Specs, CompactSerializable {
 
     private double minCollisionDestroyImpact;
 
+    private double explosionDamage;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeDouble(maxEngineAcceleration);

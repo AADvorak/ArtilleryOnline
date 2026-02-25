@@ -20,6 +20,7 @@ public enum DroneSpecsPreset {
             .setMaxEngineAcceleration(12.0)
             .setPrepareToLaunchTime(20.0)
             .setMinCollisionDestroyImpact(0.1)
+            .setExplosionDamage(5.0)
     ),
 
     HEAVY("Heavy", new DroneSpecs()
@@ -32,6 +33,7 @@ public enum DroneSpecsPreset {
             .setMaxEngineAcceleration(11.0)
             .setPrepareToLaunchTime(20.0)
             .setMinCollisionDestroyImpact(0.12)
+            .setExplosionDamage(8.0)
     );
 
     private final String name;

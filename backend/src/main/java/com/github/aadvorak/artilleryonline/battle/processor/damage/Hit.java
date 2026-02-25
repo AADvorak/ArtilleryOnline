@@ -5,6 +5,7 @@ import com.github.aadvorak.artilleryonline.battle.calculations.ShellCalculations
 import com.github.aadvorak.artilleryonline.battle.collision.Collision;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
 import com.github.aadvorak.artilleryonline.battle.model.BoxModel;
+import com.github.aadvorak.artilleryonline.battle.model.DroneModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
 
 public record Hit(Collision collision, Position explosionPosition, double damage, double radius, String nickname) {
@@ -51,6 +52,15 @@ public record Hit(Collision collision, Position explosionPosition, double damage
                 boxModel.getSpecs().getExplosionDamage(),
                 boxModel.getPreCalc().getMaxRadius(),
                 nickname
+        );
+    }
+
+    public static Hit explosionOf(DroneModel droneModel) {
+        return Hit.of(
+                droneModel.getState().getPosition().getCenter(),
+                droneModel.getSpecs().getExplosionDamage(),
+                droneModel.getPreCalc().getMaxRadius(),
+                droneModel.getNickname()
         );
     }
 
