@@ -146,7 +146,7 @@ watch(() => roomStore.messages.length, () => {
 .room-messenger {
   height: 100%;
   min-height: 100px;
-  max-height: 400px;
+  max-height: 300px;
 }
 
 .messages-container {
