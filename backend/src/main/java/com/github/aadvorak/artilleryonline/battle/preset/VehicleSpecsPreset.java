@@ -50,6 +50,7 @@ public enum VehicleSpecsPreset {
             .setDefaultGun(GunSpecsPreset.HEAVY.getName())
             .setMinCollisionDamageImpact(0.7)
             .setCollisionDamageCoefficient(2.5)
+            .setExplosionDamage(10.0)
     ),
 
     MEDIUM("Medium", new VehicleSpecs()
@@ -88,6 +89,7 @@ public enum VehicleSpecsPreset {
             .setDefaultGun(GunSpecsPreset.MEDIUM.getName())
             .setMinCollisionDamageImpact(0.5)
             .setCollisionDamageCoefficient(3.5)
+            .setExplosionDamage(8.0)
     ),
 
     LIGHT("Light", new VehicleSpecs()
@@ -123,6 +125,7 @@ public enum VehicleSpecsPreset {
             .setDefaultGun(GunSpecsPreset.LIGHT.getName())
             .setMinCollisionDamageImpact(0.3)
             .setCollisionDamageCoefficient(4.5)
+            .setExplosionDamage(5.0)
     );
 
     private final String name;
