@@ -32,8 +32,8 @@ const vehicleSelector = ref<InstanceType<typeof VehicleSelector> | undefined>()
 const messengerBottomAnchor = ref<HTMLElement>()
 
 const selectedVehicle = ref<string>()
-const openedPanels1 = ref<string[]>([ExpansionPanels.PLAYERS])
-const openedPanels2 = ref<string[]>([])
+const openedPanels1 = ref<string[] | undefined>([ExpansionPanels.PLAYERS])
+const openedPanels2 = ref<string[] | undefined>()
 const availableBattleTypes = ref<BattleType[]>([BattleType.DEATHMATCH, BattleType.TEAM_ELIMINATION])
 const battleType = ref<BattleType | undefined>()
 const wideScreen = ref<boolean>(false)
@@ -78,7 +78,8 @@ watch(battleType, (value, oldValue) => {
 })
 
 watch(openedPanels2, (value, oldValue) => {
-  if (value.includes(ExpansionPanels.MESSENGER) && !oldValue.includes(ExpansionPanels.MESSENGER)) {
+  if (value && value.includes(ExpansionPanels.MESSENGER)
+      && (!oldValue || !oldValue.includes(ExpansionPanels.MESSENGER))) {
     scrollToMessengerBottomAnchor()
   }
 })
@@ -214,7 +215,8 @@ function back() {
               </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
-          <v-expansion-panels class="sub-container" v-model="openedPanels2">
+          <div class="mb-2" v-show="!wideScreen"></div>
+          <v-expansion-panels class="sub-container" v-model="openedPanels2" variant="accordion">
             <v-expansion-panel :value="ExpansionPanels.MESSENGER">
               <v-expansion-panel-title>
                 <v-badge
