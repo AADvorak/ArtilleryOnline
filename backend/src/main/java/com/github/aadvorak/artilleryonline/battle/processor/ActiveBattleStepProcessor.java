@@ -51,7 +51,10 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
                 var team1VehiclesCount = battle.getTeamNicknames(1).stream()
                         .filter(nickname -> battle.getModel().getVehicles().get(nickname) != null)
                         .count();
-                if (team0VehiclesCount == 0) {
+                if (team0VehiclesCount == 0 && team1VehiclesCount == 0) {
+                    battle.setFinishTime(battle.getTime());
+                    return;
+                } else if (team0VehiclesCount == 0) {
                     battle.setWinnerTeamId(1);
                 } else if (team1VehiclesCount == 0) {
                     battle.setWinnerTeamId(0);
