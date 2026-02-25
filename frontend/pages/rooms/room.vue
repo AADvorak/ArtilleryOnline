@@ -275,9 +275,4 @@ function back() {
 .sub-container {
   max-width: 568px;
 }
-
-.button-center {
-  max-width: 568px;
-  align-self: center;
-}
 </style>
