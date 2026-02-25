@@ -92,11 +92,11 @@ public class BattleModelUpdates implements CompactSerializable {
         removed.addExplosionId(explosionId);
     }
 
-    public void removeVehicle(String vehicleKey) {
+    public boolean removeVehicle(String vehicleKey) {
         if (removed == null) {
             removed = new BattleModelRemoved();
         }
-        removed.addVehicleKey(vehicleKey);
+        return removed.addVehicleKey(vehicleKey);
     }
 
     public void removeBox(Integer boxId) {

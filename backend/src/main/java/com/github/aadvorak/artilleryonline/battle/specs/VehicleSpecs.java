@@ -59,6 +59,8 @@ public class VehicleSpecs implements Specs, CompactSerializable {
 
     private double collisionDamageCoefficient;
 
+    private double explosionDamage;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeString(name);

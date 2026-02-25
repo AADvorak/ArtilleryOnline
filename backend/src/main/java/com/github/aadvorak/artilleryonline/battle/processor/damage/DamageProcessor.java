@@ -83,9 +83,12 @@ public class DamageProcessor {
         var hitPoints = vehicleModel.getState().getHitPoints() - roundDamage;
         if (hitPoints <= 0) {
             vehicleModel.getState().setHitPoints(0.0);
-            battle.getModel().getUpdates().removeVehicle(battle.getModel().getVehicleKeyById(vehicleModel.getId()));
-            if (nickname != null && battle.allowedTarget(nickname, vehicleModel.getNickname())) {
-                battle.getModel().getStatistics().get(nickname).increaseDestroyedVehicles();
+            var removed = battle.getModel().getUpdates().removeVehicle(battle.getModel().getVehicleKeyById(vehicleModel.getId()));
+            if (removed) {
+                processHEDamage(Hit.explosionOf(vehicleModel), battle);
+                if (nickname != null && battle.allowedTarget(nickname, vehicleModel.getNickname())) {
+                    battle.getModel().getStatistics().get(nickname).increaseDestroyedVehicles();
+                }
             }
         } else {
             vehicleModel.getState().setHitPoints(hitPoints);
@@ -103,7 +106,8 @@ public class DamageProcessor {
     }
 
     private static void processHEDamage(Hit hit, BattleCalculations battle) {
-        if (hit.collision().getPair().second() instanceof VehicleCalculations vehicle
+        if (hit.collision() != null
+                && hit.collision().getPair().second() instanceof VehicleCalculations vehicle
                 && hit.collision().getPair().first() instanceof ShellCalculations shell) {
             if (isPenetrated(hit, vehicle.getModel())) {
                 var damageCoefficient = ShellType.BMB.equals(shell.getModel().getSpecs().getType())

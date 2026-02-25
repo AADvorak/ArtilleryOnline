@@ -59,11 +59,11 @@ public class BattleModelRemoved implements CompactSerializable {
         boxIds.add(boxId);
     }
 
-    public void addVehicleKey(String vehicleKey) {
+    public boolean addVehicleKey(String vehicleKey) {
         if (vehicleKeys == null) {
             vehicleKeys = new HashSet<>();
         }
-        vehicleKeys.add(vehicleKey);
+        return vehicleKeys.add(vehicleKey);
     }
 
     public void merge(BattleModelRemoved other) {
