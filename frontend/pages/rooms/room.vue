@@ -32,9 +32,15 @@ const vehicleSelector = ref<InstanceType<typeof VehicleSelector> | undefined>()
 const messengerBottomAnchor = ref<HTMLElement>()
 
 const selectedVehicle = ref<string>()
-const openedPanels = ref<string[]>([ExpansionPanels.PLAYERS])
+const openedPanels1 = ref<string[]>([ExpansionPanels.PLAYERS])
+const openedPanels2 = ref<string[]>([])
 const availableBattleTypes = ref<BattleType[]>([BattleType.DEATHMATCH, BattleType.TEAM_ELIMINATION])
 const battleType = ref<BattleType | undefined>()
+const wideScreen = ref<boolean>(false)
+
+const maxWidth = computed(() => {
+  return wideScreen.value ? '1200px' : '600px'
+})
 
 const readyToBattle = computed(() => {
   const members = roomStore.allMembers
@@ -71,7 +77,7 @@ watch(battleType, (value, oldValue) => {
   value && oldValue && value !== oldValue && changeBattleType(value)
 })
 
-watch(openedPanels, (value, oldValue) => {
+watch(openedPanels2, (value, oldValue) => {
   if (value.includes(ExpansionPanels.MESSENGER) && !oldValue.includes(ExpansionPanels.MESSENGER)) {
     scrollToMessengerBottomAnchor()
   }
@@ -82,6 +88,12 @@ onMounted(() => {
     battleType.value = roomStore.room.battleType
   }
   setSelectedVehicle()
+  addEventListener('resize', calculateWideScreen)
+  calculateWideScreen()
+})
+
+onUnmounted(() => {
+  removeEventListener('resize', calculateWideScreen)
 })
 
 function scrollToMessengerBottomAnchor() {
@@ -141,6 +153,10 @@ async function exit() {
   }
 }
 
+function calculateWideScreen() {
+  wideScreen.value = window.innerWidth > 1200
+}
+
 function back() {
   router.push('/rooms')
 }
@@ -148,32 +164,34 @@ function back() {
 
 <template>
   <NuxtLayout>
-    <v-card width="100%" max-width="600px">
+    <v-card width="100%" :max-width="maxWidth">
       <v-card-title>
         <menu-navigation/>
       </v-card-title>
       <v-card-text>
-        <v-toolbar color="transparent">
-          <battle-types-selector
-              v-model="battleType"
-              :available-types="availableBattleTypes"
-              :disabled="!roomStore.userIsRoomOwner"
-          />
-          <v-checkbox
-              density="compact"
-              class="ml-4"
-              :model-value="roomStore.room?.open"
-              :label="t('room.open')"
-              :disabled="!roomStore.userIsRoomOwner"
-              @click="changeOpen"
-          />
-        </v-toolbar>
-        <v-form>
-          <vehicle-selector
-              ref="vehicleSelector"
-              @select="v => selectedVehicle = v"
-          />
-        </v-form>
+        <div :class="wideScreen ? 'wide-screen-container' : ''">
+          <v-toolbar color="transparent" class="sub-container mr-8">
+            <vehicle-selector
+                ref="vehicleSelector"
+                @select="v => selectedVehicle = v"
+            />
+          </v-toolbar>
+          <v-toolbar color="transparent" class="sub-container">
+            <battle-types-selector
+                v-model="battleType"
+                :available-types="availableBattleTypes"
+                :disabled="!roomStore.userIsRoomOwner"
+            />
+            <v-checkbox
+                density="compact"
+                class="ml-4"
+                :model-value="roomStore.room?.open"
+                :label="t('room.open')"
+                :disabled="!roomStore.userIsRoomOwner"
+                @click="changeOpen"
+            />
+          </v-toolbar>
+        </div>
         <v-btn
             v-if="roomStore.userIsRoomOwner"
             class="mb-4"
@@ -184,61 +202,80 @@ function back() {
         >
           {{ t('room.battle') }}
         </v-btn>
-        <v-expansion-panels class="mb-4" v-model="openedPanels" multiple>
-          <v-expansion-panel :value="ExpansionPanels.PLAYERS">
-            <v-expansion-panel-title>
-              <v-icon class="mr-2" :icon="mdiAccountMultiple"/>
-              {{ t('room.players') }}
-            </v-expansion-panel-title>
-            <v-expansion-panel-text>
-              <room-members-table class="mb-4"/>
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-          <v-expansion-panel :value="ExpansionPanels.MESSENGER">
-            <v-expansion-panel-title>
-              <v-badge
-                  v-if="roomStore.newMessagesCount > 0"
-                  class="mr-2"
-                  color="error"
-                  :content="roomStore.newMessagesCount"
-              >
-                <v-icon :icon="mdiMessageTextOutline"/>
-              </v-badge>
-              <v-icon v-else class="mr-2" :icon="mdiMessageTextOutline"/>
-              {{ t('messenger.messages') }}
-            </v-expansion-panel-title>
-            <v-expansion-panel-text>
-              <room-messenger class="mb-4"/>
-              <div ref="messengerBottomAnchor"></div>
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-          <v-expansion-panel v-if="roomStore.userIsRoomOwner" :value="ExpansionPanels.INVITE_PLAYERS">
-            <v-expansion-panel-title>
-              <v-icon class="mr-2" :icon="mdiAccountPlus"/>
-              {{ t('room.invite') }}
-            </v-expansion-panel-title>
-            <v-expansion-panel-text>
-              <online-users-table />
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-          <v-expansion-panel v-if="roomStore.userIsRoomOwner" :value="ExpansionPanels.ADD_BOTS">
-            <v-expansion-panel-title>
-              <v-icon class="mr-2" :icon="mdiRobot"/>
-              {{ t('room.addBots') }}
-            </v-expansion-panel-title>
-            <v-expansion-panel-text>
-              <v-btn
-                  color="success"
-                  @click="addBot"
-              >
-                {{ t('room.addBot') }}
-              </v-btn>
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-        </v-expansion-panels>
+        <div :class="wideScreen ? 'mb-4 wide-screen-container' : 'mb-4'">
+          <v-expansion-panels class="sub-container mr-8" v-model="openedPanels1">
+            <v-expansion-panel :value="ExpansionPanels.PLAYERS">
+              <v-expansion-panel-title>
+                <v-icon class="mr-2" :icon="mdiAccountMultiple"/>
+                {{ t('room.players') }}
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <room-members-table class="mb-4"/>
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+          </v-expansion-panels>
+          <v-expansion-panels class="sub-container" v-model="openedPanels2">
+            <v-expansion-panel :value="ExpansionPanels.MESSENGER">
+              <v-expansion-panel-title>
+                <v-badge
+                    v-if="roomStore.newMessagesCount > 0"
+                    class="mr-2"
+                    color="error"
+                    :content="roomStore.newMessagesCount"
+                >
+                  <v-icon :icon="mdiMessageTextOutline"/>
+                </v-badge>
+                <v-icon v-else class="mr-2" :icon="mdiMessageTextOutline"/>
+                {{ t('messenger.messages') }}
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <room-messenger class="mb-4"/>
+                <div ref="messengerBottomAnchor"></div>
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+            <v-expansion-panel v-if="roomStore.userIsRoomOwner" :value="ExpansionPanels.INVITE_PLAYERS">
+              <v-expansion-panel-title>
+                <v-icon class="mr-2" :icon="mdiAccountPlus"/>
+                {{ t('room.invite') }}
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <online-users-table />
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+            <v-expansion-panel v-if="roomStore.userIsRoomOwner" :value="ExpansionPanels.ADD_BOTS">
+              <v-expansion-panel-title>
+                <v-icon class="mr-2" :icon="mdiRobot"/>
+                {{ t('room.addBots') }}
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <v-btn
+                    color="success"
+                    @click="addBot"
+                >
+                  {{ t('room.addBot') }}
+                </v-btn>
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </div>
         <v-btn class="mb-4" color="warning" width="100%" @click="exit">{{ t('common.exit') }}</v-btn>
         <v-btn class="mb-4" width="100%" @click="back">{{ t('common.back') }}</v-btn>
       </v-card-text>
     </v-card>
   </NuxtLayout>
 </template>
+
+<style scoped>
+.wide-screen-container {
+  display: flex;
+}
+
+.sub-container {
+  max-width: 568px;
+}
+
+.button-center {
+  max-width: 568px;
+  align-self: center;
+}
+</style>
