@@ -168,7 +168,6 @@ export const useUserSettingsStore = defineStore('user-settings', () => {
       try {
         settings.value = await api.getJson<UserSettingsGroupsMap>(SETTINGS_PATH)
       } catch (e) {
-        console.log(e)
         settings.value = {}
       }
     }

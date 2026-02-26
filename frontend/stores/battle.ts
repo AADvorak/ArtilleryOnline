@@ -78,8 +78,7 @@ export const useBattleStore = defineStore('battle', () => {
       const battleBinary = await new ApiRequestSender().getBytes('/battles')
       const battle = deserializeBattle(new DeserializerInput(battleBinary))
       updateBattle(battle)
-    } catch (e) {
-      console.log(e)
+    } catch (ignoredError) {
     }
   }
 

@@ -10,8 +10,7 @@ export const useCsrfStore = defineStore('csrf', () => {
     if (!csrf.value) {
       try {
         csrf.value = await new ApiRequestSender().getJson<CsrfToken>('/csrf')
-      } catch (e) {
-        console.log(e)
+      } catch (ignoredError) {
       }
     }
   }

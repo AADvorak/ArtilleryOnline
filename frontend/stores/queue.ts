@@ -11,8 +11,7 @@ export const useQueueStore = defineStore('queue', () => {
       try {
         queue.value = await new ApiRequestSender()
             .getJson<UserBattleQueueResponse>('/battles/queue')
-      } catch (e) {
-        console.log(e)
+      } catch (ignoredError) {
       }
     }
   }

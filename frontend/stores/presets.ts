@@ -11,8 +11,7 @@ export const usePresetsStore = defineStore('presets', () => {
       try {
         vehicles.value = await new ApiRequestSender()
             .getJson<VehicleSpecsResponse>('/presets/vehicles')
-      } catch (e) {
-        console.log(e)
+      } catch (ignoredError) {
       }
     }
   }

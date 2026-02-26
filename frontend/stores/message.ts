@@ -24,8 +24,7 @@ export const useMessageStore = defineStore('message', () => {
       try {
         messages.value = await new ApiRequestSender()
             .getJson<Message[]>('/messages')
-      } catch (e) {
-        console.log(e)
+      } catch (ignoredError) {
       }
     }
   }
@@ -35,8 +34,7 @@ export const useMessageStore = defineStore('message', () => {
       try {
         roomInvitations.value = await new ApiRequestSender()
             .getJson<RoomInvitation[]>('/rooms/invitations')
-      } catch (e) {
-        console.log(e)
+      } catch (ignoredError) {
       }
     }
   }

@@ -51,8 +51,7 @@ export const useRoomStore = defineStore('room', () => {
     if (!room.value) {
       try {
         room.value = await new ApiRequestSender().getJson<Room>('/rooms/my')
-      } catch (e) {
-        console.log(e)
+      } catch (ignoredError) {
       }
     }
   }
@@ -60,8 +59,7 @@ export const useRoomStore = defineStore('room', () => {
   async function loadMessages() {
     try {
       messages.value = await new ApiRequestSender().getJson<ChatMessage[]>('/rooms/my/messages')
-    } catch (e) {
-      console.log(e)
+    } catch (ignoredError) {
     }
   }
 

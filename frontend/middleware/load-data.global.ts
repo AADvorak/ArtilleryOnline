@@ -38,7 +38,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
       userStore.loadUserIfNull()
     ])
   } catch (e) {
-    console.log(e)
     // @ts-ignore
     if (e.status >= 500) {
       if (UNAVAILABLE_PATH !== to.path) {
