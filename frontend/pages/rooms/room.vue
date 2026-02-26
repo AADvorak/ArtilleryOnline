@@ -91,6 +91,9 @@ onMounted(() => {
   setSelectedVehicle()
   addEventListener('resize', calculateWideScreen)
   calculateWideScreen()
+  if (!roomStore.userIsRoomOwner && wideScreen.value) {
+    openedPanels2.value = [ExpansionPanels.MESSENGER]
+  }
 })
 
 onUnmounted(() => {
