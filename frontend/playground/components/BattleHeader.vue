@@ -7,7 +7,6 @@ import BattleDebugButtons from "@/playground/components/BattleDebugButtons.vue";
 import {useSettingsStore} from "~/stores/settings";
 import JetBar from "~/playground/components/JetBar.vue";
 import LeaveBattleDialog from "~/playground/components/LeaveBattleDialog.vue";
-import {useUserStore} from "~/stores/user";
 import {mdiCloseThick, mdiHelp, mdiMenu} from '@mdi/js'
 import IconBtn from "~/components/icon-btn.vue";
 import HelpDialog from "~/playground/components/HelpDialog.vue";
@@ -27,7 +26,6 @@ import PlayersInfo from "~/playground/components/PlayersInfo.vue";
 
 const {t} = useI18n()
 const battleStore = useBattleStore()
-const userStore = useUserStore()
 const settingsStore = useSettingsStore()
 const globalStateStore = useGlobalStateStore()
 const router = useRouter()
