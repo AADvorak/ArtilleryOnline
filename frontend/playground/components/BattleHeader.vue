@@ -21,7 +21,7 @@ import {useGlobalStateStore} from "~/stores/global-state";
 import {VerticalTooltipLocation} from "~/data/model";
 import FullScreenBtn from "~/components/full-screen-btn.vue";
 import {useRouter} from "#app";
-import {BattleType} from "~/playground/data/battle";
+import {BattleStage, BattleType} from "~/playground/data/battle";
 import PlayersInfo from "~/playground/components/PlayersInfo.vue";
 
 const {t} = useI18n()
@@ -39,6 +39,8 @@ const leaveBattleDialog = ref<InstanceType<typeof LeaveBattleDialog> | null>(nul
 const helpDialog = ref<InstanceType<typeof HelpDialog> | null>(null)
 
 const isDebugMode = computed(() => settingsStore.settings?.debug)
+
+const battleStageIsNotWaiting = computed(() => battleStore.battle?.battleStage !== BattleStage.WAITING)
 
 const centerToolbarClass = computed(() => {
   return 'toolbar center-top-toolbar ' + (props.separateHeaderToolbars ? 'top-toolbar-separate' : 'top-toolbar-merged')
@@ -135,7 +137,7 @@ function toMenu() {
   >
     <BattleDebugButtons />
   </v-toolbar>
-  <PlayersInfo :separate-header-toolbars="separateHeaderToolbars" />
+  <PlayersInfo v-if="battleStageIsNotWaiting" :separate-header-toolbars="separateHeaderToolbars" />
   <HelpDialog ref="helpDialog"/>
   <LeaveBattleDialog ref="leaveBattleDialog"/>
 </template>
