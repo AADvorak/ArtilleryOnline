@@ -22,7 +22,7 @@ export interface CanvasText {
 }
 
 export interface DrawerBase {
-  drawMDIIcon: (path: string, position: Position, color: string) => void
+  drawMDIIcon: (path: string, position: Position, color: string, scale?: number) => void
   drawText: (canvasText: CanvasText, params?: DrawParams) => void
   drawSegment: (segment: Segment, params?: DrawParams) => void
   drawCircle: (circle: Circle, params?: DrawParams) => void
@@ -48,10 +48,11 @@ export function useDrawerBase(
 
   const appearances = computed(() => userSettingsStore.appearancesOrDefaultsNameValueMapping)
 
-  function drawMDIIcon(path: string, position: Position, color: string) {
+  function drawMDIIcon(path: string, position: Position, color: string, scale: number = 1) {
     const pos = transformPosition(position)
     ctx.value!.save()
-    ctx.value!.translate(pos.x - 12, pos.y - 25)
+    ctx.value!.translate(pos.x - 12 * scale, pos.y - 25 * scale)
+    ctx.value!.scale(scale, scale)
     const path2D = new Path2D(path)
     ctx.value!.fillStyle = color
     ctx.value!.fill(path2D)
