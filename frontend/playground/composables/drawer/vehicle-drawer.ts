@@ -147,13 +147,13 @@ export function useVehicleDrawer(
     const textHeight = 1.5 * vehicleModel.preCalc.maxRadius
     const position = {
       x: vehicleModel.state.position.x,
-      y: vehicleModel.state.position.y + textHeight + (nicknameAbove ? 0.3 : 0.15)
+      y: vehicleModel.state.position.y + textHeight + (nicknameAbove ? 0.35 : 0.2)
     }
     const playerTeamId = battleStore.battle!.nicknameTeamMap[userStore.user!.nickname]
     const color = playerTeamId === teamId ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM
     const isUser = battleStore.battle?.userNicknames.includes(nickname)
     const icon = isUser ? mdiAccount : mdiRobot
-    drawerBase.drawMDIIcon(icon, position, color)
+    drawerBase.drawMDIIcon(icon, position, color, 0.7)
   }
 
   function restrictNicknameLength(nickname: string) {
