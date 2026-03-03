@@ -74,7 +74,7 @@ watch(() => roomStore.room, value => {
 })
 
 watch(battleType, (value, oldValue) => {
-  value && oldValue && value !== oldValue && changeBattleType(value)
+  value && oldValue && value !== oldValue && roomStore.userIsRoomOwner && changeBattleType(value)
 })
 
 watch(openedPanels2, (value, oldValue) => {
