@@ -34,6 +34,8 @@ public class BattleModel {
 
     private Map<String, VehicleModel> vehicles;
 
+    private Map<Integer, BaseModel> bases = new HashMap<>();
+
     private boolean updated = false;
 
     private long lastUpdateTime;
