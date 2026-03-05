@@ -105,11 +105,11 @@ async function loadHistoryPage() {
 }
 
 function isTeamBattle(item: UserBattleHistory) {
-  return item.battleType === BattleType.TEAM_ELIMINATION
+  return [BattleType.TEAM_ELIMINATION, BattleType.TEAM_CONTROL].includes(item.battleType)
 }
 
 function getBattleResult(item: UserBattleHistory) {
-  if (item.battleType === BattleType.TEAM_ELIMINATION) {
+  if (isTeamBattle(item)) {
     if (item.won === true) {
       return t('commonHistory.battleResults.victory')
     }
@@ -122,7 +122,7 @@ function getBattleResult(item: UserBattleHistory) {
 }
 
 function getBattleResultColor(item: UserBattleHistory) {
-  if (item.battleType === BattleType.TEAM_ELIMINATION) {
+  if (isTeamBattle(item)) {
     if (item.won === true) {
       return DefaultColors.BRIGHT_GREEN
     }

@@ -46,7 +46,7 @@ const usersTeamId = computed<number>(() => {
 })
 
 const battleResult = computed(() => {
-  if (battle.value?.type === BattleType.TEAM_ELIMINATION) {
+  if (battle.value && [BattleType.TEAM_ELIMINATION, BattleType.TEAM_CONTROL].includes(battle.value.type)) {
     if (battle.value.winnerTeamId !== undefined) {
       return usersTeamId.value === battle.value.winnerTeamId ? BattleResult.VICTORY : BattleResult.DEFEAT
     }

@@ -478,7 +478,7 @@ export class BattleCalculations {
 
   allowedTarget(vehicleId1: number, vehicleId2: number): boolean {
     return vehicleId1 !== vehicleId2 &&
-        (this.type !== BattleType.TEAM_ELIMINATION ||
+        (![BattleType.TEAM_ELIMINATION, BattleType.TEAM_CONTROL].includes(this.type) ||
             this.vehicleIdTeamMap.get(vehicleId1) !== this.vehicleIdTeamMap.get(vehicleId2))
   }
 }

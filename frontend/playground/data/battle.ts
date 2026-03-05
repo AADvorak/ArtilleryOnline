@@ -17,6 +17,7 @@ export enum BattleType {
   DRONE_HUNT = 'DRONE_HUNT',
   COLLIDER = 'COLLIDER',
   TEAM_ELIMINATION = 'TEAM_ELIMINATION',
+  TEAM_CONTROL = 'TEAM_CONTROL',
 }
 
 export interface NicknameTeamMap {

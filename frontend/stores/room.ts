@@ -33,7 +33,7 @@ export const useRoomStore = defineStore('room', () => {
   })
 
   const isTeamMode = computed(() => {
-    return BattleType.TEAM_ELIMINATION === room.value?.battleType
+    return room.value && [BattleType.TEAM_ELIMINATION, BattleType.TEAM_CONTROL].includes(room.value.battleType)
   })
 
   watch(room, value => {

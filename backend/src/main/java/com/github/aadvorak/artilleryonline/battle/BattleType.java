@@ -5,6 +5,8 @@ import com.github.aadvorak.artilleryonline.serialization.CompactSerializable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @RequiredArgsConstructor
 public enum BattleType implements CompactSerializable {
@@ -14,6 +16,7 @@ public enum BattleType implements CompactSerializable {
     DRONE_HUNT((short) 4, 5 * 60 * 1000),
     COLLIDER((short) 5, 10 * 60 * 1000),
     TEAM_ELIMINATION((short) 6, 10 * 60 * 1000),
+    TEAM_CONTROL((short) 7, 10 * 60 * 1000),
     ;
 
     private final Short id;
@@ -21,7 +24,7 @@ public enum BattleType implements CompactSerializable {
     private final long duration;
 
     public boolean isTeam() {
-        return this == TEAM_ELIMINATION;
+        return List.of(TEAM_ELIMINATION, TEAM_CONTROL).contains(this);
     }
 
     @Override

@@ -34,7 +34,11 @@ const messengerBottomAnchor = ref<HTMLElement>()
 const selectedVehicle = ref<string>()
 const openedPanels1 = ref<string[] | undefined>([ExpansionPanels.PLAYERS])
 const openedPanels2 = ref<string[] | undefined>()
-const availableBattleTypes = ref<BattleType[]>([BattleType.DEATHMATCH, BattleType.TEAM_ELIMINATION])
+const availableBattleTypes = ref<BattleType[]>([
+  BattleType.DEATHMATCH,
+  BattleType.TEAM_ELIMINATION,
+  BattleType.TEAM_CONTROL
+])
 const battleType = ref<BattleType | undefined>()
 const wideScreen = ref<boolean>(false)
 

@@ -24,7 +24,11 @@ import java.util.*;
 @Slf4j
 public class RoomService {
 
-    private static final Set<BattleType> availableBattleTypes = Set.of(BattleType.DEATHMATCH, BattleType.TEAM_ELIMINATION);
+    private static final Set<BattleType> availableBattleTypes = Set.of(
+            BattleType.DEATHMATCH,
+            BattleType.TEAM_ELIMINATION,
+            BattleType.TEAM_CONTROL
+    );
 
     private final UserService userService;
 

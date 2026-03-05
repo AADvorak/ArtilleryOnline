@@ -23,7 +23,12 @@ const selectedBattleType = ref<BattleType | undefined>()
 const selectedVehicleName = ref<string | undefined>()
 const selectedDateRange = ref<DateRange | undefined>()
 const selectedDateMode = ref<string | undefined>()
-const availableBattleTypes = ref<BattleType[]>([BattleType.RANDOM, BattleType.DEATHMATCH, BattleType.TEAM_ELIMINATION])
+const availableBattleTypes = ref<BattleType[]>([
+  BattleType.RANDOM,
+  BattleType.DEATHMATCH,
+  BattleType.TEAM_ELIMINATION,
+  BattleType.TEAM_CONTROL
+])
 
 const vehicles = computed(() => {
   return Object.keys(presetsStore.vehicles)
