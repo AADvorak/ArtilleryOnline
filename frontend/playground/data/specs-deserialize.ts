@@ -1,6 +1,7 @@
 import type {DeserializerInput} from "~/deserialization/deserializer-input";
 import {DeserializerBase} from "~/deserialization/deserializer-base";
 import type {
+  BaseSpecs,
   BomberSpecs,
   BoxSpecs,
   DroneSpecs,
@@ -220,5 +221,16 @@ export function deserializeMissileLauncherSpecs(input: DeserializerInput): Missi
   return {
     prepareToLaunchTime,
     missiles
+  }
+}
+
+export function deserializeBaseSpecs(input: DeserializerInput): BaseSpecs {
+  const radius = DeserializerBase.readDouble(input)
+  const capturePoints = DeserializerBase.readDouble(input)
+  const captureRate = DeserializerBase.readDouble(input)
+  return {
+    radius,
+    capturePoints,
+    captureRate
   }
 }

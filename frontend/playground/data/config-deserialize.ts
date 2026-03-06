@@ -1,5 +1,5 @@
 import type {DeserializerInput} from "~/deserialization/deserializer-input";
-import type {AmmoConfig, BoxConfig, DroneConfig, RoomConfig, VehicleConfig} from "~/playground/data/config";
+import type {AmmoConfig, BaseConfig, BoxConfig, DroneConfig, RoomConfig, VehicleConfig} from "~/playground/data/config";
 import {DeserializerBase} from "~/deserialization/deserializer-base";
 import {
   deserializeBomberSpecs,
@@ -60,5 +60,14 @@ export function deserializeAmmoConfig(input: DeserializerInput): AmmoConfig {
   return {
     name,
     amount
+  }
+}
+
+export function deserializeBaseConfig(input: DeserializerInput): BaseConfig {
+  const teamId = DeserializerBase.readNullable(input, DeserializerBase.readInt)
+  const positionX = DeserializerBase.readDouble(input)
+  return {
+    teamId,
+    positionX
   }
 }

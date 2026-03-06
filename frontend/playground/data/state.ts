@@ -132,10 +132,25 @@ export interface BoxStates {
   [id: number]: BoxState
 }
 
+export interface CapturePoints {
+  [nickname: string]: number
+}
+
+export interface BaseState {
+  capturePoints: CapturePoints
+  capturingTeamId?: number
+  captured: boolean
+}
+
+export interface BaseStates {
+  [id: number]: BaseState
+}
+
 export interface BattleModelState {
   vehicles?: VehicleStates
   shells?: ShellStates
   missiles?: MissileStates
   drones?: DroneStates
   boxes?: BoxStates
+  bases?: BaseStates
 }

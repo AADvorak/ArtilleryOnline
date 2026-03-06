@@ -46,3 +46,8 @@ export interface AmmoConfig {
   name: string
   amount: number
 }
+
+export interface BaseConfig {
+  teamId?: number
+  positionX: number
+}

@@ -138,3 +138,9 @@ export interface MissileLauncherSpecs {
   prepareToLaunchTime: number
   missiles: MissileSpecs
 }
+
+export interface BaseSpecs {
+  radius: number
+  capturePoints: number
+  captureRate: number
+}
