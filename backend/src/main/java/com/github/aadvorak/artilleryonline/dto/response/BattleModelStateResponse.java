@@ -26,6 +26,8 @@ public class BattleModelStateResponse implements CompactSerializable {
 
     private Map<Integer, BoxState> boxes;
 
+    private Map<Integer, BaseState> bases;
+
     @Override
     public void writeToStream(ByteArrayOutputStreamWrapper stream) {
         stream.writeStringMapOfSerializable(vehicles);
@@ -33,5 +35,6 @@ public class BattleModelStateResponse implements CompactSerializable {
         stream.writeIntegerMapOfSerializable(missiles);
         stream.writeIntegerMapOfSerializable(drones);
         stream.writeIntegerMapOfSerializable(boxes);
+        stream.writeIntegerMapOfSerializable(bases);
     }
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -13,7 +14,7 @@ import java.util.Map;
 @Accessors(chain = true)
 public class BaseState implements State, CompactSerializable {
 
-    private Map<String, Double> capturePoints;
+    private Map<String, Double> capturePoints = new HashMap<>();
 
     private Integer capturingTeamId;
 

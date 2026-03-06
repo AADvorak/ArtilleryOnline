@@ -3,20 +3,11 @@ package com.github.aadvorak.artilleryonline.battle;
 import com.github.aadvorak.artilleryonline.battle.command.UserCommand;
 import com.github.aadvorak.artilleryonline.battle.common.BodyPosition;
 import com.github.aadvorak.artilleryonline.battle.common.Position;
-import com.github.aadvorak.artilleryonline.battle.config.AmmoConfig;
-import com.github.aadvorak.artilleryonline.battle.config.BoxConfig;
-import com.github.aadvorak.artilleryonline.battle.config.RoomConfig;
-import com.github.aadvorak.artilleryonline.battle.config.VehicleConfig;
-import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
-import com.github.aadvorak.artilleryonline.battle.model.BoxModel;
-import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
-import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
+import com.github.aadvorak.artilleryonline.battle.config.*;
+import com.github.aadvorak.artilleryonline.battle.model.*;
 import com.github.aadvorak.artilleryonline.battle.precalc.BoxPreCalc;
 import com.github.aadvorak.artilleryonline.battle.precalc.VehiclePreCalc;
-import com.github.aadvorak.artilleryonline.battle.preset.BoxSpecsPreset;
-import com.github.aadvorak.artilleryonline.battle.preset.RoomSpecsPreset;
-import com.github.aadvorak.artilleryonline.battle.preset.ShellSpecsPreset;
-import com.github.aadvorak.artilleryonline.battle.preset.VehicleSpecsPreset;
+import com.github.aadvorak.artilleryonline.battle.preset.*;
 import com.github.aadvorak.artilleryonline.battle.processor.vehicle.VehicleOnGroundProcessor;
 import com.github.aadvorak.artilleryonline.battle.specs.*;
 import com.github.aadvorak.artilleryonline.battle.state.*;
@@ -59,6 +50,7 @@ public class BattleFactory {
                 .setNicknameTeamMap(participants.stream()
                         .collect(Collectors.toMap(BattleParticipant::getNickname, BattleParticipant::getTeamId)));
         battleModel.setVehicles(createVehicles(participants, battle, battleType));
+        battleModel.setBases(createBases(battleModel, battleType));
         if (BattleType.COLLIDER.equals(battleType)) {
             battleModel.setBoxes(createBoxes(battleModel));
         }
@@ -138,6 +130,22 @@ public class BattleFactory {
             }
         }
         return surfaces;
+    }
+
+    private Map<Integer, BaseModel> createBases(BattleModel battleModel, BattleType battleType) {
+        var bases = new HashMap<Integer, BaseModel>();
+        if (BattleType.TEAM_CONTROL.equals(battleType)) {
+            var roomSpecs = battleModel.getRoom().getSpecs();
+            var positionX = roomSpecs.getLeftBottom().getX() + BattleUtils.getRoomWidth(roomSpecs) / 2;
+            var id = battleModel.getIdGenerator().generate();
+            var baseModel = new BaseModel();
+            baseModel.setId(id);
+            baseModel.setSpecs(BaseSpecsPreset.NEUTRAL.getSpecs());
+            baseModel.setConfig(new BaseConfig().setPositionX(positionX));
+            baseModel.setState(new BaseState());
+            bases.put(id, baseModel);
+        }
+        return bases;
     }
 
     private Map<String, VehicleModel> createVehicles(Set<BattleParticipant> participants, Battle battle,

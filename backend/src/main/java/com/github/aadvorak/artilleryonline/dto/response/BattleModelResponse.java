@@ -26,6 +26,8 @@ public class BattleModelResponse implements CompactSerializable {
 
     private Map<String, VehicleModel> vehicles;
 
+    private Map<Integer, BaseModel> bases;
+
     private Map<String, PlayerBattleStatisticsResponse> statistics;
 
     private boolean updated;
@@ -39,6 +41,7 @@ public class BattleModelResponse implements CompactSerializable {
         stream.writeIntegerMapOfSerializable(boxes);
         stream.writeSerializableValue(room);
         stream.writeStringMapOfSerializable(vehicles);
+        stream.writeIntegerMapOfSerializable(bases);
         stream.writeStringMapOfSerializable(statistics);
         stream.writeBoolean(updated);
     }
