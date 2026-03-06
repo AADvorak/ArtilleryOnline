@@ -226,7 +226,7 @@ export function deserializeDroneState(input: DeserializerInput): DroneState {
 }
 
 export function deserializeBaseState(input: DeserializerInput): BaseState {
-  const capturePoints = DeserializerBase.readMap(input, DeserializerBase.readString, DeserializerBase.readInt)!
+  const capturePoints = DeserializerBase.readMap(input, DeserializerBase.readString, DeserializerBase.readDouble)!
   const capturingTeamId = DeserializerBase.readNullable(input, DeserializerBase.readInt)
   const captured = DeserializerBase.readBoolean(input)
   return {
