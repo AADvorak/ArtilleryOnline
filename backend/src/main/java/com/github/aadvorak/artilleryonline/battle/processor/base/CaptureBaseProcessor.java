@@ -30,6 +30,7 @@ public class CaptureBaseProcessor implements AfterStep1Processor {
                 .map(vehicle -> vehicle.getModel().getNickname())
                 .collect(Collectors.toSet());
         baseModel.removeNotOnBaseCapturePoints(nicknamesOnBase);
+        baseModel.addOnBaseCapturePoints(nicknamesOnBase);
         var teamIdsOnBase = nicknamesOnBase.stream()
                 .map(nickname -> battle.getNicknameTeamMap().get(nickname))
                 .collect(Collectors.toSet());

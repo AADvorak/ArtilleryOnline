@@ -35,6 +35,15 @@ public class BaseModel
         }
     }
 
+    public void addOnBaseCapturePoints(Set<String> nicknamesOnBase) {
+        nicknamesOnBase.forEach(nickname -> {
+            if (!getState().getCapturePoints().containsKey(nickname)) {
+                getState().getCapturePoints().put(nickname, 0.0);
+                this.updated = true;
+            }
+        });
+    }
+
     public void setCapturingTeamId(Integer capturingTeamId) {
         getState().setCapturingTeamId(capturingTeamId);
         this.updated = true;
