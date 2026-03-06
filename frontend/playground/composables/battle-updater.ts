@@ -239,6 +239,19 @@ export function useBattleUpdater(player: Player) {
           }
         })
       }
+      const bases = battleUpdate.state.bases
+      if (bases) {
+        Object.keys(bases).forEach(key => {
+          // @ts-ignore
+          const model = battle.model.bases[key]
+          if (model) {
+            // @ts-ignore
+            model.state = bases[key]!
+          } else {
+            missingModel = true
+          }
+        })
+      }
     }
 
     if (missingModel) {

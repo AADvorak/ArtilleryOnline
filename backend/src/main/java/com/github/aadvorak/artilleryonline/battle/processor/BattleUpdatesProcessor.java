@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.battle.processor;
 
 import com.github.aadvorak.artilleryonline.battle.Battle;
+import com.github.aadvorak.artilleryonline.battle.model.BaseModel;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.ShellModel;
 import com.github.aadvorak.artilleryonline.battle.statistics.PlayerBattleStatistics;
@@ -205,7 +206,9 @@ public class BattleUpdatesProcessor {
                 .anyMatch(ShellModel::isUpdated);
         var updatedBoxes = battleModel.getBoxes().values().stream()
                 .anyMatch(boxModel -> boxModel.getUpdate().isUpdated());
-        return updatedVehicles || updatedMissiles || updatedDrones || updatedShells || updatedBoxes;
+        var updatedBases = battleModel.getBases().values().stream()
+                .anyMatch(BaseModel::isUpdated);
+        return updatedVehicles || updatedMissiles || updatedDrones || updatedShells || updatedBoxes || updatedBases;
     }
 
     private BattleModelStateResponse createBattleModelStateResponse(BattleModel battleModel) {
@@ -219,12 +222,16 @@ public class BattleUpdatesProcessor {
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
         var boxStates = battleModel.getBoxes().entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
+        var baseStates = battleModel.getBases().entrySet().stream()
+                // todo .filter(entry -> entry.getValue().isUpdated())
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
         return new BattleModelStateResponse()
                 .setShells(shellStates)
                 .setVehicles(vehicleStates)
                 .setMissiles(missileStates)
                 .setDrones(droneStates)
-                .setBoxes(boxStates);
+                .setBoxes(boxStates)
+                .setBases(/*todo baseStates.isEmpty() ? null :*/ baseStates);
     }
 
     private void resetUpdatedFlags(Battle battle) {
@@ -235,6 +242,7 @@ public class BattleUpdatesProcessor {
         battle.getModel().getMissiles().values().forEach(missile -> missile.getUpdate().resetUpdated());
         battle.getModel().getDrones().values().forEach(drone -> drone.getUpdate().resetUpdated());
         battle.getModel().getBoxes().values().forEach(box -> box.getUpdate().resetUpdated());
+        battle.getModel().getBases().values().forEach(BaseModel::resetUpdated);
         battle.getModel().getStatistics().values().forEach(PlayerBattleStatistics::resetUpdated);
     }
 }
