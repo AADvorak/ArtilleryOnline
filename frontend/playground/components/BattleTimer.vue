@@ -1,13 +1,21 @@
 <script setup lang="ts">
 import {useBattleStore} from "~/stores/battle";
 import {computed} from "vue";
-import {BattleStage} from "@/playground/data/battle";
+import {BattleStage, BattleType} from "@/playground/data/battle";
 import {useI18n} from "vue-i18n";
 
 const MS_IN_MINUTE = 1000 * 60
 const MS_IN_SECOND = 1000
 
 const WAITING_STAGE_LENGTH = 5 * MS_IN_SECOND
+
+const SHOW_HINT_BATTLE_TYPES = [
+  BattleType.RANDOM,
+  BattleType.DRONE_HUNT,
+  BattleType.DEATHMATCH,
+  BattleType.TEAM_CONTROL,
+  BattleType.TEAM_ELIMINATION
+]
 
 const {t} = useI18n()
 
@@ -28,8 +36,10 @@ const leftTime = computed(() => {
   }
 })
 
+const isWaitingStage = computed(() => battleStore.battle?.battleStage === BattleStage.WAITING)
+
 const timerClass = computed(() => {
-  return battleStore.battle?.battleStage === BattleStage.WAITING ? 'battle-timer_waiting' : 'battle-timer'
+  return isWaitingStage.value ? 'battle-timer_waiting' : 'battle-timer'
 })
 
 const leftTimeFormatted = computed(() => {
@@ -37,10 +47,17 @@ const leftTimeFormatted = computed(() => {
 })
 
 const timerText = computed(() => {
-  const key: string = battleStore.battle?.battleStage === BattleStage.WAITING
+  const key: string = isWaitingStage.value
       ? 'battleTimer.battleStartsIn'
       : 'battleTimer.battleEndsIn'
   return t(key)
+})
+
+const hintText = computed(() => {
+  const battleType = battleStore.battle?.type
+  if (battleType && SHOW_HINT_BATTLE_TYPES.includes(battleType)) {
+    return t('common.battleHints.' + battleType)
+  }
 })
 
 function millisecondsToTime(milliseconds: number) {
@@ -62,6 +79,7 @@ function padStart(value: number, maxLength: number = 2) {
 <template>
   <div :class="timerClass">{{ leftTimeFormatted }}</div>
   <div v-show="leftTime > 0 && leftTime < WAITING_STAGE_LENGTH" class="centered-timer">
+    <div v-if="isWaitingStage" class="hint-text">{{ hintText }}</div>
     <div class="centered-timer-text">{{ timerText }}</div>
     <div class="centered-timer-time">{{ leftTimeFormatted }}</div>
   </div>
@@ -85,16 +103,22 @@ function padStart(value: number, maxLength: number = 2) {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: crimson;
   text-align: center;
   white-space: nowrap;
 }
 
 .centered-timer-time {
   font-size: 70px;
+  color: crimson;
 }
 
 .centered-timer-text {
   font-size: 18px;
+  color: crimson;
+}
+
+.hint-text {
+  font-size: 18px;
+  color: aquamarine;
 }
 </style>
