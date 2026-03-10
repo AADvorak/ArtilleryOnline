@@ -10,6 +10,8 @@ import lombok.experimental.Accessors;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -93,5 +95,12 @@ public class BattleModel {
         bodies.putAll(boxes);
         vehicles.values().forEach(vehicle -> bodies.put(vehicle.getId(), vehicle));
         return bodies;
+    }
+
+    public Set<Integer> getCapturedBaseTeamIds() {
+        return bases.values().stream()
+                .filter(baseModel -> baseModel.getState().isCaptured())
+                .map(baseModel -> baseModel.getState().getCapturingTeamId())
+                .collect(Collectors.toSet());
     }
 }

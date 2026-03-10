@@ -45,6 +45,15 @@ public class ActiveBattleStepProcessor extends BattleStepProcessorBase implement
         }
         if (battle.getType().isTeam()) {
             if (battle.getWinnerTeamId() == null) {
+                var capturedBaseTeamIds = battle.getModel().getCapturedBaseTeamIds();
+                if (capturedBaseTeamIds.size() > 1) {
+                    battle.setFinishTime(battle.getTime());
+                    return;
+                } else if (capturedBaseTeamIds.size() == 1) {
+                    battle.setWinnerTeamId(capturedBaseTeamIds.iterator().next());
+                }
+            }
+            if (battle.getWinnerTeamId() == null) {
                 var team0VehiclesCount = battle.getTeamNicknames(0).stream()
                         .filter(nickname -> battle.getModel().getVehicles().get(nickname) != null)
                         .count();
