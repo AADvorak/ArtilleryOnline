@@ -223,7 +223,7 @@ public class BattleUpdatesProcessor {
         var boxStates = battleModel.getBoxes().entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
         var baseStates = battleModel.getBases().entrySet().stream()
-                // todo .filter(entry -> entry.getValue().isUpdated())
+                .filter(entry -> entry.getValue().isUpdated())
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getState()));
         return new BattleModelStateResponse()
                 .setShells(shellStates)
@@ -231,7 +231,7 @@ public class BattleUpdatesProcessor {
                 .setMissiles(missileStates)
                 .setDrones(droneStates)
                 .setBoxes(boxStates)
-                .setBases(/*todo baseStates.isEmpty() ? null :*/ baseStates);
+                .setBases(baseStates.isEmpty() ? null : baseStates);
     }
 
     private void resetUpdatedFlags(Battle battle) {

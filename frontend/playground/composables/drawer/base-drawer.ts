@@ -45,7 +45,10 @@ export function useBaseDrawer(
   }
 
   function drawCaptureBar(baseModel: BaseModel, position: Position) {
-    const sumCapturePoints = getSumCapturePoints(baseModel.state.capturePoints)
+    const sumCapturePoints = Math.min(
+        getSumCapturePoints(baseModel.state.capturePoints),
+        baseModel.specs.capturePoints
+    )
     if (sumCapturePoints > 0) {
       ctx.value!.beginPath()
       ctx.value!.lineWidth = 1
