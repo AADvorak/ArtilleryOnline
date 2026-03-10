@@ -23,12 +23,19 @@ import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class BattleRunner {
+
+    private static final Set<BattleType> WRITE_HISTORY_BATTLE_TYPES = Set.of(
+            BattleType.RANDOM,
+            BattleType.DEATHMATCH,
+            BattleType.TEAM_ELIMINATION,
+            BattleType.TEAM_CONTROL
+    );
 
     private final UserBattleMap userBattleMap;
 
@@ -131,7 +138,7 @@ public class BattleRunner {
     }
 
     private void writeBattleToHistory(Battle battle) {
-        if (List.of(BattleType.RANDOM, BattleType.DEATHMATCH, BattleType.TEAM_ELIMINATION).contains(battle.getType())) {
+        if (WRITE_HISTORY_BATTLE_TYPES.contains(battle.getType())) {
             battleHistoryService.writeHistory(battle);
         }
     }
