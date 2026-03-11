@@ -78,20 +78,24 @@ public class DamageProcessor {
 
     public static void applyDamageToVehicle(double damage, VehicleModel vehicleModel, BattleCalculations battle, String nickname) {
         var roundDamage = Math.round(damage - 0.1);
-        StatisticsProcessor.increaseDamage(Math.min(roundDamage, vehicleModel.getState().getHitPoints()),
-                vehicleModel.getNickname(), nickname, battle);
-        var hitPoints = vehicleModel.getState().getHitPoints() - roundDamage;
-        if (hitPoints <= 0) {
-            vehicleModel.getState().setHitPoints(0.0);
-            var removed = battle.getModel().getUpdates().removeVehicle(battle.getModel().getVehicleKeyById(vehicleModel.getId()));
-            if (removed) {
-                processHEDamage(Hit.explosionOf(vehicleModel), battle);
-                if (nickname != null && battle.allowedTarget(nickname, vehicleModel.getNickname())) {
-                    battle.getModel().getStatistics().get(nickname).increaseDestroyedVehicles();
+        if (roundDamage > 0) {
+            StatisticsProcessor.increaseDamage(Math.min(roundDamage, vehicleModel.getState().getHitPoints()),
+                    vehicleModel.getNickname(), nickname, battle);
+            var hitPoints = vehicleModel.getState().getHitPoints() - roundDamage;
+            if (hitPoints <= 0) {
+                vehicleModel.getState().setHitPoints(0.0);
+                var removed = battle.getModel().getUpdates().removeVehicle(battle.getModel().getVehicleKeyById(vehicleModel.getId()));
+                if (removed) {
+                    processHEDamage(Hit.explosionOf(vehicleModel), battle);
+                    if (nickname != null && battle.allowedTarget(nickname, vehicleModel.getNickname())) {
+                        battle.getModel().getStatistics().get(nickname).increaseDestroyedVehicles();
+                    }
                 }
+            } else {
+                vehicleModel.getState().setHitPoints(hitPoints);
+                battle.getModel().getBases().values().forEach(base ->
+                        base.resetCapturePoints(vehicleModel.getNickname()));
             }
-        } else {
-            vehicleModel.getState().setHitPoints(hitPoints);
         }
     }
 
