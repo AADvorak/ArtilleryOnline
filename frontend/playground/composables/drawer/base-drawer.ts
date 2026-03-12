@@ -33,14 +33,29 @@ export function useBaseDrawer(
       bottomRadius: baseModel.specs.radius,
       topRadius: baseModel.specs.radius
     }
+    const flagpoleHeight = baseModel.specs.radius * 1.5
     const flagpoleShape: TrapezeShape = {
       name: ShapeNames.TRAPEZE,
-      height: baseModel.specs.radius * 1.5,
+      height: flagpoleHeight,
       bottomRadius: 0.01,
       topRadius: 0.01
     }
+    const flagHeight = 0.3
+    const flagWidth = 0.5
+    const flagShape: TrapezeShape = {
+      name: ShapeNames.TRAPEZE,
+      height: flagHeight,
+      bottomRadius: flagWidth / 2,
+      topRadius: flagWidth / 2
+    }
+    const flagPosition: BodyPosition = {
+      x: centerBottom.x + flagWidth / 2,
+      y: centerBottom.y + flagpoleHeight - flagHeight,
+      angle: 0
+    }
     drawerBase.drawTrapeze(new Trapeze(centerBottom, floorShape), {fillStyle: 'white'})
     drawerBase.drawTrapeze(new Trapeze(centerBottom, flagpoleShape), {fillStyle: 'white'})
+    drawerBase.drawTrapeze(new Trapeze(flagPosition, flagShape), {fillStyle: 'white'})
     drawCaptureBar(baseModel, centerBottom)
   }
 
