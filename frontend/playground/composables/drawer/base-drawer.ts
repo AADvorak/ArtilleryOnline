@@ -73,11 +73,11 @@ export function useBaseDrawer(
         x: position.x - barWidth / 2,
         y: position.y + barWidth + baseModel.specs.radius * 1.5
       })
-      const hpRatio = sumCapturePoints / baseModel.specs.capturePoints
+      const captureRatio = sumCapturePoints / baseModel.specs.capturePoints
       ctx.value!.strokeRect(barTopLeft.x, barTopLeft.y,
           drawerBase.scale(barWidth), drawerBase.scale(barHeight))
       ctx.value!.fillRect(barTopLeft.x, barTopLeft.y,
-          drawerBase.scale(barWidth * hpRatio), drawerBase.scale(barHeight))
+          drawerBase.scale(barWidth * captureRatio), drawerBase.scale(barHeight))
       ctx.value!.closePath()
     }
   }
