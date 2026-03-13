@@ -25,6 +25,14 @@
         />
       </template>
     </div>
+    <div class="capture-bases-container">
+      <template v-for="capturingBase of capturingBases">
+        <base-capture-info
+            :base-model="capturingBase"
+            :users-team-id="usersTeamId"
+        />
+      </template>
+    </div>
   </div>
   <div :class="'details-switcher-container ' + containerClass">
     <icon-btn
@@ -46,6 +54,8 @@ import {DefaultColors} from "~/dictionary/default-colors";
 import {mdiChevronUp, mdiChevronDown} from "@mdi/js";
 import {useI18n} from "vue-i18n";
 import {useUserSettingsStore} from "~/stores/user-settings";
+import type {BaseModel} from "~/playground/data/model";
+import BaseCaptureInfo from "~/playground/components/BaseCaptureInfo.vue";
 
 const props = defineProps<{
   separateHeaderToolbars: boolean
@@ -82,7 +92,8 @@ const switchShowDetailsKey = computed(() => {
       .filter(item => item.name === 'switchPlayersDetails')[0]?.value
 })
 
-const isTeamBattle = computed(() => battleStore.battle?.type === BattleType.TEAM_ELIMINATION)
+const isTeamBattle = computed(() => !!battleStore.battle?.type
+    && [BattleType.TEAM_ELIMINATION, BattleType.TEAM_CONTROL].includes(battleStore.battle.type))
 
 const team1Players = computed<PlayerInfo[]>(() => {
   return getTeamNicknames(0).map(nicknameToPlayerInfo)
@@ -94,6 +105,11 @@ const team2Players = computed<PlayerInfo[]>(() => {
 
 const containerClass = computed(() => {
   return props.separateHeaderToolbars ? 'double-top' : 'small-top'
+})
+
+const capturingBases = computed<BaseModel[]>(() => {
+  return Object.values(battleStore.battle?.model.bases || {})
+      .filter(baseModel => baseModel.state.capturingTeamId !== undefined)
 })
 
 onMounted(() => {
@@ -177,6 +193,16 @@ function calculateNarrowScreen() {
   z-index: 1000;
   opacity: 0.9;
   pointer-events: none;
+}
+
+.capture-bases-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 20px;
+  margin-top: 4px;
 }
 
 .small-top {

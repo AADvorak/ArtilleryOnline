@@ -22,6 +22,7 @@ export const common = {
   specs: 'Характеристики',
   refresh: 'Обновить',
   team: 'Команда',
+  capturingBase: 'захватывает базу',
   battleHints: {
     RANDOM: 'Выживи и уничтожь всех противников',
     DEATHMATCH: 'Выживи и уничтожь всех противников',
