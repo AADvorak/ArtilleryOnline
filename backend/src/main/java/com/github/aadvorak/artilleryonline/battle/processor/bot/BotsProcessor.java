@@ -8,6 +8,7 @@ import com.github.aadvorak.artilleryonline.battle.common.*;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Circle;
 import com.github.aadvorak.artilleryonline.battle.common.lines.Segment;
 import com.github.aadvorak.artilleryonline.battle.config.AmmoConfig;
+import com.github.aadvorak.artilleryonline.battle.model.BaseModel;
 import com.github.aadvorak.artilleryonline.battle.model.BattleModel;
 import com.github.aadvorak.artilleryonline.battle.model.RoomModel;
 import com.github.aadvorak.artilleryonline.battle.model.VehicleModel;
@@ -18,6 +19,7 @@ import com.github.aadvorak.artilleryonline.battle.state.VehicleState;
 import com.github.aadvorak.artilleryonline.battle.utils.BattleUtils;
 import com.github.aadvorak.artilleryonline.battle.utils.GeometryUtils;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -106,6 +108,9 @@ public class BotsProcessor {
                 state.setMovingDirection(moveRightBlocked ? MovingDirection.LEFT : MovingDirection.RIGHT);
             }
         }
+        if (state.getMovingDirection() == null) {
+            setMovingToBaseIfAvailable(battle.getModel().getBases().values(), state, otherVehiclePositions);
+        }
         controlJet(vehicle, battle);
         if (
                 oldTriggerPushed != state.getGunState().isTriggerPushed()
@@ -141,6 +146,23 @@ public class BotsProcessor {
             }
         }
         return false;
+    }
+
+    private void setMovingToBaseIfAvailable(Collection<BaseModel> bases, VehicleState state,
+                                            Set<Position> otherVehiclePositions) {
+        var vehicleX = state.getPosition().getX();
+        var basesPositions = bases.stream()
+                .map(baseModel -> baseModel.getConfig().getPositionX())
+                .filter(positionX -> otherVehiclePositions == null
+                        || notSeparatedByOtherVehicle(vehicleX, positionX, otherVehiclePositions))
+                .collect(Collectors.toSet());
+        var closestPosition = basesPositions.stream().findAny().orElse(null);
+        if (closestPosition != null) {
+            var xDiff = closestPosition - vehicleX;
+            if (Math.abs(xDiff) > 0.1) {
+                state.setMovingDirection(xDiff > 0 ? MovingDirection.RIGHT :  MovingDirection.LEFT);
+            }
+        }
     }
 
     private void closeBattleTargeting(VehicleCalculations vehicle, TargetData  targetData,
