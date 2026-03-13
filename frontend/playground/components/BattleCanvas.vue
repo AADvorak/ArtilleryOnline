@@ -189,12 +189,12 @@ function redrawBattle() {
     droneDrawer.draw()
     boxDrawer.draw()
     groundDrawer.draw()
+    baseDrawer.draw()
     surfaceDrawer.draw()
     vehicleDrawer.draw()
     vehicleDebugDrawer.draw()
     explosionDrawer.draw()
     shellTrajectoryDrawer.draw()
-    baseDrawer.draw()
     crosshairDrawer.draw()
   })
 }

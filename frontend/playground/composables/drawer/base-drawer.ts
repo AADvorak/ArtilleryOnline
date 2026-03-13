@@ -27,12 +27,7 @@ export function useBaseDrawer(
       ...BattleUtils.getNearestGroundPosition(baseModel.config.positionX, roomModel),
       angle: 0
     }
-    const floorShape: TrapezeShape = {
-      name: ShapeNames.TRAPEZE,
-      height: 0.1,
-      bottomRadius: baseModel.specs.radius,
-      topRadius: baseModel.specs.radius
-    }
+    const color = 'white'
     const flagpoleHeight = baseModel.specs.radius * 1.5
     const flagpoleShape: TrapezeShape = {
       name: ShapeNames.TRAPEZE,
@@ -53,10 +48,20 @@ export function useBaseDrawer(
       y: centerBottom.y + flagpoleHeight - flagHeight,
       angle: 0
     }
-    drawerBase.drawTrapeze(new Trapeze(centerBottom, floorShape), {fillStyle: 'white'})
-    drawerBase.drawTrapeze(new Trapeze(centerBottom, flagpoleShape), {fillStyle: 'white'})
-    drawerBase.drawTrapeze(new Trapeze(flagPosition, flagShape), {fillStyle: 'white'})
+    drawerBase.drawTrapeze(new Trapeze(centerBottom, flagpoleShape), {fillStyle: color})
+    drawerBase.drawTrapeze(new Trapeze(flagPosition, flagShape), {fillStyle: color})
+    drawEllipse(centerBottom, baseModel.specs.radius, color)
     drawCaptureBar(baseModel, centerBottom)
+  }
+
+  function drawEllipse(centerBottom: Position, radius: number, color: string) {
+    const radiusX = drawerBase.scale(radius)
+    const centerTransformed = drawerBase.transformPosition(centerBottom)
+    ctx.value!.beginPath()
+    ctx.value!.strokeStyle = color
+    ctx.value!.ellipse(centerTransformed.x, centerTransformed.y, radiusX, radiusX / 5, 0, 0, 2 * Math.PI)
+    ctx.value!.stroke()
+    ctx.value!.closePath()
   }
 
   function drawCaptureBar(baseModel: BaseModel, position: Position) {
