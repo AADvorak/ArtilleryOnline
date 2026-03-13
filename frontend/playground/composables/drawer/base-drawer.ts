@@ -7,12 +7,15 @@ import {ShapeNames, type TrapezeShape} from "~/playground/data/shapes";
 import type {BodyPosition, Position} from "~/playground/data/common";
 import {Trapeze} from "~/playground/data/geometry";
 import type {CapturePoints} from "~/playground/data/state";
+import {useUserStore} from "~/stores/user";
+import {DefaultColors} from "~/dictionary/default-colors";
 
 export function useBaseDrawer(
   drawerBase: DrawerBase,
   ctx: Ref<CanvasRenderingContext2D | undefined>
 ) {
   const battleStore = useBattleStore()
+  const userStore = useUserStore()
 
   function draw() {
     const bases = battleStore.battle?.model.bases
@@ -70,8 +73,13 @@ export function useBaseDrawer(
         baseModel.specs.capturePoints
     )
     if (sumCapturePoints > 0) {
+      const playerTeamId = battleStore.battle!.nicknameTeamMap[userStore.user!.nickname]
+      const color = playerTeamId === baseModel.state.capturingTeamId
+          ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM
       ctx.value!.beginPath()
       ctx.value!.lineWidth = 1
+      ctx.value!.strokeStyle = color
+      ctx.value!.fillStyle = color
       const barHeight = 0.07
       const barWidth = 1.5 * baseModel.specs.radius
       const barTopLeft = drawerBase.transformPosition({
