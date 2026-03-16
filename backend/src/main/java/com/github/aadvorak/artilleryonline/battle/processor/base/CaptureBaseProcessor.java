@@ -25,7 +25,7 @@ public class CaptureBaseProcessor implements AfterStep1Processor {
                         - vehicle.getPosition().getX()) < baseModel.getSpecs().getRadius())
                 .filter(vehicle -> {
                     var groundPosition = BattleUtils.getNearestGroundPosition(vehicle.getPosition().getX(), battle.getModel().getRoom());
-                    return vehicle.getPosition().getY() - groundPosition.getY() < vehicle.getModel().getPreCalc().getMaxRadius();
+                    return vehicle.getPosition().getY() - groundPosition.getY() < 2 * vehicle.getModel().getPreCalc().getMaxRadius();
                 })
                 .map(vehicle -> vehicle.getModel().getNickname())
                 .collect(Collectors.toSet());
