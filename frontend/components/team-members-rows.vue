@@ -29,7 +29,7 @@ const room = computed(() => {
 })
 
 const teamColor = computed<string>(() => {
-  if (room.value!.members.length <= 1) {
+  if (!room.value || room.value.members.length <= 1) {
     return ''
   }
   const isUsersTeam = teamMembers.value.filter(member => member.nickname === userStore.user!.nickname).length > 0
