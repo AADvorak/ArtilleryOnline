@@ -51,6 +51,11 @@ public class BattleFactory {
                         .collect(Collectors.toMap(BattleParticipant::getNickname, BattleParticipant::getTeamId)));
         battleModel.setVehicles(createVehicles(participants, battle, battleType));
         battleModel.setBases(createBases(battleModel, battleType));
+        battleModel.getBases().values().forEach(baseModel -> {
+            var x = baseModel.getConfig().getPositionX();
+            var radius = baseModel.getSpecs().getRadius();
+            BattleUtils.flattenGround(x - radius, x + radius, battleModel.getRoom());
+        });
         if (BattleType.COLLIDER.equals(battleType)) {
             battleModel.setBoxes(createBoxes(battleModel));
         }

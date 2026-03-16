@@ -205,4 +205,14 @@ public class BattleUtils {
             input.set(i, smoothedValue);
         }
     }
+
+    public static void flattenGround(double xMin, double xMax,  RoomModel roomModel) {
+        var indexes = getGroundIndexesBetween(xMin, xMax, roomModel);
+        var minValue = indexes.stream()
+                .map(index -> roomModel.getState().getGroundLine().get(index))
+                .min(Double::compareTo).orElse(0.0);
+        for (var index : indexes) {
+            roomModel.getState().getGroundLine().set(index, minValue);
+        }
+    }
 }
