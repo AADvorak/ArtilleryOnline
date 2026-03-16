@@ -151,15 +151,14 @@ public class BotsProcessor {
     private void setMovingToBaseIfAvailable(Collection<BaseModel> bases, VehicleState state,
                                             Set<Position> otherVehiclePositions) {
         var vehicleX = state.getPosition().getX();
-        var basesPositions = bases.stream()
-                .map(baseModel -> baseModel.getConfig().getPositionX())
-                .filter(positionX -> otherVehiclePositions == null
-                        || notSeparatedByOtherVehicle(vehicleX, positionX, otherVehiclePositions))
+        var availableBases = bases.stream()
+                .filter(base -> otherVehiclePositions == null
+                        || notSeparatedByOtherVehicle(vehicleX, base.getConfig().getPositionX(), otherVehiclePositions))
                 .collect(Collectors.toSet());
-        var closestPosition = basesPositions.stream().findAny().orElse(null);
-        if (closestPosition != null) {
-            var xDiff = closestPosition - vehicleX;
-            if (Math.abs(xDiff) > 0.1) {
+        var closestBase = availableBases.stream().findAny().orElse(null);
+        if (closestBase != null) {
+            var xDiff = closestBase.getConfig().getPositionX() - vehicleX;
+            if (Math.abs(xDiff) > 0.8 * closestBase.getSpecs().getRadius()) {
                 state.setMovingDirection(xDiff > 0 ? MovingDirection.RIGHT :  MovingDirection.LEFT);
             }
         }
