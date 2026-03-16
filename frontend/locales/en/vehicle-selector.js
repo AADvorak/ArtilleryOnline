@@ -1,3 +1,4 @@
 export const vehicleSelector = {
-  selectVehicle: 'Select vehicle'
+  selectVehicle: 'Select vehicle',
+  randomVehicle: 'Random vehicle',
 }

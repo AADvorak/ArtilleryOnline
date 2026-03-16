@@ -1,3 +1,4 @@
 export const vehicleSelector = {
-  selectVehicle: 'Выбор техники'
+  selectVehicle: 'Выбор техники',
+  randomVehicle: 'Рандомная техника',
 }

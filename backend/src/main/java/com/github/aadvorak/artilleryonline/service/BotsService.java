@@ -47,22 +47,32 @@ public class BotsService {
             "#fc0688"
     );
 
-    public BattleParticipant generateBot(Set<BattleParticipant> participants) {
+    private static final List<String> VEHICLES
+            = Arrays.stream(VehicleSpecsPreset.values()).map(VehicleSpecsPreset::getName).toList();
+
+    public BattleParticipant generateBot(Set<BattleParticipant> participants, String selectedVehicle) {
         var bot = new BattleParticipant();
-        fillBot(bot, participants);
+        fillBot(bot, participants, isValidVehicle(selectedVehicle) ? selectedVehicle : getRandomVehicle());
         return bot;
     }
 
     public void fillBot(BattleParticipant bot, Set<BattleParticipant> participants) {
+        fillBot(bot, participants, getRandomVehicle());
+    }
+
+    private void fillBot(BattleParticipant bot, Set<BattleParticipant> participants, String selectedVehicle) {
         bot.setNickname(getRandomNickname(participants));
         bot.setParams(new BattleParticipantParams()
-                .setSelectedVehicle(getRandomVehicle())
+                .setSelectedVehicle(selectedVehicle)
                 .setVehicleColor(getRandomColor()));
     }
 
     public String getRandomVehicle() {
-        var vehicles = Arrays.stream(VehicleSpecsPreset.values()).map(VehicleSpecsPreset::getName).toList();
-        return vehicles.get(BattleUtils.generateRandom(0, vehicles.size()));
+        return VEHICLES.get(BattleUtils.generateRandom(0, VEHICLES.size()));
+    }
+
+    public boolean isValidVehicle(String selectedVehicle) {
+        return selectedVehicle != null && VEHICLES.contains(selectedVehicle);
     }
 
     private String getRandomNickname(Set<BattleParticipant> participants) {

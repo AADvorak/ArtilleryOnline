@@ -32,6 +32,7 @@ const vehicleSelector = ref<InstanceType<typeof VehicleSelector> | undefined>()
 const messengerBottomAnchor = ref<HTMLElement>()
 
 const selectedVehicle = ref<string>()
+const botVehicle = ref<string>()
 const openedPanels1 = ref<string[] | undefined>([ExpansionPanels.PLAYERS])
 const openedPanels2 = ref<string[] | undefined>()
 const availableBattleTypes = ref<BattleType[]>([
@@ -129,7 +130,7 @@ async function startBattle() {
 
 async function addBot() {
   try {
-    await api.postJson('/rooms/my/bots', {})
+    await api.postJson('/rooms/my/bots', {selectedVehicle: botVehicle.value})
   } catch (e) {
     requestErrorHandler.handle(e)
   }
@@ -257,12 +258,22 @@ function back() {
                 {{ t('room.addBots') }}
               </v-expansion-panel-title>
               <v-expansion-panel-text>
-                <v-btn
-                    color="success"
-                    @click="addBot"
-                >
-                  {{ t('room.addBot') }}
-                </v-btn>
+                <v-toolbar color="transparent">
+                  <v-btn
+                      color="success"
+                      class="mr-2"
+                      @click="addBot"
+                  >
+                    {{ t('room.addBot') }}
+                  </v-btn>
+                  <vehicle-selector
+                      no-settings
+                      no-info
+                      hide-details
+                      is-random-vehicle
+                      @select="v => botVehicle = v"
+                  />
+                </v-toolbar>
               </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>

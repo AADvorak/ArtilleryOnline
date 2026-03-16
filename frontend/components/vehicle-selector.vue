@@ -6,9 +6,14 @@ import {mdiInformationOutline, mdiCogOutline} from "@mdi/js";
 import IconBtn from "~/components/icon-btn.vue";
 import {useRouter} from "#app";
 
+const RANDOM_KEY = 'random'
+
 const props = defineProps<{
   disabled?: boolean
   noSettings?: boolean
+  noInfo?: boolean
+  hideDetails?: boolean
+  isRandomVehicle?: boolean
 }>()
 
 const emit = defineEmits(['select'])
@@ -23,8 +28,18 @@ const presetsStore = usePresetsStore()
 const selectedVehicle = ref<string>()
 
 const vehicles = computed(() => {
-  return Object.keys(presetsStore.vehicles)
+  const output = Object.keys(presetsStore.vehicles || {})
       .map(key => ({key, title: getTitle(key)}))
+  if (props.isRandomVehicle) {
+    output.unshift({key: RANDOM_KEY, title: t('vehicleSelector.randomVehicle')})
+  }
+  return output
+})
+
+onMounted(() => {
+  if (props.isRandomVehicle) {
+    selectedVehicle.value = RANDOM_KEY
+  }
 })
 
 watch(selectedVehicle, value => {
@@ -61,9 +76,10 @@ defineExpose({
       :disabled="props.disabled"
       density="compact"
       :label="t('vehicleSelector.selectVehicle')"
-      clearable
+      :hide-details="props.hideDetails"
+      :clearable="!props.isRandomVehicle"
   >
-    <template v-if="!!selectedVehicle" v-slot:append>
+    <template v-if="!!selectedVehicle && selectedVehicle !== RANDOM_KEY" v-slot:append>
       <icon-btn
           v-if="!noSettings"
           :icon="mdiCogOutline"
@@ -71,11 +87,16 @@ defineExpose({
           @click="toVehicleConfigs"
       />
       <icon-btn
+          v-if="!noInfo"
           :icon="mdiInformationOutline"
           :tooltip="t('common.specs')"
           @click="showSpecsDialog"
       />
     </template>
   </v-select>
-  <vehicle-specs-dialog v-if="!!selectedVehicle" ref="specsDialog" :selected-vehicle="selectedVehicle"/>
+  <vehicle-specs-dialog
+      v-if="!!selectedVehicle && selectedVehicle !== RANDOM_KEY"
+      ref="specsDialog"
+      :selected-vehicle="selectedVehicle"
+  />
 </template>

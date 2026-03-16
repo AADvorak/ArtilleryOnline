@@ -3,6 +3,7 @@ package com.github.aadvorak.artilleryonline.service;
 import com.github.aadvorak.artilleryonline.battle.*;
 import com.github.aadvorak.artilleryonline.collection.RoomMap;
 import com.github.aadvorak.artilleryonline.collection.UserRoomMap;
+import com.github.aadvorak.artilleryonline.dto.request.AddBotRequest;
 import com.github.aadvorak.artilleryonline.dto.response.ChatMessageResponse;
 import com.github.aadvorak.artilleryonline.dto.response.RoomResponse;
 import com.github.aadvorak.artilleryonline.dto.response.RoomShortResponse;
@@ -236,14 +237,14 @@ public class RoomService {
         }
     }
 
-    public void addBot() {
+    public void addBot(AddBotRequest request) {
         var user = userService.getUserFromContext();
         var room = requireOwnRoom(user);
         if (room.getMembersCount() >= applicationLimits.getMaxRoomMembers()) {
             throw new ConflictAppException("Room is already full",
                     new Locale().setCode(LocaleCode.ROOM_IS_FULL));
         }
-        var bot = botsService.generateBot(room.getMembers());
+        var bot = botsService.generateBot(room.getMembers(), request.getSelectedVehicle());
         if (room.getBattleType().isTeam()) {
             bot.setTeamId(room.getSmallestTeamId());
         }

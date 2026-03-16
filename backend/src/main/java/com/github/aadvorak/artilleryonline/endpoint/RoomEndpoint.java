@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.endpoint;
 
 import com.github.aadvorak.artilleryonline.battle.BattleParticipantParams;
+import com.github.aadvorak.artilleryonline.dto.request.AddBotRequest;
 import com.github.aadvorak.artilleryonline.dto.request.BattleTypeRequest;
 import com.github.aadvorak.artilleryonline.dto.request.BooleanRequest;
 import com.github.aadvorak.artilleryonline.dto.request.ChatMessageRequest;
@@ -67,8 +68,8 @@ public class RoomEndpoint {
     }
 
     @PostMapping("/my/bots")
-    public void addBot() {
-        roomService.addBot();
+    public void addBot(@RequestBody AddBotRequest request) {
+        roomService.addBot(request);
     }
 
     @PutMapping("/my/open")
