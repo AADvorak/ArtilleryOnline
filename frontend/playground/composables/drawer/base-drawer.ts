@@ -53,7 +53,8 @@ export function useBaseDrawer(
     }
     drawerBase.drawTrapeze(new Trapeze(centerBottom, flagpoleShape), {fillStyle: color})
     drawerBase.drawTrapeze(new Trapeze(flagPosition, flagShape), {fillStyle: color})
-    drawEllipse(centerBottom, baseModel.specs.radius, color)
+    //drawEllipse(centerBottom, baseModel.specs.radius, color)
+    drawGround(centerBottom.x, baseModel.specs.radius, color)
     drawCaptureBar(baseModel, centerBottom)
   }
 
@@ -65,6 +66,13 @@ export function useBaseDrawer(
     ctx.value!.ellipse(centerTransformed.x, centerTransformed.y, radiusX, radiusX / 5, 0, 0, 2 * Math.PI)
     ctx.value!.stroke()
     ctx.value!.closePath()
+  }
+
+  function drawGround(x: number, radius: number, color: string) {
+    const groundPoints = BattleUtils.getGroundPointsBetween(x - radius,
+        x + radius, battleStore.battle!.model.room)
+        .map(point => ({x: point.x, y: point.y + 0.03}))
+    drawerBase.drawPolygon(groundPoints, {stroke: true, strokeStyle: color, lineWidth: 4})
   }
 
   function drawCaptureBar(baseModel: BaseModel, position: Position) {

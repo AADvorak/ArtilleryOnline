@@ -47,6 +47,11 @@ export const BattleUtils = {
     return segments
   },
 
+  getGroundPointsBetween(xMin: number, xMax: number, roomModel: RoomModel): Position[] {
+    return this.getGroundIndexesBetween(xMin, xMax, roomModel)
+        .map(index => this.getGroundPosition(index, roomModel))
+  },
+
   getGroundIndexesBetween(xMin: number, xMax: number, roomModel: RoomModel): number[] {
     const roomWidth = this.getRoomWidth(roomModel.specs)
     const groundPointsNumber = this.getGroundPointsNumber(roomModel.specs)
