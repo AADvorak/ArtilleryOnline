@@ -64,12 +64,15 @@ public class BotsProcessor {
         var needAmmo = vehicle.getModel().getRelativeAmmo() < 1.0;
         var criticalNeedAmmo = vehicle.getModel().getRelativeAmmo() < 0.3;
         var trackBroken = vehicle.getModel().getState().getTrackState().isBroken();
+        var isCapturingBase = battle.getModel().getBases().values().stream()
+                .anyMatch(base -> base.getState().getCapturePoints()
+                        .containsKey(vehicle.getModel().getNickname()));
         var verticalJet = vehicle.getModel().getConfig().getJet().getType().equals(JetType.VERTICAL);
-        if (criticalNeedHp || needHp && !trackBroken) {
+        if (criticalNeedHp || needHp && !trackBroken && !isCapturingBase) {
             isMovingToBox = setMovingToBoxIfAvailable(battle.getBoxes(), BoxType.HP, state,
                     verticalJet ? null : otherVehiclePositions);
         }
-        if (!isMovingToBox && (criticalNeedAmmo || needAmmo && !trackBroken)) {
+        if (!isMovingToBox && (criticalNeedAmmo || needAmmo && !trackBroken && !isCapturingBase)) {
             isMovingToBox = setMovingToBoxIfAvailable(battle.getBoxes(), BoxType.AMMO, state,
                     verticalJet ? null : otherVehiclePositions);
         }
@@ -90,16 +93,17 @@ public class BotsProcessor {
             if (isCloseBattle) {
                 closeBattleTargeting(vehicle, targetData, closestEnemyPosition, closestEnemyId);
             } else {
-                distantBattleTargeting(state, targetData, closestEnemyPosition, !isMovingToBox && !trackBroken);
+                distantBattleTargeting(state, targetData, closestEnemyPosition,
+                        !isMovingToBox && !trackBroken && !isCapturingBase);
             }
         }
-        if (state.getMovingDirection() == null) {
+        if (state.getMovingDirection() == null && !isCapturingBase) {
             runFromShellIfExists(vehicle.getModel(), battle.getShells(), moveRightBlocked, moveLeftBlocked);
         }
-        if (state.getMovingDirection() == null) {
+        if (state.getMovingDirection() == null && !isCapturingBase) {
             goAwayFromCloseVehicle(vehicle, otherVehiclePositions, moveRightBlocked, moveLeftBlocked);
         }
-        if (state.getMovingDirection() == null) {
+        if (state.getMovingDirection() == null && !isCapturingBase) {
             var vehicleAngle = state.getPosition().getAngle();
             if (vehicleAngle > Math.PI / 4) {
                 state.setMovingDirection(moveLeftBlocked ? MovingDirection.RIGHT : MovingDirection.LEFT);
@@ -108,7 +112,7 @@ public class BotsProcessor {
                 state.setMovingDirection(moveRightBlocked ? MovingDirection.LEFT : MovingDirection.RIGHT);
             }
         }
-        if (state.getMovingDirection() == null) {
+        if (state.getMovingDirection() == null && !isCapturingBase) {
             setMovingToBaseIfAvailable(battle.getModel().getBases().values(), state, otherVehiclePositions);
         }
         controlJet(vehicle, battle);
