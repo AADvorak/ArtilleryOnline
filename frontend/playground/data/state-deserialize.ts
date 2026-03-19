@@ -229,9 +229,11 @@ export function deserializeBaseState(input: DeserializerInput): BaseState {
   const capturePoints = DeserializerBase.readMap(input, DeserializerBase.readString, DeserializerBase.readDouble)!
   const capturingTeamId = DeserializerBase.readNullable(input, DeserializerBase.readInt)
   const captured = DeserializerBase.readBoolean(input)
+  const captureBlocked = DeserializerBase.readBoolean(input)
   return {
     capturePoints,
     capturingTeamId,
-    captured
+    captured,
+    captureBlocked
   }
 }

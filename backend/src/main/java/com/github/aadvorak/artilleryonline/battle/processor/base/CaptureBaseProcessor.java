@@ -43,6 +43,9 @@ public class CaptureBaseProcessor implements AfterStep1Processor {
             }
             baseModel.increaseCapturePoints(battle.getModel().getCurrentTimeStepSecs());
             baseModel.setCapturedIfEnoughPoints();
+            baseModel.unblockCapture();
+        } else if (teamIdsOnBase.size() > 1) {
+            baseModel.blockCapture();
         }
     }
 }

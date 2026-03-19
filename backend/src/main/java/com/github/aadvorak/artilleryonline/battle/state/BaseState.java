@@ -20,6 +20,8 @@ public class BaseState implements State, CompactSerializable {
 
     private boolean captured = false;
 
+    private boolean captureBlocked = false;
+
     public double getSumCapturePoints() {
         return capturePoints.values().stream().mapToDouble(Double::doubleValue).sum();
     }
@@ -29,5 +31,6 @@ public class BaseState implements State, CompactSerializable {
         stream.writeMap(capturePoints, stream::writeString, stream::writeDouble);
         stream.writeNullable(capturingTeamId, stream::writeInt);
         stream.writeBoolean(captured);
+        stream.writeBoolean(captureBlocked);
     }
 }

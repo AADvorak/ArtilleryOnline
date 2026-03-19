@@ -140,6 +140,7 @@ export interface BaseState {
   capturePoints: CapturePoints
   capturingTeamId?: number
   captured: boolean
+  captureBlocked: boolean
 }
 
 export interface BaseStates {

@@ -69,6 +69,20 @@ public class BaseModel
         }
     }
 
+    public void blockCapture() {
+        if (!getState().isCaptureBlocked()) {
+            getState().setCaptureBlocked(true);
+            this.updated = true;
+        }
+    }
+
+    public void unblockCapture() {
+        if (getState().isCaptureBlocked()) {
+            getState().setCaptureBlocked(false);
+            this.updated = true;
+        }
+    }
+
     public void resetUpdated() {
         this.updated = false;
     }
