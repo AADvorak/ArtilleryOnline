@@ -50,8 +50,8 @@ export function useVehicleDrawer(
       if (nicknameAbove) {
         drawNickname(userKey, vehicleModel)
       }
-      const teamId = battleStore.battle?.type === BattleType.TEAM_ELIMINATION
-          && battleStore.battle?.nicknameTeamMap[userKey]
+      const teamId = [BattleType.TEAM_CONTROL, BattleType.TEAM_ELIMINATION]
+              .includes(battleStore.battle!.type) && battleStore.battle!.nicknameTeamMap[userKey]
       if (teamId !== undefined && teamId !== false) {
         drawTeamIcon(userKey, teamId, vehicleModel, nicknameAbove)
       }
