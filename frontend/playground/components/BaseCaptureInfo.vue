@@ -29,6 +29,9 @@ const progressText = computed(() => {
 })
 
 const progressColor = computed(() => {
+  if (props.baseModel.state.captureBlocked) {
+    return DefaultColors.PROGRESS_NOT_READY
+  }
   return props.baseModel.state.capturingTeamId === props.usersTeamId
       ? DefaultColors.ALLY_TEAM
       : DefaultColors.ENEMY_TEAM

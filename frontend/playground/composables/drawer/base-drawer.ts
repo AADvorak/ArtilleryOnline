@@ -81,9 +81,7 @@ export function useBaseDrawer(
         baseModel.specs.capturePoints
     )
     if (sumCapturePoints > 0) {
-      const playerTeamId = battleStore.battle!.nicknameTeamMap[userStore.user!.nickname]
-      const color = playerTeamId === baseModel.state.capturingTeamId
-          ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM
+      const color = getProgressColor(baseModel)
       ctx.value!.beginPath()
       ctx.value!.lineWidth = 1
       ctx.value!.strokeStyle = color
@@ -101,6 +99,15 @@ export function useBaseDrawer(
           drawerBase.scale(barWidth * captureRatio), drawerBase.scale(barHeight))
       ctx.value!.closePath()
     }
+  }
+
+  function getProgressColor(baseModel: BaseModel) {
+    if (baseModel.state.captureBlocked) {
+      return DefaultColors.PROGRESS_NOT_READY
+    }
+    const playerTeamId = battleStore.battle!.nicknameTeamMap[userStore.user!.nickname]
+    return  playerTeamId === baseModel.state.capturingTeamId
+        ? DefaultColors.ALLY_TEAM : DefaultColors.ENEMY_TEAM
   }
 
   function getSumCapturePoints(capturePoints: CapturePoints) {
