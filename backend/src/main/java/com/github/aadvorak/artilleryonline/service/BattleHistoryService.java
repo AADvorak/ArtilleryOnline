@@ -1,6 +1,7 @@
 package com.github.aadvorak.artilleryonline.service;
 
 import com.github.aadvorak.artilleryonline.battle.Battle;
+import com.github.aadvorak.artilleryonline.battle.model.BaseModel;
 import com.github.aadvorak.artilleryonline.dto.request.PageRequest;
 import com.github.aadvorak.artilleryonline.dto.request.UserBattleHistoryFiltersRequest;
 import com.github.aadvorak.artilleryonline.dto.response.PageResponse;
@@ -20,7 +21,9 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -59,6 +62,7 @@ public class BattleHistoryService {
                 .setBattleTypeId(battle.getType().getId())
                 .setBeginTime(LocalDateTime.ofInstant(Instant.ofEpochMilli(battle.getBeginTime()),
                         ZoneId.systemDefault())));
+        var bases = battle.getModel().getBases().values();
         battle.getUserMap().values().forEach(user -> {
             var statistics = battle.getModel().getStatistics().get(user.getNickname());
             var userBattleHistory = mapper.map(statistics, UserBattleHistory.class)
@@ -67,7 +71,8 @@ public class BattleHistoryService {
                             .setUserId(user.getId()))
                     .setSurvived(battle.getModel().getVehicles().containsKey(user.getNickname()))
                     .setWon(battle.getWon(user.getNickname()))
-                    .setVehicleName(battle.getPlayerVehicleNameMap().get(user.getNickname()));
+                    .setVehicleName(battle.getPlayerVehicleNameMap().get(user.getNickname()))
+                    .setCapturePoints(getAllUserCapturePoints(user.getNickname(), bases));
             userBattleHistoryRepository.save(userBattleHistory);
         });
     }
@@ -83,5 +88,13 @@ public class BattleHistoryService {
                 .setItems(page.get().map(UserBattleHistoryResponse::of).toList())
                 .setPages(page.getTotalPages())
                 .setItemsLength(page.getTotalElements());
+    }
+
+    private double getAllUserCapturePoints(String nickname, Collection<BaseModel> baseModels) {
+        return baseModels.stream()
+                .map(baseModel -> baseModel.getState().getCapturePoints().get(nickname))
+                .filter(Objects::nonNull)
+                .mapToDouble(Double::doubleValue)
+                .sum();
     }
 }

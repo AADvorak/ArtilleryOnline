@@ -59,4 +59,7 @@ public class UserBattleHistory {
 
     @Column
     private Boolean won;
+
+    @Column
+    private double capturePoints;
 }
