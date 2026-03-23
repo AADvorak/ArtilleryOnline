@@ -92,6 +92,7 @@ public class BattleHistoryService {
 
     private double getAllUserCapturePoints(String nickname, Collection<BaseModel> baseModels) {
         return baseModels.stream()
+                .filter(baseModel -> baseModel.getState().isCaptured())
                 .map(baseModel -> baseModel.getState().getCapturePoints().get(nickname))
                 .filter(Objects::nonNull)
                 .mapToDouble(Double::doubleValue)
