@@ -19,6 +19,7 @@ const sumsConfig = computed(() => [
   {key: 'destroyedVehicles', name: t('commonHistory.destroyedVehicles')},
   {key: 'destroyedDrones', name: t('commonHistory.destroyedDrones')},
   {key: 'destroyedMissiles', name: t('commonHistory.destroyedMissiles')},
+  {key: 'capturePoints', name: t('commonHistory.capturePoints')},
 ])
 const sumsCausedReceivedConfig = computed(() => [
   {causedKey: 'causedDamage', receivedKey: 'receivedDamage', name: t('commonHistory.damage'),
@@ -35,6 +36,7 @@ const perBattleConfig = computed(() => [
   {key: 'destroyedVehicles', name: t('commonHistory.destroyedVehicles')},
   {key: 'destroyedDrones', name: t('commonHistory.destroyedDrones')},
   {key: 'destroyedMissiles', name: t('commonHistory.destroyedMissiles')},
+  {key: 'capturePoints', name: t('commonHistory.capturePoints')},
 ])
 const perBattleCausedReceivedConfig = computed(() => [
   {causedKey: 'causedDamage', receivedKey: 'receivedDamage', name: t('commonHistory.damage')},
@@ -98,7 +100,7 @@ function back() {
                 <tbody>
                 <tr v-for="sum of sumsConfig">
                   <td>{{ sum.name }}</td>
-                  <td class="number-column">{{ statistics[sum.key] }}</td>
+                  <td class="number-column">{{ statistics[sum.key].toFixed(0) }}</td>
                 </tr>
                 </tbody>
               </v-table>

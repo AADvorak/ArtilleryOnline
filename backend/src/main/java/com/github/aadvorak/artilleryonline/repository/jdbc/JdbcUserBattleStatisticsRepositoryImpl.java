@@ -31,7 +31,8 @@ public class JdbcUserBattleStatisticsRepositoryImpl extends JdbcBattleHistoryRep
                 sum(ubh.received_indirect_hits) as received_indirect_hits,
                 sum(ubh.received_track_breaks) as received_track_breaks,
                 sum(ubh.survived::int) as battles_survived,
-                sum(ubh.won::int) as battles_won
+                sum(ubh.won::int) as battles_won,
+                sum(ubh.capture_points) as capture_points
             from battle_history bh
                 join public.user_battle_history ubh on bh.id = ubh.battle_history_id
             where ubh.user_id = :userId
@@ -54,7 +55,8 @@ public class JdbcUserBattleStatisticsRepositoryImpl extends JdbcBattleHistoryRep
                     .setReceivedIndirectHits(rs.getInt("received_indirect_hits"))
                     .setReceivedTrackBreaks(rs.getInt("received_track_breaks"))
                     .setBattlesSurvived(rs.getInt("battles_survived"))
-                    .setBattlesWon(rs.getInt("battles_won"));
+                    .setBattlesWon(rs.getInt("battles_won"))
+                    .setCapturePoints(rs.getDouble("capture_points"));
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 

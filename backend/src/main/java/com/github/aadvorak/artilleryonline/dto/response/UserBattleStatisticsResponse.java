@@ -43,6 +43,8 @@ public class UserBattleStatisticsResponse {
 
     private int battlesWon;
 
+    private double capturePoints;
+
     public static UserBattleStatisticsResponse of(UserBattleStatisticsView view) {
         return new ModelMapper().map(view, UserBattleStatisticsResponse.class);
     }

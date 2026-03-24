@@ -40,4 +40,6 @@ public class UserBattleStatisticsView {
     private int battlesSurvived;
 
     private int battlesWon;
+
+    private double capturePoints;
 }

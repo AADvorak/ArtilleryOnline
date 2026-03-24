@@ -149,6 +149,7 @@ export interface UserBattleStatistics {
   receivedTrackBreaks: number
   battlesSurvived: number
   battlesWon: number
+  capturePoints: number
 }
 
 export interface UserBattleStatisticsPerBattle {
@@ -164,6 +165,7 @@ export interface UserBattleStatisticsPerBattle {
   receivedDirectHits: number
   receivedIndirectHits: number
   receivedTrackBreaks: number
+  capturePoints: number
 }
 
 export interface UserBattleStatisticsCoefficients {

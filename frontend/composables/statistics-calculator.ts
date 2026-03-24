@@ -18,7 +18,8 @@ export function useStatisticsCalculator() {
       receivedDamage: statistics.receivedDamage / statistics.battlesPlayed,
       receivedDirectHits: statistics.receivedDirectHits / statistics.battlesPlayed,
       receivedIndirectHits: statistics.receivedIndirectHits / statistics.battlesPlayed,
-      receivedTrackBreaks: statistics.receivedTrackBreaks / statistics.battlesPlayed
+      receivedTrackBreaks: statistics.receivedTrackBreaks / statistics.battlesPlayed,
+      capturePoints: statistics.capturePoints / statistics.battlesPlayed,
     }
   }
 
