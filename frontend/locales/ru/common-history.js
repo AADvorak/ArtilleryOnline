@@ -11,6 +11,7 @@ export const commonHistory = {
   trackBreaks: 'Сбития гусениц',
   battleType: 'Тип боя',
   vehicle: 'Техника',
+  capturePoints: 'Очки захвата',
   battleTypes: {
     RANDOM: 'Случайный',
     DEATHMATCH: 'Выживание',

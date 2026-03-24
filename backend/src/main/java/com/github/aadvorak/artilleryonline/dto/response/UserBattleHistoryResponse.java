@@ -51,6 +51,8 @@ public class UserBattleHistoryResponse {
 
     private Boolean won;
 
+    private double capturePoints;
+
     public static UserBattleHistoryResponse of(UserBattleHistoryView view) {
         return new ModelMapper().map(view, UserBattleHistoryResponse.class)
                 .setBattleType(Arrays.stream(BattleType.values())

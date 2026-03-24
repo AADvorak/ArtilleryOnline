@@ -46,4 +46,6 @@ public class UserBattleHistoryView {
     private boolean survived;
 
     private Boolean won;
+
+    private double capturePoints;
 }

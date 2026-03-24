@@ -36,6 +36,8 @@ const headers = computed(() => [
   {title: t('commonHistory.destroyedVehicles'), key: 'destroyedVehicles', align: 'end', sortable: true},
   {title: t('commonHistory.destroyedDrones'), key: 'destroyedDrones', align: 'end', sortable: true},
   {title: t('commonHistory.destroyedMissiles'), key: 'destroyedMissiles', align: 'end', sortable: true},
+  {title: t('commonHistory.capturePoints'), key: 'capturePoints', align: 'end', sortable: true,
+    value: item => item.capturePoints.toFixed(0)},
   {
     title: t('commonHistory.damage'), align: 'center', children: [
       {title: t('commonHistory.caused'), key: 'causedDamage', align: 'end', sortable: true,

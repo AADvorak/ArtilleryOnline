@@ -111,6 +111,7 @@ export interface UserBattleHistory {
   receivedTrackBreaks: number
   survived: boolean
   won?: boolean
+  capturePoints: number
 }
 
 export interface UserBattleResult {

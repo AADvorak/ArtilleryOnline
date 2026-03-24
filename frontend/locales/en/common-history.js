@@ -11,6 +11,7 @@ export const commonHistory = {
   trackBreaks: 'Track breaks',
   battleType: 'Battle type',
   vehicle: 'Vehicle',
+  capturePoints: 'Capture points',
   battleTypes: {
     RANDOM: 'Random',
     DEATHMATCH: 'Deathmatch',
