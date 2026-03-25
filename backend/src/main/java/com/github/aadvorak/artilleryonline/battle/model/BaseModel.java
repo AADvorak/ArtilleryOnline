@@ -63,8 +63,8 @@ public class BaseModel
     }
 
     public void resetCapturePoints(String nickname) {
-        if (getState().getCapturePoints().entrySet().removeIf(entry ->
-                entry.getKey().equals(nickname))) {
+        if (!getState().isCaptured() && getState().getCapturePoints().entrySet()
+                .removeIf(entry -> entry.getKey().equals(nickname))) {
             this.updated = true;
         }
     }
