@@ -265,14 +265,15 @@ public class RoomService {
         }
         var user = userService.getUserFromContext();
         var room = requireOwnRoom(user);
+        var oldBattleType = room.getBattleType();
         room.setBattleType(battleType);
-        if (battleType.isTeam()) {
+        if (battleType.isTeam() && !oldBattleType.isTeam()) {
             var index = 0;
             for (var member : room.getMembers()) {
                 member.setTeamId(index % 2 == 0 ? 0 : 1);
                 index++;
             }
-        } else {
+        } else if (!battleType.isTeam() && oldBattleType.isTeam()) {
             for (var member : room.getMembers()) {
                 member.setTeamId(0);
             }
