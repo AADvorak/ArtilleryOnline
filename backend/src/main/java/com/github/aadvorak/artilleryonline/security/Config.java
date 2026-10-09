@@ -35,6 +35,7 @@ public class Config {
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/api/users/**").permitAll()
                 .requestMatchers("/api/application/**").permitAll()
+                .requestMatchers("/actuator/**").permitAll()
                 .anyRequest().authenticated());
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

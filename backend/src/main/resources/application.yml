@@ -27,3 +27,17 @@ spring:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,health,info,metrics
+  endpoint:
+    prometheus:
+      access: unrestricted
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}

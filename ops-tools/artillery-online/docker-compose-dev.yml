@@ -23,5 +23,26 @@ services:
     networks:
       artillery-online-net:
 
+  artillery-online-prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - artillery-online-net
+
+  artillery-online-grafana:
+    image: grafana/grafana:latest
+    ports:
+      - '3001:3000'
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - artillery-online-net
+
 networks:
   artillery-online-net:
+
+volumes:
+  grafana-data:
