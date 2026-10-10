@@ -1,5 +1,6 @@
 package com.github.aadvorak.artilleryonline.ws;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -10,6 +11,12 @@ import org.springframework.web.socket.config.annotation.WebSocketTransportRegist
 @Configuration
 @EnableWebSocketMessageBroker
 public class SocketBrokerConfig implements WebSocketMessageBrokerConfigurer {
+
+    private final MeterRegistry meterRegistry;
+
+    public SocketBrokerConfig(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+    }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -25,6 +32,6 @@ public class SocketBrokerConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureWebSocketTransport(WebSocketTransportRegistration registry) {
-        registry.addDecoratorFactory(WebSocketSessionManager::new);
+        registry.addDecoratorFactory(delegate -> new WebSocketSessionManager(delegate, meterRegistry));
     }
 }

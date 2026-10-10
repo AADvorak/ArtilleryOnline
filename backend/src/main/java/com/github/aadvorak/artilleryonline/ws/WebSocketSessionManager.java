@@ -5,6 +5,8 @@ import com.github.aadvorak.artilleryonline.error.exception.AuthenticationAppExce
 import com.github.aadvorak.artilleryonline.security.ArtilleryOnlineUserDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
@@ -19,24 +21,27 @@ public class WebSocketSessionManager extends WebSocketHandlerDecorator {
 
     private final Map<Long, WebSocketSession> sessions = new ConcurrentHashMap<>();
 
-    public WebSocketSessionManager(WebSocketHandler delegate) {
+    public WebSocketSessionManager(WebSocketHandler delegate, MeterRegistry registry) {
         super(delegate);
+        Gauge.builder("artilleryonline.users.online", sessions::size)
+                .register(registry);
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         var user = getUserFromSession(session);
-        if (sessions.containsKey(user.getId())) {
-            var oldSession = sessions.get(user.getId());
+        var oldSession = sessions.put(user.getId(), session);
+        if (oldSession == null) {
+            log.info("New WebSocket Session has been established for user {}", user.getNickname());
+        } else {
             if (oldSession.isOpen()) {
                 try {
                     oldSession.close(CloseStatus.NORMAL);
                 } catch (IOException ignored) {
                 }
             }
+            log.info("Replaced WebSocket Session for user {}", user.getNickname());
         }
-        sessions.put(user.getId(), session);
-        log.info("New WebSocket Session has been established for user {}", user.getNickname());
         super.afterConnectionEstablished(session);
     }
 
