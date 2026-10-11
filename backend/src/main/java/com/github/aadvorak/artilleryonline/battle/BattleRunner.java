@@ -17,16 +17,17 @@ import com.github.aadvorak.artilleryonline.service.BattleHistoryService;
 import com.github.aadvorak.artilleryonline.service.MessageService;
 import com.github.aadvorak.artilleryonline.ws.BattleAggregatedSender;
 import com.github.aadvorak.artilleryonline.ws.BattleUpdatesSender;
-import lombok.RequiredArgsConstructor;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class BattleRunner {
 
@@ -55,8 +56,34 @@ public class BattleRunner {
 
     private final ApplicationSettings applicationSettings;
 
+    private final AtomicInteger activeBattleCount = new AtomicInteger(0);
+
+    public BattleRunner(UserBattleMap userBattleMap,
+                        BattleUpdatesSender battleUpdatesSender,
+                        BattleAggregatedSender battleAggregatedSender,
+                        MessageService messageService,
+                        BattleHistoryService battleHistoryService,
+                        WaitingBattleStepProcessor waitingBattleStepProcessor,
+                        ActiveBattleStepProcessor activeBattleStepProcessor,
+                        BattleUpdatesProcessor battleUpdatesProcessor,
+                        ApplicationSettings applicationSettings,
+                        MeterRegistry meterRegistry) {
+        this.userBattleMap = userBattleMap;
+        this.battleUpdatesSender = battleUpdatesSender;
+        this.battleAggregatedSender = battleAggregatedSender;
+        this.messageService = messageService;
+        this.battleHistoryService = battleHistoryService;
+        this.waitingBattleStepProcessor = waitingBattleStepProcessor;
+        this.activeBattleStepProcessor = activeBattleStepProcessor;
+        this.battleUpdatesProcessor = battleUpdatesProcessor;
+        this.applicationSettings = applicationSettings;
+        Gauge.builder("artilleryonline.battles.active", activeBattleCount::get)
+                .register(meterRegistry);
+    }
+
     @Async("runBattleExecutor")
     public void runBattle(Battle battle) {
+        activeBattleCount.incrementAndGet();
         startUpdatesSender(battle);
         try {
             while (!BattleStage.FINISHED.equals(battle.getBattleStage())
@@ -82,6 +109,7 @@ public class BattleRunner {
             stopUpdatesSender(battle);
             removeBattleFromMap(battle);
             removeBattleFromRoom(battle);
+            activeBattleCount.decrementAndGet();
             log.info("Battle finished: {}, map size {}", battle.getId(), userBattleMap.size());
         }
     }
