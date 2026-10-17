@@ -42,8 +42,57 @@ services:
     networks:
       - artillery-online-net
 
+  artillery-online-mongo:
+    image: mongo:7.0.0
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - artillery-online-net
+
+  artillery-online-opensearch:
+    image: opensearchproject/opensearch:2.15.0
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true"
+      - "DISABLE_SECURITY_PLUGIN=true"
+    ulimits:
+      memlock: { soft: -1, hard: -1 }
+      nofile: { soft: 65536, hard: 65536 }
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    networks:
+      - artillery-online-net
+
+  artillery-online-graylog:
+    image: graylog/graylog:7.1.10
+    depends_on:
+      - artillery-online-mongo
+      - artillery-online-opensearch
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+      - '12201:12201/tcp'
+      - '12201:12201/udp'
+    environment:
+      GRAYLOG_PASSWORD_SECRET: "my-admin-password-secret"
+      GRAYLOG_ROOT_PASSWORD_SHA2: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"
+      GRAYLOG_HTTP_EXTERNAL_URI: http://127.0.0.1:9000/
+      GRAYLOG_ELASTICSEARCH_HOSTS: http://artillery-online-opensearch:9200
+      GRAYLOG_MONGODB_URI: mongodb://artillery-online-mongo:27017/graylog
+    volumes:
+      - graylog-data:/usr/share/graylog/data
+    networks:
+      - artillery-online-net
+
 networks:
   artillery-online-net:
 
 volumes:
   grafana-data:
+  graylog-data:
+  mongo-data:
+  opensearch-data:
