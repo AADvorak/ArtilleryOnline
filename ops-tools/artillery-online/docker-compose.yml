@@ -25,8 +25,8 @@ services:
 
   artillery-online-backend:
     build:
-      context: ./images/backend
-      dockerfile: Dockerfile
+      context: ../..
+      dockerfile: ops-tools/artillery-online/images/backend/Dockerfile
     ports:
       - '8080:8080'
     depends_on:
@@ -38,8 +38,6 @@ services:
       APP_SETTINGS_DEBUG: false
       APP_SETTINGS_CLIENT_PROCESSING: true
       APP_LIMITS_MAX_ROOM_MEMBERS: 10
-    volumes:
-      - ../../backend/target/artilleryonline-0.9.0.jar:/backend/artilleryonline.jar
     stdin_open: true
     tty: true
     networks:
@@ -47,12 +45,10 @@ services:
 
   artillery-online-frontend:
     build:
-      context: ./images/frontend
-      dockerfile: Dockerfile
+      context: ../..
+      dockerfile: ops-tools/artillery-online/images/frontend/Dockerfile
     ports:
       - '3000:3000'
-    volumes:
-      - ../../frontend/:/frontend
     networks:
       artillery-online-net:
 
