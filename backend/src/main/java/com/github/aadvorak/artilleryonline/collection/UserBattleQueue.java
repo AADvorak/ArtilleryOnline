@@ -41,4 +41,8 @@ public class UserBattleQueue {
     public int size() {
         return map.size();
     }
+
+    public boolean isEmpty() {
+        return map.isEmpty();
+    }
 }
