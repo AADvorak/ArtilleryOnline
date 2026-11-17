@@ -12,15 +12,12 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @Slf4j
 public class AsyncConfig {
 
-    private final ApplicationLimits applicationLimits;
-
     private final int corePoolSize;
 
     private final int maxBattlePoolSize;
 
     public AsyncConfig(ApplicationLimits applicationLimits) {
-        this.applicationLimits = applicationLimits;
-        corePoolSize = Runtime.getRuntime().availableProcessors();
+        corePoolSize = Math.min(applicationLimits.getMaxBattles(), Runtime.getRuntime().availableProcessors());
         maxBattlePoolSize = Math.max(corePoolSize, applicationLimits.getMaxBattles());
         log.info("Async config corePoolSize = {}, maxBattlePoolSize = {}", corePoolSize, maxBattlePoolSize);
     }
@@ -29,7 +26,7 @@ public class AsyncConfig {
     public ThreadPoolTaskExecutor runBattleExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(corePoolSize);
-        executor.setMaxPoolSize(applicationLimits.getMaxBattles());
+        executor.setMaxPoolSize(maxBattlePoolSize);
         executor.setQueueCapacity(0);
         executor.setThreadNamePrefix("RunBattleAsync-");
         executor.initialize();

@@ -1,13 +1,17 @@
 package com.github.aadvorak.artilleryonline.service;
 
-import com.github.aadvorak.artilleryonline.battle.BattleStarter;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueue;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueElement;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueParams;
 import com.github.aadvorak.artilleryonline.dto.response.UserBattleQueueResponse;
+import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
 import com.github.aadvorak.artilleryonline.error.exception.NotFoundAppException;
+import com.github.aadvorak.artilleryonline.model.Locale;
+import com.github.aadvorak.artilleryonline.model.LocaleCode;
+import com.github.aadvorak.artilleryonline.properties.ApplicationLimits;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -25,10 +29,12 @@ public class UserBattleQueueService {
 
     private final UserAvailabilityService userAvailabilityService;
 
-    private final BattleStarter battleStarter;
+    private final ApplicationLimits applicationLimits;
+
+    private final ThreadPoolTaskExecutor runBattleExecutor;
 
     public UserBattleQueueResponse addUserToQueue(UserBattleQueueParams params) {
-        battleStarter.checkMaxBattles();
+        checkMaxBattles();
         var user = userService.getUserFromContext();
         userAvailabilityService.checkBattleQueueAvailability(user);
         var element = new UserBattleQueueElement()
@@ -64,5 +70,12 @@ public class UserBattleQueueService {
                                 ? LocalDateTime.ofInstant(Instant.ofEpochMilli(element.getAddTime()), ZoneId.systemDefault())
                                 : null)
                 .setParams(element.getParams());
+    }
+
+    public void checkMaxBattles() {
+        if (runBattleExecutor.getActiveCount() >= applicationLimits.getMaxBattles()) {
+            throw new ConflictAppException("Max battles limit reached",
+                    new Locale().setCode(LocaleCode.MAX_BATTLES_LIMIT_EXCEED));
+        }
     }
 }
