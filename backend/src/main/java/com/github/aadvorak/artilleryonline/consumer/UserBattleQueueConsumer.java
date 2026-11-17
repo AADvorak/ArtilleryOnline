@@ -4,15 +4,18 @@ import com.github.aadvorak.artilleryonline.battle.BattleParticipant;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueue;
 import com.github.aadvorak.artilleryonline.collection.UserBattleQueueElement;
 import com.github.aadvorak.artilleryonline.error.exception.ConflictAppException;
+import com.github.aadvorak.artilleryonline.error.response.ErrorResponse;
 import com.github.aadvorak.artilleryonline.properties.ApplicationSettings;
 import com.github.aadvorak.artilleryonline.service.BattleService;
 import com.github.aadvorak.artilleryonline.service.OnlineUserService;
+import com.github.aadvorak.artilleryonline.ws.ErrorsSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,6 +35,8 @@ public class UserBattleQueueConsumer implements Runnable, SmartLifecycle {
     private final ApplicationSettings applicationSettings;
 
     private final ThreadPoolTaskExecutor battleQueueConsumerExecutor;
+
+    private final ErrorsSender errorsSender;
 
     @Override
     public void start() {
@@ -117,6 +122,10 @@ public class UserBattleQueueConsumer implements Runnable, SmartLifecycle {
         } catch (ConflictAppException ex) {
             log.info("Users {} removed from queue but battle not started, queue size: {}",
                     nicknames, userBattleQueue.size());
+            participants.stream()
+                    .map(BattleParticipant::getUser)
+                    .filter(Objects::nonNull)
+                    .forEach(user -> errorsSender.sendError(user, ErrorResponse.of(ex)));
         }
     }
 }

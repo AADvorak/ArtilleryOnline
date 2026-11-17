@@ -30,10 +30,7 @@ public class GlobalErrorHandler {
     @ExceptionHandler(ConflictAppException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflictAppException(ConflictAppException exc) {
-        return new ErrorResponse()
-                .setCode("ConflictAppException")
-                .setMessage(exc.getMessage())
-                .setLocale(exc.getLocale() != null ? LocaleResponse.of(exc.getLocale()) : null);
+        return ErrorResponse.of(exc);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

@@ -30,6 +30,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const presetsStore = usePresetsStore()
   const roomStore = useRoomStore()
   const messageStore = useMessageStore()
+  const errorsStore = useErrorsStore()
   const configsStore = useConfigsStore()
 
   try {
@@ -62,6 +63,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
       to.path === PLAYGROUND_PATH ? battleStore.loadBattle() : battleStore.loadBattleIfNull()
     ])
     messageStore.subscribe()
+    errorsStore.subscribe()
   } else {
     messageStore.clear()
     userSettingsStore.clear()
